@@ -1,37 +1,213 @@
 .view-user-admin-people form.views-exposed-form {
+  padding: 28px 36px;
+}
+@media (max-width: 767px) {
+  .view-user-admin-people form.views-exposed-form {
+    padding: 16px 20px;
+  }
+}
+.view-user-admin-people form.views-exposed-form #edit-field-profile-geolocation-proximity-center-coordinates {
+  display: none;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root {
+  width: 100%;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .form-item,
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root fieldset.fieldset .fieldset__wrapper .form-item {
+  margin-bottom: 20px;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .form-element {
+  width: 100%;
+  max-width: 100%;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .select2-container .select2-selection--multiple {
+  min-height: calc((var(--input-padding-vertical) + var(--input-border-size)) * 2 + var(--input-line-height));
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .select2-container .select2-selection--multiple .select2-search--inline {
+  min-height: calc((var(--input-padding-vertical) + var(--input-border-size)) * 2 + var(--input-line-height) - 2px);
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .select2-container .select2-selection--multiple .select2-search__field {
+  width: 100% !important;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 0 20px;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .button {
+  margin: 0 0 20px;
+  min-height: calc((var(--input-padding-vertical) + var(--input-border-size)) * 2 + var(--input-line-height));
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--user,
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--group {
+  flex: 1;
+  min-width: 318px;
+}
+@media (max-width: 767px) {
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--user,
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--group {
+    width: 100%;
+    min-width: auto;
+    flex: 0 0 100%;
+  }
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--role,
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--status {
+  width: 100%;
+  max-width: 178px;
+  min-width: 150px;
+}
+@media (max-width: 767px) {
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--role,
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--status {
+    min-width: auto;
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 {
+  all: initial;
   display: block;
-}
-.view-user-admin-people form.views-exposed-form:after {
-  display: table;
-  clear: both;
-  content: "";
-}
-.view-user-admin-people form.views-exposed-form > *:not(.form--inline),
-.view-user-admin-people form.views-exposed-form > .fieldset .fieldset__wrapper > * {
-  float: left;
-}
-.view-user-admin-people form.views-exposed-form > *:not(.form--inline).form-item--social-follow-taxonomy-follow-filter,
-.view-user-admin-people form.views-exposed-form > .fieldset .fieldset__wrapper > *.form-item--social-follow-taxonomy-follow-filter {
   width: 100%;
-  margin-top: 1.1rem;
+  font-family: var(--gin-font);
+  text-align: center;
 }
-.view-user-admin-people form.views-exposed-form > *:not(.form--inline).form-item--social-follow-taxonomy-follow-filter .select2,
-.view-user-admin-people form.views-exposed-form > .fieldset .fieldset__wrapper > *.form-item--social-follow-taxonomy-follow-filter .select2 {
-  max-width: 400px;
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .claro-details__summary {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
 }
-.view-user-admin-people form.views-exposed-form .form--inline:not(.clearfix) {
-  width: 100%;
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .claro-details__summary:hover, .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .claro-details__summary:focus {
+  background: transparent;
 }
-.view-user-admin-people form.views-exposed-form > .fieldset,
-.view-user-admin-people form.views-exposed-form > .fieldset .fieldset__wrapper > * {
-  margin-right: 0.5rem;
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .claro-details__summary:before {
+  position: static;
+  margin-top: 0;
+  margin-left: 8px;
 }
-.view-user-admin-people form.views-exposed-form > .fieldset {
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 44px 0 0;
+  text-align: left;
+}
+@media (min-width: 1025px) {
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper {
+    margin-right: -8px;
+    margin-left: -8px;
+  }
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .claro-details__description {
+  display: none;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper > *:not(.claro-details__description) {
+  margin: 0 0 36px;
+  flex: 0 0 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+@media (min-width: 1025px) {
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper > *:not(.claro-details__description) {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0 8px;
+  }
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .form-wrapper > fieldset {
+  margin-bottom: 0;
   padding-top: 0;
 }
-.view-user-admin-people form.views-exposed-form .form-type--select.form-item--group {
-  max-width: 500px;
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper fieldset.fieldset {
+  margin-right: 0;
+  border: 0;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper fieldset.fieldset > legend.fieldset__legend > .fieldset__label {
+  margin-bottom: 12px;
+  padding-left: 20px;
+  font-size: 0.875rem;
+  line-height: 18px;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper fieldset.fieldset .fieldset__wrapper {
+  margin: 0;
+  padding: 20px 10px 16px;
+  background: var(--gin-bg-app);
+  border-radius: 16px;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper [class*=views-ef-fieldset-container] .fieldset__wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+@media (max-width: 767px) {
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper [class*=views-ef-fieldset-container] .fieldset__wrapper {
+    flex-direction: column;
+  }
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper [class*=views-ef-fieldset-container] .fieldset__wrapper > * {
+  margin-right: 0;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper [class*=views-ef-fieldset-container] .fieldset__wrapper .fieldset__description {
+  display: none;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-4 .fieldset__wrapper > *,
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-7 .fieldset__wrapper > * {
+  flex: 1 0 33.3333333333%;
+  max-width: 33.3333333333%;
+}
+@media (max-width: 1439px) {
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-4 .fieldset__wrapper > *:not(:last-child),
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-7 .fieldset__wrapper > *:not(:last-child) {
+    flex: 1 0 50%;
+    max-width: 50%;
+  }
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-4 .fieldset__wrapper > *:last-child,
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-7 .fieldset__wrapper > *:last-child {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+@media (max-width: 1439px) {
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-4 .fieldset__wrapper > *:not(:last-child),
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-7 .fieldset__wrapper > *:not(:last-child) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-2 .fieldset__wrapper > *,
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-8 .fieldset__wrapper > * {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+@media (min-width: 1440px) {
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-2 .fieldset__wrapper > *,
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-8 .fieldset__wrapper > * {
+    flex: 0 0 178px;
+    max-width: 178px;
+  }
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-2 .fieldset__wrapper > *:first-child,
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-8 .fieldset__wrapper > *:first-child {
+  flex: 1;
+  max-width: none;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-8 .fieldset__wrapper .form-type--number {
+  position: relative;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-8 .fieldset__wrapper .form-type--number .form-item__description {
+  position: absolute;
+  top: 100%;
+  left: 10px;
+}
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-3 .fieldset__wrapper > *,
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-5 .fieldset__wrapper > *,
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-6 .fieldset__wrapper > *,
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 .details-wrapper .views-ef-fieldset-container-9 .fieldset__wrapper > * {
   width: 100%;
+  max-width: 100%;
 }
 
 /*# sourceMappingURL=views-exposed-form--admin-people.css.map */

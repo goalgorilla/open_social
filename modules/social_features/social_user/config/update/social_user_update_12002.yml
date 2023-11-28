@@ -1,0 +1,372 @@
+views.view.user_admin_people:
+  expected_config: { }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            exposed_form: { }
+    add:
+      dependencies:
+        config:
+          - taxonomy.vocabulary.social_tagging
+        module:
+          - better_exposed_filters
+          - views_ef_fieldset
+      display:
+        default:
+          display_options:
+            exposed_form:
+              type: bef
+              options:
+                submit_button: Filter
+                reset_button: true
+                reset_button_label: Clear
+                exposed_sorts_label: 'Sort by'
+                expose_sort_order: true
+                sort_asc_label: Asc
+                sort_desc_label: Desc
+                text_input_required: 'Select any filter and click on Apply to see results'
+                text_input_required_format: basic_html
+                bef:
+                  general:
+                    autosubmit: false
+                    autosubmit_exclude_textfield: false
+                    autosubmit_textfield_delay: 500
+                    autosubmit_hide: false
+                    input_required: false
+                    allow_secondary: false
+                    secondary_label: 'Advanced options'
+                    secondary_open: false
+                    reset_button_always_show: true
+                  filter:
+                    created:
+                      plugin_id: bef_html5_date
+                      advanced:
+                        collapsible: false
+                        is_secondary: false
+                    access:
+                      plugin_id: bef_html5_date
+                      advanced:
+                        collapsible: false
+                        is_secondary: false
+                    combine:
+                      plugin_id: default
+                      advanced:
+                        placeholder_text: ''
+                        collapsible: false
+                        is_secondary: false
+                    roles_target_id:
+                      plugin_id: default
+                      advanced:
+                        sort_options: false
+                        rewrite:
+                          filter_rewrite_values: '- Any -|Select...'
+                        collapsible: false
+                        is_secondary: false
+                    permission:
+                      plugin_id: default
+                      advanced:
+                        sort_options: false
+                        rewrite:
+                          filter_rewrite_values: ''
+                        collapsible: false
+                        is_secondary: false
+                    status:
+                      plugin_id: default
+                      advanced:
+                        sort_options: false
+                        rewrite:
+                          filter_rewrite_values: '- Any -|Select...'
+                        collapsible: false
+                        is_secondary: false
+                    id:
+                      plugin_id: bef_select2
+                      advanced:
+                        sort_options: false
+                        placeholder_text: Select...
+                        rewrite:
+                          filter_rewrite_values: ''
+                        collapsible: false
+                        is_secondary: false
+                    social_split_profile_terms:
+                      plugin_id: default
+                      advanced:
+                        rewrite:
+                          filter_rewrite_values: ''
+                        collapsible: false
+                        is_secondary: false
+        page_1:
+          display_options:
+            display_extenders:
+              views_ef_fieldset:
+                views_ef_fieldset:
+                  enabled: true
+                  options:
+                    sort:
+                      root:
+                        container_type: container
+                        depth: '0'
+                        description: ''
+                        id: root
+                        open: true
+                        pid: ''
+                        title: ''
+                        type: container
+                        weight: '0'
+                      container-0:
+                        container_type: container
+                        depth: '1'
+                        description: 'Main fields'
+                        id: container-0
+                        open: true
+                        pid: root
+                        title: ''
+                        type: container
+                        weight: '-100'
+                      combine:
+                        depth: '2'
+                        id: combine
+                        pid: container-0
+                        type: filter
+                        weight: '-99'
+                      roles_target_id:
+                        depth: '2'
+                        id: roles_target_id
+                        pid: container-0
+                        type: filter
+                        weight: '-98'
+                      id:
+                        depth: '2'
+                        id: id
+                        pid: container-0
+                        type: filter
+                        weight: '-97'
+                      status:
+                        depth: '2'
+                        id: status
+                        pid: container-0
+                        type: filter
+                        weight: '-96'
+                      submit:
+                        depth: '2'
+                        id: submit
+                        pid: container-0
+                        type: buttons
+                        weight: '-95'
+                      reset:
+                        depth: '2'
+                        id: reset
+                        pid: container-0
+                        type: buttons
+                        weight: '-94'
+                      container-1:
+                        container_type: details
+                        depth: '1'
+                        description: ''
+                        id: container-1
+                        open: false
+                        pid: root
+                        title: 'Show more'
+                        type: container
+                        weight: '-93'
+                      container-4:
+                        container_type: container
+                        depth: '2'
+                        description: ''
+                        id: container-4
+                        open: false
+                        pid: container-1
+                        title: 'Registration date fieldset'
+                        type: container
+                        weight: '-92'
+                      created_op:
+                        depth: '3'
+                        id: created_op
+                        pid: container-4
+                        type: filter
+                        weight: '-91'
+                      created:
+                        depth: '3'
+                        id: created
+                        pid: container-4
+                        type: filter
+                        weight: '-90'
+                      container-7:
+                        container_type: container
+                        depth: '2'
+                        description: ''
+                        id: container-7
+                        open: false
+                        pid: container-1
+                        title: 'Last login fieldset'
+                        type: container
+                        weight: '-89'
+                      access_op:
+                        depth: '3'
+                        id: access_op
+                        pid: container-7
+                        type: filter
+                        weight: '-88'
+                      access:
+                        depth: '3'
+                        id: access
+                        pid: container-7
+                        type: filter
+                        weight: '-87'
+                      container-2:
+                        container_type: fieldset
+                        depth: '2'
+                        description: ''
+                        id: container-2
+                        open: false
+                        pid: container-1
+                        title: 'Container 2'
+                        type: container
+                        weight: '-86'
+                      container-8:
+                        container_type: container
+                        depth: '2'
+                        description: ''
+                        id: container-8
+                        open: false
+                        pid: container-1
+                        title: 'Container 8'
+                        type: container
+                        weight: '-83'
+                      container-3:
+                        container_type: fieldset
+                        depth: '2'
+                        description: ''
+                        id: container-3
+                        open: false
+                        pid: container-1
+                        title: 'Container 3'
+                        type: container
+                        weight: '-81'
+                      container-9:
+                        container_type: fieldset
+                        depth: '2'
+                        description: ''
+                        id: container-9
+                        open: false
+                        pid: container-1
+                        title: Permission
+                        type: container
+                        weight: '-79'
+                      permission:
+                        depth: '3'
+                        id: permission
+                        pid: container-9
+                        type: filter
+                        weight: '-78'
+                      container-5:
+                        container_type: fieldset
+                        depth: '2'
+                        description: ''
+                        id: container-5
+                        open: false
+                        pid: container-1
+                        title: 'Container 5'
+                        type: container
+                        weight: '-77'
+                      container-6:
+                        container_type: container
+                        depth: '2'
+                        description: ''
+                        id: container-6
+                        open: false
+                        pid: container-1
+                        title: 'Profile tags fieldset'
+                        type: container
+                        weight: '-75'
+                      social_split_profile_terms:
+                        depth: '3'
+                        id: social_split_profile_terms
+                        pid: container-6
+                        type: filter
+                        weight: '-74'
+                      container-10:
+                        container_type: details
+                        depth: '1'
+                        description: ''
+                        id: container-10
+                        open: false
+                        pid: root
+                        title: 'Container 10'
+                        type: container
+                        weight: '-73'
+                      container-11:
+                        container_type: details
+                        depth: '1'
+                        description: ''
+                        id: container-11
+                        open: false
+                        pid: root
+                        title: 'Container 11'
+                        type: container
+                        weight: '-72'
+                      container-12:
+                        container_type: details
+                        depth: '1'
+                        description: ''
+                        id: container-12
+                        open: false
+                        pid: root
+                        title: 'Container 12'
+                        type: container
+                        weight: '-71'
+                      container-13:
+                        container_type: details
+                        depth: '1'
+                        description: ''
+                        id: container-13
+                        open: false
+                        pid: root
+                        title: 'Container 13'
+                        type: container
+                        weight: '-70'
+                      container-14:
+                        container_type: details
+                        depth: '1'
+                        description: ''
+                        id: container-14
+                        open: false
+                        pid: root
+                        title: 'Container 14'
+                        type: container
+                        weight: '-69'
+                      container-15:
+                        container_type: details
+                        depth: '1'
+                        description: ''
+                        id: container-15
+                        open: false
+                        pid: root
+                        title: 'Container 15'
+                        type: container
+                        weight: '-68'
+                      container-16:
+                        container_type: details
+                        depth: '1'
+                        description: ''
+                        id: container-16
+                        open: false
+                        pid: root
+                        title: 'Container 16'
+                        type: container
+                        weight: '-67'
+    change:
+      display:
+        default:
+          display_options:
+            filters:
+              created:
+                expose:
+                  label: Registered
+              access:
+                expose:
+                  label: 'Last active'
+              permission:
+                expose:
+                  label: Name
