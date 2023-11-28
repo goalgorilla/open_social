@@ -103,6 +103,9 @@ class SocialSplitProfileTerms extends TaxonomyIndexTid {
           '#value' => $default_value,
           '#options' => $options,
           '#name' => $identifier,
+          '#select2' => [
+            'placeholder' => t('Select...'),
+          ],
         ];
       }
     }

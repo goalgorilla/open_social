@@ -97,3 +97,20 @@ function social_user_update_12001(array &$sandbox): void {
 
   $config->setData($data)->save(TRUE);
 }
+
+/**
+ * Enable views_ef_fieldset module and reorganize filters in admin/people page.
+ */
+function social_user_update_12002(array &$sandbox): string {
+  // Enable views_ef_fieldset module.
+  \Drupal::service('module_installer')->install(['views_ef_fieldset'], TRUE);
+
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_user', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}

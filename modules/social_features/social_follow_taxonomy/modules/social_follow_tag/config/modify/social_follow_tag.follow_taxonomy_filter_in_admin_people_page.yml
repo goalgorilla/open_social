@@ -1,0 +1,106 @@
+dependencies:
+  module:
+    - social_follow_tag
+items:
+  views.view.user_admin_people:
+    expected_config: { }
+    update_actions:
+      add:
+        dependencies:
+          config:
+            - flag.flag.follow_term
+          module:
+            - social_follow_taxonomy
+        display:
+          default:
+            display_options:
+              exposed_form:
+                options:
+                  bef:
+                    filter:
+                      social_follow_taxonomy_follow_filter:
+                        plugin_id: bef_select2
+                        advanced:
+                          sort_options: false
+                          placeholder_text: Select...
+                          rewrite:
+                            filter_rewrite_values: ''
+                          collapsible: false
+                          is_secondary: false
+              filters:
+                social_follow_taxonomy_follow_filter:
+                  id: social_follow_taxonomy_follow_filter
+                  table: users_field_data
+                  field: social_follow_taxonomy_follow_filter
+                  relationship: none
+                  group_type: group
+                  admin_label: ''
+                  entity_type: user
+                  plugin_id: social_follow_taxonomy_follow_filter
+                  operator: or
+                  value: { }
+                  group: 1
+                  exposed: true
+                  expose:
+                    operator_id: social_follow_taxonomy_follow_filter_op
+                    label: Category
+                    use_operator: false
+                    operator: social_follow_taxonomy_follow_filter_op
+                    operator_limit_selection: false
+                    operator_list: { }
+                    identifier: social_follow_taxonomy_follow_filter
+                    required: false
+                    remember: false
+                    multiple: true
+                    remember_roles:
+                      authenticated: authenticated
+                    reduce: false
+                  is_grouped: false
+                  group_info:
+                    label: ''
+                    description: ''
+                    identifier: ''
+                    optional: true
+                    widget: select
+                    multiple: false
+                    remember: false
+                    default_group: All
+                    default_group_multiple: { }
+                    group_items: { }
+                  reduce_duplicates: false
+                  vid:
+                    social_tagging: social_tagging
+                  type: select
+                  hierarchy: false
+                  limit: true
+                  error_message: true
+            cache_metadata:
+              tags:
+                - 'flagging_list:follow_term'
+          page_1:
+            display_options:
+              display_extenders:
+                views_ef_fieldset:
+                  views_ef_fieldset:
+                    options:
+                      sort:
+                        social_follow_taxonomy_follow_filter:
+                          depth: '3'
+                          id: social_follow_taxonomy_follow_filter
+                          pid: container-5
+                          type: filter
+                          weight: '-76'
+            cache_metadata:
+              tags:
+                - 'flagging_list:follow_term'
+      change:
+        display:
+          page_1:
+            display_options:
+              display_extenders:
+                views_ef_fieldset:
+                  views_ef_fieldset:
+                    options:
+                      sort:
+                        container-5:
+                          title: 'Content tags'
