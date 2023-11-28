@@ -1,43 +1,254 @@
 .view-user-admin-people {
   form.views-exposed-form {
-    display: block;
+    padding: 28px 36px;
 
-    &:after {
-      display: table;
-      clear: both;
-      content: "";
+    @media(max-width: 767px) {
+      padding: 16px 20px;
     }
 
-    > *:not(.form--inline),
-    > .fieldset .fieldset__wrapper > * {
-      float: left;
+    #edit-field-profile-geolocation-proximity-center-coordinates {
+      display: none;
+    }
 
-      &.form-item--social-follow-taxonomy-follow-filter {
+    .views-ef-fieldset-root {
+      width: 100%;
+
+      .form-item,
+      fieldset.fieldset .fieldset__wrapper .form-item {
+        margin-bottom: 20px;
+      }
+
+      .form-element {
         width: 100%;
-        margin-top: 1.1rem;
+        max-width: 100%;
+      }
 
-        .select2 {
-          max-width: 400px;
+      .select2-container .select2-selection--multiple {
+        min-height: calc(((var(--input-padding-vertical) + var(--input-border-size)) * 2) + var(--input-line-height));
+
+        .select2-search--inline {
+          min-height: calc((((var(--input-padding-vertical) + var(--input-border-size)) * 2) + var(--input-line-height)) - 2px);
+        }
+
+        .select2-search__field {
+          width: 100% !important;
         }
       }
-    }
 
-    .form--inline:not(.clearfix) {
-      width: 100%;
-    }
+      .views-ef-fieldset-container-0 {
+        display: flex;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 0 20px;
 
-    > .fieldset,
-    > .fieldset .fieldset__wrapper > * {
-      margin-right: .5rem;
-    }
+        .button {
+          margin: 0 0 20px;
+          min-height: calc(((var(--input-padding-vertical) + var(--input-border-size)) * 2) + var(--input-line-height));
+        }
 
-    > .fieldset {
-      padding-top: 0;
-    }
+        .form-item--user,
+        .form-item--group {
+          flex: 1;
+          min-width: 318px;
 
-    .form-type--select.form-item--group {
-      max-width: 500px;
-      width: 100%;
+          @media(max-width: 767px) {
+            width: 100%;
+            min-width: auto;
+            flex: 0 0 100%;
+          }
+        }
+
+        .form-item--role,
+        .form-item--status {
+          width: 100%;
+          max-width: 178px;
+          min-width: 150px;
+
+          @media(max-width: 767px) {
+            min-width: auto;
+            max-width: 100%;
+            flex: 0 0 100%;
+          }
+        }
+      }
+
+      .views-ef-fieldset-container-1 {
+        all: initial;
+        display: block;
+        width: 100%;
+        font-family: var(--gin-font);
+        text-align: center;
+
+        .claro-details__summary {
+          display: inline-flex;
+          flex-direction: row-reverse;
+          align-items: center;
+          justify-content: center;
+          padding: 8px;
+
+          &:hover,
+          &:focus {
+            background: transparent;
+          }
+
+          &:before {
+            position: static;
+            margin-top: 0;
+            margin-left: 8px;
+          }
+        }
+
+        .details-wrapper {
+          display: flex;
+          flex-wrap: wrap;
+          margin: 44px 0 0;
+          text-align: left;
+
+          @media(min-width: 1025px) {
+            margin-right: -8px;
+            margin-left: -8px;
+          }
+
+          .claro-details__description {
+            display: none;
+          }
+
+          > *:not(.claro-details__description) {
+            margin: 0 0 36px;
+            flex: 0 0 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+
+            @media(min-width: 1025px) {
+              flex: 0 0 50%;
+              max-width: 50%;
+              padding: 0 8px;
+            }
+          }
+
+          .form-wrapper > fieldset {
+            margin-bottom: 0;
+            padding-top: 0;
+          }
+
+          fieldset.fieldset {
+            margin-right: 0;
+            border: 0;
+
+            > legend.fieldset__legend {
+              > .fieldset__label {
+                margin-bottom: 12px;
+                padding-left: 20px;
+                font-size: .875rem;
+                line-height: 18px;
+              }
+            }
+
+            .fieldset__wrapper {
+              margin: 0;
+              padding: 20px 10px 16px;
+              background: var(--gin-bg-app);
+              border-radius: 16px;
+            }
+          }
+
+          [class*='views-ef-fieldset-container'] {
+            .fieldset__wrapper {
+              display: flex;
+              flex-wrap: wrap;
+
+              @media(max-width: 767px) {
+                flex-direction: column;
+              }
+
+              > * {
+                margin-right: 0;
+                padding: 0 10px;
+                box-sizing: border-box;
+              }
+
+              .fieldset__description {
+                display: none;
+              }
+            }
+          }
+
+          .views-ef-fieldset-container-4,
+          .views-ef-fieldset-container-7 {
+            .fieldset__wrapper {
+              > * {
+                flex: 1 0 calc(100% / 3);
+                max-width: calc(100% / 3);
+
+                @media(max-width: 1439px) {
+                  &:not(:last-child) {
+                    flex: 1 0 50%;
+                    max-width: 50%;
+                  }
+
+                  &:last-child {
+                    flex: 0 0 100%;
+                    max-width: 100%;
+                  }
+                }
+
+                @media(max-width: 1439px) {
+                  &:not(:last-child) {
+                    flex: 0 0 100%;
+                    max-width: 100%;
+                  }
+                }
+              }
+            }
+          }
+
+          .views-ef-fieldset-container-2,
+          .views-ef-fieldset-container-8 {
+            .fieldset__wrapper {
+              > * {
+                flex: 0 0 100%;
+                max-width: 100%;
+
+                @media(min-width: 1440px) {
+                  flex: 0 0 178px;
+                  max-width: 178px;
+                }
+
+                &:first-child {
+                  flex: 1;
+                  max-width: none;
+                }
+              }
+            }
+          }
+
+          .views-ef-fieldset-container-8 {
+            .fieldset__wrapper {
+              .form-type--number {
+                position: relative;
+
+                .form-item__description {
+                  position: absolute;
+                  top: 100%;
+                  left: 10px;
+                }
+              }
+            }
+          }
+
+          .views-ef-fieldset-container-3,
+          .views-ef-fieldset-container-5,
+          .views-ef-fieldset-container-6,
+          .views-ef-fieldset-container-9 {
+            .fieldset__wrapper {
+              > * {
+                width: 100%;
+                max-width: 100%;
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
