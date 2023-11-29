@@ -104,7 +104,7 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
   $nid = !$node->isNew() ? $node->id() : 'new';
   $options = $form['book']['bid']['#options'];
   if (!isset($options[$nid])) {
-    if ($nid === 'new' || ($nid !== $node->book['original_bid'])) {
+    if ($nid === 'new' || (isset($node->book['original_bid']) && $nid !== $node->book['original_bid'])) {
       // The node can become a new book, if it is not one already.
       $form['book']['bid']['#options'] = [$nid => t('- Create a new book -')] + $options;
     }
@@ -116,7 +116,7 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
   $disable_groups_field = in_array(\Drupal::routeMatch()->getRouteName(), [
     'entity.group_content.add_form',
     'entity.group_content.create_form',
-  ]) || ($node->book['nid'] === $node->book['bid'] && empty($node->book['pid']));
+  ]) || (isset($node->book['nid'], $node->book['bid']) && $node->book['nid'] === $node->book['bid'] && empty($node->book['pid']));
 
   if ($disable_groups_field) {
     $form['groups']['#disabled'] = TRUE;

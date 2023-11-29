@@ -18,7 +18,10 @@ use Drupal\group\Entity\GroupType;
 function social_path_manager_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $social_group_types = _social_path_manager_group_types();
 
-  $group_forms = [];
+  $group_forms = [
+    'add' => [],
+    'edit' => [],
+  ];
 
   foreach ($social_group_types as $social_group_type) {
     $group_forms['edit'][] = "group_{$social_group_type}_edit_form";
