@@ -35,7 +35,9 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     // Create a set of 10 test users that we can query. The data of the users
     // shouldn't matter.
     for ($i = 0; $i < 10; ++$i) {
-      $users[] = $this->createUser();
+      $user = $this->createUser();
+      assert($user !== FALSE, "Failed to set-up user.");
+      $users[] = $user;
     }
 
     // We must include the current user in the test data because it'll also be

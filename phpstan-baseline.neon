@@ -1611,6 +1611,16 @@ parameters:
 			path: modules/custom/entity_access_by_field/entity_access_by_field.module
 
 		-
+			message: "#^Function entity_access_by_field_field_widget_info_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/custom/entity_access_by_field/entity_access_by_field.module
+
+		-
+			message: "#^Function entity_access_by_field_field_widget_info_alter\\(\\) has parameter \\$info with no type specified\\.$#"
+			count: 1
+			path: modules/custom/entity_access_by_field/entity_access_by_field.module
+
+		-
 			message: "#^Function entity_access_by_field_field_widget_single_element_form_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/entity_access_by_field.module
@@ -1622,16 +1632,6 @@ parameters:
 
 		-
 			message: "#^Function entity_access_by_field_field_widget_single_element_form_alter\\(\\) has parameter \\$element with no type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/entity_access_by_field.module
-
-		-
-			message: "#^Function entity_access_by_field_field_widget_info_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/entity_access_by_field.module
-
-		-
-			message: "#^Function entity_access_by_field_field_widget_info_alter\\(\\) has parameter \\$info with no type specified\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/entity_access_by_field.module
 
@@ -2456,6 +2456,11 @@ parameters:
 			path: modules/custom/social_graphql/src/GraphQL/EntityConnection.php
 
 		-
+			message: "#^Method Drupal\\\\social_graphql\\\\Plugin\\\\GraphQL\\\\DataProducer\\\\Field\\\\FieldRenderer\\:\\:create\\(\\) should return static\\(Drupal\\\\social_graphql\\\\Plugin\\\\GraphQL\\\\DataProducer\\\\Field\\\\FieldRenderer\\) but returns Drupal\\\\social_graphql\\\\Plugin\\\\GraphQL\\\\DataProducer\\\\Field\\\\FieldRenderer\\.$#"
+			count: 1
+			path: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Field/FieldRenderer.php
+
+		-
 			message: "#^Method Drupal\\\\social_graphql\\\\Plugin\\\\GraphQL\\\\Schema\\\\OpenSocialBaseSchema\\:\\:getBaseSchema\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/src/Plugin/GraphQL/Schema/OpenSocialBaseSchema.php
@@ -2947,16 +2952,6 @@ parameters:
 
 		-
 			message: "#^Function social_path_manager_social_path_manager_group_tabs_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/social_path_manager/social_path_manager.module
-
-		-
-			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
-			count: 1
-			path: modules/custom/social_path_manager/social_path_manager.module
-
-		-
-			message: "#^Offset 'edit' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
 			count: 1
 			path: modules/custom/social_path_manager/social_path_manager.module
 
@@ -5656,11 +5651,6 @@ parameters:
 			path: modules/social_features/social_core/social_core.module
 
 		-
-			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\<Drupal\\\\Core\\\\Field\\\\FieldItemInterface\\>\\)\\: mixed, '_social_core_find…' given\\.$#"
-			count: 1
-			path: modules/social_features/social_core/social_core.module
-
-		-
 			message: "#^Variable \\$link might not be defined\\.$#"
 			count: 8
 			path: modules/social_features/social_core/social_core.module
@@ -5926,11 +5916,6 @@ parameters:
 			path: modules/social_features/social_embed/social_embed.install
 
 		-
-			message: "#^Parameter \\#1 \\$format_id of function editor_load expects int, string given\\.$#"
-			count: 1
-			path: modules/social_features/social_embed/social_embed.post_update.php
-
-		-
 			message: "#^Function social_embed_update_10301\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_embed/social_embed.install
@@ -5939,6 +5924,11 @@ parameters:
 			message: "#^Function social_embed_update_8001\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_embed/social_embed.install
+
+		-
+			message: "#^Parameter \\#1 \\$format_id of function editor_load expects int, string given\\.$#"
+			count: 1
+			path: modules/social_features/social_embed/social_embed.post_update.php
 
 		-
 			message: "#^Unsafe access to private constant Drupal\\\\social_embed\\\\Form\\\\EmbedConsentForm\\:\\:SETTINGS through static\\:\\:\\.$#"
@@ -8999,43 +8989,8 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_default_route/src/RouteSubscriber/RouteSubscriber.php
 
 		-
-			message: "#^Offset 'bid' does not exist on Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/social_flexible_group_book.module
-
-		-
-			message: "#^Offset 'nid' does not exist on Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/social_flexible_group_book.module
-
-		-
-			message: "#^Offset 'original_bid' does not exist on Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/social_flexible_group_book.module
-
-		-
-			message: "#^Offset 'pid' on Drupal\\\\Core\\\\Field\\\\FieldItemListInterface in empty\\(\\) does not exist\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/social_flexible_group_book.module
-
-		-
-			message: "#^Cannot cast Drupal\\\\Core\\\\TypedData\\\\TypedDataInterface to int\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
-
-		-
 			message: "#^Method Drupal\\\\social_flexible_group_book\\\\Plugin\\\\ActivityEntityCondition\\\\BookParentOnlyActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has parameter \\$entity with no type specified\\.$#"
 			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
-
-		-
-			message: "#^Offset 'depth' on Drupal\\\\Core\\\\Field\\\\FieldItemListInterface in isset\\(\\) does not exist\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
-
-		-
-			message: "#^Result of && is always false\\.$#"
-			count: 2
 			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
 
 		-
@@ -9484,11 +9439,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.install
 
 		-
-			message: "#^Cannot access offset non\\-falsy\\-string on Drupal\\\\group\\\\Entity\\\\GroupRoleInterface\\.$#"
-			count: 2
-			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
-
-		-
 			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
 			count: 2
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
@@ -9727,6 +9677,11 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/ActivityContext/InvitedToGroupActivityContext.php
+
+		-
+			message: "#^Method Drupal\\\\social_group_invite\\\\Plugin\\\\Join\\\\SocialGroupInviteJoin\\:\\:create\\(\\) should return static\\(Drupal\\\\social_group_invite\\\\Plugin\\\\Join\\\\SocialGroupInviteJoin\\) but returns Drupal\\\\social_group_invite\\\\Plugin\\\\Join\\\\SocialGroupInviteJoin\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Join/SocialGroupInviteJoin.php
 
 		-
 			message: "#^Method Drupal\\\\social_group_invite\\\\Plugin\\\\views\\\\field\\\\SocialGroupInviteViewsBulkOperationsBulkForm\\:\\:viewsFormValidate\\(\\) has parameter \\$form with no type specified\\.$#"
@@ -10067,6 +10022,16 @@ parameters:
 			message: "#^Property Drupal\\\\social_group_request\\\\Form\\\\GroupRequestMembershipRequestForm\\:\\:\\$group \\(Drupal\\\\group\\\\Entity\\\\GroupInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_request/src/Plugin/Join/SocialGroupRequestJoin.php
+
+		-
+			message: "#^Method Drupal\\\\social_group_request\\\\Plugin\\\\Join\\\\SocialGroupRequestJoin\\:\\:create\\(\\) should return static\\(Drupal\\\\social_group_request\\\\Plugin\\\\Join\\\\SocialGroupRequestJoin\\) but returns Drupal\\\\social_group_request\\\\Plugin\\\\Join\\\\SocialGroupRequestJoin\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_request/src/Plugin/Join/SocialGroupRequestJoin.php
 
 		-
 			message: "#^Method Drupal\\\\social_group_request\\\\Routing\\\\SocialGroupRequestRouteSubscriber\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
@@ -10539,6 +10504,11 @@ parameters:
 			path: modules/social_features/social_group/social_group.install
 
 		-
+			message: "#^Argument of an invalid type array\\<int, string\\>\\|null supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.module
+
+		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getFileUri\\(\\)\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -11009,17 +10979,17 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
+			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>\\}\\.$#"
 			count: 3
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Offset 'delete' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
+			message: "#^Offset 'delete' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>\\}\\.$#"
 			count: 2
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Offset 'edit' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
+			message: "#^Offset 'edit' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>\\}\\.$#"
 			count: 4
 			path: modules/social_features/social_group/social_group.module
 
@@ -11304,6 +11274,11 @@ parameters:
 			path: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php
 
 		-
+			message: "#^Possibly invalid array key type Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup\\|string\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php
+
+		-
 			message: "#^Cannot call method getGroupType\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php
@@ -11464,12 +11439,12 @@ parameters:
 			path: modules/social_features/social_group/src/SocialGroupAdminPeopleConfigOverride.php
 
 		-
-			message: "#^Cannot access an offset on array\\<int, int\\>\\|float\\|int\\|string\\|false\\|null\\.$#"
+			message: "#^Cannot access an offset on array\\<int\\<0, max\\>, int\\>\\|float\\|int\\|string\\|false\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/SocialGroupHelperService.php
 
 		-
-			message: "#^Method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getCurrentGroupMembers\\(\\) should return array but returns array\\<int, int\\>\\|float\\|int\\|string\\|false\\|null\\.$#"
+			message: "#^Method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getCurrentGroupMembers\\(\\) should return array but returns array\\<int\\<0, max\\>, int\\>\\|float\\|int\\|string\\|false\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/SocialGroupHelperService.php
 
@@ -11947,16 +11922,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_like\\\\SocialLikeConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
 			count: 1
 			path: modules/social_features/social_like/src/SocialLikeConfigOverride.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\symfony_mailer\\\\AddressInterface\\:\\:toString\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/InlineCssEmailAdjuster.php
 
 		-
 			message: "#^Function _social_mentions_set_default_config\\(\\) has no return type specified\\.$#"
@@ -13795,16 +13760,6 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$key of method Drupal\\\\Core\\\\Config\\\\Config\\:\\:get\\(\\) expects string, array\\<int, string\\>\\|string given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
-
-		-
-			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, int given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
-
-		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
@@ -14718,16 +14673,6 @@ parameters:
 			path: modules/social_features/social_profile/src/Plugin/Field/FieldWidget/SocialProfileTagSplitWidget.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\select2\\\\Plugin\\\\Field\\\\FieldWidget\\\\Select2EntityReferenceWidget\\:\\:setSocialProfileTagService\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/src/Plugin/Field/FieldWidget/SocialProfileTagSplitWidget.php
-
-		-
-			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\Field\\\\FieldWidget\\\\SocialProfileTagSplitWidget\\:\\:create\\(\\) should return Drupal\\\\social_profile\\\\Plugin\\\\Field\\\\FieldWidget\\\\SocialProfileTagSplitWidget but returns Drupal\\\\select2\\\\Plugin\\\\Field\\\\FieldWidget\\\\Select2EntityReferenceWidget\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/src/Plugin/Field/FieldWidget/SocialProfileTagSplitWidget.php
-
-		-
 			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\GraphQL\\\\SchemaExtension\\\\ProfileSchemaExtension\\:\\:registerResolvers\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/src/Plugin/GraphQL/SchemaExtension/ProfileSchemaExtension.php
@@ -15163,6 +15108,16 @@ parameters:
 			path: modules/social_features/social_swiftmail/social_swiftmail.install
 
 		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/InlineCssEmailAdjuster.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\symfony_mailer\\\\AddressInterface\\:\\:toString\\(\\)\\.$#"
+			count: 1
+			path: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php
+
+		-
 			message: "#^Method Drupal\\\\social_swiftmail\\\\Plugin\\\\Mail\\\\SocialSwiftMailer\\:\\:massageMessageBody\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_swiftmail/src/Plugin/Mail/SocialSwiftMailer.php
@@ -15271,6 +15226,11 @@ parameters:
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\Delete\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
 			count: 2
 			path: modules/social_features/social_tagging/social_tagging.module
+
+		-
+			message: "#^Cannot access offset '\\#attributes' on 'table'\\|array\\{0\\: array\\{action\\: 'order', relationship\\: 'sibling', group\\: 'categories\\-order…'\\}, \\#attributes\\?\\: mixed, \\#weight\\: mixed, effect\\: array\\{\\#tree\\: false, data\\: array\\{label\\: array\\{\\#plain_text\\: mixed\\}\\}\\}, weight\\: array\\{\\#type\\: 'weight', \\#title\\: Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup, \\#title_display\\: 'invisible', \\#default_value\\: int, \\#attributes\\: array\\{class\\: array\\{'categories\\-order…'\\}\\}\\}\\}\\|array\\{0\\: Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup, 1\\: Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup, \\#attributes\\?\\: mixed, \\#weight\\: mixed, effect\\: array\\{\\#tree\\: false, data\\: array\\{label\\: array\\{\\#plain_text\\: mixed\\}\\}\\}, weight\\: array\\{\\#type\\: 'weight', \\#title\\: Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup, \\#title_display\\: 'invisible', \\#default_value\\: int, \\#attributes\\: array\\{class\\: array\\{'categories\\-order…'\\}\\}\\}\\}\\|array\\{array\\{action\\: 'order', relationship\\: 'sibling', group\\: 'categories\\-order…'\\}\\}\\|array\\{Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup, Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup\\}\\|array\\{id\\: 'categories\\-terms', \\#attributes\\?\\: mixed, \\#weight\\: mixed, effect\\: array\\{\\#tree\\: false, data\\: array\\{label\\: array\\{\\#plain_text\\: mixed\\}\\}\\}, weight\\: array\\{\\#type\\: 'weight', \\#title\\: Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup, \\#title_display\\: 'invisible', \\#default_value\\: int, \\#attributes\\: array\\{class\\: array\\{'categories\\-order…'\\}\\}\\}\\}\\|array\\{id\\: 'categories\\-terms'\\}\\|Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup\\.$#"
+			count: 1
+			path: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
@@ -16235,11 +16195,6 @@ parameters:
 		-
 			message: "#^Cannot call method uuid\\(\\) on Drupal\\\\user\\\\Entity\\\\User\\|false\\.$#"
 			count: 2
-			path: modules/social_features/social_user/tests/src/Kernel/GraphQL/GraphQLUsersEndpointTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$callback of function array_map expects \\(callable\\(Drupal\\\\user\\\\UserInterface\\|false\\)\\: mixed\\)\\|null, Closure\\(Drupal\\\\user\\\\UserInterface\\)\\: string\\|null given\\.$#"
-			count: 1
 			path: modules/social_features/social_user/tests/src/Kernel/GraphQL/GraphQLUsersEndpointTest.php
 
 		-

@@ -20,9 +20,7 @@ class ConfigLanguageManagerTest extends KernelTestBase {
   protected $configLanguageManager;
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
   protected static $modules = [
     'user',
