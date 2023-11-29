@@ -179,3 +179,47 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: streetsidesoftware/cspell-action@v5
+
+  behat-linting:
+    name: Behat Linting
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install developer tooling
+        run: composer install --no-interaction --no-progress --working-dir=tests
+
+      - name: Find changed test files
+        run: |
+          git fetch origin $BRANCH_NAME
+          # We change the way we create the TEST_FILES env in the GITHUB_ENV file depending on whether we actually have
+          # test files that were changed in this PR. This is needed to avoid the TEST_FILES variable from containing a
+          # single blank line in case no files are changed.
+          TEST_FILES=`git diff --name-only --diff-filter=d origin/$BRANCH_NAME..HEAD -- 'tests/behat/features/capabilities/*.feature'`
+          if [ $TEST_FILES == '' ]; then
+            echo 'TEST_FILES=' >> $GITHUB_ENV
+          else
+            {
+              echo 'TEST_FILES<<EOF'
+              echo $TEST_FILES
+              echo EOF
+            } >> "$GITHUB_ENV"
+          fi
+        env:
+          BRANCH_NAME: ${{ github.base_ref || github.ref_name }}
+
+      - name: Ensure behat folder and filenames are kebab-case
+        if: ${{ env.TEST_FILES != '' }}
+        run: |
+          # We must invert the exit code because we want to have no matches, but grep treats no matches as failure.
+          ! MISNAMED_FILES=`grep -v -E '^([a-z\-]+\/)+[a-z0-9\-]+\.feature$' <<<"$TEST_FILES"`
+          EXIT_CODE=$?
+          while read -r file; do
+            echo "::error file=$file::File and folder names for Behat tests must be kebab-case and alphanumeric."
+          done <<< "$MISNAMED_FILES"
+          exit $EXIT_CODE
+
+      - name: Lint modified test files
+        if:  ${{ env.TEST_FILES != '' }}
+        run: xargs tests/vendor/bin/cucumber-linter <<<"$TEST_FILES"
