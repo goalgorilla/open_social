@@ -152,3 +152,14 @@ function social_swiftmail_update_11003(): void {
     }
   }
 }
+
+/**
+ * Update default theme for symfony mailer policy.
+ */
+function social_swiftmail_update_11004(): void {
+  // Set our theme to socialbase, as that is where our email template and
+  // styling live.
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('symfony_mailer.mailer_policy._');
+  $config->set('configuration.email_theme.theme', 'socialbase')->save();
+}
