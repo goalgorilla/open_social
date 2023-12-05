@@ -211,7 +211,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   }
                   else {
                     if ($entity instanceof NodeInterface) {
-                      $commented_content_type = strtolower($entity->getType());
+                      $commented_content_type = strtolower((string) $entity->type->entity->label());
                     }
                     else {
                       $commented_content_type = $entity->bundle();
