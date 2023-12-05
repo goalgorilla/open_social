@@ -268,7 +268,7 @@ function social_ajax_comments_form_comment_form_alter(array &$form, FormStateInt
  */
 function social_ajax_comments_batch_alter(array &$batch): void {
   /** @var \Drupal\Core\Form\FormStateInterface|null $form_state */
-  $form_state = $batch['form_state'];
+  $form_state = $batch['form_state'] ?? NULL;
 
   if (empty($form_state) || $form_state->getValue('form_id') != 'comment_comment_delete_form' || !empty($batch['batch_redirect'])) {
     return;
