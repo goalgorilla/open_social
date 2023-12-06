@@ -828,6 +828,7 @@ function social_group_update_13001() : void {
     'group_content_type_3d6b5f69ef04a',
     'group_content_type_bf33df57c91c6',
     'group_content_type_f256b744237e6',
+    'group_content_type_c8bae2527294c',
     'closed_group',
     'open_group',
     'public_group',
@@ -852,7 +853,7 @@ function social_group_update_13001() : void {
     $permissions = $role->getPermissions();
     $deprecated_permissions = array_filter($permissions, function($permission) use ($deprecated_entity_types) {
       foreach ($deprecated_entity_types as $entity_type_id) {
-        if (!str_contains($permission, $entity_type_id)) {
+        if (str_contains($permission, $entity_type_id)) {
           return TRUE;
         }
       }
