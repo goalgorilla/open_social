@@ -813,8 +813,59 @@ function social_group_update_13001() : void {
     return;
   }
 
+  // Remove deprecated configurations from config dependencies to prevent
+  // deleting them on deprecated group types uninstall.
+  $configs = [
+    'views.view.discussions',
+    'views.view.discussions_group',
+    'views.view.group_events',
+    'views.view.group_manage_members',
+    'views.view.group_members',
+    'views.view.group_topics',
+  ];
+
+  $deprecated_entity_types = [
+    'group_content_type_3d6b5f69ef04a',
+    'group_content_type_bf33df57c91c6',
+    'group_content_type_f256b744237e6',
+    'closed_group',
+    'open_group',
+    'public_group',
+    'secret_group',
+  ];
+
+  foreach ($configs as $name) {
+    $config = \Drupal::configFactory()->getEditable($name);
+    $dependencies = $config->get('dependencies.config');
+    foreach ($deprecated_entity_types as $entity_type_id) {
+      $dependencies = array_filter($dependencies, function($dependency) use ($entity_type_id) {
+        return !str_contains($dependency, $entity_type_id);
+      });
+    }
+    $config->set('dependencies.config', $dependencies);
+    $config->save();
+  }
+
+  // Invoke permissions as well.
+  foreach (\Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple() as $role) {
+    /** @var \Drupal\user\RoleInterface $role */
+    $permissions = $role->getPermissions();
+    $deprecated_permissions = array_filter($permissions, function($permission) use ($deprecated_entity_types) {
+      foreach ($deprecated_entity_types as $entity_type_id) {
+        if (!str_contains($permission, $entity_type_id)) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+    });
+
+    if ($deprecated_permissions) {
+      user_role_revoke_permissions($role->id(), $deprecated_permissions);
+    }
+  }
+
   // Uninstall the secret group module if enabled.
-  // This should take care of removing everything from secret group.
+  // This should take care of removing everything from a secret group.
   \Drupal::service("module_installer")->uninstall(["social_secret_group_featured", "social_group_secret"]);
 
   // Delete our old group types.
