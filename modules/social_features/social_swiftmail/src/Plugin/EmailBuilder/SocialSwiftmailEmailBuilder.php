@@ -47,7 +47,6 @@ class SocialSwiftmailEmailBuilder extends EmailBuilderBase {
     $email->setTo($email->getParam('to'));
     $email->setSubject($this->t('Social Mailer has been successfully configured!'));
 
-    $text[] = '<h3>' . $this->t('Hello,') . '</h3>';
     $text[] = '<p>' . $this->t('This e-mail has been sent from @site by the Social Mailer module. The module has been successfully configured.', ['@site' => $email->getParam('site_name')]) . '</p>';
     $text[] = $this->t('Kind regards') . '<br /><br />';
     $text[] = $this->t('The Social Mailer module');
