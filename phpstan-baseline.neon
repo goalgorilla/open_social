@@ -11949,6 +11949,11 @@ parameters:
 			path: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php
 
 		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/InlineCssEmailAdjuster.php
+
+		-
 			message: "#^Function _social_mentions_set_default_config\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/social_mentions.install
