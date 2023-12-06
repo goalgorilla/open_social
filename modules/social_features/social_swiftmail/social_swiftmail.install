@@ -42,6 +42,20 @@ function social_swiftmail_install() {
     $config = $config_factory->getEditable($key);
 
     if ($key === 'symfony_mailer.mailer_policy._') {
+      // Get our mailer_policy configuration.
+      $configuration = $config->getOriginal('configuration');
+
+      // Unset the old plugin and replace it with the new plugin.
+      if (!empty($configuration) && isset($configuration['mailer_inline_css'])) {
+        unset($configuration['mailer_inline_css']);
+        $configuration['mailer_inline_css_social'] = [];
+      }
+
+      // Make sure we add our fallback text format option.
+      $configuration['mail_html_text_format'] = [];
+      $config->set('configuration', $configuration);
+      $config->save();
+
       $config
         ->set('configuration.email_theme.theme', '_default')
         ->save();
@@ -151,4 +165,25 @@ function social_swiftmail_update_11003(): void {
       $config->delete();
     }
   }
+}
+
+/**
+ * Replace the mailer_inline_css plugin for our mailer_inline_css_social plugin.
+ */
+function social_swiftmail_update_11004(): void {
+  $config_factory = \Drupal::configFactory();
+  // Get our mailer_policy configuration.
+  $config_mailer = $config_factory->getEditable('symfony_mailer.mailer_policy._');
+  $configuration = $config_mailer->getOriginal('configuration');
+
+  // Unset the old plugin and replace it with the new plugin.
+  if (!empty($configuration) && isset($configuration['mailer_inline_css'])) {
+    unset($configuration['mailer_inline_css']);
+    $configuration['mailer_inline_css_social'] = [];
+  }
+
+  // Make sure we add our fallback text format option.
+  $configuration['mail_html_text_format'] = [];
+  $config_mailer->set('configuration', $configuration);
+  $config_mailer->save();
 }
