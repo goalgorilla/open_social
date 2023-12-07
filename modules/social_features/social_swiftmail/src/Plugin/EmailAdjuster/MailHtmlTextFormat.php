@@ -2,7 +2,6 @@
 
 namespace Drupal\social_swiftmail\Plugin\EmailAdjuster;
 
-use Drupal\symfony_mailer\Annotation\EmailAdjuster;
 use Drupal\symfony_mailer\EmailInterface;
 use Drupal\symfony_mailer\Processor\EmailAdjusterBase;
 
@@ -19,9 +18,9 @@ use Drupal\symfony_mailer\Processor\EmailAdjusterBase;
 class MailHtmlTextFormat extends EmailAdjusterBase {
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
-  function build(EmailInterface $email): void {
+  public function build(EmailInterface $email): void {
     $body = $email->getBody();
 
     // Make sure we have a fallback for our processed emails through Cron
