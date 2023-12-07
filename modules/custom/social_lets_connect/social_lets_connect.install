@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_lets_connect module.
+ */
+
+/**
+ * Uninstall social_lets_connect_usage module.
+ */
+function social_core_update_10001(): void {
+  $modules = [
+    'social_lets_connect_usage',
+  ];
+  \Drupal::service('module_installer')->uninstall($modules);
+
+  // Delete configs.
+  $config = \Drupal::configFactory()->getEditable('social_lets_connect_usage.settings');
+  $config->delete();
+}
