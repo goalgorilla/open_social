@@ -2,7 +2,6 @@
 
 namespace Drupal\social_swiftmail\Plugin\EmailBuilder;
 
-use Drupal\Core\Render\Markup;
 use Drupal\symfony_mailer\EmailFactoryInterface;
 use Drupal\symfony_mailer\EmailInterface;
 use Drupal\symfony_mailer\Processor\EmailBuilderBase;
@@ -50,7 +49,13 @@ class SocialSwiftmailEmailBuilder extends EmailBuilderBase {
     $text[] = '<p>' . $this->t('This e-mail has been sent from @site by the Social Mailer module. The module has been successfully configured.', ['@site' => $email->getParam('site_name')]) . '</p>';
     $text[] = $this->t('Kind regards') . '<br /><br />';
     $text[] = $this->t('The Social Mailer module');
-    $email->setBody(Markup::create(implode(PHP_EOL, $text)));
+
+    $body = [];
+    $body['#type'] = 'processed_text';
+    $body['#text'] = implode(PHP_EOL, $text);
+    $body['#format'] = filter_default_format();
+
+    $email->setBody($body);
   }
 
 }
