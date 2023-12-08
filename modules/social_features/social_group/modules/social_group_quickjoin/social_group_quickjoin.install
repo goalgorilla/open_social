@@ -60,7 +60,7 @@ function social_group_quickjoin_uninstall() {
 function social_group_quickjoin_update_dependencies() : array {
   // Ensure configurations updates runs after the group migration has completed.
   $dependencies['social_group_quickjoin'][13000] = [
-    'social_group' => 13002,
+    'social_group' => 13000,
   ];
 
   return $dependencies;
