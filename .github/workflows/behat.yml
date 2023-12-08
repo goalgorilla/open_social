@@ -98,7 +98,10 @@ jobs:
           # recommended/support version before all our D10 efforts started. We can
           # remove it later when we have a new major out.
           PREVIOUS_MAJOR=11.9.0
-          composer require goalgorilla/open_social:~$PREVIOUS_MAJOR
+          # Also include a hardcoded version for instaclick/php-webdriver
+          # as we didnt lock the version, and the patch isn't applying on the latest, so we require it
+          # specifically to match the version that was installed at that moment in time.
+          composer require goalgorilla/open_social:~$PREVIOUS_MAJOR instaclick/php-webdriver:1.4.16
 
           # Installation
           # This is purposefully duplicated because we may change how
