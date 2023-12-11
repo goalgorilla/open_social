@@ -1500,10 +1500,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2023-12-08 11:59+0000\n"
-"PO-Revision-Date: 2023-04-23 13:28+0000\n"
-"Last-Translator: Bram ten Hove <bram.ten.hove@goalgorilla.com>\n"
-"Language-Team: Spanish <https://translate.getopensocial.com/projects/open-"
-"social/distribution/es/>\n"
+"PO-Revision-Date: 2023-12-11 14:28+0000\n"
+"Last-Translator: Ronald te Brake <ronald@goalgorilla.com>\n"
+"Language-Team: Spanish <https://translate.getopensocial.com/projects/"
+"open-social/distribution/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1886,14 +1886,14 @@ msgstr ""
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/templates/social-tagging-popup.html.twig:36
 msgid "<b>1</b> follower"
 msgid_plural "<b>@count</b> followers"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "<b>1</b> seguidor"
+msgstr[1] "<b>@count</b> seguidores"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/templates/social-tagging-popup.html.twig:39
 msgid "<b>1</b> item"
 msgid_plural "<b>@count</b> items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "<b>1</b> artículo"
+msgstr[1] "<b>@count</b> artículos"
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:206
 msgid "<b><em class=\"placeholder\">1</em> Member</b> is selected"
@@ -2929,6 +2929,12 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p>Esto es para confirmar que se ha inscrito en el evento "
+"<em>[social_event:event_iam_organizing]</em> .</p>\r\n"
+"\r\n"
+"<p>[message:preview]</p>\r\n"
+"\r\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid ""
@@ -3060,7 +3066,7 @@ msgstr ""
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:201
 msgid "@address is not a valid email address."
-msgstr ""
+msgstr "@address no es una dirección de correo electrónico válida."
 
 #: modules/social_features/social_like/social_like.module:35
 msgid "@amount like(s)"
@@ -3519,7 +3525,7 @@ msgstr "Acerca de {{ arguments.id }}"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Accent link"
-msgstr ""
+msgstr "Enlace acentuado"
 
 #: modules/social_features/social_landing_page/config/install/field.storage.paragraph.field_button_style.yml:0
 msgid "Accent style"
@@ -3805,7 +3811,7 @@ msgstr "Argumento de contexto del grupo de actividad."
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailBuilder/ActivitySendEmailBuilder.php:13;13
 msgid "Activity notification"
-msgstr ""
+msgstr "Notificación de actividad"
 
 #: modules/custom/activity_creator/activity_creator.module:230;232
 msgid "Activity notification visibility access"
@@ -3977,6 +3983,8 @@ msgstr "Añadir imágenes al álbum @name"
 msgid ""
 "Add inline CSS. Specific alter for Open Social to include the email template"
 msgstr ""
+"Añadir CSS en línea. Alter específico para Open Social para incluir la "
+"plantilla de correo electrónico."
 
 #: modules/social_features/social_group/src/Controller/SocialGroupController.php:143
 msgid "Add invites"
@@ -5080,13 +5088,16 @@ msgstr "Cantidad de personas agregadas al grupo"
 
 #: modules/social_features/social_swiftmail/src/Form/TestForm.php:118
 msgid "An attempt has been made to send an e-mail to @email."
-msgstr ""
+msgstr "Se ha intentado enviar un correo electrónico a @email."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:282
 msgid ""
 "An email (ID: %sub_type) either aborted or rerouted to the configured "
 "address. For more details please refer to Email policy settings."
 msgstr ""
+"Un correo electrónico (ID: %sub_type) abortado o redirigido a la dirección "
+"configurada. Para más información, consulte Configuración de la política de "
+"correo electrónico."
 
 #: modules/social_features/social_post/social_post.admin.inc:168
 msgid "An error occurred and processing did not complete."
@@ -5123,7 +5134,7 @@ msgstr "Anónimo"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/EmailBuilder/AnonymousEventEnrollEmailBuilder.php:14;14
 msgid "Anonymous Enrollment notification"
-msgstr ""
+msgstr "Notificación anónima de inscripción"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.installer_options.yml:0
 msgid "Anonymous Event Enrolments"
@@ -5157,7 +5168,7 @@ msgstr "Apariencia"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/MailHtmlTextFormat.php:8
 msgid "Apply mail_html to body text"
-msgstr ""
+msgstr "Aplicar mail_html al cuerpo del texto"
 
 #: modules/social_features/social_event/social_event.module:1015
 msgid "Approve"
@@ -5879,6 +5890,11 @@ msgid ""
 "the rerouting. If sending rich-text email, leave this unchecked so that the "
 "body of the email will not be disturbed."
 msgstr ""
+"Marque esta casilla si desea que se inserte un mensaje en el cuerpo del "
+"correo electrónico cuando éste se redirija. De lo contrario, se utilizarán "
+"las cabeceras SMTP para describir el redireccionamiento. Si envía correo "
+"electrónico con texto enriquecido, deje esta casilla sin marcar para que no "
+"se altere el cuerpo del correo electrónico."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:156
 msgid ""
@@ -5886,6 +5902,10 @@ msgid ""
 "users after submitting an email to let them know it was aborted to send or "
 "rerouted to a different email address."
 msgstr ""
+"Marque esta casilla si desea que se muestre un mensaje de estado de Drupal a "
+"los usuarios después de enviar un correo electrónico para informarles de que "
+"se ha abortado el envío o se ha redirigido a una dirección de correo "
+"electrónico diferente."
 
 #: modules/social_features/social_tagging/config/install/field.field.taxonomy_term.social_tagging.field_term_page_url.yml:0
 msgid ""
@@ -5894,6 +5914,11 @@ msgid ""
 "experience. <p>If left blank/on default, members can still find the content "
 "related to the tag but there will be no custom page linked.</p>"
 msgstr ""
+"Elija un enlace URL para ayudar a los miembros a encontrar la página "
+"personalizada de su etiqueta. La URL se utilizará en diferentes bloques de "
+"la plataforma para mejorar la experiencia del usuario. <p>Si se deja en "
+"blanco/por defecto, los usuarios podrán encontrar el contenido relacionado "
+"con la etiqueta, pero no habrá ninguna página personalizada enlazada.</p>"
 
 #: modules/social_features/social_user/src/Form/SocialUserSettingsForm.php:39
 msgid "Choose a default landing page"
@@ -7029,11 +7054,11 @@ msgstr "Configuración de la política de datos"
 
 #: modules/custom/social_gdpr/social_gdpr.module:64
 msgid "Data protection"
-msgstr ""
+msgstr "Protección de datos"
 
 #: modules/custom/social_gdpr/social_gdpr.module:61
 msgid "Data protection statement"
-msgstr ""
+msgstr "Declaración de protección de datos"
 
 #: modules/custom/social_gdpr/social_gdpr.links.menu.yml:0
 msgid "Data usage explanation"
@@ -7140,7 +7165,7 @@ msgstr "Imagen oculta por defecto"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Default link"
-msgstr ""
+msgstr "Enlace por defecto"
 
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_image.yml:0
 msgid "Default profile image"
@@ -7279,7 +7304,7 @@ msgstr "Borrando @type's"
 
 #: modules/custom/activity_creator/src/Service/ActivityCreatorBatchActivityDeletion.php:26
 msgid "Deleting activities..."
-msgstr ""
+msgstr "Borrar actividades..."
 
 #: modules/social_features/social_group/social_group.module:2156
 msgid "Deleting the group and all the content within the group..."
@@ -7501,6 +7526,7 @@ msgstr "Deshabilitar visibilidad pública"
 #: modules/social_features/social_swiftmail/config/schema/social_swiftmail.schema.yml:0
 msgid "Disabled email message keys with user greeting"
 msgstr ""
+"Teclas de mensaje de correo electrónico deshabilitadas con saludo de usuario"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:98
 #: modules/social_features/social_profile/modules/social_profile_privacy/config/schema/social_profile_privacy.schema.yml:0
@@ -7513,7 +7539,7 @@ msgstr "Debate"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:154
 msgid "Display a Drupal status message after rerouting"
-msgstr ""
+msgstr "Mostrar un mensaje de estado de Drupal tras el redireccionamiento"
 
 #: modules/social_features/social_group/config/schema/social_group.schema.yml:0
 msgid "Display action options as buttons"
@@ -7731,7 +7757,7 @@ msgstr "Caché dinámico de páginas (recomendado)"
 
 #: modules/social_features/social_swiftmail/src/Form/TestForm.php:87
 msgid "E-mail"
-msgstr ""
+msgstr "Correo electrónico"
 
 #: modules/social_features/social_swiftmail/social_swiftmail.links.menu.yml:0
 msgid "E-mail template settings."
@@ -7899,6 +7925,8 @@ msgstr "Asunto de la tarea de correo electrónico"
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:140
 msgid "Emails that belong to users with selected roles won't be rerouted."
 msgstr ""
+"Los correos electrónicos que pertenezcan a usuarios con funciones "
+"seleccionadas no se redirigirán."
 
 #: modules/social_features/social_embed/social_embed.installer_options.yml:0
 msgid "Embed Media in Content"
@@ -8477,7 +8505,7 @@ msgstr "El evento ha pasado"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/EmailBuilder/EventInviteEmailBuilder.php:15
 msgid "Event invite"
-msgstr ""
+msgstr "Invitación al acto"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/ActivityContext/EventInviteActivityContext.php:13
 msgid "Event invite activity context"
@@ -8643,7 +8671,7 @@ msgstr "Explorar la página de LU"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/templates/social-tagging-popup.html.twig:23
 msgid "Explore tag"
-msgstr ""
+msgstr "Explorar etiqueta"
 
 #: modules/social_features/social_group/social_group.tokens.inc:184
 msgid "Explore the group"
@@ -9090,7 +9118,7 @@ msgstr "seguidores"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/core.entity_view_mode.taxonomy_term.followers_count.yml:0
 msgid "Followers count"
-msgstr ""
+msgstr "Recuento de seguidores"
 
 #: modules/social_features/social_follow_content/social_follow_content.module:110
 #: modules/social_features/social_follow_user/social_follow_user.links.task.yml:0
@@ -9519,7 +9547,7 @@ msgstr "Invitaciones grupales"
 
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/EmailBuilder/GroupInviteEmailBuilder.php:21
 msgid "Group invite"
-msgstr ""
+msgstr "Invitación de grupo"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:580
 msgid "Group invite settings"
@@ -9805,6 +9833,18 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"Hola,<br /><br /> Me gustaría invitarte a unirte a mi grupo [group:title] en "
+"[site:name].<br /><br />Un cordial saludo,<br />[user:display-name]<br /><br "
+"/><table class=\"btn-wrapp\">\r\n"
+"\t<tbody>\r\n"
+"\t\t<tr>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[group_content:register_link]\">Ver grupo</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">Acerca de [site:name]</a></td>\r\n"
+"\t\t</tr>\r\n"
+"\t</tbody>\r\n"
+"</table>"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0
@@ -9825,6 +9865,18 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"Hola,<br /><br />Me gustaría invitarte a unirte a mi grupo [group:title] en "
+"[site:name].<br /><br />Un cordial saludo,<br />[user:display-name]<br /><br "
+"/><table class=\"btn-wrapp\">\r\n"
+"\t<tbody>\r\n"
+"\t\t<tr>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[group_content:my_invitations_link]\">Ver grupo</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">Acerca de [site:name]</a></td>\r\n"
+"\t\t</tr>\r\n"
+"\t</tbody>\r\n"
+"</table>"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:270
 msgid "Hide"
@@ -9854,7 +9906,7 @@ msgstr "Bloque del muro de la página de inicio"
 
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream.yml:0
 msgid "Homepage stream block (with post form)"
-msgstr ""
+msgstr "Bloque de flujo de la página de inicio (con formulario de entrada)"
 
 #: translations.php:118
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:153
@@ -9908,7 +9960,7 @@ msgstr "Identificador"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:630
 msgid "If any of above is empty this will be used as fallback."
-msgstr ""
+msgstr "Si alguno de los anteriores está vacío, se utilizará como alternativa."
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:650
 msgid ""
@@ -10088,7 +10140,7 @@ msgstr "Información"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/InlineCssEmailAdjuster.php:14
 msgid "Inline CSS - Open Social"
-msgstr ""
+msgstr "CSS en línea - Open Social"
 
 #: social.installer_options_list.yml:0
 msgid "Inline Form Errors"
@@ -10134,7 +10186,7 @@ msgstr "Integrar el módulo de Política de Datos."
 
 #: modules/social_features/social_tagging/social_tagging.module:68
 msgid "Integrate this term into an existing category or establish new one"
-msgstr ""
+msgstr "Integrar este término en una categoría existente o crear una nueva"
 
 #: modules/custom/social_ajax_comments/social_ajax_comments.info.yml:0
 msgid "Integration with Ajax Comments."
@@ -10393,7 +10445,7 @@ msgstr "Fecha de ingreso"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailBuilder/SocialSwiftmailEmailBuilder.php:50
 msgid "Kind regards"
-msgstr ""
+msgstr "Saludos cordiales"
 
 #: modules/custom/alternative_frontpage/config/schema/alternative_frontpage.schema.yml:0
 #: modules/custom/alternative_frontpage/src/Controller/AlternativeFrontpageListBuilder.php:17
@@ -10493,7 +10545,7 @@ msgstr "Último mes"
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastAccess.php:23;8
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0
 msgid "Last activity"
-msgstr ""
+msgstr "Última actividad"
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastLogin.php:23;8
 msgid "Last login"
@@ -10723,7 +10775,7 @@ msgstr "Situado en:"
 
 #: modules/social_features/social_tagging/social_tagging.module:66
 msgid "Location"
-msgstr ""
+msgstr "Ubicación"
 
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_location.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.closed_group.field_group_location.yml:0
@@ -10736,7 +10788,7 @@ msgstr "Nombre del lugar"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/LogMail.php:11
 msgid "Log Email"
-msgstr ""
+msgstr "Correo electrónico de registro"
 
 #: modules/social_features/social_user/social_user.module:575
 msgid "Log In"
@@ -10804,7 +10856,7 @@ msgstr "Correo HTML"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:241
 msgid "Mail key: @key"
-msgstr ""
+msgstr "Llave de correo: @key"
 
 #: modules/social_features/social_core/social_core.links.menu.yml:0
 msgid "Main menu"
@@ -10823,7 +10875,7 @@ msgstr "Contenido principal de la página"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/MailHtmlTextFormat.php:8
 msgid "Make sure body text has mail_html format."
-msgstr ""
+msgstr "Asegúrese de que el cuerpo del texto tiene el formato mail_html."
 
 #: modules/social_features/social_search/src/Plugin/search_api/processor/BlockedUsers.php:11
 msgid "Makes sure that blocked users are not added to the index."
@@ -11272,7 +11324,7 @@ msgstr "Con más comentarios"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/block_content.type.most_followed_tags.yml:0
 msgid "Most followed tags"
-msgstr ""
+msgstr "Etiquetas más seguidas"
 
 #: modules/social_features/social_content_block/src/ContentBlockBase.php:43
 msgid "Most liked"
@@ -11419,7 +11471,7 @@ msgstr "Nuevo tema"
 
 #: modules/social_features/social_tagging/social_tagging.module:74
 msgid "New category"
-msgstr ""
+msgstr "Nueva categoría"
 
 #: translations.php:122
 msgid "New content has been added to a group you are in"
@@ -11553,7 +11605,7 @@ msgstr "No hay álbumes en este grupo"
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/social_flexible_group_book.module:242
 msgid "No book selected."
-msgstr ""
+msgstr "Ningún libro seleccionado."
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/config/install/views.view.group_books.yml:0
 msgid "No books in this group"
@@ -11587,7 +11639,7 @@ msgstr "No hay eventos que procesar."
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:557
 msgid "No flexible groups were updated."
-msgstr ""
+msgstr "No se ha actualizado ningún grupo flexible."
 
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 msgid "No groups found for this user"
@@ -11706,7 +11758,7 @@ msgstr "Ninguno"
 
 #: social.install:46
 msgid "Not configured"
-msgstr ""
+msgstr "No configurado"
 
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_enrollment_status.yml:0
 msgid "Not enrolled"
@@ -11761,7 +11813,7 @@ msgstr ""
 
 #: modules/custom/activity_creator/src/Service/ActivityCreatorBatchActivityDeletion.php:76
 msgid "Now processing activities :progress of :count"
-msgstr ""
+msgstr "Ahora actividades de tratamiento :progress de :count"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/src/Service/SocialProfilePrivacyBatchHelper.php:80
 msgid "Now processing profile :progress of :count"
@@ -11777,7 +11829,7 @@ msgstr "Número de mensajes privados"
 
 #: modules/custom/activity_creator/src/Service/ActivityCreatorBatchActivityDeletion.php:104
 msgid "Number of activities deleted by batch: @count"
-msgstr ""
+msgstr "Número de actividades eliminadas por lote: @count"
 
 #: modules/social_features/social_core/config/schema/social_core.schema.yml:0
 #: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/CommentNodeFormatter.php:180
@@ -12157,15 +12209,15 @@ msgstr "Organizadores"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:259
 msgid "Originally bcc: @bcc"
-msgstr ""
+msgstr "Originalmente bcc: @bcc"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:253
 msgid "Originally cc: @cc"
-msgstr ""
+msgstr "Originalmente cc: @cc"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:244
 msgid "Originally to: @to"
-msgstr ""
+msgstr "Originalmente a: @to"
 
 #: modules/social_features/social_content_report/config/install/field.field.flagging.report_comment.field_other_reason.yml:0
 #: modules/social_features/social_content_report/config/install/field.field.flagging.report_node.field_other_reason.yml:0
@@ -12449,7 +12501,7 @@ msgstr "Elige un emoji"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Pill badge"
-msgstr ""
+msgstr "Pastillero"
 
 #: modules/social_features/social_tagging/config/install/field.field.taxonomy_term.social_tagging.field_category_usage.yml:0
 msgid "Placement"
@@ -12637,6 +12689,8 @@ msgstr "Configuración de puestos"
 msgid ""
 "Post for group members was @status for @count flexible groups (ids): @ids"
 msgstr ""
+"El correo para los miembros del grupo fue @status para @count grupos "
+"flexibles (ids): @ids"
 
 #: modules/social_features/social_post/social_post.module:182;184
 msgid "Post group stream"
@@ -12779,11 +12833,11 @@ msgstr "Acciones primarias de administración"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Primary badge"
-msgstr ""
+msgstr "Insignia principal"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Primary link"
-msgstr ""
+msgstr "Enlace principal"
 
 #: modules/social_features/social_landing_page/config/install/field.storage.paragraph.field_button_style.yml:0
 msgid "Primary style"
@@ -12804,7 +12858,7 @@ msgstr "Configuración de privacidad para el módulo Perfil social."
 
 #: social.install:45
 msgid "Private File System"
-msgstr ""
+msgstr "Sistema de archivos privado"
 
 #: modules/custom/activity_logger/activity_logger.tokens.inc:41
 msgid "Private Message Thread url"
@@ -13040,6 +13094,13 @@ msgid ""
 "provided, all outgoing emails would be aborted and the email would be "
 "recorded in the recent log entries (if enabled)."
 msgstr ""
+"Proporcione una lista de direcciones de correo electrónico delimitada por "
+"comas. Todas las direcciones de correo electrónico de destino que no se "
+"ajusten a las listas \"Skip email rerouting for\" se redirigirán a estas "
+"direcciones.<br/>Si este campo está vacío y no se proporciona ningún valor, "
+"todos los correos electrónicos salientes se abortarán y el correo "
+"electrónico se registrará en las entradas de registro recientes (si está "
+"habilitado)."
 
 #: modules/social_features/social_profile/social_profile.views.inc:16
 msgid "Provide a correct sort alias"
@@ -13056,6 +13117,11 @@ msgid ""
 "\"*@example.com\" and \"name+*@example.com\" can be used to add all emails "
 "by its domain or the pattern."
 msgstr ""
+"Proporcione una lista delimitada por líneas de direcciones de correo "
+"electrónico para pasar. Todos los correos electrónicos a direcciones de esta "
+"lista no se redirigirán.<br/>Se pueden utilizar patrones A como \"*@example."
+"com\" y \"nombre+*@example.com\" para añadir todos los correos electrónicos "
+"por su dominio o el patrón."
 
 #: modules/social_features/social_content_report/social_content_report.views.inc:17
 msgid "Provide a link to close the report"
@@ -13336,7 +13402,7 @@ msgstr "Proporciona enlaces para realizar operaciones posteriores."
 
 #: modules/custom/social_media_system/social_media_system.info.yml:0
 msgid "Provides media system functionalities."
-msgstr ""
+msgstr "Proporciona funcionalidades del sistema multimedia."
 
 #: modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.info.yml:0
 msgid "Provides profile notes that can created by Managers"
@@ -13996,15 +14062,15 @@ msgstr "Requerir tipos de grupos"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:18
 msgid "Reroute emails"
-msgstr ""
+msgstr "Redirigir correos electrónicos"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:18
 msgid "Reroute emails to a specific email address."
-msgstr ""
+msgstr "Redirige los mensajes de correo electrónico a una dirección específica."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:106
 msgid "Rerouting email addresses"
-msgstr ""
+msgstr "Redireccionamiento de direcciones de correo electrónico"
 
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialGroupInviteResendConfirmForm.php:55
 msgid "Resend an invitation"
@@ -14215,7 +14281,7 @@ msgstr "Guardado el settting %label."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/LogMail.php:11
 msgid "Saves emails to the file storage."
-msgstr ""
+msgstr "Guarda los correos electrónicos en el almacén de archivos."
 
 #: modules/social_features/social_post/modules/social_post_photo/js/post-widget.js:0
 #: modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.default.yml:0
@@ -14305,7 +14371,7 @@ msgstr "Secundario"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Secondary badge"
-msgstr ""
+msgstr "Distintivo secundario"
 
 #: modules/social_features/social_core/config/optional/block.block.seven_secondary_local_tasks.yml:0
 msgid "Secondary tabs"
@@ -14383,7 +14449,7 @@ msgstr "Ver el evento"
 
 #: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendarBase.php:140
 msgid "See the event page for details: @link"
-msgstr ""
+msgstr "Consulte la página del evento para más detalles: @link"
 
 #: modules/social_features/social_event/social_event.module:98
 msgid "See who else is going"
@@ -14914,7 +14980,7 @@ msgstr "Mostrar mi idioma en mi perfil"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:147
 msgid "Show rerouting description in mail body"
-msgstr ""
+msgstr "Mostrar descripción de redireccionamiento en el cuerpo del correo"
 
 #: modules/social_features/social_user/social_user.module:615
 msgid ""
@@ -15032,11 +15098,11 @@ msgstr "Omitir confirmación para el tipo @grouptype"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:119
 msgid "Skip email rerouting for email addresses:"
-msgstr ""
+msgstr "Omitir el redireccionamiento de direcciones de correo electrónico:"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:139
 msgid "Skip email rerouting for roles:"
-msgstr ""
+msgstr "Omitir el redireccionamiento de correo electrónico para roles:"
 
 #: modules/social_features/social_search/src/Plugin/search_api/processor/VerifiedUsers.php:10
 msgid "Skip not Verified users"
@@ -15405,7 +15471,7 @@ msgstr "Artículos sociales destacados"
 
 #: modules/custom/social_file_private/social_file_private.info.yml:0
 msgid "Social File Private (Deprecated)"
-msgstr ""
+msgstr "Ficha Social Privada (obsoleta)"
 
 #: modules/social_features/social_comment/src/Plugin/GraphQL/DataProducer/SocialCommentAttachments.php:14
 msgid "Social Files"
@@ -15591,11 +15657,11 @@ msgstr "Inicio de sesión en Social Magic"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailBuilder/SocialSwiftmailEmailBuilder.php:47
 msgid "Social Mailer has been successfully configured!"
-msgstr ""
+msgstr "Social Mailer se ha configurado correctamente."
 
 #: modules/custom/social_media_system/social_media_system.info.yml:0
 msgid "Social Media System"
-msgstr ""
+msgstr "Sistema de redes sociales"
 
 #: modules/social_features/social_mentions/social_mentions.tokens.inc:23
 #: modules/social_features/social_mentions/social_mentions.info.yml:0
@@ -15859,7 +15925,7 @@ msgstr "Fecha social corta"
 #: modules/social_features/social_tagging/src/Plugin/Field/FieldFormatter/TaggingUsageFormatter.php:11
 #: modules/social_features/social_tagging/src/Plugin/Field/FieldWidget/TaggingUsageWidget.php:13
 msgid "Social tagging usage"
-msgstr ""
+msgstr "Uso del etiquetado social"
 
 #: modules/social_features/social_core/config/install/core.date_format.social_time.yml:0
 msgid "Social time"
@@ -15982,7 +16048,7 @@ msgstr "Clasificación"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/LogMail.php:30
 msgid "Spool directory"
-msgstr ""
+msgstr "Directorio Spool"
 
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_date.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0;0
@@ -16243,7 +16309,7 @@ msgstr "Plantilla de cabecera"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/field.field.block_content.most_followed_tags.field_terms.yml:0
 msgid "Terms"
-msgstr ""
+msgstr "Términos"
 
 #: modules/social_features/social_content_report/src/Form/ContentReportSettingsForm.php:87
 msgid "Terms with additional reason text"
@@ -16251,11 +16317,11 @@ msgstr "Términos con texto de razón adicional"
 
 #: modules/social_features/social_swiftmail/social_swiftmail.routing.yml:0
 msgid "Test"
-msgstr ""
+msgstr "Prueba"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailBuilder/SocialSwiftmailEmailBuilder.php:9
 msgid "Test email"
-msgstr ""
+msgstr "Prueba de correo electrónico"
 
 #: modules/custom/dropdown/src/Plugin/Field/FieldType/Dropdown.php:10
 #: modules/custom/entity_access_by_field/src/Plugin/Field/FieldType/EntityAccessField.php:7
@@ -16373,7 +16439,7 @@ msgstr "El Post ID."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailBuilder/SocialSwiftmailEmailBuilder.php:51
 msgid "The Social Mailer module"
-msgstr ""
+msgstr "El módulo Social Mailer"
 
 #: modules/social_features/social_core/social_core.module:880
 msgid "The URL alias allows you to customise the link to this page."
@@ -16401,7 +16467,7 @@ msgstr "UUID de la entidad Post."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/LogMail.php:31
 msgid "The absolute path to the spool directory."
-msgstr ""
+msgstr "La ruta absoluta al directorio de spool."
 
 #: modules/custom/activity_logger/activity_logger.module:131
 #: modules/custom/activity_logger/config/schema/activity_logger.schema.yml:0
@@ -16830,6 +16896,11 @@ msgid ""
 "installation. See https://www.drupal.org/documentation/modules/file for how "
 "to set the file_private_path in your settings.php."
 msgstr ""
+"El sistema de archivos privado debe estar configurado para que Open Social "
+"se instale. Usted puede optar por el sistema de archivos privados para los "
+"campos individuales después de la instalación. Consulte https://www.drupal."
+"org/documentation/modules/file para saber cómo configurar file_private_path "
+"en su settings.php."
 
 #: modules/custom/entity_access_by_field/entity_access_by_field.module:299
 msgid ""
@@ -17152,10 +17223,12 @@ msgid ""
 "This e-mail has been sent from @site by the Social Mailer module. The module "
 "has been successfully configured."
 msgstr ""
+"Este e-mail ha sido enviado desde @site por el módulo Social Mailer. El "
+"módulo se ha configurado correctamente."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:237
 msgid "This email was rerouted."
-msgstr ""
+msgstr "Este correo ha sido redirigido."
 
 #: modules/custom/grequest/src/Plugin/GroupContentEnabler/GroupMembershipRequest.php:208
 msgid ""
@@ -17249,6 +17322,11 @@ msgid ""
 "private\n"
 "file system is the default for sensitive fields and is opt-out.\n"
 msgstr ""
+"Este módulo está obsoleto y se desinstalará automáticamente en Open Social "
+"12\n"
+"y se eliminará en Open Social 13. A partir de Open Social 11.8.0 el sistema "
+"de archivos privado\n"
+"es el predeterminado para los campos sensibles y es opt-out.\n"
 
 #: modules/social_features/social_content_block/modules/social_event_content_block/social_event_content_block.install:56
 #: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
@@ -17267,6 +17345,8 @@ msgstr ""
 msgid ""
 "This page allows you to send a test e-mail to a recipient of your choice."
 msgstr ""
+"Esta página le permite enviar un correo electrónico de prueba a un "
+"destinatario de su elección."
 
 #: modules/social_features/social_group/social_group.permissions.yml:0
 msgid "This permission grants access to add node to multiple groups."
@@ -17627,7 +17707,7 @@ msgstr "Opciones de URL"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module:360
 msgid "URL label"
-msgstr ""
+msgstr "Etiqueta URL"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.tokens.inc:22
 msgid "URL of anonymously enrolled event with token to cancel enrollment."
@@ -18410,10 +18490,12 @@ msgid ""
 "We published a new version of the data protection statement. You can review "
 "the data protection statement @url."
 msgstr ""
+"Hemos publicado una nueva versión de la declaración de protección de datos. "
+"Puede consultar la declaración de protección de datos @url."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:238
 msgid "Web site: @site"
-msgstr ""
+msgstr "Página web: @site"
 
 #: modules/custom/social_lets_connect/modules/social_lets_connect_usage/src/Plugin/ShareUsageDataPlugin/WebsiteUrl.php:7
 msgid "Website URL"
@@ -18545,7 +18627,7 @@ msgstr "Al visitar un perfil, el usuario/a terminará primero en esta página"
 
 #: modules/social_features/social_tagging/config/install/field.field.taxonomy_term.social_tagging.field_category_usage.yml:0
 msgid "Where this term will be available within the platform"
-msgstr ""
+msgstr "Dónde estará disponible este término dentro de la plataforma"
 
 #: modules/social_features/social_content_report/config/schema/social_content_report.schema.yml:0
 msgid "Whether a reason is mandatory when reporting inappropriate content."
@@ -18795,6 +18877,10 @@ msgid ""
 "sent using the default values as provided by the Social Mailer module or as "
 "configured by you."
 msgstr ""
+"Puede enviar un correo electrónico de prueba a un destinatario de su "
+"elección. El correo electrónico se enviará utilizando los valores "
+"predeterminados proporcionados por el módulo Social Mailer o configurados "
+"por usted."
 
 #: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:256
 msgid ""
@@ -19198,7 +19284,7 @@ msgstr "[site:name]"
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.public_group-group_invitation.yml:0;0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.secret_group-group_invitation.yml:0;0
 msgid "[user:display-name] has invited you to join a group on [site:name]."
-msgstr ""
+msgstr "[user:display-name] le ha invitado a unirse a un grupo en [site:name]."
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:277
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:137
@@ -19280,7 +19366,7 @@ msgstr "crear una nueva cuenta"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/field.field.message.create_node_following_tag.field_message_context.yml:0
 msgid "create_node_following_tag"
-msgstr ""
+msgstr "crear_etiqueta_de_seguimiento_de_nodo"
 
 #: modules/custom/social_path_manager/config/install/pathauto.pattern.default_content_types.yml:0
 msgid "default content types"
@@ -19304,7 +19390,7 @@ msgstr "descendente"
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:601
 msgid "disabled"
-msgstr ""
+msgstr "desactivado"
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:168
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php:181
@@ -19313,7 +19399,7 @@ msgstr "Configuración de notificaciones por correo electrónico"
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:601
 msgid "enabled"
-msgstr ""
+msgstr "habilitado"
 
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 msgid "entity id from url"
@@ -19377,6 +19463,8 @@ msgstr "field_event_managers"
 msgid ""
 "field_group_posts_enabled does not exist. No flexibe groups were updated."
 msgstr ""
+"field_group_posts_enabled no existe. No se ha actualizado ningún grupo "
+"flexible."
 
 #: modules/social_features/social_activity/config/install/field.field.message.create_content_in_joined_group.field_message_context.yml:0
 #: modules/social_features/social_activity/config/install/field.field.message.create_event_gc.field_message_context.yml:0
