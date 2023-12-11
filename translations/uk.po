@@ -1486,10 +1486,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2023-12-08 11:59+0000\n"
-"PO-Revision-Date: 2023-04-24 10:50+0000\n"
-"Last-Translator: Bram ten Hove <bram.ten.hove@goalgorilla.com>\n"
-"Language-Team: Ukrainian <https://translate.getopensocial.com/projects/open-"
-"social/distribution/uk/>\n"
+"PO-Revision-Date: 2023-12-11 16:51+0000\n"
+"Last-Translator: Ronald te Brake <ronald@goalgorilla.com>\n"
+"Language-Team: Ukrainian <https://translate.getopensocial.com/projects/"
+"open-social/distribution/uk/>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1892,14 +1892,14 @@ msgid "<b>1</b> follower"
 msgid_plural "<b>@count</b> followers"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
+msgstr[2] "<b>@count</b> підписники"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/templates/social-tagging-popup.html.twig:39
 msgid "<b>1</b> item"
 msgid_plural "<b>@count</b> items"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
+msgstr[2] "<b>@count</b> предмети"
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:206
 msgid "<b><em class=\"placeholder\">1</em> Member</b> is selected"
@@ -2958,6 +2958,12 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p>Це необхідно для підтвердження того, що ви зареєструвалися на захід "
+"<em>[social_event:event_iam_organizing]</em> .</p>\r\n"
+"\r\n"
+"<p>[message:preview]</p>\r\n"
+"\r\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid ""
@@ -3088,7 +3094,7 @@ msgstr ""
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:201
 msgid "@address is not a valid email address."
-msgstr ""
+msgstr "@address не є дійсною адресою електронної пошти."
 
 #: modules/social_features/social_like/social_like.module:35
 msgid "@amount like(s)"
@@ -3552,7 +3558,7 @@ msgstr "Про {{ arguments.id }}"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Accent link"
-msgstr ""
+msgstr "Акцентне посилання"
 
 #: modules/social_features/social_landing_page/config/install/field.storage.paragraph.field_button_style.yml:0
 msgid "Accent style"
@@ -3837,7 +3843,7 @@ msgstr "Аргумент контексту групи активності."
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailBuilder/ActivitySendEmailBuilder.php:13;13
 msgid "Activity notification"
-msgstr ""
+msgstr "Сповіщення про активність"
 
 #: modules/custom/activity_creator/activity_creator.module:230;232
 msgid "Activity notification visibility access"
@@ -4009,6 +4015,8 @@ msgstr "Додати зображення до альбому @name"
 msgid ""
 "Add inline CSS. Specific alter for Open Social to include the email template"
 msgstr ""
+"Додавання вбудованого CSS. Спеціальна зміна для Open Social, щоб включити "
+"шаблон електронної пошти"
 
 #: modules/social_features/social_group/src/Controller/SocialGroupController.php:143
 msgid "Add invites"
@@ -5095,13 +5103,16 @@ msgstr "Кількість користувачів, доданих до гру�
 
 #: modules/social_features/social_swiftmail/src/Form/TestForm.php:118
 msgid "An attempt has been made to send an e-mail to @email."
-msgstr ""
+msgstr "Була зроблена спроба надіслати електронного листа на адресу @email."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:282
 msgid ""
 "An email (ID: %sub_type) either aborted or rerouted to the configured "
 "address. For more details please refer to Email policy settings."
 msgstr ""
+"Імейл (ID: %sub_type) або перервано, або перенаправлено на вказану адресу. "
+"Для більш детальної інформації, будь ласка, зверніться до розділу "
+"Налаштування поштової політики."
 
 #: modules/social_features/social_post/social_post.admin.inc:168
 msgid "An error occurred and processing did not complete."
@@ -5136,7 +5147,7 @@ msgstr "Анонім"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/EmailBuilder/AnonymousEventEnrollEmailBuilder.php:14;14
 msgid "Anonymous Enrollment notification"
-msgstr ""
+msgstr "Анонімне повідомлення про зарахування"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.installer_options.yml:0
 msgid "Anonymous Event Enrolments"
@@ -5170,7 +5181,7 @@ msgstr "Зовнішній вигляд"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/MailHtmlTextFormat.php:8
 msgid "Apply mail_html to body text"
-msgstr ""
+msgstr "Застосувати mail_html до основного тексту"
 
 #: modules/social_features/social_event/social_event.module:1015
 msgid "Approve"
@@ -5889,6 +5900,10 @@ msgid ""
 "the rerouting. If sending rich-text email, leave this unchecked so that the "
 "body of the email will not be disturbed."
 msgstr ""
+"Позначте цей прапорець, якщо ви хочете, щоб під час переадресації в тіло "
+"листа вставлялося повідомлення. В іншому випадку для опису перенаправлення "
+"будуть використані заголовки SMTP. Якщо ви надсилаєте розширений текст, не "
+"позначайте цю опцію, щоб тіло листа не було порушено."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:156
 msgid ""
@@ -5896,6 +5911,10 @@ msgid ""
 "users after submitting an email to let them know it was aborted to send or "
 "rerouted to a different email address."
 msgstr ""
+"Позначте цей пункт, якщо ви хочете, щоб після відправлення листа "
+"користувачам відображалося повідомлення про стан Drupal, щоб вони знали, що "
+"його було перервано для відправлення або перенаправлено на іншу адресу "
+"електронної пошти."
 
 #: modules/social_features/social_tagging/config/install/field.field.taxonomy_term.social_tagging.field_term_page_url.yml:0
 msgid ""
@@ -5904,6 +5923,11 @@ msgid ""
 "experience. <p>If left blank/on default, members can still find the content "
 "related to the tag but there will be no custom page linked.</p>"
 msgstr ""
+"Виберіть URL-адресу, щоб допомогти учасникам знайти власну сторінку вашого "
+"тегу. URL-адреса буде використовуватися в різних блоках на платформі, щоб "
+"покращити взаємодію з користувачем. <p>Якщо залишити поле порожнім/за "
+"замовчуванням, учасники все одно зможуть знайти вміст, пов'язаний з тегом, "
+"але посилання на кастомну сторінку не буде.</p>"
 
 #: modules/social_features/social_user/src/Form/SocialUserSettingsForm.php:39
 msgid "Choose a default landing page"
@@ -7030,11 +7054,11 @@ msgstr "Налаштування політики даних"
 
 #: modules/custom/social_gdpr/social_gdpr.module:64
 msgid "Data protection"
-msgstr ""
+msgstr "Захист даних"
 
 #: modules/custom/social_gdpr/social_gdpr.module:61
 msgid "Data protection statement"
-msgstr ""
+msgstr "Заява про захист даних"
 
 #: modules/custom/social_gdpr/social_gdpr.links.menu.yml:0
 msgid "Data usage explanation"
@@ -7140,7 +7164,7 @@ msgstr "Приховане зображення за замовчуванням"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Default link"
-msgstr ""
+msgstr "Посилання за замовчуванням"
 
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_image.yml:0
 msgid "Default profile image"
@@ -7280,7 +7304,7 @@ msgstr "Видалення @type"
 
 #: modules/custom/activity_creator/src/Service/ActivityCreatorBatchActivityDeletion.php:26
 msgid "Deleting activities..."
-msgstr ""
+msgstr "Видалення дій..."
 
 #: modules/social_features/social_group/social_group.module:2156
 msgid "Deleting the group and all the content within the group..."
@@ -7496,6 +7520,7 @@ msgstr "Вимкнути публічну видимість"
 #: modules/social_features/social_swiftmail/config/schema/social_swiftmail.schema.yml:0
 msgid "Disabled email message keys with user greeting"
 msgstr ""
+"Вимкнено клавіші повідомлення електронної пошти з привітанням користувача"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:98
 #: modules/social_features/social_profile/modules/social_profile_privacy/config/schema/social_profile_privacy.schema.yml:0
@@ -7508,7 +7533,7 @@ msgstr "Обговорення"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:154
 msgid "Display a Drupal status message after rerouting"
-msgstr ""
+msgstr "Відображення повідомлення про стан Drupal після перенаправлення"
 
 #: modules/social_features/social_group/config/schema/social_group.schema.yml:0
 msgid "Display action options as buttons"
@@ -7724,7 +7749,7 @@ msgstr "Динамічний кеш сторінок (рекомендовано
 
 #: modules/social_features/social_swiftmail/src/Form/TestForm.php:87
 msgid "E-mail"
-msgstr ""
+msgstr "Електронна пошта"
 
 #: modules/social_features/social_swiftmail/social_swiftmail.links.menu.yml:0
 msgid "E-mail template settings."
@@ -7892,6 +7917,8 @@ msgstr "Тема завдання на електронну пошту"
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:140
 msgid "Emails that belong to users with selected roles won't be rerouted."
 msgstr ""
+"Імейли, які належать користувачам з обраними ролями, не будуть "
+"перенаправлені."
 
 #: modules/social_features/social_embed/social_embed.installer_options.yml:0
 msgid "Embed Media in Content"
@@ -8457,7 +8484,7 @@ msgstr "Подія пройшла"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/EmailBuilder/EventInviteEmailBuilder.php:15
 msgid "Event invite"
-msgstr ""
+msgstr "Запрошення на захід"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/ActivityContext/EventInviteActivityContext.php:13
 msgid "Event invite activity context"
@@ -8619,7 +8646,7 @@ msgstr "Дослідити сторінку для LU"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/templates/social-tagging-popup.html.twig:23
 msgid "Explore tag"
-msgstr ""
+msgstr "Дослідити тег"
 
 #: modules/social_features/social_group/social_group.tokens.inc:184
 msgid "Explore the group"
@@ -9065,7 +9092,7 @@ msgstr "Відстежувачі"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/core.entity_view_mode.taxonomy_term.followers_count.yml:0
 msgid "Followers count"
-msgstr ""
+msgstr "Кількість підписників"
 
 #: modules/social_features/social_follow_content/social_follow_content.module:110
 #: modules/social_features/social_follow_user/social_follow_user.links.task.yml:0
@@ -9494,7 +9521,7 @@ msgstr "Групові запрошення"
 
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/EmailBuilder/GroupInviteEmailBuilder.php:21
 msgid "Group invite"
-msgstr ""
+msgstr "Запрошення до групи"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:580
 msgid "Group invite settings"
@@ -9775,6 +9802,18 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"Привіт,<br /><br /> Я хотів би запросити Вас приєднатися до моєї групи "
+"[group:title] на [site:name].<br /><br />З повагою,<br />[user:display-name]"
+"<br /><br /><table class=\"btn-wrapp\">\r\n"
+"\t<tbody>\r\n"
+"\t\t<tr>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[group_content:register_link]\">Переглянути групу</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">Про мене [site:name]</a></td>\r\n"
+"\t\t</tr>\r\n"
+"\t</tbody>\r\n"
+"</table>"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0
@@ -9795,6 +9834,19 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"Привіт,<br /><br />Я хотів би запросити Вас приєднатися до моєї групи "
+"[group:title] на [site:name].<br /><br />З повагою,<br />[user:display-name]"
+"<br /><br /><table class=\"btn-wrapp\">\r\n"
+"\t<tbody>\r\n"
+"\t\t<tr>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[group_content:my_invitations_link]\">Переглянути групу</a></td>"
+"\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">Про мене [site:name]</a></td>\r\n"
+"\t\t</tr>\r\n"
+"\t</tbody>\r\n"
+"</table>"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:270
 msgid "Hide"
@@ -9824,7 +9876,7 @@ msgstr "Блок потоку домашньої сторінки"
 
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream.yml:0
 msgid "Homepage stream block (with post form)"
-msgstr ""
+msgstr "Блок потоку на головній сторінці (з формою повідомлення)"
 
 #: translations.php:118
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:153
@@ -9878,6 +9930,8 @@ msgstr "Ідентифікатор"
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:630
 msgid "If any of above is empty this will be used as fallback."
 msgstr ""
+"Якщо будь-яке з перерахованих вище полів порожнє, воно буде використано як "
+"запасний варіант."
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:650
 msgid ""
@@ -10056,7 +10110,7 @@ msgstr "Відомості"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/InlineCssEmailAdjuster.php:14
 msgid "Inline CSS - Open Social"
-msgstr ""
+msgstr "Вбудований CSS - Open Social"
 
 #: social.installer_options_list.yml:0
 msgid "Inline Form Errors"
@@ -10102,7 +10156,7 @@ msgstr "Інтегрувати модуль Data Policy."
 
 #: modules/social_features/social_tagging/social_tagging.module:68
 msgid "Integrate this term into an existing category or establish new one"
-msgstr ""
+msgstr "Інтегрувати цей термін в існуючу категорію або створити нову"
 
 #: modules/custom/social_ajax_comments/social_ajax_comments.info.yml:0
 msgid "Integration with Ajax Comments."
@@ -10360,7 +10414,7 @@ msgstr "Дата приєднання"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailBuilder/SocialSwiftmailEmailBuilder.php:50
 msgid "Kind regards"
-msgstr ""
+msgstr "З повагою"
 
 #: modules/custom/alternative_frontpage/config/schema/alternative_frontpage.schema.yml:0
 #: modules/custom/alternative_frontpage/src/Controller/AlternativeFrontpageListBuilder.php:17
@@ -10460,7 +10514,7 @@ msgstr "Останній місяць"
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastAccess.php:23;8
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0
 msgid "Last activity"
-msgstr ""
+msgstr "Остання активність"
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastLogin.php:23;8
 msgid "Last login"
@@ -10690,7 +10744,7 @@ msgstr "Розташований за адресою:"
 
 #: modules/social_features/social_tagging/social_tagging.module:66
 msgid "Location"
-msgstr ""
+msgstr "Місцезнаходження"
 
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_location.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.closed_group.field_group_location.yml:0
@@ -10703,7 +10757,7 @@ msgstr "Назва місцезнаходження"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/LogMail.php:11
 msgid "Log Email"
-msgstr ""
+msgstr "Email для входу в систему"
 
 #: modules/social_features/social_user/social_user.module:575
 msgid "Log In"
@@ -10773,7 +10827,7 @@ msgstr "Пошта HTML"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:241
 msgid "Mail key: @key"
-msgstr ""
+msgstr "Ключ від пошти: @key"
 
 #: modules/social_features/social_core/social_core.links.menu.yml:0
 msgid "Main menu"
@@ -10792,7 +10846,7 @@ msgstr "Основний вміст сторінки"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/MailHtmlTextFormat.php:8
 msgid "Make sure body text has mail_html format."
-msgstr ""
+msgstr "Переконайтеся, що основний текст має формат mail_html."
 
 #: modules/social_features/social_search/src/Plugin/search_api/processor/BlockedUsers.php:11
 msgid "Makes sure that blocked users are not added to the index."
@@ -11240,7 +11294,7 @@ msgstr "Найбільше коментували"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/block_content.type.most_followed_tags.yml:0
 msgid "Most followed tags"
-msgstr ""
+msgstr "Найбільш популярні теги"
 
 #: modules/social_features/social_content_block/src/ContentBlockBase.php:43
 msgid "Most liked"
@@ -11387,7 +11441,7 @@ msgstr "Нова тема"
 
 #: modules/social_features/social_tagging/social_tagging.module:74
 msgid "New category"
-msgstr ""
+msgstr "Нова категорія"
 
 #: translations.php:122
 msgid "New content has been added to a group you are in"
@@ -11522,7 +11576,7 @@ msgstr "У цій групі немає альбомів"
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/social_flexible_group_book.module:242
 msgid "No book selected."
-msgstr ""
+msgstr "Книгу не вибрано."
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/config/install/views.view.group_books.yml:0
 msgid "No books in this group"
@@ -11556,7 +11610,7 @@ msgstr "Немає подій для обробки."
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:557
 msgid "No flexible groups were updated."
-msgstr ""
+msgstr "Гнучкі групи не оновлювалися."
 
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 msgid "No groups found for this user"
@@ -11673,7 +11727,7 @@ msgstr "Немає"
 
 #: social.install:46
 msgid "Not configured"
-msgstr ""
+msgstr "Не налаштовано"
 
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_enrollment_status.yml:0
 msgid "Not enrolled"
@@ -11727,7 +11781,7 @@ msgstr "Сповіщення користувача електронною по�
 
 #: modules/custom/activity_creator/src/Service/ActivityCreatorBatchActivityDeletion.php:76
 msgid "Now processing activities :progress of :count"
-msgstr ""
+msgstr "Зараз обробляє діяльність :progress з :count"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/src/Service/SocialProfilePrivacyBatchHelper.php:80
 msgid "Now processing profile :progress of :count"
@@ -11743,7 +11797,7 @@ msgstr "Кількість приватних повідомлень"
 
 #: modules/custom/activity_creator/src/Service/ActivityCreatorBatchActivityDeletion.php:104
 msgid "Number of activities deleted by batch: @count"
-msgstr ""
+msgstr "Кількість видалених заходів за партіями: @count"
 
 #: modules/social_features/social_core/config/schema/social_core.schema.yml:0
 #: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/CommentNodeFormatter.php:180
@@ -12126,15 +12180,15 @@ msgstr "Організатори"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:259
 msgid "Originally bcc: @bcc"
-msgstr ""
+msgstr "Спочатку bcc: @bcc"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:253
 msgid "Originally cc: @cc"
-msgstr ""
+msgstr "Оригінал: cc: @cc"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:244
 msgid "Originally to: @to"
-msgstr ""
+msgstr "Спочатку до: @to"
 
 #: modules/social_features/social_content_report/config/install/field.field.flagging.report_comment.field_other_reason.yml:0
 #: modules/social_features/social_content_report/config/install/field.field.flagging.report_node.field_other_reason.yml:0
@@ -12419,7 +12473,7 @@ msgstr "Виберіть смайлик"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Pill badge"
-msgstr ""
+msgstr "Значок з пігулками"
 
 #: modules/social_features/social_tagging/config/install/field.field.taxonomy_term.social_tagging.field_category_usage.yml:0
 msgid "Placement"
@@ -12609,7 +12663,7 @@ msgstr "Опублікувати конфігурацію"
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:600
 msgid ""
 "Post for group members was @status for @count flexible groups (ids): @ids"
-msgstr ""
+msgstr "Пошта для членів групи була @status для гнучких груп (ids) @count: @ids"
 
 #: modules/social_features/social_post/social_post.module:182;184
 msgid "Post group stream"
@@ -12750,11 +12804,11 @@ msgstr "Основні адміністративні дії"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Primary badge"
-msgstr ""
+msgstr "Основний бейдж"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Primary link"
-msgstr ""
+msgstr "Первинне посилання"
 
 #: modules/social_features/social_landing_page/config/install/field.storage.paragraph.field_button_style.yml:0
 msgid "Primary style"
@@ -12775,7 +12829,7 @@ msgstr "Налаштування конфіденційності для мод�
 
 #: social.install:45
 msgid "Private File System"
-msgstr ""
+msgstr "Приватна файлова система"
 
 #: modules/custom/activity_logger/activity_logger.tokens.inc:41
 msgid "Private Message Thread url"
@@ -13009,6 +13063,11 @@ msgid ""
 "provided, all outgoing emails would be aborted and the email would be "
 "recorded in the recent log entries (if enabled)."
 msgstr ""
+"Вкажіть список адрес електронної пошти, розділених комами. Кожна адреса "
+"призначення, яка не відповідає списку \"Пропустити перенаправлення для\", "
+"буде перенаправлена на ці адреси.<br/>Якщо це поле порожнє і не вказано "
+"жодного значення, всі вихідні імейли буде перервано, а імейл буде записано "
+"до нещодавніх записів журналу (якщо це ввімкнено)."
 
 #: modules/social_features/social_profile/social_profile.views.inc:16
 msgid "Provide a correct sort alias"
@@ -13025,6 +13084,11 @@ msgid ""
 "\"*@example.com\" and \"name+*@example.com\" can be used to add all emails "
 "by its domain or the pattern."
 msgstr ""
+"Створіть список адрес електронної пошти, які потрібно пропустити через "
+"перехресний перевід. Всі листи на адреси з цього списку не будуть "
+"перенаправлені.<br/>Шаблони на кшталт \"*@example.com\" та \"ім'я+*@example."
+"com\" можна використовувати для додавання всіх листів за доменом або "
+"шаблоном."
 
 #: modules/social_features/social_content_report/social_content_report.views.inc:17
 msgid "Provide a link to close the report"
@@ -13284,7 +13348,7 @@ msgstr "Надає посилання для виконання пост-опе�
 
 #: modules/custom/social_media_system/social_media_system.info.yml:0
 msgid "Provides media system functionalities."
-msgstr ""
+msgstr "Забезпечує функціонал медіасистеми."
 
 #: modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.info.yml:0
 msgid "Provides profile notes that can created by Managers"
@@ -13941,15 +14005,15 @@ msgstr "Вимагати типи груп"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:18
 msgid "Reroute emails"
-msgstr ""
+msgstr "Перенаправлення імейлів"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:18
 msgid "Reroute emails to a specific email address."
-msgstr ""
+msgstr "Перенаправлення імейлів на певну електронну адресу."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:106
 msgid "Rerouting email addresses"
-msgstr ""
+msgstr "Перенаправлення адрес електронної пошти"
 
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialGroupInviteResendConfirmForm.php:55
 msgid "Resend an invitation"
@@ -14162,7 +14226,7 @@ msgstr "Зберіг налаштування %label."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/LogMail.php:11
 msgid "Saves emails to the file storage."
-msgstr ""
+msgstr "Зберігає листи у файловому сховищі."
 
 #: modules/social_features/social_post/modules/social_post_photo/js/post-widget.js:0
 #: modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.default.yml:0
@@ -14252,7 +14316,7 @@ msgstr "Вторинне"
 
 #: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
 msgid "Secondary badge"
-msgstr ""
+msgstr "Вторинний значок"
 
 #: modules/social_features/social_core/config/optional/block.block.seven_secondary_local_tasks.yml:0
 msgid "Secondary tabs"
@@ -14330,7 +14394,7 @@ msgstr "Переглянути подію"
 
 #: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendarBase.php:140
 msgid "See the event page for details: @link"
-msgstr ""
+msgstr "Подробиці дивіться на сторінці події: @link"
 
 #: modules/social_features/social_event/social_event.module:98
 msgid "See who else is going"
@@ -14852,7 +14916,7 @@ msgstr "Показати мою мову в моєму профілі"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:147
 msgid "Show rerouting description in mail body"
-msgstr ""
+msgstr "Показати опис перенаправлення в тілі листа"
 
 #: modules/social_features/social_user/social_user.module:615
 msgid ""
@@ -14969,11 +15033,11 @@ msgstr "Підтвердження пропуску для типу @grouptype"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:119
 msgid "Skip email rerouting for email addresses:"
-msgstr ""
+msgstr "Пропустити перенаправлення для адрес електронної пошти:"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:139
 msgid "Skip email rerouting for roles:"
-msgstr ""
+msgstr "Пропустіть перенаправлення імейлів для ролей:"
 
 #: modules/social_features/social_search/src/Plugin/search_api/processor/VerifiedUsers.php:10
 msgid "Skip not Verified users"
@@ -15342,7 +15406,7 @@ msgstr "Соціальні функції"
 
 #: modules/custom/social_file_private/social_file_private.info.yml:0
 msgid "Social File Private (Deprecated)"
-msgstr ""
+msgstr "Соціальний файл Приватний (застарілий)"
 
 #: modules/social_features/social_comment/src/Plugin/GraphQL/DataProducer/SocialCommentAttachments.php:14
 msgid "Social Files"
@@ -15528,11 +15592,11 @@ msgstr "Логін для входу в соціальну магію"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailBuilder/SocialSwiftmailEmailBuilder.php:47
 msgid "Social Mailer has been successfully configured!"
-msgstr ""
+msgstr "Social Mailer успішно налаштовано!"
 
 #: modules/custom/social_media_system/social_media_system.info.yml:0
 msgid "Social Media System"
-msgstr ""
+msgstr "Система соціальних мереж"
 
 #: modules/social_features/social_mentions/social_mentions.tokens.inc:23
 #: modules/social_features/social_mentions/social_mentions.info.yml:0
@@ -15796,7 +15860,7 @@ msgstr "Соціальне коротке побачення"
 #: modules/social_features/social_tagging/src/Plugin/Field/FieldFormatter/TaggingUsageFormatter.php:11
 #: modules/social_features/social_tagging/src/Plugin/Field/FieldWidget/TaggingUsageWidget.php:13
 msgid "Social tagging usage"
-msgstr ""
+msgstr "Використання соціальних тегів"
 
 #: modules/social_features/social_core/config/install/core.date_format.social_time.yml:0
 msgid "Social time"
@@ -15919,7 +15983,7 @@ msgstr "Упорядкування"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/LogMail.php:30
 msgid "Spool directory"
-msgstr ""
+msgstr "Каталог спулу"
 
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_date.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0;0
@@ -16180,7 +16244,7 @@ msgstr "Заголовок шаблону"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/field.field.block_content.most_followed_tags.field_terms.yml:0
 msgid "Terms"
-msgstr ""
+msgstr "Умови"
 
 #: modules/social_features/social_content_report/src/Form/ContentReportSettingsForm.php:87
 msgid "Terms with additional reason text"
@@ -16188,11 +16252,11 @@ msgstr "Терміни з додатковим текстом причини"
 
 #: modules/social_features/social_swiftmail/social_swiftmail.routing.yml:0
 msgid "Test"
-msgstr ""
+msgstr "Тест"
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailBuilder/SocialSwiftmailEmailBuilder.php:9
 msgid "Test email"
-msgstr ""
+msgstr "Тестовий лист"
 
 #: modules/custom/dropdown/src/Plugin/Field/FieldType/Dropdown.php:10
 #: modules/custom/entity_access_by_field/src/Plugin/Field/FieldType/EntityAccessField.php:7
@@ -16309,7 +16373,7 @@ msgstr "Поштовий індекс."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailBuilder/SocialSwiftmailEmailBuilder.php:51
 msgid "The Social Mailer module"
-msgstr ""
+msgstr "Модуль Social Mailer"
 
 #: modules/social_features/social_core/social_core.module:880
 msgid "The URL alias allows you to customise the link to this page."
@@ -16337,7 +16401,7 @@ msgstr "UUID сутності Post."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/LogMail.php:31
 msgid "The absolute path to the spool directory."
-msgstr ""
+msgstr "Абсолютний шлях до каталогу спулу."
 
 #: modules/custom/activity_logger/activity_logger.module:131
 #: modules/custom/activity_logger/config/schema/activity_logger.schema.yml:0
@@ -16763,6 +16827,11 @@ msgid ""
 "installation. See https://www.drupal.org/documentation/modules/file for how "
 "to set the file_private_path in your settings.php."
 msgstr ""
+"Для встановлення Open Social необхідно налаштувати приватну файлову систему. "
+"Ви можете відмовитися від приватної файлової системи для окремих полів після "
+"встановлення. Дивіться https://www.drupal.org/documentation/modules/file, "
+"щоб дізнатися, як встановити шлях до приватної файлової системи у вашому "
+"файлі settings.php."
 
 #: modules/custom/entity_access_by_field/entity_access_by_field.module:299
 msgid ""
@@ -17078,10 +17147,12 @@ msgid ""
 "This e-mail has been sent from @site by the Social Mailer module. The module "
 "has been successfully configured."
 msgstr ""
+"Цей електронний лист було відправлено з адреси @site модулем Social Mailer. "
+"Модуль успішно налаштовано."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:237
 msgid "This email was rerouted."
-msgstr ""
+msgstr "Цей лист було перенаправлено."
 
 #: modules/custom/grequest/src/Plugin/GroupContentEnabler/GroupMembershipRequest.php:208
 msgid ""
@@ -17174,6 +17245,11 @@ msgid ""
 "private\n"
 "file system is the default for sensitive fields and is opt-out.\n"
 msgstr ""
+"Цей модуль є застарілим і буде автоматично видалений в Open Social 12\n"
+"і буде видалено в Open Social 13. Починаючи з Open Social 11.8.0, приватна "
+"файлова система\n"
+"файлова система за замовчуванням використовується для конфіденційних полів, "
+"і її можна вимкнути.\n"
 
 #: modules/social_features/social_content_block/modules/social_event_content_block/social_event_content_block.install:56
 #: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
@@ -17192,6 +17268,7 @@ msgstr ""
 msgid ""
 "This page allows you to send a test e-mail to a recipient of your choice."
 msgstr ""
+"На цій сторінці ви можете надіслати тестовий імейл обраному вами одержувачу."
 
 #: modules/social_features/social_group/social_group.permissions.yml:0
 msgid "This permission grants access to add node to multiple groups."
@@ -17547,7 +17624,7 @@ msgstr "Параметри URL-адреси"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module:360
 msgid "URL label"
-msgstr ""
+msgstr "Мітка URL-адреси"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.tokens.inc:22
 msgid "URL of anonymously enrolled event with token to cancel enrollment."
@@ -18323,10 +18400,12 @@ msgid ""
 "We published a new version of the data protection statement. You can review "
 "the data protection statement @url."
 msgstr ""
+"Ми опублікували нову версію заяви про захист даних. Ви можете ознайомитися "
+"із заявою про захист даних за посиланням @url."
 
 #: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php:238
 msgid "Web site: @site"
-msgstr ""
+msgstr "Веб-сайт: @site"
 
 #: modules/custom/social_lets_connect/modules/social_lets_connect_usage/src/Plugin/ShareUsageDataPlugin/WebsiteUrl.php:7
 msgid "Website URL"
@@ -18445,6 +18524,9 @@ msgid ""
 "receive email notifications, they still receive notifications via the "
 "notification centre within the community."
 msgstr ""
+"Якщо цей параметр увімкнено, користувачі, які ніколи не входили до "
+"спільноти, не отримуватимуть сповіщень на електронну пошту, вони все одно "
+"отримуватимуть сповіщення через центр сповіщень у спільноті."
 
 #: modules/social_features/social_user/src/Form/SocialUserSettingsForm.php:40
 msgid "When visiting a profile the user will end up at this page first"
@@ -18452,7 +18534,7 @@ msgstr "При відвідуванні профілю користувач сп
 
 #: modules/social_features/social_tagging/config/install/field.field.taxonomy_term.social_tagging.field_category_usage.yml:0
 msgid "Where this term will be available within the platform"
-msgstr ""
+msgstr "Де цей термін буде доступний на платформі"
 
 #: modules/social_features/social_content_report/config/schema/social_content_report.schema.yml:0
 msgid "Whether a reason is mandatory when reporting inappropriate content."
@@ -18697,6 +18779,9 @@ msgid ""
 "sent using the default values as provided by the Social Mailer module or as "
 "configured by you."
 msgstr ""
+"Ви можете надіслати тестовий імейл одержувачу на ваш вибір. Імейл буде "
+"надіслано з використанням значень за замовчуванням, наданих модулем Social "
+"Mailer або налаштованих вами."
 
 #: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:256
 msgid ""
@@ -19112,6 +19197,7 @@ msgstr "[site:name]"
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.secret_group-group_invitation.yml:0;0
 msgid "[user:display-name] has invited you to join a group on [site:name]."
 msgstr ""
+"[user:display-name] запрошує вас приєднатися до групи на сайті [site:name]."
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:277
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:137
@@ -19193,7 +19279,7 @@ msgstr "створити новий обліковий запис"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/field.field.message.create_node_following_tag.field_message_context.yml:0
 msgid "create_node_following_tag"
-msgstr ""
+msgstr "створити_вузол_наступний_тег"
 
 #: modules/custom/social_path_manager/config/install/pathauto.pattern.default_content_types.yml:0
 msgid "default content types"
@@ -19217,7 +19303,7 @@ msgstr "за спаданням"
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:601
 msgid "disabled"
-msgstr ""
+msgstr "з обмеженими можливостями"
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:168
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php:181
@@ -19226,7 +19312,7 @@ msgstr "налаштування сповіщень електронною по�
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:601
 msgid "enabled"
-msgstr ""
+msgstr "увімкнено"
 
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 msgid "entity id from url"
@@ -19289,7 +19375,7 @@ msgstr "field_event_managers"
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:566
 msgid ""
 "field_group_posts_enabled does not exist. No flexibe groups were updated."
-msgstr ""
+msgstr "поле_групи_постів_увімкнено не існує. Групи гнучкості не було оновлено."
 
 #: modules/social_features/social_activity/config/install/field.field.message.create_content_in_joined_group.field_message_context.yml:0
 #: modules/social_features/social_activity/config/install/field.field.message.create_event_gc.field_message_context.yml:0
