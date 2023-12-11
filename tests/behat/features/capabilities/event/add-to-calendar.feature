@@ -54,14 +54,17 @@ Feature: Add event to calendar
     And I am viewing the event "Walking in the park"
     When I click "Enroll"
     And I wait for AJAX to finish
+    And I wait for "1" seconds
     When I click "Enroll as guest"
     And I wait for AJAX to finish
+    And I wait for "1" seconds
     And I fill in the following:
       | First name    | John         |
       | Last name     | Doe          |
       | Email address | john@doe.com |
     And I press "Enroll in event" in the "Modal"
     And I wait for AJAX to finish
+    And I wait for "1" seconds
     And the file downloaded from "iCal calendar" should contain individual lines:
       """
       BEGIN:VCALENDAR
