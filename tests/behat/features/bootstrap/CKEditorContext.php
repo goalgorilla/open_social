@@ -32,27 +32,40 @@ class CKEditorContext extends RawMinkContext {
   public function iFillInTheWysiwygEditor($locator, $text) {
     $field = $this->getSession()->getPage()->findField($locator);
 
+    // A random string to use in a script, if the script is evaluated
+    // multiple times in the same test we need to make sure that each
+    // time the CKEditor instance has a unique name.
+    $string = bin2hex(openssl_random_pseudo_bytes(10));
+    $string = "a" . $string;
+
     if (NULL === $field) {
       throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value|placeholder', $locator);
     }
 
     $id = str_replace('edit-', '', $field->getAttribute('id'));
+    // If the CKEditor is loaded with AJAX, it could be that it gets
+    // appended a unique identifier, so we need to remove that.
+    if (str_contains($id, "--")) {
+      $id = explode("--", $id);
+      $id = $id[0];
+    }
+
     $editor = "div.js-form-item-" . $id . " .ck-editor__editable";
-    $this->getSession()
-      ->executeScript(
-        "
-        const domEditableElement = document.querySelector(\"$editor\");
-        if (domEditableElement.ckeditorInstance) {
-          const editorInstance = domEditableElement.ckeditorInstance;
-          if (editorInstance) {
-            editorInstance.setData(\"$text\");
-          } else {
-            throw new Exception('Could not get the editor instance!');
-          }
+    $script = "
+      let $string = document.querySelector(\"$editor\");
+      if ($string.ckeditorInstance) {
+        const editorInstance = $string.ckeditorInstance;
+        if (editorInstance) {
+          editorInstance.setData(\"$text\");
         } else {
-          throw new Exception('Could not find the element!');
+          throw new Exception('Could not get the editor instance!');
         }
-        ");
+      } else {
+        throw new Exception('Could not find the element!');
+      }
+    ";
+
+    $this->getSession()->executeScript($script);
   }
 
   /**
