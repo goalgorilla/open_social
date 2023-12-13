@@ -104,7 +104,11 @@ class ContentReportService implements ContentReportServiceInterface {
     $flag = $this->flagService->getFlagById($flag_id);
 
     if ($flag !== NULL) {
-      $flagging = $this->flagService->getFlagging($flag, $entity, $this->currentUser);
+      $session_id = NULL;
+      if ($this->currentUser->isAnonymous()) {
+        $session_id = $this->flagService->getAnonymousSessionId();
+      }
+      $flagging = $this->flagService->getFlagging($flag, $entity, $this->currentUser, $session_id);
     }
 
     // If the user already flagged this, we return a disabled link to nowhere.
