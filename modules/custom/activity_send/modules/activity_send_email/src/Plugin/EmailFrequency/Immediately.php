@@ -172,7 +172,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
     ];
 
     // Construct the body & subject for email sending.
-    $params['body'] = $this->renderer->renderRoot($notification);
+    $params['body'] = $this->renderer->renderPlain($notification);
     if ($subject !== '') {
       // We don't support tokens in our subject at the moment, if needs be
       // we can check out how the ActivityFactory processTokens method does it.
