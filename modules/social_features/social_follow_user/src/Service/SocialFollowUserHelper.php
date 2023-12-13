@@ -47,7 +47,11 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
       assert($flag !== NULL, "The 'follow_user' flag type does not exist, this indicates a problem with the social_follow_user module installation.");
       // And display only "Unfollow" button because we should leave the ability
       // to unfollow user.
-      if ($this->flagService->getFlagging($flag, $profile, $this->currentUser)) {
+      $session_id = NULL;
+      if ($this->currentUser->isAnonymous()) {
+        $session_id = $this->flagService->getAnonymousSessionId();
+      }
+      if ($this->flagService->getFlagging($flag, $profile, $this->currentUser, $session_id)) {
         $following_enabled = TRUE;
       }
     }
