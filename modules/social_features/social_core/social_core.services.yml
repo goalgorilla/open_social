@@ -34,3 +34,8 @@ services:
   social_core.config_language_manager:
     class:  Drupal\social_core\Service\ConfigLanguageManager
     arguments: ['@language_manager']
+
+  social_core.secret_files_path_processor:
+    class: Drupal\social_core\PathProcessor\SecretFiles
+    tags:
+      - { name: path_processor_inbound, priority: 100 }
