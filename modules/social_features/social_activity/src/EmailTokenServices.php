@@ -247,8 +247,11 @@ class EmailTokenServices {
     /** @var \Drupal\image\Entity\ImageStyle $image_style */
     $image_style = ImageStyle::load('social_medium');
 
-    /** @var \Drupal\file\FileInterface $image */
-    $image = !$profile->get('field_profile_image')->isEmpty() ? $profile->get('field_profile_image')->entity : '';
+    /** @var \Drupal\file\FileInterface $image|null */
+    $image = NULL;
+    if ($profile->hasField('field_profile_image')) {
+      $image = !$profile->get('field_profile_image')->isEmpty() ? $profile->get('field_profile_image')->entity : NULL;
+    }
 
     if (
       $image instanceof FileInterface &&
