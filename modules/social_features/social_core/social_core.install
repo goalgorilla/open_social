@@ -1771,3 +1771,16 @@ function social_core_update_111204(): void {
 function social_core_update_111205(): void {
   module_set_weight("field_group", -1);
 }
+
+/**
+ * Add post_update to trick drupal and avoid error.
+ */
+function social_core_update_111206(): void {
+  $key_value = \Drupal::keyValue('post_update');
+  $update_list = $key_value->get('existing_updates');
+
+  if (!in_array('user_post_update_update_roles', $update_list)) {
+    $update_list[] = 'user_post_update_update_roles';
+    $key_value->set('existing_updates', $update_list);
+  }
+}
