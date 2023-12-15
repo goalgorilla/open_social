@@ -5,6 +5,7 @@
  * The post update hooks for social_embed module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Site\Settings;
 
 /**
@@ -116,4 +117,64 @@ function social_embed_post_update_11002_populate_field_embed_content_settings(ar
     // $sandbox['#finished'] == 1 (viz., it evaluates to TRUE).
     $sandbox['#finished'] = empty($sandbox['uids']) ? 1 : $sandbox['progress'] / $sandbox['count'];
   }
+}
+
+/**
+ * Remove the old social_embed button if it's not used anymore in ckeditor4.
+ */
+function social_embed_post_update_12001_remove_old_social_embed_button(): void {
+  // Machine name of the old embed button.
+  $url_embed_button = 'social_embed';
+
+  // Get all filter formats.
+  $entity_type = 'filter_format';
+  $filter_formats = \Drupal::entityQuery($entity_type)->execute();
+
+  if (!empty($filter_formats)) {
+    $key = FALSE;
+    // Search through the filter formats if they use the url_embed plugin.
+    foreach ($filter_formats as $filter_format) {
+      // Load the editor for the given filter format.
+      // https://www.drupal.org/project/drupal/issues/3409040.
+      $editor = editor_load($filter_format);
+      // Only check for the button on non ckeditor5 instances.
+      if ($editor !== NULL && $editor->getEditor() !== 'ckeditor5') {
+        $key = array_recursive_search_key_map($url_embed_button, $editor->getSettings()['toolbar']);
+        // No need to check other formats if the button is used.
+        if ($key !== FALSE) {
+          break;
+        }
+      }
+    }
+    // If we can't any instance of the url_embed,
+    // we can safely remove the button.
+    if ($key === FALSE) {
+      // Remove the button.
+      $item = \Drupal::entityTypeManager()
+        ->getStorage('embed_button')
+        ->load($url_embed_button);
+      if ($item instanceof EntityInterface) {
+        $item->delete();
+      }
+    }
+  }
+}
+
+/**
+ * Custom function to recursively search through a multidimensional array.
+ */
+function array_recursive_search_key_map(string $needle, array $haystack): array|bool {
+  foreach ($haystack as $first_level_key => $value) {
+    if ($needle === $value) {
+      return [$first_level_key];
+    }
+
+    if (is_array($value)) {
+      $callback = array_recursive_search_key_map($needle, $value);
+      if ($callback && is_array($callback)) {
+        return array_merge([$first_level_key], $callback);
+      }
+    }
+  }
+  return FALSE;
 }
