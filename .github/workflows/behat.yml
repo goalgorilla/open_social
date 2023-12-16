@@ -305,7 +305,7 @@ jobs:
 
       - name: Upload Installation database
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: behat-test-output
           path: behat-test-output
@@ -456,7 +456,7 @@ jobs:
 
       - name: Upload Behat Test Output
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: behat-test-output
           path: behat-test-output
