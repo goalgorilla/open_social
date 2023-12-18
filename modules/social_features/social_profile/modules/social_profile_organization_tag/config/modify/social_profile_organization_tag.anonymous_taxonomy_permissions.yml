@@ -1,0 +1,14 @@
+dependencies:
+  module:
+    - social_registration_fields
+    - taxonomy_access_fix
+items:
+  user.role.anonymous:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'view terms in profile_organization_tag'
+          - 'view term names in profile_organization_tag'
+          - 'select terms in profile_organization_tag'
