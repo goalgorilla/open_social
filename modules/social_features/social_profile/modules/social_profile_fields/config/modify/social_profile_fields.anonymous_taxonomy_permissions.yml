@@ -1,0 +1,14 @@
+dependencies:
+  module:
+    - social_registration_fields
+    - taxonomy_access_fix
+items:
+  user.role.anonymous:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'view terms in nationality'
+          - 'view term names in nationality'
+          - 'select terms in nationality'
