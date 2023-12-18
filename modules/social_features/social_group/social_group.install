@@ -865,13 +865,34 @@ function social_group_update_13001() : void {
     }
   }
 
+  // Clean up views displays.
+  $view_displays = \Drupal::configFactory()
+    ->listAll('core.entity_view_display.');
+
+  foreach ($view_displays as $name) {
+    $config = \Drupal::configFactory()->getEditable($name);
+    $content = (array) $config->get('content');
+    if (empty($content)) {
+      continue;
+    }
+
+    unset($content['groups_type_public_group']);
+    unset($content['groups_type_open_group']);
+    unset($content['groups_type_closed_group']);
+    unset($content['groups_type_secret_group']);
+
+    if (array_diff(array_keys((array) $config->get('content')), array_keys($content))) {
+      $config->set('content', $content);
+      $config->save();
+    }
+  }
+
   // Uninstall the secret group module if enabled.
   // This should take care of removing everything from a secret group.
   \Drupal::service("module_installer")->uninstall(["social_secret_group_featured", "social_group_secret"]);
 
   // Delete our old group types.
-  $group_type_storage = \Drupal::entityTypeManager()
-    ->getStorage("group_type");
+  $group_type_storage = \Drupal::entityTypeManager()->getStorage("group_type");
   foreach ($group_type_storage->loadMultiple(["closed_group", "open_group", "public_group"]) as $group_type) {
     $group_type->delete();
   }
@@ -895,7 +916,7 @@ function social_group_update_13002(): ?string {
   // Execute configuration update definitions with logging of success.
   $updateHelper->executeUpdate('social_group', __FUNCTION__);
 
-  // Output logged messages to related channel of update execution.
+  // Output logged messages to a related channel of update execution.
   return $updateHelper->logger()->output();
 }
 

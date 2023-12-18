@@ -38,6 +38,7 @@ views.view.group_events:
                   open_group-group_node-event: {  }
                   closed_group-group_node-event: {  }
                   public_group-group_node-event: {  }
+                  secret_group-group_node-event: {  }
             arguments:
               gid:
                 validate_options:
@@ -45,24 +46,25 @@ views.view.group_events:
                     closed_group: {  }
                     open_group: {  }
                     public_group: {  }
+                    secret_group: {  }
     add:
       dependencies:
         config:
           - core.entity_view_mode.group_content.teaser
           - group.content_type.flexible_group-group_node-event
           - group.type.flexible_group
-        display:
-          default:
-            display_options:
-              filters:
-                type:
-                  value:
-                    flexible_group-group_node-event: flexible_group-group_node-event
-              arguments:
-                gid:
-                  validate_options:
-                    bundles:
-                      flexible_group: flexible_group
+      display:
+        default:
+          display_options:
+            filters:
+              type:
+                value:
+                  flexible_group-group_node-event: flexible_group-group_node-event
+            arguments:
+              gid:
+                validate_options:
+                  bundles:
+                    flexible_group: flexible_group
 
 views.view.group_manage_members:
   expected_config: { }
@@ -115,7 +117,7 @@ views.view.group_managers:
           - group.content_type.flexible_group-group_membership
           - group.type.flexible_group
           - profile.type.profile
-        display:
+      display:
           default:
             display_options:
               filters:
@@ -173,6 +175,7 @@ views.view.group_members:
                   open_group-group_membership: {  }
                   closed_group-group_membership: {  }
                   public_group-group_membership: {  }
+                  secret_group-group_membership: {  }
             arguments:
               gid:
                 validate_options:
@@ -209,6 +212,7 @@ views.view.group_topics:
                   closed_group-group_node-topic: {  }
                   open_group-group_node-topic: {  }
                   public_group-group_node-topic: {  }
+                  secret_group-group_node-topic:  {  }
             arguments:
               gid:
                 validate_options:
@@ -216,6 +220,7 @@ views.view.group_topics:
                     closed_group: {  }
                     open_group: {  }
                     public_group: {  }
+                    secret_group: {  }
     add:
       dependencies:
         config:
@@ -229,7 +234,7 @@ views.view.group_topics:
             filters:
               type:
                 value:
-                  flexible_group-group_node-event: flexible_group-group_node-event
+                  flexible_group-group_node-topic: flexible_group-group_node-topic
             arguments:
               gid:
                 validate_options:
