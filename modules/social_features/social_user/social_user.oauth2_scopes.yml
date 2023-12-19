@@ -1,0 +1,144 @@
+"viewer":
+  description: Provide read/write access to all user and profile information.
+  umbrella: true
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: 'Allow the application to read and update your email, phone, address, and other user and profile information.'
+"viewer:profile":
+  parent: viewer
+  description: Provides access to basic profile information such as name, avatar and introduction.
+  umbrella: false
+  granularity: permission
+  permission: view users # @todo: Incorrect permission!
+  #  permission: view own profile fields
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: 'Allow the application to view your basic profile information.'
+"viewer:email":
+  parent: viewer
+  description: Provides access to a user's e-mail.
+  umbrella: false
+  granularity: permission
+  permission: view users # @todo: Incorrect permission!
+  #  permission: view own field_profile_email profile profile field
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: 'Allow the application to view your email address.'
+"viewer:phone":
+  parent: viewer
+  description: Provides access to a user's phone number.
+  umbrella: false
+  granularity: permission
+  permission: view users # @todo: Incorrect permission!
+  #  permission: view own field_profile_phone_number profile profile field
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: 'Allow the application to view your phone number.'
+"viewer:address":
+  parent: viewer
+  description: Provides access to a user's address information.
+  umbrella: false
+  granularity: permission
+  permission: view users # @todo: Incorrect permission!
+  #  permission: view own field_profile_address profile profile field
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: 'Allow the application to view your address.'
+
+"user":
+  description: Provides access to all user data on the platform.
+  umbrella: true
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: 'Allow the application to read and write any user and profile information you have access to.'
+    # Bot
+    client_credentials:
+      status: true
+      description: 'Allow the application to read and write any user and profile information on the platform.'
+"user:list":
+  parent: user
+  description: Provides access to user listings on the platform.
+  umbrella: false
+  granularity: permission
+  permission: view users # @todo: Incorrect permission!
+  #  permission: list user
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: 'Allow the application to list the users on the platform you have access to.'
+    # Bot
+    client_credentials:
+      status: true
+      description: 'Allow the application to list all users on the platform.'
+"user:write":
+  parent: user
+  description: Provides the ability to manage all user and profile data on the platform, this includes creating new users.
+  umbrella: false
+  granularity: permission
+  # @todo Write test case for user being able to edit users while not having the "administer users" permission in an on-behalf-of-user application
+  permission: administer users # on behalf user?
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: 'Allow the application to update any user information you have access to.'
+    # Bot
+    client_credentials:
+      status: true
+      description: 'Allow the application to update any user information on the platform.'
+"user:read":
+  parent: user:write
+  description: Provides access to view all user data on the platform.
+  umbrella: false
+  granularity: permission
+  permission: access user profiles
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: 'Allow the application to read any user information you have access to.'
+    # Bot
+    client_credentials:
+      status: true
+      description: 'Allow the application to read any user information on the platform.'
+"user:profile":
+  parent: user:write
+  description: Access to all profile information on the platform.
+  umbrella: false
+  granularity: permission
+  permission: view users # @todo: Incorrect permission!
+  #  permission: view any profile profile field
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: 'Allow the application to read any profile information you have access to.'
+    # Bot
+    client_credentials:
+      status: true
+      description: 'Allow the application to read any profile information on the platform.'
+"user:profile:community":
+  parent: user:profile
+  description: Access to community visible profile information
+  umbrella: false
+  granularity: permission
+  permission: view users # @todo: Incorrect permission!
+  #  permission: view community
+  grant_types:
+    # Bot
+    client_credentials:
+      status: true
+      description: 'Allow the application to read any profile information on the platform with community visibility.'

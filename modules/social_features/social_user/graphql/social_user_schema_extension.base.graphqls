@@ -22,23 +22,23 @@ type User implements Node & Actor {
   Can be null if the user has not filled in an e-mail or if the user/application
   making the request is not allowed to view this user's e-mail.
   """
-  mail: Email
+  mail: Email @allowUser(requiredScopes: ["viewer.email"]) @allowAll(requiredScopes: ["user.profile.community"])
   """
   The timestamp indicating when the user was created.
   """
-  created: Int!
+  created: Int! # @allowUser(requiredScopes: []) @allowBot(requiredScopes: ["user.read"])
   """
   The timestamp indicating when the user was last updated.
   """
-  updated: Int!
+  updated: Int! @allowUser(requiredScopes: []) @allowBot(requiredScopes: ["user.read"])
   """
   The status of the user account.
   """
-  status: UserStatus!
+  status: UserStatus! #@allowUser(requiredScopes: []) @allowBot(requiredScopes: ["user.read"])
   """
   The roles that the user has.
   """
-  roles: [UserRole!]!
+  roles: [UserRole!]! # @allowUser(requiredScopes: []) @allowBot(requiredScopes: ["user.read"])
 }
 
 """

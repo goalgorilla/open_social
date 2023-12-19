@@ -20,6 +20,10 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    */
   protected static $modules = [
     "entity",
+    "serialization",
+    "consumers",
+    "simple_oauth",
+    "graphql_oauth",
     "social_graphql",
   ];
 
@@ -28,6 +32,8 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    */
   protected function setUp() : void {
     parent::setUp();
+
+    $this->installEntitySchema("consumer");
 
     // We need the configuration for social_graphql module to be loaded as it
     // contains the Open Social GraphQL server.

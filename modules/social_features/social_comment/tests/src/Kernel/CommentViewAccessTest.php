@@ -6,6 +6,7 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
+use Drupal\user\UserInterface;
 
 /**
  * Tests comment view level access.
@@ -77,7 +78,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
    *
    * Until https://www.drupal.org/project/drupal/issues/3039955 is fixed.
    */
-  protected function setUpCurrentUser(array $values = [], array $permissions = [], $admin = FALSE) {
+  protected function setUpCurrentUser(array $values = [], array $permissions = [], bool $admin = FALSE) : UserInterface {
     self::assertFalse($admin, "The current setUpCurrentUser workaround doesn't support admin users.");
     $user = $this->createUser($values, $permissions);
     $this->setCurrentUser($user);

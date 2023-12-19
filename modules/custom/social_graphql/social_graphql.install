@@ -34,3 +34,13 @@ function social_graphql_update_10101() {
   // Removed deprecated settings use_entity_access_api.
   // @see https://www.drupal.org/project/social/issues/3215750
 }
+
+/**
+ * Enable graphql_oauth and simple_oauth_static_scope modules.
+ */
+function social_graphql_update_12001() : void {
+  \Drupal::service("module.installer")->install([
+    'graphql_oauth',
+    'simple_oauth_static_scope',
+  ]);
+}
