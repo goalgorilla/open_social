@@ -45,7 +45,6 @@ use Drupal\social_group\Entity\Group;
 use Drupal\social_group\Form\SocialGroupAddForm;
 use Drupal\social_group\GroupContentVisibilityUpdate;
 use Drupal\social_group\SocialGroupInterface;
-use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
@@ -93,7 +92,7 @@ function social_group_theme() {
  * Implements hook_entity_type_alter().
  */
 function social_group_entity_type_alter(array &$entity_types) {
-  // @TODO: Check if this is still needed for Flexible Group or create a follow-up issue.
+  // @todo Check if this is still needed for Flexible Group or create a follow-up issue.
   /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
   if (isset($entity_types['group'])) {
     $entity_types['group']
@@ -886,7 +885,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
       // If user doesn't have permission to change group types disable it.
       // Or if group types can't be edited due to visibility issues.
-      if (!social_group_group_type_permission_check()) {
+      if (!\Drupal::currentUser()->hasPermission('edit group types')) {
         $group_type_element['#disabled'] = TRUE;
       }
       else {
@@ -1975,6 +1974,8 @@ function _social_group_delete_group() {
  * Get all groups.
  *
  * @deprecated Use the entityTypeManager directly, you probably only want flexible groups.
+ *
+ * @see https://www.drupal.org/project/social/issues/3380714
  */
 function social_group_get_all_groups() {
   $query = \Drupal::service('entity_type.manager')

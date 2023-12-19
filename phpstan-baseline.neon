@@ -121,11 +121,6 @@ parameters:
 			path: modules/custom/activity_creator/activity_creator.install
 
 		-
-			message: "#^Function activity_creator_update_dependencies\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/activity_creator.install
-
-		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\Update\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/activity_creator.install
@@ -4041,11 +4036,6 @@ parameters:
 			path: modules/social_features/social_book/social_book.install
 
 		-
-			message: "#^Function social_book_update_dependencies\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_book/social_book.install
-
-		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 2
 			path: modules/social_features/social_book/social_book.install
@@ -7664,11 +7654,6 @@ parameters:
 			path: modules/social_features/social_event/social_event.install
 
 		-
-			message: "#^Function social_event_update_dependencies\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/social_event.install
-
-		-
 			message: "#^Parameter \\#1 \\$entity_type_id of method Drupal\\\\Core\\\\Entity\\\\EntityTypeManagerInterface\\:\\:getStorage\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.install
@@ -8984,6 +8969,11 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module
 
 		-
+			message: "#^Constant Drupal\\\\social_group_default_route\\\\EventSubscriber\\\\RedirectSubscriber\\:\\:DEFAULT_CLOSED_ROUTE is unused.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
+
+		-
 			message: "#^Method Drupal\\\\social_group_default_route\\\\EventSubscriber\\\\RedirectSubscriber\\:\\:groupLandingPage\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
@@ -9387,11 +9377,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/src/FlexibleGroupContentVisibilityUpdate.php
-
-		-
-			message: "#^Method Drupal\\\\social_group_flexible_group\\\\SocialGroupFlexibleGroupConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/src/SocialGroupFlexibleGroupConfigOverride.php
 
 		-
 			message: "#^Method Drupal\\\\social_group_flexible_group\\\\Subscriber\\\\Route\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
@@ -9800,7 +9785,7 @@ parameters:
 
 		-
 			message: "#^Cannot call method getOutsiderRole\\(\\) on Drupal\\\\group\\\\Entity\\\\GroupType\\|null\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.install
 
 		-
@@ -10279,46 +10264,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_welcome_message/social_group_welcome_message.module
 
 		-
-			message: "#^Cannot call method fetchCol\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 2
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Cannot call method getComponent\\(\\) on Drupal\\\\Core\\\\Entity\\\\Entity\\\\EntityFormDisplay\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Cannot call method getComponent\\(\\) on Drupal\\\\layout_builder\\\\Entity\\\\LayoutBuilderEntityViewDisplay\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Cannot call method setComponent\\(\\) on Drupal\\\\Core\\\\Entity\\\\Entity\\\\EntityFormDisplay\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Cannot call method setComponent\\(\\) on Drupal\\\\layout_builder\\\\Entity\\\\LayoutBuilderEntityViewDisplay\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Cannot call method toArray\\(\\) on Drupal\\\\field\\\\Entity\\\\FieldStorageConfig\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function _social_group_set_permissions\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_install\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
 			message: "#^Function social_group_update_10201\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.install
@@ -10364,173 +10309,13 @@ parameters:
 			path: modules/social_features/social_group/social_group.install
 
 		-
-			message: "#^Function social_group_update_8001\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8002\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8004\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8004\\(\\) has parameter \\$sandbox with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8005\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8006\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8007\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8008\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8009\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8010\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8011\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8012\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8013\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8014\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8301\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8301\\(\\) has parameter \\$sandbox with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8302\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8302\\(\\) has parameter \\$sandbox with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8303\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8501\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8502\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8801\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8802\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8901\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8902\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8903\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8904\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8905\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8906\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Function social_group_update_8907\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
 			message: "#^Function social_group_update_dependencies\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.install
 
 		-
-			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_group_get_permissions expects string, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
 			message: "#^Parameter \\#2 \\$data of method Drupal\\\\Core\\\\Config\\\\CachedStorage\\:\\:write\\(\\) expects array, array\\|bool given\\.$#"
-			count: 3
+			count: 2
 			path: modules/social_features/social_group/social_group.install
 
 		-
@@ -10639,11 +10424,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Function _social_group_visibility_settings_submit\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Function _social_membership_delete_form_submit\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -10744,21 +10524,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Function social_group_form_entity_access_by_field_visibility_form_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function social_group_form_entity_access_by_field_visibility_form_alter\\(\\) has parameter \\$form with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function social_group_form_entity_access_by_field_visibility_form_alter\\(\\) has parameter \\$form_id with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Function social_group_form_node_form_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -10770,11 +10535,6 @@ parameters:
 
 		-
 			message: "#^Function social_group_get_all_groups\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function social_group_get_all_open_groups\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -10999,23 +10759,18 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Function template_preprocess_group_settings_help\\(\\) has no return type specified\\.$#"
+			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
-			count: 3
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Offset 'delete' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_group/social_group.module
 
 		-
 			message: "#^Offset 'edit' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
-			count: 4
+			count: 2
 			path: modules/social_features/social_group/social_group.module
 
 		-
@@ -11040,7 +10795,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$type of method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getDefaultGroupVisibility\\(\\) expects string, int\\|string\\|null given\\.$#"
-			count: 3
+			count: 2
 			path: modules/social_features/social_group/social_group.module
 
 		-
@@ -11190,7 +10945,7 @@ parameters:
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_group/src/EventSubscriber/RedirectSubscriber.php
 
 		-
@@ -11337,16 +11092,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_group\\\\Plugin\\\\Action\\\\SocialSendEmail\\:\\:execute\\(\\) has parameter \\$entity with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Block/GroupAddEventBlock.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Block/GroupAddTopicBlock.php
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
@@ -12188,11 +11933,6 @@ parameters:
 
 		-
 			message: "#^Function social_page_update_8908\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_page/social_page.install
-
-		-
-			message: "#^Function social_page_update_dependencies\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_page/social_page.install
 
@@ -13153,7 +12893,7 @@ parameters:
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 3
+			count: 2
 			path: modules/social_features/social_post/src/PostAccessControlHandler.php
 
 		-
@@ -14928,11 +14668,6 @@ parameters:
 			path: modules/social_features/social_search/social_search.install
 
 		-
-			message: "#^Function social_search_update_dependencies\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_search/social_search.install
-
-		-
 			message: "#^Function social_block_view_search_hero_block_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_search/social_search.module
@@ -15379,11 +15114,6 @@ parameters:
 
 		-
 			message: "#^Function social_topic_update_8909\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_topic/social_topic.install
-
-		-
-			message: "#^Function social_topic_update_dependencies\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_topic/social_topic.install
 
@@ -16326,3 +16056,8 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
+
+		-
+			message: "#^Negated boolean expression is always false.$#"
+			count: 2
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Join/SocialGroupInviteJoin.php

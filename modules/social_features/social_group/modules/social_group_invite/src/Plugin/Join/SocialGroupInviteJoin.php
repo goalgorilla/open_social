@@ -109,7 +109,7 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
       count($items = parent::actions($entity, $variables)) === 1 &&
       in_array($entity->bundle(), $this->types())
     ) {
-      if (count($items) === 0) {
+      if (!$items) {
         $items[] = ['attributes' => ['class' => ['btn-accent']]];
       }
       else {
