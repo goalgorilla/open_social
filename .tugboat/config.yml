@@ -80,3 +80,12 @@ services:
   # A database for storage of Open Social data.
   db:
     image: tugboatqa/mariadb:latest
+  # SOLR is used to power Open Social's search
+  solr:
+    image: ghcr.io/goalgorilla/ci-tugboat-solr:8.11
+    commands:
+      init:
+        - su -s /bin/sh -c "/opt/solr/bin/solr create_core -c drupal -force" solr
+      build:
+        - cd "/var/solr/data/drupal" && rm -rf conf
+        - cd "/var/solr/data/drupal" && ln -snf "/solr-conf/conf" conf

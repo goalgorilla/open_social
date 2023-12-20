@@ -64,6 +64,12 @@ jobs:
           - "1080"
       redis:
         image: redis:latest
+      solr:
+        image: ghcr.io/goalgorilla/ci-solr:8.11
+        env:
+          SOLR_SOLR_MEM_SIZE: 512m
+          PARTIAL_SEARCH_ENABLED: 0
+        options: --health-cmd="solr status" --health-interval=10s --health-timeout=5s --health-retries=3
 
     defaults:
       run:
@@ -177,6 +183,11 @@ jobs:
           - "1080"
       redis:
         image: redis:latest
+      solr:
+        image: ghcr.io/goalgorilla/ci-solr:8.11
+        env:
+          SOLR_SOLR_MEM_SIZE: 512m
+          PARTIAL_SEARCH_ENABLED: 0
 
     defaults:
       run:
@@ -343,6 +354,11 @@ jobs:
           - "1080"
       redis:
         image: redis:latest
+      solr:
+        image: ghcr.io/goalgorilla/ci-solr:8.11
+        env:
+          SOLR_SOLR_MEM_SIZE: 512m
+          PARTIAL_SEARCH_ENABLED: 0
       chrome:
         # We use an image based on zenika/alpine-chrome:latest so we can add
         # the start-up arguments that we need.
