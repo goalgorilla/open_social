@@ -498,15 +498,20 @@ class SocialDrupalContext extends DrupalContext {
 
 
   /**
-   * I Wait for (field_name) field be rendered.
+   * I wait (seconds) seconds for (field_name) (field_type) be rendered.
    *
-   * @When /^(?:|I )wait for "([^"]*)" field be rendered$/
-   */  public function iWaitForTheFieldBeRender(string $field_name): void {
+   * @When /^(?:|I )wait "([^"]*)" seconds for "([^"]*)" "([^"]*)" field be rendered$/
+   */
+  public function iWaitForTheFieldBeRender(string $seconds, string $field_name, string $field_type): void {
 
-    $ajax_timeout = $this->getMinkParameter('ajax_timeout');
-    $condition = sprintf("document.querySelectorAll('[name=\"%s\"').length > 0", $field_name);
-    if (!$this->getSession()->getDriver()->wait(1000 * $ajax_timeout, $condition)) {
-      throw new \Exception(sprintf("The %s field did not render within $ajax_timeout seconds.", $field_name));
+    $types = [
+      'link' => 'a[title',
+      'input' => 'input[name',
+    ];
+
+    $condition = sprintf("document.querySelectorAll('%s=\"%s\"]').length > 0", $types[$field_type], $field_name);
+    if (!$this->getSession()->getDriver()->wait(1000 * (int) $seconds, $condition)) {
+      throw new \Exception(sprintf("The %s field did not render within %s seconds.", $field_name, $seconds));
     }
   }
 
