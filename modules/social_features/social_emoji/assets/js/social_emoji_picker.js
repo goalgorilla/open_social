@@ -3,7 +3,7 @@
  * Provides an emoji picker via emoji-picker-element.
  */
 
-(function (Drupal, drupalSettings, once, Popper, tabbable, CKEDITOR) {
+(function (Drupal, drupalSettings, once, tabbable, CKEDITOR) {
 
   /**
    * Social emoji picker object instance.
@@ -398,4 +398,4 @@
     }
   };
 
-})(Drupal, drupalSettings, once, Popper, tabbable, window.CKEDITOR);
+})(Drupal, drupalSettings, once, tabbable, window.CKEDITOR);
