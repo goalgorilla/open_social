@@ -496,22 +496,35 @@ class SocialDrupalContext extends DrupalContext {
     }
   }
 
-
   /**
-   * I wait (seconds) seconds for (field_name) (field_type) be rendered.
+   * I wait for (field_name) (field_type) be rendered.
    *
-   * @When /^(?:|I )wait "([^"]*)" seconds for "([^"]*)" "([^"]*)" field be rendered$/
+   * @When /^(?:|I )wait for "([^"]*)" "([^"]*)" field be rendered$/
    */
-  public function iWaitForTheFieldBeRender(string $seconds, string $field_name, string $field_type): void {
+  public function iWaitForTheFieldBeRender(string $field_name, string $field_type): void {
 
+    // Type of field accepted to be found.
     $types = [
       'link' => 'a[title',
       'input' => 'input[name',
     ];
 
+    // To avoid loop an infinite loop we create a countable and try to keep
+    // this function to be executed in max 60 seconds.
+    $check_count = 0;
+
+    // Field query-element to be found.
     $condition = sprintf("document.querySelectorAll('%s=\"%s\"]').length > 0", $types[$field_type], $field_name);
-    if (!$this->getSession()->getDriver()->wait(1000 * (int) $seconds, $condition)) {
-      throw new \Exception(sprintf("The %s field did not render within %s seconds.", $field_name, $seconds));
+
+    while (!$this->getSession()->getDriver()->wait(500, $condition)) {
+      // Each loop will wait 500 milliseconds, so when the countable arrived at
+      // 120 probably the script take about 60 seconds and this check will throw
+      // an exception with error.
+      if ($check_count === 120) {
+        throw new \Exception(sprintf("The %s field did not render within 60 seconds.", $field_name));
+      }
+
+      $check_count++;
     }
   }
 
