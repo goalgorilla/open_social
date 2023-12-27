@@ -1,0 +1,13 @@
+dependencies:
+  module:
+    - taxonomy_access_fix
+items:
+  user.role.authenticated:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'view terms in topic_types'
+          - 'view term names in topic_types'
+          - 'select terms in topic_types'
