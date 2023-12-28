@@ -4,6 +4,7 @@ namespace Drupal\social_event_addtocal\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -137,11 +138,19 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
    */
   public function getEventDescription(NodeInterface $node) {
     // Get event URL.
-    $node_url = $this->t('See the event page for details: @link', ['@link' => $node->toUrl('canonical', ['absolute' => TRUE])->toString()]);
-    // Update event description with adding event link.
-    $description = $node_url;
+    // It is impossible to generate canonical absolute URL for an entity without
+    // ID - it will trigger EntityMalformedException. This could happen when
+    // previewing the node, in that case we don't have to render a description.
+    try {
+      $description = $this->t('See the event page for details: @link', ['@link' => $node->toUrl('canonical', ['absolute' => TRUE])->toString()]);
 
-    return Unicode::truncate(strip_tags($description), 1000, TRUE, TRUE);
+      // Update event description with adding event link.
+      return Unicode::truncate(strip_tags($description), 1000, TRUE, TRUE);
+    }
+    catch (EntityMalformedException) {
+      return '';
+    }
+
   }
 
   /**
