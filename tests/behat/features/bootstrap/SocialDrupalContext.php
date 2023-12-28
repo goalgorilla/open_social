@@ -497,11 +497,11 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * I wait for (field_name) (field_type) be rendered.
+   * I wait for field: (field_name) of type: (field_type) to be rendered.
    *
-   * @When /^(?:|I )wait for "([^"]*)" "([^"]*)" field be rendered$/
+   * @When /^(?:|I )wait for field: "([^"]*)" of type: "([^"]*)" to be rendered$/
    */
-  public function iWaitForTheFieldBeRender(string $field_name, string $field_type): void {
+  public function iWaitForTheFieldToBeRendered(string $field_name, string $field_type): void {
 
     // Type of field accepted to be found.
     $types = [
@@ -513,7 +513,7 @@ class SocialDrupalContext extends DrupalContext {
     // this function to be executed in max 60 seconds.
     $check_count = 0;
 
-    // Field query-element to be found.
+    // Field query-element of field to be found.
     $condition = sprintf("document.querySelectorAll('%s=\"%s\"]').length > 0", $types[$field_type], $field_name);
 
     while (!$this->getSession()->getDriver()->wait(500, $condition)) {

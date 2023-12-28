@@ -54,10 +54,10 @@ Feature: Add event to calendar
     And I am viewing the event "Walking in the park"
     When I click "Enroll"
     And I wait for AJAX to finish
-    And I wait for "Enroll as guest" "link" field be rendered
+    And I wait for field: "Enroll as guest" of type: "link" to be rendered
     When I click "Enroll as guest"
     And I wait for AJAX to finish
-    And I wait for "field_first_name" "input" field be rendered
+    And I wait for field: "field_first_name" of type: "input" to be rendered
     And I fill in the following:
       | First name    | John         |
       | Last name     | Doe          |
