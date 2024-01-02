@@ -10,6 +10,14 @@ on:
       - main
       - "[0-9]+.[0-9]+.x"
 
+# We use the default concurrency grouping of allowing a single workflow per branch/PR/tag to run at the same time.
+# In case of PRs we only care about the results for the last workflow run, so we cancel workflows already in progress
+# when new code is pushed, in all other cases (branches/tags) we want to have a history for commits so it's easier to
+# find breakages when they occur (head_ref is non-empty only when the workflow is triggered from a PR).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.head_ref != '' }}
+
 # github.head_ref is only set when the workflow was triggered by a pull_request and it contains the value of the source branch of the PR.
 # github.ref_name will than only be used if the workflow was not triggered by a pull_request and it also just contains the branch name.
 env:
