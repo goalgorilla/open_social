@@ -51,3 +51,17 @@ function social_event_invite_uninstall() {
 function social_event_invite_update_last_removed() : int {
   return 11402;
 }
+
+/**
+ * Disable mail notification for message template .
+ */
+function social_event_invite_update_12001(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_invite', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
