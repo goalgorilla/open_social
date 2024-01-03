@@ -5,6 +5,7 @@ namespace Drupal\social_group;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -51,14 +52,14 @@ class CrossPostingService {
    *   The entity manager.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
-   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $group_content_plugin_manager
-   *   The group content enabler manager.
+   * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $groupRelationTypeManager
+   *   The group relation type manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $database, GroupContentEnablerManagerInterface $group_content_plugin_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $database, , GroupRelationTypeManagerInterface $groupRelationTypeManager) {
     $this->entityTypeManager = $entity_type_manager;
     $this->groupStorage = $entity_type_manager->getStorage('group');
     $this->database = $database;
-    $this->groupContentManager = $group_content_plugin_manager;
+    $this->groupRelationTypeManager = $groupRelationTypeManager;
   }
 
   /**
@@ -201,13 +202,14 @@ class CrossPostingService {
    *   An array with plugin ids.
    */
   public function getValidGroupContentPluginIds(): array {
-    $groupContentPluginIds = array_filter($this->groupContentManager->getInstalledIds(), function ($string) {
+    // @todo: getInstalledIds() should has a required param.
+    $groupContentPluginIds = array_filter($this->groupRelationTypeManager->getInstalledIds(), function ($string) {
       return strpos($string, 'group_node:') === 0;
     });
 
     $plugins = [];
     foreach ($groupContentPluginIds as $pluginId) {
-      $plugins = array_merge($plugins, $this->groupContentManager->getGroupContentTypeIds($pluginId));
+      $plugins = array_merge($plugins, $this->groupRelationTypeManager->getRelationshipTypeIds($pluginId));
     }
 
     return $plugins;
