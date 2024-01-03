@@ -215,7 +215,7 @@ jobs:
           # We must invert the exit code because we want to have no matches, but grep treats no matches as failure.
           ! MISNAMED_FILES=`grep -v -E '^([a-z\-]+\/)+[a-z0-9\-]+\.feature$' <<<"$TEST_FILES"`
           EXIT_CODE=$?
-          while read -r file; do
+          while read -r file && [ ! -z $file ]; do
             echo "::error file=$file::File and folder names for Behat tests must be kebab-case and alphanumeric."
           done <<< "$MISNAMED_FILES"
           exit $EXIT_CODE
