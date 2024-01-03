@@ -1,37 +1,32 @@
 <?php
 
-namespace Drupal\grequest\Plugin\GroupContentEnabler;
+namespace Drupal\grequest\Plugin\Group\Relation;
 
-use Drupal\group\Access\GroupAccessResult;
-use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\GroupContentInterface;
-use Drupal\group\Plugin\GroupContentEnablerBase;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\Core\Url;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\group\Access\GroupAccessResult;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
 
 /**
- * Provides a content enabler for users.
+ * Provides a group relation type for users.
  *
- * @deprecated and should be removed.
- *
- * @GroupContentEnabler(
+ * @GroupRelationType(
  *   id = "group_membership_request",
- *   label = @Translation("Group membership request"),
- *   description = @Translation("Adds users as requesters for the group."),
+ *   label = @Translation("Group user"),
+ *   description = @Translation("Adds users to groups without making them members."),
  *   entity_type_id = "user",
- *   pretty_path_key = "request",
+ *   pretty_path_key = "user",
  *   reference_label = @Translation("Username"),
- *   reference_description = @Translation("The name of the user you want to make a member"),
- *   handlers = {
- *     "permission_provider" = "Drupal\group\Plugin\GroupContentPermissionProvider",
- *   },
+ *   reference_description = @Translation("The name of the user you want to add to the group"),
+ *   admin_permission = "administer user_as_content"
  * )
  */
-class GroupMembershipRequest extends GroupContentEnablerBase {
+class GroupMembershipRequest extends GroupRelationBase {
 
   /**
    * Invitation created and waiting for user's response.
@@ -61,7 +56,12 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
         'url' => new Url(
           'grequest.request_membership',
           ['group' => $group->id()],
-          ['query' => ['destination' => Url::fromRoute('<current>')->toString()]]
+          [
+            'query' => [
+              'destination' => Url::fromRoute('<current>')
+                ->toString()
+            ]
+          ]
         ),
         'weight' => 99,
       ];
