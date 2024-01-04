@@ -678,3 +678,33 @@ function social_group_flexible_group_update_111102(): void {
   $config->set("new_revision", FALSE);
   $config->save();
 }
+
+/**
+ * Add taxonomy permission with the Taxonomy Access Fix is enabled.
+ */
+function social_group_flexible_group_update_120001(): void {
+  // Nothing to do if the module is not installed.
+  if (!\Drupal::moduleHandler()->moduleExists("taxonomy_access_fix")) {
+    return;
+  }
+
+  // Permission to grant.
+  $taxonomy_permissions = [
+    'view terms in group_type',
+    'view term names in group_type',
+    'select terms in group_type',
+  ];
+
+  // Load the permission.
+  $entity_type_manager = \Drupal::entityTypeManager();
+  /** @var \Drupal\user\RoleInterface $role */
+  $role = $entity_type_manager->getStorage('user_role')->load('authenticated');
+
+  // If the role is not have the permission, grant permission.
+  foreach ($taxonomy_permissions as $taxonomy_permission) {
+    if (!$role->hasPermission($taxonomy_permission)) {
+      $role->grantPermission($taxonomy_permission);
+      $role->save();
+    }
+  }
+}
