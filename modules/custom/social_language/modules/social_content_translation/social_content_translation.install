@@ -64,33 +64,8 @@ function social_content_translation_install_language_settings_for_entities() {
 }
 
 /**
- * Add support translations for entities.
+ * Implements hook_update_last_removed().
  */
-function social_content_translation_update_8001() {
-  $module_names = [
-    'social_group_flexible_group',
-  ];
-
-  $config = \Drupal::configFactory()->getEditable('social_content_translation.settings');
-
-  foreach ($module_names as $module_name) {
-    $config->set($module_name, TRUE);
-    $config->save(TRUE);
-  }
-}
-
-/**
- * Add translations compatibility for Topics.
- */
-function social_content_translation_update_10301() {
-  $module_names = [
-    'social_topic',
-  ];
-
-  $config = \Drupal::configFactory()->getEditable('social_content_translation.settings');
-
-  foreach ($module_names as $module_name) {
-    $config->set($module_name, TRUE);
-    $config->save(TRUE);
-  }
+function social_content_translation_update_last_removed() : int {
+  return 10301;
 }

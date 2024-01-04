@@ -5,79 +5,9 @@
  * Contains install and update hooks.
  */
 
-use Drupal\Core\Config\FileStorage;
-
 /**
- * Enable editor advanced link module.
+ * Implements hook_update_last_removed().
  */
-function social_editor_update_8901() {
-  \Drupal::service('module_installer')->install(['editor_advanced_link']);
-}
-
-/**
- * Added editor advanced link html attributes.
- */
-function social_editor_update_8903() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_editor', 'social_editor_update_8903');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Added editor table widget for basic_html format.
- */
-function social_editor_update_8904() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_editor', 'social_editor_update_8904');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Add aligment buttons to mail_html text format.
- */
-function social_editor_update_9000(): string {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_editor', 'social_editor_update_9000');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Enable ckeditor5 module.
- */
-function social_editor_update_9001(): void {
-  \Drupal::service('module_installer')->install(['ckeditor5']);
-}
-
-/**
- * Switch text formats to use ckeditor5.
- */
-function social_editor_update_9002(): void {
-  // Install new configs.
-  $config_files = [
-    'editor.editor.basic_html' => 'editor.editor.basic_html_9002',
-    'editor.editor.full_html' => 'editor.editor.full_html_9002',
-    'editor.editor.mail_html' => 'editor.editor.mail_html_9002',
-  ];
-
-  $config_storage = \Drupal::service('config.storage');
-  $config_path = \Drupal::service('extension.list.module')->getPath('social_editor') . '/config/static/';
-  $source = new FileStorage($config_path);
-  foreach ($config_files as $origin_name => $update_name) {
-    $config_storage->write($origin_name, (array) $source->read($update_name));
-  }
+function social_editor_update_last_removed() : int {
+  return 9002;
 }

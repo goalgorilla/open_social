@@ -6,15 +6,8 @@
  */
 
 /**
- * Update event metatags.
+ * Implements hook_update_last_removed().
  */
-function social_metatag_update_11001(): string {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_metatag', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
+function social_metatag_update_last_removed() : int {
+  return 11001;
 }

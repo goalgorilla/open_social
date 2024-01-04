@@ -26,57 +26,10 @@ function alternative_frontpage_install(): void {
 }
 
 /**
- * Convert the old frontpage settings to the new config entity.
+ * Implements hook_update_last_removed().
  */
-function alternative_frontpage_update_11101(): void {
-  // Get the settings for authenticated users.
-  $alternative_frontpage = \Drupal::configFactory()->get('alternative_frontpage.settings');
-  $authenticated = $alternative_frontpage->get('frontpage_for_authenticated_user');
-  $storage = \Drupal::entityTypeManager()->getStorage('alternative_frontpage');
-
-  if (!empty($authenticated) && !$storage->load('authenticated')) {
-    // Create the new entry.
-    $storage = $storage->create([
-      'id' => 'authenticated',
-      'label' => 'Authenticated Users',
-      'path' => $authenticated,
-      'roles_target_id' => 'authenticated',
-    ]);
-    $storage->save();
-
-    \Drupal::configFactory()->getEditable('alternative_frontpage.settings')->delete();
-  }
-
-  // Get the settings for anonymous users.
-  $site_config = \Drupal::configFactory()->get('system.site');
-  $anonymous = $site_config->get('page.front');
-
-  if (!empty($anonymous) && !$storage->load('anonymous')) {
-    // Create the new entry.
-    $storage = $storage->create([
-      'id' => 'anonymous',
-      'label' => 'Anonymous Users',
-      'path' => $anonymous,
-      'roles_target_id' => 'anonymous',
-    ]);
-    $storage->save();
-  }
-
-  // Give the new permissions to sitemanager.
-  $permissions = [
-    'add alternative frontpage settings',
-    'delete alternative frontpage settings',
-    'edit alternative frontpage settings',
-  ];
-
-  user_role_grant_permissions('sitemanager', $permissions);
-}
-
-/**
- * Update contentmanager and sitemanager roles weight.
- */
-function alternative_frontpage_update_11102(): void {
-  alternative_frontpage_change_role_weight();
+function alternative_frontpage_update_last_removed() : int {
+  return 11102;
 }
 
 /**
@@ -87,6 +40,8 @@ function alternative_frontpage_update_11102(): void {
  * use the role with the highest weight to get an alternative front page for
  * this role, and it's logical that sitemanager and content manager should be
  * more powerful, then any custom role.
+ *
+ * @todo Remove this in https://www.drupal.org/project/social/issues/3412263.
  */
 function alternative_frontpage_change_role_weight(): void {
   /** @var \Drupal\user\RoleStorageInterface $roles_storage */

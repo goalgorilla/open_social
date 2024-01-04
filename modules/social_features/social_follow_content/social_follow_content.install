@@ -5,8 +5,6 @@
  * Install, update and uninstall functions for the social_follow_content module.
  */
 
-use Symfony\Component\Yaml\Yaml;
-
 /**
  * Implements hook_install().
  *
@@ -38,58 +36,8 @@ function social_follow_content_install() {
 }
 
 /**
- * Implements hook_update_dependencies().
+ * Implements hook_update_last_removed().
  */
-function social_follow_content_update_dependencies() {
-  // New config changes should run after the Update Helper module is enabled.
-  $dependencies['social_follow_content'][8801] = [
-    'social_core' => 8805,
-  ];
-
-  return $dependencies;
-}
-
-/**
- * Remove follow content button from Topic small teasers.
- */
-function social_follow_content_update_8001() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_follow_content', 'social_follow_content_update_8001');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Update message template "message.template.create_comment_following_node".
- *
- * Added new 'preview' and 'cta_button' tokens.
- */
-function social_follow_content_update_10301() {
-  $config_file = \Drupal::service('extension.list.module')->getPath('social_follow_content') . '/config/static/message.template.create_comment_following_node_10301.yml';
-  if (is_file($config_file)) {
-    $settings = Yaml::parse(file_get_contents($config_file));
-    if (is_array($settings)) {
-      $config = \Drupal::configFactory()
-        ->getEditable('message.template.create_comment_following_node');
-      $config->setData($settings)->save(TRUE);
-    }
-  }
-}
-
-/**
- * Update exposed filter button name.
- */
-function social_follow_content_update_11401(): string {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_follow_content', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
+function social_follow_content_update_last_removed() : int {
+  return 11401;
 }

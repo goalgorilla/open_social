@@ -5,8 +5,6 @@
  * Install, update and uninstall functions for the group_core_comments module.
  */
 
-use Drupal\user\Entity\Role;
-
 /**
  * Implements hook_install().
  *
@@ -23,19 +21,8 @@ function group_core_comments_install() {
 }
 
 /**
- * Enable 'delete all comments' permission for site manager users.
+ * Implements hook_update_last_removed().
  */
-function group_core_comments_update_8001(&$sandbox) {
-  $roles = Role::loadMultiple();
-
-  $permissions = [
-    'delete all comments',
-  ];
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'sitemanager') {
-      user_role_grant_permissions($role->id(), $permissions);
-    }
-  }
+function group_core_comments_update_last_removed() : int {
+  return 8001;
 }

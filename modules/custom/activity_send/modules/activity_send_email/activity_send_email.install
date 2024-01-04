@@ -5,8 +5,6 @@
  * Install, update and uninstall functions for the activity_send_email module.
  */
 
-use Drupal\Core\Database\Database;
-
 /**
  * Implements hook_uninstall().
  *
@@ -66,46 +64,8 @@ function activity_send_email_schema() {
 }
 
 /**
- * Add new database tables to store digest activities and digest timings in.
+ * Implements hook_update_last_removed().
  */
-function activity_send_email_update_8001() {
-  // Get the full spec for the new table.
-  $spec['user_activity_digest'] = [
-    'fields' => [
-      'uid' => [
-        'description' => 'The {user}.uid of the target user.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ],
-      'activity' => [
-        'description' => 'The {activity}.id.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ],
-      'frequency' => [
-        'description' => 'The frequency for this activity. It should match the EmailFrequency plugin id.',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ],
-      'timestamp' => [
-        'description' => 'The timestamp of when this item was inserted.',
-        'type' => 'int',
-        'length' => 11,
-        'not null' => TRUE,
-        'default' => 0,
-        'unsigned' => TRUE,
-      ],
-    ],
-    'indexes' => [
-      'uad_uid' => ['uid'],
-      'uad_frequency' => ['frequency'],
-    ],
-  ];
-
-  // Add the two tables.
-  $schema = Database::getConnection()->schema();
-  $schema->createTable('user_activity_digest', $spec['user_activity_digest']);
+function activity_send_email_update_last_removed() : int {
+  return 8001;
 }

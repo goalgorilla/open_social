@@ -5,8 +5,6 @@
  * Installation code for the activity_creator module.
  */
 
-use Drupal\Core\Database\Database;
-
 /**
  * Implements hook_schema().
  */
@@ -45,105 +43,8 @@ function activity_creator_schema() {
 }
 
 /**
- * Implements hook_update_dependencies().
+ * Implements hook_update_last_removed().
  */
-function activity_creator_update_dependencies() {
-  // New config changes should run after the Update Helper module is enabled.
-  $dependencies['activity_creator'][8801] = [
-    'social_core' => 8805,
-  ];
-
-  return $dependencies;
-}
-
-/**
- * Create new database table {activity_notification_status}.
- */
-function activity_creator_update_8001() {
-  $spec['activity_notification_status'] = [
-    'fields' => [
-      'uid' => [
-        'description' => 'The {user}.uid of user.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ],
-      'aid' => [
-        'description' => 'The {activity}.id of activity.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ],
-      'status' => [
-        'description' => 'The activity status.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 1,
-      ],
-    ],
-    'indexes' => [
-      'ans_uid' => ['uid'],
-      'ans_aid' => ['aid'],
-      'ans_uid_aid' => ['uid', 'aid'],
-      'ans_status' => ['status'],
-    ],
-  ];
-
-  $db = Database::getConnection();
-  $schema = $db->schema();
-  $schema->createTable('activity_notification_status', $spec['activity_notification_status']);
-}
-
-/**
- * Updates activities with status READ to SEEN.
- *
- * As we are removing the ACTIVITY_STATUS_READ, so we want to update all the
- * current activities with status as read to seen, so that we don't have any
- * dangling data in tables.
- */
-function activity_creator_update_8002() {
-  try {
-    $connection = Database::getConnection();
-    // Get all the activities with status READ.
-    $txn = $connection->startTransaction();
-
-    // Update all the activities status as READ to SEEN.
-    $connection->update('activity__field_activity_status')
-      ->fields(['field_activity_status_value' => 2])
-      ->condition('field_activity_status_value', 3)
-      ->execute();
-  }
-  catch (\PDOException $exception) {
-    \Drupal::logger('default')->error($exception->getMessage());
-    $txn->rollBack();
-  }
-}
-
-/**
- * Update cardinality for field_activity_recipient_user.
- *
- * After features removal accidentally the cardinality was set to 1 again,
- * due to #3087083 it should be set to UNLIMITED so one activity can be
- * send to multiple users. Noticed in #3125732.
- */
-function activity_creator_update_8801() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('activity_creator', 'activity_creator_update_8801');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Remove activities notification status if related entity not exist.
- *
- * @see activity_creator_post_update_8802_remove_orphaned_activities()
- * @see activity_creator_post_update_8803_remove_activities_with_no_related_entities()
- */
-function activity_creator_update_8802(&$sandbox) {
-  // Removed in https://www.drupal.org/project/social/issues/3171563.
+function activity_creator_update_last_removed() : int {
+  return 8802;
 }

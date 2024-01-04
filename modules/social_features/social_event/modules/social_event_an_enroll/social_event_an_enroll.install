@@ -50,20 +50,6 @@ function social_event_an_enroll_uninstall() {
 }
 
 /**
- * Implements hook_update_dependencies().
- */
-function social_event_an_enroll_update_dependencies(): array {
-  // New config changes should run after the VBO module changes
-  // the structure of views.
-  $dependencies['social_event_an_enroll'][11001] = [
-    'views_bulk_operations' => 8034,
-    'social_event_managers' => 11001,
-  ];
-
-  return $dependencies;
-}
-
-/**
  * Fix blocks visibility.
  */
 function _social_event_an_enroll_fix_blocks() {
@@ -114,114 +100,8 @@ function _social_event_an_enroll_alter_event_manage_enrollments_view(): void {
 }
 
 /**
- * Fix text of AU Enrollment Confirmation Email.
+ * Implements hook_update_last_removed().
  */
-function social_event_an_enroll_update_8001() {
-  $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
-  $config->set('event_an_enroll_email_subject', "You are enrolled in the event [node:title]");
-  $config->set('event_an_enroll_email_body', "You have been enrolled in the event [node:title]. You can cancel your enrollment anytime using the following link: [social_event_an_enroll:enrolled_event].");
-  $config->save();
-}
-
-/**
- * Enable Event AN Enroll globally by default.
- */
-function social_event_an_enroll_update_8002() {
-  $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
-  $config->set('event_an_enroll', TRUE);
-  $config->save();
-}
-
-/**
- * Set default value for Event AN Enroll and allow authors to change it.
- */
-function social_event_an_enroll_update_8003() {
-  $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
-  $config->set('event_an_enroll_default_value', FALSE);
-  $config->set('event_an_enroll_allow_edit', TRUE);
-  $config->save();
-}
-
-/**
- * Update description and label.
- */
-function social_event_an_enroll_update_8004() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event_an_enroll', 'social_event_an_enroll_update_8004');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Add translation compatibility for Event fields and views.
- */
-function social_event_an_enroll_update_8005() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event_an_enroll', 'social_event_an_enroll_update_8005');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Remove translation filter for the Manage enrollments view.
- */
-function social_event_an_enroll_update_10301() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event_an_enroll', 'social_event_an_enroll_update_10301');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Add a custom action to 'views.view.event_manage_enrollments'.
- *
- * Action ID: 'social_event_an_enroll_send_email_action'.
- */
-function social_event_an_enroll_update_11001(array &$sandbox): void {
-  $config = \Drupal::configFactory()->getEditable('views.view.event_manage_enrollments');
-  $selected_actions = $config->get('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions');
-
-  $preconfiguration = [];
-  if (!empty($selected_actions)) {
-    // Get the action_key of social_event_managers_send_email_action.
-    $action_key = array_search('social_event_managers_send_email_action', array_column($selected_actions, 'action_id'));
-    // Get the preconfiguration of social_event_managers_send_email_action.
-    $preconfiguration = $selected_actions[$action_key]['preconfiguration'];
-    // Remove regular 'social_event_managers_send_email_action' action.
-    unset($selected_actions[$action_key]);
-  }
-
-  $selected_actions[] = [
-    'action_id' => 'social_event_an_enroll_send_email_action',
-    'preconfiguration' => $preconfiguration,
-  ];
-
-  $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions', $selected_actions);
-  $config->save();
-}
-
-/**
- * Update exposed filter button name.
- */
-function social_event_an_enroll_update_11401(): string {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event_an_enroll', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
+function social_event_an_enroll_update_last_removed() : int {
+  return 11401;
 }

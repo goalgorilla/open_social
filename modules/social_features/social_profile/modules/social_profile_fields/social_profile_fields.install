@@ -5,7 +5,6 @@
  * The social profile fields install file.
  */
 
-use Drupal\Core\Config\FileStorage;
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\User;
 use Symfony\Component\Yaml\Yaml;
@@ -21,20 +20,6 @@ function social_profile_fields_install() {
   _social_profile_fields_update_search_index();
   _social_profile_fields_update_search_index('social_all');
   _social_profile_fields_nationalities();
-}
-
-/**
- * Disable and enable the search index, so the nickname field is added.
- */
-function social_profile_fields_update_8001() {
-  _social_profile_fields_update_search_index();
-}
-
-/**
- * Disable and enable the main search index, so the nickname field is added.
- */
-function social_profile_fields_update_8002() {
-  _social_profile_fields_update_search_index('social_all');
 }
 
 /**
@@ -78,31 +63,6 @@ function _social_profile_fields_update_search_index($index_id = 'social_users') 
 }
 
 /**
- * Add a field for nationality.
- */
-function social_profile_fields_update_8003() {
-  $entity_type_ids = [
-    'taxonomy.vocabulary.' => 'taxonomy_vocabulary',
-    'field.storage.profile.field_profile_' => 'field_storage_config',
-    'field.field.profile.profile.field_profile_' => 'field_config',
-  ];
-
-  $path = \Drupal::service('extension.list.module')->getPath('social_profile_fields') . '/config/static/';
-
-  foreach ($entity_type_ids as $prefix => $entity_type_id) {
-    $config_file = $path . $prefix . 'nationality_8003.yml';
-    $settings = Yaml::parseFile($config_file);
-
-    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
-    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
-
-    $storage->createFromStorageRecord($settings)->save();
-  }
-
-  _social_profile_fields_nationalities();
-}
-
-/**
  * Create taxonomy terms for nationalities in the "Nationality" vocabulary.
  */
 function _social_profile_fields_nationalities() {
@@ -120,16 +80,8 @@ function _social_profile_fields_nationalities() {
 }
 
 /**
- * Make "Nationality" vocabulary translatable.
+ * Implements hook_update_last_removed().
  */
-function social_profile_fields_update_11201(): void {
-  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
-    return;
-  }
-
-  $config_storage = \Drupal::service('config.storage');
-  $config_path = \Drupal::service('extension.list.module')->getPath('social_profile_fields') . '/config/static';
-  $source = new FileStorage($config_path);
-
-  $config_storage->write('language.content_settings.taxonomy_term.nationality', (array) $source->read('language.content_settings.taxonomy_term.nationality_11201'));
+function social_profile_fields_update_last_removed() : int {
+  return 11201;
 }

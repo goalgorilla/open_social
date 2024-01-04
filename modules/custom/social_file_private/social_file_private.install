@@ -58,51 +58,8 @@ function social_file_private_install() : void {
 }
 
 /**
- * Move config overrides into active configuration.
+ * Implements hook_update_last_removed().
  */
-function social_file_private_update_11001() : void {
-  $field_storages = [
-    'field.storage.block_content.field_hero_image',
-    'field.storage.comment.field_comment_files',
-    'field.storage.group.field_group_image',
-    'field.storage.node.field_book_image',
-    'field.storage.node.field_event_image',
-    'field.storage.node.field_files',
-    'field.storage.node.field_page_image',
-    'field.storage.node.field_topic_image',
-    'field.storage.post.field_post_image',
-    'field.storage.profile.field_profile_image',
-    'field.storage.profile.field_profile_banner_image',
-    'field.storage.paragraph.field_hero_image',
-    'field.storage.paragraph.field_hero_small_image',
-  ];
-
-  foreach ($field_storages as $storage_id) {
-    $storage = FieldStorageConfig::load($storage_id);
-    // No need to update fields that aren't installed.
-    if ($storage === NULL) {
-      continue;
-    }
-    // Only update fields that aren't already private.
-    if ($storage->getSetting("uri_schema") === "public") {
-      $storage->setSetting("uri_schema", "private")->save();
-    }
-  }
-
-  $editor_ids = [
-    'editor.editor.basic_html',
-    'editor.editor.full_html',
-  ];
-
-  foreach ($editor_ids as $editor_id) {
-    $editor_config = \Drupal::configFactory()->getEditable($editor_id);
-    // Skip editor configs that don't yet exist.
-    if ($editor_config->isNew()) {
-      continue;
-    }
-    // Only update config that isn't already private.
-    if ($editor_config->get('image_upload.scheme') === "public") {
-      $editor_config->set('image_upload.scheme', 'private')->save();
-    }
-  }
+function social_file_private_update_last_removed() : int {
+  return 11001;
 }
