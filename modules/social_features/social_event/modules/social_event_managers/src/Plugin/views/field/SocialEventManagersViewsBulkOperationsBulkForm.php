@@ -176,8 +176,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
           if ($entity = $this->getEntity($row)) {
             $bulk_form_keys[$row_index] = self::calculateEntityBulkFormKey(
               $entity,
-              $row->{$base_field},
-              $row_index
+              $row->{$base_field}
             );
           }
         }
