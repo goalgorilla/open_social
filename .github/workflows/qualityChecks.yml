@@ -44,7 +44,7 @@ jobs:
       # result of the merge rather than the pre-merged code.
       # A separate path is used to keep our working directory clean.
       - name: Setup a temporary repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: ${{ github.workspace }}/tmp/repository
           # Since composer must clone from this we require all the history.
@@ -177,7 +177,7 @@ jobs:
     runs-on: ubuntu-22.04
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: streetsidesoftware/cspell-action@v5
 
   behat-linting:
@@ -185,7 +185,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install developer tooling
         run: composer install --no-interaction --no-progress --working-dir=tests

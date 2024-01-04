@@ -29,7 +29,7 @@ jobs:
     name: "Feature Discovery"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - run: sudo apt-get install jq
 
@@ -85,7 +85,7 @@ jobs:
         working-directory: /var/www
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: ${{ github.workspace }}/tmp
 
@@ -211,7 +211,7 @@ jobs:
           path: ${{ github.workspace }}
           key: ${{ github.sha }}-previous-version-${{ matrix.with_optional }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: ${{ github.workspace }}/tmp
 
