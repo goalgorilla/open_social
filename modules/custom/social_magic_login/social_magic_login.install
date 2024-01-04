@@ -6,10 +6,8 @@
  */
 
 /**
- * Preserve the functionality at the time the setting is introduced.
+ * Implements hook_update_last_removed().
  */
-function social_magic_login_update_11001() : void {
-  \Drupal::configFactory()->getEditable('social_magic_login.settings')
-    ->set('show_used_message', TRUE)
-    ->save();
+function social_magic_login_update_last_removed() : int {
+  return 11001;
 }

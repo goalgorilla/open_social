@@ -6,7 +6,6 @@
  */
 
 use Drupal\group\Entity\GroupType;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -33,33 +32,8 @@ function _social_group_request_set_permissions() {
 }
 
 /**
- * Update the listed below message template files as per new email style.
- *
- * 1. message.template.approve_request_join_group
- * 2. message.template.request_to_join_a_group.
- *
- * Added new 'preview' and 'cta_button' tokens to these templates.
+ * Implements hook_update_last_removed().
  */
-function social_group_request_update_10301() {
-  // Prepare the path.
-  $path = \Drupal::service('extension.list.module')->getPath('social_group_request') . '/config/static/';
-
-  $message_templates = [
-    'message.template.approve_request_join_group' => $path . 'message.template.approve_request_join_group_10301.yml',
-    'message.template.request_to_join_a_group' => $path . 'message.template.request_to_join_a_group_10301.yml',
-  ];
-
-  // Retrieves the configuration factory.
-  $config_factory = \Drupal::configFactory();
-
-  // Update each template file.
-  foreach ($message_templates as $key => $config_file) {
-    if (is_file($config_file)) {
-      $settings = Yaml::parse(file_get_contents($config_file));
-      if (is_array($settings)) {
-        $config = $config_factory->getEditable($key);
-        $config->setData($settings)->save(TRUE);
-      }
-    }
-  }
+function social_group_request_update_last_removed() : int {
+  return 10301;
 }

@@ -111,11 +111,8 @@ function download_count_install() {
 }
 
 /**
- * Increase download count flood window from 2 to 5 seconds.
+ * Implements hook_update_last_removed().
  */
-function download_count_update_8001(&$sandbox) {
-  $config = \Drupal::service('config.factory')
-    ->getEditable('download_count.settings');
-  $config->set('download_count_flood_window', 5);
-  $config->save();
+function download_count_update_last_removed() : int {
+  return 8001;
 }

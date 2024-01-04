@@ -5,8 +5,6 @@
  * The Social post photo installation.
  */
 
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
-
 /**
  * Install hook for Social Post Photo.
  */
@@ -68,65 +66,8 @@ function social_post_photo_uninstall() {
 }
 
 /**
- * Set the number of comments on Post Teaser and Full display.
+ * Implements hook_update_last_removed().
  */
-function social_post_photo_update_8001() {
-  \Drupal::service('config.installer')->installDefaultConfig('module', 'social_post_photo');
-}
-
-/**
- * Create "Featured" view display for photo post.
- */
-function social_post_photo_update_8002() {
-  if (!EntityViewDisplay::load('post.photo.featured')) {
-    $display = EntityViewDisplay::load('post.photo.default')->toArray();
-    $display = array_merge($display, [
-      'uuid' => NULL,
-      '_core' => NULL,
-      'targetEntityType' => 'post',
-      'mode' => 'featured',
-    ]);
-    EntityViewDisplay::create($display)->save();
-  }
-}
-
-/**
- * Change placeholder text of the post text field.
- */
-function social_post_photo_update_8901() {
-  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
-  $update_helper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $update_helper->executeUpdate('social_post_photo', 'social_post_photo_update_8901');
-
-  // Output logged messages to related channel of update execution.
-  return $update_helper->logger()->output();
-}
-
-/**
- * Display field_album for post photo featured view mode.
- */
-function social_post_photo_update_10201() {
-  $config = \Drupal::configFactory()->getEditable('core.entity_view_display.post.photo.featured');
-  $content = $config->get('content');
-  $hidden = $config->get('hidden');
-
-  $content['field_album'] = [
-    'type' => 'social_album_entity_reference_label',
-    'weight' => 4,
-    'region' => 'content',
-    'label' => 'hidden',
-    'settings' => ['link' => TRUE],
-    'third_party_settings' => [],
-  ];
-
-  if (in_array('field_album', $hidden)) {
-    unset($hidden['field_album']);
-  }
-
-  $config
-    ->set('content', $content)
-    ->set('hidden', $hidden)
-    ->save();
+function social_post_photo_update_last_removed() : int {
+  return 10201;
 }

@@ -14,22 +14,8 @@ function social_node_install() {
 }
 
 /**
- * Remove "gnode_anonymous" realm for nodes without "public" visibility.
+ * Implements hook_update_last_removed().
  */
-function social_node_update_11901(): void {
-  // Get all nodes with "public" visibility.
-  $nids = \Drupal::database()->select('node__field_content_visibility', 't')
-    ->fields('t', ['entity_id'])
-    ->condition('field_content_visibility_value', 'public', '<>')
-    ->execute()->fetchAllKeyed(0, 0);
-
-  if (empty($nids)) {
-    return;
-  }
-
-  // Remove anonymous realms from database for given nodes.
-  \Drupal::database()->delete('node_access')
-    ->condition('realm', 'gnode_anonymous')
-    ->condition('nid', $nids, 'IN')
-    ->execute();
+function social_node_update_last_removed() : int {
+  return 11901;
 }

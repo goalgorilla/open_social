@@ -6,36 +6,12 @@
  */
 
 /**
- * Set the default export plugins normal users can use.
- */
-function social_user_export_update_8001() : void {
-  $plugins = [
-    'display_name' => 'display_name',
-    'user_first_name' => 'user_first_name',
-    'user_last_name' => 'user_last_name',
-  ];
-
-  // Set the default export plugins normal users can use.
-  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_export.settings');
-  $config->set('plugins', $plugins)->save();
-}
-
-/**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_user_export.
  */
 function social_user_export_install(): void {
   // Add changes to user_admin_people view.
-  _social_user_export_alter_user_admin_people_view();
-}
-
-/**
- * Adds custom action in user_admin_people.
- *
- * Action ID: 'social_user_export_enrollments_action' action.
- */
-function _social_user_export_alter_user_admin_people_view(): void {
   $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
   $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
   $selected_actions[] = [
@@ -49,17 +25,8 @@ function _social_user_export_alter_user_admin_people_view(): void {
 }
 
 /**
- * The emptied hook.
+ * Implements hook_update_last_removed().
  */
-function social_user_export_update_11001(array &$sandbox): void {
-  // Moved to separate sequential update hook.
-  // @see: social_user_export_update_11002
-}
-
-/**
- * Empty.
- */
-function social_user_export_update_11002(array &$sandbox): void {
-  // Moved to post-update hook.
-  // See social_user_export_post_update_export_action.
+function social_user_export_update_last_removed() : int {
+  return 11002;
 }

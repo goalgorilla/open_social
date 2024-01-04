@@ -5,8 +5,6 @@
  * Install and update functions for the social_profile_organization_tag module.
  */
 
-use Drupal\Core\Config\FileStorage;
-
 /**
  * Implements hook_install().
  */
@@ -34,16 +32,8 @@ function social_profile_organization_tag_install() {
 }
 
 /**
- * Make "Profile Organization Tag" vocabulary translatable.
+ * Implements hook_update_last_removed().
  */
-function social_profile_organization_tag_update_11201(): void {
-  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
-    return;
-  }
-
-  $config_storage = \Drupal::service('config.storage');
-  $config_path = \Drupal::service('extension.list.module')->getPath('social_profile_organization_tag') . '/config/static';
-  $source = new FileStorage($config_path);
-
-  $config_storage->write('language.content_settings.taxonomy_term.profile_organization_tag', (array) $source->read('language.content_settings.taxonomy_term.profile_organization_tag_11201'));
+function social_profile_organization_tag_update_last_removed() : int {
+  return 11201;
 }

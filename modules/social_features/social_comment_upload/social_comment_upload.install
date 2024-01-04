@@ -17,17 +17,8 @@ function social_comment_upload_install() {
 }
 
 /**
- * Set default values for social comment upload access.
+ * Implements hook_update_last_removed().
  */
-function social_comment_upload_update_8001() {
-  // This update we introduce some settings for which we set the default values
-  // and permissions.
-  // By default attachment uploading is allowed.
-  \Drupal::configFactory()
-    ->getEditable('social_comment_upload.settings')
-    ->set('allow_upload_comments', TRUE)
-    ->save();
-
-  // SM should be able to change the permissions.
-  user_role_grant_permissions('sitemanager', ['administer social_comment_upload settings']);
+function social_comment_upload_update_last_removed() : int {
+  return 8001;
 }

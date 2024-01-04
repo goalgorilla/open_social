@@ -6,29 +6,8 @@
  */
 
 /**
- * Add translations support for "Featured Content" custom block fields.
+ * Implements hook_update_last_removed().
  */
-function social_featured_content_update_10300() {
-  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
-  $update_helper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $update_helper->executeUpdate('social_featured_content', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
-  return $update_helper->logger()->output();
-}
-
-/**
- * Update exposed filter button name.
- */
-function social_featured_content_update_11401(): string {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_featured_content', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
+function social_featured_content_update_last_removed() : int {
+  return 11401;
 }

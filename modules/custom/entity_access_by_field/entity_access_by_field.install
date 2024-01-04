@@ -5,9 +5,6 @@
  * Entity Access By Field module install file.
  */
 
-use Drupal\user\Entity\Role;
-use Drupal\user\RoleInterface;
-
 /**
  * Implements hook_install().
  *
@@ -30,88 +27,8 @@ function entity_access_by_field_install() {
 }
 
 /**
- * Set permissions.
+ * Implements hook_update_last_removed().
  */
-function entity_access_by_field_update_8001(&$sandbox) {
-  // Set some default permissions.
-  _entity_access_by_field_set_permissions();
-}
-
-/**
- * Set community visibility by default.
- */
-function entity_access_by_field_update_8002() {
-  \Drupal::configFactory()
-    ->getEditable('entity_access_by_field.settings')
-    ->set('default_visibility', 'community')
-    ->save();
-}
-
-/**
- * Remove default value from fields type of "entity_access_field".
- */
-function entity_access_by_field_update_8003() {
-  $field_map = \Drupal::service('entity_field.manager')->getFieldMapByFieldType('entity_access_field');
-  $config_factory = \Drupal::configFactory();
-
-  foreach ($field_map as $entity_type_id => $fields) {
-    foreach ($fields as $field_name => $data) {
-      foreach ($data['bundles'] as $bundle) {
-        $config_factory
-          ->getEditable("field.field.{$entity_type_id}.{$bundle}.{$field_name}")
-          ->set('default_value', [])
-          ->save();
-      }
-    }
-  }
-}
-
-/**
- * Function to set permissions.
- */
-function _entity_access_by_field_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _entity_access_by_field_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Get the permissions per role.
- *
- * @param string $role
- *   The role to fetch the permissions for.
- *
- * @return array
- *   An array containing permissions.
- */
-function _entity_access_by_field_get_permissions($role) {
-  // Anonymous.
-  $permissions[RoleInterface::ANONYMOUS_ID] = [];
-
-  // Authenticated.
-  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
-
-  // Verified.
-  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], []);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['verified'], [
-    'override disabled public visibility',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
+function entity_access_by_field_update_last_removed() : int {
+  return 8003;
 }

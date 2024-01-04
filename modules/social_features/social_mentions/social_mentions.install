@@ -5,8 +5,6 @@
  * Install, update and uninstall functions for the social_mentions module.
  */
 
-use Symfony\Component\Yaml\Yaml;
-
 /**
  * Implements hook_install().
  *
@@ -37,17 +35,6 @@ function social_mentions_install() {
 }
 
 /**
- * Set suggestion amount to the default of 8.
- */
-function social_mentions_update_8001() {
-  $config = \Drupal::configFactory()->getEditable('mentions.settings');
-
-  $config->set('suggestions_amount', 8);
-
-  $config->save();
-}
-
-/**
  * Set default settings.
  */
 function _social_mentions_set_default_config() {
@@ -65,51 +52,10 @@ function _social_mentions_set_default_config() {
 }
 
 /**
- * Update the listed below message template files as per new email style.
- *
- * 1. message.template.create_comment_reply_mention
- * 2. message.template.create_mention_comment
- * 3. message.template.create_mention_post.
- *
- * Added new 'preview' and 'cta_button' tokens to these templates.
+ * Implements hook_update_last_removed().
  */
-function social_mentions_update_10301() {
-  // Prepare the path.
-  $path = \Drupal::service('extension.list.module')->getPath('social_mentions') . '/config/static/';
-
-  $message_templates = [
-    'message.template.create_comment_reply_mention' => $path . 'message.template.create_comment_reply_mention_10301.yml',
-    'message.template.create_mention_comment' => $path . 'message.template.create_mention_comment_10301.yml',
-    'message.template.create_mention_post' => $path . 'message.template.create_mention_post_10301.yml',
-  ];
-
-  // Retrieves the configuration factory.
-  $config_factory = \Drupal::configFactory();
-
-  // Update each template file.
-  foreach ($message_templates as $key => $config_file) {
-    if (is_file($config_file)) {
-      $settings = Yaml::parse(file_get_contents($config_file));
-      if (is_array($settings)) {
-        $config = $config_factory->getEditable($key);
-        $config->setData($settings)->save(TRUE);
-      }
-    }
-  }
-}
-
-/**
- * Updating  configuration keys as per underlying schema.
- */
-function social_mentions_update_11001() : string {
-  /** @var \Drupal\update_helper\Updater $updater */
-  $updater = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updater->executeUpdate('social_mentions', 'social_mentions_update_11001');
-
-  // Output logged messages to related channel of update execution.
-  return $updater->logger()->output();
+function social_mentions_update_last_removed() : int {
+  return 11001;
 }
 
 /**

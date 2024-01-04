@@ -43,27 +43,8 @@ function social_follow_taxonomy_install() {
 }
 
 /**
- * Enable Social Follow Tag module if Social Tagging module installed.
+ * Implements hook_update_last_removed().
  */
-function social_follow_taxonomy_update_8801() {
-  if (
-    \Drupal::moduleHandler()->moduleExists('social_tagging') &&
-    !\Drupal::moduleHandler()->moduleExists('social_follow_tag')
-  ) {
-    \Drupal::service('module_installer')->install(['social_follow_tag']);
-  }
-}
-
-/**
- * Update exposed filter button name.
- */
-function social_follow_taxonomy_update_11401(): string {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_follow_taxonomy', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
+function social_follow_taxonomy_update_last_removed() : int {
+  return 11401;
 }

@@ -5,8 +5,6 @@
  * Install, update and uninstall functions for the social_language module.
  */
 
-use Drupal\Core\Serialization\Yaml;
-
 /**
  * Implements hook_install().
  *
@@ -41,81 +39,8 @@ function social_language_install() {
 }
 
 /**
- * Enable topic type and profile tag taxonomy translation.
+ * Implements hook_update_last_removed().
  */
-function social_language_update_8001() {
-  // Install the configuration added as part of this update.
-  $profile_tag_yml = <<<YAML
-langcode: en
-status: true
-dependencies:
-  config:
-    - taxonomy.vocabulary.profile_tag
-  module:
-    - content_translation
-third_party_settings:
-  content_translation:
-    enabled: true
-id: taxonomy_term.profile_tag
-target_entity_type_id: taxonomy_term
-target_bundle: profile_tag
-default_langcode: site_default
-language_alterable: true
-YAML;
-
-  $topic_types_yml = <<<YAML
-langcode: en
-status: true
-dependencies:
-  config:
-    - taxonomy.vocabulary.topic_types
-  module:
-    - content_translation
-third_party_settings:
-  content_translation:
-    enabled: true
-id: taxonomy_term.topic_types
-target_entity_type_id: taxonomy_term
-target_bundle: topic_types
-default_langcode: site_default
-language_alterable: true
-YAML;
-
-  $new_config = [
-    'language.content_settings.taxonomy_term.profile_tag' => $profile_tag_yml,
-    'language.content_settings.taxonomy_term.topic_types' => $topic_types_yml,
-  ];
-
-  $config_factory = \Drupal::configFactory();
-
-  foreach ($new_config as $name => $yml) {
-    $data = Yaml::decode($yml);
-    $config_factory->getEditable($name)->setData($data)->save(TRUE);
-  }
-
-  // Grant the new permissions for the sitemanager.
-  user_role_grant_permissions('sitemanager', [
-    'translate profile_tag taxonomy_term',
-    'translate topic_types taxonomy_term',
-  ]);
-}
-
-/**
- * Allow "Content Manager" role to manage translations.
- */
-function social_language_update_10301() {
-  $permissions = [
-    'create content translations',
-    'delete content translations',
-    'update content translations',
-  ];
-  user_role_grant_permissions('contentmanager', $permissions);
-}
-
-/**
- * Change the weight for the module "Social Language".
- */
-function social_language_update_10302() {
-  // Make sure the module has more weight then "Content Translation" module.
-  module_set_weight('social_language', 11);
+function social_language_update_last_removed() : int {
+  return 10302;
 }

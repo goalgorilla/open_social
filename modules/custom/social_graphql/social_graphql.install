@@ -16,21 +16,8 @@ function social_graphql_install() {
 }
 
 /**
- * Implements hook_update_dependencies().
+ * Implements hook_update_last_removed().
  */
-function social_graphql_update_dependencies() {
-  // Run the update hook only after an update hook in social_core.
-  $dependencies['social_graphql'][8901] = [
-    'social_core' => 10103,
-  ];
-
-  return $dependencies;
-}
-
-/**
- * Opt-in to the new entity access API.
- */
-function social_graphql_update_10101() {
-  // Removed deprecated settings use_entity_access_api.
-  // @see https://www.drupal.org/project/social/issues/3215750
+function social_graphql_update_last_removed() : int {
+  return 10101;
 }
