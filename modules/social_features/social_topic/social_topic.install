@@ -151,3 +151,33 @@ function social_topic_update_120001(): string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Add taxonomy permission with the Taxonomy Access Fix is enabled.
+ */
+function social_topic_update_120002(): void {
+  // Nothing to do if the module is not installed.
+  if (!\Drupal::moduleHandler()->moduleExists("taxonomy_access_fix")) {
+    return;
+  }
+
+  // Permission to grant.
+  $taxonomy_permissions = [
+    'view terms in topic_types',
+    'view term names in topic_types',
+    'select terms in topic_types',
+  ];
+
+  // Load the permission.
+  $entity_type_manager = \Drupal::entityTypeManager();
+  /** @var \Drupal\user\RoleInterface $role */
+  $role = $entity_type_manager->getStorage('user_role')->load('authenticated');
+
+  // If the role is not have the permission, grant permission.
+  foreach ($taxonomy_permissions as $taxonomy_permission) {
+    if (!$role->hasPermission($taxonomy_permission)) {
+      $role->grantPermission($taxonomy_permission);
+      $role->save();
+    }
+  }
+}
