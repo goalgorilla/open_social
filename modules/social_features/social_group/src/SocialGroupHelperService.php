@@ -12,9 +12,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\group\Entity\GroupContent;
-use Drupal\group\Entity\GroupContentInterface;
-use Drupal\group\Entity\GroupContentType;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_post\Entity\PostInterface;
@@ -165,7 +165,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
         ->load($entity_id);
 
       // Try to load the entity.
-      if ($group_content instanceof GroupContentInterface) {
+      if ($group_content instanceof GroupRelationshipInterface) {
         // Get group id.
         $gid = $group_content->getGroup()->id();
       }
@@ -177,7 +177,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       // Try to load the entity.
       if ($entity instanceof ContentEntityInterface) {
         // Try to load group content from entity.
-        if ($group_contents = GroupContent::loadByEntity($entity)) {
+        if ($group_contents = GroupRelationship::loadByEntity($entity)) {
           // Set the group id.
           $gid = reset($group_contents)->getGroup()->id();
         }
@@ -255,16 +255,22 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       // We need to get all group memberships,
       // GroupContentType::loadByEntityTypeId('user'); will also return
       // requests and invites for a given user entity.
-      $group_content_types = GroupContentType::loadByContentPluginId('group_membership');
+      $group_content_types = GroupRelationshipType::loadByPluginId('group_membership');
       $group_content_types = array_keys($group_content_types);
 
-      $query = $this->database->select('group_content_field_data', 'gcfd');
-      $query->addField('gcfd', 'gid');
-      $query->condition('gcfd.entity_id', (string) $uid);
-      $query->condition('gcfd.type', $group_content_types, 'IN');
-      $result = $query->execute();
+      // @todo: GroupRelationship (group_content) DB tables have been renamed
+      // (we shouldn’t be making custom database queries, but in some cases we do,
+      // so we must check whether we’ve done so for this table).
+      //      $query = $this->database->select('group_content_field_data', 'gcfd');
+      //      $query->addField('gcfd', 'gid');
+      //      $query->condition('gcfd.entity_id', (string) $uid);
+      //      $query->condition('gcfd.type', $group_content_types, 'IN');
+      //      $result = $query->execute();
+      //
+      //      $groups[$uid] = $result !== NULL ? $result->fetchCol() : [];
 
-      $groups[$uid] = $result !== NULL ? $result->fetchCol() : [];
+      // Temporary set return value.
+      $groups[$uid] = []
     }
 
     return $groups[$uid];
@@ -281,7 +287,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       $hidden_types = [];
       $this->moduleHandler->alter('social_group_hide_types', $hidden_types);
 
-      $group_content_types = GroupContentType::loadByEntityTypeId('user');
+      $group_content_types = GroupRelationshipType::loadByEntityTypeId('user');
       $group_content_types = array_keys($group_content_types);
       $query = $this->database->select('group_content_field_data', 'gcfd');
       $query->addField('gcfd', 'gid');
