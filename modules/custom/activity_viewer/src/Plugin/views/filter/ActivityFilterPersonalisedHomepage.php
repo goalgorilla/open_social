@@ -252,6 +252,13 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
   protected function getAvailableNodeIds(AccountInterface $user, array $memberships) {
     $nids = &drupal_static(__FUNCTION__);
     if (!isset($nids)) {
+
+      // @todo: Fix: "Base table or view not found: 1146 Table 'social.group_content_field_data' doesn't exist"
+      // GroupRelationship (group_content) DB tables have been renamed
+      // (we shouldn’t be making custom database queries, but in some cases we do,
+      // so we must check whether we’ve done so for this table).
+      return [];
+
       $query = $this->connection->select('node_field_data', 'nfd');
       $query->fields('nfd', ['nid']);
       $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
