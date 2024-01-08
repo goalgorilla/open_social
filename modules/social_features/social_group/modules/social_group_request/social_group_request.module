@@ -16,9 +16,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
-use Drupal\group\Entity\GroupContentTypeInterface;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
+use Drupal\group\Entity\GroupRelationshipTypeInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\message\Entity\Message;
 use Drupal\taxonomy\Entity\Term;
@@ -26,8 +26,8 @@ use Drupal\taxonomy\Entity\Term;
 /**
  * Implements hook_ENTITY_TYPE_insert() for group_content_type.
  */
-function social_group_request_group_content_type_insert(GroupContentTypeInterface $group_content_type) {
-  if ($group_content_type->getContentPluginId() === 'group_membership_request') {
+function social_group_request_group_content_type_insert(GroupRelationshipTypeInterface $group_content_type) {
+  if ($group_content_type->getPluginId() === 'group_membership_request') {
     // Add Message field.
     FieldConfig::create([
       'field_storage' => FieldStorageConfig::loadByName('group_content', 'field_grequest_message'),
@@ -98,9 +98,9 @@ function social_group_request_social_group_join_method_info(): array {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_group_request_group_content_insert(GroupContentInterface $group_content) {
-  $type = $group_content->getContentPlugin()->getPluginId();
-  $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasContentPlugin('group_membership_request');
+function social_group_request_group_content_insert(GroupRelationshipInterface $group_content) {
+  $type = $group_content->getPluginId();
+  $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasPlugin('group_membership_request');
 
   // If new membership is created, check related membership request exists.
   if ($type === 'group_membership' && $membership_request_enabled) {
@@ -112,7 +112,7 @@ function social_group_request_group_content_insert(GroupContentInterface $group_
     ];
     $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
 
-    /** @var \Drupal\group\Entity\GroupContentInterface $request */
+    /** @var \Drupal\group\Entity\GroupRelationshipInterface $request */
     foreach ($requests as $request) {
       try {
         $request
@@ -261,7 +261,7 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
     $group_type = $group->getGroupType();
     $prohibit = FALSE;
 
-    if ($group_type->hasContentPlugin('group_membership_request')) {
+    if ($group_type->hasPlugin('group_membership_request')) {
       /** @var \Drupal\social_group\JoinManagerInterface $manager */
       $manager = \Drupal::service('plugin.manager.social_group.join');
 
@@ -312,7 +312,7 @@ function social_group_request_preprocess_activity(array &$variables) {
       switch ($message->template->target_id) {
         case 'request_to_join_a_group':
           $activity_entity = $activity->getRelatedEntity();
-          if ($activity_entity instanceof GroupContentInterface) {
+          if ($activity_entity instanceof GroupRelationshipInterface) {
             $variables['full_url'] = Url::fromRoute('view.group_pending_members.membership_requests', [
               'arg_0' => $activity_entity->getGroup()->id(),
             ]);
@@ -321,7 +321,7 @@ function social_group_request_preprocess_activity(array &$variables) {
 
         case 'approve_request_join_group':
           $activity_entity = $activity->getRelatedEntity();
-          if ($activity_entity instanceof GroupContentInterface) {
+          if ($activity_entity instanceof GroupRelationshipInterface) {
             $variables['full_url'] = Url::fromRoute('social_group.stream', [
               'group' => $activity_entity->getGroup()->id(),
             ]);
