@@ -27,9 +27,9 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\group\Entity\GroupContent;
-use Drupal\group\Entity\GroupContentInterface;
-use Drupal\group\Entity\GroupContentType;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\GroupMembership;
@@ -987,10 +987,10 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       elseif (isset($entity)) {
         // If node don't belong to any group as a group content plugin
         // we don't need group visibility field.
-        /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
-        $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
+        /** @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $gc_manager */
+        $gc_manager = \Drupal::service('group_relation_type.manager');
 
-        if (!$gc_manager->getGroupContentTypeIds('group_node:' . $entity->bundle())) {
+        if (!$gc_manager->getRelationshipTypeIds('group_node:' . $entity->bundle())) {
           unset($form['groups']);
         }
       }
@@ -1443,22 +1443,22 @@ function _social_group_grant_admin_role($uid, $gid) {
     }
     // Check if the user is already a member in the group
     // (could be in update mode here).
-    /** @var \Drupal\group\GroupMembership $membership */
     $admin_role = $group->bundle() . '-group_admin';
+    /** @var \Drupal\group\GroupMembership $membership */
     $membership = $group->getMember($account);
 
     // Check what roles are there.
     $roles = [];
     if ($membership instanceof GroupMembership) {
-      foreach ($membership->getGroupContent()->get('group_roles') as $group_role_ref) {
+      foreach ($membership->getGroupRelationship()->get('group_roles') as $group_role_ref) {
         /** @var \Drupal\Core\Field\EntityReferenceFieldItemList $group_role_ref */
         $roles[] = $group_role_ref->getValue();
       }
 
       // No admin? Add it.
       if (!in_array($admin_role, $roles)) {
-        $membership->getGroupContent()->set('group_roles', ['target_id' => $admin_role]);
-        $membership->getGroupContent()->save();
+        $membership->getGroupRelationship()->set('group_roles', ['target_id' => $admin_role]);
+        $membership->getGroupRelationship()->save();
       }
     }
   }
@@ -1467,12 +1467,12 @@ function _social_group_grant_admin_role($uid, $gid) {
 /**
  * When creating a new group membership or a node with group reference.
  *
- * @param \Drupal\group\Entity\GroupContentInterface $group_content
+ * @param \Drupal\group\Entity\GroupRelationshipInterface $group_content
  *   The group content.
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function social_group_group_content_insert(GroupContentInterface $group_content) {
+function social_group_group_content_insert(GroupRelationshipInterface $group_content) {
   if ($group_content->getEntity()->getEntityTypeId() === 'user') {
     if ($group_content->bundle() === $group_content->getGroup()
       ->bundle() . '-group_membership') {
@@ -1816,13 +1816,13 @@ function social_group_menu_local_actions_alter(&$local_actions) {
 /**
  * Return user profile by given group membership content.
  *
- * @param \Drupal\group\Entity\GroupContent $group_content
+ * @param \Drupal\group\Entity\GroupRelationship $group_content
  *   Group content entity.
  *
  * @return \Drupal\profile\Entity\Profile|null
  *   Returns the Profile entity for the member.
  */
-function _social_group_get_member_profile(GroupContent $group_content) {
+function _social_group_get_member_profile(GroupRelationship $group_content) {
   $user_profile = NULL;
   // Get User entity.
   $user_entity = $group_content->getEntity();
@@ -1926,7 +1926,7 @@ function _social_group_cache_tags(GroupInterface $group) {
 
   $current_user = \Drupal::currentUser();
   if ($group_membership = $group->getMember($current_user)) {
-    $group_content = $group_membership->getGroupContent();
+    $group_content = $group_membership->getGroupRelationship();
     $tags[] = 'group_content:' . $group_content->id();
   }
 
@@ -2126,7 +2126,7 @@ function _social_group_get_current_group_types(AccountInterface $account) {
 function _social_group_delete_group() {
   // Get the group.
   if ($group = _social_group_get_current_group()) {
-    $group_content_types = GroupContentType::loadByEntityTypeId('node');
+    $group_content_types = GroupRelationshipType::loadByEntityTypeId('node');
     $group_content_types = array_keys($group_content_types);
 
     // Get all the node's related to the current group.
@@ -2340,7 +2340,7 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
     }
   }
 
-  // Now make sure the relevant GroupContent is removed or added.
+  // Now make sure the relevant GroupRelationship is removed or added.
   // But only when we are on the original language, we don't want to update
   // this when translating. The field is disabled for that scenario so no
   // need to run this.
@@ -2489,8 +2489,10 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
   foreach (GroupType::loadMultiple() as $group_type) {
     $new = !in_array($group_type->id(), $condition['value']);
-    $permissions = $group_type->getAnonymousRole()->getPermissions();
-    $hidden = !in_array('view group', $permissions);
+    $group_type_id = $group_type->id();
+    $anonymous_role = \Drupal::entityTypeManager()->getStorage('group_role')
+      ->load($group_type->id() . '-anonymous');
+    $hidden = !in_array('view group', $anonymous_role->getPermissions());
 
     if ($new && $hiddens === $hidden) {
       $condition['value'][] = $group_type->id();
