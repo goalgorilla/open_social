@@ -101,9 +101,8 @@ jobs:
           apt-get install -y jq
           # This gets all version info from composer for Open Social. We then
           # use jq to traverse and manipulate the JSON data to find ourselves
-          # the last stable major version before the current stable major
-          # version.
-          PREVIOUS_MAJOR=`composer info -a --format json goalgorilla/open_social | jq '.versions | map(select(contains("-") == false)) | map(split(".")[0] | tonumber) | unique | reverse | .[1]'`
+          # the current stable major version.
+          PREVIOUS_MAJOR=`composer info -a --format json goalgorilla/open_social | jq '.versions | map(select(contains("-") == false)) | map(split(".")[0] | tonumber) | unique | reverse | .[0]'`
           echo "Setting up update test from Open Social $PREVIOUS_MAJOR"
 
           # Also include a hardcoded version for instaclick/php-webdriver
