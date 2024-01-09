@@ -200,7 +200,7 @@ jobs:
           # test files that were changed in this PR. This is needed to avoid the TEST_FILES variable from containing a
           # single blank line in case no files are changed.
           TEST_FILES=`git diff --name-only --diff-filter=d origin/$BRANCH_NAME..HEAD -- 'tests/behat/features/capabilities/*.feature'`
-          if [ $TEST_FILES == '' ]; then
+          if [ "$TEST_FILES" == '' ]; then
             echo 'TEST_FILES=' >> $GITHUB_ENV
           else
             {
