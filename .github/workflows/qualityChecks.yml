@@ -183,6 +183,9 @@ jobs:
   behat-linting:
     name: Behat Linting
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
