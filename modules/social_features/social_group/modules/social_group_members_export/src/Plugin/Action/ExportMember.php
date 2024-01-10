@@ -54,8 +54,7 @@ class ExportMember extends ExportUser {
    * @see social_user_export_file_download()
    */
   protected function generateFilePath() : string {
-    $hash = md5(microtime());
-    return 'export-members-' . substr($hash, 20, 12) . '.csv';
+    return 'export-members-' . bin2hex(random_bytes(8)) . '.csv';
   }
 
 }
