@@ -1784,3 +1784,13 @@ function social_core_update_111206(): void {
     $key_value->set('existing_updates', $update_list);
   }
 }
+
+/**
+ * Install social emoji module.
+ */
+function social_core_update_121001(): void {
+  $modules = [
+    'social_emoji',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+}
