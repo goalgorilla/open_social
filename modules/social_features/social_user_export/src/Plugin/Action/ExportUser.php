@@ -275,8 +275,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *   The path to the file.
    */
   protected function generateFilePath() : string {
-    $hash = md5((string) microtime(TRUE));
-    return 'export-users-' . substr($hash, 20, 12) . '.csv';
+    return 'export-users-' . bin2hex(random_bytes(8)) . '.csv';
   }
 
   /**
