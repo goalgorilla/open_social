@@ -8,7 +8,7 @@
 <!-- *[Required] Paste a link to the drupal.org issue queue item. If any other issue trackers were used, include links to those too.* -->
 
 ## Theme issue tracker
-*[Required if applicable] Paste a link to the drupal.org theme issue queue item, either from [socialbase](https://www.drupal.org/project/socialbase) or [socialblue](https://www.drupal.org/project/socialblue). If any other issue trackers were used, include links to those too.*
+<!-- *[Required if applicable] Paste a link to the drupal.org theme issue queue item, either from [socialbase](https://www.drupal.org/project/socialbase) or [socialblue](https://www.drupal.org/project/socialblue). If any other issue trackers were used, include links to those too.* -->
 
 ## How to test
 <!--
