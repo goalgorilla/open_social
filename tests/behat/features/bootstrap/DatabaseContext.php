@@ -193,7 +193,13 @@ class DatabaseContext implements Context {
    * @When I run pending updates
    */
   public function executeUpdates() : void {
-    $this->drushDriver->drush("updatedb", ['-y']);
+    $output = $this->drushDriver->drush("updatedb", ['-y']);
+    // @todo Drush requires -y to continue running updates when the list of updates are presented but -y also bypasses
+    // the question about requirements check errors so we must manually check for the output until a better solutions is
+    // found in https://github.com/drush-ops/drush/issues/5806.
+    if (str_contains($output, "Requirements check reports errors. Do you wish to continue?")) {
+      throw new \Exception("The update showed requirement errors, manually run the updates using drush against the fixture used for the test to find the errors.");
+    }
   }
 
   /**
