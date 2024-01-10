@@ -226,3 +226,13 @@ function _social_core_create_menu_links() {
 function social_core_update_last_removed() : int {
   return 111206;
 }
+
+/**
+ * Install social emoji module.
+ */
+function social_core_update_121001(): void {
+  $modules = [
+    'social_emoji',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+}
