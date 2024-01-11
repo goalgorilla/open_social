@@ -11,3 +11,19 @@
 function social_lets_connect_update_last_removed() : int {
   return 10001;
 }
+
+/**
+ * Uninstall social_lets_connect_usage module.
+ */
+function social_lets_connect_update_12001() : void {
+  // This update hook was previously called social_core_update_10001 which meant
+  // it didn't run.
+  $modules = [
+    'social_lets_connect_usage',
+  ];
+  \Drupal::service('module_installer')->uninstall($modules);
+
+  // Delete configs.
+  $config = \Drupal::configFactory()->getEditable('social_lets_connect_usage.settings');
+  $config->delete();
+}
