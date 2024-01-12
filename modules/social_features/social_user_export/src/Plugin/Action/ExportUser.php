@@ -35,6 +35,11 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   use MessengerTrait;
 
   /**
+   * Starting characters for spreadsheet formulas.
+   */
+  private const FORMULAS_START_CHARACTERS = ['=', '-', '+', '@', "\t", "\r"];
+
+  /**
    * The User export plugin manager.
    *
    * @var \Drupal\social_user_export\Plugin\UserExportPluginManager
@@ -192,7 +197,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
       foreach ($this->pluginDefinitions as $plugin) {
         $configuration = $this->getPluginConfiguration($plugin['id'], $entity_id);
         $instance = $this->userExportPlugin->createInstance($plugin['id'], $configuration);
-        $row[] = $instance->getValue($entity);
+        $this->writeRow($row, $instance->getValue($entity));
       }
       $csv->insertOne($row);
     }
@@ -220,6 +225,26 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     }
 
     return [];
+  }
+
+  /**
+   * Write values to a CSV row.
+   *
+   * This also escapes strings starting with a formula character.
+   *
+   * @param array $row
+   *   The row to inject the value into.
+   * @param string $value
+   *   The value to insert.
+   */
+  protected function writeRow(array &$row, string $value): void {
+    // The single quote ' is recommended to prefix formulas.
+    if (\in_array(substr($value, 0, 1), self::FORMULAS_START_CHARACTERS, TRUE)) {
+      $row[] = "'" . $value;
+    }
+    else {
+      $row[] = $value;
+    }
   }
 
   /**
