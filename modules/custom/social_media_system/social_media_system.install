@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_media_system module.
+ */
+
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Add featured view mode to media system.
+ */
+function social_media_system_update_24101(): void {
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_media_system') . '/config/install';
+  $source = new FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $data = $source->read('core.entity_view_mode.media.featured');
+  if (is_array($data)) {
+    $config_storage->write('core.entity_view_mode.media.featured', $data);
+  }
+}
