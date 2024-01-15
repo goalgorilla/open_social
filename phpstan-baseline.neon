@@ -1341,6 +1341,16 @@ parameters:
 			path: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php
 
 		-
+			message: """
+        #^Call to deprecated function format_size\\(\\)\\:
+        in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
+          \\\\Drupal\\\\Core\\\\StringTranslation\\\\ByteSizeMarkup\\:\\:create\\(\\$size, \\$langcode\\)
+          instead\\.$#
+			"""
+			count: 1
+			path: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php
+
+		-
 			message: "#^Function dropdown_help\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/dropdown/dropdown.module
@@ -3091,6 +3101,15 @@ parameters:
 			path: modules/social_features/social_activity/social_activity.module
 
 		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_activity/social_activity.module
+
+		-
 			message: "#^Function social_activity_token_info\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/social_activity.tokens.inc
@@ -3238,6 +3257,15 @@ parameters:
 		-
 			message: "#^Function social_album_entity_extra_field_info\\(\\) has no return type specified\\.$#"
 			count: 1
+			path: modules/social_features/social_album/social_album.module
+
+		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 2
 			path: modules/social_features/social_album/social_album.module
 
 		-
@@ -3657,6 +3685,15 @@ parameters:
 
 		-
 			message: "#^Function social_book_social_user_account_header_create_links\\(\\) has parameter \\$context with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_book/social_book.module
+
+		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
 			count: 1
 			path: modules/social_features/social_book/social_book.module
 
@@ -4696,6 +4733,15 @@ parameters:
 			path: modules/social_features/social_core/social_core.module
 
 		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_core/social_core.module
+
+		-
 			message: "#^Function social_core_post_update_8701_enable_queue_storage\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_core/social_core.post_update.php
@@ -4951,7 +4997,25 @@ parameters:
 			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedConvertUrlToEmbedFilter.php
 
 		-
+			message: """
+        #^Call to deprecated function watchdog_exception\\(\\)\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
+          Use \\\\Drupal\\\\Core\\\\Utility\\\\Error\\:\\:logException\\(\\) instead\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedConvertUrlToEmbedFilter.php
+
+		-
 			message: "#^Not allowed to call private function _filter_url from module social_embed\\.$#"
+			count: 1
+			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlEmbedFilter.php
+
+		-
+			message: """
+        #^Call to deprecated function watchdog_exception\\(\\)\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
+          Use \\\\Drupal\\\\Core\\\\Utility\\\\Error\\:\\:logException\\(\\) instead\\.$#
+			"""
 			count: 1
 			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlEmbedFilter.php
 
@@ -5591,6 +5655,16 @@ parameters:
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_invite/src/Plugin/views/field/SocialEventInviteRecipientField.php
+
+		-
+			message: """
+        #^Call to deprecated method getEntityTranslation\\(\\) of class Drupal\\\\social_event_invite\\\\Plugin\\\\views\\\\field\\\\SocialEventInviteRecipientField\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
+          \\\\Drupal\\\\views\\\\Entity\\\\Render\\\\EntityTranslationRenderTrait\\:\\:getEntityTranslationByRelationship
+          instead\\.$#
+			"""
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Plugin/views/field/SocialEventInviteRecipientField.php
 
@@ -6574,6 +6648,26 @@ parameters:
 			path: modules/social_features/social_event/social_event.module
 
 		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 2
+			path: modules/social_features/social_event/social_event.module
+
+		-
+			message: """
+        #^Call to deprecated function system_time_zones\\(\\)\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. This function
+          is no longer used in Drupal core\\. Use
+          \\\\Drupal\\\\Core\\\\Datetime\\\\TimeZoneFormHelper\\:\\:getOptionsList\\(\\) or
+          \\\\DateTimeZone\\:\\:listIdentifiers\\(\\) instead\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_event/social_event.module
+
+		-
 			message: "#^Function social_event_post_update_10301_enable_event_enrollment\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.post_update.php
@@ -7109,6 +7203,15 @@ parameters:
 			path: modules/social_features/social_follow_content/social_follow_content.module
 
 		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_follow_content/social_follow_content.module
+
+		-
 			message: "#^Cannot call method access\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php
@@ -7334,6 +7437,15 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
 
 		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
+
+		-
 			message: "#^Function social_follow_taxonomy_token_info\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
@@ -7412,6 +7524,16 @@ parameters:
 			message: "#^Method Drupal\\\\social_follow_taxonomy\\\\Plugin\\\\views\\\\filter\\\\FollowTaxonomyViewsFilter\\:\\:valueForm\\(\\) has parameter \\$form with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/src/Plugin/views/filter/FollowTaxonomyViewsFilter.php
+
+		-
+			message: """
+        #^Call to deprecated function user_role_names\\(\\)\\:
+        in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
+          \\\\Drupal\\\\user\\\\Entity\\\\Role\\:\\:loadMultiple\\(\\) and, if necessary, an inline
+          implementation instead\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_follow_user/src/Form/SocialFollowUserSettingsForm.php
 
 		-
 			message: "#^Function social_footer_install\\(\\) has no return type specified\\.$#"
@@ -9144,6 +9266,15 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 2
+			path: modules/social_features/social_group/social_group.module
+
+		-
 			message: "#^Function social_group_token_info\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.tokens.inc
@@ -9659,6 +9790,15 @@ parameters:
 			path: modules/social_features/social_landing_page/social_landing_page.module
 
 		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_landing_page/social_landing_page.module
+
+		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_landing_page/src/ContentTranslationDefaultsConfigOverride.php
@@ -10038,6 +10178,15 @@ parameters:
 
 		-
 			message: "#^Function social_page_social_user_account_header_create_links\\(\\) has parameter \\$context with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_page/social_page.module
+
+		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
 			count: 1
 			path: modules/social_features/social_page/social_page.module
 
@@ -11307,6 +11456,15 @@ parameters:
 			path: modules/social_features/social_private_message/social_private_message.module
 
 		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.module
+
+		-
 			message: "#^Function social_private_message_tokens_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.tokens.inc
@@ -12250,6 +12408,15 @@ parameters:
 			path: modules/social_features/social_profile/social_profile.module
 
 		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 2
+			path: modules/social_features/social_profile/social_profile.module
+
+		-
 			message: "#^Function social_profile_post_update_10101_profile_names_update\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.post_update.php
@@ -12958,6 +13125,15 @@ parameters:
 			path: modules/social_features/social_topic/social_topic.module
 
 		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 2
+			path: modules/social_features/social_topic/social_topic.module
+
+		-
 			message: "#^Cannot call method access\\(\\) on Drupal\\\\taxonomy\\\\Entity\\\\Term\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_topic/src/Controller/SocialTopicController.php
@@ -13290,6 +13466,15 @@ parameters:
 		-
 			message: "#^Function template_preprocess_unwrapped_container\\(\\) has no return type specified\\.$#"
 			count: 1
+			path: modules/social_features/social_user/social_user.module
+
+		-
+			message: """
+        #^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
+        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+          replacement\\.$#
+			"""
+			count: 2
 			path: modules/social_features/social_user/social_user.module
 
 		-
