@@ -5,9 +5,11 @@
 
       if ($viewUserAdmin) {
         $viewUserAdmin.each(function () {
-          var $showMore = $(this).find('.views-ef-fieldset-container-1 > summary');
-          var textLess = Drupal.t('Show less');
-          var textMore = Drupal.t('Show more');
+
+          // Collapse button behavior.
+          var $showMore = $(this).find('.views-ef-fieldset-container-1 > summary'),
+              textLess = Drupal.t('Show less'),
+              textMore = Drupal.t('Show more');
 
           $showMore.on('click', function () {
             if ($showMore.attr('aria-expanded') === 'false') {
