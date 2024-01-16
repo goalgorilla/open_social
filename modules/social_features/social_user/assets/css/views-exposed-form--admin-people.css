@@ -26,30 +26,37 @@
 .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .select2-container .select2-selection--multiple .select2-search--inline {
   min-height: calc((var(--input-padding-vertical) + var(--input-border-size)) * 2 + var(--input-line-height) - 2px);
 }
-.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .select2-container .select2-selection--multiple .select2-search__field {
-  width: 100% !important;
-}
 .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   flex-wrap: wrap;
   gap: 0 20px;
 }
+.view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+  margin-bottom: 20px;
+}
+@media (min-width: 1025px) {
+  .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-actions {
+    margin-top: 26px;
+  }
+}
 .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .button {
-  margin: 0 0 20px;
   min-height: calc((var(--input-padding-vertical) + var(--input-border-size)) * 2 + var(--input-line-height));
+  margin: 0;
 }
 .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--user,
 .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--group {
   flex: 1;
   min-width: 318px;
 }
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
   .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--user,
   .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--group {
     width: 100%;
     min-width: auto;
-    flex: 0 0 100%;
   }
 }
 .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--role,
@@ -58,12 +65,11 @@
   max-width: 178px;
   min-width: 150px;
 }
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
   .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--role,
   .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-0 .form-item--status {
     min-width: auto;
     max-width: 100%;
-    flex: 0 0 100%;
   }
 }
 .view-user-admin-people form.views-exposed-form .views-ef-fieldset-root .views-ef-fieldset-container-1 {

@@ -85,6 +85,10 @@ function social_user_form_views_exposed_form_alter(array &$form, FormStateInterf
 
     if ($main_container) {
       $main_container['group']['#select2']['closeOnSelect'] = FALSE;
+
+      // Add wrapper to the filter and reset button.
+      $main_container['submit']['#prefix'] = '<div class="form-actions">';
+      $main_container['reset']['#suffix'] = '</div>';
     }
 
     if ($secondary_container) {
