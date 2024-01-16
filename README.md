@@ -41,4 +41,4 @@ We are testing [Tugboat](https://www.tugboat.qa/) to achieve the following:
 We use github actions to trigger
 1. PHPStan for static analysis of the code being contributed
 2. PHPCS for coding standards of the code being contributed
-3. PHPUnit for our unit tests instead of running it in Travis CI 
+3. PHPUnit for our unit tests instead of running it in Travis CI
