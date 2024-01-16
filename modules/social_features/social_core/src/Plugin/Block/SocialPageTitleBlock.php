@@ -169,7 +169,10 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
       ], $route_names))) {
         $translation = $this->entityRepository->getTranslationFromContext($node);
 
-        if ($translation instanceof NodeInterface) {
+        if (
+          $translation instanceof NodeInterface &&
+          !is_null($translation->getTitle())
+        ) {
           $node->setTitle($translation->getTitle());
         }
 
