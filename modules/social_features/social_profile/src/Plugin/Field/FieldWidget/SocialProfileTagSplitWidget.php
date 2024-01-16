@@ -57,10 +57,13 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
     // Do not render field if no options or not active.
     if (
       !$this->profileTagService->isActive() ||
-      !$this->profileTagService->hasContent() ||
-      empty($element['#options'])
+      !$this->profileTagService->hasContent()
     ) {
       return [];
+    }
+
+    if (empty($element['#options'])) {
+      return $element;
     }
 
     // Only for fields related to taxonomy terms.
