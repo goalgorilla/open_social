@@ -82,7 +82,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
    */
   protected function setUpCurrentUser(array $values = [], array $permissions = [], $admin = FALSE) : UserInterface {
     self::assertFalse($admin, "The current setUpCurrentUser workaround doesn't support admin users.");
-    $user = $this->createUser($values, current($permissions));
+    $user = $this->createUser($permissions, NULL, FALSE, $values);
     $this->setCurrentUser($user);
     return $user;
   }
