@@ -50,6 +50,11 @@ function social_content_translation_install_language_settings_for_entities() {
       // Otherwise lets install it.
       if (!$config_storage->exists($config_name)) {
         $file = $source->read($config_name);
+        // Checking if exist file and go to next when it doesn't exist.
+        if (!$file) {
+          continue;
+        }
+
         // We create a config as an entity because it allows to update field
         // definitions for translated fields.
         // @see content_translation_language_content_settings_insert()

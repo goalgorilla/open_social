@@ -75,6 +75,11 @@ class ImagePopupController extends ControllerBase {
       /** @var \Drupal\file\FileInterface $file */
       $file = $storage->load($file['target_id']);
 
+      // When don't have file-uri, go to the next.
+      if (is_null($file->getFileUri())) {
+        continue;
+      }
+
       $items[$found][] = $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri());
     }
 

@@ -255,6 +255,7 @@ class EmailTokenServices {
 
     if (
       $image instanceof FileInterface &&
+      !is_null($image->getFileUri()) &&
       $this->streamWrapperManager->getScheme($image->getFileUri()) !== 'private'
     ) {
       $image_url = $image_style->buildUrl($image->getFileUri());
@@ -263,7 +264,9 @@ class EmailTokenServices {
       // Add default image.
       if (!empty($default_image['id'])) {
         $file = File::load($default_image['id']);
-        $image_url = $image_style->buildUrl($file->getFileUri());
+        // The function getFileUri can return string or null and buildUrl only,
+        // accept string, I added this validation to avoid warnings.
+        $image_url = ($file && $file->getFileUri()) ? $image_style->buildUrl($file->getFileUri()) : NULL;
       }
     }
     // Add the profile image.

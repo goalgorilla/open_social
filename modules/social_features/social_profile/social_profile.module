@@ -724,7 +724,7 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
     $image = $entity->get('field_profile_image')->entity;
 
     // Must have a value and not be NULL.
-    if ($image instanceof FileInterface) {
+    if ($image instanceof FileInterface && !is_null($image->getFileUri())) {
       // Potentially the file is in the private file system. In that case,
       // anonymous user don't have access to it.
       $file_scheme = \Drupal::service('stream_wrapper_manager')->getScheme($image->getFileUri());

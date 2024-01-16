@@ -3452,6 +3452,11 @@ parameters:
 
 		-
 			message: "#^Cannot call method getFileUri\\(\\) on Drupal\\\\file\\\\Entity\\\\File\\|null\\.$#"
+			count: 2
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Not allowed to call private function _social_event_format_date from module social_activity\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/src/EmailTokenServices.php
 

@@ -178,9 +178,10 @@ class FollowTaxonomyViewsFilter extends TaxonomyIndexTid {
           );
 
         foreach ($terms as $term) {
-          $options[$term->id()] = $this->entityRepository
-            ->getTranslationFromContext($term)
-            ->label();
+          $entity = $this->entityRepository
+            ->getTranslationFromContext($term);
+
+          $options[$term->id()] = is_null($entity) ? NULL : $entity->label();
         }
       }
 
