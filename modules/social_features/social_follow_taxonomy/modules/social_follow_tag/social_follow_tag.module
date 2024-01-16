@@ -293,7 +293,9 @@ function social_follow_tag_entity_update(EntityInterface $entity) {
     }
 
     // Set the creation time because it is used as notification creation time.
-    $entity->setCreatedTime($entity->getChangedTime());
+    if (!is_null($entity->getChangedTime())) {
+      $entity->setCreatedTime($entity->getChangedTime());
+    }
     // Set the owner id because it is used as the id of the notification author.
     $entity->setOwnerId(\Drupal::currentUser()->id());
 

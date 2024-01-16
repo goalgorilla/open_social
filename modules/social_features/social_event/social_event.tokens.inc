@@ -188,7 +188,8 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
  */
 function _social_event_get_link_to_event_from_enrollment(int $event_enrollment_id, bool $as_link = FALSE) {
   // Check if the event still exists.
-  if ($event = _social_event_get_event_from_enrollment($event_enrollment_id)) {
+  $event = _social_event_get_event_from_enrollment($event_enrollment_id);
+  if ($event && !is_null($event->getTitle())) {
     if ($as_link) {
       $url_string = $event->toUrl('canonical')->toString(TRUE);
       return $url_string->getGeneratedUrl();

@@ -1486,7 +1486,7 @@ function social_group_group_content_insert(GroupContentInterface $group_content)
   $referenced_entity = $group_content->getEntity();
   if ($referenced_entity instanceof NodeInterface) {
     $author = $referenced_entity->getRevisionUser();
-    if ($author->id() !== NULL) {
+    if (!is_null($author)) {
       $group_content->setOwnerId((int) $author->id());
       $group_content->save();
     }

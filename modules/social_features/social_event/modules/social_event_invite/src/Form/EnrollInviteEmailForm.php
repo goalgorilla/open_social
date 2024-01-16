@@ -117,7 +117,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     if (is_array($email_logo) && !empty($email_logo)) {
       $file = File::load(reset($email_logo));
 
-      if ($file instanceof File) {
+      if ($file instanceof File && !is_null($file->getFileUri())) {
         $logo = $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri());
       }
     }

@@ -155,6 +155,11 @@ class SocialAlbumController extends ControllerBase {
       /** @var \Drupal\file\FileInterface $file */
       $file = $storage->load($file_id);
 
+      // When the file isn't have an URi, go to the next.
+      if (is_null($file->getFileUri())) {
+        continue;
+      }
+
       $items[$found][] = [
         'url' => $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri()),
         'pid' => $post_id,
