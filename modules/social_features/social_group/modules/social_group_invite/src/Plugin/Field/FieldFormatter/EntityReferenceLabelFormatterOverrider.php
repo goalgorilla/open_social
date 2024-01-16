@@ -47,7 +47,12 @@ class EntityReferenceLabelFormatterOverrider extends EntityReferenceLabelFormatt
      * @var \Drupal\group\Entity\GroupInterface $entity
      */
     foreach ($items->referencedEntities() as $delta => $entity) {
-      $entities[$delta] = $this->entityRepository->getTranslationFromContext($entity, $langcode);
+      $entity = $this->entityRepository->getTranslationFromContext($entity, $langcode);
+      if (is_null($entity)) {
+        continue;
+      }
+
+      $entities[$delta] = $entity;
     }
 
     return $entities;

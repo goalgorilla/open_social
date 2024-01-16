@@ -28,7 +28,7 @@ function social_swiftmail_get_logo(string $theme_id): string {
   if (!empty($email_logo[0])) {
     $file = File::load($email_logo[0]);
 
-    if ($file instanceof FileInterface) {
+    if ($file instanceof FileInterface && !is_null($file->getFileUri())) {
       $file_url_generator = \Drupal::service('file_url_generator');
       $logo = $file_url_generator->generateAbsoluteString($file->getFileUri());
     }

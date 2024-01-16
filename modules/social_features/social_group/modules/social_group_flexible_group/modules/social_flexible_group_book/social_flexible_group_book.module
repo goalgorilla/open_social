@@ -229,6 +229,10 @@ function _social_flexible_group_book_ajax_callback(array $form, FormStateInterfa
   }
 
   foreach ($books_in_group as $book) {
+    if (is_null($book)) {
+      continue;
+    }
+
     $options[$book->id()] = $book->label();
   }
 
