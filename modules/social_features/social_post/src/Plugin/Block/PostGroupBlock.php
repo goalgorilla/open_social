@@ -69,7 +69,7 @@ class PostGroupBlock extends PostBlock {
         $membership = $group->getMember($account);
         $context = [];
         if ($membership) {
-          $group_content = $membership->getGroupContent();
+          $group_content = $membership->getGroupRelationship();
           $context = ['group_content' => $group_content];
           if (
             $group->hasField('field_group_posts_enabled') &&
