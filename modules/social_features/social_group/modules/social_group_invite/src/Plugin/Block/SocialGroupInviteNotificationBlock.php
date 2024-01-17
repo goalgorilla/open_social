@@ -9,7 +9,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
-use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
+use Drupal\ginvite\Plugin\Group\Relation\GroupInvitation;
 use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -101,7 +101,7 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
     // Only when group invite is installed.
     if (
       $this->group === NULL ||
-      !$this->group->getGroupType()->hasContentPlugin('group_invitation')
+      !$this->group->getGroupType()->hasPlugin('group_invitation')
     ) {
       return [];
     }
