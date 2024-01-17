@@ -32,5 +32,9 @@ services:
     arguments: ['@transliteration']
 
   social_core.config_language_manager:
-    class:  Drupal\social_core\Service\ConfigLanguageManager
+    class: Drupal\social_core\Service\ConfigLanguageManager
     arguments: ['@language_manager']
+
+  social_core.layout:
+    class: Drupal\social_core\Service\LayoutService
+    arguments: ['@module_handler']
