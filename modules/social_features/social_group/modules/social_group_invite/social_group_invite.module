@@ -310,7 +310,7 @@ function _social_group_invite_current_type_enabled_invites() {
   // Check if group type has content plugin enabled.
   if ($group instanceof GroupInterface) {
     $group_type = $group->getGroupType();
-    if ($group_type->hasContentPlugin('group_invitation')) {
+    if ($group_type->hasPlugin('group_invitation')) {
       $enabled = TRUE;
     }
   }

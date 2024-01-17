@@ -18,7 +18,7 @@ use Drupal\file\Entity\File;
 use Drupal\ginvite\GroupInvitationLoader;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\GroupMembershipLoaderInterface;
-use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -103,11 +103,11 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   protected $token;
 
   /**
-   * The group content plugin manager.
+   * The group relation type manager
    *
-   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
-  protected $pluginManager;
+  protected $groupRelationTypeManager;
 
   /**
    * The file url generator.
@@ -133,8 +133,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *   The group membership loader.
    * @param \Drupal\ginvite\GroupInvitationLoader $invitation_loader
    *   Invitations loader service.
-   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager
-   *   The group content enabler manager.
+   * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $group_relation_type_manager
+   *   The group relation type manager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\Utility\Token $token
@@ -150,14 +150,14 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     MessengerInterface $messenger,
     GroupMembershipLoaderInterface $group_membership_loader,
     GroupInvitationLoader $invitation_loader,
-    GroupContentEnablerManagerInterface $plugin_manager,
+    GroupRelationTypeManagerInterface $group_relation_type_manager,
     ConfigFactoryInterface $config_factory,
     Token $token,
     FileUrlGenerator $file_url_generator
   ) {
     parent::__construct($route_match, $entity_type_manager, $temp_store_factory, $logger_factory, $messenger, $group_membership_loader, $invitation_loader);
     $this->group = $this->routeMatch->getParameter('group');
-    $this->pluginManager = $plugin_manager;
+    $this->groupRelationTypeManager = $group_relation_type_manager;
     $this->configFactory = $config_factory;
     $this->token = $token;
     $this->groupMembershipLoader = $group_membership_loader;
@@ -177,7 +177,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       $container->get('messenger'),
       $container->get('group.membership_loader'),
       $container->get('ginvite.invitation_loader'),
-      $container->get('plugin.manager.group_content_enabler'),
+      $container->get('group_relation_type.manager'),
       $container->get('config.factory'),
       $container->get('token'),
       $container->get('file_url_generator')
@@ -240,7 +240,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     ];
 
     // Load plugin configuration.
-    $group_plugin_collection = $this->pluginManager->getInstalled($group->getGroupType());
+    $group_plugin_collection = $this->groupRelationTypeManager->getInstalled($group->getGroupType());
     $group_invite_config = $group_plugin_collection->getConfiguration()['group_invitation'];
 
     // Get invite settings.

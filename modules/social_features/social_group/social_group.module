@@ -357,7 +357,7 @@ function social_group_preprocess_group(array &$variables) {
       'group' => $group->id(),
     ]);
     $variables['about_url'] = $about_url;
-    if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
+    if ($group->getGroupType()->hasPlugin('group_node:event')) {
       $variables['group_events'] = $group_statistics->getGroupNodeCount($group, 'event');
       $variables['group_events_label'] = \Drupal::translation()
         ->formatPlural($variables['group_events'],
@@ -365,7 +365,7 @@ function social_group_preprocess_group(array &$variables) {
           'events'
         );
     }
-    if ($group->getGroupType()->hasContentPlugin('group_node:topic')) {
+    if ($group->getGroupType()->hasPlugin('group_node:topic')) {
       $variables['group_topics'] = $group_statistics->getGroupNodeCount($group, 'topic');
       $variables['group_topics_label'] = \Drupal::translation()
         ->formatPlural($variables['group_topics'],
