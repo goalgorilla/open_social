@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_lazy_loading module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_lazy_loading.
+ */
+function social_lazy_loading_install(): void {
+  // Set default settings, prefer using native lazy loading.
+  \Drupal::configFactory()->getEditable('lazy.settings')
+    ->set('preferNative', TRUE)->save();
+}
+
+/**
+ * Set default settings, prefer using native lazy loading.
+ */
+function social_lazy_loading_update_12100(): void {
+  \Drupal::configFactory()->getEditable('lazy.settings')
+    ->set('preferNative', TRUE)->save();
+}
