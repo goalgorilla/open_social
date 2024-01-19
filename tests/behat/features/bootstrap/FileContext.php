@@ -14,6 +14,77 @@ use Psr\Http\Message\ResponseInterface;
 class FileContext extends RawMinkContext {
 
   /**
+   * Try to download file from url.
+   *
+   * @param string $url
+   *   The link url.
+   *
+   * @When I try to download :url
+   */
+  public function iTryToDownloadFile(string $url): void {
+    $this->iTryToDownloadFileStatusCode = NULL;
+    $this->iTryToDownloadFileResponse = NULL;
+
+    $cookies = $this->getSession()->getDriver()->getCookies();
+
+    //$hostname = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+    $hostname = $this->getMinkParameter('base_url');
+    if (strpos($url, $hostname) === FALSE) {
+      $url = $hostname . $url;
+    }
+
+    try {
+      $response = $this->getUrlWithGuzzle($cookies, $url);
+      $this->iTryToDownloadFileResponse = $response;
+      $this->iTryToDownloadFileStatusCode = $response->getStatusCode();
+    } catch (\Exception $e) {
+      $this->iTryToDownloadFileStatusCode = $e->getCode();
+    }
+  }
+
+  /**
+   * Validate the status code after you try to download file from url
+   * with "iTryToDownloadFile" method.
+   *
+   * Note: this step must be always after step "@When I try to download :url".
+   *
+   * @param $status_code
+   *   Status code
+   *
+   * @Then I should see response status code :statusCode
+   */
+  public function iShouldSeeResponseStatusCode($status_code) {
+    $responseStatusCode = $this->iTryToDownloadFileStatusCode;
+
+    if (!$responseStatusCode == intval($status_code)) {
+      throw new \RuntimeException('Did not see response status code "' . $status_code . '", but "' . $responseStatusCode . '"%s.');
+    }
+  }
+
+  /**
+   * Validate the response header value after you try to download file from url
+   * with "iTryToDownloadFile" method.
+   *
+   * Note: this step must be always after step "@When I try to download :url".
+   *
+   * @param $header
+   *   Response header key
+   * @param $value
+   *   Response header value
+   *
+   * @Then I should see in the response header :header with :value
+   */
+  public function iShouldSeeInTheHeader($header, $value) {
+    if ($this->iTryToDownloadFileResponse) {
+      if (!empty($this->iTryToDownloadFileResponse->getHeader($header)) && $this->iTryToDownloadFileResponse->getHeader($header)[0] !== $value) {
+        throw new \RuntimeException('There is no response header ' . $header . ' with value "' . $value. '"');
+      }
+    } else {
+      throw new \RuntimeException('Response is missing or is not valid. Response code: "' . $this->iTryToDownloadFileStatusCode . '". Also check if "I try to download :url" behat step was correctly triggered in previous step.');
+    }
+  }
+
+  /**
    * @param string $link_text
    *   The link url.
    * @param string $contents
