@@ -26,7 +26,7 @@ class GroupContext extends RawMinkContext {
   use GroupTrait;
 
   /**
-   * Keep track of all groups that are created so they can easily be removed.
+   * Keep track of all groups that are created, so they can easily be removed.
    */
   private array $groups = [];
 
@@ -67,14 +67,23 @@ class GroupContext extends RawMinkContext {
    * Create multiple groups at the start of a test.
    *
    * Creates group of a given type provided in the form:
-   * | author | title    | description     | author   | type        | language
-   * | user-1 | My title | My description  | username | open_group  | en
-   * | ...    | ...      | ...             | ...      | ...         | ...
+   * | author | title      | description     | author   | type        | language | field_group_allowed_visibility |
+   * | user-1 | My title 1 | My description  | username | open_group  | en       | public                         |
+   * | user-1 | My title 2 | My description  | username | open_group  | en       | public,community,group         |
+   * | ...    | ...        | ...             | ...      | ...         | ...      | ...                            |
    *
    * @Given groups:
    */
   public function createGroups(TableNode $groupsTable) {
     foreach ($groupsTable->getHash() as $groupHash) {
+
+      // @todo We might want to do add more generic approach for multi-value
+      // fields like "field_group_allowed_visibility".
+      if (isset($groupHash['field_group_allowed_visibility'])) {
+        $groupHash['field_group_allowed_visibility'] =
+          explode(',', $groupHash['field_group_allowed_visibility']);
+      }
+
       $group = $this->groupCreate($groupHash);
       $this->groups[$group->id()] = $group;
     }
