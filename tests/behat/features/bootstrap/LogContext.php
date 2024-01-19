@@ -8,7 +8,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Database\Query\PagerSelectExtender;
 use Drupal\Core\Database\Query\TableSortExtender;
-use Drupal\Core\Database\StatementWrapper;
+use Drupal\Core\Database\StatementWrapperIterator;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
@@ -205,10 +205,10 @@ class LogContext implements Context {
    * We must query for this manually taking inspiration from the DbLogController
    * because there's no service that provides proper non-database access.
    *
-   * @return \Drupal\Core\Database\StatementWrapper
+   * @return \Drupal\Core\Database\StatementWrapperIterator
    *   The result of the log message query.
    */
-  private function getLogMessages() : StatementWrapper {
+  private function getLogMessages() : StatementWrapperIterator {
     $query = \Drupal::database()->select('watchdog', 'w')
       ->extend(PagerSelectExtender::class)
       ->extend(TableSortExtender::class);
