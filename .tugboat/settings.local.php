@@ -27,8 +27,11 @@ $settings['hash_salt'] = hash('sha256', getenv('TUGBOAT_REPO_ID'));
 $settings['deployment_identifier'] = getenv('TUGBOAT_PREVIEW_ID');
 
 // Send e-mail using Tugboat's SMTP server so they are captured.
-$config['swiftmailer.transport']['transport'] = 'smtp';
-$config['swiftmailer.transport']['smtp_host'] = getenv('TUGBOAT_SMTP');
+$config['symfony_mailer.mailer_transport.sendmail']['plugin'] = 'smtp';
+$config['symfony_mailer.mailer_transport.sendmail']['configuration']['user'] = '';
+$config['symfony_mailer.mailer_transport.sendmail']['configuration']['pass'] = '';
+$config['symfony_mailer.mailer_transport.sendmail']['configuration']['port'] = '587';
+$config['symfony_mailer.mailer_transport.sendmail']['configuration']['host'] = getenv('TUGBOAT_SMTP');
 
 // Set a config sync directory to stop Drupal from showing us errors.
 $settings['config_sync_directory'] = "/var/www/config/sync";
