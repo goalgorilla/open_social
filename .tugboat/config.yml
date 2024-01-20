@@ -70,11 +70,6 @@ services:
           pmu social_demo
         # Change file owner again because of the way demo content is copied.
         chown -R www-data:www-data $DOCROOT
-        # Ensure SMPT gets created for Symfony mailer, the settings are taken
-        # care off in our settings.local.php, but we need to have the plugin created.
-        ../vendor/bin/drush \
-        --yes \
-        cset symfony_mailer.mailer_transport.sendmail plugin 'smtp'
       build: |
         cd $DOCROOT/..
         export BRANCH_NAME=$([ "$TUGBOAT_PREVIEW_TYPE" = "pullrequest" ] && echo "$TUGBOAT_GITHUB_HEAD" || echo "$TUGBOAT_PREVIEW_REF")
