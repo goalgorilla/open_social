@@ -10,6 +10,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Access\GroupAccessResult;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
 
 /**
@@ -103,7 +104,7 @@ class GroupMembershipRequest extends GroupRelationBase {
   /**
    * {@inheritdoc}
    */
-  protected function viewAccess(GroupContentInterface $group_content, AccountInterface $account) {
+  protected function viewAccess(GroupRelationshipInterface $group_content, AccountInterface $account) {
     $group = $group_content->getGroup();
     return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }
@@ -111,7 +112,7 @@ class GroupMembershipRequest extends GroupRelationBase {
   /**
    * {@inheritdoc}
    */
-  protected function updateAccess(GroupContentInterface $group_content, AccountInterface $account) {
+  protected function updateAccess(GroupRelationshipInterface $group_content, AccountInterface $account) {
     $group = $group_content->getGroup();
     return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }
@@ -119,7 +120,7 @@ class GroupMembershipRequest extends GroupRelationBase {
   /**
    * {@inheritdoc}
    */
-  protected function deleteAccess(GroupContentInterface $group_content, AccountInterface $account) {
+  protected function deleteAccess(GroupRelationshipInterface $group_content, AccountInterface $account) {
     $group = $group_content->getGroup();
     return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }

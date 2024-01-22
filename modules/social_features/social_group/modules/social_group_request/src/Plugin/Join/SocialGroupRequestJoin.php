@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
-use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
+use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\social_group\EntityMemberInterface;
 use Drupal\social_group\JoinBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -73,7 +73,7 @@ class SocialGroupRequestJoin extends JoinBase {
 
     $group_type = $group->getGroupType();
 
-    if (!$group_type->hasContentPlugin('group_membership_request')) {
+    if (!$group_type->hasPlugin('group_membership_request')) {
       return $items;
     }
 
@@ -114,14 +114,13 @@ class SocialGroupRequestJoin extends JoinBase {
       return $items;
     }
 
-    $types = $group
-      ->getGroupType()
-      ->getContentPlugin('group_membership_request')
-      ->getContentTypeConfigId();
+    $relation_type_id = $this->entityTypeManager
+      ->getStorage('group_content_type')
+      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
 
     $count = $this->entityTypeManager->getStorage('group_content')
       ->getQuery()
-      ->condition('type', $types)
+      ->condition('type', $relation_type_id)
       ->condition('gid', $group->id())
       ->condition('entity_id', $this->currentUser->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)

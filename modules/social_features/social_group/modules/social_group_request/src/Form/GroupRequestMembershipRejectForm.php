@@ -9,8 +9,8 @@ use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -29,7 +29,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
   /**
    * Group membership request.
    *
-   * @var \Drupal\group\Entity\GroupContentInterface
+   * @var \Drupal\group\Entity\GroupRelationshipInterface
    */
   protected $groupContent;
 
@@ -107,7 +107,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupContentInterface $group_content = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupRelationshipInterface $group_content = NULL) {
     $this->group = $group;
     $this->groupContent = $group_content;
 
