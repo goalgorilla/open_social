@@ -371,7 +371,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                 ],
                 'created' => [
                   'id' => 'created',
-                  'table' => 'group_content_field_data',
+                  'table' => 'group_relationship_field_data',
                   'field' => 'created',
                   'relationship' => 'none',
                   'group_type' => 'group',
@@ -441,7 +441,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                 ],
                 'gid' => [
                   'id' => 'gid',
-                  'table' => 'group_content_field_data',
+                  'table' => 'group_relationship_field_data',
                   'field' => 'gid',
                   'relationship' => 'none',
                   'group_type' => 'group',
@@ -507,7 +507,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                 ],
                 'id' => [
                   'id' => 'id',
-                  'table' => 'group_content_field_data',
+                  'table' => 'group_relationship_field_data',
                   'field' => 'id',
                   'relationship' => 'none',
                   'group_type' => 'group',

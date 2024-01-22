@@ -13,8 +13,8 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\Entity\Group;
 use Drupal\social_group_request\Form\GroupRequestMembershipRequestAnonymousForm;
@@ -87,27 +87,28 @@ class GroupRequestController extends ControllerBase {
   /**
    * Return the title for approve request confirmation page.
    */
-  public function getTitleApproveRequest(GroupInterface $group, GroupContentInterface $group_content) {
+  public function getTitleApproveRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
     return $this->t('Approve membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
   /**
    * Return the title for reject request confirmation page.
    */
-  public function getTitleRejectRequest(GroupInterface $group, GroupContentInterface $group_content) {
+  public function getTitleRejectRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
     return $this->t('Reject membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
   /**
    * Builds the form to create new membership on membership request approve.
    */
-  public function approveRequest(GroupInterface $group, GroupContentInterface $group_content) {
-    /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
-    $plugin = $group->getGroupType()->getContentPlugin('group_membership');
+  public function approveRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
+    $relation_type_id = $this->entityTypeManager()
+      ->getStorage('group_content_type')
+      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership');
 
     // Pre-populate a group membership from Membership request.
     $group_content = $this->entityTypeManager()->getStorage('group_content')->create([
-      'type' => $plugin->getContentTypeConfigId(),
+      'type' => $relation_type_id,
       'gid' => $group->id(),
       'entity_id' => $group_content->getEntity()->id(),
     ]);
@@ -123,13 +124,12 @@ class GroupRequestController extends ControllerBase {
   public function requestMembership(GroupInterface $group) {
     $response = new AjaxResponse();
 
-    $contentTypeConfigId = $group
-      ->getGroupType()
-      ->getContentPlugin('group_membership_request')
-      ->getContentTypeConfigId();
+    $relation_type_id = $this->entityTypeManager()
+      ->getStorage('group_content_type')
+      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
 
     $request = $this->entityTypeManager()->getStorage('group_content')->getQuery()
-      ->condition('type', $contentTypeConfigId)
+      ->condition('type', $relation_type_id)
       ->condition('gid', $group->id())
       ->condition('entity_id', $this->currentUser()->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
@@ -167,13 +167,12 @@ class GroupRequestController extends ControllerBase {
    * Callback to cancel the request of membership.
    */
   public function cancelRequest(GroupInterface $group) {
-    $content_type_config_id = $group
-      ->getGroupType()
-      ->getContentPlugin('group_membership_request')
-      ->getContentTypeConfigId();
+    $relation_type_id = $this->entityTypeManager()
+      ->getStorage('group_content_type')
+      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
 
     $requests = $this->entityTypeManager()->getStorage('group_content')->loadByProperties([
-      'type' => $content_type_config_id,
+      'type' => $relation_type_id,
       'gid' => $group->id(),
       'entity_id' => $this->currentUser()->id(),
       'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
