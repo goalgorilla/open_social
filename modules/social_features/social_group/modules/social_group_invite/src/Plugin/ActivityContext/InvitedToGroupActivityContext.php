@@ -3,7 +3,7 @@
 namespace Drupal\social_group_invite\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
+use Drupal\ginvite\Plugin\Group\Relation\GroupInvitation;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
@@ -27,7 +27,7 @@ class InvitedToGroupActivityContext extends ActivityContextBase {
       $referenced_entity = $this->activityFactory->getActivityRelatedEntity($data);
       $storage = $this->entityTypeManager->getStorage('group_content');
 
-      /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+      /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_content */
       $group_content = $storage->load($referenced_entity['target_id']);
 
       // Check if the user (entity_id) has a pending invite for the group.

@@ -6,8 +6,8 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
-use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation as GroupInvitationEnabler;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\ginvite\Plugin\Group\Relation\GroupInvitation as GroupInvitationEnabler;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_group\EntityMemberInterface;
 use Drupal\social_group\Plugin\Join\SocialGroupDirectJoin;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -77,9 +77,9 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
 
         if ($invitation instanceof GroupInvitationWrapper) {
           // Let's grab the group content, so we can build the URL.
-          $group_content = $invitation->getGroupContent();
+          $group_content = $invitation->getGroupRelationship();
 
-          if ($group_content instanceof GroupContentInterface) {
+          if ($group_content instanceof GroupRelationshipInterface) {
             $invited = TRUE;
           }
         }
