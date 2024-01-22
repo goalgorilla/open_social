@@ -221,6 +221,10 @@ jobs:
             composer require goalgorilla/open_social:dev-$BRANCH_NAME
           fi
 
+          # Run an additional composer install, to make sure patches are applied.
+          # This can be removed when composer-patches 2.0.0 lands.
+          composer install
+
           cp tmp/tests/default.settings.php /var/www/html/sites/default/default.settings.php
           mkdir -p /var/www/files_private
 
