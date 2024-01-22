@@ -78,22 +78,16 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
   public function query():void {
     $account = $this->view->getUser();
 
-    $open_groups = [];
-    $public_groups = [];
-    $group_memberships = [];
-
     if ($this->moduleHandler->moduleExists('social_group')) {
       // @todo This creates a dependency on Social Group which shouldn't exist,
       // this access logic should be in that module instead.
-      $open_groups = social_group_get_all_open_groups();
-      $public_groups = social_group_get_all_public_groups();
       $group_memberships = $this->groupHelper->getAllGroupsForUser($account->id());
     }
+
     $groups = [
-      ...$open_groups,
-      ...$public_groups,
-      ...$group_memberships,
+      ...$group_memberships ?? [],
     ];
+
     $groups_unique = array_unique($groups);
 
     // Add tables and joins.
