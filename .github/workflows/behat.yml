@@ -209,6 +209,8 @@ jobs:
             composer require goalgorilla/open_social:dev-$BRANCH_NAME
           fi
 
+          composer install
+
           cp tmp/tests/default.settings.php /var/www/html/sites/default/default.settings.php
           mkdir -p /var/www/files_private
 
