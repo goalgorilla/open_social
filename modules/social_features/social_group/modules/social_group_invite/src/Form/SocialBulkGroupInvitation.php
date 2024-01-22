@@ -339,7 +339,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
           }
         }
         else {
-          /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
+          /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface $group_content_storage */
           $group_content_storage = $this->entityTypeManager->getStorage('group_content');
           // If the invitation has already been send, unset it from the list
           // and show an error.
@@ -463,15 +463,17 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       'finished' => 'Drupal\social_group_invite\Form\SocialBulkGroupInvitation::batchFinished',
     ];
 
+    $relation_type_id = $this->entityTypeManager
+      ->getStorage('group_content_type')
+      ->getRelationshipTypeId($this->group->getGroupType()->id(), 'group_invitation');
+
     foreach ($form_state->getValue('users_fieldset')['user'] as $email) {
       $email = $this->extractEmailsFrom($email);
 
       // Make sure to only add valid emails to the batch.
       if ($email) {
         $values = [
-          'type' => $this->group->getGroupType()
-            ->getContentPlugin('group_invitation')
-            ->getContentTypeConfigId(),
+          'type' => $relation_type_id,
           'gid' => $this->group->id(),
           'invitee_mail' => $email,
           'entity_id' => 0,
@@ -483,7 +485,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     // Prepare params to store them in tempstore.
     $params = [];
     $params['gid'] = $this->group->id();
-    $params['plugin'] = $this->group->getGroupType()->getContentPlugin('group_invitation')->getContentTypeConfigId();
+    $params['plugin'] = $relation_type_id;
     $params['emails'] = $this->getSubmittedEmails($form_state);
 
     $tempstore = $this->tempStoreFactory->get('ginvite_bulk_invitation');

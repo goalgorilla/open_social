@@ -8,7 +8,7 @@ use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -18,9 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SocialGroupInviteResendConfirmForm extends ConfirmFormBase implements ContainerInjectionInterface {
 
   /**
-   * Invite (a group content entity).
+   * Invite (a group related entity).
    *
-   * @var \Drupal\group\Entity\GroupContentInterface|null
+   * @var \Drupal\group\Entity\GroupRelationshipInterface|null
    */
   protected $invite;
 
@@ -74,7 +74,7 @@ class SocialGroupInviteResendConfirmForm extends ConfirmFormBase implements Cont
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupContentInterface $group_content = NULL): array {
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupRelationshipInterface $group_content = NULL): array {
     $this->invite = $group_content;
 
     $form = parent::buildForm($form, $form_state);
@@ -91,7 +91,7 @@ class SocialGroupInviteResendConfirmForm extends ConfirmFormBase implements Cont
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    if (!($this->invite instanceof GroupContentInterface)) {
+    if (!($this->invite instanceof GroupRelationshipInterface)) {
       return;
     }
 

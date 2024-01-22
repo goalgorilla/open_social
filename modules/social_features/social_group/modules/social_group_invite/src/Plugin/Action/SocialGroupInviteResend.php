@@ -96,7 +96,7 @@ class SocialGroupInviteResend extends ViewsBulkOperationsActionBase implements C
     // This action allows to resend invitations for each member.
     $time = $this->time->getCurrentTime();
 
-    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+    /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
     $duplicate = $entity->createDuplicate();
     // We can leave the "created" field value without changes.
     // But we want to "bring up" our resent invitation to the top of

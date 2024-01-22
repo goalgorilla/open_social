@@ -16,9 +16,9 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TypedData\Exception\MissingDataException;
 use Drupal\Core\Url;
-use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
-use Drupal\group\Entity\GroupContent;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\ginvite\Plugin\Group\Relation\GroupInvitation;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\Entity\GroupTypeInterface;
@@ -131,12 +131,13 @@ function social_group_invite_block_access(Block $block, $operation, AccountInter
   // will allow users to go back.
   if (in_array($route_name, $routes_to_check)) {
     $block_id = $block->getPluginId();
+    /** @var GroupRelationshipInterface $group_content */
     $group_content = \Drupal::routeMatch()->getParameter('group_content');
 
     // Only if we are sure it's a group invitation.
     if (NULL !== $group_content &&
-      NULL !== $group_content->getGroupContentType() &&
-      $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation') {
+      NULL !== $group_content->getRelationshipType() &&
+      $group_content->getRelationshipType()->getPluginId() === 'group_invitation') {
       // This is a list of the blocks that this function cares about,
       // if we're being called for a different block we exit early.
       $hide_blocks = [
@@ -225,7 +226,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
   if ($view->id() === 'social_group_invitations') {
     // For invite status we want to show the readable name.
     if ($variables['field']->field === 'invitation_status' && !empty($variables['row']->_entity)) {
-      /** @var \Drupal\group\Entity\GroupContent $entity */
+      /** @var \Drupal\group\Entity\GroupRelationship $entity */
       $entity = $variables['row']->_entity;
       // If we have a invite we check it's status.
       $field_value = _social_group_get_group_invite_value($entity, 'invitation_status');
@@ -273,7 +274,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
 /**
  * Return a group invites field value if it exists.
  *
- * @param \Drupal\group\Entity\GroupContent $entity
+ * @param \Drupal\group\Entity\GroupRelationship $entity
  *   Group invitation.
  * @param string $field_name
  *   The field name.
@@ -281,7 +282,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
  * @return string|null
  *   The field value or NULL if there isn't any.
  */
-function _social_group_get_group_invite_value(GroupContent $entity, $field_name) {
+function _social_group_get_group_invite_value(GroupRelationship $entity, $field_name) {
   $field_value = NULL;
   if ($entity->hasField($field_name)) {
     try {
@@ -434,14 +435,14 @@ function _social_group_invite_action_form_submit($form, FormStateInterface $form
   $invite_content = \Drupal::routeMatch()->getParameter('group_content');
   $group = '';
 
-  if ($invite_content instanceof GroupContentInterface) {
+  if ($invite_content instanceof GroupRelationshipInterface) {
     $group = $invite_content->getGroup();
   }
   elseif (is_string($invite_content)) {
     $group_content = \Drupal::entityTypeManager()->getStorage('group_content')
       ->load($invite_content);
 
-    if ($group_content instanceof GroupContentInterface) {
+    if ($group_content instanceof GroupRelationshipInterface) {
       $group = $group_content->getGroup();
     }
   }
@@ -501,11 +502,11 @@ function social_group_invite_set_default_permissions_for_group_type(GroupTypeInt
 function social_group_invite_preprocess_activity(&$variables) {
   $activity = $variables['elements']['#activity'];
   $related_entity = $activity->getRelatedEntity();
-  // If the related entity is a piece of GroupContent and coming from the
+  // If the related entity is a piece of GroupRelationship and coming from the
   // ginvite group_invitation plugin, lets link the entity to the group itself.
   if (!empty($related_entity) &&
-    $related_entity instanceof GroupContent &&
-    $related_entity->getGroupContentType()->getContentPluginId() === 'group_invitation') {
+    $related_entity instanceof GroupRelationship &&
+    $related_entity->getRelationshipType()->getPluginId() === 'group_invitation') {
     $group = $related_entity->getGroup();
     if ($group instanceof GroupInterface) {
       $variables['full_url'] = $group->toUrl('canonical');
@@ -717,7 +718,7 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
     isset($context["data"]["group"]) &&
     $context["type"] === 'group_content'
   ) {
-    /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+    /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_content */
     $group_content = $context["data"]["group_content"];
     $group_content_id = $group_content->get('id')->getString();
 
@@ -795,12 +796,12 @@ function social_group_invite_entity_operation_alter(array &$operations, EntityIn
     return;
   }
 
-  /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+  /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
   if ($entity->getEntityTypeId() !== 'group_content') {
     return;
   }
 
-  if ($entity->getContentPlugin()->getPluginId() === 'group_invitation') {
+  if ($entity->getPlugin()->getPluginId() === 'group_invitation') {
     // Hide "view" operation as a redundant on this page.
     unset($operations['view']);
     // Rename default operation.
