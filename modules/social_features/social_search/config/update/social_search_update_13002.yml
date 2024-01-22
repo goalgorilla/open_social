@@ -1,0 +1,135 @@
+search_api.index.social_all:
+  expected_config: {  }
+  update_actions:
+    delete:
+      field_settings:
+        rendered_item:
+          configuration:
+            view_mode:
+              entity:group:
+                closed_group: {  }
+                open_group: {  }
+                public_group: {  }
+                secret_group: {  }
+    add:
+      field_settings:
+        rendered_item:
+          configuration:
+            view_mode:
+              entity:group:
+                flexible_group: teaser
+
+search_api.index.social_groups:
+  expected_config: {  }
+  update_actions:
+    delete:
+      field_settings:
+        rendered_item:
+          configuration:
+            view_mode:
+              entity:group:
+                closed_group: {  }
+                open_group: {  }
+                public_group: {  }
+                secret_group: {  }
+    add:
+      field_settings:
+        field_group_allowed_join_method:
+          label: 'Allowed join method'
+          datasource_id: 'entity:group'
+          property_path: field_group_allowed_join_method
+          type: string
+          dependencies:
+            config:
+              - field.storage.group.field_group_allowed_join_method
+        rendered_item:
+          configuration:
+            view_mode:
+              entity:group:
+                flexible_group: teaser
+
+views.view.search_all:
+  expected_config: {  }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            row:
+              options:
+                view_modes:
+                  entity:group:
+                    closed_group: {  }
+                    open_group: {  }
+                    public_group: {  }
+                    secret_group: {  }
+    add:
+      display:
+        default:
+          display_options:
+            row:
+              options:
+                view_modes:
+                  entity:group:
+                    flexible_group: teaser
+
+views.view.search_groups:
+  expected_config: {  }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            row:
+              options:
+                view_modes:
+                  entity:group:
+                    closed_group: {  }
+                    open_group: {  }
+                    public_group: {  }
+                    secret_group: {  }
+    add:
+      display:
+        default:
+          display_options:
+            row:
+              options:
+                view_modes:
+                  entity:group:
+                    flexible_group: teaser
+            filters:
+              field_group_allowed_join_method:
+                id: field_group_allowed_join_method
+                table: search_api_index_social_groups
+                field: field_group_allowed_join_method
+                relationship: none
+                group_type: group
+                admin_label: ''
+                operator: or
+                value: { }
+                group: 1
+                exposed: true
+                expose:
+                  operator_id: field_group_allowed_join_method_op
+                  label: 'Join method'
+                  description: ''
+                  use_operator: false
+                  operator: field_group_allowed_join_method_op
+                  identifier: field_group_allowed_join_method
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+                plugin_id: search_api_options

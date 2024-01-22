@@ -22,6 +22,14 @@ field_settings:
     dependencies:
       module:
         - group
+  field_group_allowed_join_method:
+    label: 'Allowed join method'
+    datasource_id: 'entity:group'
+    property_path: field_group_allowed_join_method
+    type: string
+    dependencies:
+      config:
+        - field.storage.group.field_group_allowed_join_method
   field_group_description:
     label: Description
     datasource_id: 'entity:group'
@@ -61,8 +69,7 @@ field_settings:
         anonymous: anonymous
       view_mode:
         'entity:group':
-          closed_group: teaser
-          open_group: teaser
+          flexible_group: teaser
   type:
     label: Type
     datasource_id: 'entity:group'
