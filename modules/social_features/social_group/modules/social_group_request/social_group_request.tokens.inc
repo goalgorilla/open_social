@@ -93,7 +93,7 @@ function social_group_request_tokens_alter(array &$replacements, array $context,
         $email_token_services = \Drupal::service('social_activity.email_token_services');
 
         if (!empty($group_content = $email_token_services->getRelatedObject($message)) && $group_content->getEntityTypeId() == 'group_content') {
-          /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+          /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_content */
           // Get the group entity.
           $group = $group_content->getGroup();
           if ($group instanceof Group) {

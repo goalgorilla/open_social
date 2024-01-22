@@ -8,7 +8,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
+use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -27,7 +27,7 @@ class GroupRequestMembershipRequestForm extends FormBase {
   /**
    * Group membership request.
    *
-   * @var \Drupal\group\Entity\GroupContentInterface
+   * @var \Drupal\group\Entity\GroupRelationshipInterface
    */
   protected $groupContent;
 
@@ -125,13 +125,12 @@ class GroupRequestMembershipRequestForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $content_type_config_id = $this->group
-      ->getGroupType()
-      ->getContentPlugin('group_membership_request')
-      ->getContentTypeConfigId();
+    $relation_type_id = $this->entityTypeManager
+      ->getStorage('group_content_type')
+      ->getRelationshipTypeId($this->group->getGroupType()->id(), 'group_membership_request');
 
     $group_content = $this->entityTypeManager->getStorage('group_content')->create([
-      'type' => $content_type_config_id,
+      'type' => $relation_type_id,
       'gid' => $this->group->id(),
       'entity_id' => $this->currentUser()->id(),
       'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,

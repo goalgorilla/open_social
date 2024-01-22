@@ -5,8 +5,8 @@ namespace Drupal\grequest\Form;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 
 /**
@@ -24,7 +24,7 @@ class GroupRequestMembershipRejectForm extends ConfirmFormBase {
   /**
    * Group membership request.
    *
-   * @var \Drupal\group\Entity\GroupContentInterface
+   * @var \Drupal\group\Entity\GroupRelationshipInterface
    */
   protected $groupContent;
 
@@ -52,7 +52,7 @@ class GroupRequestMembershipRejectForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupContentInterface $group_content = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupRelationshipInterface $group_content = NULL) {
     $this->group = $group;
     $this->groupContent = $group_content;
 
