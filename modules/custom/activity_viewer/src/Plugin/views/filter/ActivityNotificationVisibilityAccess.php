@@ -66,17 +66,14 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     $query = $this->query;
     $account = $this->view->getUser();
 
-    $open_groups = [];
-    $group_memberships = [];
     if ($this->moduleHandler->moduleExists('social_group')) {
       // @todo This creates a dependency on Social Group which shouldn't exist,
       // this access logic should be in that module instead.
-      $open_groups = social_group_get_all_open_groups();
       $group_memberships = $this->groupHelper
         ->getAllGroupsForUser($account->id());
     }
-    $groups = array_merge($open_groups, $group_memberships);
-    $groups_unique = array_unique($groups);
+
+    $groups_unique = array_unique($group_memberships ?? []);
 
     // Add tables and joins.
     $query->addTable('activity__field_activity_recipient_group');
