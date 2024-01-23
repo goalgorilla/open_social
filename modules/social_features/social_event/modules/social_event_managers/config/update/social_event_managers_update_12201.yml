@@ -1,0 +1,30 @@
+views.view.event_manage_enrollments:
+  expected_config: {  }
+  update_actions:
+    change:
+      display:
+        default:
+          display_options:
+            exposed_form:
+              type: bef
+              options:
+                text_input_required_format: basic_html
+                bef:
+                  general:
+                    autosubmit: true
+                    autosubmit_exclude_textfield: false
+                    autosubmit_hide: true
+                    allow_secondary: false
+                  pager:
+                    plugin_id: default
+                    advanced:
+                      is_secondary: false
+            pager:
+              options:
+                items_per_page: 25
+                expose:
+                  items_per_page: true
+                  items_per_page_options: '25, 50, 100'
+            header:
+              result:
+                content: '@total enrollees'
