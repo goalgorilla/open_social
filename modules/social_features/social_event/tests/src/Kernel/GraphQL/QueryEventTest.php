@@ -71,6 +71,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
     // https://github.com/drupal-graphql/graphql/pull/1220 is merged.
     'social_topic',
     'variationcache',
+    'better_exposed_filters',
   ];
 
   /**
