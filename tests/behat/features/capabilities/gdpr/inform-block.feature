@@ -39,11 +39,6 @@ Feature: Inform about personal data collection
     And I fill in "Summary" with "Inform block summary for sign up page"
     And I fill in "Description" with "Inform block description for sign up page"
     And I press "Save"
-    Then I should be on "admin/config/system/inform-consent/add"
-    And I should see "Machine-readable name" in the ".form-item--id.form-type--machine-name label.form-required" element
-
-    When I fill in "Machine-readable name" with "sign_up"
-    And I press "Save"
     Then I should be on "admin/config/system/inform-consent"
     And I should see the text "Saved the Inform block title for sign up page Example."
     And I should see the text "Inform block title for sign up page"
@@ -66,7 +61,7 @@ Feature: Inform about personal data collection
     And I fill in "Title" with "Inform block title for user edit page"
     And I fill in "Page" with "/user/*/edit"
     And I fill in "Summary" with "Inform block summary for user edit page"
-    And I press "Save"
+    And I press the "Edit" button
     And I fill in "Machine-readable name" with "user_edit"
     And I press "Save"
 

@@ -1,4 +1,4 @@
-@api @gdpr @data-policy @data-policy-create @DS-5586 @no-update
+@api @gdpr @data-policy @data-policy-create @DS-5586 @no-update @javascript
 Feature: Create data policy and view new policy
   Benefit: In order to have a clear data policy users need to accept
   Role: As a SM
@@ -86,6 +86,7 @@ Feature: Create data policy and view new policy
     And I press "Save"
 
     Given I am logged in as "behatuser"
+    And I make a screenshot with the name "test"
     Then I should be on "data-policy-agreement?destination=/stream"
 
     And I should see the text "Our data protection statement has been updated on"
@@ -94,15 +95,20 @@ Feature: Create data policy and view new policy
     And I should see the text "process."
     And I should see the text "I read and consent to the"
     And I should see the link "third version of the data policy"
+    And I make a screenshot with the name "test0"
     And I should see "Save"
 
     When I click "the account cancellation"
+    And I make a screenshot with the name "test1"
     Then I should see the text "Are you sure you want to cancel your account?"
+    And I make a screenshot with the name "test2"
     When I click "Cancel"
+    And I make a screenshot with the name "test3"
     And I click "third version of the data policy"
     And I wait for AJAX to finish
-    Then I should see "Third version of the data policy" in the ".ui-dialog-title" element
-    And I should see the text "Description for the third version of the data policy"
+    And I make a screenshot with the name "test4"
+    Then I should see "Third version of the data policy" in the "Modal"
+    And I should see "Description for the third version of the data policy" in the "Modal"
 
     When I logout
     And I am on "user/register"
