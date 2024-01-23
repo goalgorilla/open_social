@@ -104,7 +104,7 @@ class FlexibleGroupContentVisibilityUpdate {
   /**
    * Update visibility for all Group Content based on a new group type.
    *
-   * @param \Drupal\node\Entity\Node|\Drupal\social_post\Entity\Post|\Drupal\group\GroupMembership|\Drupal\group\Entity\GroupContentInterface $entity
+   * @param \Drupal\node\Entity\Node|\Drupal\social_post\Entity\Post|\Drupal\group\GroupMembership|\Drupal\group\Entity\GroupRelationshipInterface $entity
    *   The content we are updating.
    * @param array $new_options
    *   The Group's new visibility options.

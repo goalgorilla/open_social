@@ -347,17 +347,16 @@ function social_group_request_preprocess_page_title(&$variables) {
 
   /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = \Drupal::entityTypeManager()->getStorage('group')->load($group_id);
-  if (!$group->getGroupType()->hasContentPlugin('group_membership_request')) {
+  if (!$group->getGroupType()->hasPlugin('group_membership_request')) {
     return;
   }
 
-  $contentTypeConfigId = $group
-    ->getGroupType()
-    ->getContentPlugin('group_membership_request')
-    ->getContentTypeConfigId();
+  $relation_type_id = \Drupal::entityTypeManager()
+    ->getStorage('group_content_type')
+    ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
 
   $requests = \Drupal::entityQuery('group_content')
-    ->condition('type', $contentTypeConfigId)
+    ->condition('type', $relation_type_id)
     ->condition('gid', $group->id())
     ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
     ->count()
