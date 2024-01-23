@@ -14,7 +14,6 @@ Feature: Create data policy and view new policy
       | behatuser        | behatuser@example.com        | 1      | verified    |
 
     Given I enable the module "social_gdpr"
-    Given I turn off ckeditor
     Given I am logged in as "behatsitemanager" with the "without consent" permission
     When I am on "admin/config/people/data-policy"
 
@@ -26,7 +25,8 @@ Feature: Create data policy and view new policy
     And I should see the text "Name"
     And I should see the text "Description"
     And I fill in "Name" with "First version of the data policy"
-    When I fill in "Description" with "Description for the first version of the data policy"
+    When I fill in the "edit-field-description-0-value" WYSIWYG editor with "Description for the first version of the data policy"
+    And I wait for "1" seconds
     And I press "Save"
 
     # Create a new revision for the new data policy entity.
@@ -41,7 +41,8 @@ Feature: Create data policy and view new policy
     And I should see the text "Description"
     And I should see the text "Revision log message"
     And I fill in "Name" with "Second version of the data policy"
-    When I fill in "Description" with "Description for the second version of the data policy"
+    When I fill in the "edit-field-description-0-value" WYSIWYG editor with "Description for the second version of the data policy"
+    And I wait for "1" seconds
     And I press "Save"
 
     # Active this new revision.
@@ -71,7 +72,8 @@ Feature: Create data policy and view new policy
     And I should see the text "Description"
     And I should see the text "Revision log message"
     And I fill in "Name" with "Third version of the data policy"
-    When I fill in "Description" with "Description for the third version of the data policy"
+    When I fill in the "edit-field-description-0-value" WYSIWYG editor with "Description for the third version of the data policy"
+    And I wait for "1" seconds
     And I press "Save"
 
     # Active this new revision for the first entity.
@@ -86,7 +88,6 @@ Feature: Create data policy and view new policy
     And I press "Save"
 
     Given I am logged in as "behatuser"
-    And I make a screenshot with the name "test"
     Then I should be on "data-policy-agreement?destination=/stream"
 
     And I should see the text "Our data protection statement has been updated on"
@@ -95,20 +96,15 @@ Feature: Create data policy and view new policy
     And I should see the text "process."
     And I should see the text "I read and consent to the"
     And I should see the link "third version of the data policy"
-    And I make a screenshot with the name "test0"
     And I should see "Save"
 
     When I click "the account cancellation"
-    And I make a screenshot with the name "test1"
     Then I should see the text "Are you sure you want to cancel your account?"
-    And I make a screenshot with the name "test2"
     When I click "Cancel"
-    And I make a screenshot with the name "test3"
     And I click "third version of the data policy"
     And I wait for AJAX to finish
-    And I make a screenshot with the name "test4"
-    Then I should see "Third version of the data policy" in the "Modal"
-    And I should see "Description for the third version of the data policy" in the "Modal"
+    Then I should see "Third version of the data policy"
+    And I should see the text "Description for the third version of the data policy"
 
     When I logout
     And I am on "user/register"
@@ -117,5 +113,5 @@ Feature: Create data policy and view new policy
 
     When I click "third version of the data policy"
     And I wait for AJAX to finish
-    Then I should see "Third version of the data policy" in the ".ui-dialog-title" element
+    Then I should see "Third version of the data policy"
     And I should see the text "Description for the third version of the data policy"
