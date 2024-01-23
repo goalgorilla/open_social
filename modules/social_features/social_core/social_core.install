@@ -120,6 +120,7 @@ function social_core_install() {
       'administer account settings',
       'administer themes',
       'administer blocks',
+      'administer block content',
       'access social_core dashboard',
     ]
   );
@@ -1793,4 +1794,14 @@ function social_core_update_121001(): void {
     'social_emoji',
   ];
   \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Add permission for SM to edit block content.
+ */
+function social_core_update_121002(): void {
+  // This was added in a Drupal Core release as new permission.
+  // Considering we already assign administer blocks, this seems like a good
+  // first iteration.
+  user_role_grant_permissions('sitemanager', ['administer block content']);
 }
