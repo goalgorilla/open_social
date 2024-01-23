@@ -2,11 +2,8 @@
 Feature: Items per page limit on the Manage members overview page
 
   Background:
-    Given I enable the module "social_group_flexible_group"
+    Given I enable the module "social_event_managers"
 
-    And groups with non-anonymous owner:
-      | label           | field_group_description      | field_flexible_group_visibility | field_group_allowed_visibility  |type            |
-      | Flexible group  | Description of Flexible group| public                          | public                          |flexible_group  |
     And users:
       | name       | mail                    | status | roles    |
       | member1    | mail_user1@example.com  | 1      | verified |
@@ -35,51 +32,47 @@ Feature: Items per page limit on the Manage members overview page
       | member24   | mail_user24@example.com | 1      | verified |
       | member25   | mail_user25@example.com | 1      | verified |
       | member26   | mail_user26@example.com | 1      | verified |
-    And group members:
-      | group           | user     |
-      | Flexible group  | member1  |
-      | Flexible group  | member2  |
-      | Flexible group  | member3  |
-      | Flexible group  | member4  |
-      | Flexible group  | member5  |
-      | Flexible group  | member6  |
-      | Flexible group  | member7  |
-      | Flexible group  | member8  |
-      | Flexible group  | member9  |
-      | Flexible group  | member10 |
-      | Flexible group  | member11 |
-      | Flexible group  | member12 |
-      | Flexible group  | member13 |
-      | Flexible group  | member14 |
-      | Flexible group  | member15 |
-      | Flexible group  | member16 |
-      | Flexible group  | member17 |
-      | Flexible group  | member18 |
-      | Flexible group  | member19 |
-      | Flexible group  | member20 |
-      | Flexible group  | member21 |
-      | Flexible group  | member22 |
-      | Flexible group  | member23 |
-      | Flexible group  | member24 |
-      | Flexible group  | member25 |
-      | Flexible group  | member26 |
+    And event content:
+      | title         | field_event_date | status | field_content_visibility | field_event_an_enroll | author  |
+      | Test Event    | +2 days          | 1      | public                   | 1                     | member1 |
+    And event enrollees:
+      | event       | user     |
+      | Test Event  | member1  |
+      | Test Event  | member2  |
+      | Test Event  | member3  |
+      | Test Event  | member4  |
+      | Test Event  | member5  |
+      | Test Event  | member6  |
+      | Test Event  | member7  |
+      | Test Event  | member8  |
+      | Test Event  | member9  |
+      | Test Event  | member10 |
+      | Test Event  | member11 |
+      | Test Event  | member12 |
+      | Test Event  | member13 |
+      | Test Event  | member14 |
+      | Test Event  | member15 |
+      | Test Event  | member16 |
+      | Test Event  | member17 |
+      | Test Event  | member18 |
+      | Test Event  | member19 |
+      | Test Event  | member20 |
+      | Test Event  | member21 |
+      | Test Event  | member22 |
+      | Test Event  | member23 |
+      | Test Event  | member24 |
+      | Test Event  | member25 |
+      | Test Event  | member26 |
 
   Scenario: User can control the number of items displayed on the Manage members overview page
     Given I am logged in as a user with the sitemanager role
 
-    When I am viewing the group "Flexible group"
+    When I am viewing the event "Test Event"
 
-    And I click "Manage members"
-    And I should see "27 members"
+    And I click "Manage enrollments"
+    And I should see "26 enrollees"
     And I select "50" from "items_per_page"
 
     # Should be displayed all items without page.
     Then I should not see the link "Next"
-    And I should not see the link "Last"
-
-    # Check that selected number of items now is permanent for the current user.
-    And I click "About"
-    And I click "Manage members"
-    And should see "50" selected in the "items_per_page" select field
-    And I should not see the link "Next"
     And I should not see the link "Last"

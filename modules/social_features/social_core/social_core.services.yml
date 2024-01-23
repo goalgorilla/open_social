@@ -38,3 +38,7 @@ services:
   social_core.layout:
     class: Drupal\social_core\Service\LayoutService
     arguments: ['@module_handler']
+
+  social_core.members_page_helper:
+    class: Drupal\social_core\Service\MembersPageHelperService
+    arguments: [ '@user.data', '@current_user' ]

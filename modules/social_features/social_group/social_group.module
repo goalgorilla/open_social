@@ -35,6 +35,7 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\social_core\Service\MembersPageHelperService;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Controller\SocialGroupListBuilder;
 use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
@@ -3175,26 +3176,20 @@ function social_group_social_tagging_type(): string {
  */
 function social_group_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   if ($form['#id'] === 'views-exposed-form-group-manage-members-page-group-manage-members') {
-    $form['actions']['submit']['#submit'][] = '_views_manage_members_exposed_form_submit';
-  }
-}
+    /** @var \Drupal\views\ViewExecutable $view */
+    $view = $form_state->get('view');
 
-/**
- * Submission handler for social_group_form_views_exposed_form_alter().
- */
-function _views_manage_members_exposed_form_submit(array $form, FormStateInterface $form_state): void {
-  // Currently, only user input includes actual items_per_page value.
-  $values = $form_state->getUserInput();
-
-  // Check if items_per_page value has been changed.
-  if (isset($values['items_per_page'])) {
-    $items_per_page = $values['items_per_page'];
-
-    /** @var  \Drupal\user\UserDataInterface $userData */
-    $userData = \Drupal::service('user.data');
-
-    // Save selected specific number of items on the page for current user.
-    $userData->set('social_group', \Drupal::currentUser()->id(), 'items_per_page', $items_per_page);
+    // Declare value 'module_name' since we send it to callback.
+    $form['module_name'] = [
+      '#type' => 'value',
+      '#value' => 'social_group',
+    ];
+    // Declare 'items_per_value_key' that will be sent in users_data table.
+    $form['items_per_value_key'] = [
+      '#type' => 'value',
+      '#value' => $view->id() . '__items_per_page',
+    ];
+    $form['actions']['submit']['#submit'][] = [MembersPageHelperService::class, 'setItemsPerPage'];
   }
 }
 
@@ -3202,18 +3197,13 @@ function _views_manage_members_exposed_form_submit(array $form, FormStateInterfa
  * Implements hook_views_pre_view().
  */
 function social_group_views_pre_view(ViewExecutable $view, string $display_id, array &$args): void {
-  if ($display_id === 'page_group_manage_members') {
-    // Get default pager options.
-    $default_pager_options = $view->display_handler->getOption('pager');
-
-    /** @var  \Drupal\user\UserDataInterface $userData */
-    $userData = \Drupal::service('user.data');
-
-    // Check if user selected specific number of items on the page and override
-    // default one.
-    if ($items_per_page = $userData->get('social_group', \Drupal::currentUser()->id(), 'items_per_page')) {
-      $default_pager_options['options']['items_per_page'] = $items_per_page;
-      $view->display_handler->setOption('pager', $default_pager_options);
-    }
+  if ($view->id() === 'group_manage_members' && $display_id === 'page_group_manage_members') {
+    // Get related '__items_per_value' value from users_data table.
+    \Drupal::service('social_core.members_page_helper')
+      ->getItemsPerPage(
+        $view,
+        'social_group',
+        $view->id() . '__items_per_page'
+      );
   }
 }

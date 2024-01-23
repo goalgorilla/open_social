@@ -5,20 +5,21 @@
  * Contains social_event_managers.module.
  */
 
+use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\block\Entity\Block;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\social_core\Service\MembersPageHelperService;
+use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 use Drupal\user\Entity\User;
 use Drupal\views\ViewExecutable;
-use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
 
 /**
@@ -224,6 +225,54 @@ function social_event_managers_form_node_event_edit_form_alter(&$form, FormState
     // Unless you are the author / have the right permissions.
     if ($user->hasPermission('administer nodes') || $user->id() == $node->getOwnerId()) {
       $form['author']['#access'] = TRUE;
+    }
+  }
+}
+
+/**
+ * Implements hook_form_form_ID_alter().
+ */
+function social_event_managers_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  if ($form['#id'] === 'views-exposed-form-event-manage-enrollments-page-manage-enrollments') {
+    /** @var \Drupal\views\ViewExecutable $view */
+    $view = $form_state->get('view');
+
+    // Declare value 'module_name' since we send it to callback.
+    $form['module_name'] = [
+      '#type' => 'value',
+      '#value' => 'social_event_managers',
+    ];
+    // Declare 'items_per_value_key' that will be sent in users_data table.
+    $form['items_per_value_key'] = [
+      '#type' => 'value',
+      '#value' => $view->id() . '__items_per_page',
+    ];
+    $form['actions']['submit']['#submit'][] = [MembersPageHelperService::class, 'setItemsPerPage'];
+  }
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function social_event_managers_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+  if ($view->id() === 'event_manage_enrollments') {
+    // Remove fields from the Enrollment Management tab if the user is not a
+    // manager or organiser.
+    if (!social_event_manager_or_organizer()) {
+      $fields = $view->display_handler->getOption('fields');
+      $fields['operations_1']['exclude'] = TRUE;
+      $fields['social_views_bulk_operations_bulk_form_enrollments_1']['exclude'] = TRUE;
+      $view->display_handler->overrideOption('fields', $fields);
+    }
+
+    if ($display_id === 'page_manage_enrollments') {
+      // Get related '__items_per_value' value from users_data table.
+      \Drupal::service('social_core.members_page_helper')
+        ->getItemsPerPage(
+          $view,
+          'social_event_managers',
+          $view->id() . '__items_per_page'
+        );
     }
   }
 }
@@ -629,20 +678,5 @@ function social_event_managers_preprocess_views_view(&$variables) {
         ->view($block);
     }
   }
-}
 
-/**
- * Implements hook_views_pre_view().
- */
-function social_event_managers_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
-  // Remove fields from the Enrollment Management tab if the user is not a
-  // manager or organiser.
-  if ($view->id() === 'event_manage_enrollments') {
-    if (!social_event_manager_or_organizer()) {
-      $fields = $view->display_handler->getOption('fields');
-      $fields['operations_1']['exclude'] = TRUE;
-      $fields['social_views_bulk_operations_bulk_form_enrollments_1']['exclude'] = TRUE;
-      $view->display_handler->overrideOption('fields', $fields);
-    }
-  }
 }
