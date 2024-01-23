@@ -6,6 +6,7 @@ dependencies:
     - field.storage.profile.field_profile_organization
     - node.type.event
   module:
+    - better_exposed_filters
     - node
     - options
     - profile
@@ -42,7 +43,7 @@ display:
           query_comment: ''
           query_tags: {  }
       exposed_form:
-        type: basic
+        type: bef
         options:
           submit_button: Filter
           reset_button: false
@@ -51,10 +52,21 @@ display:
           expose_sort_order: true
           sort_asc_label: Asc
           sort_desc_label: Desc
+          text_input_required_format: basic_html
+          bef:
+            general:
+              autosubmit: true
+              autosubmit_exclude_textfield: false
+              autosubmit_hide: true
+              allow_secondary: false
+            pager:
+              plugin_id: default
+              advanced:
+                is_secondary: false
       pager:
         type: full
         options:
-          items_per_page: 10
+          items_per_page: 25
           offset: 0
           id: 0
           total_pages: null
@@ -64,9 +76,9 @@ display:
             first: '« First'
             last: 'Last »'
           expose:
-            items_per_page: false
+            items_per_page: true
             items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options: '25, 50, 100'
             items_per_page_options_all: false
             items_per_page_options_all_label: '- All -'
             offset: false
@@ -532,7 +544,7 @@ display:
           group_type: group
           admin_label: ''
           empty: true
-          content: '@total Enrollees'
+          content: '@total enrollees'
           plugin_id: result
       footer: {  }
       empty:
