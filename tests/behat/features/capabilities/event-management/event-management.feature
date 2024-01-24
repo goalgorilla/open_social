@@ -1,4 +1,4 @@
-@api @event-management @stability @javascript @DS-1258 @stability-2
+@api @javascript
 Feature: Event Management
   Benefit: In order to organise an event
   Role: As a Verified
@@ -16,13 +16,13 @@ Feature: Event Management
       | event_organiser_1 | eo_1@example.com | GoalGorilla                | 1      | verified |
       | event_organiser_2 | eo_2@example.com | Drupal                     | 1      | verified |
     And groups:
-      | label                                    | field_group_description | author            | type        | langcode |
-      | Springfield local business collaboration | Description text        | event_organiser_1 | open_group  | en       |
+      | label                                    | field_group_description | author            | type           | field_flexible_group_visibility | field_group_allowed_join_method | field_group_allowed_visibility | langcode |
+      | Springfield local business collaboration | Description text        | event_organiser_1 | flexible_group | public                          | direct                          | community                      | en       |
     And I am logged in as an "verified"
     And I am on "user"
     And I click "Events"
     And I click "Create Event"
-    When I fill in the following:
+    And I fill in the following:
       | Title                                  | This is an event with event organisers |
       | edit-field-event-date-0-value-date     | 2025-01-01                             |
       | edit-field-event-date-end-0-value-date | 2025-01-01                             |
@@ -36,20 +36,20 @@ Feature: Event Management
     And I wait for AJAX to finish
     And I fill in "event_organiser_2" for "field_event_managers[1][target_id]"
     And I press "Create event"
-    Then I should see "This is an event with event organisers has been created."
+    And I should see "This is an event with event organisers has been created."
     And I should see "THIS IS AN EVENT WITH EVENT ORGANISERS"
     And I should see "Body description text" in the "Main content"
     And I should see "Organisers"
     And I should not see the link "All Organisers"
 
     # Create event in group.
-    Given I am on "all-groups"
+    And I am on "all-groups"
     And I click "Springfield local business collaboration"
     And I click "Join"
     And I press "Join group"
     And I click "Events"
     And I click "Create Event"
-    When I fill in the following:
+    And I fill in the following:
       | Title                                  | This is an event with event organisers in group |
       | edit-field-event-date-0-value-date     | 2025-01-01                                      |
       | edit-field-event-date-end-0-value-date | 2025-01-01                                      |
@@ -66,37 +66,37 @@ Feature: Event Management
     And I should see "This is an event with event organisers in group"
 
     # Now test with event_organiser_1
-    Given I logout
+    And I logout
     And I am logged in as "event_organiser_1"
     And I open the "event" node with title "This is an event with event organisers"
     And I click "Edit content"
-    Then I should see "Save"
+    And I should see "Save"
     And I should not see "Authoring information"
 
-    Given I open the "event" node with title "This is an event with event organisers in group"
+    And I open the "event" node with title "This is an event with event organisers in group"
     And I click "Edit content"
-    Then I should see "Save"
+    And I should see "Save"
     And I should not see "Authoring information"
 
     # Now test with event_organiser_2
-    Given I logout
+    And I logout
     And I am logged in as "event_organiser_2"
     And I open the "event" node with title "This is an event with event organisers"
     And I click "Edit content"
-    Then I should see "Save"
+    And I should see "Save"
     And I should not see "Authoring information"
 
-    Given I open the "event" node with title "This is an event with event organisers in group"
+    And I open the "event" node with title "This is an event with event organisers in group"
     And I click "Edit content"
-    Then I should see "Save"
+    And I should see "Save"
     And I should not see "Authoring information"
 
     # Regression test for topic
-    Given "topic" content:
+    And "topic" content:
       | title                   | body          |
       | Topic regression test   | Description   |
     And I open the "topic" node with title "Topic regression test"
-    Then I should not see "Organisers"
+    And I should not see "Organisers"
 
 
   Scenario: Ensure, that if we have several translations of the event, the enrollees and organisers are not duplicated
@@ -109,7 +109,7 @@ Feature: Event Management
     And I press "Add language"
     And I wait for AJAX to finish
 
-    Given I am viewing my event:
+    And I am viewing my event:
       | title                    | My awesome event |
       | body                     | Body text        |
       | field_event_date         | +7 days          |
@@ -127,15 +127,15 @@ Feature: Event Management
     And I press "Save"
 
     # Enroll for event
-    When I press the "Enroll" button
+    And I press the "Enroll" button
     And I wait for AJAX to finish
-    Then I should see the text "Meetup: My awesome event" in the "Modal"
+    And I should see the text "Meetup: My awesome event" in the "Modal"
     And I press the "Close" button
 
     # Add translation for this event.
     And I should see "Translate"
-    When I click "Translate"
-    Then I should see "Dutch"
+    And I click "Translate"
+    And I should see "Dutch"
     And I should see "Not translated"
     And I should see "Add"
     And I click "Add"
@@ -143,9 +143,8 @@ Feature: Event Management
 
     # Check if enrollees aren't duplicated.
     And I should see "1 people have enrolled"
-    When I click "Manage enrollments"
-    Then I should see "1 Enrollees"
+    And I click "Manage enrollments"
+    And I should see "1 Enrollees"
     # Check if organisers aren't duplicated.
-    When I click "Organisers"
-    Then I should see "Ryan Gosling" exactly "1" times
-
+    And I click "Organisers"
+    And I should see "Ryan Gosling" exactly "1" times

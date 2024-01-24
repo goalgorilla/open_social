@@ -68,8 +68,8 @@ class GroupContext extends RawMinkContext {
    *
    * Creates group of a given type provided in the form:
    * | author | title      | description     | author   | type        | language | field_group_allowed_visibility |
-   * | user-1 | My title 1 | My description  | username | open_group  | en       | public                         |
-   * | user-1 | My title 2 | My description  | username | open_group  | en       | public,community,group         |
+   * | user-1 | My title 1 | My description  | username | flexible_group  | en       | public                         |
+   * | user-1 | My title 2 | My description  | username | flexible_group  | en       | public,community,group         |
    * | ...    | ...        | ...             | ...      | ...         | ...      | ...                            |
    *
    * @Given groups:
@@ -86,7 +86,7 @@ class GroupContext extends RawMinkContext {
    *
    * Creates group of a given type provided in the form:
    * | title    | description     | author   | type        | language
-   * | My title | My description  | username | open_group  | en
+   * | My title | My description  | username | flexible_group  | en
    * | ...      | ...             | ...      | ...         | ...
    *
    * @Given groups with non-anonymous owner:
@@ -123,7 +123,7 @@ class GroupContext extends RawMinkContext {
    *
    * Creates group of a given type provided in the form:
    * | title    | description     | author   | type        | language
-   * | My title | My description  | username | open_group  | en
+   * | My title | My description  | username | flexible_group  | en
    * | ...      | ...             | ...      | ...         | ...
    *
    * @Given groups owned by current user:
@@ -187,9 +187,6 @@ class GroupContext extends RawMinkContext {
    */
   public function whenICreateAGroupUsingTheForm(string $group_type, TableNode $fields): void {
     $group_types = [
-      'public' => 'public_group',
-      'open' => 'open_group',
-      'closed' => 'closed_group',
       'flexible' => 'flexible_group',
     ];
     $group_type_selector = $group_types[$group_type] ?? NULL;
