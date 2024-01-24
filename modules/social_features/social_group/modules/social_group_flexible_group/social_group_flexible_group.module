@@ -207,9 +207,61 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
       $form['field_group_type']['#access'] = FALSE;
     }
 
+    // Disable the public visibility option on group create/edit content option.
+    $config = \Drupal::config('entity_access_by_field.settings');
+    $account = \Drupal::currentUser();
+    if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
+      $form['field_group_allowed_visibility']['widget']['public']['#disabled'] = TRUE;
+      // Because the checkbox is disabled we also need to remove the value.
+      if (($key = array_search('public', $form['field_group_allowed_visibility']['widget']["#default_value"], TRUE)) !== FALSE) {
+        unset($form['field_group_allowed_visibility']['widget']["#default_value"][$key]);
+      }
+    }
+
+    // Validate visibilities.
+    $form['#validate'][] = '_flexible_group_visibility_validation';
     $form['#after_build'][] = 'social_group_flexible_group_flexible_group_add_after_build';
     $form['#attached']['library'][] = 'social_group_flexible_group/admin';
     $form['#attached']['library'][] = 'social_group_flexible_group/form';
+  }
+}
+
+/**
+ * Custom form validation to make sure people cannot hack visibility.
+ *
+ * @param array $form
+ *   The form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ *
+ * @return void
+ *   Void as it will trigger setErrorByName method.
+ */
+function _flexible_group_visibility_validation($form, &$form_state) {
+  // Get visibility options.
+  $visibilities = $form['field_flexible_group_visibility']['widget']['#options'];
+
+  // Check if the values are being altered while it's disabled.
+  // Check for group visibility.
+  foreach ($visibilities as $visibility => $value) {
+    if (isset($form['field_flexible_group_visibility']['widget'][$visibility]['#disabled'])
+      && $form['field_flexible_group_visibility']['widget'][$visibility]['#disabled'] === TRUE
+      && $form_state->getValue('field_flexible_group_visibility')[0]['value'] === $visibility) {
+      $form_state->setErrorByName('field_flexible_group_visibility', t('@visibility visibility is not allowed', ['@visibility' => $visibility]));
+    }
+  }
+
+  // Get visibility options.
+  $visibilities = $form['field_group_allowed_visibility']['widget']['#options'];
+
+  // Check if the values are being altered while it's disabled.
+  // Check for group content visibility.
+  foreach ($visibilities as $visibility => $value) {
+    if (isset($form['field_group_allowed_visibility']['widget'][$visibility]['#disabled'])
+      && $form['field_group_allowed_visibility']['widget'][$visibility]['#disabled'] === TRUE
+      && in_array($visibility, array_column($form_state->getValue('field_group_allowed_visibility'), 'value'), TRUE)) {
+      $form_state->setErrorByName('field_group_allowed_visibility', t('@visibility visibility is not allowed', ['@visibility' => $visibility]));
+    }
   }
 }
 
