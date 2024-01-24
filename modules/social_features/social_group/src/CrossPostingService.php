@@ -4,7 +4,7 @@ namespace Drupal\social_group;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 use Drupal\node\NodeInterface;
@@ -25,11 +25,11 @@ class CrossPostingService {
   protected $entityTypeManager;
 
   /**
-   * The group content plugin manager.
+   * The group relation type manager under test.
    *
-   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManager
    */
-  protected $groupContentManager;
+  protected $groupRelationTypeManager;
 
   /**
    * The database connection.
@@ -46,7 +46,7 @@ class CrossPostingService {
   protected $groupStorage;
 
   /**
-   * Constructs a GroupContentMultipleActivityEntityCondition object.
+   * Constructs a GroupRelationMultipleActivityEntityCondition object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
@@ -63,7 +63,7 @@ class CrossPostingService {
   }
 
   /**
-   * Get groups which have a current node as a group content.
+   * Get groups which have a current node as a group relation.
    *
    * @param \Drupal\node\NodeInterface $node
    *   Node object.
@@ -72,7 +72,7 @@ class CrossPostingService {
    *   An array with group ids.
    */
   public function getGroupIdsForNode(NodeInterface $node): array {
-    $validPlugins = $this->getValidGroupContentPluginIds();
+    $validPlugins = $this->getValidGroupRelationPluginIds();
 
     $query = $this->database->select('group_content_field_data', 'gc');
     $query->addField('gc', 'gid');
@@ -110,19 +110,20 @@ class CrossPostingService {
   /**
    * Returns groups list have the same group content entity (node).
    *
-   * @param \Drupal\group\Entity\GroupContentInterface $groupContent
+   * @param \Drupal\group\Entity\GroupRelationshipInterface $groupContent
    *   Node object.
    *
    * @return array
    *   An array with group ids.
    */
-  public function getGroupIdsByGroupContentNodeEntity(GroupContentInterface $groupContent): array {
-    $validPlugins = $this->getValidGroupContentPluginIds();
+  public function getGroupIdsByGroupContentNodeEntity(GroupRelationshipInterface $groupContent): array {
+    $validPlugins = $this->getValidGroupRelationPluginIds();
     // If group content is not a node - nothing return.
     if (!$validPlugins) {
       return [];
     }
 
+    // @todo: Adjust query.
     // Get node id.
     $subQuery = $this->database->select('group_content_field_data', 'gc');
     $subQuery->addField('gc', 'entity_id');
@@ -150,13 +151,13 @@ class CrossPostingService {
   /**
    * Returns groups list have the same group content entity (node).
    *
-   * @param \Drupal\group\Entity\GroupContentInterface $groupContent
+   * @param \Drupal\group\Entity\GroupRelationshipInterface $groupContent
    *   Node object.
    *
    * @return array
    *   An array with group ids.
    */
-  public function getGroupsByGroupContentNodeEntity(GroupContentInterface $groupContent): array {
+  public function getGroupsByGroupContentNodeEntity(GroupRelationshipInterface $groupContent): array {
     $gids = $this->getGroupIdsByGroupContentNodeEntity($groupContent);
 
     return $this->groupStorage->loadMultiple($gids);
@@ -175,7 +176,7 @@ class CrossPostingService {
     if ($entity instanceof NodeInterface) {
       $gids = $this->getGroupIdsForNode($entity);
     }
-    elseif ($entity instanceof GroupContentInterface) {
+    elseif ($entity instanceof GroupRelationshipInterface) {
       $gids = $this->getGroupIdsByGroupContentNodeEntity($entity);
     }
 
@@ -185,24 +186,24 @@ class CrossPostingService {
   /**
    * Returns flag if node exists in multiple groups.
    *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   * @param \Drupal\Core\Entity\GroupRelationshipInterface $entity
    *   Entity object.
    *
    * @return bool
    *   Returns flag if node exists in multiple groups.
    */
-  public function nodeExistsInMultipleGroups(ContentEntityInterface $entity): bool {
+  public function nodeExistsInMultipleGroups(GroupRelationshipInterface $entity): bool {
     return $this->countGroupsByGroupContentNode($entity) > 1;
   }
 
   /**
-   * Returns existed group content plugins applicable to nodes.
+   * Returns existed group relation plugins applicable to nodes.
    *
    * @return array
    *   An array with plugin ids.
    */
-  public function getValidGroupContentPluginIds(): array {
-    // @todo: getInstalledIds() should has a required param.
+  public function getValidGroupRelationPluginIds(): array {
+    // @todo: now getInstalledIds() should has a required param.
     $groupContentPluginIds = array_filter($this->groupRelationTypeManager->getInstalledIds(), function ($string) {
       return strpos($string, 'group_node:') === 0;
     });
