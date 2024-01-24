@@ -51,7 +51,7 @@ class SocialGroupSelection extends DefaultSelection {
       /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
       $group_type = $storage->load($group_type_id);
 
-      if (!$group_type->hasContentPlugin($plugin_id)) {
+      if (!$group_type->hasPlugin($plugin_id)) {
         $excluded_group_types[] = $group_type_id;
       }
     }
