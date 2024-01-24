@@ -5,8 +5,8 @@ namespace Drupal\grequest\Form;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
-use Drupal\group\Entity\GroupContent;
+use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupInterface;
 
 /**
@@ -55,13 +55,12 @@ class GroupRequestMembershipForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $contentTypeConfigId = $this->group
-      ->getGroupType()
-      ->getContentPlugin('group_membership_request')
-      ->getContentTypeConfigId();
+    $relation_type_id = $this->entityTypeManager()
+      ->getStorage('group_content_type')
+      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
 
-    $group_content = GroupContent::create([
-      'type' => $contentTypeConfigId,
+    $group_content = GroupRelationship::create([
+      'type' => $relation_type_id,
       'gid' => $this->group->id(),
       'entity_id' => $this->currentUser()->id(),
       'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
