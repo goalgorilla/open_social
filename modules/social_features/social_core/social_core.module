@@ -154,7 +154,7 @@ function social_core_preprocess_node(&$variables) {
     $node_fields = $node->getFields();
     $find_image_field = '_social_core_find_image_field';
     assert(is_callable($find_image_field));
-    /** @var callable(Drupal\Core\Field\FieldItemListInterface<Drupal\Core\Field\FieldItemInterface>):\Drupal\Core\Field\FieldItemList|null $find_image_field */
+    /** @var callable(Drupal\Core\Field\FieldItemListInterface<Drupal\Core\Field\FieldItemInterface>):bool|null $find_image_field */
     $image_fields = array_filter($node_fields, $find_image_field);
 
     // Get the first image field of all the fields.

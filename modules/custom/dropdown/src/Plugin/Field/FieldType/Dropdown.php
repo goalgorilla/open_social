@@ -172,7 +172,10 @@ class Dropdown extends FieldItemBase {
 
     $list = explode("\n", $string);
     $list = array_map('trim', $list);
-    $list = array_filter($list, 'strlen');
+    $callback = 'strlen';
+    assert(is_callable($callback));
+    /** @var callable(string):bool|null $callback */
+    $list = array_filter($list, $callback);
 
     foreach ($list as $position => $text) {
       // Check for an explicit key.
