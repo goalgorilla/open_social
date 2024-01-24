@@ -4,6 +4,7 @@ namespace Drupal\social_node;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -87,8 +88,10 @@ class SocialNodeForm extends NodeForm {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): ContentEntityInterface {
     parent::validateForm($form, $form_state);
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    $entity = $this->buildEntity($form, $form_state);
 
     // Get visibility options.
     $visibilities = $form['field_content_visibility']['widget']['#options'];
@@ -101,6 +104,8 @@ class SocialNodeForm extends NodeForm {
         $form_state->setErrorByName('field_content_visibility', t('@visibility visibility is not allowed', ['@visibility' => $visibility]));
       }
     }
+
+    return $entity;
   }
 
   /**
