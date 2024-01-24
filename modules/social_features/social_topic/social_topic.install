@@ -569,7 +569,7 @@ function social_topic_update_120001(): string {
  */
 function social_topic_update_120002(): void {
   // Nothing to do if the module is not installed.
-  if (!\Drupal::moduleHandler()->moduleExists("taxonomy_access_fix")) {
+  if (!\Drupal::moduleHandler()->moduleExists('taxonomy_access_fix')) {
     return;
   }
 
@@ -586,10 +586,15 @@ function social_topic_update_120002(): void {
   $role = $entity_type_manager->getStorage('user_role')->load('authenticated');
 
   // If the role is not have the permission, grant permission.
+  $roleUpdated = FALSE;
   foreach ($taxonomy_permissions as $taxonomy_permission) {
     if (!$role->hasPermission($taxonomy_permission)) {
       $role->grantPermission($taxonomy_permission);
-      $role->save();
+      $roleUpdated = TRUE;
     }
+  }
+
+  if ($roleUpdated) {
+    $role->save();
   }
 }
