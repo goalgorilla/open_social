@@ -85,6 +85,25 @@ class SocialNodeForm extends NodeForm {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+
+    // Get visibility options.
+    $visibilities = $form['field_content_visibility']['widget']['#options'];
+
+    // Check if the values are being altered while it's disabled.
+    foreach ($visibilities as $visibility => $value) {
+      if (isset($form['field_content_visibility']['widget'][$visibility]['#disabled'])
+        && $form['field_content_visibility']['widget'][$visibility]['#disabled'] === TRUE
+        && $form_state->getValue('field_content_visibility')[0]['value'] === $visibility) {
+        $form_state->setErrorByName('field_content_visibility', t('@visibility visibility is not allowed', ['@visibility' => $visibility]));
+      }
+    }
+  }
+
+  /**
    * Gets the messenger.
    *
    * @return \Drupal\social_node\Service\SocialNodeMessengerInterface
