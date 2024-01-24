@@ -10,7 +10,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
@@ -131,7 +131,7 @@ class SocialGroupController extends ControllerBase {
     $group = $this->routeMatch->getParameter('group');
 
     if (
-      $group_content instanceof GroupContentInterface &&
+      $group_content instanceof GroupRelationshipInterface &&
       $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation'
     ) {
       if ($group instanceof SocialGroupInterface) {
@@ -159,7 +159,7 @@ class SocialGroupController extends ControllerBase {
     $group_content = $this->routeMatch->getParameter('group_content');
 
     if (
-      $group_content instanceof GroupContentInterface &&
+      $group_content instanceof GroupRelationshipInterface &&
       $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation'
     ) {
       $group = $this->routeMatch->getParameter('group');

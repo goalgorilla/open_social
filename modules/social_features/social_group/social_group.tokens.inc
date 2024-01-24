@@ -6,7 +6,7 @@
  */
 
 use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
@@ -77,7 +77,7 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
 
               if ($entity !== NULL) {
                 // If it's group content.
-                if ($entity instanceof GroupContentInterface) {
+                if ($entity instanceof GroupRelationshipInterface) {
                   $group_content_type = $entity->getGroupContentType();
                   if ($group_content_type !== NULL) {
                     $display_name = $group_content_type->label();
@@ -170,12 +170,12 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
         $email_token_services = \Drupal::service('social_activity.email_token_services');
 
         if (!empty($group_content = $email_token_services->getRelatedObject($message)) && $group_content->getEntityTypeId() == 'group_content') {
-          /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+          /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_content */
           // Get the group entity.
           /** @var Drupal\group\Entity\Group $group */
           $group = $group_content->getGroup();
           if ($group instanceof Group) {
-            if ($group_content->getContentPlugin()->getPluginId() === 'group_membership') {
+            if ($group_content->getPluginId() === 'group_membership') {
               $message_template_id = $message->getTemplate()->id();
               $link = $group_content->getGroup()->toUrl();
               switch ($message_template_id) {
