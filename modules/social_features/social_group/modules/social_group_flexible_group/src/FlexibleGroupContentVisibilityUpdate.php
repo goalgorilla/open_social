@@ -224,6 +224,13 @@ class FlexibleGroupContentVisibilityUpdate {
 
     $visibility = '';
     $option_values = array_column($new_options, 'value');
+
+    // Keep the current visibility of group content items if it's still
+    // available in the group content visibility options.
+    if (in_array($current_visibility, $option_values)) {
+      return $current_visibility;
+    }
+
     // Calculate new options based on what it was before editting.
     switch ($current_visibility) {
       case 'community':

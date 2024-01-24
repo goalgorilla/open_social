@@ -659,6 +659,11 @@ class GroupContext extends RawMinkContext {
     $group['uid'] = $account->id();
     unset($group['author']);
 
+    // Allow using multiple values.
+    if (isset($group['field_group_allowed_visibility']) && str_contains($group['field_group_allowed_visibility'], ',')) {
+      $group['field_group_allowed_visibility'] = explode(',', $group['field_group_allowed_visibility']);
+    }
+
     // Let's create some groups.
     $this->validateEntityFields('group', $group);
     $group_object = Group::create($group);
