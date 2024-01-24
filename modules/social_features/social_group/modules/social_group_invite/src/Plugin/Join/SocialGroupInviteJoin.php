@@ -61,7 +61,7 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
     // Only for groups that have invites enabled.
     /** @var \Drupal\social_group\SocialGroupInterface $entity */
     if (
-      $entity->getGroupType()->hasContentPlugin('group_invitation') &&
+      $entity->getGroupType()->hasPlugin('group_invitation') &&
       $this->currentUser->isAuthenticated()
     ) {
       // Check if the user has a pending invite for the group.
