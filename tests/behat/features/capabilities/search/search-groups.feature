@@ -1,4 +1,4 @@
-@api @search @groups @stability @1523 @TB-1690 @stability-3 @search-groups
+@api
 Feature: Search
   Benefit: In order to find specific content
   Role: As a LU
@@ -8,15 +8,16 @@ Feature: Search
     Given users:
       | name             | mail                     | status |
       | Group search One | group_user_1@example.com | 1      |
-    Given groups:
-      | label                    | field_group_description | author           | type        | langcode |
-      | Behat test group title 1 | My Behat description    | Group search One | open_group  | en       |
-      | Behat test group title 2 | My Behat description 2  | Group search One | open_group  | en       |
-      | Behat test group title 3 | No Behat descr          | Group search One | open_group  | en       |
+    And groups:
+      | label                    | field_group_description | author           | type           | field_flexible_group_visibility | field_group_allowed_visibility | field_group_allowed_join_method | langcode |
+      | Behat test group title 1 | My Behat description    | Group search One | flexible_group | public                          | public                         | direct                          | en       |
+      | Behat test group title 2 | My Behat description 2  | Group search One | flexible_group | public                          | public                         | direct                          | en       |
+      | Behat test group title 3 | No Behat descr          | Group search One | flexible_group | public                          | public                         | direct                          | en       |
     And Search indexes are up to date
     And I am logged in as an "authenticated user"
     #@TODO: Change "search/content" to the homepage when search block will be in the header
     And I am on "search/groups"
+
     When I fill in "search_input" with "My Behat description"
     And I press "Search" in the "Hero block" region
     And I should see the heading "Search" in the "Hero block" region
