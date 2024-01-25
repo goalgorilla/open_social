@@ -3249,17 +3249,16 @@ function social_group_social_core_title(): array {
 
         $plugin_id = \Drupal::routeMatch()->getParameter('plugin_id');
 
-        $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
+        $group_relation_type = $group->getGroupType()->getPlugin($plugin_id)->getRelationType();
 
-        $definition = \Drupal::entityTypeManager()
-          ->getDefinition($plugin->getEntityTypeId());
+        $definition = \Drupal::entityTypeManager()->getDefinition($group_relation_type->getEntityTypeId());
 
         if (
           $definition !== NULL &&
           ($entity_type_id = $definition->getBundleEntityType()) !== NULL
         ) {
           return \Drupal::entityTypeManager()->getStorage($entity_type_id)
-            ->load($plugin->getEntityBundle());
+            ->load($group_relation_type->getEntityBundle());
         }
 
         return NULL;
