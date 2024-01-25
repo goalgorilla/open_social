@@ -64,7 +64,7 @@ class FlexibleGroupContentVisibilityUpdate {
     // Load all the GroupContentEntities from Post to content.
     // Memberships don't need an update.
     $entities = $posts = [];
-    $entities = $group->getContentEntities();
+    $entities = $group->getRelatedEntities();
     $posts = self::getPostsFromGroup($group);
 
     // Add posts to the entities we need to update based on visibility.
@@ -104,7 +104,7 @@ class FlexibleGroupContentVisibilityUpdate {
   /**
    * Update visibility for all Group Content based on a new group type.
    *
-   * @param \Drupal\node\Entity\Node|\Drupal\social_post\Entity\Post|\Drupal\group\GroupMembership|\Drupal\group\Entity\GroupRelationshipInterface $entity
+   * @param \Drupal\node\Entity\Node|\Drupal\social_post\Entity\Post|\Drupal\group\Entity\GroupMembership|\Drupal\group\Entity\GroupRelationshipInterface $entity
    *   The content we are updating.
    * @param array $new_options
    *   The Group's new visibility options.
@@ -128,7 +128,7 @@ class FlexibleGroupContentVisibilityUpdate {
       $entity->save();
     }
 
-    // Make sure our GroupContent referenced entities also get invalidated.
+    // Make sure our GroupRelationship referenced entities also get invalidated.
     $tags = $entity->getCacheTagsToInvalidate();
     Cache::invalidateTags($tags);
 
