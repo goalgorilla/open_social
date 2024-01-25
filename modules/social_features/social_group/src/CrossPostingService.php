@@ -6,7 +6,6 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
-use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -27,7 +26,7 @@ class CrossPostingService {
   /**
    * The group relation type manager under test.
    *
-   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManager
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
   protected $groupRelationTypeManager;
 
@@ -74,7 +73,7 @@ class CrossPostingService {
   public function getGroupIdsForNode(NodeInterface $node): array {
     $validPlugins = $this->getValidGroupRelationPluginIds();
 
-    $query = $this->database->select('group_content_field_data', 'gc');
+    $query = $this->database->select('group_relationship_field_data', 'gc');
     $query->addField('gc', 'gid');
     $query->condition('gc.entity_id', $node->id());
     $query->condition('gc.type', $validPlugins, 'IN');
@@ -123,14 +122,13 @@ class CrossPostingService {
       return [];
     }
 
-    // @todo: Adjust query.
     // Get node id.
-    $subQuery = $this->database->select('group_content_field_data', 'gc');
+    $subQuery = $this->database->select('group_relationship_field_data', 'gc');
     $subQuery->addField('gc', 'entity_id');
     $subQuery->condition('gc.id', $groupContent->id());
 
     // Get count of group content with the current node.
-    $query = $this->database->select('group_content_field_data', 'gc');
+    $query = $this->database->select('group_relationship_field_data', 'gc');
     $query->addField('gc', 'gid');
     $query->condition('gc.entity_id', $subQuery);
     $query->condition('gc.type', $validPlugins, 'IN');
@@ -186,13 +184,13 @@ class CrossPostingService {
   /**
    * Returns flag if node exists in multiple groups.
    *
-   * @param \Drupal\Core\Entity\GroupRelationshipInterface $entity
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   Entity object.
    *
    * @return bool
    *   Returns flag if node exists in multiple groups.
    */
-  public function nodeExistsInMultipleGroups(GroupRelationshipInterface $entity): bool {
+  public function nodeExistsInMultipleGroups(ContentEntityInterface $entity): bool {
     return $this->countGroupsByGroupContentNode($entity) > 1;
   }
 
@@ -203,8 +201,7 @@ class CrossPostingService {
    *   An array with plugin ids.
    */
   public function getValidGroupRelationPluginIds(): array {
-    // @todo: now getInstalledIds() should has a required param.
-    $groupContentPluginIds = array_filter($this->groupRelationTypeManager->getInstalledIds(), function ($string) {
+    $groupContentPluginIds = array_filter($this->groupRelationTypeManager->getAllInstalledIds(), function ($string) {
       return strpos($string, 'group_node:') === 0;
     });
 
