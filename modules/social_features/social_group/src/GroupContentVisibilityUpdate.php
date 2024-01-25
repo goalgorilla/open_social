@@ -59,8 +59,8 @@ class GroupContentVisibilityUpdate {
    */
   public static function batchUpdateGroupContentVisibility(GroupInterface $group, $new_type) {
     // Set it up as a batch. We need to update visibility.
-    // Load all the GroupContentEntities from Post to Memberships to content.
-    $entities = $group->getContentEntities();
+    // Load all the GroupRelationshipEntities from Post to Memberships to content.
+    $entities = $group->getRelatedEntities();
 
     $posts = self::getPostsFromGroup($group);
     foreach ($posts as $pid => $post) {
@@ -102,7 +102,7 @@ class GroupContentVisibilityUpdate {
   /**
    * Update visibility for all Group Content based on a new group type.
    *
-   * @param \Drupal\node\Entity\Node|\Drupal\social_post\Entity\Post|\Drupal\group\GroupMembership|\Drupal\group\Entity\GroupContentInterface $entity
+   * @param \Drupal\node\Entity\Node|\Drupal\social_post\Entity\Post|\Drupal\group\GroupMembership|\Drupal\group\Entity\GroupRelationshipInterface $entity
    *   The content we are updating.
    * @param string $new_type
    *   The new Group type.
@@ -126,16 +126,16 @@ class GroupContentVisibilityUpdate {
       $entity->set('field_content_visibility', $default_visibility);
       $entity->save();
     }
-    // For GroupMembers we have to update the GroupContent.
+    // For GroupMembers we have to update the GroupRelationship.
     if ($entity instanceof GroupMembership) {
       $new_group_type = $new_type . '-group_membership';
-      $membershipEntity = $entity->getGroupContent();
+      $membershipEntity = $entity->getGroupRelationship();
       $membershipEntity->set('type', $new_group_type);
       $membershipEntity->save();
       $entity = $membershipEntity;
     }
 
-    // Make sure our GroupContent referenced entities also get invalidated.
+    // Make sure our GroupRelationship referenced entities also get invalidated.
     $tags = $entity->getCacheTagsToInvalidate();
     Cache::invalidateTags($tags);
 

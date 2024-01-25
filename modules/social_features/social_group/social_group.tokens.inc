@@ -78,7 +78,7 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
               if ($entity !== NULL) {
                 // If it's group content.
                 if ($entity instanceof GroupRelationshipInterface) {
-                  $group_content_type = $entity->getGroupContentType();
+                  $group_content_type = $entity->getRelationshipType();
                   if ($group_content_type !== NULL) {
                     $display_name = $group_content_type->label();
                     $content_url = Url::fromRoute('entity.node.canonical',

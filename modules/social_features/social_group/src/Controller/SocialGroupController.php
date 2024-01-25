@@ -132,7 +132,7 @@ class SocialGroupController extends ControllerBase {
 
     if (
       $group_content instanceof GroupRelationshipInterface &&
-      $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation'
+      $group_content->getPluginId() === 'group_invitation'
     ) {
       if ($group instanceof SocialGroupInterface) {
         return $this->t('Add invites to group: @group_name', [
@@ -160,7 +160,7 @@ class SocialGroupController extends ControllerBase {
 
     if (
       $group_content instanceof GroupRelationshipInterface &&
-      $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation'
+      $group_content->getPluginId() === 'group_invitation'
     ) {
       $group = $this->routeMatch->getParameter('group');
 

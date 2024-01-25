@@ -5,7 +5,7 @@ namespace Drupal\social_group\Plugin\views\field;
 use Drupal\social_group\Entity\Group;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 
 /**
  * Field handler to present the groups membership count.
@@ -27,7 +27,7 @@ class SocialGroupMembershipCount extends FieldPluginBase {
   public function render(ResultRow $row) {
     $group_content = $this->getEntity($row);
     // Grab the group from the group_invite.
-    if ($group_content instanceof GroupContent) {
+    if ($group_content instanceof GroupRelationship) {
       $group = $group_content->getGroup();
       if ($group instanceof Group) {
         /** @var \Drupal\social_group\GroupStatistics $group_statistics */

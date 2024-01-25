@@ -82,5 +82,6 @@ class GroupStatistics {
     // return $query->countQuery()->execute()->fetchField();
 
     return 0;
+  }
 
 }
