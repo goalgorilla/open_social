@@ -12,7 +12,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Render\Element\Checkboxes;
 use Drupal\Core\Url;
 use Drupal\crop\Entity\CropType;
-use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,9 +25,9 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * The group content plugin manager.
    *
-   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
-  protected $groupContentPluginManager;
+  protected $groupRelationTypeManager;
 
   /**
    * The entity type manager.
@@ -52,19 +52,19 @@ class SocialGroupSettings extends ConfigFormBase {
    *   The entity manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
-   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $group_content_plugin_manager
+   * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $group_content_plugin_manager
    *   The group content plugin manager.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     EntityTypeManagerInterface $entity_type_manager,
     ModuleHandlerInterface $module_handler,
-    GroupContentEnablerManagerInterface $group_content_plugin_manager
+    GroupRelationTypeManagerInterface $group_content_plugin_manager
   ) {
     parent::__construct($config_factory);
     $this->entityTypeManager = $entity_type_manager;
     $this->moduleHandler = $module_handler;
-    $this->groupContentPluginManager = $group_content_plugin_manager;
+    $this->groupRelationTypeManager = $group_content_plugin_manager;
   }
 
   /**
@@ -75,7 +75,7 @@ class SocialGroupSettings extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('module_handler'),
-      $container->get('plugin.manager.group_content_enabler')
+      $container->get('group_relation_type.manager')
     );
   }
 
@@ -290,7 +290,7 @@ class SocialGroupSettings extends ConfigFormBase {
     // Add possibility to add entity types from other modules.
     $this->moduleHandler->alter('social_group_cross_posting', $content_types);
 
-    $group_content_types = $this->groupContentPluginManager->getInstalledIds();
+    $group_content_types = $this->groupRelationTypeManager->getAllInstalledIds();
     foreach ($content_types as $bundle) {
       $plugin_id = 'group_node:' . $bundle;
       if (in_array($plugin_id, $group_content_types)) {
