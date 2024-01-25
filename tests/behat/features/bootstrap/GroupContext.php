@@ -76,14 +76,6 @@ class GroupContext extends RawMinkContext {
    */
   public function createGroups(TableNode $groupsTable) {
     foreach ($groupsTable->getHash() as $groupHash) {
-
-      // @todo We might want to do add more generic approach for multi-value
-      // fields like "field_group_allowed_visibility".
-      if (isset($groupHash['field_group_allowed_visibility'])) {
-        $groupHash['field_group_allowed_visibility'] =
-          explode(',', $groupHash['field_group_allowed_visibility']);
-      }
-
       $group = $this->groupCreate($groupHash);
       $this->groups[$group->id()] = $group;
     }
