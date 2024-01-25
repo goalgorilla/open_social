@@ -17,7 +17,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Plugin\GroupContentEnablerManager;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\select2\Plugin\Field\FieldWidget\Select2EntityReferenceWidget;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
@@ -66,7 +66,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   /**
    * The plugin manager.
    */
-  protected GroupContentEnablerManager $pluginManager;
+  protected GroupRelationTypeManagerInterface $pluginManager;
 
   /**
    * The user entity storage..
@@ -78,7 +78,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler, GroupContentEnablerManager $pluginManager, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler, GroupRelationTypeManagerInterface $pluginManager, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->configFactory = $configFactory;
     $this->moduleHander = $moduleHandler;
@@ -101,7 +101,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       $container->get('config.factory'),
       $container->get('current_user'),
       $container->get('module_handler'),
-      $container->get('plugin.manager.group_content_enabler'),
+      $container->get('group_relation_type.manager'),
       $container->get('entity_type.manager')
     );
   }
