@@ -64,7 +64,7 @@ class FlexibleGroupContentVisibilityUpdate {
     // Load all the GroupContentEntities from Post to content.
     // Memberships don't need an update.
     $entities = $posts = [];
-    $entities = $group->getContentEntities();
+    $entities = $group->getRelatedEntities();
     $posts = self::getPostsFromGroup($group);
 
     // Add posts to the entities we need to update based on visibility.
@@ -128,7 +128,7 @@ class FlexibleGroupContentVisibilityUpdate {
       $entity->save();
     }
 
-    // Make sure our GroupContent referenced entities also get invalidated.
+    // Make sure our GroupRelationship referenced entities also get invalidated.
     $tags = $entity->getCacheTagsToInvalidate();
     Cache::invalidateTags($tags);
 

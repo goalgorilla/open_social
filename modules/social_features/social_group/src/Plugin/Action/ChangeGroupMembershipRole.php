@@ -9,7 +9,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -88,7 +88,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
     $update = TRUE;
     $value = [];
 
-    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+    /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
     /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $roles */
     $roles = &$entity->get('group_roles');
 
@@ -149,7 +149,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
    * {@inheritdoc}
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
-    if ($object instanceof GroupContentInterface && $object->getContentPlugin()->getPluginId() === 'group_membership') {
+    if ($object instanceof GroupRelationshipInterface && $object->getPluginId() === 'group_membership') {
       $access = $object->access('update', $account, TRUE);
     }
     else {
