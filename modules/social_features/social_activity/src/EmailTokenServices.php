@@ -241,11 +241,15 @@ class EmailTokenServices {
 
     /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
     $profile_storage = $this->entityTypeManager->getStorage('profile');
-    /** @var \Drupal\profile\Entity\Profile $profile */
+    /** @var \Drupal\profile\Entity\Profile|null $profile */
     $profile = $profile_storage->loadByUser($user, 'profile');
     // Add the profile image.
     /** @var \Drupal\image\Entity\ImageStyle $image_style */
     $image_style = ImageStyle::load('social_medium');
+
+    if (!$profile) {
+      return $preview_info;
+    }
 
     /** @var \Drupal\file\FileInterface $image|null */
     $image = NULL;
