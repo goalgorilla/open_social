@@ -6,7 +6,6 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
-use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -203,8 +202,7 @@ class CrossPostingService {
    *   An array with plugin ids.
    */
   public function getValidGroupRelationPluginIds(): array {
-    // @todo: now getInstalledIds() should has a required param.
-    $groupContentPluginIds = array_filter($this->groupRelationTypeManager->getInstalledIds(), function ($string) {
+    $groupContentPluginIds = array_filter($this->groupRelationTypeManager->getAllInstalledIds(), function ($string) {
       return strpos($string, 'group_node:') === 0;
     });
 
