@@ -76,8 +76,7 @@ Feature: Move content after creation
     And I clear group field
     And I wait for AJAX to finish
     And I press "Save"
-    And I run cron
-    And I wait for the batch job to finish
+    And I wait for the social batch job to finish
     Then I should not see "Motorboats"
     And I should not see "Kayaking"
 

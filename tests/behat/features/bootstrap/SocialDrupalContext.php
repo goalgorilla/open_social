@@ -452,6 +452,16 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * Wait for the Batch API to finish.
+   *
+   * @Given /^I wait for the social batch job to finish$/
+   */
+  public function iWaitForTheBatchJobToFinish() {
+    $page = $this->getSession()->getPage();
+    $this->getSession()->wait(1800000, (!$page->find('css', '#progress-wrapper')));
+  }
+
+  /**
    * Add likes to node at the start of a test with existing users as authors.
    *
    * Creates like provided in the form:
