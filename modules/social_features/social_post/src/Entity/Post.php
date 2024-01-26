@@ -56,7 +56,6 @@ use Drupal\user\UserInterface;
  *     "add-form" = "/post/add/{post_type}",
  *     "edit-form" = "/post/{post}/edit",
  *     "delete-form" = "/post/{post}/delete",
- *     "collection" = "/admin/content/post",
  *   },
  *   bundle_entity_type = "post_type",
  *   field_ui_base_route = "entity.post_type.edit_form"

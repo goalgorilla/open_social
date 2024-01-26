@@ -5,12 +5,14 @@
  * Install, update and uninstall functions for the social_core module.
  */
 
-use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\crop\Entity\CropType;
 use Drupal\file\Entity\File;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
-use Drupal\crop\Entity\CropType;
 use Drupal\user\RoleInterface;
+use Drupal\views\Entity\View;
 
 /**
  * Implements hook_requirements().
@@ -246,4 +248,20 @@ function social_core_update_121002(): void {
   // Considering we already assign administer blocks, this seems like a good
   // first iteration.
   user_role_grant_permissions('sitemanager', ['administer block content']);
+}
+
+/**
+ * Create views.view.posts (module social_post).
+ */
+function social_core_update_122001(): void {
+  // Only create if the posts view doesn't exist and views is enabled.
+  if (\Drupal::moduleHandler()->moduleExists('views') && !View::load('posts')) {
+    $config_path = Drupal::service('extension.list.module')->getPath('social_post') . '/config/install';
+    $source = new FileStorage($config_path);
+    $data = $source->read('views.view.posts');
+
+    if (is_array($data)) {
+      \Drupal::entityTypeManager()->getStorage('view')->create($data)->save();
+    }
+  }
 }
