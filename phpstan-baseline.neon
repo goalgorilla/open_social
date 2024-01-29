@@ -4992,25 +4992,7 @@ parameters:
 			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedConvertUrlToEmbedFilter.php
 
 		-
-			message: """
-        #^Call to deprecated function watchdog_exception\\(\\)\\:
-        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-          Use \\\\Drupal\\\\Core\\\\Utility\\\\Error\\:\\:logException\\(\\) instead\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedConvertUrlToEmbedFilter.php
-
-		-
 			message: "#^Not allowed to call private function _filter_url from module social_embed\\.$#"
-			count: 1
-			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlEmbedFilter.php
-
-		-
-			message: """
-        #^Call to deprecated function watchdog_exception\\(\\)\\:
-        in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-          Use \\\\Drupal\\\\Core\\\\Utility\\\\Error\\:\\:logException\\(\\) instead\\.$#
-			"""
 			count: 1
 			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlEmbedFilter.php
 
