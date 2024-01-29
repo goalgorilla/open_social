@@ -6,7 +6,9 @@ use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Utility\Error;
 use Drupal\filter\FilterProcessResult;
 use Drupal\social_embed\Service\SocialEmbedHelper;
 use Drupal\url_embed\Plugin\Filter\UrlEmbedFilter;
@@ -55,6 +57,13 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
   protected AccountProxyInterface $currentUser;
 
   /**
+   * The logger factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected LoggerChannelFactoryInterface $loggerFactory;
+
+  /**
    * Constructs a SocialEmbedUrlEmbedFilter object.
    *
    * @param array $configuration
@@ -73,6 +82,8 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
    *   The social embed helper class object.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   Current user object.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
+   *   The logger channel factory service.
    */
   public function __construct(
     array $configuration,
@@ -82,13 +93,15 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
     UuidInterface $uuid,
     ConfigFactory $config_factory,
     SocialEmbedHelper $embed_helper,
-    AccountProxyInterface $current_user
+    AccountProxyInterface $current_user,
+    LoggerChannelFactoryInterface $loggerFactory
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $url_embed);
     $this->uuid = $uuid;
     $this->configFactory = $config_factory;
     $this->embedHelper = $embed_helper;
     $this->currentUser = $current_user;
+    $this->loggerFactory = $loggerFactory;
   }
 
   /**
@@ -104,6 +117,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
       $container->get('config.factory'),
       $container->get('social_embed.helper_service'),
       $container->get('current_user'),
+      $container->get('logger.factory'),
     );
   }
 
@@ -143,7 +157,8 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
           }
         }
         catch (\Exception $e) {
-          watchdog_exception('url_embed', $e);
+          $logger = $this->loggerFactory->get('url_embed');
+          Error::logException($logger, $e);
         } finally {
           // If the $url_output is empty, that means URL is non-embeddable.
           // So, we return the original url instead of blank output.

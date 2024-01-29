@@ -5,6 +5,7 @@ namespace Drupal\social_embed\Plugin\Filter;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Utility\Error;
 use Drupal\filter\FilterProcessResult;
 use Drupal\social_embed\Service\SocialEmbedHelper;
 use Drupal\url_embed\Plugin\Filter\ConvertUrlToEmbedFilter;
@@ -203,7 +204,9 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
                 catch (\Exception $e) {
                   // If anything goes wrong while retrieving remote data, catch
                   // the exception to avoid a WSOD and leave the URL as is.
-                  watchdog_exception('url_embed', $e);
+                  $logger = \Drupal::logger('url_embed');
+                  Error::logException($logger, $e);
+
                   return $match[1];
                 }
               },
