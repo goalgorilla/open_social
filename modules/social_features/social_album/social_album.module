@@ -515,7 +515,7 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
 
     $node->save();
 
-    \Drupal::service('social_group.set_groups_for_node_service')->addGroupContent($node, $post->field_recipient_group->entity);
+    \Drupal::service('social_group.set_groups_for_node_service')->addGroupRelationship($node, $post->field_recipient_group->entity);
 
     $post->set('field_album', $node->id());
   }
