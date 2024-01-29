@@ -22,7 +22,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
@@ -485,10 +485,10 @@ function social_event_flagging_insert(EntityInterface $entity) {
   $nid = $entity->entity_id->value;
   $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
 
-  /** @var \Drupal\group\Entity\GroupContentInterface $groupcontent */
-  foreach (GroupContent::loadByEntity($node) as $groupcontent) {
+  /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_relationship */
+  foreach (GroupRelationship::loadByEntity($node) as $group_relationship) {
     /** @var \Drupal\group\Entity\GroupInterface $group */
-    $group = $groupcontent->getGroup();
+    $group = $group_relationship->getGroup();
 
     $allowed_type = in_array($group->bundle(), $group_type_ids);
     $is_member = $group->getMember($current_user) instanceof GroupMembershipLoaderInterface;
