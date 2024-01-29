@@ -5,7 +5,7 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 
 /**
  * Provides a 'ProfileActivityContext' activity context.
@@ -52,7 +52,7 @@ class ProfileActivityContext extends ActivityContextBase {
     }
 
     // Check if the content is placed in a group (regardless of content type).
-    if (GroupContent::loadByEntity($entity)) {
+    if (GroupRelationship::loadByEntity($entity)) {
       return FALSE;
     }
 
