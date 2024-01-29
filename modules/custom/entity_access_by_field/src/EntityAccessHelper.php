@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\EntityOwnerInterface;
 
@@ -139,7 +139,7 @@ class EntityAccessHelper {
           ) {
             // If user doesn't have permission we just check user membership in
             // groups where the node attached as group content.
-            $group_contents = GroupContent::loadByEntity($entity);
+            $group_contents = GroupRelationship::loadByEntity($entity);
 
             // Check recursively - if user is a member at least in one group we
             // should allow to check access by gnode module.

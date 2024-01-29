@@ -7,7 +7,7 @@ use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\social_group\SocialGroupHelperService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -125,8 +125,8 @@ class GroupActivityContext extends ActivityContextBase {
     }
 
     // Check if the content is placed in a group (regardless of content type).
-    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
-    if (GroupContent::loadByEntity($entity)) {
+    /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
+    if (GroupRelationship::loadByEntity($entity)) {
       return TRUE;
     }
 

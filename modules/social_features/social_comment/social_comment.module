@@ -215,7 +215,7 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
     unset($links['comment']['#links']['comment-reply']);
   }
   else {
-    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $storage */
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface $storage */
     $storage = \Drupal::entityTypeManager()->getStorage('group_content');
 
     /** @var \Drupal\Core\Entity\ContentEntityInterface $commented_entity */

@@ -43,9 +43,9 @@ class EntityAccessByField extends ContentAccess {
   /**
    * The group content storage handler.
    *
-   * @var \Drupal\group\Entity\Storage\GroupContentStorageInterface
+   * @var \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface
    */
-  protected $groupContentStorage;
+  protected $groupRelationshipStorage;
 
   /**
    * {@inheritdoc}
@@ -58,9 +58,9 @@ class EntityAccessByField extends ContentAccess {
     $processor->setDatabase($container->get('database'));
     $processor->setCurrentUser($container->get('current_user'));
 
-    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
-    $group_content_storage = $container->get('entity_type.manager')->getStorage('group_content');
-    $processor->groupContentStorage = $group_content_storage;
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface $group_relationship_storage */
+    $group_relationship_storage = $container->get('entity_type.manager')->getStorage('group_content');
+    $processor->groupRelationshipStorage = $group_relationship_storage;
 
     return $processor;
   }
@@ -97,7 +97,7 @@ class EntityAccessByField extends ContentAccess {
     $field_definitions = $node->getFieldDefinitions();
 
     // Get all group content entities.
-    $gnodes = $this->groupContentStorage->loadByEntity($node);
+    $gnodes = $this->groupRelationshipStorage->loadByEntity($node);
 
     foreach ($fields as $field) {
       /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
