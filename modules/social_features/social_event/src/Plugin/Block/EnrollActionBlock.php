@@ -8,7 +8,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -138,14 +138,14 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    */
   public function getGroups($node) {
 
-    $groupcontents = GroupContent::loadByEntity($node);
+    $group_relationships = GroupRelationship::loadByEntity($node);
 
     $groups = [];
     // Only react if it is actually posted inside a group.
-    if (!empty($groupcontents)) {
-      foreach ($groupcontents as $groupcontent) {
-        /** @var \Drupal\group\Entity\GroupContent $groupcontent */
-        $group = $groupcontent->getGroup();
+    if (!empty($group_relationships)) {
+      foreach ($group_relationships as $group_relationship) {
+        /** @var \Drupal\group\Entity\GroupRelationship $group_relationship */
+        $group = $group_relationship->getGroup();
         /** @var \Drupal\group\Entity\Group $group*/
         $groups[] = $group;
       }
