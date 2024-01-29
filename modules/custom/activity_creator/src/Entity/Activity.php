@@ -247,7 +247,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
         }
       }
       elseif ($target_type === 'group_content') {
-        /** @var \Drupal\group\Entity\GroupContent $group_content */
+        /** @var \Drupal\group\Entity\GroupRelationship $group_content */
         if ($group_content = \Drupal::service('entity_type.manager')->getStorage($target_type)->load($target_id)) {
           $target_type = $group_content->getEntity()->getEntityTypeId();
           $target_id = $group_content->getEntity()->id();

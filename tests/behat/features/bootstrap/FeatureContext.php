@@ -554,7 +554,7 @@ class FeatureContext extends RawMinkContext {
         $invitation = reset($invitations);
 
         if ($invitation instanceof GroupInvitationWrapper) {
-          $group_content = $invitation->getGroupContent();
+          $group_content = $invitation->getGroupRelationship();
           return $group_content->id();
         }
       }
