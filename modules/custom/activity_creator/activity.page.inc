@@ -70,8 +70,8 @@ function template_preprocess_activity(array &$variables) {
     $entity = reset($entities);
 
     if ($entity instanceof EntityInterface && $entity->getEntityTypeId() === 'group_content') {
-      /** @var \Drupal\group\Entity\GroupContentInterface $entity */
-      if ($entity->getGroupContentType()->getContentPluginId() === 'group_membership' && $entity->getEntity()->id() !== $activity->getOwnerId()) {
+      /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
+      if ($entity->getPluginId() === 'group_membership' && $entity->getEntity()->id() !== $activity->getOwnerId()) {
         $account = $entity->getEntity();
       }
     }

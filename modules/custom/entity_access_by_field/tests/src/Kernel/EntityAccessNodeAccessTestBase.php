@@ -79,7 +79,7 @@ abstract class EntityAccessNodeAccessTestBase extends EntityKernelTestBase {
     $storage->create(['type' => 'b'] + $values)->save();
 
     // Install some node types on the group type.
-    /** @var \Drupal\group\Entity\Storage\GroupContentTypeStorageInterface $storage */
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('group_content_type');
     $storage->createFromPlugin($groupTypeA, 'group_node:a')->save();
     $storage->createFromPlugin($groupTypeA, 'group_node:b')->save();
