@@ -54,7 +54,7 @@ class CrossPostingService {
    * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $groupRelationTypeManager
    *   The group relation type manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $database, , GroupRelationTypeManagerInterface $groupRelationTypeManager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $database, GroupRelationTypeManagerInterface $groupRelationTypeManager) {
     $this->entityTypeManager = $entity_type_manager;
     $this->groupStorage = $entity_type_manager->getStorage('group');
     $this->database = $database;
@@ -123,6 +123,8 @@ class CrossPostingService {
     }
 
     // @todo: Adjust query.
+    return [];
+
     // Get node id.
     $subQuery = $this->database->select('group_content_field_data', 'gc');
     $subQuery->addField('gc', 'entity_id');

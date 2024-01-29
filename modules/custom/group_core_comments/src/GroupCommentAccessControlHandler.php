@@ -5,7 +5,7 @@ namespace Drupal\group_core_comments;
 use Drupal\Core\Access\AccessResult;
 use Drupal\comment\CommentAccessControlHandler;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
@@ -30,7 +30,7 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
     if (!($commented_entity instanceof ContentEntityInterface)) {
       return AccessResult::neutral();
     }
-    $group_contents = GroupContent::loadByEntity($commented_entity);
+    $group_contents = GroupRelationship::loadByEntity($commented_entity);
 
     // Check for 'delete all comments' permission in case content is not from
     // group.
@@ -74,7 +74,7 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
 
     // Only when you have permission to view the comments.
     foreach ($group_contents as $group_content) {
-      /** @var \Drupal\group\Entity\GroupContent $group_content */
+      /** @var \Drupal\group\Entity\GroupRelationship $group_content */
       $group = $group_content->getGroup();
       /** @var \Drupal\group\Entity\Group $group */
       if ($group->hasPermission($perm, $account)) {
