@@ -11,7 +11,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\SocialEventTrait;
@@ -536,14 +536,14 @@ class EnrollActionForm extends FormBase {
    *   Array of group entities.
    */
   public function getGroups($node) {
-    $groupcontents = GroupContent::loadByEntity($node);
+    $group_relationships = GroupRelationship::loadByEntity($node);
 
     $groups = [];
     // Only react if it is actually posted inside a group.
-    if (!empty($groupcontents)) {
-      foreach ($groupcontents as $groupcontent) {
-        /** @var \Drupal\group\Entity\GroupContent $groupcontent */
-        $group = $groupcontent->getGroup();
+    if (!empty($group_relationships)) {
+      foreach ($group_relationships as $group_relationship) {
+        /** @var \Drupal\group\Entity\GroupRelationship $group_relationship */
+        $group = $group_relationship->getGroup();
         /** @var \Drupal\group\Entity\Group $group */
         $groups[] = $group;
       }
