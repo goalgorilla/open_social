@@ -146,7 +146,7 @@ function _social_album_set_group_permissions() {
     /** @var \Drupal\group\Entity\GroupTypeInterface $type */
     $type = $type_storage->load($type_id);
 
-    if (!$type->hasContentPlugin('group_node:album')) {
+    if (!$type->hasPlugin('group_node:album')) {
       continue;
     }
 
