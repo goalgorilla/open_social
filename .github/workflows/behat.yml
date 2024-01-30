@@ -10,6 +10,14 @@ on:
       - main
       - "[0-9]+.[0-9]+.x"
 
+# We use the default concurrency grouping of allowing a single workflow per branch/PR/tag to run at the same time.
+# In case of PRs we only care about the results for the last workflow run, so we cancel workflows already in progress
+# when new code is pushed, in all other cases (branches/tags) we want to have a history for commits so it's easier to
+# find breakages when they occur (head_ref is non-empty only when the workflow is triggered from a PR).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.head_ref != '' }}
+
 # github.head_ref is only set when the workflow was triggered by a pull_request and it contains the value of the source branch of the PR.
 # github.ref_name will than only be used if the workflow was not triggered by a pull_request and it also just contains the branch name.
 env:
@@ -21,7 +29,7 @@ jobs:
     name: "Feature Discovery"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - run: sudo apt-get install jq
 
@@ -39,7 +47,7 @@ jobs:
     name: "Install previous Open Social major version"
     runs-on: ubuntu-22.04
     container:
-      image: goalgorilla/open_social_docker:ci-php7
+      image: goalgorilla/open_social_docker:ci-drupal10-php8.1
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -64,6 +72,12 @@ jobs:
           - "1080"
       redis:
         image: redis:latest
+      solr:
+        image: ghcr.io/goalgorilla/ci-solr:8.11
+        env:
+          SOLR_SOLR_MEM_SIZE: 512m
+          PARTIAL_SEARCH_ENABLED: 0
+        options: --health-cmd="solr status" --health-interval=10s --health-timeout=5s --health-retries=3
 
     defaults:
       run:
@@ -71,7 +85,7 @@ jobs:
         working-directory: /var/www
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: ${{ github.workspace }}/tmp
 
@@ -87,21 +101,14 @@ jobs:
           apt-get install -y jq
           # This gets all version info from composer for Open Social. We then
           # use jq to traverse and manipulate the JSON data to find ourselves
-          # the last stable major version before the current stable major
-          # version.
-          PREVIOUS_MAJOR=`composer info -a --format json goalgorilla/open_social | jq '.versions | map(select(contains("-") == false)) | map(split(".")[0] | tonumber) | unique | reverse | .[1]'`
+          # the current stable major version.
+          PREVIOUS_MAJOR=`composer info -a --format json goalgorilla/open_social | jq '.versions | map(select(contains("-") == false)) | map(split(".")[0] | tonumber) | unique | reverse | .[0]'`
           echo "Setting up update test from Open Social $PREVIOUS_MAJOR"
 
-          # We don't support update paths from below 11, because with Open Social
-          # 12 we ship Drupal 10, which requires people to first update to Drupal
-          # Drupal 9.4, that's why we're now starting out update path from the last
-          # recommended/support version before all our D10 efforts started. We can
-          # remove it later when we have a new major out.
-          PREVIOUS_MAJOR=11.9.0
-          # Also include a hardcoded version for instaclick/php-webdriver
+          # Also include a hardcoded version for instaclick/php-webdriver and drupal/dynamic_entity_reference
           # as we didnt lock the version, and the patch isn't applying on the latest, so we require it
           # specifically to match the version that was installed at that moment in time.
-          composer require goalgorilla/open_social:~$PREVIOUS_MAJOR instaclick/php-webdriver:1.4.16
+          composer require goalgorilla/open_social:~$PREVIOUS_MAJOR instaclick/php-webdriver:1.4.16 drupal/dynamic_entity_reference:3.1.0
 
           # Installation
           # This is purposefully duplicated because we may change how
@@ -177,6 +184,11 @@ jobs:
           - "1080"
       redis:
         image: redis:latest
+      solr:
+        image: ghcr.io/goalgorilla/ci-solr:8.11
+        env:
+          SOLR_SOLR_MEM_SIZE: 512m
+          PARTIAL_SEARCH_ENABLED: 0
 
     defaults:
       run:
@@ -192,7 +204,7 @@ jobs:
           path: ${{ github.workspace }}
           key: ${{ github.sha }}-previous-version-${{ matrix.with_optional }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: ${{ github.workspace }}/tmp
 
@@ -237,18 +249,18 @@ jobs:
           drush cset symfony_mailer.mailer_transport.sendmail configuration.host 'mailcatcher' -y
           drush cset symfony_mailer.mailer_transport.sendmail configuration.port '1025' -y
 
-          # Ensure there are no warnings in the update.log
-          if grep -E '^>\s+\[warning\]\s' update.log 1>/dev/null; then
-            # Move the update.log with warnings and status messages to the test output. The text is viewable on GitHub
-            # too but some people might find it easier to just download the artifact and get digging.
+          # Ensure there are no warnings or requirements errors in the update.log
+          if grep -E '^>\s+\[warning\]\s' update.log 1>/dev/null || grep 'Requirements check reports errors. Do you wish to continue?' update.log 1>/dev/null; then
+            # Move the update.log with warnings/errors and status messages to the test output. The text is viewable on
+            # GitHub too but some people might find it easier to just download the artifact and get digging.
             if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
               mv update.log behat-test-output/update-with-optional.log
             else
               mv update.log behat-test-output/update.log
             fi
 
-            # Abort our testing until the warning is fixed and let our user know why we stopped.
-            echo "The drush output should not contain any warnings"
+            # Abort our testing until the warning/error is fixed and let our user know why we stopped.
+            echo "The drush output should not contain any warnings or requirements errors"
             exit 1
           fi
 
@@ -345,6 +357,11 @@ jobs:
           - "1080"
       redis:
         image: redis:latest
+      solr:
+        image: ghcr.io/goalgorilla/ci-solr:8.11
+        env:
+          SOLR_SOLR_MEM_SIZE: 512m
+          PARTIAL_SEARCH_ENABLED: 0
       chrome:
         # We use an image based on zenika/alpine-chrome:latest so we can add
         # the start-up arguments that we need.
