@@ -102,12 +102,12 @@ function entity_access_by_field_node_grants_alter(array &$grants, AccountInterfa
         // issues during installation.
         /** @var \Drupal\user\UserStorageInterface $user_storage */
         $user_storage = \Drupal::entityTypeManager()->getStorage('user');
-        /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
-        $group_content_storage = \Drupal::entityTypeManager()->getStorage('group_content');
+        /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $group_relationship_type_storage */
+        $group_relationship_type_storage = \Drupal::entityTypeManager()->getStorage('group_content');
 
         /** @var \Drupal\user\UserInterface $user */
         $user = $user_storage->load($account->id());
-        $memberships = $group_content_storage->loadByEntity($user);
+        $memberships = $group_relationship_type_storage->loadByEntity($user);
         foreach ($memberships as $membership) {
           $gids[$account->id()][] = $membership->getGroup()->id();
         }
