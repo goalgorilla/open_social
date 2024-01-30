@@ -311,7 +311,7 @@ class BookContext extends RawMinkContext {
     // we must do that ourselves.
     if (isset($group_id)) {
       try {
-        Group::load($group_id)?->addContent($book_object, "group_node:book");
+        Group::load($group_id)?->addRelationship($book_object, "group_node:book");
       }
       catch (PluginNotFoundException $_) {
         throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
