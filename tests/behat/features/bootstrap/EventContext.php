@@ -614,7 +614,7 @@ class EventContext extends RawMinkContext {
     // we must do that ourselves.
     if (isset($group_id)) {
       try {
-        Group::load($group_id)?->addContent($event_object, "group_node:event");
+        Group::load($group_id)?->addRelationship($event_object, "group_node:event");
       }
       catch (PluginNotFoundException $_) {
         throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
