@@ -404,7 +404,7 @@ class TopicContext extends RawMinkContext {
     // we must do that ourselves.
     if (isset($group_id)) {
       try {
-        Group::load($group_id)?->addContent($topic_object, "group_node:topic");
+        Group::load($group_id)?->addRelationship($topic_object, "group_node:topic");
       }
       catch (PluginNotFoundException $_) {
         throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
