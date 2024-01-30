@@ -105,7 +105,7 @@ class EventSettingsForm extends ConfigFormBase {
     $group_types = $this->entityTypeManager->getStorage('group_type')->loadMultiple();
     foreach ($group_types as $group_type) {
       // Check if this group type uses events.
-      if ($group_type->hasContentPlugin('group_node:event')) {
+      if ($group_type->hasPlugin('group_node:event')) {
         // Add to the option array.
         $form['event_display']['enroll']['#options'][$group_type->id()] = $group_type->label();
       }
