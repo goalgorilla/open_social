@@ -26,11 +26,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, PluginFormInterface {
 
   /**
-   * The group storage.
+   * The entity type manager service.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $storage;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The currently active route match object.
@@ -62,7 +62,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->storage = $entity_type_manager->getStorage('group');
+    $this->entityTypeManager = $entityTypeManager;
     $this->routeMatch = $route_match;
   }
 
@@ -168,11 +168,16 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
     $id = $this->routeMatch->getRawParameter('group');
 
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
-    $group_type = $this->storage->load($id)->getGroupType();
+    $group_type = $this->entityTypeManager
+      ->getStorage('group')
+      ->load($id)->getGroupType();
 
     $roles = $group_type->getRoles(FALSE);
-    $id = $group_type->getMemberRoleId();
-    $roles[$id] = $group_type->getMemberRole();
+
+    // In case that getMemberRoleId() and getMemberRole() have been removed
+    // try to load directly.
+    $id = $group_type->id() . '-member';
+    $roles[$id] = $this->entityTypeManager->getStorage('group_role')->load($id);
 
     $markup = $this->formatPlural($this->context['selected_count'],
       'Choose which group roles to assign to the member you selected',

@@ -991,7 +991,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         $gc_manager = \Drupal::service('group_relation_type.manager');
 
         if (!$gc_manager->getRelationshipTypeIds('group_node:' . $entity->bundle())) {
-          unset($form['groups']);
+         unset($form['groups']);
         }
       }
     }
@@ -2653,7 +2653,8 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
 
   // If members can see it, we also need to show group types because
   // we are not calculation memberships.
-  $member = $group_type->getMemberRole();
+  $id = $group_type->id() . '-member';
+  $member =  \Drupal::entityTypeManager()->getStorage('group_role')->load($id);
   if (NULL !== $member && $member->hasPermission('view group')) {
     return TRUE;
   }
