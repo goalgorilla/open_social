@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\node\NodeInterface;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 
 /**
  * Implements hook_entity_insert().
@@ -56,7 +56,7 @@ function activity_basics_social_group_move(NodeInterface $node): void {
 
   // If the node is placed within a new group, we add the move_entity_action
   // activity.
-  $group_contents = GroupContent::loadByEntity($node);
+  $group_contents = GroupRelationship::loadByEntity($node);
   if (!empty($group_contents)) {
     _activity_basics_entity_action($node, 'move_entity_action');
   }
