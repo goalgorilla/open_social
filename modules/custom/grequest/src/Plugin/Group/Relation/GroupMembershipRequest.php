@@ -147,61 +147,6 @@ class GroupMembershipRequest extends GroupRelationBase {
   /**
    * {@inheritdoc}
    */
-  public function postInstall() {
-    if (!\Drupal::isConfigSyncing()) {
-      $group_content_type_id = $this->getContentTypeConfigId();
-
-      // Add Status field.
-      FieldConfig::create([
-        'field_storage' => FieldStorageConfig::loadByName('group_content', 'grequest_status'),
-        'bundle' => $group_content_type_id,
-        'label' => $this->t('Request status'),
-        'required' => TRUE,
-        'default_value' => self::REQUEST_PENDING,
-      ])->save();
-      // Add "Updated by" field, to save reference to
-      // user who approved/denied request.
-      FieldConfig::create([
-        'field_storage' => FieldStorageConfig::loadByName('group_content', 'grequest_updated_by'),
-        'bundle' => $group_content_type_id,
-        'label' => $this->t('Approved/Rejected by'),
-        'settings' => [
-          'handler' => 'default',
-          'target_bundles' => NULL,
-        ],
-      ])->save();
-
-      // Build the 'default' display ID for both the entity form and view mode.
-      $default_display_id = "group_content.$group_content_type_id.default";
-      // Build or retrieve the 'default' view mode.
-      if (!$view_display = EntityViewDisplay::load($default_display_id)) {
-        $view_display = EntityViewDisplay::create([
-          'targetEntityType' => 'group_content',
-          'bundle' => $group_content_type_id,
-          'mode' => 'default',
-          'status' => TRUE,
-        ]);
-      }
-
-      // Assign display settings for the 'default' view mode.
-      $view_display
-        ->setComponent('grequest_status', [
-          'type' => 'number_integer',
-        ])
-        ->setComponent('grequest_updated_by', [
-          'label' => 'above',
-          'type' => 'entity_reference_label',
-          'settings' => [
-            'link' => 1,
-          ],
-        ])
-        ->save();
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
 
