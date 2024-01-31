@@ -5,9 +5,9 @@
  * Contains social_page.module..
  */
 
+use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**
@@ -53,8 +53,9 @@ function social_page_social_user_account_header_create_links($context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('Create New Page'),
       ],
-      '#title' => new TranslatableMarkup('New Page'),
       '#weight' => 300,
-    ] + Url::fromRoute('node.add', ['node_type' => 'page'])->toRenderArray(),
+    ] + Link::createFromRoute((new TranslatableMarkup('New Page')), 'node.add', [
+      'node_type' => 'page',
+    ])->toRenderable(),
   ];
 }

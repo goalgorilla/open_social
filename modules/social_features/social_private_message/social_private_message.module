@@ -10,6 +10,7 @@ use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
@@ -532,6 +533,15 @@ function social_private_message_social_user_account_header_account_links(array $
     $label_classes = 'badge badge-accent badge--pill';
   }
 
+  $title_link = [
+    '#type' => 'inline_template',
+    '#template' => '<span>{% trans %}Inbox{% endtrans %}</span><span{{ attributes }}>{{ icon }}</span>',
+    '#context' => [
+      'attributes' => new Attribute(['class' => $label_classes]),
+      'icon' => (string) $num_account_messages,
+    ],
+  ];
+
   return [
     'messages_mobile' => [
       '#type' => 'link',
@@ -542,15 +552,7 @@ function social_private_message_social_user_account_header_account_links(array $
       '#attributes' => [
         'title' => new TranslatableMarkup('Inbox'),
       ],
-      '#title' => [
-        '#type' => 'inline_template',
-        '#template' => '<span>{% trans %}Inbox{% endtrans %}</span><span{{ attributes }}>{{ icon }}</span>',
-        '#context' => [
-          'attributes' => new Attribute(['class' => $label_classes]),
-          'icon' => (string) $num_account_messages,
-        ],
-      ],
-    ] + Url::fromRoute('social_private_message.inbox')->toRenderArray(),
+    ] + Link::createFromRoute($title_link, 'social_private_message.inbox')->toRenderable(),
   ];
 
 }

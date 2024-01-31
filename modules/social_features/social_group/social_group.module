@@ -20,6 +20,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
@@ -2423,17 +2424,27 @@ function social_group_user_cancel_methods_alter(&$methods) {
  * group type selection page.
  */
 function social_group_social_user_account_header_create_links($context) {
-  // Create url to create a group.
-  $route_add_group = Url::fromRoute('entity.group.add_page');
 
   // If we have a user to work with, we can check if we should redirect it to
   // the create group overview or a single group.
   // If we do not have a user we'll default to the overview.
+  $route_add_group = NULL;
   if (!empty($context['user'])) {
     /** @var \Drupal\Core\Session\AccountInterface $user */
     $account = $context['user'];
+    /** @var \Drupal\Core\Url|NULL $route_add_group */
     $route_add_group = \Drupal::service('social_group.helper_service')
-      ->getGroupsToAddUrl($account) ?? $route_add_group;
+      ->getGroupsToAddUrl($account);
+
+    // Get groups to add url can return Url service
+    // It will change it when necessary.
+    if ($route_add_group instanceof Url) {
+      $route_add_group = Link::fromTextAndUrl((new TranslatableMarkup('New Group')), $route_add_group);
+    }
+  }
+
+  if (empty($route_add_group)) {
+    $route_add_group = Link::createFromRoute((new TranslatableMarkup('New Group')), 'entity.group.add_page');
   }
 
   return [
@@ -2442,9 +2453,8 @@ function social_group_social_user_account_header_create_links($context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('Create New Group'),
       ],
-      '#title' => new TranslatableMarkup('New Group'),
       '#weight' => 500,
-    ] + $route_add_group->toRenderArray(),
+    ] + $route_add_group->toRenderable(),
   ];
 }
 
@@ -2498,11 +2508,10 @@ function social_group_social_user_account_header_account_links(array $context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('View my groups'),
       ],
-      '#title' => new TranslatableMarkup('My groups'),
       '#weight' => 800,
-    ] + Url::fromRoute('view.groups.page_user_groups', [
+    ] + Link::createFromRoute((new TranslatableMarkup('My groups')), 'view.groups.page_user_groups', [
       'user' => $context['user']->id(),
-    ])->toRenderArray(),
+    ])->toRenderable(),
   ];
 }
 
