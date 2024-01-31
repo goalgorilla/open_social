@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\file\Entity\File;
 use Drupal\filter\FilterFormatInterface;
@@ -238,9 +239,9 @@ function social_core_social_user_account_header_account_links(array $context) {
         '#attributes' => [
           'title' => new TranslatableMarkup('Invites'),
         ],
-        '#title' => $title,
         '#weight' => 350,
-      ] + Url::fromRoute('social_core.my_invites')->toRenderArray(),
+      ] + Link::createFromRoute($title, 'social_core.my_invites')->toRenderable(),
+
     ];
   }
 }
