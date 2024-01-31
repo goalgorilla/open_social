@@ -7,8 +7,8 @@
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Url;
 use Drupal\flag\Entity\Flag;
 use Drupal\flag\FlagInterface;
 use Drupal\message\Entity\Message;
@@ -46,9 +46,8 @@ function social_follow_taxonomy_social_user_account_header_account_links(array $
       '#attributes' => [
         'title' => new TranslatableMarkup("View tags I'm following"),
       ],
-      '#title' => new TranslatableMarkup('Following tags'),
       '#weight' => 1001,
-    ] + Url::fromRoute('view.following_tags.following_tags')->toRenderArray(),
+    ] + Link::createFromRoute((new TranslatableMarkup('Following tags')), 'view.following_tags.following_tags')->toRenderable(),
   ];
 }
 

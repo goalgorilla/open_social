@@ -6,9 +6,9 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
-use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
@@ -362,9 +362,10 @@ function social_landing_page_social_user_account_header_create_links($context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('Create New Landing Page'),
       ],
-      '#title' => new TranslatableMarkup('New Landing Page'),
       '#weight' => 400,
-    ] + Url::fromRoute('node.add', ['node_type' => 'landing_page'])->toRenderArray(),
+    ] + Link::createFromRoute((new TranslatableMarkup('New Landing Page')), 'node.add', [
+      'node_type' => 'landing_page',
+    ])->toRenderable(),
   ];
 }
 

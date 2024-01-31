@@ -12,7 +12,6 @@ use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_group\SocialGroupHelperService;
 use Drupal\social_user\Entity\User;
@@ -491,11 +490,10 @@ function social_user_social_user_account_header_account_links(array $context) {
       '#attributes' => [
         'title' => new TranslatableMarkup("Settings"),
       ],
-      '#title' => new TranslatableMarkup("Settings"),
       '#weight' => 1200,
-    ] + Url::fromRoute('entity.user.edit_form', [
+    ] + Link::createFromRoute((new TranslatableMarkup('Settings')), 'entity.user.edit_form', [
       'user' => $context['user']->id(),
-    ])->toRenderArray(),
+    ])->toRenderable(),
     'divider_logout' => [
       "#wrapper_attributes" => [
         "class" => ["divider"],
@@ -508,9 +506,8 @@ function social_user_social_user_account_header_account_links(array $context) {
       '#attributes' => [
         'title' => new TranslatableMarkup("Logout"),
       ],
-      '#title' => new TranslatableMarkup("Logout"),
       '#weight' => 1500,
-    ] + Url::fromRoute('user.logout')->toRenderArray(),
+    ] + Link::createFromRoute((new TranslatableMarkup('Logout')), 'user.logout')->toRenderable(),
   ];
 }
 
