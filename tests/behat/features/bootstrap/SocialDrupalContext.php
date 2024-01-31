@@ -528,4 +528,29 @@ class SocialDrupalContext extends DrupalContext {
     }
   }
 
+  /**
+   * Set the preferred language for the current user if this language exists.
+   *
+   * Can be used for testing multi-language.
+   *
+   * @Given My preferred language is :preferred_language
+   */
+  public function setPreferredLanguageForCurrentUser(string $preferred_language) {
+    if (!$preferred_language) {
+      throw new \Exception("You need to specify the langcode for set preferred language for the current user.");
+    }
+    $language_manager = \Drupal::service('language_manager');
+    $all_enabled_languages = $language_manager->getLanguages();
+    $current_language = array_filter($all_enabled_languages, fn($language): bool => $language->getName() === $preferred_language);
+    if (empty($current_language)) {
+      throw new \Exception("The language '${$preferred_language}' you specified does not exist or is not enabled");
+    }
+    $current_language = reset($current_language);
+    $current_language_lg = $current_language->getId();
+    $current_user = $this->getUserManager()->getCurrentUser();
+    $current_user = User::load($current_user->uid);
+    $current_user->set('preferred_langcode', $current_language_lg);
+    $current_user->save();
+  }
+
 }
