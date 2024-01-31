@@ -2,15 +2,7 @@
 
 namespace Drupal\grequest\Plugin\Group\Relation;
 
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\group\Access\GroupAccessResult;
-use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
 
 /**
@@ -47,87 +39,6 @@ class GroupMembershipRequest extends GroupRelationBase {
   /**
    * {@inheritdoc}
    */
-  public function getGroupOperations(GroupInterface $group) {
-    $account = \Drupal::currentUser();
-    $operations = [];
-
-    if (!$group->getMember($account) && $group->hasPermission('request group membership', $account)) {
-      $operations['group-request-membership'] = [
-        'title' => $this->t('Request group membership'),
-        'url' => new Url(
-          'grequest.request_membership',
-          ['group' => $group->id()],
-          [
-            'query' => [
-              'destination' => Url::fromRoute('<current>')
-                ->toString()
-            ]
-          ]
-        ),
-        'weight' => 99,
-      ];
-    }
-
-    return $operations;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getGroupContentPermissions() {
-    $permissions = parent::getPermissions();
-
-    // Add extra permissions specific to membership group content entities.
-    $permissions['request group membership'] = [
-      'title' => $this->t('Request group membership'),
-      'allowed for' => ['outsider'],
-    ];
-
-    // These are handled by 'administer members'.
-    unset($permissions['update own group_membership_request content']);
-    unset($permissions['view group_membership_request content']);
-    unset($permissions['create group_membership_request content']);
-    unset($permissions['update any group_membership_request content']);
-    unset($permissions['delete any group_membership_request content']);
-    unset($permissions['delete own group_membership_request content']);
-
-    return $permissions;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function createAccess(GroupInterface $group, AccountInterface $account) {
-    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function viewAccess(GroupRelationshipInterface $group_content, AccountInterface $account) {
-    $group = $group_content->getGroup();
-    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function updateAccess(GroupRelationshipInterface $group_content, AccountInterface $account) {
-    $group = $group_content->getGroup();
-    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function deleteAccess(GroupRelationshipInterface $group_content, AccountInterface $account) {
-    $group = $group_content->getGroup();
-    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getEntityReferenceSettings() {
     $settings = parent::getEntityReferenceSettings();
     $settings['handler_settings']['include_anonymous'] = FALSE;
@@ -142,61 +53,6 @@ class GroupMembershipRequest extends GroupRelationBase {
     $configuration['entity_cardinality'] = 1;
 
     return $configuration;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function postInstall() {
-    if (!\Drupal::isConfigSyncing()) {
-      $group_content_type_id = $this->getContentTypeConfigId();
-
-      // Add Status field.
-      FieldConfig::create([
-        'field_storage' => FieldStorageConfig::loadByName('group_content', 'grequest_status'),
-        'bundle' => $group_content_type_id,
-        'label' => $this->t('Request status'),
-        'required' => TRUE,
-        'default_value' => self::REQUEST_PENDING,
-      ])->save();
-      // Add "Updated by" field, to save reference to
-      // user who approved/denied request.
-      FieldConfig::create([
-        'field_storage' => FieldStorageConfig::loadByName('group_content', 'grequest_updated_by'),
-        'bundle' => $group_content_type_id,
-        'label' => $this->t('Approved/Rejected by'),
-        'settings' => [
-          'handler' => 'default',
-          'target_bundles' => NULL,
-        ],
-      ])->save();
-
-      // Build the 'default' display ID for both the entity form and view mode.
-      $default_display_id = "group_content.$group_content_type_id.default";
-      // Build or retrieve the 'default' view mode.
-      if (!$view_display = EntityViewDisplay::load($default_display_id)) {
-        $view_display = EntityViewDisplay::create([
-          'targetEntityType' => 'group_content',
-          'bundle' => $group_content_type_id,
-          'mode' => 'default',
-          'status' => TRUE,
-        ]);
-      }
-
-      // Assign display settings for the 'default' view mode.
-      $view_display
-        ->setComponent('grequest_status', [
-          'type' => 'number_integer',
-        ])
-        ->setComponent('grequest_updated_by', [
-          'label' => 'above',
-          'type' => 'entity_reference_label',
-          'settings' => [
-            'link' => 1,
-          ],
-        ])
-        ->save();
-    }
   }
 
   /**
