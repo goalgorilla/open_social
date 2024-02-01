@@ -14,3 +14,8 @@ services:
     class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestPostInstall'
     arguments: [ '@group.relation_handler.post_install', '@entity_type.manager', '@string_translation' ]
     shared: false
+
+  group.relation_handler.access_control.grequest:
+    class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestAccessControl'
+    arguments: [ '@group.relation_handler.access_control' ]
+    shared: false

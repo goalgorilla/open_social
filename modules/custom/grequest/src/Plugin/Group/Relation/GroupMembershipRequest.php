@@ -2,15 +2,7 @@
 
 namespace Drupal\grequest\Plugin\Group\Relation;
 
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\group\Access\GroupAccessResult;
-use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
 
 /**
@@ -43,37 +35,6 @@ class GroupMembershipRequest extends GroupRelationBase {
    * Invitation rejected by user.
    */
   const REQUEST_REJECTED = 2;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function createAccess(GroupInterface $group, AccountInterface $account) {
-    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function viewAccess(GroupRelationshipInterface $group_content, AccountInterface $account) {
-    $group = $group_content->getGroup();
-    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function updateAccess(GroupRelationshipInterface $group_content, AccountInterface $account) {
-    $group = $group_content->getGroup();
-    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function deleteAccess(GroupRelationshipInterface $group_content, AccountInterface $account) {
-    $group = $group_content->getGroup();
-    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
-  }
 
   /**
    * {@inheritdoc}
