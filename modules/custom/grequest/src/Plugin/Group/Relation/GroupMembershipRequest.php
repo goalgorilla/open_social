@@ -47,33 +47,6 @@ class GroupMembershipRequest extends GroupRelationBase {
   /**
    * {@inheritdoc}
    */
-  public function getGroupOperations(GroupInterface $group) {
-    $account = \Drupal::currentUser();
-    $operations = [];
-
-    if (!$group->getMember($account) && $group->hasPermission('request group membership', $account)) {
-      $operations['group-request-membership'] = [
-        'title' => $this->t('Request group membership'),
-        'url' => new Url(
-          'grequest.request_membership',
-          ['group' => $group->id()],
-          [
-            'query' => [
-              'destination' => Url::fromRoute('<current>')
-                ->toString()
-            ]
-          ]
-        ),
-        'weight' => 99,
-      ];
-    }
-
-    return $operations;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function getGroupContentPermissions() {
     $permissions = parent::getPermissions();
 

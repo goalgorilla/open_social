@@ -1,0 +1,10 @@
+services:
+  # Specific group relation handlers.
+  group.relation_handler.operation_provider.grequest:
+    class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestOperationProvider'
+    arguments: [ '@group.relation_handler.operation_provider', '@current_user', '@string_translation' ]
+    shared: false
+  group.relation_handler.post_install.grequest:
+    class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestPostInstall'
+    arguments: [ '@group.relation_handler.post_install', '@entity_type.manager', '@string_translation' ]
+    shared: false
