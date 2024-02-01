@@ -88,8 +88,7 @@ class SocialPostPostForm extends AreaPluginBase {
     foreach ($definitions as $plugin_id => $definition) {
       // Context aware plugins are not currently supported.
       // Core and component plugins can be context-aware
-      // https://www.drupal.org/node/1938688
-      // @see \Drupal\ctools\Plugin\Block\EntityView
+      // https://www.drupal.org/node/1938688.
       if (isset($definition['context'])) {
         continue;
       }
