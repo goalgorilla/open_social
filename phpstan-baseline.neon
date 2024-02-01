@@ -1341,16 +1341,6 @@ parameters:
 			path: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php
 
 		-
-			message: """
-        #^Call to deprecated function format_size\\(\\)\\:
-        in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-          \\\\Drupal\\\\Core\\\\StringTranslation\\\\ByteSizeMarkup\\:\\:create\\(\\$size, \\$langcode\\)
-          instead\\.$#
-			"""
-			count: 1
-			path: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php
-
-		-
 			message: "#^Function dropdown_help\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/dropdown/dropdown.module

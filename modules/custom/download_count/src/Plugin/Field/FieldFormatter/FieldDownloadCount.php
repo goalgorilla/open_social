@@ -6,6 +6,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\ByteSizeMarkup;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\file\Plugin\Field\FieldFormatter\GenericFileFormatter;
 use Drupal\Core\Database\Database;
@@ -233,7 +234,7 @@ class FieldDownloadCount extends GenericFileFormatter {
         '#link_text' => $link_text,
         '#classes' => $attributes['class'],
         '#count' => $count,
-        '#file_size' => format_size($file_size),
+        '#file_size' => ByteSizeMarkup::create($file_size),
         '#path_to_socialbase' => $path_to_socialbase,
         '#node_icon' => $node_icon,
         '#attached' => [
