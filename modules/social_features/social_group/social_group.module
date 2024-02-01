@@ -2130,7 +2130,7 @@ function _social_group_delete_group() {
     $group_content_types = array_keys($group_content_types);
 
     // Get all the node's related to the current group.
-    $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+    $query = \Drupal::database()->select('group_relationship_field_data', 'gcfd');
     $query->addField('gcfd', 'entity_id');
     $query->condition('gcfd.gid', $group->id());
     $query->condition('gcfd.type', $group_content_types, 'IN');
