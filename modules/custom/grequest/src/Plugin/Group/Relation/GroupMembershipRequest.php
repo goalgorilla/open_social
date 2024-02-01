@@ -47,29 +47,6 @@ class GroupMembershipRequest extends GroupRelationBase {
   /**
    * {@inheritdoc}
    */
-  protected function getGroupContentPermissions() {
-    $permissions = parent::getPermissions();
-
-    // Add extra permissions specific to membership group content entities.
-    $permissions['request group membership'] = [
-      'title' => $this->t('Request group membership'),
-      'allowed for' => ['outsider'],
-    ];
-
-    // These are handled by 'administer members'.
-    unset($permissions['update own group_membership_request content']);
-    unset($permissions['view group_membership_request content']);
-    unset($permissions['create group_membership_request content']);
-    unset($permissions['update any group_membership_request content']);
-    unset($permissions['delete any group_membership_request content']);
-    unset($permissions['delete own group_membership_request content']);
-
-    return $permissions;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function createAccess(GroupInterface $group, AccountInterface $account) {
     return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }
