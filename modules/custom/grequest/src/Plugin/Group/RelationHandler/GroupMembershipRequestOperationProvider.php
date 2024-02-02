@@ -26,7 +26,11 @@ class GroupMembershipRequestOperationProvider implements OperationProviderInterf
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
-  public function __construct(OperationProviderInterface $parent, AccountProxyInterface $current_user, TranslationInterface $string_translation) {
+  public function __construct(
+    OperationProviderInterface $parent,
+    AccountProxyInterface $current_user,
+    TranslationInterface $string_translation
+  ) {
     $this->parent = $parent;
     $this->currentUser = $current_user;
     $this->stringTranslation = $string_translation;
