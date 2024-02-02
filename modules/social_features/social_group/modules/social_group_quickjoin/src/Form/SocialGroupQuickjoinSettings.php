@@ -2,9 +2,11 @@
 
 namespace Drupal\social_group_quickjoin\Form;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupType;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class SocialEventTypeSettings.
@@ -12,6 +14,13 @@ use Drupal\group\Entity\GroupType;
  * @package Drupal\social_group_quickjoin\Form
  */
 class SocialGroupQuickjoinSettings extends ConfigFormBase {
+
+  /**
+   * Entity type manger.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * {@inheritdoc}
@@ -27,6 +36,25 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
    */
   public function getFormId() {
     return 'social_group_quickjoin_form';
+  }
+
+  /**
+   * SocialGroupQuickjoinSettings constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity_type.manager')
+    );
   }
 
   /**
@@ -113,9 +141,13 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
     $types = [];
     /** @var \Drupal\group\Entity\GroupType $group_type */
     foreach (GroupType::loadMultiple() as $group_type) {
+      $outsider_role = $this->entityTypeManager
+        ->getStorage('group_role')
+        ->load($group_type->id() . '-outsider');
+
       // We can only select group types that have the 'join group'
       // permission enabled.
-      if (in_array('join group', $group_type->getOutsiderRole()->getPermissions())) {
+      if (in_array('join group', $outsider_role->getPermissions())) {
         $types[] = $group_type;
       }
     }
