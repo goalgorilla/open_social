@@ -32,6 +32,7 @@ use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\GroupMembership;
+use Drupal\group\PermissionScopeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
@@ -2279,42 +2280,46 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
 
   // Anonymous users have a special role.
   if ($account->isAnonymous()) {
-    /** @var \Drupal\group\Entity\GroupRoleInterface $role */
-    return $group_type->getAnonymousRole()->hasPermission('view group');
+    /** @var \Drupal\group\Entity\GroupRoleInterface $anonymous_role */
+    $anonymous_role = \Drupal::entityTypeManager()->getStorage('group_role')
+      ->load($group_type->id() . '-anonymous');
+    return $anonymous_role->hasPermission('view group');
   }
 
   // The service that keeps platform roles in sync with group roles for
   // outsiders.
   /** @var \Drupal\group\GroupRoleSynchronizerInterface $group_role_synchroniser */
   $group_role_synchroniser = \Drupal::service('group_role.synchronizer');
-  /** @var \Drupal\group\Entity\GroupRoleInterface[] $group_roles */
-  $group_roles = $group_type->getRoles();
-
-  $user_roles = $account->getRoles(TRUE);
 
   // Authenticated is a locked Role,
   // So first we check outsiders also easier on the performance :)
-  $outsider = $group_type->getOutsiderRole();
+  $outsider = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->load($group_type->id() . '-outsider');
+
   if (NULL !== $outsider && $outsider->hasPermission('view group')) {
     return TRUE;
   }
 
+  /** @var \Drupal\group\Access\GroupPermissionCalculatorInterface $group_permission_calculator */
+  $group_permission_calculator = \Drupal::service('group_permission.calculator');
+  $calculated_permissions = $group_permission_calculator->calculateFullPermissions($account);
+
   // If members can see it, we also need to show group types because
   // we are not calculation memberships.
-  $id = $group_type->id() . '-member';
-  $member =  \Drupal::entityTypeManager()->getStorage('group_role')->load($id);
-  if (NULL !== $member && $member->hasPermission('view group')) {
+  /** @var \Drupal\flexible_permissions\CalculatedPermissionsItemInterface|false $member */
+  $member = $calculated_permissions->getItem(PermissionScopeInterface::INSIDER_ID, (string) $group_type->id());
+  if (FALSE !== $member && $member->hasPermission('view group')) {
     return TRUE;
   }
 
   // Check each role this user has whether its group counterpart has the correct
   // permission. This counts for the advanced group permissions.
   // Admin, SM, CM.
-  foreach ($user_roles as $role) {
-    $group_role = $group_role_synchroniser->getGroupRoleId($type, $role);
-    if ($group_roles[$group_role]->hasPermission('view group')) {
-      return TRUE;
-    }
+  /** @var \Drupal\flexible_permissions\CalculatedPermissionsItemInterface|false $group_role */
+  $group_role = $calculated_permissions->getItem(PermissionScopeInterface::OUTSIDER_ID, (string) $group_type->id());
+  if (FALSE !== $group_role && $group_role->hasPermission('view group')) {
+    return TRUE;
   }
 
   // The user has no role that can view the group type.

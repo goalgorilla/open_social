@@ -17,10 +17,6 @@ use Drupal\gnode\Plugin\Group\Relation\GroupNode
  *   reference_label = @Translation("Title"),
  *   reference_description = @Translation("The title of the node to add to the group"),
  *   deriver = "Drupal\gnode\Plugin\Group\Relation\GroupNodeDeriver",
- *   handlers = {
- *     "access" = "Drupal\social_event_managers\Plugin\EventsGroupContentAccessControlHandler",
- *     "permission_provider" = "Drupal\gnode\Plugin\GroupNodePermissionProvider",
- *   }
  * )
  */
 class GroupEventNode extends GroupNode {
