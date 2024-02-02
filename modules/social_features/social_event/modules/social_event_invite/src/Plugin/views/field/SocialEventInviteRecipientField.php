@@ -99,7 +99,7 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
       $entity = $this->getEntity($values);
       if ($entity && $profile) {
         $build = [];
-        $entity = $this->getEntityTranslation($entity, $values);
+        $entity = $this->getEntityTranslationByRelationship($entity, $values);
         $view_builder = $this->entityTypeManager->getViewBuilder('profile');
         $build += $view_builder->view($profile, 'table', $entity->language()->getId());
         return $build;
