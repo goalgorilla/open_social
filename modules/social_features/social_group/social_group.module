@@ -2324,8 +2324,10 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
 
   // Anonymous users have a special role.
   if ($account->isAnonymous()) {
-    /** @var \Drupal\group\Entity\GroupRoleInterface $role */
-    return $group_type->getAnonymousRole()->hasPermission('view group');
+    /** @var \Drupal\group\Entity\GroupRoleInterface $anonymous_role */
+    $anonymous_role = \Drupal::entityTypeManager()->getStorage('group_role')
+      ->load($group_type->id() . '-anonymous');
+    return $anonymous_role->hasPermission('view group');
   }
 
   // The service that keeps platform roles in sync with group roles for
