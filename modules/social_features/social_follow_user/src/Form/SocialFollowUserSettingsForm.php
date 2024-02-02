@@ -2,8 +2,13 @@
 
 namespace Drupal\social_follow_user\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\RoleInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a form to configure Social Follow User settings.
@@ -11,6 +16,44 @@ use Drupal\Core\Form\FormStateInterface;
  * @package Drupal\social_follow_user\Form
  */
 class SocialFollowUserSettingsForm extends ConfigFormBase {
+
+  /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * Constructs a SocialFollowUserSettingsForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface|null $typedConfigManager
+   *   The typed config manager.
+   */
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    EntityTypeManagerInterface $entityTypeManager,
+    ?TypedConfigManagerInterface $typedConfigManager = NULL,
+  ) {
+    parent::__construct($config_factory, $typedConfigManager);
+
+    $this->entityTypeManager = $entityTypeManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): self {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('entity_type.manager'),
+      $container->get('config.typed')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -51,9 +94,12 @@ class SocialFollowUserSettingsForm extends ConfigFormBase {
 
     // Remove the permissions for following users if disabled.
     if ($follow_status === TRUE && $form_state->getValue('status') === 0) {
+      /** @var \Drupal\user\RoleStorageInterface $role_storage */
+      $role_storage = $this->entityTypeManager->getStorage('user_role');
+
       // Permission can be different from default so retrieve it dynamically.
-      $roles = user_role_names(FALSE, $permission);
-      $roles = array_keys($roles);
+      $entity_roles = array_filter($role_storage->loadMultiple(), fn(RoleInterface $role) => $role->hasPermission($permission));
+      $roles = array_map(fn(RoleInterface $role) => $role->id(), $entity_roles);
 
       foreach ($roles as $role) {
         user_role_revoke_permissions($role, [$permission]);
