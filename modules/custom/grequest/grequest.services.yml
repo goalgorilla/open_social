@@ -19,3 +19,8 @@ services:
     class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestAccessControl'
     arguments: [ '@group.relation_handler.access_control' ]
     shared: false
+
+  group.relation_handler.entity_reference.grequest:
+    class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestEntityReference'
+    arguments: [ '@group.relation_handler.entity_reference' ]
+    shared: false
