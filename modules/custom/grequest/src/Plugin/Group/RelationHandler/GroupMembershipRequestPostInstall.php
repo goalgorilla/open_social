@@ -5,9 +5,7 @@ namespace Drupal\grequest\Plugin\Group\RelationHandler;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest
+use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\GroupRelationshipTypeInterface;
 use Drupal\group\Plugin\Group\RelationHandler\PostInstallInterface;
 use Drupal\group\Plugin\Group\RelationHandler\PostInstallTrait;
@@ -41,10 +39,7 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
    */
   public function getInstallTasks() {
     $tasks = $this->parent->getInstallTasks();
-    $tasks['install-group-membership-request-fields'] = [
-      $this,
-      'installGroupMembershipRequestFields',
-    ];
+    $tasks['install-group-membership-request-fields'] = [$this, 'installGroupMembershipRequestFields'];
     return $tasks;
   }
 
@@ -62,24 +57,31 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
       return;
     }
 
+    $field_config_storage = $this->entityTypeManager->getStorage('field_config');
+    $field_storage_config_storage = $this->entityTypeManager->getStorage('field_storage_config');
     $relationship_type_id = $relationship_type->id();
 
     // Add Status field.
-    FieldConfig::create([
-      'field_storage' => FieldStorageConfig::loadByName('group_content', 'grequest_status'),
+    $field_config_storage->create([
+      'field_storage' => $field_storage_config_storage->load('group_content.' . GroupMembershipRequest::STATUS_FIELD),
       'bundle' => $relationship_type_id,
       'label' => $this->t('Request status'),
       'required' => TRUE,
       'default_value' => [
-        [
-          'value' => GroupMembershipRequest::REQUEST_PENDING,
-        ],
-      ])->save();
+          [
+            'value' => GroupMembershipRequest::REQUEST_PENDING,
+          ],
+      ],
+      'settings' => [
+        'workflow' => 'request',
+        'workflow_callback' => '',
+      ],
+    ])->save();
 
     // Add "Updated by" field, to save reference to
     // user who approved/denied request.
-    FieldConfig::create([
-      'field_storage' => FieldStorageConfig::loadByName('group_content', 'grequest_updated_by'),
+    $field_config_storage->create([
+      'field_storage' => $field_storage_config_storage->load('group_content.grequest_updated_by'),
       'bundle' => $relationship_type_id,
       'label' => $this->t('Approved/Rejected by'),
       'settings' => [

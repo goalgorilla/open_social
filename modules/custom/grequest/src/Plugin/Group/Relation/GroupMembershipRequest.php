@@ -6,17 +6,17 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
 
 /**
- * Provides a group relation type for users.
+ * Provides a group relation for users as group membership request.
  *
  * @GroupRelationType(
  *   id = "group_membership_request",
- *   label = @Translation("Group user"),
- *   description = @Translation("Adds users to groups without making them members."),
+ *   label = @Translation("Group membership request"),
+ *   description = @Translation("Adds users as requesters for the group."),
  *   entity_type_id = "user",
- *   pretty_path_key = "user",
+ *   pretty_path_key = "request",
  *   reference_label = @Translation("Username"),
- *   reference_description = @Translation("The name of the user you want to add to the group"),
- *   admin_permission = "administer user_as_content"
+ *   reference_description = @Translation("The name of the user you want to make a member"),
+ *   admin_permission = "administer membership requests"
  * )
  */
 class GroupMembershipRequest extends GroupRelationBase {
@@ -37,13 +37,9 @@ class GroupMembershipRequest extends GroupRelationBase {
   const REQUEST_REJECTED = 2;
 
   /**
-   * {@inheritdoc}
+   * Status field.
    */
-  public function getEntityReferenceSettings() {
-    $settings = parent::getEntityReferenceSettings();
-    $settings['handler_settings']['include_anonymous'] = FALSE;
-    return $settings;
-  }
+  const STATUS_FIELD = 'grequest_status';
 
   /**
    * {@inheritdoc}
