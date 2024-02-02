@@ -12,7 +12,7 @@ use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 /**
  * Provides access control for Event GroupContent entities.
  *
- * @todo: looks like it should be replaced with: Drupal\group\Entity\Access\GroupRelationshipAccessControlHandler
+ * @todo: looks like it deprecated now and should be removed.
  */
 class EventsGroupContentAccessControlHandler extends GroupContentAccessControlHandler {
 
