@@ -2339,7 +2339,10 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
 
   // Authenticated is a locked Role,
   // So first we check outsiders also easier on the performance :)
-  $outsider = $group_type->getOutsiderRole();
+  $outsider = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->load($group_type->id() . '-outsider');
+
   if (NULL !== $outsider && $outsider->hasPermission('view group')) {
     return TRUE;
   }
