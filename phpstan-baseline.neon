@@ -8850,26 +8850,6 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/src/Plugin/views/filter/FollowTaxonomyViewsFilter.php
 
 		-
-			message: """
-				#^Call to deprecated function user_role_names\\(\\)\\:
-				in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-				  \\\\Drupal\\\\user\\\\Entity\\\\Role\\:\\:loadMultiple\\(\\) and, if necessary, an inline
-				  implementation instead\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_follow_user/social_follow_user.install
-
-		-
-			message: """
-				#^Call to deprecated function user_role_names\\(\\)\\:
-				in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-				  \\\\Drupal\\\\user\\\\Entity\\\\Role\\:\\:loadMultiple\\(\\) and, if necessary, an inline
-				  implementation instead\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_follow_user/src/Form/SocialFollowUserSettingsForm.php
-
-		-
 			message: "#^Function social_footer_install\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_footer/social_footer.install
