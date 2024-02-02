@@ -7649,17 +7649,6 @@ parameters:
 
 		-
 			message: """
-				#^Call to deprecated function system_time_zones\\(\\)\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. This function
-				  is no longer used in Drupal core\\. Use
-				  \\\\Drupal\\\\Core\\\\Datetime\\\\TimeZoneFormHelper\\:\\:getOptionsList\\(\\) or
-				  \\\\DateTimeZone\\:\\:listIdentifiers\\(\\) instead\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_event/social_event.module
-
-		-
-			message: """
 				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
 				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
 				  replacement\\.$#
@@ -8408,7 +8397,12 @@ parameters:
 			path: modules/social_features/social_featured_items/social_featured_items.install
 
 		-
-			message: "#^Function social_event_post_update_10301_enable_event_enrollment\\(\\) has no return type specified\\.$#"
+			message: "#^Function social_featured_items_update_8001\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_featured_items/social_featured_items.install
+
+		-
+			message: "#^Function social_featured_items_theme\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_featured_items/social_featured_items.module
 
