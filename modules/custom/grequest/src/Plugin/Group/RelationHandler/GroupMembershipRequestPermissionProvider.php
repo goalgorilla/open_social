@@ -26,17 +26,15 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
    * {@inheritdoc}
    */
   public function getPermission($operation, $target, $scope = 'any') {
-    $operations = [
-      'view',
-      'create',
-      'update'
-      'delete',
-    ];
-
-    // @todo: check $target and if needed additinalol permissions.
+    // The following permissions are handled by the admin permission or have a
+    // different permission name.
     if ($target === 'relationship') {
-      if (in_array($operation, $operations) {
-        return 'administer members';
+      switch ($operation) {
+        case 'view':
+        case 'update':
+        case 'create':
+        case 'delete':
+          return $this->getAdminPermission();
       }
     }
     return $this->parent->getPermission($operation, $target, $scope);
@@ -48,9 +46,12 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
   public function buildPermissions() {
     $permissions = $this->parent->buildPermissions();
 
+    // Update the title to make user friendly.
+    $permissions[$this->getAdminPermission()]['title'] = $this->t('Administer membership requests');
+
     // Add extra permissions specific to membership group content entities.
-    $permissions['request group membership'] = [
-      'title' => $this->t('Request group membership!'),
+    $permissions[$this->getRequestGroupMembershipPermission()] = [
+      'title' => $this->t('Request group membership'),
       'allowed for' => ['outsider'],
     ];
 
@@ -63,6 +64,16 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
     unset($permissions['delete own group_membership_request content']);
 
     return $permissions;
+  }
+
+  /**
+   * Get request membership permission.
+   *
+   * @return string
+   *  Permission name.
+   */
+  public function getRequestGroupMembershipPermission() {
+    return 'request group membership';
   }
 
 }
