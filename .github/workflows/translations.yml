@@ -104,7 +104,7 @@ jobs:
           echo "$PR_BODY" > "${RUNNER_TEMP}/CHANGES.md"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           branch: automation/translations-source-extraction
           delete-branch: true
