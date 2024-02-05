@@ -31,6 +31,7 @@ use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
+use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\group\GroupMembership;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
@@ -2330,10 +2331,6 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
     return $anonymous_role->hasPermission('view group');
   }
 
-  // The service that keeps platform roles in sync with group roles for
-  // outsiders.
-  /** @var \Drupal\group\GroupRoleSynchronizerInterface $group_role_synchroniser */
-  $group_role_synchroniser = \Drupal::service('group_role.synchronizer');
   /** @var \Drupal\group\Entity\GroupRoleInterface[] $group_roles */
   $group_roles = $group_type->getRoles();
 
@@ -2361,7 +2358,11 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
   // permission. This counts for the advanced group permissions.
   // Admin, SM, CM.
   foreach ($user_roles as $role) {
-    $group_role = $group_role_synchroniser->getGroupRoleId($type, $role);
+    // group_role.synchronizer service has been removed, lets generates role_id
+    // directly.
+    $machine_name_max_length = EntityTypeInterface::ID_MAX_LENGTH - GroupTypeInterface::ID_MAX_LENGTH - 1;
+    $machine_name = substr(md5('group_role_sync.' . $role), 0, $machine_name_max_length);
+    $group_role = "$type-$machine_name";
     if ($group_roles[$group_role]->hasPermission('view group')) {
       return TRUE;
     }
