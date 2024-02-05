@@ -3,16 +3,17 @@ status: true
 dependencies:
   config:
     - group.type.flexible_group
+    - user.role.contentmanager
   enforced:
     config:
       - user.role.contentmanager
 id: flexible_group-83776d798
 label: 'Content manager'
 weight: 3
-internal: true
-audience: outsider
 group_type: flexible_group
-permissions_ui: false
+admin: false
+scope: outsider
+global_role: contentmanager
 permissions:
   - 'access comments'
   - 'access group_membership overview'
