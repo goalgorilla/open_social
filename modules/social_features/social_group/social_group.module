@@ -2286,11 +2286,6 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
     return $anonymous_role->hasPermission('view group');
   }
 
-  // The service that keeps platform roles in sync with group roles for
-  // outsiders.
-  /** @var \Drupal\group\GroupRoleSynchronizerInterface $group_role_synchroniser */
-  $group_role_synchroniser = \Drupal::service('group_role.synchronizer');
-
   // Authenticated is a locked Role,
   // So first we check outsiders also easier on the performance :)
   $outsider = \Drupal::entityTypeManager()
