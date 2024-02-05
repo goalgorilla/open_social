@@ -56,8 +56,8 @@ class UserUid extends ArgumentPluginBase {
     $this->ensureMyTable();
 
     // Use the table definition to correctly add this user ID condition.
-    if ($this->table !== 'group_content_field_data') {
-      $subselect2 = $this->database->select('group_content_field_data', 'gc');
+    if ($this->table !== 'group_relationship_field_data') {
+      $subselect2 = $this->database->select('group_relationship_field_data', 'gc');
       $subselect2->addField('gc', 'gid');
       $subselect2->condition('gc.entity_id', $this->argument);
       $subselect2->condition('gc.type', '%' . $this->database->escapeLike('membership') . '%', 'LIKE');

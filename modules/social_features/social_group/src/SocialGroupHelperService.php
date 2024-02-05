@@ -260,7 +260,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
 
       $group_content_types = GroupRelationshipType::loadByEntityTypeId('user');
       $group_content_types = array_keys($group_content_types);
-      $query = $this->database->select('group_content_field_data', 'gcfd');
+      $query = $this->database->select('group_relationship_field_data', 'gcfd');
       $query->addField('gcfd', 'gid');
       $query->condition('gcfd.entity_id', $uid);
       $query->condition('gcfd.type', $group_content_types, 'IN');
