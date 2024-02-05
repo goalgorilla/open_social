@@ -55,7 +55,7 @@ function social_profile_preview_preprocess_field__field_activity_output_text(arr
           '#markup' => str_replace(
             $old_markup,
             $new_markup,
-            $renderer->render($item['content']),
+            $renderer->renderPlain($item['content']),
           ),
         ];
       }
