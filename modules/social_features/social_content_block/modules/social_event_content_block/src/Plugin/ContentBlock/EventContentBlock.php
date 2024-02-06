@@ -82,7 +82,7 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
           break;
 
         case 'field_event_group':
-          $query->innerJoin('group_content_field_data', 'gc', 'gc.entity_id = base_table.nid');
+          $query->innerJoin('group_relationship_field_data', 'gc', 'gc.entity_id = base_table.nid');
           $query->condition('gc.type', '%' . $query->escapeLike('-group_node-event'), 'LIKE');
           $query->condition('gc.gid', $field_value, 'IN');
           break;

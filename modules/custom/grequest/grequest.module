@@ -22,11 +22,15 @@ function grequest_group_content_insert(GroupRelationshipInterface $group_content
   if ($type == 'group_membership' && $membership_request_enabled) {
     $approver = \Drupal::currentUser();
     $storage = \Drupal::entityTypeManager()->getStorage('group_content');
-    $filters = [
+    $properties = [
+      'gid' => $group_content->getGroup()->id(),
+      'plugin_id' => 'group_membership_request',
       'entity_id' => $group_content->get('entity_id')->getString(),
       'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
     ];
-    $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
+    // loadByGroup() doesn't support filters param anymore,
+    // so, lets use loadByProperties() instead.
+    $requests = $storage->loadByProperties($properties);
 
     /** @var \Drupal\group\Entity\GroupRelationshipInterface $request */
     foreach ($requests as $request) {

@@ -18,7 +18,7 @@ function social_group_views_data_alter(array &$data) {
     'help' => t('User is member of the group'),
     'argument' => [
       'field' => 'uid',
-      'name table' => 'group_content_field_data',
+      'name table' => 'group_relationship_field_data',
       'name field' => 'name',
       'id' => 'group_content_user_uid',
       'no group by' => TRUE,

@@ -51,7 +51,7 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
    * @param bool $is_syncing
    *   Whether config is syncing.
    */
-  public function installGroupMembershipRequestFields(GroupRelationshipTypeInterface $relationship_type, $is_syncing) {
+  public function installGroupMembershipRequestFields(GroupRelationshipTypeInterface $relationship_type, $is_syncing): void {
     // Only create config objects while config import is not in progress.
     if ($is_syncing === TRUE) {
       return;

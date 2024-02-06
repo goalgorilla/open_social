@@ -56,10 +56,11 @@ class GrequestController extends ControllerBase {
    * Builds the form to create new membership on membership request approve.
    */
   public function approveRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
-
-    $relation_type_id = $this->entityTypeManager
-      ->getStorage('group_content_type')
-      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager()->getStorage('group_content_type');
+    $plugin = $group->getGroupType()->getPlugin('group_membership');
+    $group_type_id = (string) $group->getGroupType()->id();
+    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, $plugin->getRelationTypeId());
 
     // Pre-populate a group membership from Membership request.
     $group_content = GroupRelationship::create([

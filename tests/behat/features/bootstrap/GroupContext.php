@@ -10,7 +10,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
 use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupContentType;
+use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
@@ -585,11 +585,11 @@ class GroupContext extends RawMinkContext {
 
       if ($gid) {
         $group = Group::load($gid);
-        $group_content_types = GroupContentType::loadByEntityTypeId('node');
+        $group_content_types = GroupRelationshipType::loadByEntityTypeId('node');
         $group_content_types = array_keys($group_content_types);
 
         // Get all the node's related to the current group.
-        $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+        $query = \Drupal::database()->select('group_relationship_field_data', 'gcfd');
         $query->addField('gcfd', 'entity_id');
         $query->condition('gcfd.gid', $group->id());
         $query->condition('gcfd.type', $group_content_types, 'IN');
