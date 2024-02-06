@@ -73,7 +73,7 @@ class CrossPostingService {
   public function getGroupIdsForNode(NodeInterface $node): array {
     $validPlugins = $this->getValidGroupRelationPluginIds();
 
-    $query = $this->database->select('group_content_field_data', 'gc');
+    $query = $this->database->select('group_relationship_field_data', 'gc');
     $query->addField('gc', 'gid');
     $query->condition('gc.entity_id', $node->id());
     $query->condition('gc.type', $validPlugins, 'IN');
