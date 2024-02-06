@@ -214,9 +214,12 @@ function _social_flexible_group_book_ajax_callback(array $form, FormStateInterfa
   }
 
   /** @var \Drupal\social_node\Entity\Node[] $books_in_group */
-  $books_in_group = $group->getRelatedEntities('group_node:book', [
-    'entity_id' => $all_books,
-  ]);
+  $books_in_group = \Drupal::entityTypeManager()->getStorage('group_content')
+    ->loadByProperties([
+      'plugin_id' => 'group_node:book',
+      'entity_id' => $all_books,
+    ]);
+
   // Get translations.
   $books_in_group = array_map([\Drupal::service('entity.repository'), 'getTranslationFromContext'], $books_in_group);
 

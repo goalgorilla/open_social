@@ -163,7 +163,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           // notifications.
           // There can be incidences where even if the user was deleted
           // its membership data was left in the table
-          // group_content_field_data, so, it is necessary to check
+          // group_relationship_field_data, so, it is necessary to check
           // if the user actually exists in system.
           $group_user = $membership->getUser();
           if (
