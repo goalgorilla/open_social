@@ -46,7 +46,7 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
       $configuration = [
         'left_table' => 'node_field_data',
         'left_field' => 'nid',
-        'table' => 'group_content_field_data',
+        'table' => 'group_relationship_field_data',
         'field' => 'entity_id',
         'operator' => '=',
       ];
