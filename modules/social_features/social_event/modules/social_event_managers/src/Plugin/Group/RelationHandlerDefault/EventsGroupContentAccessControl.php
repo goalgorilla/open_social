@@ -1,34 +1,34 @@
 <?php
 
-namespace Drupal\social_event_managers\Plugin;
+namespace Drupal\social_event_managers\Plugin\Group\RelationHandlerDefault;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\Plugin\GroupContentAccessControlHandler;
+use Drupal\group\Plugin\Group\RelationHandler\AccessControlInterface;
+use Drupal\group\Plugin\Group\RelationHandler\AccessControlTrait;
+use Drupal\group\Plugin\Group\RelationHandlerDefault\AccessControl;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 
 /**
  * Provides access control for Event GroupContent entities.
  *
- * @todo: looks like it deprecated now and should be removed.
+ * @todo Check if the access handler not need anymore if favor of "social_event_managers_node_access()".
  */
-class EventsGroupContentAccessControlHandler extends GroupContentAccessControlHandler {
+class EventsGroupContentAccessControl implements AccessControlInterface {
+
+  use AccessControlTrait;
 
   /**
-   * The plugin's permission provider.
+   * Constructs a new GroupMembershipAccessControl.
    *
-   * @var \Drupal\group\Plugin\GroupContentPermissionProviderInterface
+   * @param \Drupal\group\Plugin\Group\RelationHandlerDefault\AccessControl $parent
+   *   The parent access control handler.
    */
-  protected $permissionProvider;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
+  public function __construct(AccessControlInterface $parent) {
+    $this->parent = $parent;
+  }
 
   /**
    * {@inheritdoc}
@@ -36,21 +36,12 @@ class EventsGroupContentAccessControlHandler extends GroupContentAccessControlHa
   public function entityAccess(EntityInterface $entity, $operation, AccountInterface $account, $return_as_object = FALSE) {
     // We only care about Update (/edit) of the Event content.
     if ($operation !== 'update') {
-      return parent::entityAccess($entity, $operation, $account, $return_as_object);
+      $this->parent->entityAccess($entity, $operation, $account, $return_as_object);
     }
 
-    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $storage */
-    $storage = $this->entityTypeManager->getStorage('group_content');
-    $group_contents = $storage->loadByEntity($entity);
-
-    // Filter out the content that does not use this plugin.
-    foreach ($group_contents as $id => $group_content) {
-      // @todo Shows the need for a plugin ID base field.
-      $plugin_id = $group_content->getContentPlugin()->getPluginId();
-      if ($plugin_id !== $this->pluginId) {
-        unset($group_contents[$id]);
-      }
-    }
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorage $storage */
+    $storage = $this->entityTypeManager()->getStorage('group_content');
+    $group_contents = $storage->loadByEntity($entity, $this->pluginId);
 
     // If this plugin is not being used by the entity, we have nothing to say.
     if (empty($group_contents)) {
@@ -58,7 +49,7 @@ class EventsGroupContentAccessControlHandler extends GroupContentAccessControlHa
     }
 
     // We need to determine if the user has access based on group permissions.
-    $group_based_access = parent::entityAccess($entity, $operation, $account, $return_as_object);
+    $group_based_access = $this->parent->entityAccess($entity, $operation, $account, $return_as_object);
 
     // Only when the access result is False we need to override,
     // when a user already has access based on Group relation we're good.
@@ -78,13 +69,18 @@ class EventsGroupContentAccessControlHandler extends GroupContentAccessControlHa
       }
     }
 
+    if (!isset($result)) {
+      return $group_based_access;
+    }
+
     // If we did not allow access, we need to explicitly forbid access to avoid
     // other modules from granting access where Group promised the entity would
     // be inaccessible.
     if (!$result->isAllowed()) {
       $result = AccessResult::forbidden()->addCacheContexts(['user.group_permissions']);
     }
-    $result->addCacheContexts(['user']);
+
+    $result->cachePerUser();
 
     return $return_as_object ? $result : $result->isAllowed();
   }
