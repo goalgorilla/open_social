@@ -122,16 +122,13 @@ class CrossPostingService {
       return [];
     }
 
-    // @todo: Adjust query.
-    return [];
-
     // Get node id.
-    $subQuery = $this->database->select('group_content_field_data', 'gc');
+    $subQuery = $this->database->select('group_relationship_field_data', 'gc');
     $subQuery->addField('gc', 'entity_id');
     $subQuery->condition('gc.id', $groupContent->id());
 
     // Get count of group content with the current node.
-    $query = $this->database->select('group_content_field_data', 'gc');
+    $query = $this->database->select('group_relationship_field_data', 'gc');
     $query->addField('gc', 'gid');
     $query->condition('gc.entity_id', $subQuery);
     $query->condition('gc.type', $validPlugins, 'IN');
