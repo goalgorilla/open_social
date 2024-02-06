@@ -232,5 +232,28 @@ function social_album_update_13000(): void {
       ->getEditable($config)
       ->delete();
   }
+}
 
+/**
+ * Replace deprecated group permissions.
+ */
+function social_album_update_13001(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_album', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
+ * Update page_group_albums_overview views config to use a correct table.
+ */
+function social_album_update_13002() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_album', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
 }

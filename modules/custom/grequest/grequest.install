@@ -11,3 +11,33 @@
 function grequest_update_last_removed() : int {
   return 11401;
 }
+
+/**
+ * Replace deprecated cache context in "Pending members" view.
+ */
+function grequest_update_13000(): void {
+  $view = \Drupal::configFactory()->getEditable('views.view.group_pending_members');
+  foreach (['default', 'page_1'] as $display) {
+    $cache_contexts = $view->get("display.$display.cache_metadata.contexts");
+    // Remove deprecated cache context.
+    $cache_contexts = array_diff($cache_contexts, ['group_membership.roles.permissions']);
+    // Add a new cache context.
+    $cache_contexts[] = 'user.group_permissions';
+    $view->set("display.$display.cache_metadata.contexts", $cache_contexts);
+  }
+  $view->save();
+}
+
+/**
+ * Update group_pending_members views config to use a correct table.
+ */
+function grequest_update_13001() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('grequest', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}

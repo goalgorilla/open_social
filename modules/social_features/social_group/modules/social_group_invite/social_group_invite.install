@@ -32,16 +32,8 @@ function social_group_invite_update_dependencies() : array {
     'social_group' => 13000,
   ];
 
-  $dependencies['social_group_invite'][13001] = [
-    'social_group' => 13006,
-  ];
-
   $dependencies['social_group'][13001] = [
     'social_group_invite' => 13000,
-  ];
-
-  $dependencies['social_group'][13007] = [
-    'social_group_invite' => 13001,
   ];
 
   return $dependencies;
@@ -141,4 +133,18 @@ function social_group_invite_update_13001(): void {
       $config_translation->save();
     }
   }
+}
+
+/**
+ * Update group_invite views config to use a correct table.
+ */
+function social_group_invite_update_13003() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_group_invite', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
 }
