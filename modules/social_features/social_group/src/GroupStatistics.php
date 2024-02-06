@@ -69,19 +69,13 @@ class GroupStatistics {
    *   The number of entities.
    */
   protected function count(GroupInterface $group, $type) {
-
-    // @todo: Fix: "Base table or view not found: 1146
-    // Table 'social.group_content_field_data' doesn't exist"
-
     // Additional caching not required since views does this for us.
-    // $query = $this->database->select('group_content_field_data', 'gcfd');
-    // $query->addField('gcfd', 'gid');
-    // $query->condition('gcfd.gid', $group->id());
-    // $query->condition('gcfd.type', $group->getGroupType()->id() . '-' . $type, 'LIKE');
+    $query = $this->database->select('group_relationship_field_data', 'gcfd');
+    $query->addField('gcfd', 'gid');
+    $query->condition('gcfd.gid', $group->id());
+    $query->condition('gcfd.type', $group->getGroupType()->id() . '-' . $type, 'LIKE');
 
-    // return $query->countQuery()->execute()->fetchField();
-
-    return 0;
+    return $query->countQuery()->execute()->fetchField();
   }
 
 }
