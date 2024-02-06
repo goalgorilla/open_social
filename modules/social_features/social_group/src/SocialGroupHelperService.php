@@ -229,19 +229,12 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       $group_content_types = GroupRelationshipType::loadByPluginId('group_membership');
       $group_content_types = array_keys($group_content_types);
 
-      // @todo: GroupRelationship (group_content) DB tables have been renamed
-      // (we shouldn’t be making custom database queries, but in some cases we do,
-      // so we must check whether we’ve done so for this table).
-      //      $query = $this->database->select('group_content_field_data', 'gcfd');
-      //      $query->addField('gcfd', 'gid');
-      //      $query->condition('gcfd.entity_id', (string) $uid);
-      //      $query->condition('gcfd.type', $group_content_types, 'IN');
-      //      $result = $query->execute();
-      //
-      //      $groups[$uid] = $result !== NULL ? $result->fetchCol() : [];
-
-      // Temporary set return value.
-      $groups[$uid] = []
+      $query = $this->database->select('group_relationship_field_data', 'gcfd');
+      $query->addField('gcfd', 'gid');
+      $query->condition('gcfd.entity_id', (string) $uid);
+      $query->condition('gcfd.type', $group_content_types, 'IN');
+      $result = $query->execute();
+      $groups[$uid] = $result !== NULL ? $result->fetchCol() : [];
     }
 
     return $groups[$uid];

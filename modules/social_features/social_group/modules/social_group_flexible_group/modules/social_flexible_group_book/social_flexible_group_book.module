@@ -159,7 +159,7 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
   else {
     // If book is creating without group we remove all books
     // that are in groups already.
-    $query = \Drupal::database()->select('group_content_field_data', 't');
+    $query = \Drupal::database()->select('group_relationship_field_data', 't');
     $query->addField('t', 'entity_id', 'nid');
     $query->condition('type', 'flexible_group-group_node-book');
     $results = $query->execute();
