@@ -168,9 +168,23 @@ function social_user_update_13000(): ?string {
 }
 
 /**
+ * Update user_admin_people views config to use a correct table.
+ */
+function social_user_update_13001() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_user', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
+
+/**
  * Copy show-main-in-messages to new structure and delete old structure.
  */
-function social_user_update_13001(): void {
+function social_user_update_13002(): void {
   $system_config = \Drupal::configFactory()
     ->get('system.site');
 

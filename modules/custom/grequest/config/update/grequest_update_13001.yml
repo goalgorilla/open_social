@@ -1,0 +1,21 @@
+views.view.group_pending_members:
+  expected_config: {  }
+  update_actions:
+    change:
+      base_table: group_relationship_field_data
+      display:
+        default:
+          display_options:
+            fields:
+              created:
+                table: group_relationship_field_data
+              gid:
+                table: group_relationship_field_data
+              id:
+                table: group_relationship_field_data
+            relationships:
+              gc__user:
+                table: group_relationship_field_data
+            arguments:
+              gid:
+                table: group_relationship_field_data

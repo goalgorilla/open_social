@@ -1,0 +1,117 @@
+views.view.group_members:
+  expected_config: {  }
+  update_actions:
+    change:
+      base_table: group_relationship_field_data
+      display:
+        default:
+          display_options:
+            fields:
+              label:
+                table: group_relationship_field_data
+            sorts:
+              created:
+                table: group_relationship_field_data
+              label:
+                table: group_relationship_field_data
+            relationships:
+              gc__user:
+                table: group_relationship_field_data
+            arguments:
+              gid:
+                table: group_relationship_field_data
+        block_newest_members:
+          display_options:
+            sorts:
+              created:
+                table: group_relationship_field_data
+        page_group_members:
+          display_options:
+            sorts:
+              created:
+                table: group_relationship_field_data
+              label:
+                table: group_relationship_field_data
+
+views.view.group_topics:
+  expected_config: {  }
+  update_actions:
+    change:
+      base_table: group_relationship_field_data
+      display:
+        default:
+          display_options:
+            fields:
+              label:
+                table: group_relationship_field_data
+            relationships:
+              gc__node:
+                table: group_relationship_field_data
+            arguments:
+              gid:
+                table: group_relationship_field_data
+
+views.view.group_events:
+  expected_config: {  }
+  update_actions:
+    change:
+      base_table: group_relationship_field_data
+      display:
+        default:
+          display_options:
+            fields:
+              label:
+                table: group_relationship_field_data
+            relationships:
+              gc__node:
+                table: group_relationship_field_data
+            arguments:
+              gid:
+                table: group_relationship_field_data
+
+views.view.group_managers:
+  expected_config: { }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filter_groups:
+              groups: {  }
+    add:
+      display:
+        default:
+          display_options:
+            filter_groups:
+              groups:
+                1: AND
+    change:
+      display:
+        default:
+          display_options:
+            arguments:
+              gid:
+                table: group_relationship_field_data
+
+views.view.group_manage_members:
+  expected_config: { }
+  update_actions:
+    change:
+      base_table: group_relationship_field_data
+      display:
+        default:
+          display_options:
+            fields:
+              operations:
+                table: group_relationship
+              created:
+                table: group_relationship_field_data
+            sorts:
+              created:
+                table: group_relationship_field_data
+            relationships:
+              gc__user:
+                table: group_relationship_field_data
+            arguments:
+              gid:
+                table: group_relationship_field_data

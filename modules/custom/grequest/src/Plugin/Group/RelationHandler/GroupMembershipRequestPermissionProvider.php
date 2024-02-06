@@ -47,11 +47,11 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
     $permissions = $this->parent->buildPermissions();
 
     // Update the title to make user friendly.
-    $permissions[$this->getAdminPermission()]['title'] = $this->t('Administer membership requests');
+    $permissions[$this->getAdminPermission()]['title'] = 'Administer membership requests';
 
     // Add extra permissions specific to membership group content entities.
     $permissions[$this->getRequestGroupMembershipPermission()] = [
-      'title' => $this->t('Request group membership'),
+      'title' => 'Request group membership',
       'allowed for' => ['outsider'],
     ];
 
@@ -70,7 +70,7 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
    * Get request membership permission.
    *
    * @return string
-   *  Permission name.
+   *   Permission name.
    */
   public function getRequestGroupMembershipPermission() {
     return 'request group membership';
