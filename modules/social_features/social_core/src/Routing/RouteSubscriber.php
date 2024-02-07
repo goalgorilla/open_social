@@ -18,9 +18,6 @@ class RouteSubscriber extends RouteSubscriberBase {
    */
   private const CALLBACKS = [
     'system.entity_autocomplete' => EntityAutocompleteController::class . '::handleAutocomplete',
-
-    // Write our own VBO update selection for validation on AJAX request.
-    'views_bulk_operations.update_selection' => SocialCoreController::class . '::updateSelection',
   ];
 
   /**
