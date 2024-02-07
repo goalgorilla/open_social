@@ -482,7 +482,7 @@ class ContentBuilder implements ContentBuilderInterface {
       case 'most_commented':
         if ($is_group) {
           $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
-          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $group_alias = $query->leftJoin('group_relationship_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
           $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
         }
         // Otherwise, only check direct votes.
@@ -496,7 +496,7 @@ class ContentBuilder implements ContentBuilderInterface {
       case 'last_commented':
         if ($is_group) {
           $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
-          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $group_alias = $query->leftJoin('group_relationship_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
           $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
         }
         else {
@@ -514,7 +514,7 @@ class ContentBuilder implements ContentBuilderInterface {
         // content entities.
         if ($is_group) {
           $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
-          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $group_alias = $query->leftJoin('group_relationship_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
           $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
         }
         // Otherwise, only check direct votes.
@@ -530,7 +530,7 @@ class ContentBuilder implements ContentBuilderInterface {
       // that as sort value.
       case 'last_interacted':
         if ($is_group) {
-          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid");
+          $group_alias = $query->leftJoin('group_relationship_field_data', 'gfd', "$base_field = %alias.gid");
           $group_post_alias = $query->leftjoin('post__field_recipient_group', 'pst', "$base_field = %alias.field_recipient_group_target_id");
           $post_alias = $query->leftjoin('post_field_data', 'pfd', "$group_post_alias.entity_id = %alias.id");
           $comment_alias = $query->leftjoin('comment_field_data', 'cfd', "$post_alias.id = %alias.entity_id AND %alias.entity_type = 'post'");
@@ -563,7 +563,7 @@ class ContentBuilder implements ContentBuilderInterface {
       case 'trending':
         if ($is_group) {
           $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
-          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $group_alias = $query->leftJoin('group_relationship_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
           $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
           $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
         }

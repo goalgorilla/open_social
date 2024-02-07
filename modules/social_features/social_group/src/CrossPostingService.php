@@ -184,13 +184,13 @@ class CrossPostingService {
   /**
    * Returns flag if node exists in multiple groups.
    *
-   * @param \Drupal\Core\Entity\GroupRelationshipInterface $entity
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   Entity object.
    *
    * @return bool
    *   Returns flag if node exists in multiple groups.
    */
-  public function nodeExistsInMultipleGroups(GroupRelationshipInterface $entity): bool {
+  public function nodeExistsInMultipleGroups(ContentEntityInterface $entity): bool {
     return $this->countGroupsByGroupContentNode($entity) > 1;
   }
 
