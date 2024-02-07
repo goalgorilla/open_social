@@ -544,3 +544,17 @@ function social_group_update_13000() : void {
 function social_group_update_13002() : void {
   \Drupal::state()->delete("social_group_group_type_migration_opt_out");
 }
+
+/**
+ * Add a medium teaser view mode.
+ */
+function social_group_update_13003(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
