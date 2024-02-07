@@ -117,6 +117,11 @@ class SocialCoreController extends ControllerBase {
    *   The display ID of the current view.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
+   *
+   * @deprecated in open_social:12.1.0 and is removed from open_social:14.0.0. Use
+   *   'views_bulk_operations.update_selection' instead.
+   *
+   * @see https://www.drupal.org/node/3419770
    */
   public function updateSelection(
     string $view_id,
