@@ -7,7 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -104,7 +104,7 @@ class ActivityNotifications extends ControllerBase {
       $entity_query->accessCheck();
       $ids = $entity_query->execute();
     }
-    elseif ($entity instanceof GroupContentInterface) {
+    elseif ($entity instanceof GroupRelationshipInterface) {
       $linked_entity = $entity->getEntity();
       $group = $entity->getGroup();
       // Contrary to what PHPStan says `getEntity` can return NULL within Open

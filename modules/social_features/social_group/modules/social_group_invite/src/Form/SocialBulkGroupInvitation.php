@@ -103,7 +103,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   protected $token;
 
   /**
-   * The group relation type manager
+   * The group relation type manager.
    *
    * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */

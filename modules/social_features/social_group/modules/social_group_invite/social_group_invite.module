@@ -131,7 +131,7 @@ function social_group_invite_block_access(Block $block, $operation, AccountInter
   // will allow users to go back.
   if (in_array($route_name, $routes_to_check)) {
     $block_id = $block->getPluginId();
-    /** @var GroupRelationshipInterface $group_content */
+    /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_content */
     $group_content = \Drupal::routeMatch()->getParameter('group_content');
 
     // Only if we are sure it's a group invitation.

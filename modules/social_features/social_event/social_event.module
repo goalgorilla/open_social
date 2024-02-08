@@ -520,6 +520,7 @@ function social_event_flagging_insert(EntityInterface $entity) {
   }
 
   $nid = $entity->entity_id->value;
+  /** @var \Drupal\Core\Entity\EntityInterface $node */
   $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
 
   /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_relationship */
