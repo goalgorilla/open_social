@@ -47,6 +47,10 @@ function hook_social_group_hide_types_alter(array &$hidden_types) {
  *   The group type we alter the visibility setting for.
  *
  * @ingroup social_group_api
+ *
+ * @deprecated in social:12.2.0 and is removed from social:13.0.0. There is no
+ *     replacement.
+ * @see https://www.drupal.org/project/social/issues/3420020
  */
 function hook_social_group_default_visibility_alter(&$visibility, $group_type_id) {
   switch ($group_type_id) {
