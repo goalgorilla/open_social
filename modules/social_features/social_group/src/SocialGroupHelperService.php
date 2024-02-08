@@ -191,37 +191,6 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getDefaultGroupVisibility(string $type) {
-    $visibility = &drupal_static(__FUNCTION__ . $type);
-
-    if (empty($visibility)) {
-      switch ($type) {
-        case 'closed_group':
-          $visibility = 'group';
-          break;
-
-        case 'open_group':
-          $visibility = 'community';
-          break;
-
-        case 'public_group':
-          $visibility = 'public';
-          break;
-
-        default:
-          $visibility = NULL;
-      }
-
-      \Drupal::moduleHandler()
-        ->alter('social_group_default_visibility', $visibility, $type);
-    }
-
-    return $visibility;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function getCurrentGroupMembers() {
     $cache = &drupal_static(__FUNCTION__, []);
 

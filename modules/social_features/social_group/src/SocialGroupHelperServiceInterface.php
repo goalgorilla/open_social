@@ -65,21 +65,6 @@ interface SocialGroupHelperServiceInterface {
   public function getGroupFromEntity(array $entity, bool $read_cache = TRUE): ?int;
 
   /**
-   * Returns the default visibility.
-   *
-   * @param string $type
-   *   The Group Type.
-   *
-   * @return string|null
-   *   The default visibility.
-   *
-   * @deprecated in social:12.2.0 and is removed from social:13.0.0. There is no
-   *    replacement.
-   * @see https://www.drupal.org/project/social/issues/3420020
-   */
-  public static function getDefaultGroupVisibility(string $type);
-
-  /**
    * Returns the statically cached group members form the current group.
    *
    * @return array
