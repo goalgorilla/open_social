@@ -876,7 +876,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         $gc_manager = \Drupal::service('group_relation_type.manager');
 
         if (!$gc_manager->getRelationshipTypeIds('group_node:' . $entity->bundle())) {
-         unset($form['groups']);
+          unset($form['groups']);
         }
       }
     }

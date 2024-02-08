@@ -7,7 +7,7 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
 
@@ -94,7 +94,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             '#link' => $link,
           ];
         }
-        elseif ($entity->getEntityTypeId() === 'group_content' && $entity instanceof GroupContentInterface) {
+        elseif ($entity->getEntityTypeId() === 'group_content' && $entity instanceof GroupRelationshipInterface) {
           /** @var \Drupal\node\Entity\Node $node */
           $node = $entity->getEntity();
           if ($node instanceof NodeInterface) {
