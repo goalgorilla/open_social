@@ -14,6 +14,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * GroupAddForm.
  *
+ * @deprecated in social:12.2.0 and is removed from social:13.0.0. There is no
+ *      replacement.
+ * @see https://www.drupal.org/node/3420122
+ *
  * @package Drupal\social_group\Form
  */
 class SocialGroupAddForm extends FormBase {
@@ -136,7 +140,7 @@ class SocialGroupAddForm extends FormBase {
 
     // Add help text if the user can't edit group types.
     if (!$user->hasPermission('edit group types')) {
-      $element['#description'] = $this->t('In order to change the group type, 
+      $element['#description'] = $this->t('In order to change the group type,
         please contact the content or site managers.');
     }
 
@@ -174,7 +178,7 @@ class SocialGroupAddForm extends FormBase {
         ],
         'widget' => [
           '#title' => $this->t('Group type'),
-          '#description' => $this->t('In order to change the group type, 
+          '#description' => $this->t('In order to change the group type,
           please contact the content or site managers.'),
           '#field_parents' => [],
           '#required' => TRUE,
