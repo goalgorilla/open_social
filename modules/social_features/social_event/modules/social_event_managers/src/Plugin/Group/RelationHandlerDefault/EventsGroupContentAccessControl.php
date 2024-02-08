@@ -8,7 +8,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Plugin\Group\RelationHandler\AccessControlInterface;
 use Drupal\group\Plugin\Group\RelationHandler\AccessControlTrait;
-use Drupal\group\Plugin\Group\RelationHandlerDefault\AccessControl;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 
 /**

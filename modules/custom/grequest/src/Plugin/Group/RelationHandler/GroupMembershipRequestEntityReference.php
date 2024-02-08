@@ -7,7 +7,7 @@ use Drupal\group\Plugin\Group\RelationHandler\EntityReferenceInterface;
 use Drupal\group\Plugin\Group\RelationHandler\EntityReferenceTrait;
 
 /**
- * Configures the entity reference for the group_membership_request relation plugin.
+ * Configures entity reference for the group_membership_request relation plugin.
  */
 class GroupMembershipRequestEntityReference implements EntityReferenceInterface {
 

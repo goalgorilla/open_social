@@ -70,7 +70,7 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
    * Get request membership permission.
    *
    * @return string
-   *  Permission name.
+   *   Permission name.
    */
   public function getRequestGroupMembershipPermission() {
     return 'request group membership';

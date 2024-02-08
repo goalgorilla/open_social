@@ -16,7 +16,10 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Provides a content enabler for users.
  *
- * @deprecated and should be removed.
+ * @deprecated and should be removed, and need to use
+ * Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest.
+ *
+ * @see https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/group/updating-your-modules-to-group-20-api
  *
  * @GroupContentEnabler(
  *   id = "group_membership_request",
