@@ -11,8 +11,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -42,8 +40,6 @@ use Drupal\social_group\Controller\SocialGroupListBuilder;
 use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_group\Entity\Access\SocialGroupAccessControlHandler;
 use Drupal\social_group\Entity\Group;
-use Drupal\social_group\Form\SocialGroupAddForm;
-use Drupal\social_group\GroupContentVisibilityUpdate;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
@@ -115,30 +111,6 @@ function social_group_entity_type_alter(array &$entity_types) {
  *   - allowed_visibility: The allowed visibilities.
  */
 function template_preprocess_group_settings_help(array &$variables) {
-}
-
-/**
- * Check if a User is able to edit a Group's GroupType.
- *
- * @return bool
- *   TRUE if a user may edit a existings groups group type.
- */
-function social_group_group_type_permission_check() {
-  // Get the Group object from the route.
-  if (($group = _social_group_get_current_group()) === NULL) {
-    return FALSE;
-  }
-
-  // Check if we have a default visibility, if we don't it must be a custom
-  // group type, we need to have a visibility in order to update group content.
-  // please see hook_social_group_default_visibility_alter.
-  if (\Drupal::service('social_group.helper_service')
-    ->getDefaultGroupVisibility($group->getGroupType()->id()) === NULL) {
-    return FALSE;
-  }
-
-  // Otherwise, return true when we are able to edit the current group type.
-  return \Drupal::currentUser()->hasPermission('edit group types');
 }
 
 /**
@@ -1027,50 +999,6 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
     }
 
-    if (in_array($form_id, $group_forms['edit'])) {
-      $social_group_form = SocialGroupAddForm::create(\Drupal::getContainer());
-      $group_type_element = $social_group_form->getGroupTypeElement(TRUE);
-
-      // Get the current group.
-      if (($group = _social_group_get_current_group()) !== NULL) {
-        // Set the default value in the form.
-        $group_type_element['widget']['#default_value'] = $group->getGroupType()
-          ->id();
-      }
-
-      // If user doesn't have permission to change group types disable it.
-      // Or if group types can't be edited due to visibility issues.
-      if (!social_group_group_type_permission_check()) {
-        $group_type_element['#disabled'] = TRUE;
-      }
-      else {
-        $group_type_element['#prefix'] = '<div id="group-type-result"></div>';
-        $group_type_element['widget']['#ajax'] = [
-          'callback' => '_social_group_inform_group_type_selection',
-          'effect' => 'fade',
-          'event' => 'change',
-        ];
-      }
-
-      $form['group_type'] = $group_type_element;
-
-      // Disable all group types that can't be edited. Because they don't have
-      // a visibility.
-      /** @var string $type */
-      foreach (array_keys($form['group_type']['widget']['#options']) as $type) {
-        if ($helper->getDefaultGroupVisibility($type) === NULL) {
-          $form['group_type']['widget'][$type] = [
-            '#disabled' => TRUE,
-          ];
-        }
-      }
-
-      $form['#fieldgroups']['group_settings']->children[] = 'group_type';
-      $form['#group_children']['group_type'] = 'group_settings';
-
-      $form['actions']['submit']['#submit'][] = '_social_group_type_edit_submit';
-    }
-
     if (
       in_array($form_id, $group_forms['delete']) &&
       ($group = _social_group_get_current_group()) !== NULL
@@ -1298,55 +1226,6 @@ function _social_group_unique_members(
     $form_state,
     $complete_form,
   );
-}
-
-/**
- * Function that gives information to a CM+ when they edit a Group Type.
- *
- * @return \Drupal\Core\Ajax\AjaxResponse
- *   An ajax command containing the informative text.
- */
-function _social_group_inform_group_type_selection() {
-  $text = t('Please note that changing the group type will also change the
-  visibility of the group content and the way users can join the group.');
-  $ajax_response = new AjaxResponse();
-  $ajax_response->addCommand(new HtmlCommand('#group-type-result', $text));
-
-  return $ajax_response;
-}
-
-/**
- * Form submit for removing members from a group so we can clear caches.
- *
- * @throws \Drupal\Core\Entity\EntityStorageException
- */
-function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
-  // Check if the group_type changed.
-  // Visibility be empty for flexible groups.
-  $group = _social_group_get_current_group();
-  if (
-    $group instanceof GroupInterface &&
-    !empty($form['group_type']) &&
-    (\Drupal::service('social_group.helper_service')
-      ->getDefaultGroupVisibility($group->getGroupType()->id()) != NULL)
-  ) {
-    $default_type = $form['group_type']['widget']['#default_value'];
-    $new_type = $form_state->getValue('group_type')[0]['value'];
-
-    // Update the Group entity and all it's content when the type changed.
-    if ($new_type !== $default_type) {
-      // Update the default visibility of all the content.
-      GroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $new_type);
-    }
-  }
-
-  if ($group instanceof GroupInterface) {
-    // Make sure we clear cache tags accordingly.
-    $cache_tags = _social_group_cache_tags($group);
-    foreach ($cache_tags as $cache_tag) {
-      Cache::invalidateTags([$cache_tag]);
-    }
-  }
 }
 
 /**
