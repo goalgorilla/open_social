@@ -6,8 +6,62 @@
  */
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_metatag_update_dependencies() : array {
+  // Ensure configurations updates runs after the group migration has completed,
+  // but before everything is cleaned up.
+  $dependencies['social_metatag'][13000] = [
+    'social_group' => 13000,
+  ];
+  $dependencies['social_group'][13002] = [
+    'social_metatag' => 13000,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Implements hook_update_last_removed().
  */
 function social_metatag_update_last_removed() : int {
   return 11001;
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_metatag_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_metatag')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  // Remove deprecated configs.
+  \Drupal::configFactory()
+    ->getEditable('metatag.metatag_defaults.group_content__public_group-group_node-topic')
+    ->delete();
+  \Drupal::configFactory()
+    ->getEditable('metatag.metatag_defaults.group_content__public_group-group_node-event')
+    ->delete();
+  \Drupal::configFactory()
+    ->getEditable('metatag.metatag_defaults.group_content__open_group-group_node-topic')
+    ->delete();
+  \Drupal::configFactory()
+    ->getEditable('metatag.metatag_defaults.group_content__open_group-group_node-event')
+    ->delete();
+  \Drupal::configFactory()
+    ->getEditable('metatag.metatag_defaults.group_content__closed_group-group_node-event')
+    ->delete();
+  \Drupal::configFactory()
+    ->getEditable('metatag.metatag_defaults.group_content__closed_group-group_node-topic')
+    ->delete();
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_metatag', __FUNCTION__);
+  return $updateHelper->logger()->output();
 }
