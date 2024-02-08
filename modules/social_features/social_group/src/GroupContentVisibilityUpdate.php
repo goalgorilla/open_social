@@ -14,6 +14,10 @@ use Drupal\node\Entity\Node;
 /**
  * Class GroupContentVisibilityUpdate.
  *
+ * @deprecated in social:12.2.0 and is removed from social:13.0.0. There is no
+ *     replacement.
+ * @see https://www.drupal.org/node/3420118
+ *
  * @package Drupal\social_group
  */
 class GroupContentVisibilityUpdate {
