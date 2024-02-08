@@ -1500,12 +1500,6 @@ function social_group_field_widget_single_element_form_alter(&$element, FormStat
     if (!empty($current_group)) {
       $group_type = $current_group->getGroupType();
       $group_type_id = $group_type->id();
-      // If it's an existing entity we don't need to set the default
-      // rather follow the saved one.
-      if (!$entity->id() && $field_cardinality === 1) {
-        $element['#default_value'] = \Drupal::service('social_group.helper_service')
-          ->getDefaultGroupVisibility($group_type_id);
-      }
     }
     else {
       $group_type_id = NULL;
