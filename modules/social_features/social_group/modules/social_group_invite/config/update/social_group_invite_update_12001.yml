@@ -1,0 +1,22 @@
+views.view.social_group_invitations:
+  expected_config: {  }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            fields:
+              social_views_bulk_operations_bulk_form_invites:
+                selected_actions: {  }
+
+    add:
+      display:
+        default:
+          display_options:
+            fields:
+              social_views_bulk_operations_bulk_form_invites:
+                selected_actions:
+                  0:
+                    action_id: social_group_invite_resend_action
+                  3:
+                    action_id: social_group_invite_remove_action

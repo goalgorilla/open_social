@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Action(
  *   id = "social_group_invite_resend_action",
- *   label = @Translation("Resend invites for group members"),
+ *   label = @Translation("Send reminders"),
  *   type = "group_content",
  *   confirm = TRUE,
  * )
