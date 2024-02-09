@@ -175,3 +175,7 @@ new TranslatableMarkup('By submitting this form you will become a member of the 
 // String added because activity view modes will display attachment count
 // instead of links.
 new PluralTranslatableMarkup(0, '1 attachment.', '@count attachments.');
+
+// String added because original one was changed due to #3420469 issue.
+new TranslatableMarkup('Resend invites for group members');
+
