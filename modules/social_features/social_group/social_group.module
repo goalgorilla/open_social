@@ -379,6 +379,9 @@ function social_group_preprocess_group(array &$variables) {
         );
     }
   }
+
+  // Update if user is member of a group.
+  $variables['joined'] = $group->hasMember($account);
 }
 
 /**
