@@ -62,7 +62,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->entityTypeManager = $entityTypeManager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->routeMatch = $route_match;
   }
 
