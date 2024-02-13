@@ -157,7 +157,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
           }
         }
         catch (\Exception $e) {
-          $logger = $this->loggerFactory->get('url_embed');
+          $logger = $this->loggerFactory->get('social_embed');
           Error::logException($logger, $e);
         } finally {
           // If the $url_output is empty, that means URL is non-embeddable.
