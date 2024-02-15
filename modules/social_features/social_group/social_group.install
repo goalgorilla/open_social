@@ -558,3 +558,17 @@ function social_group_update_13003(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Make group views independent of group types.
+ */
+function social_group_update_13004() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_group', 'social_group_update_13004');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
