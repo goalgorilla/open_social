@@ -48,3 +48,21 @@ function activity_creator_schema() {
 function activity_creator_update_last_removed() : int {
   return 8802;
 }
+
+/**
+ * Remove entity specific configuration from activity entity reference.
+ */
+function activity_creator_update_13000() : string {
+  // In the storage layer we no longer care about the entity stored since we're
+  // changing a field that's not humanly editable but only used in business
+  // logic. Other systems decide what to send notifications for and if someone
+  // wants to loop send notifications for notifications, we don't stop them.
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('activity_creator', 'activity_creator_update_13000');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
