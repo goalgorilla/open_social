@@ -38,11 +38,6 @@ services:
     class: Drupal\social_group\SocialGroupSelectorWidgetConfigOverride
     tags:
       - {name: config.factory.override, priority: 10}
-  social_group.admin_people_override:
-    class: Drupal\social_group\SocialGroupAdminPeopleConfigOverride
-    arguments: ['@module_handler']
-    tags:
-    - {name: config.factory.override, priority: 10}
   social_group.group_statistics:
     class: Drupal\social_group\GroupStatistics
     arguments: ['@database']

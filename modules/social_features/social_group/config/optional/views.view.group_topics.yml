@@ -3,17 +3,12 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.group_content.teaser
-    - group.content_type.closed_group-group_node-topic
-    - group.content_type.open_group-group_node-topic
-    - group.content_type.public_group-group_node-topic
-    - group.type.closed_group
-    - group.type.open_group
-    - group.type.public_group
     - taxonomy.vocabulary.topic_types
   module:
     - group
     - node
     - taxonomy
+    - social_topic
 id: group_topics
 label: 'Group Topics'
 module: views
@@ -144,50 +139,6 @@ display:
           separator: ', '
           field_api_classes: false
       filters:
-        type:
-          id: type
-          table: group_content_field_data
-          field: type
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: in
-          value:
-            closed_group-group_node-topic: closed_group-group_node-topic
-            open_group-group_node-topic: open_group-group_node-topic
-            public_group-group_node-topic: public_group-group_node-topic
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: group_content
-          entity_field: type
-          plugin_id: bundle
         field_topic_type_target_id:
           id: field_topic_type_target_id
           table: node__field_topic_type
@@ -399,7 +350,7 @@ display:
           relationship: none
           group_type: group
           admin_label: 'Group content Content'
-          required: false
+          required: true
           group_content_plugins:
             'group_node:topic': 'group_node:topic'
             'group_node:event': '0'
@@ -438,14 +389,7 @@ display:
           validate:
             type: 'entity:group'
             fail: 'not found'
-          validate_options:
-            access: false
-            bundles:
-              closed_group: closed_group
-              open_group: open_group
-              public_group: public_group
-            multiple: 0
-            operation: view
+          validate_options: {  }
           break_phrase: false
           not: false
           entity_type: group_content

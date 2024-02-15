@@ -117,82 +117,6 @@ display:
           hide_alter_empty: true
           view_mode: default
       filters:
-        group_roles_target_id_2:
-          id: group_roles_target_id_2
-          table: group_content__group_roles
-          field: group_roles_target_id
-          relationship: group_content
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value: public_group-group_manager
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: string
-        group_roles_target_id_1:
-          id: group_roles_target_id_1
-          table: group_content__group_roles
-          field: group_roles_target_id
-          relationship: group_content
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value: closed_group-group_manager
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: string
         group_roles_target_id:
           id: group_roles_target_id
           table: group_content__group_roles
@@ -200,8 +124,8 @@ display:
           relationship: group_content
           group_type: group
           admin_label: ''
-          operator: '='
-          value: open_group-group_manager
+          operator: ends
+          value: '-group_manager'
           group: 1
           exposed: false
           expose:
@@ -240,7 +164,7 @@ display:
           entity_type: profile
           entity_field: type
           plugin_id: bundle
-          group: 2
+          group: 1
           expose:
             operator_limit_selection: false
             operator_list: {  }
