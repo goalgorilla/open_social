@@ -24,7 +24,7 @@ Feature: I want to be able to hide certain profile information
       | City | Lviv |
       | Street address | Fedkovycha 60a |
       | Postal code | 79000 |
-      | Oblast | Lviv oblast |
+    And I select "Lviv oblast" from "Region"
     And I press "Save"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"

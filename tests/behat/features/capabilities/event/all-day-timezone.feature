@@ -27,7 +27,7 @@ Feature: All day event for different timezones
       | City           | Lviv           |
       | Street address | Fedkovycha 60a |
       | Postal code    | 79000          |
-      | Oblast         | Lviv oblast    |
+    And I select "Lviv oblast" from "Region"
     And I press "Create event"
     Then I should see "This is a timezone test for all day events has been created."
     And I should see "1 Jan '25"
