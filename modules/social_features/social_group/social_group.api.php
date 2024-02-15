@@ -380,5 +380,35 @@ function hook_social_group_cross_posting_alter(array &$content_types) {
 }
 
 /**
+ * Provide entity types in which entities can be linked to the group.
+ *
+ * @return array
+ *   An associative array of statuses that shows if additional fields per each
+ *   group type should be created, keyed by entity type identifier.
+ *
+ * @see group_entity_base_field_info()
+ */
+function hook_group_types(): array {
+  return [
+    'node' => TRUE,
+    'user' => FALSE,
+  ];
+}
+
+/**
+ * Alter entity types in which entities can be linked to the group.
+ *
+ * @param array $types
+ *   An associative array of entity types returned by hook_group_types().
+ *
+ * @see group_entity_base_field_info()
+ */
+function hook_group_types_alter(array &$types): void {
+  if (isset($types['user']) && !$types['user']) {
+    $types['user'] = TRUE;
+  }
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
