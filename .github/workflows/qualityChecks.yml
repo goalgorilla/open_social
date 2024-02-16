@@ -26,7 +26,7 @@ jobs:
           - 8.1
     steps:
       # We want to reuse our project setup to run different jobs at once.
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: opensocial-project-build
         with:
           path: ./*
@@ -79,7 +79,7 @@ jobs:
         php:
           - 8.1
     steps:
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@v4
         id: opensocial-project-build-load
         with:
           path: ./*
@@ -107,7 +107,7 @@ jobs:
     name: PHPCS check
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@v4
         id: opensocial-project-build-load
         with:
           path: ./*
@@ -145,7 +145,7 @@ jobs:
         php:
           - 8.1
     steps:
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@v4
         id: opensocial-project-build-load
         with:
           path: ./*
