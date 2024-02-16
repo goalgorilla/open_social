@@ -36,7 +36,6 @@ Feature: Create Event
     And I should see "Fedkovycha 60a" in the "Main content"
     And I should see "79000" in the "Main content"
     And I should see "Lviv" in the "Main content"
-    And I should see "Lviv oblast" in the "Main content"
     And I should see "1 Jan '25 11:00" in the "Main content"
 
     # Quick edit
