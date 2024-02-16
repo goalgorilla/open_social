@@ -1,0 +1,16 @@
+search_api.index.social_groups:
+  expected_config: {  }
+  update_actions:
+    add:
+      field_settings:
+        role_access:
+          label: 'Role-based access information'
+          property_path: search_api_role_access
+          type: string
+          indexed_locked: true
+          type_locked: true
+          hidden: true
+      processor_settings:
+        role_access:
+          weights:
+            preprocess_query: -30

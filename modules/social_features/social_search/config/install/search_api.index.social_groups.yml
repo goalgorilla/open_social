@@ -63,6 +63,13 @@ field_settings:
         'entity:group':
           closed_group: teaser
           open_group: teaser
+  role_access:
+    label: 'Role-based access information'
+    property_path: search_api_role_access
+    type: string
+    indexed_locked: true
+    type_locked: true
+    hidden: true
   type:
     label: Type
     datasource_id: 'entity:group'
@@ -95,6 +102,9 @@ processor_settings:
       preprocess_index: -10
       preprocess_query: -10
   language_with_fallback: {  }
+  role_access:
+    weights:
+      preprocess_query: -30
   stopwords:
     plugin_id: stopwords
     all_fields: false
