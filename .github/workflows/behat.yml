@@ -145,7 +145,7 @@ jobs:
         run: rm -r tmp
 
       - name: Package up previous version
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}
           key: ${{ github.sha }}-previous-version-${{ matrix.with_optional }}
@@ -200,7 +200,7 @@ jobs:
     steps:
       - name: Retrieve previous version
         if: ${{ matrix.update == 'update' }}
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           fail-on-cache-miss: true
           path: ${{ github.workspace }}
@@ -302,7 +302,7 @@ jobs:
         run: chown -R www-data:www-data /var/www
 
       - name: Package up site
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}
           key: ${{ github.sha }}-test-setup-${{ matrix.update}}${{ matrix.with_optional }}
@@ -378,7 +378,7 @@ jobs:
 
     steps:
       - name: Download Site
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           fail-on-cache-miss: true
           path: ${{ github.workspace }}
