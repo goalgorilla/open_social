@@ -122,7 +122,7 @@ jobs:
             export OPTIONAL="social_module_configure_form.select_all='TRUE'"
           fi
 
-          drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
+          drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social' > >(tee install-output.log) 2> >(tee install-error.log >&2)
 
           # Make sure swiftmailer is configured for our CI.
           drush cset -y swiftmailer.transport transport 'smtp'
@@ -136,6 +136,25 @@ jobs:
             drush sql-dump > behat-test-output/pre-update-with-optional.sql
           else
             drush sql-dump > behat-test-output/pre-update.sql
+          fi
+
+          # Ensure there are no warnings or errors in the install-*.log.
+          # We do this after the database dump because drush doesn't actually
+          # exit, so this makes debugging easier.
+          if grep -E '\[warning\]' install-output.log install-error.log 1>/dev/null || grep -E '\[error\]' install-output.log install-error.log 1>/dev/null; then
+            # Move the install-*.log with warnings/errors and status messages to the test output. The text is viewable on
+            # GitHub too but some people might find it easier to just download the artifact and get digging.
+            if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
+              mv install-output.log behat-test-output/pre-update-install-output-with-optional.log
+              mv install-error.log behat-test-output/pre-update-install-error-with-optional.log
+            else
+              mv install-output.log behat-test-output/pre-update-install-output.log
+              mv install-error.log behat-test-output/pre-update-install-error.log
+            fi
+
+            # Abort our testing until the warning/error is fixed and let our user know why we stopped.
+            echo "The drush install output should not contain any warnings or errors"
+            exit 1
           fi
 
           # Remove the composer files since we'll recreate this in the update.
@@ -274,7 +293,7 @@ jobs:
             export OPTIONAL="social_module_configure_form.select_all='TRUE'"
           fi
 
-          drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
+          drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social' > >(tee install-output.log) 2> >(tee install-error.log >&2)
 
           # Make sure symfony_mailer is configured for our CI.
           drush cset symfony_mailer.mailer_transport.sendmail plugin 'smtp' -y
@@ -294,6 +313,27 @@ jobs:
             drush sql:dump > behat-test-output/installation-with-optional.sql
           else
             drush sql:dump > behat-test-output/installation.sql
+          fi
+
+      - name: Validate install contained no errors
+        if: ${{ matrix.update == '' }}
+        run: |
+          # Ensure there are no warnings or errors in the install-*.log.
+          # We do this after database dumping to help debugging.
+          if grep -E '\[warning\]' install-output.log install-error.log 1>/dev/null || grep -E '\[error\]' install-output.log install-error.log 1>/dev/null; then
+            # Move the install-*.log with warnings/errors and status messages to the test output. The text is viewable on
+            # GitHub too but some people might find it easier to just download the artifact and get digging.
+            if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
+              mv install-output.log behat-test-output/install-output-with-optional.log
+              mv install-error.log behat-test-output/install-error-with-optional.log
+            else
+              mv install-output.log behat-test-output/install-output.log
+              mv install-error.log behat-test-output/install-error.log
+            fi
+
+            # Abort our testing until the warning/error is fixed and let our user know why we stopped.
+            echo "The drush install output should not contain any warnings or errors"
+            exit 1
           fi
 
       - name: Fix owner of web files
