@@ -65,11 +65,6 @@ class QueryEventTest extends SocialGraphQLTestBase {
     'social_profile',
     'social_event_managers',
     'views_bulk_operations',
-    // @deprecated added since we use social_entity_url producer in the
-    // EventSchemaExtension, but social_entity_url marked as deprecated so,
-    // social_topic should be removed from $modules when
-    // https://github.com/drupal-graphql/graphql/pull/1220 is merged.
-    'social_topic',
     'variationcache',
     'better_exposed_filters',
   ];
@@ -97,7 +92,8 @@ class QueryEventTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('profile');
 
     $this->installSchema('comment', 'comment_entity_statistics');
-    $this->installSchema('file', ['file_usage']);
+    $this->installSchema('file', 'file_usage');
+
     $this->installConfig([
       'node',
       'social_core',
