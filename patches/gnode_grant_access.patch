@@ -1,0 +1,457 @@
+diff --git a/group.module b/group.module
+index eec510a..1033e0f 100644
+--- a/group.module
++++ b/group.module
+@@ -304,6 +304,17 @@ function group_query_entity_query_alter(AlterableInterface $query) {
+   }
+ 
+   $entity_type_id = $query->getMetaData('entity_type');
++
++  // Only do query access checks for non-nodes. Nodes will use grants/access
++  // records as defined in gnode.
++  if (\Drupal::moduleHandler()->moduleExists('gnode') && $entity_type_id == 'node') {
++    return;
++  }
++  $tables = $query->getTables();
++  if (isset($tables['node_field_data_group_relationship_field_data__node_access'])) {
++    return;
++  }
++
+   if ($query->hasTag($entity_type_id . '_access')) {
+     $entity_type_manager = \Drupal::entityTypeManager();
+     $entity_type = $entity_type_manager->getDefinition($entity_type_id);
+diff --git a/modules/gnode/gnode.module b/modules/gnode/gnode.module
+index 4972219..51a130f 100644
+--- a/modules/gnode/gnode.module
++++ b/modules/gnode/gnode.module
+@@ -6,11 +6,21 @@
+  */
+ 
+ use Drupal\Core\Entity\EntityInterface;
++use Drupal\Core\Session\AccountInterface;
+ use Drupal\Core\Url;
++use Drupal\Core\Render\RenderContext;
++use Drupal\group\Entity\GroupRoleInterface;
+ use Drupal\group\Entity\GroupInterface;
++use Drupal\group\Entity\GroupType;
++use Drupal\group\PermissionScopeInterface;
++use Drupal\node\NodeInterface;
+ use Drupal\node\NodeTypeInterface;
++use Drupal\user\RoleInterface;
+ use Symfony\Component\Routing\RouterInterface;
+ 
++// We need a grant ID for match-all access records.
++define('GNODE_MASTER_GRANT_ID', 1986);
++
+ /**
+  * Implements hook_ENTITY_TYPE_insert().
+  */
+@@ -41,3 +51,342 @@ function gnode_entity_operation(EntityInterface $entity) {
+ 
+   return $operations;
+ }
++
++/**
++ * Implements hook_ENTITY_TYPE_insert().
++ */
++function gnode_group_role_insert(GroupRoleInterface $group_role): void {
++  // Because we optimize for anonymous users, it also means we need to rebuild
++  // the node grants table when an anonymous role is added.
++  // See: gnode_node_access_records()
++  if ($group_role->isAnonymous()) {
++    node_access_needs_rebuild(TRUE);
++  }
++}
++
++/**
++ * Implements hook_ENTITY_TYPE_update().
++ */
++function gnode_group_role_update(GroupRoleInterface $group_role): void {
++  // Because we optimize for anonymous users, it also means we need to rebuild
++  // the node grants table when an anonymous role has its permissions changed.
++  // See: gnode_node_access_records()
++  if ($group_role->isAnonymous()) {
++    $new = array_unique($group_role->getPermissions());
++    $old = array_unique($group_role->original->getPermissions());
++    sort($new);
++    sort($old);
++
++    if ($new != $old) {
++      node_access_needs_rebuild(TRUE);
++    }
++  }
++}
++
++/**
++ * Implements hook_node_grants().
++ *
++ * We define the following grants:
++ * - 'gnode:NODE_TYPE': Grants view and update or delete any access to nodes.
++ * - 'gnode_unpublished:NODE_TYPE': Grants view access to unpublished nodes.
++ * - 'gnode_author:UID:NODE_TYPE': Grants update or delete access to authors.
++ * - 'gnode_anonymous': Given to anonymous users.
++ * - 'gnode_bypass': Given to anyone with the 'bypass group access' permission.
++ *
++ * @see gnode_node_access_records()
++ */
++function gnode_node_grants(AccountInterface $account, $op): array {
++  // Provide the master grant for users who can bypass group access.
++  if ($account->hasPermission('bypass group access')) {
++    return ['gnode_bypass' => [GNODE_MASTER_GRANT_ID]];
++  }
++
++  // Anonymous users get the anonymous grant. See the implementation in the
++  // gnode_node_access_records() function as to why that is.
++  if ($account->isAnonymous()) {
++    return ['gnode_anonymous' => [GNODE_MASTER_GRANT_ID]];
++  }
++
++  // Gather the machine names of all node types.
++  $entity_type_manager = \Drupal::entityTypeManager();
++
++  $node_bundles = $entity_type_manager
++    ->getStorage('node_type')
++    ->getQuery()
++    ->accessCheck(FALSE)
++    ->execute();
++
++  $uid = $account->id();
++
++  /** @var \Drupal\group\Access\IndividualGroupPermissionCalculator $permission_calculator */
++  $permission_calculator = \Drupal::service('group_permission.individual_calculator');
++
++  // First set grants for permissions that the user has in specific groups.
++  foreach ($permission_calculator->calculatePermissions($account, PermissionScopeInterface::INDIVIDUAL_ID) as $item) {
++    /** @var \Drupal\flexible_permissions\CalculatedPermissionsItem $item */
++    // Add the groups the user is a member of to use later on.
++    $individual_membership_gids[] = $gid = $item->getIdentifier();
++
++    foreach ($node_bundles as $bundle) {
++      $plugin_id = "group_node:$bundle";
++
++      switch ($op) {
++        case 'view':
++          if ($item->hasPermission("view $plugin_id entity")) {
++            $grants_individual["gnode:$bundle"][] = $gid;
++          }
++          if ($item->hasPermission("view unpublished $plugin_id entity")) {
++            $grants_individual["gnode_unpublished:$bundle"][] = $gid;
++          }
++          break;
++
++        case 'update':
++        case 'delete':
++          // If you can act on any node, there's no need for the author grant.
++          if ($item->hasPermission("$op any $plugin_id entity")) {
++            $grants_individual["gnode:$bundle"][] = $gid;
++          }
++          elseif ($item->hasPermission("$op own $plugin_id entity")) {
++            $grants_individual["gnode_author:$uid:$bundle"][] = $gid;
++          }
++          break;
++      }
++    }
++  }
++
++  // First set grants for permissions that the user has in specific groups.
++  /** @var \Drupal\flexible_permissions\CalculatedPermissionsItem $item */
++  foreach ($permission_calculator->calculatePermissions($account, PermissionScopeInterface::INSIDER_ID) as $item) {
++    $group_bundle = $item->getIdentifier();
++
++    $insider_membership_gids = \Drupal::database()->select($table = 'group_relationship_field_data')
++      ->fields($table, ['gid'])
++      ->condition("$table.entity_id", $account->id())
++      ->condition("$table.plugin_id", 'group_membership')
++      ->condition("$table.group_type", $group_bundle)
++      ->execute()?->fetchCol();
++
++    if (!$insider_membership_gids) {
++      // If a user doesn't have a membership in any groups of given bundle, then we can't build
++      // grands.
++      continue;
++    }
++
++    foreach ($node_bundles as $bundle) {
++      $plugin_id = "group_node:$bundle";
++
++      switch ($op) {
++        case 'view':
++          if ($item->hasPermission("view $plugin_id entity")) {
++            $grants_insider["gnode:$bundle"][] = $insider_membership_gids;
++          }
++          if ($item->hasPermission("view unpublished $plugin_id entity")) {
++            $grants_insider["gnode_unpublished:$bundle"][] = $insider_membership_gids;
++          }
++          break;
++
++        case 'update':
++        case 'delete':
++          // If you can act on any node, there's no need for the author grant.
++          if ($item->hasPermission("$op any $plugin_id entity")) {
++            $grants_insider["gnode:$bundle"][] = $insider_membership_gids;
++          }
++          elseif ($item->hasPermission("$op own $plugin_id entity")) {
++            $grants_insider["gnode_author:$uid:$bundle"][] = $insider_membership_gids;
++          }
++          break;
++      }
++    }
++  }
++
++  foreach ($permission_calculator->calculatePermissions($account, PermissionScopeInterface::OUTSIDER_ID) as $item) {
++    // Get the IDs of all the groups the user is not part of for the group type.
++    $query = $entity_type_manager->getStorage('group')
++      ->getQuery()
++      ->accessCheck(FALSE)
++      ->condition('type', $item->getIdentifier());
++
++    if (!empty($individual_membership_gids) || !empty($insider_membership_gids)) {
++      $query->condition('id', [...($individual_membership_gids ?? []), ...($insider_membership_gids ?? [])], 'NOT IN');
++    }
++
++    $outsider_membership_gids = \Drupal::service('renderer')->executeInRenderContext(new RenderContext(), function () use ($query) {
++      return $query->execute();
++    });
++
++    // If we could not retrieve any group IDs, skip to the next group type.
++    if (empty($outsider_membership_gids)) {
++      continue;
++    }
++
++    foreach ($node_bundles as $bundle) {
++      $plugin_id = "group_node:$bundle";
++
++      // Only check for permissions if the group type has the group_node plugin
++      // installed for the node type.
++      if (!GroupType::load($item->getIdentifier())?->hasPlugin($plugin_id)) {
++        continue;
++      }
++
++      switch ($op) {
++        case 'view':
++          if ($item->hasPermission("view $plugin_id entity")) {
++            $grants_outsider["gnode:$bundle"][] = $outsider_membership_gids;
++          }
++          if ($item->hasPermission("view unpublished $plugin_id entity")) {
++            $grants_outsider["gnode_unpublished:$bundle"][] = $outsider_membership_gids;
++          }
++          break;
++
++        case 'update':
++        case 'delete':
++          // If you can act on any node, there's no need for the author grant.
++          if ($item->hasPermission("$op any $plugin_id entity")) {
++            $grants_outsider["gnode:$bundle"][] = $outsider_membership_gids;
++          }
++          elseif ($item->hasPermission("$op own $plugin_id entity")) {
++            $uid = $account->id();
++            $grants_outsider["gnode_author:$uid:$bundle"][] = $outsider_membership_gids;
++          }
++          break;
++      }
++    }
++  }
++
++
++  foreach ($grants_insider ?? [] as $key => $gids_per_group_type) {
++    $grants_insider[$key] = array_reduce($gids_per_group_type, 'array_merge', []);
++  }
++
++  // The code above populated the outsider grants by adding the group IDs per
++  // group type. We need to combine this into one big list of group IDs per
++  // entry in the $grants_o array.
++  foreach ($grants_outsider ?? [] as $key => $gids_per_group_type) {
++    $grants_outsider[$key] = array_reduce($gids_per_group_type, 'array_merge', []);
++  }
++
++  // Recursively merge the member grants with the outsider grants.
++  return array_merge_recursive($grants_individual ?? [], $grants_insider ?? [], $grants_outsider ?? []);
++}
++
++/**
++ * Implements hook_node_access_records().
++ *
++ * @see gnode_node_grants()
++ */
++function gnode_node_access_records(NodeInterface $node): array {
++  $records = $group_types = [];
++  $bundle = $node->bundle();
++  $plugin_id = "group_node:$bundle";
++
++  // Load all of the group content for this node.
++  $group_relationships = \Drupal::entityTypeManager()
++    ->getStorage('group_content')
++    ->loadByEntity($node);
++
++  // Only act if there are group content entities for this node.
++  if (empty($group_relationships)) {
++    return $records;
++  }
++
++  // We can use the same grant-all base because we will only hand out the grants
++  // based on the $op parameter in hook_node_grants().
++  $base = [
++    'grant_view' => 1,
++    'grant_update' => 1,
++    'grant_delete' => 1,
++    'priority' => 0,
++  ];
++
++  // Set records for every group the node belongs to.
++  $uid = $node->getOwnerId();
++  $prefix = $node->isPublished() ? 'gnode' : 'gnode_unpublished';
++  /** @var \Drupal\group\Entity\GroupRelationshipInterface $content */
++  foreach ($group_relationships as $content) {
++    $group = $content->getGroup();
++    $group_relationship_bundle = $content->bundle();
++
++    // Gather all group types the node belongs to.
++    if (!isset($group_types[$group_relationship_bundle])) {
++      $group_types[$group_relationship_bundle] = $group->getGroupType();
++    }
++
++    // We use the group ID as the realm ID.
++    $gid = $group->id();
++
++    // Add the non-author record for viewing nodes.
++    $records[] = ['gid' => $gid, 'realm' => "$prefix:$bundle"] + $base;
++
++    // Add the author record for updating or deleting.
++    $records[] = ['gid' => $gid, 'realm' => "gnode_author:$uid:$bundle"] + $base;
++  }
++
++  // Add the general access bypass record.
++  $records[] = ['gid' => GNODE_MASTER_GRANT_ID, 'realm' => 'gnode_bypass'] + $base;
++
++  // For anonymous users we actually build the access record based on the groups
++  // the node belongs to. After all: If you're anonymous to one group, you're
++  // anonymous to all groups. Meaning that if one of the node's groups allows
++  // anonymous users to view the node, all anonymous users can view it. We can
++  // use this to our advantage by assigning a special access record that we can
++  // provide a grant for in gnode_node_grants().
++  $anonymous_record = [
++    'gid' => GNODE_MASTER_GRANT_ID,
++    'realm' => 'gnode_anonymous',
++    'grant_view' => 0,
++    'grant_update' => 0,
++    'grant_delete' => 0,
++    'priority' => 0,
++  ];
++
++  // Get references to the grants for faster and more readable loops below.
++  $can_view = &$anonymous_record['grant_view'];
++  $can_update = &$anonymous_record['grant_update'];
++  $can_delete = &$anonymous_record['grant_delete'];
++
++  $view_permission = $node->isPublished()
++    ? "view $plugin_id entity"
++    : "view unpublished $plugin_id entity";
++
++  foreach ($group_types as $group_type) {
++    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
++    $anonymous_group_role = \Drupal::entityTypeManager()
++      ->getStorage('group_role')
++      ->loadByProperties([
++        'group_type' => $group_type->id(),
++        'scope', PermissionScopeInterface::OUTSIDER_ID,
++        'global_role' => RoleInterface::ANONYMOUS_ID,
++      ]);
++
++    if (empty($anonymous_group_role)) {
++      continue;
++    }
++
++    $anonymous_group_role = reset($anonymous_group_role);
++
++    if (!$can_view && $anonymous_group_role->hasPermission($view_permission)) {
++      $can_view = 1;
++    }
++    if (!$can_update && $anonymous_group_role->hasPermission("update any $plugin_id entity")) {
++      $can_update = 1;
++    }
++    if (!$can_delete && $anonymous_group_role->hasPermission("delete any $plugin_id entity")) {
++      $can_delete = 1;
++    }
++
++    // If the node is owned by anonymous, we also need to check for the author
++    // permissions following the pattern "$op own $plugin_id entity".
++    if ($uid == 0) {
++      if (!$can_update && $anonymous_group_role->hasPermission("update own $plugin_id entity")) {
++        $can_update = 1;
++      }
++      if (!$can_delete && $anonymous_group_role->hasPermission("delete own $plugin_id entity")) {
++        $can_delete = 1;
++      }
++    }
++  }
++
++  $records[] = $anonymous_record;
++
++  return $records;
++}
+diff --git a/modules/gnode/gnode.services.yml b/modules/gnode/gnode.services.yml
+index 9632843..3ff1fb8 100644
+--- a/modules/gnode/gnode.services.yml
++++ b/modules/gnode/gnode.services.yml
+@@ -9,3 +9,7 @@ services:
+     class: 'Drupal\gnode\Plugin\Group\RelationHandler\GroupNodePermissionProvider'
+     arguments: ['@group.relation_handler.permission_provider']
+     shared: false
++  group.relation_handler.access_control.group_node:
++    class: 'Drupal\gnode\Plugin\Group\RelationHandlerDefault\GroupNodeAccessControl'
++    arguments: ['@group.relation_handler.access_control']
++    shared: false
+\ No newline at end of file
+diff --git a/modules/gnode/src/Plugin/Group/RelationHandlerDefault/GroupNodeAccessControl.php b/modules/gnode/src/Plugin/Group/RelationHandlerDefault/GroupNodeAccessControl.php
+new file mode 100644
+index 0000000..3c51e01
+--- /dev/null
++++ b/modules/gnode/src/Plugin/Group/RelationHandlerDefault/GroupNodeAccessControl.php
+@@ -0,0 +1,47 @@
++<?php
++
++namespace Drupal\gnode\Plugin\Group\RelationHandlerDefault;
++
++use Drupal\Core\Access\AccessResult;
++use Drupal\Core\Access\AccessResultInterface;
++use Drupal\Core\Entity\EntityInterface;
++use Drupal\Core\Session\AccountInterface;
++use Drupal\group\Plugin\Group\RelationHandler\AccessControlInterface;
++use Drupal\group\Plugin\Group\RelationHandler\AccessControlTrait;
++use Drupal\node\NodeInterface;
++
++/**
++ * Checks access for the "group_node" relation plugin.
++ */
++class GroupNodeAccessControl implements AccessControlInterface {
++
++  use AccessControlTrait;
++
++  /**
++   * Constructs a new GroupNodeAccessControl.
++   *
++   * @param \Drupal\group\Plugin\Group\RelationHandler\AccessControlInterface $parent
++   *   The parent access control handler.
++   */
++  public function __construct(AccessControlInterface $parent) {
++    $this->parent = $parent;
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public function entityAccess(EntityInterface $entity, $operation, AccountInterface $account, $return_as_object = FALSE): bool|AccessResultInterface {
++    $result = $this->parent->entityAccess($entity, $operation, $account, TRUE);
++    // This access handler should work only with "node" entities.
++    if ($entity instanceof NodeInterface) {
++      // We're NOT returning forbidden here because we want to fall back to normal
++      // node_access handling. node grants only deal with view update and delete.
++      if ($result->isForbidden() && in_array($operation, ['view', 'update', 'delete'])) {
++        $result = AccessResult::neutral()->addCacheableDependency($result);
++      }
++    }
++
++    return $return_as_object ? $result : $result->isAllowed();
++  }
++
++}
