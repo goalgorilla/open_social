@@ -308,20 +308,7 @@ display:
     display_options:
       display_extenders: {  }
       block_description: 'Enrollments Block'
-      footer:
-        area:
-          id: area
-          table: views
-          field: area
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: false
-          tokenize: true
-          content:
-            value: '<a href="/node/{{ raw_arguments.nid }}/enrollments">See all enrollments</a>'
-            format: basic_html
-          plugin_id: text
+      footer: {  }
       defaults:
         footer: false
         style: false
@@ -383,8 +370,8 @@ display:
           entity_type: node
           entity_field: nid
           plugin_id: node_nid
-      link_display: view_enrollments
-      link_url: ''
+      link_display: custom_url
+      link_url: '/node/{{ raw_arguments.nid }}/enrollments'
       use_more: true
       use_more_always: true
       use_more_text: 'All enrollments'
