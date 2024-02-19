@@ -1,6 +1,6 @@
 services:
   social_event_managers.overrider:
-    class: \Drupal\social_event_managers\SocialEventManagersConfigOverride
+    class: Drupal\social_event_managers\SocialEventManagersConfigOverride
     tags:
       - {name: config.factory.override, priority: 5}
 
@@ -14,8 +14,3 @@ services:
     class: 'Drupal\social_event_managers\Access\AddEnrolleeAccessCheck'
     tags:
       - { name: 'access_check', applies_to: '_enrollee_permission', priority: 249 }
-
-  group.relation_handler.access_control.group_node:
-    class: 'Drupal\social_event_managers\Plugin\Group\RelationHandlerDefault\EventsGroupContentAccessControl'
-    arguments: ['@group.relation_handler.access_control']
-    shared: false
