@@ -15,7 +15,9 @@ services:
     tags:
       - { name: 'access_check', applies_to: '_enrollee_permission', priority: 249 }
 
-  group.relation_handler.access_control.group_node:
-    class: 'Drupal\social_event_managers\Plugin\Group\RelationHandlerDefault\EventsGroupContentAccessControl'
-    arguments: ['@group.relation_handler.access_control']
+  # Decorating group relation handlers.
+  social_event_managers.relation_handler.access_control.group_node.decorator:
+    class: 'Drupal\social_event_managers\Plugin\Group\RelationHandler\EventsGroupContentAccessControl'
+    decorates: 'group.relation_handler.access_control.group_node'
+    arguments: ['@social_event_managers.relation_handler.access_control.group_node.decorator.inner']
     shared: false
