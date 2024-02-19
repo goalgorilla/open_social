@@ -128,41 +128,6 @@ display:
           multi_type: separator
           multi_separator: ', '
       filters:
-        field_group_allowed_join_method:
-          id: field_group_allowed_join_method
-          table: search_api_index_social_groups
-          field: field_group_allowed_join_method
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: or
-          value: { }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_group_allowed_join_method_op
-            label: 'Join method'
-            description: ''
-            use_operator: false
-            operator: field_group_allowed_join_method_op
-            identifier: field_group_allowed_join_method
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: { }
-            group_items: { }
-          plugin_id: search_api_options
         type:
           id: type
           table: search_api_index_social_groups
