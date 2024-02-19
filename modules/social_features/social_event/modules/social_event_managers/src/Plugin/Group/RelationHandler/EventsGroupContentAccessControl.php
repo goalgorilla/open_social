@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\social_event_managers\Plugin\Group\RelationHandlerDefault;
+namespace Drupal\social_event_managers\Plugin\Group\RelationHandler;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Plugin\Group\RelationHandler\AccessControlInterface;
 use Drupal\group\Plugin\Group\RelationHandler\AccessControlTrait;
+use Drupal\node\NodeInterface;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 
 /**
@@ -35,42 +35,19 @@ class EventsGroupContentAccessControl implements AccessControlInterface {
   public function entityAccess(EntityInterface $entity, $operation, AccountInterface $account, $return_as_object = FALSE) {
     // We only care about Update (/edit) of the Event content.
     if ($operation !== 'update') {
-      $this->parent->entityAccess($entity, $operation, $account, $return_as_object);
+      return $this->parent->entityAccess($entity, $operation, $account, $return_as_object);
     }
 
-    /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorage $storage */
-    $storage = $this->entityTypeManager()->getStorage('group_content');
-    $group_contents = $storage->loadByEntity($entity, $this->pluginId);
-
-    // If this plugin is not being used by the entity, we have nothing to say.
-    if (empty($group_contents)) {
-      return AccessResult::neutral();
+    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'event') {
+      return $this->parent->entityAccess($entity, $operation, $account, $return_as_object);
     }
 
-    // We need to determine if the user has access based on group permissions.
-    $group_based_access = $this->parent->entityAccess($entity, $operation, $account, $return_as_object);
-
-    // Only when the access result is False we need to override,
-    // when a user already has access based on Group relation we're good.
-    if (!$group_based_access instanceof AccessResultForbidden) {
-      return $group_based_access;
+    /** @var \Drupal\node\NodeInterface $entity */
+    if ($entity->get('field_event_managers')->isEmpty()) {
+      return $this->parent->entityAccess($entity, $operation, $account, $return_as_object);
     }
 
-    // Based on the EventManager access we can determine if a user
-    // is the owner, or an event manager/organizer and give out
-    // permissions.
-    foreach ($group_contents as $group_content) {
-      /** @var \Drupal\node\NodeInterface $node */
-      $node = $group_content->getEntity();
-      $result = SocialEventManagersAccessHelper::getEntityAccessResult($node, $operation, $account);
-      if ($result->isAllowed()) {
-        break;
-      }
-    }
-
-    if (!isset($result)) {
-      return $group_based_access;
-    }
+    $result = SocialEventManagersAccessHelper::getEntityAccessResult($entity, $operation, $account);
 
     // If we did not allow access, we need to explicitly forbid access to avoid
     // other modules from granting access where Group promised the entity would
