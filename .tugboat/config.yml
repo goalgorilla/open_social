@@ -82,7 +82,7 @@ services:
     image: tugboatqa/mariadb:latest
   # SOLR is used to power Open Social's search
   solr:
-    image: ghcr.io/goalgorilla/ci-tugboat-solr:9
+    image: ghcr.io/goalgorilla/ci-tugboat-solr:9.2
     commands:
       init:
         - su -s /bin/sh -c "/opt/solr/bin/solr create_core -c drupal -force" solr
