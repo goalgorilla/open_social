@@ -190,7 +190,7 @@ function _social_album_blocks(callable $function = NULL, array $items = [
 /**
  * Implements hook_update_dependencies().
  */
-function social_event_update_dependencies(): array {
+function social_album_update_dependencies(): array {
   // Ensure configurations updates runs after the group migration has completed,
   // but before the group types are removed.
   $dependencies['social_album'][13000] = [
