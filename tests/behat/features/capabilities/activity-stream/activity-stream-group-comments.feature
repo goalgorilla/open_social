@@ -1,9 +1,16 @@
-@api
+@api @disabled
 Feature: See comments in activity stream in a group
   Benefit: Participate in discussions on the platform
   Role: As a Verified
   Goal/desire: I do not want to see replies to comments in the activity stream
   Related Stories: DS-923, DS-1394, DS-4211, DS-4886
+
+  Todo: https://www.drupal.org/project/social/issues/3422859
+  ⚠️ This test is disabled because support for viewing comments in the activity
+  stream was only implemented for the old group types (such as public group) and
+  was forgotten for flexible groups. The old test can no longer work as the
+  group type has been removed. We keep this test around so that when the
+  functionality for flexible groups is implemented we can easily enable it.
 
   Background:
     Given users:
