@@ -1361,6 +1361,7 @@ function _social_group_grant_admin_role($uid, $gid) {
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function social_group_group_content_insert(GroupContentInterface $group_content) {
+  _social_group_content_log_changes( $group_content, 'create');
   if ($group_content->getEntity()->getEntityTypeId() === 'user') {
     if ($group_content->bundle() === $group_content->getGroup()
       ->bundle() . '-group_membership') {
@@ -3205,5 +3206,112 @@ function social_group_views_pre_view(ViewExecutable $view, string $display_id, a
         'social_group',
         $view->id() . '__items_per_page'
       );
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_group_group_insert(GroupInterface $group): void {
+  _social_group_log_changes($group, 'create');
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function social_group_group_update(GroupInterface $group): void {
+  _social_group_log_changes($group, 'update');
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function social_group_group_delete(GroupInterface $group): void {
+  _social_group_log_changes($group, 'delete');
+}
+
+/**
+ * Log group changes.
+ */
+function _social_group_log_changes(GroupInterface $group, $action): void {
+  $message = t('User %actor performed %action for %entity_type %id');
+  $args = [
+    '%actor' => \Drupal::currentUser()->id(),
+    '%action' => $action,
+    '%entity_type' => $group->getEntityTypeId(),
+    '%id' => $group->id(),
+  ];
+  \Drupal::logger('social_audit_log')->info($message, $args);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function social_group_group_content_update(GroupContentInterface $group_content): void {
+  _social_group_content_log_changes( $group_content, 'update');
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function social_group_group_content_presave(GroupContentInterface $group_content): void {
+  _social_group_content_log_role_changes($group_content);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function social_group_group_content_delete(GroupContentInterface $group_content): void {
+  _social_group_content_log_changes( $group_content, 'delete');
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function _social_group_content_log_changes(GroupContentInterface $group_content, $action): void {
+  $plugins = ['group_membership', 'group_invitation', 'group_membership_request'];
+  $plugin_id = $group_content->getContentPlugin()->getPluginId();
+  if (in_array($plugin_id, $plugins)) {
+    $message = t('User %actor performed %action for %entity_type of user %uid in group %group_id');
+    $args = [
+      '%actor' => \Drupal::currentUser()->id(),
+      '%action' => $action,
+      '%entity_type' => $plugin_id,
+      '%uid' => $group_content->get('entity_id')->getString(),
+      '%group_id' => $group_content->getGroup()->id(),
+    ];
+    \Drupal::logger('social_audit_log')->info($message, $args);
+  }
+}
+
+/**
+ * Handle new and removed roles when a membership is changed.
+ */
+function _social_group_content_log_role_changes(GroupContentInterface $entity) {
+  if ($entity->original && $entity->getContentPlugin()->getPluginId() === 'group_membership') {
+    $original = new GroupMembership($entity->original);
+    $membership = new GroupMembership($entity);
+
+    $new_roles[] = 'group_member';
+    foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
+      $new_roles[] = $group_role_ref->target_id;
+    }
+
+    $old_roles[] = 'group_member';
+    foreach ($original->getGroupContent()->group_roles as $group_role_ref) {
+      $old_roles[] = $group_role_ref->target_id;
+    }
+
+    // Only log saves of existing users if there are role changes.
+    if ($old_roles != $new_roles) {
+      \Drupal::logger('social_audit_log')
+        ->info("User %actor changed group roles for user %uid from %old to %new in group %group_id", [
+          '%old' => '[' . implode(", ", $old_roles) . ']',
+          '%new' => '[' . implode(", ", $new_roles) . ']',
+          '%uid' => $entity->getOwner()->id(),
+          '%actor' => \Drupal::currentUser()->id(),
+          '%group_id' => $entity->getGroup()->id(),
+        ]);
+    }
   }
 }

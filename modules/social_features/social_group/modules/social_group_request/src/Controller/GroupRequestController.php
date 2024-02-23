@@ -114,6 +114,8 @@ class GroupRequestController extends ControllerBase {
 
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
 
+    _social_group_content_log_changes($group_content, "approve request to join");
+
     return $this->entityFormBuilder()->getForm($group_content, 'add');
   }
 

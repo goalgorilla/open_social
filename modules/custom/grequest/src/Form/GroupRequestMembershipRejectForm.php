@@ -71,6 +71,7 @@ class GroupRequestMembershipRejectForm extends ConfirmFormBase {
     $result = $this->groupContent->save();
 
     if ($result) {
+      _social_group_content_log_changes($this->groupContent, "cancel request to join");
       $this->messenger()->addStatus($this->t('Membership Request rejected'));
     }
     else {

@@ -709,6 +709,7 @@ function social_user_user_insert(UserInterface $user): void {
     $user->addRole('verified');
     $user->save();
   }
+  _social_user_log_changes($user, 'create');
 }
 
 /**
@@ -742,24 +743,24 @@ function social_user_preprocess_username(array &$variables): void {
  * Implements hook_ENTITY_TYPE_update().
  */
 function social_user_user_update(UserInterface $user): void {
-  $message = t('User %actor performed %action for %entity_type %id');
-  $args = [
-    '%actor' => \Drupal::currentUser()->id(),
-    '%action' => 'update',
-    '%entity_type' => $user->getEntityTypeId(),
-    '%id' => $user->id(),
-  ];
-  \Drupal::logger('social_audit_log')->info($message, $args);
+  _social_user_log_changes($user, 'update');
 }
 
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
 function social_user_user_delete(UserInterface $user): void {
+  _social_user_log_changes($user, 'delete');
+}
+
+/**
+ * Log user changes.
+ */
+function _social_user_log_changes(UserInterface $user, $action): void {
   $message = t('User %actor performed %action for %entity_type %id');
   $args = [
     '%actor' => \Drupal::currentUser()->id(),
-    '%action' => 'delete',
+    '%action' => $action,
     '%entity_type' => $user->getEntityTypeId(),
     '%id' => $user->id(),
   ];
@@ -778,7 +779,6 @@ function social_user_user_presave(UserInterface $user): void {
  * Log user role changes.
  */
 function _social_user_log_role_changes(UserInterface $user): void {
-  // This is an update to an existing user.
   if ($user->original) {
     $original = $user->original;
     $old_roles = $original->getRoles();
@@ -794,16 +794,6 @@ function _social_user_log_role_changes(UserInterface $user): void {
       ]);
     }
   }
-  else {
-    $new_roles = $user->getRoles();
-    // New user hasn't been saved yet, so default role shows as anonymous
-    // not authenticated.
-    $new_roles = str_replace("anonymous", "authenticated", $new_roles);
-    \Drupal::logger('social_audit_log')->info("New user: %name created with roles %new.", [
-      '%new' => '[' . implode(", ", $new_roles) . ']',
-      '%name' => $user->getAccountName(),
-    ]);
-  }
 }
 
 /**
@@ -811,7 +801,6 @@ function _social_user_log_role_changes(UserInterface $user): void {
  *
  */
 function _social_user_log_status_changes(UserInterface $user): void {
-  // This is an update to an existing user.
   if ($user->original) {
     $original = $user->original;
     $old_status = ($original->isActive() ? 'active' : 'blocked');
@@ -819,7 +808,6 @@ function _social_user_log_status_changes(UserInterface $user): void {
 
     // Only log saves of existing users if there are status changes.
     if ($old_status != $new_status) {
-
       \Drupal::logger('social_audit_log')->info("User %actor changed status for user %uid from %old to %new.", [
         '%old' => $old_status,
         '%new' => $new_status,
@@ -827,13 +815,5 @@ function _social_user_log_status_changes(UserInterface $user): void {
         '%actor' => \Drupal::currentUser()->id(),
       ]);
     }
-
-  }
-  else {
-    $new_status = ($user->isActive() ? 'active' : 'blocked');
-    \Drupal::logger('social_audit_log')->info("New user: %name created with %new status.", [
-      '%new' => $new_status,
-      '%name' => $user->getAccountName(),
-    ]);
   }
 }
