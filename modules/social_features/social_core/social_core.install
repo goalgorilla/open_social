@@ -265,31 +265,3 @@ function social_core_update_122001(): void {
     }
   }
 }
-
-/**
- * Uninstall admin_toolbar_tools if nothing uses it.
- */
-function social_core_update_123001() : void {
-  // Nothing to do if the module is not installed.
-  if (!\Drupal::moduleHandler()->moduleExists('admin_toolbar_tools')) {
-    return;
-  }
-
-  // If there are modules depending on admin_toolbar_tools, and it is enabled
-  // we can't uninstall it.
-  $module_dependencies = \Drupal::service('extension.list.module')->get('admin_toolbar_tools')->required_by ?? [];
-  $has_dependency_enabled = FALSE;
-  foreach ($module_dependencies as $module_name => $module_dependency) {
-    if (\Drupal::moduleHandler()->moduleExists($module_name)) {
-      $has_dependency_enabled = TRUE;
-      break;
-    }
-  }
-  if ($has_dependency_enabled) {
-    return;
-  }
-
-  // Uninstall the module (nothing should depend on it but let the module
-  // uninstaller double-check just in case).
-  \Drupal::service('module_installer')->uninstall(['admin_toolbar_tools'], FALSE);
-}
