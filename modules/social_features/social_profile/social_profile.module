@@ -1062,3 +1062,17 @@ function social_profile_social_core_default_main_menu_links_alter(array &$links)
 function social_profile_social_tagging_type(): string {
   return 'profile';
 }
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function social_profile_profile_update(ProfileInterface $profile): void {
+  $message = t('User %actor performed %action for %entity_type %id');
+  $args = [
+    '%actor' => \Drupal::currentUser()->id(),
+    '%action' => 'update',
+    '%entity_type' => $profile->getEntityTypeId(),
+    '%id' => $profile->getOwnerId(),
+  ];
+  \Drupal::logger('social_audit_log')->info($message, $args);
+}
