@@ -1,0 +1,234 @@
+// Dialog animate.
+@keyframes dialog_opacity {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ui-dialog:not(.ui-dialog-off-canvas).social-dialog--user-preview {
+  display: block !important;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: .5rem;
+  box-shadow: 0 1px 2px rgb(20 45 82 / 2%), 0 3px 4px rgb(20 45 82 / 3%), 0 5px 8px rgb(20 45 82 / 4%);
+  background-color: #fff;
+  transform: none;
+  overflow: hidden;
+  animation: dialog_opacity 0.5s ease-out;
+
+  @media(max-width: 1024px) {
+    display: none !important;
+  }
+
+  > .ui-dialog-titlebar {
+    display: none;
+  }
+
+  > .ui-dialog-content {
+    font-family: 'montserrat', sans-serif;
+    padding: 0;
+  }
+}
+
+.teaser-preview-popup {
+  .card__block {
+    padding: 0;
+  }
+
+  .media {
+    display: block;
+    padding-bottom: 36px;
+
+    &-header {
+      display: block;
+      height: 84px;
+      margin: 0;
+      border-radius: 0;
+    }
+
+    &-info {
+      display: flex;
+      align-items: flex-start;
+      margin: -58px 0 16px;
+    }
+
+    &-info,
+    &-body {
+      padding-left: 28px;
+      padding-right: 28px;
+    }
+
+    &-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 116px;
+      height: 116px;
+      border: 8px solid #fff;
+      background: #f5f5f5;
+
+      &,
+      img {
+        border-radius: 50%;
+      }
+
+      .field {
+        height: 100%;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      svg {
+        width: 42px;
+        height: 42px;
+        fill: #cecece;
+      }
+    }
+  }
+
+  .preview-popup-user-number {
+    display: flex;
+    align-items: center;
+    margin: 78px 0 0 12px;
+
+    .user-icon {
+      display: flex;
+      align-items: center;
+      padding: 1px 8px 1px 1px;
+      border: 1px solid #cecece;
+      border-radius: 16px;
+
+      font-size: .875rem;
+      font-weight: 600;
+      line-height: 20px;
+
+      .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        margin-right: 4px;
+        border-radius: 50%;
+        background-color: #cecece;
+
+        svg {
+          width: 12px;
+          height: 12px;
+        }
+      }
+    }
+
+    .member-joined {
+      margin-left: 12px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .preview-popup-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    &,
+    a {
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 24px;
+      color: #343434;
+    }
+
+    svg {
+      margin-left: 8px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .preview-popup-types {
+    > * {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 12px -4px -8px;
+
+      > * {
+        padding: 0 4px;
+        margin-bottom: 8px;
+
+        > * {
+          display: flex;
+          align-items: center;
+          padding: 2px 1em;
+          background-color: #e6e6e6;
+          color: #343434;
+          font-size: .75rem;
+          font-weight: 500;
+          line-height: 20px;
+          border-radius: 8px;
+
+          svg {
+            margin-right: 8px;
+          }
+        }
+      }
+    }
+  }
+
+  .preview-popup-description {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+
+    .field {
+      margin-top: 20px;
+      p {
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 24px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .btn-group--wrapper {
+    display: flex;
+    align-items: center;
+    margin: 28px -10px 0;
+
+    &:empty {
+      margin: 0;
+    }
+
+    > .btn {
+      margin: 0 10px;
+      padding: 4px 20px !important;
+      font-size: .875rem;
+      font-weight: 600;
+      line-height: 20px;
+
+      &.btn-primary {
+        color: #fff;
+      }
+    }
+  }
+}
