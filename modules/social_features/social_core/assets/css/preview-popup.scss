@@ -1,0 +1,227 @@
+// Dialog animate.
+@keyframes dialog_opacity {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ui-dialog:not(.ui-dialog-off-canvas).social-dialog--user-preview {
+  margin-top: 0;
+  margin-bottom: 0;
+  transform: none;
+  display: block !important;
+  overflow: hidden;
+  animation: dialog_opacity 0.5s ease-out;
+
+  @media(max-width: 1024px) {
+    display: none !important;
+  }
+
+  > .ui-dialog-titlebar {
+    display: none;
+  }
+
+  > .ui-dialog-content {
+    font-family: 'montserrat', sans-serif;
+    padding: 0;
+  }
+}
+
+.teaser-preview-popup {
+  .card__block {
+    padding: 0;
+  }
+
+  .media {
+    display: block;
+    padding-bottom: 36px;
+
+    &-header {
+      height: 84px;
+    }
+
+    &-info {
+      display: flex;
+      align-items: flex-start;
+      margin: -58px 0 16px;
+    }
+
+    &-info,
+    &-body {
+      padding-left: 28px;
+      padding-right: 28px;
+    }
+
+    &-logo {
+      width: 116px;
+      height: 116px;
+      border: 8px solid #fff;
+
+      &,
+      img {
+        border-radius: 50%;
+      }
+
+      .field {
+        height: 100%;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .preview-popup-user-number {
+    display: flex;
+    align-items: center;
+    margin: 78px 0 0 12px;
+
+    .user-icon {
+      display: flex;
+      align-items: center;
+      padding: 1px 8px 1px 1px;
+      border: 1px solid #cecece;
+      border-radius: 16px;
+
+      font-size: .875rem;
+      font-weight: 600;
+      line-height: 20px;
+
+      .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        margin-right: 4px;
+        border-radius: 50%;
+        background-color: #cecece;
+
+        svg {
+          width: 12px;
+          height: 12px;
+        }
+      }
+    }
+
+    .member-joined {
+      margin-left: 12px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .preview-popup-title {
+    margin-bottom: 12px;
+
+    &,
+    a {
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 24px;
+      color: #343434;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .preview-popup-types {
+    margin-top: 12px;
+
+    .field--name-type {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 0 -4px -6px;
+
+      .field--item {
+        padding: 0 4px;
+        margin-bottom: 6px;
+
+        a {
+          display: flex;
+          align-items: center;
+          background-color: #e6e6e6;
+          color: #343434;
+          font-size: .75rem;
+          border-radius: 1em;
+          padding: 0 1em;
+          line-height: 2;
+
+          &:before {
+            content: '';
+            display: block;
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+            background: url('../../../../assets/icons/icon-organisation.svg') no-repeat center center/16px 16px;
+          }
+        }
+      }
+    }
+  }
+
+  .preview-popup-description {
+    margin-top: 20px;
+
+    .field {
+      p {
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 24px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .btn-group--wrapper {
+    display: flex;
+    align-items: center;
+    margin: 28px -10px 0;
+
+    > .btn {
+      margin: 0 10px;
+      padding: 4px 20px !important;
+      font-size: .875rem;
+      font-weight: 600;
+      line-height: 20px;
+    }
+  }
+}
+
+.profile-preview-link {
+  position: relative;
+  display: block;
+
+  &:before {
+    content: '';
+    position: absolute;
+    height: calc(100% + 6px);
+    width: calc(100% + 6px);
+    border: 1px solid transparent;
+    top: -3px;
+    left: -3px;
+    border-radius: 50%;
+  }
+
+  &:hover {
+    &:before {
+      border-color: #777;
+    }
+
+    img {
+      filter: brightness(80%);
+    }
+  }
+}

@@ -1,0 +1,127 @@
+{#
+/**
+ * @file
+ *
+ * Default theme implementation for organizations.
+ *
+ * Available variables:
+ * - content: Items for the content of the organization.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given child element:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ * - attributes: HTML attributes for the wrapper.
+ * - view_mode: The organization view mode used.
+ * - organization: The organization object.
+ * - url: The organization URL, if available.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ *
+ * @ingroup themeable
+ */
+#}
+{%
+  set classes = [
+  'preview-popup',
+  view_mode ? 'preview-popup--view-mode--' ~ view_mode|clean_class,
+  'teaser-preview-popup',
+  'clearfix',
+]
+%}
+
+{{ attach_library('social_core/preview-popup') }}
+
+<div{{ attributes.addClass(classes) }}>
+  {{ title_suffix.contextual_links }}
+  <div class="card__block">
+    <div class="media-wrapper">
+      <div class="media">
+        <div class="media-header badge-secondary"></div>
+        <div class="media-info">
+          <div class="media-logo">
+            {% block preview_popup_logo %}
+              {{ content.logo }}
+            {% endblock %}
+          </div>
+          <div class="preview-popup-user-number">
+            <div class="user-icon">
+              <div class="icon">
+                <svg width="13" height="12" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <title>{% trans %}Members{% endtrans %}</title>
+                  <g id="All: Icon" clip-path="url(#clip0_3448_7377)">
+                    <g id="Union">
+                      <path d="M4.25 5.25C5.28553 5.25 6.125 4.41053 6.125 3.375C6.125 2.33947 5.28553 1.5 4.25 1.5C3.21447 1.5 2.375 2.33947 2.375 3.375C2.375 4.41053 3.21447 5.25 4.25 5.25Z" fill="#343434"/>
+                      <path d="M8.75 5.25C9.78553 5.25 10.625 4.41053 10.625 3.375C10.625 2.33947 9.78553 1.5 8.75 1.5C7.71447 1.5 6.875 2.33947 6.875 3.375C6.875 4.41053 7.71447 5.25 8.75 5.25Z" fill="#343434"/>
+                      <path d="M8.68779 10.5C8.72871 10.2561 8.75001 10.0055 8.75001 9.75C8.75001 8.38702 8.14405 7.16556 7.18683 6.34034C7.66267 6.12183 8.19211 6 8.75001 6C10.8211 6 12.5 7.67893 12.5 9.75V9.975C12.5 10.2649 12.265 10.5 11.975 10.5H8.68779Z" fill="#343434"/>
+                      <path d="M0.5 9.75C0.5 7.67893 2.17893 6 4.25 6C6.32107 6 8 7.67893 8 9.75V9.975C8 10.2649 7.76495 10.5 7.475 10.5H1.025C0.735051 10.5 0.5 10.2649 0.5 9.975V9.75Z" fill="#343434"/>
+                    </g>
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_3448_7377">
+                      <rect width="12" height="12" fill="white" transform="translate(0.5)"/>
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div>
+              {% block preview_popup_member_count %}
+                {{ members_count }}
+              {% endblock %}
+            </div>
+            {% if joined %}
+              <svg class="member-joined" width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <title>{% trans %}Joined{% endtrans %}</title>
+                <g id="All: Icon" clip-path="url(#clip0_3448_7379)">
+                  <g id="Union">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.5001 4.25C12.5001 5.553 11.9137 6.71904 10.9905 7.49864C11.2856 7.61021 11.5721 7.73928 11.8488 7.88459C12.0181 7.97351 12.1838 8.0685 12.3454 8.16926C12.5328 8.28614 12.5767 8.53643 12.4503 8.71762L12.0499 9.29175C11.9235 9.47294 11.6748 9.51617 11.4859 9.40162C11.3765 9.3353 11.265 9.27225 11.1514 9.2126C10.2852 8.7577 9.29885 8.5 8.25011 8.5C4.93273 8.5 2.219 11.0846 2.01271 14.3499C1.99878 14.5704 1.82103 14.75 1.60011 14.75H0.900113C0.679199 14.75 0.499042 14.5705 0.510263 14.3499C0.670026 11.2084 2.70039 8.56071 5.50956 7.49849C4.58641 6.71889 4.00011 5.55291 4.00011 4.25C4.00011 1.90279 5.9029 0 8.25011 0C10.5973 0 12.5001 1.90279 12.5001 4.25ZM8.25011 1.5C6.73133 1.5 5.50011 2.73122 5.50011 4.25C5.50011 5.76878 6.73133 7 8.25011 7C9.7689 7 11.0001 5.76878 11.0001 4.25C11.0001 2.73122 9.7689 1.5 8.25011 1.5Z" fill="#343434"/>
+                    <path d="M15.1955 9.14362C15.3804 8.95239 15.6835 8.95209 15.8688 9.14294L16.3639 9.65285C16.5453 9.83965 16.5455 10.1398 16.3645 10.3269L11.1153 15.7521C10.7962 16.0819 10.2767 16.0828 9.95652 15.754L6.38683 12.089C6.20482 11.9021 6.2045 11.6012 6.3861 11.414L6.92089 10.8625C7.10562 10.672 7.40787 10.6716 7.59311 10.8615L10.5759 13.9206L15.1955 9.14362Z" fill="#343434"/>
+                  </g>
+                </g>
+                <defs>
+                  <clipPath id="clip0_3448_7379">
+                    <rect width="16" height="16" fill="white" transform="translate(0.5)"/>
+                  </clipPath>
+                </defs>
+              </svg>
+            {% endif %}
+          </div>
+        </div>
+        <div class="media-body">
+          <div{{ title_attributes }} class="card--text preview-popup-title">
+            <a href="{{ url }}" rel="bookmark">
+              {{ label }}
+              {% block preview_popup_user_icon %}
+              {% endblock %}
+            </a>
+          </div>
+          <div class="preview-popup-types">
+            {% block preview_popup_type %}
+              {{ content.type }}
+            {% endblock %}
+          </div>
+          <div class="preview-popup-description">
+            {% block preview_popup_description %}
+              {{ content.description }}
+            {% endblock %}
+          </div>
+          {% if content.field_allow_to_follow %}
+            <div class="btn-group--wrapper">
+              {{ user_actions }}
+            </div>
+          {% endif %}
+          {% if followers_count %}
+            <div class="preview-popup-followers-count">
+              <b>{{ followers_count }}</b>
+              {% trans %}
+                follower
+              {% plural followers_count %}
+                followers
+              {% endtrans %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
