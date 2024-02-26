@@ -300,3 +300,17 @@ function social_core_update_123001() : void {
 function social_core_update_123002(): void {
   user_role_grant_permissions('sitemanager', ['administer site configuration']);
 }
+
+/**
+ * Set cache maximum age with 1 hour.
+ */
+function social_core_update_123003(): void {
+  // Get cache configuration.
+  $config = \Drupal::service('config.factory')->getEditable('system.performance');
+
+  // When the max-age is empty, set 1 hour.
+  if (empty($config->get('cache.page.max_age'))) {
+    $config->set('cache.page.max_age', 3600)
+      ->save();
+  }
+}
