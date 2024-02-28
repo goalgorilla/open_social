@@ -298,6 +298,16 @@ class SocialEmbedConvertUrlToEmbedFilter extends FilterBase implements Container
             // Testing pattern.
             $testing_pattern = '/' . $item . '/';
 
+            // For "Facebook" and "Instagram" links embedding require to set up an application.
+            // Sometimes it doesn't have a sake to do it. Let's return a link without embedding
+            // if the application isn't connected.
+            if (
+              preg_match("/facebook.com\/|instagram.com\//i", $result_link) &&
+              !\Drupal::config('url_embed.settings')->get('facebook_app_id')
+            ) {
+              return $result_link;
+            }
+
             // Check if it matches.
             if (preg_match($testing_pattern, $url_for_processing)) {
               $result_link = '<drupal-url data-embed-url="' . $full_url . '"></drupal-url>';
