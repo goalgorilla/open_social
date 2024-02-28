@@ -30,7 +30,7 @@
                 '<div>'.concat(previewPopup[identifier].data, '</div>'),
                 {
                   dialogClass: 'social-dialog social-dialog--user-preview',
-                  width: '384px',
+                  width: '360px',
                   position: {
                     my: 'left top',
                     at: 'right top',
@@ -45,7 +45,7 @@
                       })
                       .on('mouseleave', function () {
                         timeouts[selector] = window.setTimeout(function () {
-                          // currentDialog.remove();
+                          currentDialog.remove();
 
                           if (refresh === 1) {
                             cleanupUserData(dialogs);
@@ -139,7 +139,7 @@
 
           timeouts[selector] = window.setTimeout(function () {
             if (dialogs[selector] !== undefined && dialogs[selector].open) {
-              // $(context).find('.ui-dialog').remove();
+              $(context).find('.ui-dialog').remove();
             }
           }, delayClose);
         });

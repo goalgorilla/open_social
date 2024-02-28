@@ -118,7 +118,13 @@
   }
 
   .preview-popup-title {
+    display: flex;
+    align-items: center;
     margin-bottom: 12px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 
     &,
     a {
@@ -128,41 +134,39 @@
       color: #343434;
     }
 
+    svg {
+      margin-left: 8px;
+    }
+
     a:hover {
       text-decoration: underline;
     }
   }
 
   .preview-popup-types {
-    margin-top: 12px;
-
-    .field--name-type {
+    > * {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      margin: 0 -4px -6px;
+      margin: 12px -4px -8px;
 
-      .field--item {
+      > * {
         padding: 0 4px;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
 
-        a {
+        > * {
           display: flex;
           align-items: center;
+          padding: 2px 1em;
           background-color: #e6e6e6;
           color: #343434;
           font-size: .75rem;
-          border-radius: 1em;
-          padding: 0 1em;
-          line-height: 2;
+          font-weight: 500;
+          line-height: 20px;
+          border-radius: 8px;
 
-          &:before {
-            content: '';
-            display: block;
-            width: 16px;
-            height: 16px;
-            margin-right: 4px;
-            background: url('../../../../assets/icons/icon-organisation.svg') no-repeat center center/16px 16px;
+          svg {
+            margin-right: 8px;
           }
         }
       }
@@ -170,9 +174,8 @@
   }
 
   .preview-popup-description {
-    margin-top: 20px;
-
     .field {
+      margin-top: 20px;
       p {
         font-size: 1rem;
         font-weight: 500;
@@ -196,32 +199,6 @@
       font-size: .875rem;
       font-weight: 600;
       line-height: 20px;
-    }
-  }
-}
-
-.profile-preview-link {
-  position: relative;
-  display: block;
-
-  &:before {
-    content: '';
-    position: absolute;
-    height: calc(100% + 6px);
-    width: calc(100% + 6px);
-    border: 1px solid transparent;
-    top: -3px;
-    left: -3px;
-    border-radius: 50%;
-  }
-
-  &:hover {
-    &:before {
-      border-color: #777;
-    }
-
-    img {
-      filter: brightness(80%);
     }
   }
 }

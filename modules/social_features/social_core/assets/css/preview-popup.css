@@ -98,7 +98,13 @@
   height: 16px;
 }
 .teaser-preview-popup .preview-popup-title {
+  display: flex;
+  align-items: center;
   margin-bottom: 12px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 .teaser-preview-popup .preview-popup-title,
 .teaser-preview-popup .preview-popup-title a {
@@ -107,41 +113,37 @@
   line-height: 24px;
   color: #343434;
 }
+.teaser-preview-popup .preview-popup-title svg {
+  margin-left: 8px;
+}
 .teaser-preview-popup .preview-popup-title a:hover {
   text-decoration: underline;
 }
-.teaser-preview-popup .preview-popup-types {
-  margin-top: 12px;
-}
-.teaser-preview-popup .preview-popup-types .field--name-type {
+.teaser-preview-popup .preview-popup-types > * {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  margin: 0 -4px -6px;
+  margin: 12px -4px -8px;
 }
-.teaser-preview-popup .preview-popup-types .field--name-type .field--item {
+.teaser-preview-popup .preview-popup-types > * > * {
   padding: 0 4px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
-.teaser-preview-popup .preview-popup-types .field--name-type .field--item a {
+.teaser-preview-popup .preview-popup-types > * > * > * {
   display: flex;
   align-items: center;
+  padding: 2px 1em;
   background-color: #e6e6e6;
   color: #343434;
   font-size: 0.75rem;
-  border-radius: 1em;
-  padding: 0 1em;
-  line-height: 2;
+  font-weight: 500;
+  line-height: 20px;
+  border-radius: 8px;
 }
-.teaser-preview-popup .preview-popup-types .field--name-type .field--item a:before {
-  content: "";
-  display: block;
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
-  background: url("../../../../assets/icons/icon-organisation.svg") no-repeat center center/16px 16px;
+.teaser-preview-popup .preview-popup-types > * > * > * svg {
+  margin-right: 8px;
 }
-.teaser-preview-popup .preview-popup-description {
+.teaser-preview-popup .preview-popup-description .field {
   margin-top: 20px;
 }
 .teaser-preview-popup .preview-popup-description .field p {
@@ -163,27 +165,6 @@
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 20px;
-}
-
-.profile-preview-link {
-  position: relative;
-  display: block;
-}
-.profile-preview-link:before {
-  content: "";
-  position: absolute;
-  height: calc(100% + 6px);
-  width: calc(100% + 6px);
-  border: 1px solid transparent;
-  top: -3px;
-  left: -3px;
-  border-radius: 50%;
-}
-.profile-preview-link:hover:before {
-  border-color: #777;
-}
-.profile-preview-link:hover img {
-  filter: brightness(80%);
 }
 
 /*# sourceMappingURL=preview-popup.css.map */
