@@ -126,13 +126,10 @@ class SocialEmbedHelper {
     return [
       '(facebook.com\/(.*)\/videos\/(.*))',
       '(facebook.com\/(.*)\/photos\/(.*))',
-      '(facebook.com\/photo\/(.*))',
       '(facebook.com\/(.*)\/posts\/(.*))',
-      '(facebook.com\/reel\/(.*))',
       '(flickr.com\/photos\/(.*))',
       '(flic.kr\/p\/(.*))',
       '(instagram.com\/p\/(.*))',
-      '(instagram.com\/reel\/(.*))',
       '(open.spotify.com\/track\/(.*))',
       '(twitter.com\/(.*)\/status\/(.*))',
       '(vimeo.com\/\d{7,9})',
