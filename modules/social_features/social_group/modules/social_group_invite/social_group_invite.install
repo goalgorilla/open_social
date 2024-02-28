@@ -23,6 +23,22 @@ function social_group_invite_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_group_invite_update_dependencies() : array {
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['social_group_invite'][13000] = [
+    'social_group' => 13000,
+  ];
+
+  $dependencies['social_group'][13001] = [
+    'social_group_invite' => 13000,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Implements hook_update_last_removed().
  */
 function social_group_invite_update_last_removed() : int {
@@ -30,9 +46,17 @@ function social_group_invite_update_last_removed() : int {
 }
 
 /**
- * Update views bulk operations actions to make them translatable.
+ * Remove deprecated group types.
  */
-function social_group_invite_update_12001(): string {
+function social_group_invite_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 

@@ -13,12 +13,6 @@ services:
     tags:
       - { name: event_subscriber }
 
-  social_group_flexible_group.config_override:
-    class: Drupal\social_group_flexible_group\SocialGroupFlexibleGroupConfigOverride
-    arguments: ['@config.factory']
-    tags:
-      - { name: config.factory.override, priority: 10 }
-
   social_group_flexible_group.redirect_subscriber:
     class: Drupal\social_group_flexible_group\EventSubscriber\RedirectSubscriber
     arguments: ['@current_user', '@current_route_match']

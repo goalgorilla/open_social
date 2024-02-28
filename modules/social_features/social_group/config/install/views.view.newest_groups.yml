@@ -266,6 +266,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - user
         - user.permissions
       tags: {  }
   page_all_groups:
@@ -278,6 +279,82 @@ display:
       path: all-groups
       display_description: ''
       filters:
+        default_langcode:
+          id: default_langcode
+          table: groups_field_data
+          field: default_langcode
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: { }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: { }
+            group_items: { }
+          entity_type: group
+          entity_field: default_langcode
+          plugin_id: boolean
+        field_group_allowed_join_method_value:
+          id: field_group_allowed_join_method_value
+          table: group__field_group_allowed_join_method
+          field: field_group_allowed_join_method_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: { }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_group_allowed_join_method_value_op
+            label: 'Join method'
+            description: ''
+            use_operator: false
+            operator: field_group_allowed_join_method_value_op
+            identifier: field_group_allowed_join_method
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: field_group_allowed_join_method
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: { }
+            group_items: { }
+          plugin_id: list_field
         type:
           id: type
           table: groups_field_data
@@ -324,8 +401,8 @@ display:
           entity_field: type
           plugin_id: bundle
       defaults:
-        filters: true
-        filter_groups: true
+        filters: false
+        filter_groups: false
       filter_groups:
         operator: AND
         groups:
@@ -339,5 +416,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - user.permissions
       tags: {  }

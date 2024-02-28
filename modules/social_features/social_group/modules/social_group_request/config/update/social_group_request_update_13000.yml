@@ -1,0 +1,24 @@
+message.template.approve_request_join_group:
+  expected_config: {  }
+  update_actions:
+    delete:
+      third_party_settings:
+        activity_logger:
+          activity_bundle_entities:
+            group_content-closed_group-group_membership: {  }
+            group_content-open_group-group_membership: { }
+            group_content-public_group-group_membership: { }
+    add:
+      third_party_settings:
+        activity_logger:
+          activity_bundle_entities:
+            group_content-flexible_group-group_membership: group_content-flexible_group-group_membership
+
+message.template.request_to_join_a_group:
+  expected_config: {  }
+  update_actions:
+    delete:
+      third_party_settings:
+        activity_logger:
+          activity_bundle_entities:
+            group_content-group_content_type_c8bae2527294c: {  }
