@@ -317,4 +317,17 @@ class SocialMinkContext extends MinkContext {
       throw new \Exception('Found '.$numberText.' times of "'.$text.'" when expecting '.$expectedNumber);
     }
   }
+
+  /**
+   * @When /^I hover over the element "([^"]*)"(?:|.*)$/
+   */
+  public function iHoverOverTheElement($locator) {
+    $session = $this->getSession();
+    $element = $session->getPage()->find('css', $locator);
+
+    if (null === $element) {
+      throw new ElementNotFoundException($session->getDriver(), 'element', 'css', $locator);
+    }
+    $element->mouseOver();
+  }
 }
