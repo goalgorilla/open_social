@@ -40,7 +40,10 @@
     padding-bottom: 36px;
 
     &-header {
+      display: block;
       height: 84px;
+      margin: 0;
+      border-radius: 0;
     }
 
     &-info {
@@ -184,6 +187,11 @@
   }
 
   .preview-popup-description {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+
     .field {
       margin-top: 20px;
       p {
