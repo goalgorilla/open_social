@@ -298,13 +298,23 @@ class SocialEmbedConvertUrlToEmbedFilter extends FilterBase implements Container
             // Testing pattern.
             $testing_pattern = '/' . $item . '/';
 
-            // For "Facebook" and "Instagram" links embedding require to set up an application.
-            // Sometimes it doesn't have a sake to do it. Let's return a link without embedding
+            // For "Facebook" and "Instagram" links embedding require to
+            // set up an application. Sometimes it doesn't have a sake
+            // to do it. Let's return a link without embedding
             // if the application isn't connected.
             if (
               preg_match("/facebook.com\/|instagram.com\//i", $result_link) &&
-              !\Drupal::config('url_embed.settings')->get('facebook_app_id')
+              (
+                !\Drupal::config('url_embed.settings')->get('facebook_app_id') ||
+                !\Drupal::config('url_embed.settings')->get('facebook_app_secret')
+              )
             ) {
+              return $result_link;
+            }
+
+            // Twitter: Return not supported for embedding
+            // specific link as a link.
+            if (preg_match('(twitter.com\/(.*)\/status\/(.*)\/(.*))', $result_link)) {
               return $result_link;
             }
 
