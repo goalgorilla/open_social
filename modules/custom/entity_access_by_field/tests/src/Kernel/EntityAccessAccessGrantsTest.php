@@ -17,8 +17,8 @@ class EntityAccessAccessGrantsTest extends EntityAccessNodeAccessTestBase {
     // We focus on the node types, which is what
     // entity_access_by_field_node_grants_alter() attempts to influence.
     $grants = [
-      'gnode:a' => [1, 2],
-      'gnode:b' => [1, 2],
+      'gnode:a' => [$this->group1->id(), $this->group2->id()],
+      'gnode:b' => [$this->group1->id(), $this->group2->id()],
     ];
 
     // Verify that when a member is part of both groups, nothing will be
@@ -36,8 +36,8 @@ class EntityAccessAccessGrantsTest extends EntityAccessNodeAccessTestBase {
     entity_access_by_field_node_grants_alter($altered_grants_groups2, $this->account, 'view');
 
     $expected_result_groups2 = [
-      'gnode:a' => [1 => 2],
-      'gnode:b' => [1 => 2],
+      'gnode:a' => [1 => $this->group2->id()],
+      'gnode:b' => [1 => $this->group2->id()],
     ];
     $this->assertEquals($expected_result_groups2, $altered_grants_groups2);
 

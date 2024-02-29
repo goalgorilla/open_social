@@ -24,18 +24,6 @@ function social_group_invite_install() {
 }
 
 /**
- * Implements hook_update_dependencies().
- */
-function social_group_invite_update_dependencies() : array {
-  // Ensure configurations updates runs after the group migration has completed.
-  $dependencies['social_group_invite'][13000] = [
-    'social_group' => 13001,
-  ];
-
-  return $dependencies;
-}
-
-/**
  * Implements hook_update_last_removed().
  */
 function social_group_invite_update_last_removed() : int {

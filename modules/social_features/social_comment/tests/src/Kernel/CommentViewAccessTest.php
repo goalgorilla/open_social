@@ -41,6 +41,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
     'views',
     'group',
     'variationcache',
+    'flexible_permissions',
   ];
 
   /**
