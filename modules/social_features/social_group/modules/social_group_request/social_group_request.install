@@ -62,19 +62,6 @@ function social_group_request_update_13000(): ?string {
     return NULL;
   }
 
-  $configurations = [
-    'core.entity_view_display.group_content.group_content_type_c8bae2527294c.default',
-    'field.field.group_content.group_content_type_c8bae2527294c.grequest_status',
-    'field.field.group_content.group_content_type_c8bae2527294c.grequest_updated_by',
-    'group.content_type.group_content_type_c8bae2527294c',
-  ];
-
-  foreach ($configurations as $name) {
-    \Drupal::configFactory()
-      ->getEditable($name)
-      ->delete();
-  }
-
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
   $updateHelper->executeUpdate('social_group_request', __FUNCTION__);
