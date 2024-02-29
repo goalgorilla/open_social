@@ -1062,3 +1062,12 @@ function social_profile_social_core_default_main_menu_links_alter(array &$links)
 function social_profile_social_tagging_type(): string {
   return 'profile';
 }
+
+/**
+ * Remove the organization from the options to use in the user registration.
+ */
+function social_profile_social_registration_fields_list_alter(array &$fields): void {
+  if (($key = array_search('field_profile_organization', $fields, TRUE)) !== FALSE) {
+    unset($fields[$key]);
+  }
+}
