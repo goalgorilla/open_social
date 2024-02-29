@@ -123,3 +123,12 @@ function social_profile_organization_tag_fetch(Profile $profile, $return_html = 
   }
   return new FormattableMarkup('', []);
 }
+
+/**
+ * Remove the organization tag from the options to use in the user registration.
+ */
+function social_profile_organization_tag_social_registration_fields_list_alter(array &$fields): void {
+  if (($key = array_search('field_profile_organization_tag', $fields, TRUE)) !== FALSE) {
+    unset($fields[$key]);
+  }
+}

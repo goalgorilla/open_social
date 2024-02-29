@@ -93,3 +93,57 @@ function social_profile_organization_tag_update_121001(): void {
     }
   }
 }
+
+/**
+ * Revert the anonymous permission from 121001 to see organization tags.
+ */
+function social_profile_organization_tag_update_121002(): void {
+  // Nothing to do if the module is not installed.
+  if (!\Drupal::moduleHandler()->moduleExists("taxonomy_access_fix")) {
+    return;
+  }
+
+  // Permission to grant.
+  $taxonomy_permissions = [
+    'view terms in profile_organization_tag',
+    'view term names in profile_organization_tag',
+    'select terms in profile_organization_tag',
+  ];
+
+  // Authenticated roles.
+  $authenticated_roles = [
+    'verified',
+  ];
+
+  // Load the permission.
+  $entity_type_manager = \Drupal::entityTypeManager();
+  foreach ($authenticated_roles as $role) {
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = $entity_type_manager->getStorage('user_role')->load($role);
+
+    // If the role is not have the permission, grant permission.
+    foreach ($taxonomy_permissions as $taxonomy_permission) {
+      if ($role->hasPermission($taxonomy_permission)) {
+        $role->revokePermission($taxonomy_permission);
+        $role->save();
+      }
+    }
+  }
+
+  // For anonymous role, we need to check the if Registration Fields is enabled.
+  if (!\Drupal::moduleHandler()->moduleExists("social_registration_fields")) {
+    return;
+  }
+
+  // Load anonymous role.
+  /** @var \Drupal\user\RoleInterface $role */
+  $role = $entity_type_manager->getStorage('user_role')->load('anonymous');
+
+  // If the role is not have the permission, grant permission.
+  foreach ($taxonomy_permissions as $taxonomy_permission) {
+    if ($role->hasPermission($taxonomy_permission)) {
+      $role->revokePermission($taxonomy_permission);
+      $role->save();
+    }
+  }
+}
