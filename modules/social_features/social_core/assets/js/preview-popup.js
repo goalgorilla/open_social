@@ -45,7 +45,7 @@
                       })
                       .on('mouseleave', function () {
                         timeouts[selector] = window.setTimeout(function () {
-                          // currentDialog.remove();
+                          currentDialog.remove();
 
                           if (refresh === 1) {
                             cleanupUserData(dialogs);
@@ -139,7 +139,7 @@
 
           timeouts[selector] = window.setTimeout(function () {
             if (dialogs[selector] !== undefined && dialogs[selector].open) {
-              // $(context).find('.ui-dialog').remove();
+              $(context).find('.ui-dialog').remove();
             }
           }, delayClose);
         });
