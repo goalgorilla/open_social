@@ -51,7 +51,7 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('entity_type.manager')
     );
@@ -141,6 +141,7 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
     $types = [];
     /** @var \Drupal\group\Entity\GroupType $group_type */
     foreach (GroupType::loadMultiple() as $group_type) {
+      /** @var \Drupal\group\Entity\GroupRoleInterface $outsider_role */
       $outsider_role = $this->entityTypeManager
         ->getStorage('group_role')
         ->load($group_type->id() . '-outsider');

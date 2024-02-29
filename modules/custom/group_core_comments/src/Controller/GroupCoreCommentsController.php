@@ -80,9 +80,9 @@ class GroupCoreCommentsController extends ControllerBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function quickJoinGroup(GroupInterface $group) {
-    $relation_type_id = $this->entityTypeManager()
-      ->getStorage('group_content_type')
-      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager()->getStorage('group_content_type');
+    $relation_type_id = $storage->getRelationshipTypeId((string) $group->getGroupType()->id(), 'group_membership');
 
     $group_content = $this->entityTypeManager()->getStorage('group_content')->create([
       'type' => $relation_type_id,

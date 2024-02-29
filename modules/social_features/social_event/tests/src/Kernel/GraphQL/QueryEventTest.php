@@ -72,6 +72,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
     'social_topic',
     'variationcache',
     'better_exposed_filters',
+    'gnode',
   ];
 
   /**

@@ -158,7 +158,7 @@ class SetGroupsForNodeService {
    * @param \Drupal\group\Entity\Group $group
    *   Object of a group.
    */
-  public static function addGroupRelationship(NodeInterface $node, Group $group) {
+  public static function addGroupRelationship(NodeInterface $node, Group $group): void {
     // @todo Check if group plugin id exists.
     $plugin_id = 'group_node:' . $node->bundle();
     $group_contents = GroupRelationship::loadByEntity($node);
@@ -175,7 +175,7 @@ class SetGroupsForNodeService {
    * @param \Drupal\group\Entity\Group $group
    *   Object of a group.
    */
-  public static function removeGroupRelationship(NodeInterface $node, Group $group) {
+  public static function removeGroupRelationship(NodeInterface $node, Group $group): void {
     // Try to load group content from entity.
     $group_contents = GroupRelationship::loadByEntity($node);
     foreach ($group_contents as $group_content) {

@@ -285,16 +285,24 @@ function social_group_update_13000() : void {
     \Drupal::logger("social_group")->error("Can not migrate group types for non-SQL storage back-ends.");
     return;
   }
+  $group_type_content_plugins = [];
   $group_content_table_mapping = $group_content_storage->getTableMapping();
-
   $group_content_base_table = $group_content_storage->getBaseTable();
   $group_content_data_table = $group_content_storage->getDataTable();
   assert($group_content_data_table !== FALSE, "The group content entity should support a data table.");
 
-  /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $group_content_enabler_manager */
-  $group_content_enabler_manager = \Drupal::service("plugin.manager.group_content_enabler");
-  /** @var array<string, string[]> $group_type_content_plugins */
-  $group_type_content_plugins = $group_content_enabler_manager->getGroupTypePluginMap();
+  if (\Drupal::hasService('plugin.manager.group_content_enabler')) {
+    // Following service will be removed in the group 2.x version but we still
+    // need to make compatible for previous version.
+    $group_content_enabler_manager = \Drupal::service("plugin.manager.group_content_enabler");
+    $group_type_content_plugins = $group_content_enabler_manager->getGroupTypePluginMap();
+  }
+  elseif (\Drupal::hasService('group_relation_type.manager')) {
+    // This service is replacing group_content_enabler in the next group 2.x
+    // version. So, lets make sure that the current update applied correctly.
+    $plugin_manager = \Drupal::service('group_relation_type.manager');
+    $group_type_content_plugins = $plugin_manager->getGroupTypePluginMap();
+  }
   $group_type_content_plugin_replacement = [];
 
   // Ensure all old group type plugins are supported in flexible groups.
@@ -717,4 +725,18 @@ function social_group_update_13004() : string {
  */
 function social_group_update_13006() : void {
   \Drupal::state()->delete("social_group_group_type_migration_opt_out");
+}
+
+/**
+ * Update group_members views config to use a correct table in relationships.
+ */
+function social_group_update_14001() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
 }

@@ -44,6 +44,7 @@ use Drupal\social_group\Controller\SocialGroupListBuilder;
 use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_group\Entity\Access\SocialGroupAccessControlHandler;
 use Drupal\social_group\Entity\Group;
+use Drupal\social_group\Plugin\Field\GroupGroupReferenceItemList;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -2176,7 +2177,8 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
   foreach (GroupType::loadMultiple() as $group_type) {
     $new = !in_array($group_type->id(), $condition['value']);
-    $group_type_id = $group_type->id();
+
+    /** @var \Drupal\user\RoleInterface $anonymous_role */
     $anonymous_role = \Drupal::entityTypeManager()->getStorage('group_role')
       ->load($group_type->id() . '-anonymous');
     $hidden = !in_array('view group', $anonymous_role->getPermissions());
@@ -2339,6 +2341,7 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
 
   // Authenticated is a locked Role,
   // So first we check outsiders also easier on the performance :)
+  /** @var \Drupal\group\Entity\GroupRoleInterface $outsider */
   $outsider = \Drupal::entityTypeManager()
     ->getStorage('group_role')
     ->load($group_type->id() . '-outsider');
@@ -2350,6 +2353,7 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
   // If members can see it, we also need to show group types because
   // we are not calculation memberships.
   $id = $group_type->id() . '-member';
+  /** @var \Drupal\group\Entity\GroupRoleInterface $member */
   $member = \Drupal::entityTypeManager()->getStorage('group_role')->load($id);
   if (NULL !== $member && $member->hasPermission('view group')) {
     return TRUE;

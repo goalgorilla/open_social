@@ -167,10 +167,11 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
 
     $id = $this->routeMatch->getRawParameter('group');
 
+    /** @var \Drupal\group\Entity\GroupInterface $group */
+    $group = $this->entityTypeManager->getStorage('group')->load($id);
+
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
-    $group_type = $this->entityTypeManager
-      ->getStorage('group')
-      ->load($id)->getGroupType();
+    $group_type = $group->getGroupType();
 
     $roles = $group_type->getRoles(FALSE);
 

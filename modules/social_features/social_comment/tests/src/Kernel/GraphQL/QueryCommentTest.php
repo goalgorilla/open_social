@@ -46,6 +46,7 @@ class QueryCommentTest extends SocialGraphQLTestBase {
     'views',
     'group',
     'variationcache',
+    'flexible_permissions',
   ];
 
   /**

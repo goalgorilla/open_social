@@ -26,7 +26,7 @@ class CrossPostingService {
   /**
    * The group relation type manager under test.
    *
-   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManager
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
   protected $groupRelationTypeManager;
 
