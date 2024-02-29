@@ -108,7 +108,7 @@ jobs:
           # Also include a hardcoded version for instaclick/php-webdriver, drupal/dynamic_entity_reference and drupal/core
           # as we didnt lock the version, and the patch isn't applying on the latest, so we require it
           # specifically to match the version that was installed at that moment in time.
-          composer require goalgorilla/open_social:~$PREVIOUS_MAJOR instaclick/php-webdriver:1.4.16 drupal/dynamic_entity_reference:3.1.0 drupal/core:10.2.3
+          composer require goalgorilla/open_social:~$PREVIOUS_MAJOR instaclick/php-webdriver:1.4.16 drupal/dynamic_entity_reference:3.1.0 drupal/core:10.2.3 "drupal/flexible_permissions:^1.1.0"
 
           # Installation
           # This is purposefully duplicated because we may change how
@@ -123,6 +123,7 @@ jobs:
           fi
 
           drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social' > >(tee install-output.log) 2> >(tee install-error.log >&2)
+          drush en flexible_permissions
 
           # Dump the database to our test-output folder so that we can locally
           # debug if the update fails.
