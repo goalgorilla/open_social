@@ -38,6 +38,12 @@ function social_language_install() {
   \Drupal::configFactory()->getEditable('locale.settings')
     ->set('translation.path', '/tmp')
     ->save();
+
+  // Changing the schedule for locale cron.
+  \Drupal::service('ultimate_cron.discovery')->discoverCronJobs();
+  \Drupal::configFactory()->getEditable('ultimate_cron.job.locale_cron')
+    ->set('scheduler.configuration.rules', ['0+@ 0 * * *'])
+    ->save();
 }
 
 /**
@@ -118,4 +124,18 @@ function social_language_update_10301() {
 function social_language_update_10302() {
   // Make sure the module has more weight then "Content Translation" module.
   module_set_weight('social_language', 11);
+}
+
+/**
+ * Changing the schedule for locale cron.
+ */
+function social_language_update_12201(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_language', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
