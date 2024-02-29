@@ -95,9 +95,9 @@ Feature: Mute/Unmute group notifications
     And I should see "Mute group"
     # There should be notifications.
     And I am on "/notifications"
-    And I should see "dude_2nd created a topic Topic for unmute notify in the Ressinel's group 1st group"
+    And I should see "dude_2nd created a INTERNAL USE ONLY -- Flexible group -- Group node (Topic) Topic for unmute notify in the Ressinel's group 1st group"
     And I should have an email with subject "New content has been added to a group you are in" and in the content:
-      | dude_2nd created a topic Topic for unmute notify in the Ressinel's group 1st group |
+      | dude_2nd created a INTERNAL USE ONLY -- Flexible group -- Group node (Topic) Topic for unmute notify in the Ressinel's group 1st group |
 
   @email-spool
   Scenario: LU not able to receive notifications from the muted group

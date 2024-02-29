@@ -16,7 +16,7 @@ abstract class EntityAccessNodeAccessTestBase extends EntityKernelTestBase {
    *
    * @var array
    */
-  protected static $modules = ['group', 'options', 'entity', 'variationcache', 'node', 'gnode', 'social_group', 'flag', 'address', 'image', 'file', 'entity_access_by_field'];
+  protected static $modules = ['group', 'options', 'entity', 'variationcache', 'node', 'gnode', 'social_group', 'flag', 'address', 'image', 'file', 'entity_access_by_field', 'flexible_permissions'];
 
   /**
    * The entity type manager service.
@@ -67,7 +67,16 @@ abstract class EntityAccessNodeAccessTestBase extends EntityKernelTestBase {
 
     // Create a group type.
     $storage = $this->entityTypeManager->getStorage('group_type');
-    $values = ['label' => 'foo', 'description' => 'bar'];
+    $values = [
+      'label' => 'foo',
+      'description' => 'bar',
+      // Farther two options needed to make an author as a group member as well.
+      // Probably, in next "group" module versions making author as a group
+      // member could be possible only with Group::addMember() method.
+      /* @see \Drupal\group\Entity\Group::postSave() */
+      'creator_membership' => TRUE,
+      'creator_wizard' => FALSE,
+    ];
     /** @var \Drupal\group\Entity\GroupTypeInterface $groupTypeA */
     $groupTypeA = $storage->create(['id' => 'a'] + $values);
     $groupTypeA->save();
