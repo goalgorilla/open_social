@@ -16,6 +16,11 @@ class ChromeDriver extends ChromeDriverBase {
    */
   public function visit($url) {
     parent::visit($url);
+    // We need an additional reload after we implemented a default page cache.
+    // A reload seems to do a hard refresh, ensuring we don't run in to pages
+    // being served from cache when we visit the URL's.
+    // @todo: find a better way of dealing with this scenario.
+    parent::reload();
     // We overwrite the visit method because Open Social uses the CKEditor on
     // some pages. The editor waits until the page is loaded similarly to our
     // Behat driver. This can cause a race condition between the CKEditor and
