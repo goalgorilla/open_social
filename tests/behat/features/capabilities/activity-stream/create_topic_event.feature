@@ -126,6 +126,7 @@ Feature: See and get notified when content is created
     And I press "Continue"
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
+    And I click radio button "Public"
     And I press "Save"
     And I should see "Test open group" in the "Main content"
     And I should see "Test open group" in the "Hero block"

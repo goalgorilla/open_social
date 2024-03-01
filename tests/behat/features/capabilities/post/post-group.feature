@@ -14,6 +14,7 @@ Feature: Create Post on Group
     And I press "Continue"
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
+    And I click radio button "Public"
     And I fill in "Location name" with "GG HQ"
     And I select "NL" from "Country"
     And I wait for AJAX to finish
