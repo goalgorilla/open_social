@@ -555,6 +555,83 @@ function social_group_update_13001() : void {
     return;
   }
 
+  // Remove deprecated configurations from config dependencies to prevent
+  // deleting them on deprecated group types uninstall.
+  // We can load only "views" and "blocks". Other configuration should
+  // be checked manually.
+  $configs = [
+    // Load "views".
+    ...\Drupal::configFactory()->listAll('views.view.'),
+    // Load "blocks".
+    ...\Drupal::configFactory()->listAll('block.block.'),
+  ];
+
+  $deprecated_entity_types = [
+    'group_content_type_3d6b5f69ef04a',
+    'group_content_type_bf33df57c91c6',
+    'group_content_type_f256b744237e6',
+    'group_content_type_c8bae2527294c',
+    'closed_group',
+    'open_group',
+    'public_group',
+    'secret_group',
+  ];
+
+  foreach ($configs as $name) {
+    $config = \Drupal::configFactory()->getEditable($name);
+    $dependencies = $config->get('dependencies.config');
+    if (!$dependencies) {
+      continue;
+    }
+    foreach ($deprecated_entity_types as $entity_type_id) {
+      $dependencies = array_filter($dependencies, function ($dependency) use ($entity_type_id) {
+        return !str_contains($dependency, $entity_type_id);
+      });
+    }
+    $config->set('dependencies.config', $dependencies);
+    $config->save();
+  }
+
+  // Invoke permissions as well.
+  foreach (\Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple() as $role) {
+    /** @var \Drupal\user\RoleInterface $role */
+    $permissions = $role->getPermissions();
+    $deprecated_permissions = array_filter($permissions, function ($permission) use ($deprecated_entity_types) {
+      foreach ($deprecated_entity_types as $entity_type_id) {
+        if (str_contains($permission, $entity_type_id)) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+    });
+
+    if ($deprecated_permissions) {
+      user_role_revoke_permissions($role->id(), $deprecated_permissions);
+    }
+  }
+
+  // Clean up views displays.
+  $view_displays = \Drupal::configFactory()
+    ->listAll('core.entity_view_display.');
+
+  foreach ($view_displays as $name) {
+    $config = \Drupal::configFactory()->getEditable($name);
+    $content = (array) $config->get('content');
+    if (empty($content)) {
+      continue;
+    }
+
+    unset($content['groups_type_public_group']);
+    unset($content['groups_type_open_group']);
+    unset($content['groups_type_closed_group']);
+    unset($content['groups_type_secret_group']);
+
+    if (array_diff(array_keys((array) $config->get('content')), array_keys($content))) {
+      $config->set('content', $content);
+      $config->save();
+    }
+  }
+
   // Uninstall the secret group module if enabled.
   // This should take care of removing everything from a secret group.
   \Drupal::service("module_installer")->uninstall(["social_secret_group_featured", "social_group_secret"]);
