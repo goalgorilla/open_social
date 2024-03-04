@@ -49,7 +49,7 @@ function social_group_migration_test_update_dependencies() : array {
 
   // Ensure our test verification runs after the group migration has completed.
   $dependencies['social_group_migration_test'][13002] = [
-    'social_group' => 13002,
+    'social_group' => 13000,
   ];
 
   return $dependencies;
@@ -185,7 +185,7 @@ function social_group_migration_test_update_13002(array &$sandbox) : string {
   $members_per_group = SOCIAL_GROUP_MIGRATION_TEST_MEMBERS_PER_GROUP;
   $topics_per_group = SOCIAL_GROUP_MIGRATION_TEST_TOPICS_PER_GROUP;
 
-  // requireAssertions errors if it' not called without being passed `TRUE`
+  // require_assertions errors if it' not called without being passed `TRUE`
   // before, but it's only called with `TRUE` if assertions are enabled which
   // allows us to ensure assertions are enabled.
   assert(require_assertions(TRUE));

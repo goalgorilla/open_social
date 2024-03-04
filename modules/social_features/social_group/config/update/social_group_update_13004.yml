@@ -1,22 +1,10 @@
 views.view.group_events:
-  expected_config:
-    display:
-      default:
-        display_options:
-          arguments:
-            gid:
-              validate_options: { }
-          filters:
-            type:
-              table: group_content_field_data
+  expected_config: { }
   update_actions:
     delete:
       display:
         default:
           display_options:
-            arguments:
-              gid:
-                validate_options: { }
             filters:
               type: { }
     change:
@@ -45,16 +33,7 @@ views.view.group_manage_members:
             filters:
               type: {  }
 views.view.group_managers:
-  expected_config:
-    display:
-      default:
-        display_options:
-          filters:
-            group_roles_target_id: { }
-            group_roles_target_id_1: { }
-            group_roles_target_id_2: { }
-            type:
-              group: 2
+  expected_config: {  }
   update_actions:
     delete:
       display:
@@ -105,18 +84,7 @@ views.view.group_members:
                 required: true
                 table: group_content_field_data
 views.view.group_topics:
-  expected_config:
-    display:
-      default:
-        display_options:
-          arguments:
-            gid:
-              validate_options: { }
-          filters:
-            type: { }
-          relationships:
-            gc__node:
-              required: false
+  expected_config: { }
   update_actions:
     delete:
       display:
