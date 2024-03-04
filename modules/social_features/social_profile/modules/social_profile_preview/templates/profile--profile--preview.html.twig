@@ -44,14 +44,14 @@
           {{ content.uid }}
           {{ content.field_profile_function }}
 
-          {% if content.flag_follow_user or content.private_message_link %}
+{#          {% if content.flag_follow_user or content.private_message_link %}#}
             <div class="btn-group--wrapper">
-              {% if following_enabled %}
+{#              {% if following_enabled %}#}
                 {{ content.flag_follow_user }}
-              {% endif %}
+{#              {% endif %}#}
               {{ content.private_message_link }}
             </div>
-          {% endif %}
+{#          {% endif %}#}
         </div>
       </div>
     </div>
@@ -63,12 +63,23 @@
     {{ content.field_profile_summary }}
   {% endif %}
 
-  {% if content.followers or content.following %}
+{#  {% if content.followers or content.following %}#}
     <div class="follow-user--counter">
       {{ content.followers }}
       {{ content.following }}
     </div>
-  {% endif %}
+{#  {% endif %}#}
 
   {{ content|without('field_profile_image', 'uid', 'field_profile_function', 'flag_follow_user', 'private_message_link', 'field_profile_summary', 'field_profile_self_introduction', 'followers', 'following') }}
 </div>
+
+{#{% extends "@social_core/preview-popup.html.twig" %}#}
+
+{#{% block preview_popup_logo %}#}
+{#  {{ content.field_profile_image }}#}
+{#{% endblock %}#}
+
+{#{% block preview_popup_user_number %}#}
+{#{% endblock %}#}
+
+
