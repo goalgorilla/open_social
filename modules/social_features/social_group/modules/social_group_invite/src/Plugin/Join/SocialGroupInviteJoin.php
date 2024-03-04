@@ -107,11 +107,9 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
     }
     elseif (
       count($items = parent::actions($entity, $variables)) === 1 &&
-      in_array($entity->bundle(), $this->types()) ||
-      $entity->bundle() === 'closed_group' &&
-      !$entity->hasPermission('manage all groups', $this->currentUser)
+      in_array($entity->bundle(), $this->types())
     ) {
-      if (count($items) === 0) {
+      if (!$items) {
         $items[] = ['attributes' => ['class' => ['btn-accent']]];
       }
       else {
@@ -119,7 +117,6 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
       }
 
       $items[0]['label'] = $variables['cta'] = $this->t('Invitation only');
-      $variables['closed_group'] = TRUE;
     }
 
     return $items;

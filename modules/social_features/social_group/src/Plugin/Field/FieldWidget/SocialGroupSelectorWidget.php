@@ -457,17 +457,6 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
         $account,
       )
     ) {
-      if ($group->getGroupType()->id() === 'public_group') {
-        $config = $this->configFactory->get('entity_access_by_field.settings');
-
-        if (
-          $config->get('disable_public_visibility') === 1 &&
-          !$account->hasPermission('override disabled public visibility')
-        ) {
-          return FALSE;
-        }
-      }
-
       return TRUE;
     }
 

@@ -58,7 +58,7 @@ class SocialGroupDirectJoin extends JoinBase {
     /** @var \Drupal\social_group\SocialGroupInterface $entity */
     return $entity->hasPermission('join group', $this->currentUser) ||
       $this->currentUser->isAnonymous() &&
-      in_array($entity->bundle(), ['flexible_group', 'public_group']);
+      $entity->bundle() === 'flexible_group';
   }
 
 }

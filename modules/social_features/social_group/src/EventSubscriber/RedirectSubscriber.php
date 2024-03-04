@@ -54,29 +54,6 @@ class RedirectSubscriber implements EventSubscriberInterface {
         'arg_0' => $group->id(),
       ])->toString()));
     }
-
-    // Get the current user.
-    $user = \Drupal::currentUser();
-    // The array of forbidden routes.
-    $routes = [
-      'entity.group.canonical',
-      'entity.group.join',
-      'view.group_events.page_group_events',
-      'view.group_topics.page_group_topics',
-    ];
-    // If a group is set, and the type is closed_group.
-    if ($group->getGroupType()->id() === 'closed_group') {
-      if ($user->id() != 1) {
-        if ($user->hasPermission('manage all groups')) {
-          return;
-        }
-        // If the user is not an member of this group.
-        elseif (!$group->hasMember($user) && in_array($route_name, $routes)) {
-          $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()])
-            ->toString()));
-        }
-      }
-    }
   }
 
 }
