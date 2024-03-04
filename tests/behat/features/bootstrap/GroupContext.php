@@ -702,4 +702,22 @@ class GroupContext extends RawMinkContext {
     }
   }
 
+  /**
+   * Switch "group type" settings.
+   *
+   * @param string $switch
+   *   Should be either "enable" or "disable".
+   *
+   * @Given I :switch group type settings
+   */
+  public function iSwitchGroupTypeSettings(string $switch): void {
+     if (!in_array($switch, ['enable', 'disable'])) {
+       throw new \InvalidArgumentException('Invalid parameter $switch');
+     }
+
+    \Drupal::configFactory()
+      ->getEditable('social_group.settings')
+      ->set('social_group_type_required', $switch === 'enable')
+      ->save();
+  }
 }
