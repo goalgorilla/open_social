@@ -39,39 +39,6 @@ function hook_social_group_hide_types_alter(array &$hidden_types) {
 }
 
 /**
- * Provide a method to alter the default content visibility for a group type.
- *
- * @param string $visibility
- *   The visibility option that is default.
- * @param string $group_type_id
- *   The group type we alter the visibility setting for.
- *
- * @ingroup social_group_api
- *
- * @deprecated in social:12.2.0 and is removed from social:13.0.0. There is no
- *     replacement.
- * @see https://www.drupal.org/project/social/issues/3420020
- */
-function hook_social_group_default_visibility_alter(&$visibility, $group_type_id) {
-  switch ($group_type_id) {
-    case 'custom_public_group':
-      $visibility = 'public';
-
-      break;
-
-    case 'custom_open_group':
-      $visibility = 'community';
-
-      break;
-
-    case 'custom_closed_group':
-      $visibility = 'group';
-
-      break;
-  }
-}
-
-/**
  * Provide a method to alter the allowed content visibility for a group type.
  *
  * @param array $visibilities
@@ -308,7 +275,7 @@ function hook_social_group_join_method_info_alter(
     isset($items['added']) &&
     $entity !== NULL &&
     $entity->getEntityTypeId() === 'group' &&
-    $entity->bundle() === 'secret_group'
+    $entity->bundle() === 'my_custom_group'
   ) {
     $items['added']['weight'] = 90;
   }
@@ -354,7 +321,7 @@ function hook_social_group_join_method_usage_alter(array &$items) {
     if (
       $item['entity_type'] === 'group' &&
       isset($item['bundle']) &&
-      $item['bundle'] === 'closed_group' &&
+      $item['bundle'] === 'flexible_group' &&
       !isset($item['field'])
     ) {
       $item['field'] = 'field_group_allowed_join_method';

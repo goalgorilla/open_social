@@ -375,11 +375,7 @@ function social_group_invite_form_alter(&$form, FormStateInterface $form_state, 
   // has it's own routes, with no group context that loads the
   // join form. Decline is done differently. Due to the fact on joining
   // users need to fill in their membership fields.
-  $social_group_types = [
-    'open_group',
-    'closed_group',
-    'public_group',
-  ];
+  $social_group_types = [];
 
   // Also include any added optional group types.
   \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
@@ -546,8 +542,7 @@ function social_group_invite_preprocess_join(array &$variables): void {
   if (
     $entity->hasField('field_flexible_group_visibility') &&
     !$entity->field_flexible_group_visibility->isEmpty() &&
-    $entity->field_flexible_group_visibility->value === 'members' ||
-    in_array($entity->bundle(), ['closed_group', 'secret_group'])
+    $entity->field_flexible_group_visibility->value === 'members'
   ) {
     $group_url = NULL;
   }
@@ -737,8 +732,7 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
     if (
       ($group->hasField('field_flexible_group_visibility') &&
       !$group->get('field_flexible_group_visibility')->isEmpty() &&
-      $group->get('field_flexible_group_visibility')->getValue()[0]['value'] === 'members') ||
-      in_array($group->bundle(), ['closed_group', 'secret_group'])
+      $group->get('field_flexible_group_visibility')->getValue()[0]['value'] === 'members')
     ) {
 
       // Update the destination for use with the register link.
