@@ -47,6 +47,10 @@ function social_page_social_tagging_type_alter(array &$items): void {
  * Adds the "Create Page" link to the content creation menu.
  */
 function social_page_social_user_account_header_create_links($context) {
+  $link = Link::createFromRoute((new TranslatableMarkup('New Page')), 'node.add', [
+    'node_type' => 'page',
+  ]);
+
   return [
     'add_page' => [
       '#type' => 'link',
@@ -54,8 +58,7 @@ function social_page_social_user_account_header_create_links($context) {
         'title' => new TranslatableMarkup('Create New Page'),
       ],
       '#weight' => 300,
-    ] + Link::createFromRoute((new TranslatableMarkup('New Page')), 'node.add', [
-      'node_type' => 'page',
-    ])->toRenderable(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 }
