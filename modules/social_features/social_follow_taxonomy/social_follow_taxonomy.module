@@ -141,6 +141,10 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
 
   if (in_array($message_template_id, $message_template)) {
     $entity = $activity->getRelatedEntity();
+    // Checking if entity exist to avoid errors.
+    if (empty($entity)) {
+      return;
+    }
 
     if ($entity->getEntityTypeId() === 'node') {
       $storage = \Drupal::entityTypeManager()->getStorage('flagging');
