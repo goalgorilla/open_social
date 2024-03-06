@@ -105,10 +105,10 @@ jobs:
           PREVIOUS_MAJOR=`composer info -a --format json goalgorilla/open_social | jq '.versions | map(select(contains("-") == false)) | map(split(".")[0] | tonumber) | unique | reverse | .[0]'`
           echo "Setting up update test from Open Social $PREVIOUS_MAJOR"
 
-          # Also include a hardcoded version for instaclick/php-webdriver and drupal/dynamic_entity_reference
+          # Also include a hardcoded version for instaclick/php-webdriver, drupal/dynamic_entity_reference and drupal/core
           # as we didnt lock the version, and the patch isn't applying on the latest, so we require it
           # specifically to match the version that was installed at that moment in time.
-          composer require goalgorilla/open_social:~$PREVIOUS_MAJOR instaclick/php-webdriver:1.4.16 drupal/dynamic_entity_reference:3.1.0
+          composer require goalgorilla/open_social:~$PREVIOUS_MAJOR instaclick/php-webdriver:1.4.16 drupal/dynamic_entity_reference:3.1.0 drupal/core:10.2.3
 
           # Installation
           # This is purposefully duplicated because we may change how
