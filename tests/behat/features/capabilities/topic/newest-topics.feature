@@ -1,44 +1,52 @@
-@api @topic @stability @perfect @community @newest @overview @block @verified @critical @DS-1057 @stability-3 @newest-topics
+@api
 Feature: See newest topics in the community
   Benefit: In order to discover content
   Role: As a Verified
   Goal/desire: I want to see newest topics block and overview
 
-  Scenario: Successfully show my upcoming events as a Verified
-#    TODO: Test visibility settings (Public, Community)
-
+  Background:
     Given "topic_types" terms:
       | name          |
       | Blog          |
       | News          |
       | Article       |
 
-    Given I am on "/stream"
-    Then I should not see "Behat Topic 1"
-    And I should not see "Behat Topic 2"
-
-    Given "topic" content:
+    And "topic" content:
       | title         | field_topic_type | status | field_content_visibility |
       | Behat Topic 1 | Blog             | 1      | public                   |
       | Behat Topic 2 | News             | 1      | public                   |
 
-    Given I am on "/stream"
+  Scenario: Successfully show upcoming events as a AN on the stream
+    Given I am an anonymous user
+
+    When I am on "/stream"
 
     Then I should see "All topics"
     And I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
 
-    When I am on "all-topics"
+  Scenario: Successfully show upcoming events as a AN on the overview
+    Given I am an anonymous user
+
+    When I am on the topic overview
+
     Then I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
     And I should see "All topics"
 
+  Scenario: Successfully show my upcoming events as a Verified on the stream
     Given I am logged in as an "verified"
-    And I am on "/stream"
+
+    When I am on "/stream"
+
     Then I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
 
-    When I am on "all-topics"
+  Scenario: Successfully show my upcoming events as a Verified on the overview
+    Given I am logged in as an "verified"
+
+    When I am on the topic overview
+
     Then I should see "All topics"
     And I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
