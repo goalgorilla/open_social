@@ -210,16 +210,36 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     switch ($entity->getEntityTypeId()) {
       case 'node':
       case 'post':
+        $tag_fields = [];
+
         foreach ($this->getListOfTagsFields() as $field_name) {
-          if (
-            $entity->hasField($field_name) &&
-            !$entity->get($field_name)->isEmpty()
-          ) {
-            return TRUE;
+          $tag_fields[] = array_column($entity->get($field_name)->getValue(), 'target_id');
+        }
+
+        if (empty($tag_fields)) {
+          return FALSE;
+        }
+
+        $following_tags = [];
+        $flagged_tags = $this->connection
+          ->select('flagging', 'f')
+          ->fields('f', ['entity_id'])
+          ->condition('flag_id', 'follow_term');
+        $flegged_tags->execute->fetchCol();
+
+        foreach ($tag_fields as $tag_field) {
+          foreach ($tag_field as $tag) {
+            if (in_array($tag, $flagged_tags)) {
+              $following_tags[] = $tag;
+            }
           }
         }
-        return FALSE;
+
+        if (!empty($following_tags)) {
+          return TRUE;
+        }
     }
+
     return FALSE;
   }
 
