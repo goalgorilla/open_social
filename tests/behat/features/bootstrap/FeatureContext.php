@@ -40,6 +40,14 @@ class FeatureContext extends RawMinkContext {
      * @param \Behat\Behat\Hook\Scope\BeforeScenarioScope $scope
      */
     public function before(BeforeScenarioScope $scope) {
+      // Restart the session in that case, this means
+      // the browser cache is cleared and not shared between
+      // scenario's. This is necessary due to enabling cache.page.max_age
+      // which adds the Cache Control header and allows the browser
+      // to cache things between scenario's.
+      // See: https://github.com/goalgorilla/open_social/actions/runs/8188710546/job/22392267853.
+      $this->getSession()->restart();
+
       // Start a session if not already done.
       // Needed since https://github.com/minkphp/Mink/pull/705
       // Otherwise resizeWindow will throw an error.
