@@ -1094,3 +1094,12 @@ function social_group_update_12101(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Enable the flexible_permissions module.
+ */
+function social_group_update_12301(): void {
+  if (!\Drupal::service('module_handler')->moduleExists('flexible_permissions')) {
+    \Drupal::service('module_installer')->install(['flexible_permissions']);
+  }
+}
