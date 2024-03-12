@@ -200,6 +200,15 @@ function social_group_update_12101(): string {
 }
 
 /**
+ * Enable the flexible_permissions module.
+ */
+function social_group_update_12301(): void {
+  if (!\Drupal::service('module_handler')->moduleExists('flexible_permissions')) {
+    \Drupal::service('module_installer')->install(['flexible_permissions']);
+  }
+}
+
+/**
  * Update old group types to flexible groups.
  */
 function social_group_update_13000() : void {
