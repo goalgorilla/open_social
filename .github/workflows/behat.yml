@@ -78,6 +78,9 @@ jobs:
           SOLR_SOLR_MEM_SIZE: 512m
           PARTIAL_SEARCH_ENABLED: 0
           SOLR_HOST: solr
+          VIRTUAL_PORT: 8983
+        ports:
+          - "8983"
         # options: --health-cmd="solr status" --health-interval=10s --health-timeout=5s --health-retries=3
 
     defaults:
@@ -201,10 +204,15 @@ jobs:
         image: redis:latest
       solr:
         image: ghcr.io/goalgorilla/ci-solr:9.2
+        volumes:
+          - ${{ github.workspace }}:/var/solr/data/
         env:
           SOLR_SOLR_MEM_SIZE: 512m
           PARTIAL_SEARCH_ENABLED: 0
           SOLR_HOST: solr
+          VIRTUAL_PORT: 8983
+        ports:
+          - "8983"
         # options: --health-cmd="solr status" --health-interval=10s --health-timeout=5s --health-retries=3
 
     defaults:
@@ -382,10 +390,15 @@ jobs:
         image: redis:latest
       solr:
         image: ghcr.io/goalgorilla/ci-solr:9.2
+        volumes:
+          - ${{ github.workspace }}:/var/solr/data/
         env:
           SOLR_SOLR_MEM_SIZE: 512m
           PARTIAL_SEARCH_ENABLED: 0
           SOLR_HOST: solr
+          VIRTUAL_PORT: 8983
+        ports:
+          - "8983"
         # options: --health-cmd="solr status" --health-interval=10s --health-timeout=5s --health-retries=3
       chrome:
         # We use an image based on zenika/alpine-chrome:latest so we can add
