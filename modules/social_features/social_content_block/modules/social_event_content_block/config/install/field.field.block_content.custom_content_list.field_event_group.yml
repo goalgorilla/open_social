@@ -4,8 +4,7 @@ dependencies:
   config:
     - block_content.type.custom_content_list
     - field.storage.block_content.field_event_group
-    - group.type.open_group
-    - group.type.public_group
+    - group.type.flexible_group
 id: block_content.custom_content_list.field_event_group
 field_name: field_event_group
 entity_type: block_content
@@ -20,11 +19,9 @@ settings:
   handler: 'default:group'
   handler_settings:
     target_bundles:
-      open_group: open_group
-      public_group: public_group
       flexible_group: flexible_group
     sort:
       field: _none
     auto_create: false
-    auto_create_bundle: open_group
+    auto_create_bundle: flexible_group
 field_type: entity_reference

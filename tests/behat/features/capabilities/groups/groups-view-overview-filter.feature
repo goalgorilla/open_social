@@ -1,35 +1,8 @@
-@api @javascript @group @group-overview
+@api @javascript
 Feature: All group overview filters
 
   Background:
     Given I enable the module "social_group_flexible_group"
-
-  Scenario: As user I can filter on the available group types on the group overview
-    Given I am an anonymous user
-
-    When I am viewing the groups overview
-
-    Then the "Group type" select field should not contain the following options:
-      | options         |
-      | Secret group    |
-      | Community group |
-    And the "Group type" select field should contain the following options:
-      | options         |
-      | Flexible group  |
-      | Public group    |
-      | - Any -         |
-
-#  @TODO when Flexible groups is our only group type this should work. For now it doesnt, as we have public and flexible
-#  as group types enabled by default. In order to create a setup step for this test to run we would either need to
-#  uninstall a group type, or remove permissions for AN / outsiders to not be able to view published group of type as
-#  group permission. This doesn't help us in our confidence to do the group migration, so we can revisit this later.
-#
-#  Scenario: As user I can not filter on group types on the group overview if there is only one group type
-#    Given I am an anonymous user
-#
-#    When I am viewing the groups overview
-#
-#    Then I should not see "Group type" in the "Sidebar second"
 
   Scenario: As user I can not filter on the field group type if there are no types added
     Given I am an anonymous user
@@ -41,7 +14,7 @@ Feature: All group overview filters
 
   Scenario: As user I can not filter on the field group type if the setting is disabled even if there are options
     Given I am an anonymous user
-    And I set the configuration item "social_group.settings" with key "social_group_type_required" to FALSE
+    And I disable group type settings
     And "group_type" terms:
       | name |
       | Local Group |
@@ -52,13 +25,12 @@ Feature: All group overview filters
 
   Scenario: As user I can filter on the field group type if flexible groups is selected as filter option
     Given I am an anonymous user
-    And I set the configuration item "social_group.settings" with key "social_group_type_required" to TRUE
+    And I enable group type settings
     And "group_type" terms:
       | name |
       | Local Group |
 
     When I am viewing the groups overview
-    And I select "Flexible group" from "Group type"
 
     Then I should see "Type" in the "Sidebar second"
 
@@ -74,7 +46,6 @@ Feature: All group overview filters
       | This is not a local one | Just an ordinary on       | public                          | flexible_group  | 01/01/01 |                  |
 
     When I am viewing the groups overview
-    And I select "Flexible group" from "Group type"
     And I select "Local Group" from "Type"
     And I press "Filter"
 

@@ -847,20 +847,18 @@ function social_profile_social_user_account_header_account_links(array $context)
       '#attributes' => [
         'title' => new TranslatableMarkup('View my profile'),
       ],
-      '#title' => new TranslatableMarkup('My profile'),
       '#weight' => 500,
-    ] + Url::fromRoute('user.page')->toRenderArray(),
+    ] + Link::createFromRoute((new TranslatableMarkup('My profile')), 'user.page')->toRenderable(),
     'edit_profile' => [
       '#type' => 'link',
       '#attributes' => [
         'title' => new TranslatableMarkup("Edit profile"),
       ],
-      '#title' => new TranslatableMarkup("Edit profile"),
       '#weight' => 1300,
-    ] + Url::fromRoute('profile.user_page.single', [
+    ] + Link::createFromRoute((new TranslatableMarkup('Edit profile')), 'profile.user_page.single', [
       'user' => $context['user']->id(),
       'profile_type' => 'profile',
-    ])->toRenderArray(),
+    ])->toRenderable(),
   ];
 }
 
@@ -1061,4 +1059,13 @@ function social_profile_social_core_default_main_menu_links_alter(array &$links)
  */
 function social_profile_social_tagging_type(): string {
   return 'profile';
+}
+
+/**
+ * Remove the organization from the options to use in the user registration.
+ */
+function social_profile_social_registration_fields_list_alter(array &$fields): void {
+  if (($key = array_search('field_profile_organization', $fields, TRUE)) !== FALSE) {
+    unset($fields[$key]);
+  }
 }

@@ -137,35 +137,6 @@ function _social_album_set_group_permissions() {
     $current = $previous = array_merge($previous, $current);
   }
 
-  $permissions = [
-    'open_group' => [
-      'outsider' => [
-        'view group_node:album entity',
-        'view group_node:album content',
-      ],
-    ],
-    'public_group' => [
-      'anonymous' => [
-        'view group_node:album entity',
-        'view group_node:album content',
-      ],
-    ],
-  ];
-
-  foreach ($permissions as &$type_permissions) {
-    $all_type_permissions = $previous = [];
-
-    foreach ($common_permissions as $role_id => $common_permissions_list) {
-      if (isset($type_permissions[$role_id])) {
-        $previous = array_merge($previous, $type_permissions[$role_id]);
-      }
-
-      $all_type_permissions[$role_id] = array_unique(array_merge($common_permissions_list, $previous));
-    }
-
-    $type_permissions = $all_type_permissions;
-  }
-
   $type_storage = \Drupal::entityTypeManager()->getStorage('group_type');
 
   /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $role_storage */
@@ -187,7 +158,7 @@ function _social_album_set_group_permissions() {
         $role = $role_storage->load($type_role_id);
 
         $role
-          ->grantPermissions($permissions[$type_id][$role_id] ?? $common_permissions[$role_id])
+          ->grantPermissions($common_permissions[$role_id])
           ->save();
       }
     }
@@ -217,8 +188,49 @@ function _social_album_blocks(callable $function = NULL, array $items = [
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_album_update_dependencies(): array {
+  // Ensure configurations updates runs after the group migration has completed,
+  // but before the group types are removed.
+  $dependencies['social_album'][13000] = [
+    'social_group' => 13000,
+  ];
+  $dependencies['social_group'][13001] = [
+    'social_album' => 13000,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Implements hook_update_last_removed().
  */
 function social_album_update_last_removed() : int {
   return 11471;
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_album_update_13000(): void {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return;
+  }
+
+  foreach ([
+    'group.content_type.closed_group-group_node-album',
+    'group.content_type.open_group-group_node-album',
+    'group.content_type.public_group-group_node-album',
+    'group.content_type.secret_group-group_node-album',
+  ] as $config) {
+    \Drupal::configFactory()
+      ->getEditable($config)
+      ->delete();
+  }
+
 }

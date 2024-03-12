@@ -94,7 +94,7 @@ class EventDate extends InOperator {
 
       case self::PAST_EVENTS:
         $this->query->addWhereExpression($this->options['group'], "
-        (({$now} >= {$field_end}) AND ({$past_midnight} > {$field_end}))
+        (({$now} >= {$field_end}) OR ({$all_day} > 0 AND {$past_midnight} > {$field_end}))
         OR
         ({$field_end} IS NULL AND {$now} >= {$field})");
         break;

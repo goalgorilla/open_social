@@ -788,6 +788,28 @@ $settings['entity_update_backup'] = TRUE;
 $settings['migrate_node_migrate_type_classic'] = FALSE;
 
 /**
+ * Configure Swiftmailer for Open Social <=10.
+ *
+ * We want to capture mails by default rather than accidentally send them out
+ * into the world.
+ */
+$config['swiftmailer.transport']['transport'] = 'smtp';
+$config['swiftmailer.transport']['smtp_host'] = 'mailcatcher';
+$config['swiftmailer.transport']['smtp_port'] = 1025;
+
+/**
+ * Configure Symfony mailer (Open Social >=11).
+ *
+ * We want to capture mails by default rather than accidentally send them out
+ * into the world.
+ */
+$config['symfony_mailer.mailer_transport.sendmail']['plugin'] = 'smtp';
+$config['symfony_mailer.mailer_transport.sendmail']['configuration']['user'] = '';
+$config['symfony_mailer.mailer_transport.sendmail']['configuration']['pass'] = '';
+$config['symfony_mailer.mailer_transport.sendmail']['configuration']['host'] = 'mailcatcher';
+$config['symfony_mailer.mailer_transport.sendmail']['configuration']['port'] = '1025';
+
+/**
  * Load local development override configuration, if available.
  *
  * Create a settings.local.php file to override variables on secondary (staging,
@@ -800,7 +822,7 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
  *
  * Keep this code block at the end of this file to take full effect.
  */
-if ($drupal_settings === 'development' && file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
+if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
   include $app_root . '/' . $site_path . '/settings.local.php';
 }
 

@@ -34,16 +34,8 @@ class SocialLazyLoadingImageDisplayOverride implements ConfigFactoryOverrideInte
       'core.entity_view_display.node.page.activity' => 'field_page_image',
       'core.entity_view_display.node.page.activity_comment' => 'field_page_image',
       // Groups.
-      'core.entity_view_display.group.open_group.teaser' => 'field_group_image',
-      'core.entity_view_display.group.open_group.hero' => 'field_group_image',
-      'core.entity_view_display.group.secret_group.teaser' => 'field_group_image',
-      'core.entity_view_display.group.secret_group.hero' => 'field_group_image',
       'core.entity_view_display.group.flexible_group.teaser' => 'field_group_image',
       'core.entity_view_display.group.flexible_group.hero' => 'field_group_image',
-      'core.entity_view_display.group.public_group.teaser' => 'field_group_image',
-      'core.entity_view_display.group.public_group.hero' => 'field_group_image',
-      'core.entity_view_display.group.closed_group.teaser' => 'field_group_image',
-      'core.entity_view_display.group.closed_group.hero' => 'field_group_image',
       // Posts.
       'core.entity_view_display.post.photo.activity' => 'field_post_image',
       'core.entity_view_display.post.photo.activity_comment' => 'field_post_image',

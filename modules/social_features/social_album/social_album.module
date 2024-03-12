@@ -10,9 +10,9 @@ use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_album\Form\SocialAlbumImageForm;
 use Drupal\social_album\Form\SocialAlbumPostForm;
@@ -77,9 +77,8 @@ function social_album_social_user_account_header_create_links($context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('Create New Album'),
       ],
-      '#title' => new TranslatableMarkup('New Album'),
       '#weight' => 400,
-    ] + Url::fromRoute('node.add', ['node_type' => 'album'])->toRenderArray(),
+    ] + Link::createFromRoute((new TranslatableMarkup('New Album')), 'node.add', ['node_type' => 'album'])->toRenderable(),
   ];
 }
 
@@ -544,11 +543,12 @@ function social_album_social_user_account_header_account_links(array $context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('View my albums'),
       ],
-      '#title' => new TranslatableMarkup('My albums'),
       '#weight' => 550,
-    ] + Url::fromRoute('view.albums.page_albums_overview', [
-      'user' => $context['user']->id(),
-    ])->toRenderArray(),
+    ] + Link::createFromRoute(
+      (new TranslatableMarkup('My albums')),
+      'view.albums.page_albums_overview',
+      ['user' => $context['user']->id()]
+    )->toRenderable(),
   ];
 }
 

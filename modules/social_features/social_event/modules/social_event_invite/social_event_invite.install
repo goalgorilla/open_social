@@ -12,21 +12,14 @@ use Drupal\group\Entity\GroupType;
  * Implements hook_install().
  */
 function social_event_invite_install() {
-  // Set default settings for the group types invite feature is enabled for.
-  $group_types = [];
-  /** @var \Drupal\group\Entity\GroupType $group_type */
-  foreach (GroupType::loadMultiple() as $group_type) {
-    // We do not want to enable the invite feature for closed or secret groups.
-    if (in_array($group_type->id(), ['closed_group', 'secret_group'])) {
-      $group_types[$group_type->id()] = 0;
-    }
-    else {
-      $group_types[$group_type->id()] = $group_type->id();
-    }
-  }
+  // Enable event invites for all group types by default by setting the settings
+  // to group_type => group_type for each defined group bundle.
+  // @todo https://www.drupal.org/project/social/issues/3421951.
+  $group_types = GroupType::loadMultiple();
+  $invite_group_types = array_combine(array_keys($group_types), array_keys($group_types));
 
   \Drupal::configFactory()->getEditable('social_event_invite.settings')
-    ->set('invite_group_types', $group_types)
+    ->set('invite_group_types', $invite_group_types)
     ->save();
 }
 
@@ -43,6 +36,22 @@ function social_event_invite_uninstall() {
       $field->delete();
     }
   }
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_event_invite_update_dependencies(): array {
+  // Ensure configurations updates runs after the group migration has completed,
+  // but before the group types are removed.
+  $dependencies['social_event_invite'][13000] = [
+    'social_group' => 13000,
+  ];
+  $dependencies['social_group'][13001] = [
+    'social_event_invite' => 13000,
+  ];
+
+  return $dependencies;
 }
 
 /**
@@ -63,5 +72,27 @@ function social_event_invite_update_12001(): string {
   $updateHelper->executeUpdate('social_event_invite', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_event_invite_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_invite', __FUNCTION__);
+
+  // Output logged messages to a related channel of update execution.
   return $updateHelper->logger()->output();
 }

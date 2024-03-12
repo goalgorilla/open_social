@@ -6,23 +6,34 @@
  */
 
 use Drupal\activity_creator\Plugin\ActivityActionInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\SynchronizableInterface;
-use Drupal\node\NodeInterface;
 use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupContentInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_entity_insert().
  */
 function activity_basics_entity_insert(EntityInterface $entity): void {
+  // Don't trigger activity creation for group content entity with
+  // related UNPUBLISHED entity.
+  if ($entity instanceof GroupContentInterface) {
+    $related_entity = $entity->getEntity();
+
+    if ($related_entity instanceof EntityPublishedInterface && !$related_entity->isPublished()) {
+      // Don't do anything.
+      return;
+    }
+  }
+
   _activity_basics_entity_action($entity, 'create_entitiy_action');
 
   // Check if the entity created with "published" status.
-  if ($entity instanceof EntityPublishedInterface) {
-    if ($entity->isPublished()) {
-      _activity_basics_entity_action($entity, 'publish_entity_action');
-    }
+  if ($entity instanceof EntityPublishedInterface && $entity->isPublished()) {
+    _activity_basics_entity_action($entity, 'publish_entity_action');
   }
 }
 
@@ -38,12 +49,29 @@ function activity_basics_entity_update(EntityInterface $entity): void {
  */
 function activity_basics_entity_presave(EntityInterface $entity): void {
   // Check if the entity become published.
-  if ($entity instanceof EntityPublishedInterface && !$entity->isNew()) {
+  if (
+    $entity instanceof EntityPublishedInterface &&
+    !$entity->isNew()
+  ) {
     // Check if entity change state from "unpublished" to "published".
     // @phpstan-ignore-next-line
     $original = $entity->original;
+
     if (!$original->isPublished() && $entity->isPublished()) {
       _activity_basics_entity_action($entity, 'publish_entity_action');
+
+      // Check if entity is instance of content.
+      assert($entity instanceof ContentEntityInterface);
+
+      // Load all of the group content for this entity.
+      // Check if related entity become published then trig activity creation.
+      $group_contents = (array) \Drupal::entityTypeManager()
+        ->getStorage('group_content')
+        ->loadByEntity($entity);
+
+      foreach ($group_contents as $group_content) {
+        _activity_basics_entity_action($group_content, 'create_entitiy_action');
+      }
     }
   }
 }

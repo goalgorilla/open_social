@@ -90,12 +90,6 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
     }
 
     if (is_object($group) && $group->hasPermission('create group_node:book entity', $account) && $account->hasPermission("create book content")) {
-      if ($group->getGroupType()->id() === 'public_group') {
-        $config = $this->configFactory->get('entity_access_by_field.settings');
-        if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
-          return AccessResult::forbidden();
-        }
-      }
       return AccessResult::allowed();
     }
 

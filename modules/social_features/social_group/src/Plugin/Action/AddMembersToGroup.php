@@ -116,7 +116,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form['#title'] = $this->formatPlural($this->context['selected_count'], 'Add selected member to a group', 'Add @count selected members to a group');
 
-    $groups = Group::loadMultiple(social_group_get_all_groups());
+    $groups = Group::loadMultiple();
 
     $options = [];
     // Grab all the groups, sorted by group type for the select list.

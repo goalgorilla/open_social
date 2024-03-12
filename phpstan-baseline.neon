@@ -881,6 +881,21 @@ parameters:
 			path: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module
 
 		-
+			message: "#^Cannot access offset 'interval' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/EmailFrequencyBase.php
+
+		-
+			message: "#^Cannot access offset 'name' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/EmailFrequencyBase.php
+
+		-
+			message: "#^Cannot access offset 'weight' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/EmailFrequencyBase.php
+
+		-
 			message: "#^Method Drupal\\\\activity_send_email\\\\EmailFrequencyBase\\:\\:processItem\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/activity_send/modules/activity_send_email/src/EmailFrequencyBase.php
@@ -2531,6 +2546,11 @@ parameters:
 			path: modules/custom/social_lets_connect/modules/social_lets_connect_usage/src/Plugin/ShareUsageDataPlugin/OpenSocialVersion.php
 
 		-
+			message: "#^Cannot access offset 'setting' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/custom/social_lets_connect/modules/social_lets_connect_usage/src/Plugin/ShareUsageDataPluginBase.php
+
+		-
 			message: "#^Method Drupal\\\\social_lets_connect_usage\\\\Plugin\\\\ShareUsageDataPluginBase\\:\\:enabled\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/social_lets_connect/modules/social_lets_connect_usage/src/Plugin/ShareUsageDataPluginBase.php
@@ -3021,15 +3041,6 @@ parameters:
 			path: modules/social_features/social_activity/social_activity.install
 
 		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_activity/social_activity.module
-
-		-
 			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/social_activity.module
@@ -3217,15 +3228,6 @@ parameters:
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
 			count: 6
-			path: modules/social_features/social_album/social_album.module
-
-		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 2
 			path: modules/social_features/social_album/social_album.module
 
 		-
@@ -3637,15 +3639,6 @@ parameters:
 			message: "#^Function social_book_install\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_book/social_book.install
-
-		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_book/social_book.module
 
 		-
 			message: "#^Function social_book_menu_local_tasks_alter\\(\\) has no return type specified\\.$#"
@@ -4443,15 +4436,6 @@ parameters:
 			path: modules/social_features/social_core/social_core.module
 
 		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_core/social_core.module
-
-		-
 			message: "#^Cannot access offset 0 on 0\\|0\\.0\\|array\\{\\}\\|string\\|false\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_core/social_core.module
@@ -4972,11 +4956,6 @@ parameters:
 			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedConvertUrlToEmbedFilter.php
 
 		-
-			message: "#^Parameter \\#3 \\$subject of function preg_replace_callback expects array\\|string, string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedConvertUrlToEmbedFilter.php
-
-		-
 			message: "#^Not allowed to call private function _filter_url from module social_embed\\.$#"
 			count: 1
 			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlEmbedFilter.php
@@ -5025,6 +5004,56 @@ parameters:
 			message: "#^Method Drupal\\\\social_event_addtocal\\\\Form\\\\SocialAddToCalendarSettingsForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_addtocal/src/Form/SocialAddToCalendarSettingsForm.php
+
+		-
+			message: "#^Cannot access offset 'url' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendar/AddToGoogle.php
+
+		-
+			message: "#^Cannot access offset 'url' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendar/AddToICal.php
+
+		-
+			message: "#^Cannot access offset 'url' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendar/AddToOutlook.php
+
+		-
+			message: "#^Cannot access offset 'url' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendar/AddToYahoo.php
+
+		-
+			message: "#^Cannot access offset 'allDayFormat' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendarBase.php
+
+		-
+			message: "#^Cannot access offset 'dateFormat' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendarBase.php
+
+		-
+			message: "#^Cannot access offset 'endDateModification' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendarBase.php
+
+		-
+			message: "#^Cannot access offset 'id' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendarBase.php
+
+		-
+			message: "#^Cannot access offset 'label' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendarBase.php
+
+		-
+			message: "#^Cannot access offset 'utcDateFormat' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_addtocal/src/Plugin/SocialAddToCalendarBase.php
 
 		-
 			message: "#^Function _social_event_an_enroll_fix_blocks\\(\\) has no return type specified\\.$#"
@@ -6330,15 +6359,6 @@ parameters:
 			path: modules/social_features/social_event/social_event.module
 
 		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 2
-			path: modules/social_features/social_event/social_event.module
-
-		-
 			message: "#^Function _social_event_views_update\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.module
@@ -7104,15 +7124,6 @@ parameters:
 			path: modules/social_features/social_follow_content/social_follow_content.module
 
 		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_follow_content/social_follow_content.module
-
-		-
 			message: "#^Function social_follow_content_comment_insert\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_content/social_follow_content.module
@@ -7296,15 +7307,6 @@ parameters:
 			message: "#^Function social_follow_taxonomy_install\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.install
-
-		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
 
 		-
 			message: "#^Function _social_follow_taxonomy_invalidate_follow_tag_cache\\(\\) has no return type specified\\.$#"
@@ -7792,11 +7794,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_flexible_group/src/FlexibleGroupContentVisibilityUpdate.php
 
 		-
-			message: "#^Method Drupal\\\\social_group_flexible_group\\\\SocialGroupFlexibleGroupConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/src/SocialGroupFlexibleGroupConfigOverride.php
-
-		-
 			message: "#^Method Drupal\\\\social_group_flexible_group\\\\Subscriber\\\\Route\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Subscriber/Route.php
@@ -8198,7 +8195,7 @@ parameters:
 
 		-
 			message: "#^Cannot call method getOutsiderRole\\(\\) on Drupal\\\\group\\\\Entity\\\\GroupType\\|null\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.install
 
 		-
@@ -8652,11 +8649,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_welcome_message/social_group_welcome_message.module
 
 		-
-			message: "#^Function social_group_install\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.install
-
-		-
 			message: "#^Argument of an invalid type array\\<int, string\\>\\|null supplied for foreach, only iterables are supported\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -8678,15 +8670,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
-			count: 2
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
 			count: 2
 			path: modules/social_features/social_group/social_group.module
 
@@ -8762,11 +8745,6 @@ parameters:
 
 		-
 			message: "#^Function _social_group_node_form_submit\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function _social_group_visibility_settings_submit\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -8871,21 +8849,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Function social_group_form_entity_access_by_field_visibility_form_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function social_group_form_entity_access_by_field_visibility_form_alter\\(\\) has parameter \\$form with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function social_group_form_entity_access_by_field_visibility_form_alter\\(\\) has parameter \\$form_id with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Function social_group_form_node_form_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -8897,11 +8860,6 @@ parameters:
 
 		-
 			message: "#^Function social_group_get_all_groups\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function social_group_get_all_open_groups\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -9126,26 +9084,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Function template_preprocess_group_settings_help\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>\\}\\.$#"
-			count: 3
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Offset 'delete' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>\\}\\.$#"
-			count: 2
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Offset 'edit' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int\\<0, max\\>, non\\-falsy\\-string\\>\\}\\.$#"
-			count: 3
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Parameter \\#1 \\$account of method Drupal\\\\group\\\\Entity\\\\GroupInterface\\:\\:addMember\\(\\) expects Drupal\\\\user\\\\UserInterface, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -9162,6 +9100,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$type of function social_group_can_view_groups_of_type expects string, int\\|string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.module
+
+		-
+			message: "#^Function template_preprocess_group_settings_help\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -9297,7 +9240,7 @@ parameters:
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_group/src/EventSubscriber/RedirectSubscriber.php
 
 		-
@@ -9418,16 +9361,6 @@ parameters:
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
-			path: modules/social_features/social_group/src/Plugin/Block/GroupAddEventBlock.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Block/GroupAddTopicBlock.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
 			path: modules/social_features/social_group/src/Plugin/Block/GroupHeroBlock.php
 
 		-
@@ -9531,11 +9464,6 @@ parameters:
 			path: modules/social_features/social_group/src/SetGroupsForNodeService.php
 
 		-
-			message: "#^Method Drupal\\\\social_group\\\\SocialGroupAdminPeopleConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupAdminPeopleConfigOverride.php
-
-		-
 			message: "#^Cannot access an offset on array\\<int\\<0, max\\>, int\\>\\|float\\|int\\|string\\|false\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/SocialGroupHelperService.php
@@ -9559,15 +9487,6 @@ parameters:
 			message: "#^Function social_landing_page_install\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_landing_page/social_landing_page.install
-
-		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_landing_page/social_landing_page.module
 
 		-
 			message: "#^Cannot call method buildUrl\\(\\) on Drupal\\\\image\\\\Entity\\\\ImageStyle\\|null\\.$#"
@@ -10041,15 +9960,6 @@ parameters:
 			message: "#^Function social_page_install\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_page/social_page.install
-
-		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_page/social_page.module
 
 		-
 			message: "#^Function social_page_help\\(\\) has no return type specified\\.$#"
@@ -10777,6 +10687,11 @@ parameters:
 			path: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostFormatter.php
 
 		-
+			message: "#^Cannot access offset 'id' on array\\|Drupal\\\\Component\\\\Plugin\\\\Definition\\\\PluginDefinitionInterface\\.$#"
+			count: 2
+			path: modules/social_features/social_post/src/Plugin/views/area/SocialPostPostForm.php
+
+		-
 			message: "#^Method Drupal\\\\social_post\\\\Plugin\\\\views\\\\area\\\\SocialPostPostForm\\:\\:buildOptionsForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/Plugin/views/area/SocialPostPostForm.php
@@ -10968,7 +10883,7 @@ parameters:
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 3
+			count: 2
 			path: modules/social_features/social_post/src/PostAccessControlHandler.php
 
 		-
@@ -11123,15 +11038,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addWhere\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/social_private_message.module
-
-		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
 
@@ -11994,15 +11900,6 @@ parameters:
 			path: modules/social_features/social_profile/social_profile.module
 
 		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 2
-			path: modules/social_features/social_profile/social_profile.module
-
-		-
 			message: "#^Call to method getThreadIdForMembers\\(\\) on an unknown class %%private_message\\.mapper\\.class%%\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.module
@@ -12861,15 +12758,6 @@ parameters:
 			path: modules/social_features/social_topic/social_topic.module
 
 		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 2
-			path: modules/social_features/social_topic/social_topic.module
-
-		-
 			message: "#^Function _social_topic_change_topic_icon_ajax\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_topic/social_topic.module
@@ -13117,15 +13005,6 @@ parameters:
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByUser\\(\\)\\.$#"
 			count: 1
-			path: modules/social_features/social_user/social_user.module
-
-		-
-			message: """
-				#^Call to deprecated method toRenderArray\\(\\) of class Drupal\\\\Core\\\\Url\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 2
 			path: modules/social_features/social_user/social_user.module
 
 		-
@@ -13782,3 +13661,13 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
+
+		-
+			message: "#^Constant Drupal\\\\social_group_default_route\\\\EventSubscriber\\\\RedirectSubscriber\\:\\:DEFAULT_CLOSED_ROUTE is unused.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
+
+		-
+			message: "#^Negated boolean expression is always false.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Join/SocialGroupInviteJoin.php

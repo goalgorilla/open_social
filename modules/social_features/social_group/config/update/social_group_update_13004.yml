@@ -1,0 +1,104 @@
+views.view.group_events:
+  expected_config: { }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              type: { }
+    change:
+      display:
+        default:
+          display_options:
+            arguments:
+              gid:
+                validate_options: {  }
+            relationships:
+              gc__node:
+                required: true
+views.view.group_manage_members:
+  expected_config:
+    display:
+      default:
+        display_options:
+          filters:
+            type:
+              table: group_content_field_data
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              type: {  }
+views.view.group_managers:
+  expected_config: {  }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              group_roles_target_id_1: { }
+              group_roles_target_id_2: { }
+    change:
+      display:
+        default:
+          display_options:
+            filters:
+              group_roles_target_id:
+                operator: ends
+                value: '-group_manager'
+              type:
+                group: 1
+views.view.group_members:
+  expected_config:
+    display:
+      default:
+        display_options:
+          filters:
+            type: { }
+          relationships: { }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              type: { }
+    change:
+      display:
+        default:
+          display_options:
+            relationships:
+              gc__user:
+                entity_type: group_content
+                field: gc__user
+                group_content_plugins:
+                  group_membership: group_membership
+                group_type: group
+                id: gc__user
+                plugin_id: group_content_to_entity
+                relationship: none
+                required: true
+                table: group_content_field_data
+views.view.group_topics:
+  expected_config: { }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              type: { }
+    change:
+      display:
+        default:
+          display_options:
+            arguments:
+              gid:
+                validate_options: {  }
+            relationships:
+              gc__node:
+                required: true

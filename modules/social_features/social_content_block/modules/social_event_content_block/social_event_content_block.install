@@ -6,8 +6,46 @@
  */
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_event_content_block_update_dependencies() : array {
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['social_event_content_block'][13000] = [
+    'social_group' => 13000,
+  ];
+
+  $dependencies['social_group'][13001] = [
+    'social_event_content_block' => 13000,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Implements hook_update_last_removed().
  */
 function social_event_content_block_update_last_removed() : int {
   return 11502;
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_event_content_block_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_content_block', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

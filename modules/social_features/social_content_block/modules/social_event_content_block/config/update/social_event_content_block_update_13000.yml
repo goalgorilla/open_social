@@ -1,0 +1,25 @@
+field.field.block_content.custom_content_list.field_event_group:
+  expected_config: { }
+  update_actions:
+    delete:
+      dependencies:
+        config: { }
+      settings:
+        handler_settings:
+          target_bundles:
+            open_group: {  }
+            public_group: {  }
+    add:
+      dependencies:
+        config:
+          - block_content.type.custom_content_list
+          - field.storage.block_content.field_event_group
+          - group.type.flexible_group
+      settings:
+        handler_settings:
+          target_bundles:
+            flexible_group: flexible_group
+    change:
+      settings:
+        handler_settings:
+          auto_create_bundle: flexible_group

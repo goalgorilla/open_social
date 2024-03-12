@@ -106,8 +106,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
       $route = $group->default_route_an->value;
 
       if ($route === NULL) {
-        $route = $group->getGroupType()->id() === 'closed_group'
-          ? self::DEFAULT_CLOSED_ROUTE : self::DEFAULT_ROUTE;
+        $route = self::DEFAULT_ROUTE;
       }
     }
     else {

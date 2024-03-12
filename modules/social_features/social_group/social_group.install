@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
 use Drupal\field\FieldStorageConfigInterface;
+use Drupal\group\Entity\GroupType;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 
 /**
@@ -15,17 +16,14 @@ use Drupal\menu_link_content\Entity\MenuLinkContent;
  *
  * Perform actions related to the installation of social_group.
  */
-function social_group_install() {
+function social_group_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'verified',
     [
-      'create open_group group',
-      'create closed_group group',
       'view group stream page',
       'view groups on my profile',
       'view groups on other profiles',
-      'create public_group group',
       'flag mute_group_notifications',
       'unflag mute_group_notifications',
     ]
@@ -33,12 +31,9 @@ function social_group_install() {
   user_role_grant_permissions(
     'contentmanager',
     [
-      'create open_group group',
-      'create closed_group group',
       'view group stream page',
       'view groups on my profile',
       'view groups on other profiles',
-      'create public_group group',
       'bypass create group access',
       'manage all groups',
       'view node.event.field_content_visibility:group content',
@@ -53,12 +48,9 @@ function social_group_install() {
   user_role_grant_permissions(
     'sitemanager',
     [
-      'create open_group group',
-      'create closed_group group',
       'view group stream page',
       'view groups on my profile',
       'view groups on other profiles',
-      'create public_group group',
       'bypass create group access',
       'manage all groups',
       'view node.event.field_content_visibility:group content',
@@ -108,6 +100,24 @@ function social_group_install() {
   // Since we update group related permissions that touch node content we must
   // also rebuild the node access permissions.
   node_access_rebuild();
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_group_update_dependencies(): array {
+  $dependencies['social_group'][13001] = [
+    'activity_creator' => 13000,
+  ];
+
+  // Check if "address:^2.0" exists we should add this
+  // dependency, otherwise updates will be broken.
+  \Drupal::moduleHandler()->loadInclude('address', 'install');
+  if (function_exists('address_update_9201')) {
+    $dependencies['social_group'][13001]['address'] = 9201;
+  }
+
+  return $dependencies;
 }
 
 /**
@@ -307,6 +317,7 @@ function social_group_update_13000() : void {
   }
 
   // Ensure all roles for our old groups exist for flexible groups.
+  /** @var \Drupal\group\Entity\GroupRoleInterface[] $group_roles */
   $group_roles = \Drupal::entityTypeManager()->getStorage("group_role")->loadMultiple();
   $group_roles_by_type = [];
   foreach ($group_roles as $group_role_id => $role) {
@@ -457,8 +468,8 @@ function social_group_update_13000() : void {
       }
     }
 
-    // Insert 1 into group__field_group_posts_enabled /
-    // group_revision__field_group_posts_enabled.
+    // Insert 1 into "group__field_group_posts_enabled" or
+    // "group_revision__field_group_posts_enabled".
     $posts_enabled_field_storage = $fsc_storage->load("group.field_group_posts_enabled");
     assert($posts_enabled_field_storage instanceof FieldStorageConfigInterface);
     foreach ($group_table_mapping->getAllFieldTableNames("field_group_posts_enabled") as $tableName) {
@@ -539,10 +550,129 @@ function social_group_update_13000() : void {
 }
 
 /**
- * Clean up any group migration opt-out that might be enabled.
+ * Uninstall old group types.
  */
-function social_group_update_13002() : void {
-  \Drupal::state()->delete("social_group_group_type_migration_opt_out");
+function social_group_update_13001() : void {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get("social_group_group_type_migration_opt_out", FALSE)) {
+    \Drupal::logger("social_group")->info("Platform has opted out of group migration.");
+    return;
+  }
+
+  // Remove deprecated configurations from config dependencies to prevent
+  // deleting them on deprecated group types uninstall.
+  // We can load only "views" and "blocks". Other configuration should
+  // be checked manually.
+  $configs = [
+    // Load "views".
+    ...\Drupal::configFactory()->listAll('views.view.'),
+    // Load "blocks".
+    ...\Drupal::configFactory()->listAll('block.block.'),
+  ];
+
+  $deprecated_entity_types = [
+    'group_content_type_3d6b5f69ef04a',
+    'group_content_type_bf33df57c91c6',
+    'group_content_type_f256b744237e6',
+    'group_content_type_c8bae2527294c',
+    'closed_group',
+    'open_group',
+    'public_group',
+    'secret_group',
+  ];
+
+  foreach ($configs as $name) {
+    $config = \Drupal::configFactory()->getEditable($name);
+    $dependencies = $config->get('dependencies.config');
+    if (!$dependencies) {
+      continue;
+    }
+    foreach ($deprecated_entity_types as $entity_type_id) {
+      $dependencies = array_filter($dependencies, function ($dependency) use ($entity_type_id) {
+        return !str_contains($dependency, $entity_type_id);
+      });
+    }
+    $config->set('dependencies.config', $dependencies);
+    $config->save();
+  }
+
+  // Invoke permissions as well.
+  foreach (\Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple() as $role) {
+    /** @var \Drupal\user\RoleInterface $role */
+    $permissions = $role->getPermissions();
+    $deprecated_permissions = array_filter($permissions, function ($permission) use ($deprecated_entity_types) {
+      foreach ($deprecated_entity_types as $entity_type_id) {
+        if (str_contains($permission, $entity_type_id)) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+    });
+
+    if ($deprecated_permissions) {
+      user_role_revoke_permissions($role->id(), $deprecated_permissions);
+    }
+  }
+
+  // Clean up views displays.
+  $view_displays = \Drupal::configFactory()
+    ->listAll('core.entity_view_display.');
+
+  foreach ($view_displays as $name) {
+    $config = \Drupal::configFactory()->getEditable($name);
+    $content = (array) $config->get('content');
+    if (empty($content)) {
+      continue;
+    }
+
+    unset($content['groups_type_public_group']);
+    unset($content['groups_type_open_group']);
+    unset($content['groups_type_closed_group']);
+    unset($content['groups_type_secret_group']);
+
+    if (array_diff(array_keys((array) $config->get('content')), array_keys($content))) {
+      $config->set('content', $content);
+      $config->save();
+    }
+  }
+
+  // Uninstall the secret group module if enabled.
+  // This should take care of removing everything from a secret group.
+  \Drupal::service("module_installer")->uninstall(["social_secret_group_featured", "social_group_secret"]);
+
+  // Delete our old group types.
+  $group_type_storage = \Drupal::entityTypeManager()
+    ->getStorage("group_type");
+  foreach ($group_type_storage->loadMultiple(["closed_group", "open_group", "public_group"]) as $group_type) {
+    if (!$group_type instanceof GroupType) {
+      continue;
+    }
+    $group_type->delete();
+  }
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_group_update_13002(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to a related channel of update execution.
+  return $updateHelper->logger()->output();
 }
 
 /**
@@ -557,4 +687,25 @@ function social_group_update_13003(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Make group views independent of group types.
+ */
+function social_group_update_13004() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_group', 'social_group_update_13004');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
+
+/**
+ * Clean up any group migration opt-out that might be enabled.
+ */
+function social_group_update_13006() : void {
+  \Drupal::state()->delete("social_group_group_type_migration_opt_out");
 }

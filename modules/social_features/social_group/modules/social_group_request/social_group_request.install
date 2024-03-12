@@ -18,17 +18,29 @@ function social_group_request_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_group_request_update_dependencies(): array {
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['social_group_request'][13000] = [
+    'social_group' => 13000,
+  ];
+
+  $dependencies['social_group'][13001] = [
+    'social_group_request' => 13000,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Assign group request permission for closed and flexible group types.
  */
 function _social_group_request_set_permissions() {
-
   if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
     $group_type = GroupType::load('flexible_group');
     $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
   }
-
-  $group_type = GroupType::load('closed_group');
-  $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
 }
 
 /**
@@ -36,4 +48,22 @@ function _social_group_request_set_permissions() {
  */
 function social_group_request_update_last_removed() : int {
   return 10301;
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_group_request_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_group_request', __FUNCTION__);
+  return $updateHelper->logger()->output();
 }
