@@ -398,6 +398,9 @@ class TopicContext extends RawMinkContext {
     if ($violations->count() !== 0) {
       throw new \Exception("The topic you tried to create is invalid: $violations");
     }
+    if (!$topic_object->body->format) {
+      $topic_object->body->format = 'basic_html';
+    }
     $topic_object->save();
 
     // Adding to group usually happens in a form handler so for initialization
