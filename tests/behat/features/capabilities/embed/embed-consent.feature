@@ -1,4 +1,4 @@
-@api @embed @embed-consent @stability @perfect @critical @TB-5671 @stability-4
+@api
 Feature: Embed
   Benefit: Provides user feature allow/disallow embedded content
   Role: As a SM
@@ -6,104 +6,54 @@ Feature: Embed
 
   Background:
     Given I enable the module "social_embed"
+    And topics with non-anonymous author:
+      | title          | field_topic_type | body                                               | field_content_visibility |
+      | Embed consent  | News             | <p>https://www.youtube.com/watch?v=fv2nWEXKSf4</p> | public                   |
 
-  @LU
-  Scenario: Check the working of consent settings for LU
-    Given I am logged in as a user with the "administer social embed settings" permission
-    And I am on "admin/config/opensocial/embed-consent"
-    When I check the box "edit-embed-consent-settings-lu"
-    And I press the "Save configuration" button
-    Then I should see the text "The configuration options have been saved."
-    And I logout
-    Then the cache has been cleared
-
-    # Create a topic with embedded content.
-    Given I am logged in as an "authenticated user"
+  Scenario: As AU I want to configure my consent to see all embedded content immediately
+    Given I set the configuration item "social_embed.settings" with key "embed_consent_settings_lu" to 1
+    And I am logged in as an "authenticated user"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    Then I should see "Enforce consent for all embedded content"
-    And I check the box "Enforce consent for all embedded content"
+    And I uncheck the box "Enforce consent for all embedded content"
     And I press "Save"
-    Given I am on "node/add/topic"
-    And I check the box "News"
-    When I fill in the following:
-      | Title | Embed consent |
-    And I click on the embed icon in the WYSIWYG editor
-    And I wait for AJAX to finish
-    And I fill in "URL" with "https://www.youtube.com/watch?v=ojafuCcUZzU"
-    And I press the "Embed" button
-    # Temporary comment next step since it will fails because of the Embed
-    # module new release https://www.drupal.org/project/embed/releases/8.x-1.5
-    # @see https://git.drupalcode.org/project/embed/-/commit/89b249e4da8f5b39fdfa3e97960107c850427469
-    # @todo Uncomment it out when a solution will found
-    # And I wait for AJAX to finish
-    And I wait for "3" seconds
-    And I press "Create topic"
-    Then I should see "Topic Embed consent has been created."
+
+    When I open the "topic" node with title "Embed consent"
+
+    Then The iframe in the body description should have the src "https://www.youtube.com/embed/fv2nWEXKSf4?feature=oembed"
+
+  Scenario: As AU I want to be able to give my consent to individual video's
+    Given I set the configuration item "social_embed.settings" with key "embed_consent_settings_lu" to 1
+
+    When I am logged in as an "authenticated user"
+    And I open the "topic" node with title "Embed consent"
     And I click "Show content"
     And I wait for AJAX to finish
     And I wait for "3" seconds
-    And The embedded content in the body description should have the src "https://www.youtube.com/embed/ojafuCcUZzU"
-    And I logout
 
-    # Restore the settings
-    Given I am logged in as a user with the "administer social embed settings" permission
-    And I am on "admin/config/opensocial/embed-consent"
-    When I uncheck the box "edit-embed-consent-settings-lu"
-    And I press the "Save configuration" button
-    Then I should see the text "The configuration options have been saved."
-    And I logout
+    Then The embedded content in the body description should have the src "https://www.youtube.com/embed/fv2nWEXKSf4?feature=oembed"
 
-    # Check the content as LU again
-    Then the cache has been cleared
+  Scenario: As AU I want to see embedded content
     Given I am logged in as an "authenticated user"
-    And I am on the homepage
-    And I click "Embed consent"
-    And The iframe in the body description should have the src "https://www.youtube.com/embed/ojafuCcUZzU"
 
-  @AN
-  Scenario: Check the working of consent settings for AN
-    Given I am logged in as a user with the "administer social embed settings" permission
-    And I am on "admin/config/opensocial/embed-consent"
-    When I check the box "edit-embed-consent-settings-an"
-    And I press the "Save configuration" button
-    Then I should see the text "The configuration options have been saved."
+    When I open the "topic" node with title "Embed consent"
 
-    # Create a topic with embedded content.
-    Given I am on "node/add/topic"
-    And I check the box "News"
-    And I click radio button "Public"
-    When I fill in the following:
-      | Title | Embed consent (AN) |
-    And I click on the embed icon in the WYSIWYG editor
-    And I wait for AJAX to finish
-    And I fill in "URL" with "https://www.youtube.com/watch?v=ojafuCcUZzU"
-    And I press the "Embed" button
-    # Temporary comment next step since it will fails because of the Embed
-    # module new release https://www.drupal.org/project/embed/releases/8.x-1.5
-    # @see https://git.drupalcode.org/project/embed/-/commit/89b249e4da8f5b39fdfa3e97960107c850427469
-    # @todo Uncomment it out when a solution will found
-    # And I wait for AJAX to finish
-    And I wait for "3" seconds
-    And I press "Create topic"
-    Then I should see "Topic Embed consent (AN) has been created."
-    And I logout
+    Then The iframe in the body description should have the src "https://www.youtube.com/embed/fv2nWEXKSf4?feature=oembed"
 
-    # Check the content as AN
-    And I open the "topic" node with title "Embed consent (AN)"
+  Scenario: As AN I want to be able to give my consent to individual video's when that is configured
+    Given I set the configuration item "social_embed.settings" with key "embed_consent_settings_an" to 1
+
+    When I am an anonymous user
+    And I open the "topic" node with title "Embed consent"
     And I click "Show content"
     And I wait for AJAX to finish
     And I wait for "3" seconds
-    And The embedded content in the body description should have the src "https://www.youtube.com/embed/ojafuCcUZzU"
 
-    # Restore the settings
-    Given I am logged in as a user with the "administer social embed settings" permission
-    And I am on "admin/config/opensocial/embed-consent"
-    When I uncheck the box "edit-embed-consent-settings-an"
-    And I press the "Save configuration" button
-    Then I should see the text "The configuration options have been saved."
-    And I logout
+    Then The embedded content in the body description should have the src "https://www.youtube.com/embed/fv2nWEXKSf4?feature=oembed"
 
-    # Check the content as AN again
-    And I open the "topic" node with title "Embed consent (AN)"
-    And The iframe in the body description should have the src "https://www.youtube.com/embed/ojafuCcUZzU"
+  Scenario: As AN I want to see embedded content
+    Given I am an anonymous user
+
+    When I open the "topic" node with title "Embed consent"
+
+    Then The iframe in the body description should have the src "https://www.youtube.com/embed/fv2nWEXKSf4?feature=oembed"
