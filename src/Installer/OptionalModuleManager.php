@@ -155,7 +155,7 @@ class OptionalModuleManager implements ContainerInjectionInterface {
 
     $contents = file_get_contents($optional_info_file);
     if ($contents === FALSE) {
-      throw new IOException("Could not read '${$optional_info_file}'.");
+      throw new IOException("Could not read '{$optional_info_file}'.");
     }
     // We don't catch the InvalidDataTypeException thrown here because we have
     // no better info to give developers about invalid Yaml files.
