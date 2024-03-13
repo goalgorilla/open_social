@@ -5,8 +5,6 @@
  * The Social Private Message (de)installation file.
  */
 
-use Drupal\message\Entity\Message;
-
 /**
  * Implements hook_uninstall().
  */
@@ -75,7 +73,10 @@ function social_private_message_uninstall(bool $is_syncing) : void {
     ->condition('template', 'create_private_message')
     ->execute();
   assert(is_array($message_ids));
-  Message::deleteMultiple($message_ids);
+
+  $storage = \Drupal::entityTypeManager()->getStorage('message');
+  $entities = $storage->loadMultiple($message_ids);
+  $storage->delete($entities);
 }
 
 /**
