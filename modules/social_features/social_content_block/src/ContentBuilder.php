@@ -69,7 +69,24 @@ class ContentBuilder implements ContentBuilderInterface {
   protected TimeInterface $time;
 
   /**
-   * {@inheritdoc}
+   * ContentBuilder constructor.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   User account entity.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Database\Connection $connection
+   *   The current active database's master connection.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
+   * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
+   *   The content block manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    */
   public function __construct(
     AccountInterface $account,
