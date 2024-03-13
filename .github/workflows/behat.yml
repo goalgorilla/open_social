@@ -203,6 +203,7 @@ jobs:
         env:
           SOLR_SOLR_MEM_SIZE: 512m
           PARTIAL_SEARCH_ENABLED: 0
+          SOLR_HOST: solr
 
     defaults:
       run:
@@ -382,6 +383,7 @@ jobs:
         env:
           SOLR_SOLR_MEM_SIZE: 512m
           PARTIAL_SEARCH_ENABLED: 0
+          SOLR_HOST: solr
       chrome:
         # We use an image based on zenika/alpine-chrome:latest so we can add
         # the start-up arguments that we need.
