@@ -85,7 +85,7 @@ class AlbumContext extends RawMinkContext {
       elseif ($key === "group") {
         $group_id = $this->getNewestGroupIdFromTitle($value);
         if ($group_id === NULL) {
-          throw new \Exception("Group '${$value}' does not exist.");
+          throw new \Exception("Group '{$value}' does not exist.");
         }
         $page->selectFieldOption($field, $group_id);
         // Changing the group of an album updates the visibility settings so we

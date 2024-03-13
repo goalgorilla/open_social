@@ -243,7 +243,7 @@ class EntityConnection implements ConnectionInterface {
     if (!is_null($cursor)) {
       $cursor_object = $this->queryHelper->getCursorObject($cursor);
       if (is_null($cursor_object)) {
-        throw new UserError("invalid cursor '${$cursor}'");
+        throw new UserError("invalid cursor '{$cursor}'");
       }
       $pagination_condition = $query->orConditionGroup();
 

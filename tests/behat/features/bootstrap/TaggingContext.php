@@ -22,7 +22,7 @@ class TaggingContext extends RawMinkContext {
     $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties(['name' => $term_name]);
     $term = reset($term);
     if (!$term instanceof TermInterface) {
-      throw new \Exception("Term '${$term_name}' does not exist.");
+      throw new \Exception("Term '{$term_name}' does not exist.");
     }
     /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $helper */
     $helper = \Drupal::service('social_tagging.tag_service');
