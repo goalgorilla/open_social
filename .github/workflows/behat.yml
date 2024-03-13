@@ -276,6 +276,7 @@ jobs:
         run: |
           set -e
 
+          curl "http://solr:8983/solr/gettingstarted/select?indent=on&q=*:*&wt=json"
           export OPTIONAL=""
           if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
             export OPTIONAL="social_module_configure_form.select_all='TRUE'"
