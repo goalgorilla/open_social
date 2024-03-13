@@ -137,6 +137,10 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
   ];
 
   $message = Message::load($activity->field_activity_message->target_id);
+  // Return early if message is empty.
+  if (empty($message)) {
+    return;
+  }
   $message_template_id = $message->getTemplate()->id();
 
   if (in_array($message_template_id, $message_template)) {
