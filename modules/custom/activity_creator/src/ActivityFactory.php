@@ -126,6 +126,11 @@ class ActivityFactory extends ControllerBase {
   protected function buildActivities(array $data) {
     $activities = [];
     $message = Message::load($data['mid']);
+    // Return early if message is empty.
+    if (empty($message)) {
+      return $activities;
+    }
+
     // Initialize fields for new activity entity.
     $activity_fields = [
       'created' => $this->getCreated($message),
@@ -269,6 +274,11 @@ class ActivityFactory extends ControllerBase {
       // Update output text for activity on not user related streams.
       $arguments = [];
       $message = Message::load($data['mid']);
+      // Return early if message is empty.
+      if (empty($message)) {
+        return $activities;
+      }
+
       $count = $this->getAggregationAuthorsCount($data);
       if (is_numeric($count) && $count > 1) {
         $arguments = ['@count' => $count - 1];
