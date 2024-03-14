@@ -98,3 +98,17 @@ function _social_like_set_defaults() {
 function social_like_update_last_removed() : int {
   return 11402;
 }
+
+/**
+ * Change 'check_vote_init' variable as true.
+ */
+function social_like_update_13001(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_like', 'social_like_update_13001');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
