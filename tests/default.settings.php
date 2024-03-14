@@ -810,6 +810,15 @@ $config['symfony_mailer.mailer_transport.sendmail']['configuration']['host'] = '
 $config['symfony_mailer.mailer_transport.sendmail']['configuration']['port'] = '1025';
 
 /**
+ * Set the index_timeout to 50 (Open Social >=13).
+ *
+ * In Open Social 13 we start using solr 9, but during the automated tests the
+ * solr container is quite slow to respond.
+ * To make sure our tests don't time out we increase the index timeout.
+ */
+$config['search_api.server.social_solr']['backend_config']['connector_config']['index_timeout'] = '50';
+
+/**
  * Load local development override configuration, if available.
  *
  * Create a settings.local.php file to override variables on secondary (staging,
