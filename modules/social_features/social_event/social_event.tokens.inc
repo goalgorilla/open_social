@@ -10,6 +10,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\message\Entity\Message;
+use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
@@ -37,6 +38,11 @@ function social_event_token_info() {
     'description' => t('Url of the Event a user enrolled to.'),
   ];
 
+  $social_event['enrolled_users_count'] = [
+    'name' => t('Enrolled users count'),
+    'description' => t('The total count of enrolled users to the current event.'),
+  ];
+
   return [
     'types' => ['social_event' => $type],
     'tokens' => [
@@ -50,6 +56,33 @@ function social_event_token_info() {
  */
 function social_event_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
+  if ($type === 'social_event') {
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'enrolled_users_count':
+          $nid = Drupal::routeMatch()->getRawParameter('node');
+          if ($nid) {
+            $node = \Drupal::entityTypeManager()
+              ->getStorage('node')
+              ->load($nid);
+            if ($node instanceof NodeInterface && $node->getType() === 'event') {
+              $enrollments = \Drupal::service('social_event.status_helper');
+              $count = count($enrollments->getAllEventEnrollments((int) $node->id(), TRUE));
+              $enrollments = \Drupal::translation()->formatPlural(
+                $count,
+                ':count person has enrolled',
+                ':count people have enrolled',
+                [':count' => $count]
+              );
+              if ($count !== NULL) {
+                $replacements[$original] = $enrollments;
+              }
+            }
+          }
+          break;
+      }
+    }
+  }
   if ($type === 'social_event' && !empty($data['message'])) {
     /** @var Drupal\message\Entity\Message $message */
     $message = $data['message'];
