@@ -172,16 +172,17 @@ display:
       sorts: {  }
       title: Enrollments
       header:
-        result:
-          id: result
-          table: views
-          field: result
-          relationship: none
-          group_type: group
+        area_text_custom:
           admin_label: ''
+          content: '[social_event:enrolled_users_count]'
           empty: true
-          content: '@total people have enrolled'
-          plugin_id: result
+          field: area_text_custom
+          group_type: group
+          id: area_text_custom
+          plugin_id: text_custom
+          relationship: none
+          table: views
+          tokenize: false
       footer:
         area:
           id: area

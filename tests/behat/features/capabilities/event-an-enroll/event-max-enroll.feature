@@ -37,7 +37,7 @@ Feature: Limitation event enrollments
     And I wait for AJAX to finish
     Then I reload the page
     Then I should not see "0 people have enrolled (2 spots left)"
-    And I should see "1 people have enrolled (1 spot left)"
+    And I should see "1 person has enrolled (1 spot left)"
 
     Given users:
       | name              | mail                     | status | roles    |
@@ -49,7 +49,7 @@ Feature: Limitation event enrollments
     And I press "Enroll"
     And I wait for AJAX to finish
     Then I reload the page
-    Then I should not see "1 people have enrolled (1 spot left)"
+    Then I should not see "1 person has enrolled (1 spot left)"
     And I should see "2 people have enrolled (0 spots left)"
     And I should see the button "Enrolled"
 

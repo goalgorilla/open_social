@@ -142,7 +142,7 @@ Feature: Event Management
     And I press "Create event (this translation)"
 
     # Check if enrollees aren't duplicated.
-    And I should see "1 people have enrolled"
+    And I should see "1 person has enrolled"
     And I click "Manage enrollments"
     And I should see "1 Enrollees"
     # Check if organisers aren't duplicated.
