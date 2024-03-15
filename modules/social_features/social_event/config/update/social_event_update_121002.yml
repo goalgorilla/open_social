@@ -1,0 +1,39 @@
+views.view.event_enrollments:
+  expected_config:
+    display:
+      default:
+        display_options:
+          header:
+            result:
+              admin_label: ''
+              content: '@total people have enrolled'
+              empty: true
+              field: result
+              group_type: group
+              id: result
+              plugin_id: result
+              relationship: none
+              table: views
+  update_actions:
+    change:
+      display:
+        default:
+          display_options:
+            header:
+              area_text_custom:
+                admin_label: ''
+                content: '[social_event:enrolled_users_count]'
+                empty: true
+                field: area_text_custom
+                group_type: group
+                id: area_text_custom
+                plugin_id: text_custom
+                relationship: none
+                table: views
+                tokenize: false
+    delete:
+      display:
+        default:
+          display_options:
+            header:
+              result:
