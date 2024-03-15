@@ -140,6 +140,20 @@ function social_event_update_121001(): string {
 }
 
 /**
+ * Change the event enrollments view header to a token.
+ */
+function social_event_update_121002(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Remove deprecated group types.
  */
 function social_event_update_130000(): ?string {
