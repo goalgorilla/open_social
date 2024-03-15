@@ -32,7 +32,7 @@ function social_event_max_enroll_views_post_render(ViewExecutable $view, &$outpu
       // Count how many spots left.
       $left = $event_max_enroll_service->getEnrollmentsLeft($node);
       $title_suffix = \Drupal::translation()->formatPlural($left, '(1 spot left)', '(@count spots left)');
-      $view->header['result']->options['content'] .= ' ' . $title_suffix;
+      $view->header['area_text_custom']->options['content'] .= ' ' . $title_suffix;
     }
   }
 }

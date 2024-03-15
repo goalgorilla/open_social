@@ -26,7 +26,7 @@ Feature: Enroll for an event
     And I should see the button "Enrolled"
 
     Then I reload the page
-    And I should see "1 people have enrolled"
+    And I should see "1 person has enrolled"
     And I should see the link "All enrollments"
 
     When I click "All enrollments"
@@ -71,7 +71,7 @@ Feature: Enroll for an event
     And I should see the button "Enrolled"
 
     Then I reload the page
-    And I should see "1 people have enrolled"
+    And I should see "1 person has enrolled"
     And I should see the link "All enrollments"
 
   @verified
@@ -95,7 +95,7 @@ Feature: Enroll for an event
     And I press the "Close" button
     And I should see the button "Enrolled"
     Then I reload the page
-    And I should see "1 people have enrolled"
+    And I should see "1 person has enrolled"
     And I should see the link "All enrollments"
 
     When I press the "Enrolled" button
@@ -111,7 +111,7 @@ Feature: Enroll for an event
     And I wait for AJAX to finish
     And I press the "Close" button
     And I reload the page
-    Then I should see "1 people have enrolled"
+    Then I should see "1 person has enrolled"
     And I should see the link "All enrollments"
 
   @verified @cache

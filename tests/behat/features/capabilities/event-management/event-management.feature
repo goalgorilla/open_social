@@ -142,9 +142,10 @@ Feature: Event Management
     And I press "Create event (this translation)"
 
     # Check if enrollees aren't duplicated.
-    And I should see "1 people have enrolled"
-    When I click "Manage enrollments"
-    Then I should see "1 Enrollees"
+    And I should see "1 person has enrolled"
+    And I click "Manage enrollments"
+    And I should see "1 Enrollees"
+
     # Check if organisers aren't duplicated.
     When I click "Organisers"
     Then I should see "Ryan Gosling" exactly "1" times
