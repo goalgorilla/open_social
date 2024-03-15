@@ -70,8 +70,8 @@ class ActivitySendEmailBuilder extends EmailBuilderBase implements ContainerFact
     }
     else {
       $site_name = $this->configFactory->get('system.site')->get('name');
-      $email->setSubject($this->t('Notification from %site_name', [
-        '%site_name' => $site_name,
+      $email->setSubject($this->t('Notification from @site_name', [
+        '@site_name' => $site_name,
       ], [
         'langcode' => $email->getLangcode(),
       ]));
