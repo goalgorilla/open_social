@@ -77,6 +77,7 @@ class SocialFollowUserSettingsForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Active'),
       '#default_value' => $this->config('social_follow_user.settings')->get('status'),
+      '#description' => $this->t('This opt-in will activate or deactivate the Follow User feature.'),
     ];
 
     return parent::buildForm($form, $form_state);
