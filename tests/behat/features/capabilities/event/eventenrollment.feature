@@ -158,3 +158,14 @@ Feature: Enroll for an event
 
     Then I should see "No one has enrolled for this event"
     And I should see the button "Event has passed"
+
+  Scenario: Showing the correct total enrollment count.
+    Given events with non-anonymous author:
+      | title        | body                  | field_content_visibility | field_event_date    | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+    And there are 13 event enrollments for the "Test content" event
+
+    When I am logged in as an "verified"
+    And I am viewing the event "Test content"
+
+    Then I should see "13 people have enrolled"
