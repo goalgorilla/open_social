@@ -405,6 +405,7 @@ class ContentBuilder implements ContentBuilderInterface {
     }
 
     $element['field_sorting']['widget']['#options'] = $options;
+    $element['field_sorting']['widget']['#process'][] = [static::class, 'processSortOptions'];
 
     $selector = $content_block_manager->getSelector('field_sorting', NULL, $element);
 
@@ -423,10 +424,52 @@ class ContentBuilder implements ContentBuilderInterface {
   }
 
   /**
+   * Helps to rebuild values for "field_sorting" form element.
+   *
+   * @param array $element
+   *   The "field_sorting" form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
+   * @param array $complete_form
+   *   The form build array.
+   *
+   * @return array
+   *   The element array.
+   */
+  public static function processSortOptions(array $element, FormStateInterface $form_state, array &$complete_form): array {
+    $sort_value = is_array($element['#value'])
+      ? $element['#value'][0] ?? NULL
+      : $element['#value'];
+
+    $options = $element['#options'];
+    // If the current value isn't in the options list, we will have an error on
+    // default value element validation. Here we reassign value with the first
+    // option.
+    /* @see \Drupal\Core\Form\FormValidator::performRequiredValidation() */
+    if ($sort_value === NULL || !isset($options[$sort_value])) {
+      $new_sort_value = is_array($element['#value'])
+        ? [key($options)]
+        : key($options);
+
+      $form_state->setValue($element['#parents'], $new_sort_value);
+      $element['#value'] = $new_sort_value;
+    }
+
+    return $element;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function updateFormSortingOptions(array $form, FormStateInterface $form_state): array {
     $parents = ['field_sorting'];
+
+    if (
+      $form_state->has('layout_builder__component') ||
+      str_contains($form_state->getValue('form_id'), 'layout_builder')
+    ) {
+      $parents = array_merge(['settings', 'block_form'], $parents);
+    }
 
     // Check that the currently selected value is valid and change it otherwise.
     $value_parents = array_merge($parents, ['0', 'value']);
@@ -438,13 +481,7 @@ class ContentBuilder implements ContentBuilderInterface {
     );
 
     if ($sort_value === NULL || !isset($options[$sort_value])) {
-      // Unfortunately this has already triggered a validation error.
-      $form_state->clearErrors();
       $form_state->setValue($value_parents, key($options));
-    }
-
-    if ($form_state->has('layout_builder__component')) {
-      $parents = array_merge(['settings', 'block_form'], $parents);
     }
 
     return NestedArray::getValue($form, $parents);
