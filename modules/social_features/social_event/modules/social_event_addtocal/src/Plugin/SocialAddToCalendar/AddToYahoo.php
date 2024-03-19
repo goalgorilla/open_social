@@ -12,7 +12,7 @@ use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarBase;
  * @SocialAddToCalendar(
  *   id = "yahoo",
  *   label = @Translation("Yahoo"),
- *   url = "http://calendar.yahoo.com"
+ *   url = "https://calendar.yahoo.com"
  * )
  */
 class AddToYahoo extends SocialAddToCalendarBase {
@@ -36,7 +36,7 @@ class AddToYahoo extends SocialAddToCalendarBase {
       ],
     ];
 
-    return Url::fromUri($this->pluginDefinition['url'], $options);
+    return Url::fromUri($this->pluginDefinition['url'] ?? 'https://calendar.yahoo.com', $options);
   }
 
 }

@@ -143,14 +143,16 @@ class SocialPostPostForm extends AreaPluginBase {
     $block_instance = $block_manager->createInstance($this->options['block_id'], []);
 
     $plugin_definition = $block_instance->getPluginDefinition();
+    // Adding a default value to avoid error when it is empty.
+    $plugin_definition_id = $plugin_definition['id'] ?? '';
 
     // Don't return broken block plugin instances.
-    if ($plugin_definition['id'] == 'broken') {
+    if ($plugin_definition_id == 'broken') {
       return NULL;
     }
 
     // Don't return broken block content instances.
-    if ($plugin_definition['id'] == 'block_content') {
+    if ($plugin_definition_id == 'block_content') {
       $uuid = $block_instance->getDerivativeId();
       if (!\Drupal::service('entity.repository')->loadEntityByUuid('block_content', $uuid)) {
         return NULL;
