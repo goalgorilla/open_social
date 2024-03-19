@@ -40,7 +40,7 @@ class AddToOutlook extends SocialAddToCalendarBase {
       ],
     ];
 
-    return Url::fromUri($this->pluginDefinition['url'], $options);
+    return Url::fromUri($this->pluginDefinition['url'] ?? 'https://outlook.live.com/calendar/0/deeplink/compose', $options);
   }
 
 }
