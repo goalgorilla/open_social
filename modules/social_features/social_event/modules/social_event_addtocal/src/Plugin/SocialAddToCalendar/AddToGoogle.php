@@ -12,7 +12,7 @@ use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarBase;
  * @SocialAddToCalendar(
  *   id = "google",
  *   label = @Translation("Google"),
- *   url = "http://www.google.com/calendar/event"
+ *   url = "https://www.google.com/calendar/event"
  * )
  */
 class AddToGoogle extends SocialAddToCalendarBase {
@@ -36,7 +36,7 @@ class AddToGoogle extends SocialAddToCalendarBase {
       ],
     ];
 
-    return Url::fromUri($this->pluginDefinition['url'], $options);
+    return Url::fromUri($this->pluginDefinition['url'] ?? 'https://www.google.com/calendar/event', $options);
   }
 
 }

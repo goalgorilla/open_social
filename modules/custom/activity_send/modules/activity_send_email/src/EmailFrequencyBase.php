@@ -19,21 +19,21 @@ class EmailFrequencyBase extends PluginBase implements EmailFrequencyInterface {
    * {@inheritdoc}
    */
   public function getName() {
-    return $this->pluginDefinition['name'];
+    return $this->pluginDefinition['name'] ?? '';
   }
 
   /**
    * {@inheritdoc}
    */
   public function getWeight() {
-    return $this->pluginDefinition['weight'];
+    return $this->pluginDefinition['weight'] ?? 0;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getInterval() {
-    return $this->pluginDefinition['interval'];
+    return $this->pluginDefinition['interval'] ?? 0;
   }
 
   /**

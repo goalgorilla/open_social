@@ -31,6 +31,10 @@ class AddToICal extends SocialAddToCalendarBase {
       ],
     ];
 
+    if (empty($this->pluginDefinition['url'])) {
+      return Url::fromRoute('<front>');
+    }
+
     return Url::fromRoute($this->pluginDefinition['url'], [], $options);
   }
 
