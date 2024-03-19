@@ -816,7 +816,10 @@ $config['symfony_mailer.mailer_transport.sendmail']['configuration']['port'] = '
  * solr container is quite slow to respond.
  * To make sure our tests don't time out we increase the index timeout.
  */
-$config['search_api.server.social_solr']['backend_config']['connector_config']['index_timeout'] = '50';
+$config['search_api.server.social_solr']['backend_config']['connector_config']['index_timeout'] = '10';
+$config['search_api.server.social_solr']['backend_config']['connector_config']['timeout'] = '10';
+$config['search_api.server.social_solr']['backend_config']['connector_config']['optimize_timeout'] = '10';
+$config['search_api.server.social_solr']['backend_config']['connector_config']['finalize_timeout'] = '10';
 
 /**
  * Load local development override configuration, if available.
