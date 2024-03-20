@@ -102,9 +102,11 @@ class GroupRequestController extends ControllerBase {
    * Builds the form to create new membership on membership request approve.
    */
   public function approveRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
-    $relation_type_id = $this->entityTypeManager()
-      ->getStorage('group_content_type')
-      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager()->getStorage('group_content_type');
+    $plugin = $group->getGroupType()->getPlugin('group_membership');
+    $group_type_id = (string) $group->getGroupType()->id();
+    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, $plugin->getRelationTypeId());
 
     // Pre-populate a group membership from Membership request.
     $group_content = $this->entityTypeManager()->getStorage('group_content')->create([
@@ -124,9 +126,10 @@ class GroupRequestController extends ControllerBase {
   public function requestMembership(GroupInterface $group) {
     $response = new AjaxResponse();
 
-    $relation_type_id = $this->entityTypeManager()
-      ->getStorage('group_content_type')
-      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager()->getStorage('group_content_type');
+    $group_type_id = (string) $group->getGroupType()->id();
+    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
 
     $request = $this->entityTypeManager()->getStorage('group_content')->getQuery()
       ->condition('type', $relation_type_id)
@@ -167,9 +170,10 @@ class GroupRequestController extends ControllerBase {
    * Callback to cancel the request of membership.
    */
   public function cancelRequest(GroupInterface $group) {
-    $relation_type_id = $this->entityTypeManager()
-      ->getStorage('group_content_type')
-      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager()->getStorage('group_content_type');
+    $group_type_id = (string) $group->getGroupType()->id();
+    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
 
     $requests = $this->entityTypeManager()->getStorage('group_content')->loadByProperties([
       'type' => $relation_type_id,

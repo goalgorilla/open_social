@@ -146,9 +146,10 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
 
     // If nothing custom has been configured just proceed with default.
     if (is_null($invite_settings)) {
-      $group_content_plugin = $invite->getPlugin();
-      if ($group_content_plugin->getPluginId() === 'group_invitation') {
-        $configuration = $group_content_plugin->getConfiguration('group_invitation');
+      if ($invite->getPluginId() === 'group_invitation') {
+        /** @var \Drupal\group\Plugin\Group\Relation\GroupRelationInterface $group_content_plugin */
+        $group_content_plugin = $invite->getPlugin();
+        $configuration = $group_content_plugin->getConfiguration();
         $invitation_subject = (!$params['existing_user']) ? $configuration['invitation_subject'] : $configuration['existing_user_invitation_subject'];
         $invitation_body = (!$params['existing_user']) ? $configuration['invitation_body'] : $configuration['existing_user_invitation_body'];
 
@@ -183,9 +184,9 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
       if ($invite instanceof GroupRelationshipInterface) {
         // Allows to have different invite message per group type by replacing
         // default global message.
-        $group_content_plugin = $invite->getPlugin();
-
-        if ($group_content_plugin->getPluginId() === 'group_invitation') {
+        if ($invite->getPluginId() === 'group_invitation') {
+          /** @var \Drupal\group\Plugin\Group\Relation\GroupRelationInterface $group_content_plugin */
+          $group_content_plugin = $invite->getPlugin();
           $configuration = $group_content_plugin->getConfiguration();
 
           if ($subject = $configuration['invitation_subject'] ?? '') {

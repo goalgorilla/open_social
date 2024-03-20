@@ -114,9 +114,10 @@ class SocialGroupRequestJoin extends JoinBase {
       return $items;
     }
 
-    $relation_type_id = $this->entityTypeManager
-      ->getStorage('group_content_type')
-      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('group_content_type');
+    $group_type_id = (string) $group->getGroupType()->id();
+    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
 
     $count = $this->entityTypeManager->getStorage('group_content')
       ->getQuery()
@@ -124,7 +125,10 @@ class SocialGroupRequestJoin extends JoinBase {
       ->condition('gid', $group->id())
       ->condition('entity_id', $this->currentUser->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
-      ->accessCheck()
+      // Currently, we can't give permissions for outsider (that is synced with
+      // AU role) user to view any entity relations of Group membership request.
+      // So, disable access checking for this query.
+      ->accessCheck(FALSE)
       ->range(0, 1)
       ->count()
       ->execute();
