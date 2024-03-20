@@ -99,11 +99,15 @@ function social_group_request_group_content_insert(GroupRelationshipInterface $g
   if ($type === 'group_membership' && $membership_request_enabled) {
     $approver = \Drupal::currentUser()->id();
     $storage = \Drupal::entityTypeManager()->getStorage('group_content');
-    $filters = [
+    $properties = [
+      'gid' => $group_content->getGroup()->id(),
+      'plugin_id' => 'group_membership_request',
       'entity_id' => $group_content->getEntity()->id(),
       'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
     ];
-    $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
+    // loadByGroup() doesn't support filters param anymore,
+    // so, lets use loadByProperties() instead.
+    $requests = $storage->loadByProperties($properties);
 
     /** @var \Drupal\group\Entity\GroupRelationshipInterface $request */
     foreach ($requests as $request) {
@@ -339,10 +343,10 @@ function social_group_request_preprocess_page_title(&$variables) {
   if (!$group->getGroupType()->hasPlugin('group_membership_request')) {
     return;
   }
-
-  $relation_type_id = \Drupal::entityTypeManager()
-    ->getStorage('group_content_type')
-    ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
+  /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('group_content_type');
+  $group_type_id = (string) $group->getGroupType()->id();
+  $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
 
   $requests = \Drupal::entityQuery('group_content')
     ->condition('type', $relation_type_id)

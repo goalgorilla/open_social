@@ -117,7 +117,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
       '#type' => 'html_tag',
       '#tag' => 'p',
       '#value' => $this->t('Are you sure you want to reject the membership request for @name?', [
-        '@name' => $group_content->getEntity()->getDisplayName(),
+        '@name' => $group_content ? $group_content->getEntity()->getDisplayName() : '',
       ]),
       '#weight' => 1,
       '#prefix' => '<div class="card"><div class="card__block">',

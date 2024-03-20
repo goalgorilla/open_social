@@ -5,8 +5,6 @@
  * Install/Uninstall/Update hooks for social_group_request module.
  */
 
-use Drupal\group\Entity\GroupType;
-
 /**
  * Implements hook_install().
  */
@@ -38,6 +36,7 @@ function social_group_request_update_dependencies(): array {
  */
 function _social_group_request_set_permissions() {
   if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
+    /** @var \Drupal\group\Entity\GroupRoleInterface $outsider */
     $outsider = \Drupal::entityTypeManager()
       ->getStorage('group_role')
       ->load('flexible_group-outsider');

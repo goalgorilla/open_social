@@ -114,9 +114,10 @@ class SocialGroupRequestJoin extends JoinBase {
       return $items;
     }
 
-    $relation_type_id = $this->entityTypeManager
-      ->getStorage('group_content_type')
-      ->getRelationshipTypeId($group->getGroupType()->id(), 'group_membership_request');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('group_content_type');
+    $group_type_id = (string) $group->getGroupType()->id();
+    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
 
     $count = $this->entityTypeManager->getStorage('group_content')
       ->getQuery()

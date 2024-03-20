@@ -345,7 +345,13 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
           // and show an error.
           // For some reason groupInvitationLoader service doesn't work
           // properly.
-          if (!empty($group_content_storage->loadByGroup($this->group, 'group_invitation', ['invitee_mail' => $email]))) {
+          $group_invitation = $group_content_storage->loadByProperties([
+            'gid' => $this->group->id(),
+            'plugin_id' => 'group_invitation',
+            'invitee_mail' => $email,
+          ]);
+
+          if (!empty($group_invitation)) {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
 
             $message_singular = "User with @error_message e-mail has already been invited.";
@@ -463,9 +469,10 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       'finished' => 'Drupal\social_group_invite\Form\SocialBulkGroupInvitation::batchFinished',
     ];
 
-    $relation_type_id = $this->entityTypeManager
-      ->getStorage('group_content_type')
-      ->getRelationshipTypeId($this->group->getGroupType()->id(), 'group_invitation');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('group_content_type');
+    $group_type_id = (string) $this->group->getGroupType()->id();
+    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_invitation');
 
     foreach ($form_state->getValue('users_fieldset')['user'] as $email) {
       $email = $this->extractEmailsFrom($email);

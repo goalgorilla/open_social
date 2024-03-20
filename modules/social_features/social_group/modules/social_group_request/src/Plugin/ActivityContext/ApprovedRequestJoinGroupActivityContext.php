@@ -32,11 +32,15 @@ class ApprovedRequestJoinGroupActivityContext extends ActivityContextBase {
       $group_content = $storage->load($referenced_entity['target_id']);
 
       if ($group_content instanceof GroupRelationshipInterface) {
-        $filters = [
+        $properties = [
+          'gid' => $group_content->getGroup()->id(),
+          'plugin_id' => 'group_membership_request',
           'entity_id' => $group_content->getEntity()->id(),
           'grequest_status' => GroupMembershipRequest::REQUEST_ACCEPTED,
         ];
-        $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
+        // loadByGroup() doesn't support filters param anymore, lets use
+        // loadByProperties() instead.
+        $requests = $storage->loadByProperties($properties);
 
         if (!empty($requests)) {
           $recipients[] = [
