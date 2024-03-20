@@ -135,8 +135,7 @@ function social_group_invite_block_access(Block $block, $operation, AccountInter
     $group_content = \Drupal::routeMatch()->getParameter('group_content');
 
     // Only if we are sure it's a group invitation.
-    if (NULL !== $group_content &&
-      NULL !== $group_content->getRelationshipType() &&
+    if ($group_content instanceof GroupRelationshipInterface &&
       $group_content->getRelationshipType()->getPluginId() === 'group_invitation') {
       // This is a list of the blocks that this function cares about,
       // if we're being called for a different block we exit early.
@@ -801,7 +800,7 @@ function social_group_invite_entity_operation_alter(array &$operations, EntityIn
     return;
   }
 
-  if ($entity->getPlugin()->getPluginId() === 'group_invitation') {
+  if ($entity->getPluginId() === 'group_invitation') {
     // Hide "view" operation as a redundant on this page.
     unset($operations['view']);
     // Rename default operation.
