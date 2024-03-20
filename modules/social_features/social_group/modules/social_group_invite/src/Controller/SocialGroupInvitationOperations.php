@@ -30,7 +30,10 @@ class SocialGroupInvitationOperations extends InvitationOperations {
 
     // Check if user already is a member.
     $membership = $this->membershipLoader->load($group, $this->currentUser());
-    $relation_type_id = $this->entityTypeManager()->getStorage('group_content_type')->getRelationshipTypeId($group_type->id(), 'group_membership');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager()->getStorage('group_content_type');
+    $group_type_id = (string) $group->getGroupType()->id();
+    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership');
 
     if (!$membership) {
       /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_content */

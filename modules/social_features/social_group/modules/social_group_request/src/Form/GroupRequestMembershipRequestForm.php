@@ -125,9 +125,10 @@ class GroupRequestMembershipRequestForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $relation_type_id = $this->entityTypeManager
-      ->getStorage('group_content_type')
-      ->getRelationshipTypeId($this->group->getGroupType()->id(), 'group_membership_request');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('group_content_type');
+    $group_type_id = (string) $this->group->getGroupType()->id();
+    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
 
     $group_content = $this->entityTypeManager->getStorage('group_content')->create([
       'type' => $relation_type_id,
