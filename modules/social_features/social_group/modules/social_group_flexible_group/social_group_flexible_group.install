@@ -96,3 +96,30 @@ function social_group_flexible_group_update_130001(): void {
   ];
   user_role_grant_permissions('sitemanager', $permissions);
 }
+
+/**
+ * Add new group permissions to group-member/manager roles.
+ */
+function social_group_flexible_group_update_130002(): void {
+  // After group upgrade 'content' replaced with 'relationship' permission.
+  // So, need to assign new permissions for user roles to adjust access to
+  // group relationship items.
+  $group_permissions['flexible_group-member'] = [
+    'view group_node:topic relationship',
+  ];
+
+  // Group manager.
+  $group_permissions['flexible_group-group_manager'] = $group_permissions['flexible_group-member'];
+
+  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+  $group_type = \Drupal::entityTypeManager()
+    ->getStorage('group_type')
+    ->load('flexible_group');
+
+  foreach ($group_type->getRoles() as $role) {
+    if (!empty($group_permissions[$role->id()])) {
+      $role->grantPermissions($group_permissions[$role->id()])
+        ->save();
+    }
+  }
+}
