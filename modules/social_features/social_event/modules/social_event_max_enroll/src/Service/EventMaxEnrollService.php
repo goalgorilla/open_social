@@ -5,7 +5,7 @@ namespace Drupal\social_event_max_enroll\Service;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
-use Drupal\social_event\Service\SocialEventEnrollServiceInterface;
+use Drupal\social_event\Entity\Node\Event;
 
 /**
  * Class EventMaxEnrollService.
@@ -29,33 +29,22 @@ class EventMaxEnrollService implements EventMaxEnrollServiceInterface {
   protected $configFactory;
 
   /**
-   * The social event enroll.
-   *
-   * @var \Drupal\social_event\Service\SocialEventEnrollServiceInterface
-   */
-  protected $socialEventEnroll;
-
-  /**
    * EventMaxEnrollService constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Injection of the configFactory.
-   * @param \Drupal\social_event\Service\SocialEventEnrollServiceInterface $social_event_enroll
-   *   The social event enroll.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
-    ConfigFactoryInterface $configFactory,
-    SocialEventEnrollServiceInterface $social_event_enroll
+    ConfigFactoryInterface $configFactory
   ) {
     $this->storage = $entity_type_manager->getStorage('event_enrollment');
     $this->configFactory = $configFactory;
-    $this->socialEventEnroll = $social_event_enroll;
   }
 
   /**
@@ -88,7 +77,7 @@ class EventMaxEnrollService implements EventMaxEnrollServiceInterface {
    */
   public function isEnabled(NodeInterface $node) {
     // Check if we're working with an event.
-    if ($this->socialEventEnroll->isEnabled($node)) {
+    if ($node instanceof Event && $node->isEnrollmentEnabled()) {
       $config = $this->configFactory->get('social_event_max_enroll.settings');
 
       // Check if feature is enabled.

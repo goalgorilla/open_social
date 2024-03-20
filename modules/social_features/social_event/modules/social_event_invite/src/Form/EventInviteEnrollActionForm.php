@@ -5,6 +5,7 @@ namespace Drupal\social_event_invite\Form;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
+use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\Form\EnrollActionForm;
 
@@ -32,7 +33,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
 
     if (!$current_user->isAnonymous()) {
       // Check if enrollment is enabled.
-      if ($node === NULL || !$this->eventEnrollService->isEnabled($node)) {
+      if ($node === NULL || ($node instanceof Event && !$node->isEnrollmentEnabled())) {
         return [];
       }
       $conditions = [
