@@ -5,9 +5,6 @@
  * Hooks provided by the Social Content Block module.
  */
 
-use Drupal\block_content\BlockContentInterface;
-use Drupal\Core\Database\Query\SelectInterface;
-
 /**
  * Alter the list of content block plugin definitions.
  *
