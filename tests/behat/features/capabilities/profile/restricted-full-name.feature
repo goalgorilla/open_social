@@ -239,7 +239,7 @@ Feature: I want to restrict full name visibility when nickname is used
 
     # Check sorting members in group.
     # First of all we need create a group.
-    And I am on "group/add"
+    And I am on "group/add/flexible_group"
     And I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I click radio button "Public"
@@ -381,7 +381,7 @@ Feature: I want to restrict full name visibility when nickname is used
 
     # Check sorting members in group.
     # First of all we need create a group.
-    And I am on "group/add"
+    And I am on "group/add/flexible_group"
     And I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I click radio button "Public"
@@ -524,7 +524,7 @@ Feature: I want to restrict full name visibility when nickname is used
 
     # Check sorting members in group.
     # First of all we need create a group.
-    And I am on "group/add"
+    And I am on "group/add/flexible_group"
     And I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I click radio button "Public"

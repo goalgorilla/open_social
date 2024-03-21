@@ -10,8 +10,7 @@ Feature: Revisions are disabled for open group
       | Group Manager One | gm_1@example.com | GoalGorilla                | 1      | verified |
       | Group Member Two  | gm_2@example.com | Drupal                     | 1      | verified |
     And I am logged in as "Group Manager One"
-    And I am on "group/add"
-    And I wait for AJAX to finish
+    And I am on "group/add/flexible_group"
 
     When I fill in "Title" with "Test open group"
     And I wait for "1" seconds

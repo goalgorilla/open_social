@@ -10,8 +10,7 @@ Feature: Edit my group as a group manager
       | Group Manager     | gm_1@example.com | GoalGorilla                | 1      | verified |
 
     And I am logged in as "Group Manager"
-    And I am on "group/add"
-    And I wait for AJAX to finish
+    And I am on "group/add/flexible_group"
 
     When I click radio button "Community" with the id "edit-field-flexible-group-visibility-community"
     And I fill in "Title" with "Test flexible group"
@@ -25,7 +24,7 @@ Feature: Edit my group as a group manager
     And I click "Manage members"
     And I should see "Add members"
 
-  # TB-4365 - As a Group Manager I want to change group join-method
+    # TB-4365 - As a Group Manager I want to change group join-method
     And I click "Edit group"
     And I wait for AJAX to finish
     And I click radio button "Invite only" with the id "edit-field-group-allowed-join-method-added"

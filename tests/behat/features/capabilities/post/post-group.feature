@@ -10,7 +10,7 @@ Feature: Create Post on Group
       | Group User One | group_user_1@example.com | 1      | verified |
       | Group User Two | group_user_2@example.com | 1      | verified |
     And I am logged in as "Group User One"
-    And I am on "group/add"
+    And I am on "group/add/flexible_group"
 
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
