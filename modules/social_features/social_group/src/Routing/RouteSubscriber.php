@@ -4,7 +4,6 @@ namespace Drupal\social_group\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Drupal\social_group\Controller\SocialGroupController;
-use Drupal\social_group\Form\SocialGroupAddForm;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -49,13 +48,6 @@ class RouteSubscriber extends RouteSubscriberBase {
         '_title_callback',
         SocialGroupController::class . '::groupRemoveContentTitle',
       );
-    }
-
-    if ($route = $collection->get('entity.group.add_page')) {
-      $defaults = $route->getDefaults();
-      unset($defaults['_controller']);
-      $defaults['_form'] = SocialGroupAddForm::class;
-      $route->setDefaults($defaults);
     }
 
     if ($route = $collection->get('view.groups.page_user_groups')) {
