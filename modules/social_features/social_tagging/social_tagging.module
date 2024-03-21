@@ -609,25 +609,6 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
 }
 
 /**
- * Main term names to machine name for on node edit / validate.
- *
- * @param string $text
- *   A node.
- *
- * @return mixed|string
- *   A machine name so it can be used programmatically.
- *
- * @deprecated in social:11.3.10 and is removed from social:13.0.0. Use
- *   \Drupal::service('social_core.machine_name')->transform() instead.
- *
- * @see https://www.drupal.org/node/3306214
- */
-function social_tagging_to_machine_name($text) {
-  @trigger_error('social_tagging_to_machine_name() is deprecated in social:11.3.10 and is removed from social:13.0.0. Use "\Drupal::service(\'social_core.machine_name\')->transform()" instead. See https://www.drupal.org/node/3306214', E_USER_DEPRECATED);
-  return preg_replace('@[^a-z0-9-]+@', '_', strtolower($text));
-}
-
-/**
  * Implements hook_preprocess_profile().
  */
 function social_tagging_preprocess_profile(array &$variables) {
