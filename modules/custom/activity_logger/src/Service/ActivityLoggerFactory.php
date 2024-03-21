@@ -303,56 +303,6 @@ class ActivityLoggerFactory {
   }
 
   /**
-   * Create field instances.
-   *
-   * @param string $message_type
-   *   The typeof message.
-   * @param array $fields
-   *   The data to insert in the field instances.
-   */
-  protected function createFieldInstances($message_type, array $fields) {
-    @trigger_error(__METHOD__ . ' is deprecated in social:11.7.0 and is removed from social:13.0.0. Create the fields using `config/install` instead. See https://www.drupal.org/node/3232246', E_USER_DEPRECATED);
-    foreach ($fields as $field) {
-      $id = 'message.' . $message_type . '.' . $field['name'];
-      $config_storage = $this->entityTypeManager
-        ->getStorage('field_config');
-      // Create field instances if they do not exists.
-      if ($config_storage->load($id) === NULL) {
-        $field_instance = [
-          'langcode' => 'en',
-          'status' => TRUE,
-          'config' => [
-            'field.storage.message.' . $field['name'],
-            'message.template.' . $message_type,
-          ],
-          'module' => ['options'],
-          'id' => $id,
-          'field_name' => $field['name'],
-          'entity_type' => 'message',
-          'bundle' => $message_type,
-          'label' => '',
-          'description' => '',
-          'required' => FALSE,
-          'translatable' => FALSE,
-          'default_value' => [],
-          'default_value_callback' => '',
-          'field_type' => $field['type'],
-        ];
-
-        if ($field['type'] === 'list_string') {
-          $field_instance['module'] = ['options'];
-          $field_instance['settings'] = [];
-        }
-        elseif ($field['type'] === 'dynamic_entity_reference') {
-          $field_instance['module'] = ['dynamic_entity_reference'];
-          $field_instance['settings'] = [];
-        }
-        $config_storage->create($field_instance)->save();
-      }
-    }
-  }
-
-  /**
    * Checks if a message already exists.
    *
    * @param string $message_type
