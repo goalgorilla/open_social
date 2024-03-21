@@ -64,26 +64,6 @@ function social_album_install() {
 }
 
 /**
- * Add new paths where blocks should be displayed.
- *
- * @param string $pages
- *   The current sequence of block paths.
- * @param array $paths
- *   List of blocks which should be updated and paths which should be added.
- *
- * @deprecated in social:11.4.0 and is removed from social:13.0.0. Use
- *   _social_core_blocks_paths instead.
- *
- * @see https://www.drupal.org/node/3291491
- *
- * @return string
- *   List of block paths with new paths.
- */
-function _social_album_install_blocks(string $pages, array $paths) {
-  return _social_core_blocks_paths($pages, $paths);
-}
-
-/**
  * Implements hook_uninstall().
  */
 function social_album_uninstall() {
