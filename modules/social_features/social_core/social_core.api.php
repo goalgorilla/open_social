@@ -67,26 +67,6 @@ function hook_social_core_title_alter(array &$titles) {
 }
 
 /**
- * Provide a method to alter the article for a node. E.g. 'a', 'an', 'the'.
- *
- * @param array $node_types
- *   The filter format that is default.
- *
- * @deprecated in social:11.4.0 and is removed from social:13.0.0. Use
- *   hook_social_core_title_alter instead.
- *
- * @see https://www.drupal.org/node/3285045
- * @see \Drupal\social_core\Routing\RouteSubscriber::alterRoutes()
- * @see \Drupal\social_core\Controller\SocialCoreController::addPageTitle()
- *
- * @ingroup social_core_api
- */
-function hook_social_node_title_prefix_articles_alter(array &$node_types) {
-  // The default is set to 'a'.
-  $node_types['discussions'] = 'an';
-}
-
-/**
  * Provides route for node page where should be displayed simple title.
  *
  * @return string
