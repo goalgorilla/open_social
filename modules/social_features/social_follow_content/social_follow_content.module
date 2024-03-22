@@ -101,6 +101,8 @@ function social_follow_content_event_enrollment_follow(EntityInterface $entity) 
  * Adds the "Following" link to the user menu.
  */
 function social_follow_content_social_user_account_header_account_links(array $context) {
+  $link = Link::createFromRoute((new TranslatableMarkup('Following')), 'view.following.following');
+
   return [
     'my_content' => [
       '#type' => 'link',
@@ -108,7 +110,8 @@ function social_follow_content_social_user_account_header_account_links(array $c
         'title' => new TranslatableMarkup("View content I'm following"),
       ],
       '#weight' => 1000,
-    ] + Link::createFromRoute((new TranslatableMarkup('Following')), 'view.following.following')->toRenderable(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 }
 
