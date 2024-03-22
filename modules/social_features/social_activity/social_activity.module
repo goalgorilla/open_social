@@ -141,6 +141,8 @@ function social_activity_social_user_account_header_account_links(array $context
     ],
   ];
 
+  $link = Link::createFromRoute($title_link, 'view.activity_stream_notifications.page_1');
+
   return [
     'notification_mobile' => [
       '#wrapper_attributes' => [
@@ -151,7 +153,8 @@ function social_activity_social_user_account_header_account_links(array $context
       '#attributes' => [
         'title' => new TranslatableMarkup('Notification Center'),
       ],
-    ] + Link::createFromRoute($title_link, 'view.activity_stream_notifications.page_1')->toRenderable(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 }
 

@@ -542,6 +542,8 @@ function social_private_message_social_user_account_header_account_links(array $
     ],
   ];
 
+  $link = Link::createFromRoute($title_link, 'social_private_message.inbox');
+
   return [
     'messages_mobile' => [
       '#type' => 'link',
@@ -552,7 +554,8 @@ function social_private_message_social_user_account_header_account_links(array $
       '#attributes' => [
         'title' => new TranslatableMarkup('Inbox'),
       ],
-    ] + Link::createFromRoute($title_link, 'social_private_message.inbox')->toRenderable(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 
 }

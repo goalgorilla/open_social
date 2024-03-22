@@ -226,6 +226,8 @@ function social_core_social_user_account_header_account_links(array $context) {
       ];
     }
 
+    $link = Link::createFromRoute($title, 'social_core.my_invites');
+
     return [
       'divider_no_mobile' => [
         '#wrapper_attributes' => [
@@ -240,8 +242,8 @@ function social_core_social_user_account_header_account_links(array $context) {
           'title' => new TranslatableMarkup('Invites'),
         ],
         '#weight' => 350,
-      ] + Link::createFromRoute($title, 'social_core.my_invites')->toRenderable(),
-
+        '#access' => $link->getUrl()->access(),
+      ] + $link->toRenderable(),
     ];
   }
 }
