@@ -841,6 +841,12 @@ function social_profile_social_user_account_header_account_links(array $context)
     return [];
   }
 
+  $my_profile_link = Link::createFromRoute((new TranslatableMarkup('My profile')), 'user.page');
+  $edit_profile_link = Link::createFromRoute((new TranslatableMarkup('Edit profile')), 'profile.user_page.single', [
+    'user' => $context['user']->id(),
+    'profile_type' => 'profile',
+  ]);
+
   return [
     'my_profile' => [
       '#type' => 'link',
@@ -849,7 +855,8 @@ function social_profile_social_user_account_header_account_links(array $context)
       ],
       '#title' => new TranslatableMarkup('My profile'),
       '#weight' => 500,
-    ] + Url::fromRoute('user.page')->toRenderArray(),
+      '#access' => $my_profile_link->getUrl()->access(),
+    ] + $my_profile_link->toRenderable(),
     'edit_profile' => [
       '#type' => 'link',
       '#attributes' => [
@@ -857,10 +864,8 @@ function social_profile_social_user_account_header_account_links(array $context)
       ],
       '#title' => new TranslatableMarkup("Edit profile"),
       '#weight' => 1300,
-    ] + Url::fromRoute('profile.user_page.single', [
-      'user' => $context['user']->id(),
-      'profile_type' => 'profile',
-    ])->toRenderArray(),
+      '#access' => $edit_profile_link->getUrl()->access(),
+    ] + $edit_profile_link->toRenderable(),
   ];
 }
 

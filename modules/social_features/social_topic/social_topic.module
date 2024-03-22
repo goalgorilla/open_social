@@ -213,6 +213,10 @@ function social_topic_social_tagging_type_alter(array &$items): void {
  * Adds the "Create Topic" link to the content creation menu.
  */
 function social_topic_social_user_account_header_create_links($context) {
+  $link = Link::createFromRoute((new TranslatableMarkup('New Topic')), 'node.add', [
+    'node_type' => 'topic',
+  ]);
+
   return [
     'add_topic' => [
       '#type' => 'link',
@@ -221,7 +225,8 @@ function social_topic_social_user_account_header_create_links($context) {
       ],
       '#title' => new TranslatableMarkup('New Topic'),
       '#weight' => 200,
-    ] + Url::fromRoute('node.add', ['node_type' => 'topic'])->toRenderArray(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 }
 
@@ -236,6 +241,10 @@ function social_topic_social_user_account_header_account_links(array $context) {
     return [];
   }
 
+  $link = Link::createFromRoute((new TranslatableMarkup('My topics')), 'view.topics.page_profile', [
+    'user' => $context['user']->id(),
+  ]);
+
   return [
     'my_topics' => [
       '#type' => 'link',
@@ -244,9 +253,8 @@ function social_topic_social_user_account_header_account_links(array $context) {
       ],
       '#title' => new TranslatableMarkup('My topics'),
       '#weight' => 700,
-    ] + Url::fromRoute('view.topics.page_profile', [
-      'user' => $context['user']->id(),
-    ])->toRenderArray(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 }
 
