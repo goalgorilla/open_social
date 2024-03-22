@@ -356,6 +356,10 @@ function social_landing_page_social_tagging_type_alter(array &$items): void {
  * Adds the "Create Landing Page" link to the content creation menu.
  */
 function social_landing_page_social_user_account_header_create_links($context) {
+  $link = Link::createFromRoute((new TranslatableMarkup('New Landing Page')), 'node.add', [
+    'node_type' => 'landing_page',
+  ]);
+
   return [
     'add_landing_page' => [
       '#type' => 'link',
@@ -363,9 +367,8 @@ function social_landing_page_social_user_account_header_create_links($context) {
         'title' => new TranslatableMarkup('Create New Landing Page'),
       ],
       '#weight' => 400,
-    ] + Link::createFromRoute((new TranslatableMarkup('New Landing Page')), 'node.add', [
-      'node_type' => 'landing_page',
-    ])->toRenderable(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 }
 

@@ -537,6 +537,12 @@ function social_album_social_user_account_header_account_links(array $context) {
     return [];
   }
 
+  $link = Link::createFromRoute(
+    (new TranslatableMarkup('My albums')),
+    'view.albums.page_albums_overview',
+    ['user' => $context['user']->id()]
+  );
+
   return [
     'my_albums' => [
       '#type' => 'link',
@@ -544,11 +550,8 @@ function social_album_social_user_account_header_account_links(array $context) {
         'title' => new TranslatableMarkup('View my albums'),
       ],
       '#weight' => 550,
-    ] + Link::createFromRoute(
-      (new TranslatableMarkup('My albums')),
-      'view.albums.page_albums_overview',
-      ['user' => $context['user']->id()]
-    )->toRenderable(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 }
 
