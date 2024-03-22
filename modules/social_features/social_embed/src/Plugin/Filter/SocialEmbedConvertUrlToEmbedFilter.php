@@ -330,8 +330,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends FilterBase implements Container
     catch (\Exception $e) {
       // If anything goes wrong while retrieving remote data, catch
       // the exception to avoid a WSOD and leave the URL as is.
-      $logger = \Drupal::logger('social_embed');
-      Error::logException($logger, $e);
+      watchdog_exception('url_embed', $e);
 
       return $match[1];
     }
