@@ -131,6 +131,17 @@ function social_activity_social_user_account_header_account_links(array $context
     }
   }
 
+  $title_link = [
+    '#type' => 'inline_template',
+    '#template' => '<span>{% trans %}Notification Center{% endtrans %}</span><span{{ attributes }}>{{ icon }}</span>',
+    '#context' => [
+      'attributes' => new Attribute(['class' => $label_classes]),
+      'icon' => (string) $num_notifications,
+    ],
+  ];
+
+  $link = Link::createFromRoute($title_link, 'view.activity_stream_notifications.page_1');
+
   return [
     'notification_mobile' => [
       '#wrapper_attributes' => [
@@ -141,15 +152,8 @@ function social_activity_social_user_account_header_account_links(array $context
       '#attributes' => [
         'title' => new TranslatableMarkup('Notification Center'),
       ],
-      '#title' => [
-        '#type' => 'inline_template',
-        '#template' => '<span>{% trans %}Notification Center{% endtrans %}</span><span{{ attributes }}>{{ icon }}</span>',
-        '#context' => [
-          'attributes' => new Attribute(['class' => $label_classes]),
-          'icon' => (string) $num_notifications,
-        ],
-      ],
-    ] + Url::fromRoute('view.activity_stream_notifications.page_1')->toRenderArray(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 }
 

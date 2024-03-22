@@ -40,6 +40,8 @@ function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
  * Adds the "Following tags" link to the user menu.
  */
 function social_follow_taxonomy_social_user_account_header_account_links(array $context) {
+  $link = Link::createFromRoute((new TranslatableMarkup('Following tags')), 'view.following_tags.following_tags');
+
   return [
     'my_tags' => [
       '#type' => 'link',
@@ -48,7 +50,8 @@ function social_follow_taxonomy_social_user_account_header_account_links(array $
       ],
       '#title' => new TranslatableMarkup('Following tags'),
       '#weight' => 1001,
-    ] + Url::fromRoute('view.following_tags.following_tags')->toRenderArray(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 }
 

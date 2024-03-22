@@ -485,6 +485,11 @@ function social_user_social_user_account_header_account_links(array $context) {
     return [];
   }
 
+  $my_account_link = Link::createFromRoute((new TranslatableMarkup('Settings')), 'entity.user.edit_form', [
+    'user' => $context['user']->id(),
+  ]);
+  $logout_link = Link::createFromRoute((new TranslatableMarkup('Logout')), 'user.logout');
+
   return [
     'my_account' => [
       '#type' => 'link',
@@ -493,9 +498,8 @@ function social_user_social_user_account_header_account_links(array $context) {
       ],
       '#title' => new TranslatableMarkup("Settings"),
       '#weight' => 1200,
-    ] + Url::fromRoute('entity.user.edit_form', [
-      'user' => $context['user']->id(),
-    ])->toRenderArray(),
+      '#access' => $my_account_link->getUrl()->access(),
+    ] + $my_account_link->toRenderable(),
     'divider_logout' => [
       "#wrapper_attributes" => [
         "class" => ["divider"],
@@ -510,7 +514,8 @@ function social_user_social_user_account_header_account_links(array $context) {
       ],
       '#title' => new TranslatableMarkup("Logout"),
       '#weight' => 1500,
-    ] + Url::fromRoute('user.logout')->toRenderArray(),
+      '#access' => $logout_link->getUrl()->access(),
+    ] + $logout_link->toRenderable(),
   ];
 }
 

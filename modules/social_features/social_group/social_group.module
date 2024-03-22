@@ -2571,7 +2571,8 @@ function social_group_social_user_account_header_create_links($context) {
       ],
       '#title' => new TranslatableMarkup('New Group'),
       '#weight' => 500,
-    ] + $route_add_group->toRenderArray(),
+      '#access' => $route_add_group->getUrl()->access(),
+    ] + $route_add_group->toRenderable(),
   ];
 }
 
@@ -2619,6 +2620,10 @@ function social_group_social_user_account_header_account_links(array $context) {
     return [];
   }
 
+  $link = Link::createFromRoute((new TranslatableMarkup('My groups')), 'view.groups.page_user_groups', [
+    'user' => $context['user']->id(),
+  ]);
+
   return [
     'my_groups' => [
       '#type' => 'link',
@@ -2627,9 +2632,8 @@ function social_group_social_user_account_header_account_links(array $context) {
       ],
       '#title' => new TranslatableMarkup('My groups'),
       '#weight' => 800,
-    ] + Url::fromRoute('view.groups.page_user_groups', [
-      'user' => $context['user']->id(),
-    ])->toRenderArray(),
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
   ];
 }
 
