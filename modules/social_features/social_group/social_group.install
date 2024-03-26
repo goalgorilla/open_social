@@ -100,6 +100,9 @@ function social_group_install(): void {
   // Since we update group related permissions that touch node content we must
   // also rebuild the node access permissions.
   node_access_rebuild();
+
+  // Add group bulk action to people view.
+  _social_group_alter_admin_people_view();
 }
 
 /**
@@ -125,6 +128,29 @@ function social_group_update_dependencies(): array {
  */
 function social_group_update_last_removed() : int {
   return 11902;
+}
+
+/**
+ * Update the user admin view with our custom action.
+ *
+ * Action ID: 'social_group_add_members_to_group_action'.
+ */
+function _social_group_alter_admin_people_view(): void {
+  // Get people view config.
+  $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
+  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
+
+  // Check if already have bulk action.
+  if (in_array('social_group_add_members_to_group_action', array_column(array_values($selected_actions), 'action_id'))) {
+    return;
+  }
+
+  // Add bulk action and save them.
+  $selected_actions[] = [
+    'action_id' => 'social_group_add_members_to_group_action',
+  ];
+  $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
+  $config->save();
 }
 
 /**
@@ -206,6 +232,13 @@ function social_group_update_12301(): void {
   if (!\Drupal::service('module_handler')->moduleExists('flexible_permissions')) {
     \Drupal::service('module_installer')->install(['flexible_permissions']);
   }
+}
+
+/**
+ * Add group bulk action to people view.
+ */
+function social_group_update_12302(): void {
+  _social_group_alter_admin_people_view();
 }
 
 /**
