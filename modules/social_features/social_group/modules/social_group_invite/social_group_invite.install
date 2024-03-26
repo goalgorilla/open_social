@@ -16,7 +16,7 @@ function social_group_invite_install() {
   // Assign permissions by default to all group types
   // that have group_invitation enabled.
   foreach (GroupType::loadMultiple() as $group_type) {
-    if ($group_type->hasContentPlugin('group_invitation')) {
+    if ($group_type->hasPlugin('group_invitation')) {
       social_group_invite_set_default_permissions_for_group_type($group_type);
     }
   }
@@ -28,11 +28,7 @@ function social_group_invite_install() {
 function social_group_invite_update_dependencies() : array {
   // Ensure configurations updates runs after the group migration has completed.
   $dependencies['social_group_invite'][13000] = [
-    'social_group' => 13000,
-  ];
-
-  $dependencies['social_group'][13001] = [
-    'social_group_invite' => 13000,
+    'social_group' => 13001,
   ];
 
   return $dependencies;

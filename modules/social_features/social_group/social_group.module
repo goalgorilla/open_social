@@ -18,6 +18,7 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -26,11 +27,12 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\group\Entity\GroupContent;
-use Drupal\group\Entity\GroupContentInterface;
-use Drupal\group\Entity\GroupContentType;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
+use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\group\GroupMembership;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
@@ -42,6 +44,7 @@ use Drupal\social_group\Controller\SocialGroupListBuilder;
 use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_group\Entity\Access\SocialGroupAccessControlHandler;
 use Drupal\social_group\Entity\Group;
+use Drupal\social_group\Plugin\Field\GroupGroupReferenceItemList;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -294,7 +297,7 @@ function social_group_preprocess_group(array &$variables) {
       'group' => $group->id(),
     ]);
     $variables['about_url'] = $about_url;
-    if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
+    if ($group->getGroupType()->hasPlugin('group_node:event')) {
       $variables['group_events'] = $group_statistics->getGroupNodeCount($group, 'event');
       $variables['group_events_label'] = \Drupal::translation()
         ->formatPlural($variables['group_events'],
@@ -302,7 +305,7 @@ function social_group_preprocess_group(array &$variables) {
           'events'
         );
     }
-    if ($group->getGroupType()->hasContentPlugin('group_node:topic')) {
+    if ($group->getGroupType()->hasPlugin('group_node:topic')) {
       $variables['group_topics'] = $group_statistics->getGroupNodeCount($group, 'topic');
       $variables['group_topics_label'] = \Drupal::translation()
         ->formatPlural($variables['group_topics'],
@@ -857,10 +860,10 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       elseif (isset($entity)) {
         // If node don't belong to any group as a group content plugin
         // we don't need group visibility field.
-        /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
-        $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
+        /** @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $gc_manager */
+        $gc_manager = \Drupal::service('group_relation_type.manager');
 
-        if (!$gc_manager->getGroupContentTypeIds('group_node:' . $entity->bundle())) {
+        if (!$gc_manager->getRelationshipTypeIds('group_node:' . $entity->bundle())) {
           unset($form['groups']);
         }
       }
@@ -1220,22 +1223,22 @@ function _social_group_grant_admin_role($uid, $gid) {
     }
     // Check if the user is already a member in the group
     // (could be in update mode here).
-    /** @var \Drupal\group\GroupMembership $membership */
     $admin_role = $group->bundle() . '-group_admin';
+    /** @var \Drupal\group\GroupMembership $membership */
     $membership = $group->getMember($account);
 
     // Check what roles are there.
     $roles = [];
     if ($membership instanceof GroupMembership) {
-      foreach ($membership->getGroupContent()->get('group_roles') as $group_role_ref) {
+      foreach ($membership->getGroupRelationship()->get('group_roles') as $group_role_ref) {
         /** @var \Drupal\Core\Field\EntityReferenceFieldItemList $group_role_ref */
         $roles[] = $group_role_ref->getValue();
       }
 
       // No admin? Add it.
       if (!in_array($admin_role, $roles)) {
-        $membership->getGroupContent()->set('group_roles', ['target_id' => $admin_role]);
-        $membership->getGroupContent()->save();
+        $membership->getGroupRelationship()->set('group_roles', ['target_id' => $admin_role]);
+        $membership->getGroupRelationship()->save();
       }
     }
   }
@@ -1244,12 +1247,12 @@ function _social_group_grant_admin_role($uid, $gid) {
 /**
  * When creating a new group membership or a node with group reference.
  *
- * @param \Drupal\group\Entity\GroupContentInterface $group_content
+ * @param \Drupal\group\Entity\GroupRelationshipInterface $group_content
  *   The group content.
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function social_group_group_content_insert(GroupContentInterface $group_content) {
+function social_group_group_content_insert(GroupRelationshipInterface $group_content) {
   if ($group_content->getEntity()->getEntityTypeId() === 'user') {
     if ($group_content->bundle() === $group_content->getGroup()
       ->bundle() . '-group_membership') {
@@ -1572,13 +1575,13 @@ function social_group_menu_local_actions_alter(&$local_actions) {
 /**
  * Return user profile by given group membership content.
  *
- * @param \Drupal\group\Entity\GroupContent $group_content
+ * @param \Drupal\group\Entity\GroupRelationship $group_content
  *   Group content entity.
  *
  * @return \Drupal\profile\Entity\Profile|null
  *   Returns the Profile entity for the member.
  */
-function _social_group_get_member_profile(GroupContent $group_content) {
+function _social_group_get_member_profile(GroupRelationship $group_content) {
   $user_profile = NULL;
   // Get User entity.
   $user_entity = $group_content->getEntity();
@@ -1682,7 +1685,7 @@ function _social_group_cache_tags(GroupInterface $group) {
 
   $current_user = \Drupal::currentUser();
   if ($group_membership = $group->getMember($current_user)) {
-    $group_content = $group_membership->getGroupContent();
+    $group_content = $group_membership->getGroupRelationship();
     $tags[] = 'group_content:' . $group_content->id();
   }
 
@@ -1860,11 +1863,11 @@ function _social_group_get_current_group_types(AccountInterface $account) {
 function _social_group_delete_group() {
   // Get the group.
   if ($group = _social_group_get_current_group()) {
-    $group_content_types = GroupContentType::loadByEntityTypeId('node');
+    $group_content_types = GroupRelationshipType::loadByEntityTypeId('node');
     $group_content_types = array_keys($group_content_types);
 
     // Get all the node's related to the current group.
-    $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+    $query = \Drupal::database()->select('group_relationship_field_data', 'gcfd');
     $query->addField('gcfd', 'entity_id');
     $query->condition('gcfd.gid', $group->id());
     $query->condition('gcfd.type', $group_content_types, 'IN');
@@ -2054,7 +2057,7 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
     }
   }
 
-  // Now make sure the relevant GroupContent is removed or added.
+  // Now make sure the relevant GroupRelationship is removed or added.
   // But only when we are on the original language, we don't want to update
   // this when translating. The field is disabled for that scenario so no
   // need to run this.
@@ -2174,8 +2177,11 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
   foreach (GroupType::loadMultiple() as $group_type) {
     $new = !in_array($group_type->id(), $condition['value']);
-    $permissions = $group_type->getAnonymousRole()->getPermissions();
-    $hidden = !in_array('view group', $permissions);
+
+    /** @var \Drupal\user\RoleInterface $anonymous_role */
+    $anonymous_role = \Drupal::entityTypeManager()->getStorage('group_role')
+      ->load($group_type->id() . '-anonymous');
+    $hidden = !in_array('view group', $anonymous_role->getPermissions());
 
     if ($new && $hiddens === $hidden) {
       $condition['value'][] = $group_type->id();
@@ -2326,14 +2332,12 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
 
   // Anonymous users have a special role.
   if ($account->isAnonymous()) {
-    /** @var \Drupal\group\Entity\GroupRoleInterface $role */
-    return $group_type->getAnonymousRole()->hasPermission('view group');
+    /** @var \Drupal\group\Entity\GroupRoleInterface $anonymous_role */
+    $anonymous_role = \Drupal::entityTypeManager()->getStorage('group_role')
+      ->load($group_type->id() . '-anonymous');
+    return $anonymous_role->hasPermission('view group');
   }
 
-  // The service that keeps platform roles in sync with group roles for
-  // outsiders.
-  /** @var \Drupal\group\GroupRoleSynchronizerInterface $group_role_synchroniser */
-  $group_role_synchroniser = \Drupal::service('group_role.synchronizer');
   /** @var \Drupal\group\Entity\GroupRoleInterface[] $group_roles */
   $group_roles = $group_type->getRoles();
 
@@ -2341,14 +2345,20 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
 
   // Authenticated is a locked Role,
   // So first we check outsiders also easier on the performance :)
-  $outsider = $group_type->getOutsiderRole();
+  /** @var \Drupal\group\Entity\GroupRoleInterface $outsider */
+  $outsider = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->load($group_type->id() . '-outsider');
+
   if (NULL !== $outsider && $outsider->hasPermission('view group')) {
     return TRUE;
   }
 
   // If members can see it, we also need to show group types because
   // we are not calculation memberships.
-  $member = $group_type->getMemberRole();
+  $id = $group_type->id() . '-member';
+  /** @var \Drupal\group\Entity\GroupRoleInterface $member */
+  $member = \Drupal::entityTypeManager()->getStorage('group_role')->load($id);
   if (NULL !== $member && $member->hasPermission('view group')) {
     return TRUE;
   }
@@ -2357,7 +2367,11 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
   // permission. This counts for the advanced group permissions.
   // Admin, SM, CM.
   foreach ($user_roles as $role) {
-    $group_role = $group_role_synchroniser->getGroupRoleId($type, $role);
+    // group_role.synchronizer service has been removed, lets generates role_id
+    // directly.
+    $machine_name_max_length = EntityTypeInterface::ID_MAX_LENGTH - GroupTypeInterface::ID_MAX_LENGTH - 1;
+    $machine_name = substr(md5('group_role_sync.' . $role), 0, $machine_name_max_length);
+    $group_role = "$type-$machine_name";
     if ($group_roles[$group_role]->hasPermission('view group')) {
       return TRUE;
     }
@@ -2940,17 +2954,16 @@ function social_group_social_core_title(): array {
 
         $plugin_id = \Drupal::routeMatch()->getParameter('plugin_id');
 
-        $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
+        $group_relation_type = $group->getGroupType()->getPlugin($plugin_id)->getRelationType();
 
-        $definition = \Drupal::entityTypeManager()
-          ->getDefinition($plugin->getEntityTypeId());
+        $definition = \Drupal::entityTypeManager()->getDefinition($group_relation_type->getEntityTypeId());
 
         if (
           $definition !== NULL &&
           ($entity_type_id = $definition->getBundleEntityType()) !== NULL
         ) {
           return \Drupal::entityTypeManager()->getStorage($entity_type_id)
-            ->load($plugin->getEntityBundle());
+            ->load($group_relation_type->getEntityBundle());
         }
 
         return NULL;
@@ -3001,4 +3014,91 @@ function social_group_views_pre_view(ViewExecutable $view, string $display_id, a
         $view->id() . '__items_per_page'
       );
   }
+}
+
+/**
+ * Implements hook_group_types().
+ *
+ * We currently only use this for nodes and users since they can be installed
+ * as group content.
+ */
+function social_group_group_types(): array {
+  return array_fill_keys(['node', 'user'], TRUE);
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ *
+ * Creates computed fields to get the groups related to an entity. There will be
+ * a field containing all groups. Each group type will also get a separate
+ * field.
+ */
+function social_group_entity_base_field_info(EntityTypeInterface $entity_type): array {
+  $fields = [];
+
+  $entity_types = \Drupal::moduleHandler()->invokeAll('group_types');
+  \Drupal::moduleHandler()->alter('group_types', $entity_types);
+
+  if (!isset($entity_types[$entity_type->id()])) {
+    return $fields;
+  }
+
+  $fields['groups'] = BaseFieldDefinition::create('entity_reference')
+    ->setName('groups')
+    ->setTargetEntityTypeId($entity_type->id())
+    ->setSetting('target_type', 'group')
+    ->setLabel(t('Get the related groups for this entity.'))
+    ->setDescription(t('A list of all the groups referencing this entity.'))
+    ->setTranslatable(FALSE)
+    ->setComputed(TRUE)
+    ->setCustomStorage(TRUE)
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setClass(GroupGroupReferenceItemList::class)
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayOptions('form', [
+      'label' => 'hidden',
+      'region' => 'hidden',
+      'weight' => 50,
+    ])
+    ->setDisplayConfigurable('view', TRUE)
+    ->setDisplayOptions('view', [
+      'label' => 'hidden',
+      'region' => 'hidden',
+      'weight' => 50,
+    ]);
+
+  if (!$entity_types[$entity_type->id()]) {
+    return $fields;
+  }
+
+  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+  foreach (\Drupal::entityTypeManager()->getStorage('group_type')->loadMultiple() as $group_type) {
+    $field_name = 'groups_type_' . $group_type->id();
+    $fields[$field_name] = BaseFieldDefinition::create('entity_reference')
+      ->setName($field_name)
+      ->setTargetEntityTypeId($entity_type->id())
+      ->setSetting('target_type', 'group')
+      ->setSetting('handler_settings', ['target_bundles' => [$group_type->id() => $group_type->id()]])
+      ->setLabel(t('Get the related @type groups for this entity.', ['@type' => $group_type->label()]))
+      ->setDescription(t('A list of all the groups referencing this entity.'))
+      ->setTranslatable(FALSE)
+      ->setComputed(TRUE)
+      ->setCustomStorage(TRUE)
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setClass(GroupGroupReferenceItemList::class)
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('form', [
+        'label' => 'hidden',
+        'region' => 'hidden',
+        'weight' => 50,
+      ])
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'region' => 'hidden',
+        'weight' => 50,
+      ]);
+  }
+
+  return $fields;
 }

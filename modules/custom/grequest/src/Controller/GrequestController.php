@@ -5,8 +5,8 @@ namespace Drupal\grequest\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\group\Entity\GroupContent;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -55,13 +55,16 @@ class GrequestController extends ControllerBase {
   /**
    * Builds the form to create new membership on membership request approve.
    */
-  public function approveRequest(GroupInterface $group, GroupContentInterface $group_content) {
+  public function approveRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager()->getStorage('group_content_type');
+    $plugin = $group->getGroupType()->getPlugin('group_membership');
+    $group_type_id = (string) $group->getGroupType()->id();
+    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, $plugin->getRelationTypeId());
 
-    /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
-    $plugin = $group->getGroupType()->getContentPlugin('group_membership');
     // Pre-populate a group membership from Membership request.
-    $group_content = GroupContent::create([
-      'type' => $plugin->getContentTypeConfigId(),
+    $group_content = GroupRelationship::create([
+      'type' => $relation_type_id,
       'gid' => $group->id(),
       'entity_id' => $group_content->get('entity_id')->getString(),
     ]);

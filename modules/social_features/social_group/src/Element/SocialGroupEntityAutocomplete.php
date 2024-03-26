@@ -5,7 +5,7 @@ namespace Drupal\social_group\Element;
 use Drupal\Component\Utility\Tags;
 use Drupal\Core\Entity\EntityReferenceSelection\SelectionWithAutocreateInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_core\Entity\Element\EntityAutocomplete;
 use Drupal\social_group\EntityMemberInterface;
 use Drupal\user\UserInterface;
@@ -41,7 +41,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
     /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
     $form_object = $form_state->getFormObject();
 
-    if (($entity = $form_object->getEntity()) instanceof GroupContentInterface) {
+    if (($entity = $form_object->getEntity()) instanceof GroupRelationshipInterface) {
       // Load the current Group, so we can see if there are existing members.
       $entity = $entity->getGroup();
     }

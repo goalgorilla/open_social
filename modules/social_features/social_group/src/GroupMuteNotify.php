@@ -7,8 +7,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlaggingInterface;
 use Drupal\flag\FlagServiceInterface;
-use Drupal\group\Entity\GroupContent;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
@@ -98,7 +98,7 @@ class GroupMuteNotify {
       return NULL;
     }
 
-    if ($entity instanceof GroupContentInterface) {
+    if ($entity instanceof GroupRelationshipInterface) {
       /** @var \Drupal\group\Entity\GroupInterface $group */
       $group = $entity->getGroup();
     }
@@ -125,9 +125,9 @@ class GroupMuteNotify {
       case 'node':
         if ($entity instanceof NodeInterface) {
           // Try to get the group.
-          $group_content = GroupContent::loadByEntity($entity);
+          $group_content = GroupRelationship::loadByEntity($entity);
           if (!empty($group_content)) {
-            /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+            /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_content */
             $group_content = reset($group_content);
             /** @var \Drupal\group\Entity\GroupInterface $group */
             $group = $group_content->getGroup();

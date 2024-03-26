@@ -10,8 +10,8 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\SynchronizableInterface;
-use Drupal\group\Entity\GroupContent;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -20,7 +20,7 @@ use Drupal\node\NodeInterface;
 function activity_basics_entity_insert(EntityInterface $entity): void {
   // Don't trigger activity creation for group content entity with
   // related UNPUBLISHED entity.
-  if ($entity instanceof GroupContentInterface) {
+  if ($entity instanceof GroupRelationshipInterface) {
     $related_entity = $entity->getEntity();
 
     if ($related_entity instanceof EntityPublishedInterface && !$related_entity->isPublished()) {
@@ -84,7 +84,7 @@ function activity_basics_social_group_move(NodeInterface $node): void {
 
   // If the node is placed within a new group, we add the move_entity_action
   // activity.
-  $group_contents = GroupContent::loadByEntity($node);
+  $group_contents = GroupRelationship::loadByEntity($node);
   if (!empty($group_contents)) {
     _activity_basics_entity_action($node, 'move_entity_action');
   }

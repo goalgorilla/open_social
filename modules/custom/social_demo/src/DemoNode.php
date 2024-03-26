@@ -5,7 +5,7 @@ namespace Drupal\social_demo;
 use Drupal\Core\Entity\EntityBase;
 use Drupal\flag\Entity\Flagging;
 use Drupal\node\NodeInterface;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 
 /**
  * Abstract class for creating demo nodes.
@@ -66,7 +66,7 @@ abstract class DemoNode extends DemoContent {
         $this->content[$entity->id()] = $entity;
 
         if (!empty($item['group'])) {
-          $this->createGroupContent($entity, $item['group']);
+          $this->createGroupRelationship($entity, $item['group']);
         }
 
         if (isset($item['followed_by'])) {
@@ -128,7 +128,7 @@ abstract class DemoNode extends DemoContent {
    * @param string $uuid
    *   UUID of a group.
    */
-  public function createGroupContent(NodeInterface $entity, $uuid) {
+  public function createGroupRelationship(NodeInterface $entity, $uuid) {
     // Load the group.
     $groups = $this->groupStorage->loadByProperties([
       'uuid' => $uuid,
@@ -136,11 +136,14 @@ abstract class DemoNode extends DemoContent {
 
     if ($groups) {
       $group = current($groups);
-      // Get the group content plugin.
+      // Get the group relation plugin.
       $plugin_id = 'group_node:' . $entity->bundle();
-      $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
-      $group_content = GroupContent::create([
-        'type' => $plugin->getContentTypeConfigId(),
+      $relation_type_id = \Drupal::entityTypeManager()
+        ->getStorage('group_content_type')
+        ->getRelationshipTypeId($group->getGroupType()->id(), $plugin_id);
+
+      $group_content = GroupRelationship::create([
+        'type' => $relation_type_id,
         'gid' => $group->id(),
         'entity_id' => $entity->id(),
       ]);

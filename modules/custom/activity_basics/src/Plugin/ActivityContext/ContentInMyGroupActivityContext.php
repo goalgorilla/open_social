@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\GroupMuteNotify;
 use Drupal\social_post\Entity\PostInterface;
@@ -34,7 +34,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
   protected $groupMuteNotify;
 
   /**
-   * Constructs a GroupContentInMyGroupActivityContext object.
+   * Constructs a GroupRelationshipInMyGroupActivityContext object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -163,7 +163,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           // notifications.
           // There can be incidences where even if the user was deleted
           // its membership data was left in the table
-          // group_content_field_data, so, it is necessary to check
+          // group_relationship_field_data, so, it is necessary to check
           // if the user actually exists in system.
           $group_user = $membership->getUser();
           if (
@@ -188,7 +188,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
    * {@inheritdoc}
    */
   public function isValidEntity(EntityInterface $entity): bool {
-    if ($entity instanceof GroupContentInterface) {
+    if ($entity instanceof GroupRelationshipInterface) {
       return TRUE;
     }
 

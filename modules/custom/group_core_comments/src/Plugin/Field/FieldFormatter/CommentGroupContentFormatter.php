@@ -14,7 +14,7 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -142,7 +142,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
 
     // Exclude entities without the set id.
     if (!empty($entity->id())) {
-      $group_contents = GroupContent::loadByEntity($entity);
+      $group_contents = GroupRelationship::loadByEntity($entity);
     }
 
     if (!empty($group_contents)) {

@@ -4,8 +4,8 @@ namespace Drupal\social_group;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\group\Entity\GroupContentInterface;
-use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -24,11 +24,11 @@ class CrossPostingService {
   protected $entityTypeManager;
 
   /**
-   * The group content plugin manager.
+   * The group relation type manager under test.
    *
-   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
-  protected $groupContentManager;
+  protected $groupRelationTypeManager;
 
   /**
    * The database connection.
@@ -45,24 +45,24 @@ class CrossPostingService {
   protected $groupStorage;
 
   /**
-   * Constructs a GroupContentMultipleActivityEntityCondition object.
+   * Constructs a GroupRelationMultipleActivityEntityCondition object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
-   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $group_content_plugin_manager
-   *   The group content enabler manager.
+   * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $groupRelationTypeManager
+   *   The group relation type manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $database, GroupContentEnablerManagerInterface $group_content_plugin_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $database, GroupRelationTypeManagerInterface $groupRelationTypeManager) {
     $this->entityTypeManager = $entity_type_manager;
     $this->groupStorage = $entity_type_manager->getStorage('group');
     $this->database = $database;
-    $this->groupContentManager = $group_content_plugin_manager;
+    $this->groupRelationTypeManager = $groupRelationTypeManager;
   }
 
   /**
-   * Get groups which have a current node as a group content.
+   * Get groups which have a current node as a group relation.
    *
    * @param \Drupal\node\NodeInterface $node
    *   Node object.
@@ -71,9 +71,9 @@ class CrossPostingService {
    *   An array with group ids.
    */
   public function getGroupIdsForNode(NodeInterface $node): array {
-    $validPlugins = $this->getValidGroupContentPluginIds();
+    $validPlugins = $this->getValidGroupRelationPluginIds();
 
-    $query = $this->database->select('group_content_field_data', 'gc');
+    $query = $this->database->select('group_relationship_field_data', 'gc');
     $query->addField('gc', 'gid');
     $query->condition('gc.entity_id', $node->id());
     $query->condition('gc.type', $validPlugins, 'IN');
@@ -109,26 +109,26 @@ class CrossPostingService {
   /**
    * Returns groups list have the same group content entity (node).
    *
-   * @param \Drupal\group\Entity\GroupContentInterface $groupContent
+   * @param \Drupal\group\Entity\GroupRelationshipInterface $groupContent
    *   Node object.
    *
    * @return array
    *   An array with group ids.
    */
-  public function getGroupIdsByGroupContentNodeEntity(GroupContentInterface $groupContent): array {
-    $validPlugins = $this->getValidGroupContentPluginIds();
+  public function getGroupIdsByGroupContentNodeEntity(GroupRelationshipInterface $groupContent): array {
+    $validPlugins = $this->getValidGroupRelationPluginIds();
     // If group content is not a node - nothing return.
     if (!$validPlugins) {
       return [];
     }
 
     // Get node id.
-    $subQuery = $this->database->select('group_content_field_data', 'gc');
+    $subQuery = $this->database->select('group_relationship_field_data', 'gc');
     $subQuery->addField('gc', 'entity_id');
     $subQuery->condition('gc.id', $groupContent->id());
 
     // Get count of group content with the current node.
-    $query = $this->database->select('group_content_field_data', 'gc');
+    $query = $this->database->select('group_relationship_field_data', 'gc');
     $query->addField('gc', 'gid');
     $query->condition('gc.entity_id', $subQuery);
     $query->condition('gc.type', $validPlugins, 'IN');
@@ -149,13 +149,13 @@ class CrossPostingService {
   /**
    * Returns groups list have the same group content entity (node).
    *
-   * @param \Drupal\group\Entity\GroupContentInterface $groupContent
+   * @param \Drupal\group\Entity\GroupRelationshipInterface $groupContent
    *   Node object.
    *
    * @return array
    *   An array with group ids.
    */
-  public function getGroupsByGroupContentNodeEntity(GroupContentInterface $groupContent): array {
+  public function getGroupsByGroupContentNodeEntity(GroupRelationshipInterface $groupContent): array {
     $gids = $this->getGroupIdsByGroupContentNodeEntity($groupContent);
 
     return $this->groupStorage->loadMultiple($gids);
@@ -174,7 +174,7 @@ class CrossPostingService {
     if ($entity instanceof NodeInterface) {
       $gids = $this->getGroupIdsForNode($entity);
     }
-    elseif ($entity instanceof GroupContentInterface) {
+    elseif ($entity instanceof GroupRelationshipInterface) {
       $gids = $this->getGroupIdsByGroupContentNodeEntity($entity);
     }
 
@@ -195,19 +195,19 @@ class CrossPostingService {
   }
 
   /**
-   * Returns existed group content plugins applicable to nodes.
+   * Returns existed group relation plugins applicable to nodes.
    *
    * @return array
    *   An array with plugin ids.
    */
-  public function getValidGroupContentPluginIds(): array {
-    $groupContentPluginIds = array_filter($this->groupContentManager->getInstalledIds(), function ($string) {
+  public function getValidGroupRelationPluginIds(): array {
+    $groupContentPluginIds = array_filter($this->groupRelationTypeManager->getAllInstalledIds(), function ($string) {
       return strpos($string, 'group_node:') === 0;
     });
 
     $plugins = [];
     foreach ($groupContentPluginIds as $pluginId) {
-      $plugins = array_merge($plugins, $this->groupContentManager->getGroupContentTypeIds($pluginId));
+      $plugins = array_merge($plugins, $this->groupRelationTypeManager->getRelationshipTypeIds($pluginId));
     }
 
     return $plugins;

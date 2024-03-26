@@ -255,7 +255,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       $query = $this->connection->select('node_field_data', 'nfd');
       $query->fields('nfd', ['nid']);
       $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
-      $query->leftJoin('group_content_field_data', 'gcfd', "gcfd.entity_id = nfd.nid AND gcfd.type LIKE '%-group_node-%'");
+      $query->leftJoin('group_relationship_field_data', 'gcfd', "gcfd.entity_id = nfd.nid AND gcfd.type LIKE '%-group_node-%'");
       $or = $query->orConditionGroup();
       if ($user->isAuthenticated()) {
         // Nodes community visibility.

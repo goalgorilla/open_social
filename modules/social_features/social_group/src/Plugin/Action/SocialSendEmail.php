@@ -5,7 +5,7 @@ namespace Drupal\social_group\Plugin\Action;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_user\Plugin\Action\SocialSendEmail as SocialSendEmailBase;
 
 /**
@@ -24,8 +24,8 @@ class SocialSendEmail extends SocialSendEmailBase {
    * {@inheritdoc}
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
-    if ($object instanceof GroupContentInterface) {
-      /** @var \Drupal\group\Entity\GroupContentInterface $object */
+    if ($object instanceof GroupRelationshipInterface) {
+      /** @var \Drupal\group\Entity\GroupRelationshipInterface $object */
       return $object->access('view', $account, $return_as_object);
     }
 
@@ -36,7 +36,7 @@ class SocialSendEmail extends SocialSendEmailBase {
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
-    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+    /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
     return $entity->getEntity()->id();
   }
 

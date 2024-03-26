@@ -65,6 +65,7 @@ abstract class GraphQLTestBase extends KernelTestBase {
     'menu_link_content',
     'link',
     'typed_data',
+    'flexible_permissions',
   ];
 
   /**

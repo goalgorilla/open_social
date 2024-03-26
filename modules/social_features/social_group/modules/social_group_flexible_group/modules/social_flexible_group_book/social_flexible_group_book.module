@@ -141,7 +141,7 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
 
     if ($group instanceof GroupInterface) {
       /** @var \Drupal\social_node\Entity\Node[] $books */
-      $books = $group->getContentEntities('group_node:book');
+      $books = $group->getRelatedEntities('group_node:book');
       $bids = array_map(function ($book) {
         return $book->id();
       }, $books);
@@ -159,7 +159,7 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
   else {
     // If book is creating without group we remove all books
     // that are in groups already.
-    $query = \Drupal::database()->select('group_content_field_data', 't');
+    $query = \Drupal::database()->select('group_relationship_field_data', 't');
     $query->addField('t', 'entity_id', 'nid');
     $query->condition('type', 'flexible_group-group_node-book');
     $results = $query->execute();
@@ -214,9 +214,12 @@ function _social_flexible_group_book_ajax_callback(array $form, FormStateInterfa
   }
 
   /** @var \Drupal\social_node\Entity\Node[] $books_in_group */
-  $books_in_group = $group->getContentEntities('group_node:book', [
-    'entity_id' => $all_books,
-  ]);
+  $books_in_group = \Drupal::entityTypeManager()->getStorage('group_content')
+    ->loadByProperties([
+      'plugin_id' => 'group_node:book',
+      'entity_id' => $all_books,
+    ]);
+
   // Get translations.
   $books_in_group = array_map([\Drupal::service('entity.repository'), 'getTranslationFromContext'], $books_in_group);
 

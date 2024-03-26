@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\comment\CommentManagerInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Link;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupRelationship;
 
 /**
  * Provides a node comment formatter.
@@ -53,7 +53,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
     // Exclude entities without the set id.
     if (!empty($entity->id())) {
-      $group_contents = GroupContent::loadByEntity($entity);
+      $group_contents = GroupRelationship::loadByEntity($entity);
     }
 
     if (!empty($group_contents)) {

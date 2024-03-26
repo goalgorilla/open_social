@@ -11,7 +11,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\Core\Url;
-use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
+use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\social_group\JoinManagerInterface;
 use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -110,7 +110,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
 
     $group_type = $this->group->getGroupType();
 
-    if (!$group_type->hasContentPlugin('group_membership_request')) {
+    if (!$group_type->hasPlugin('group_membership_request')) {
       return [];
     }
 
@@ -135,9 +135,8 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       }
     }
 
-    $content_type_config_id = $group_type
-      ->getContentPlugin('group_membership_request')
-      ->getContentTypeConfigId();
+    $content_type_config_id = $group_type->getPlugin('group_membership_request')
+      ->getRelationTypeId();
 
     $requests = (int) $this->entityTypeManager->getStorage('group_content')
       ->getQuery()

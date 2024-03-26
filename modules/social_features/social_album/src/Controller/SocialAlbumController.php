@@ -16,7 +16,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 
 /**
  * Returns responses for Album routes.
@@ -35,9 +35,9 @@ class SocialAlbumController extends ControllerBase {
   /**
    * The Group Content Enabler manager.
    *
-   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
-  protected $gcContentEnabler;
+  protected $groupRelationTypeManager;
 
   /**
    * File URL Generator services.
@@ -61,7 +61,7 @@ class SocialAlbumController extends ControllerBase {
    *   The current user.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory service.
-   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_enabler
+   * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $group_relation_type_manager
    *   The group content manager.
    * @param \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator
    *   The file url generator service.
@@ -73,7 +73,7 @@ class SocialAlbumController extends ControllerBase {
     EntityFormBuilderInterface $entity_form_builder,
     AccountInterface $current_user,
     ConfigFactoryInterface $config_factory,
-    GroupContentEnablerManagerInterface $gc_enabler,
+    GroupRelationTypeManagerInterface $group_relation_type_manager,
     FileUrlGeneratorInterface $file_url_generator
   ) {
     $this->setStringTranslation($translation);
@@ -82,7 +82,7 @@ class SocialAlbumController extends ControllerBase {
     $this->entityFormBuilder = $entity_form_builder;
     $this->currentUser = $current_user;
     $this->configFactory = $config_factory;
-    $this->gcContentEnabler = $gc_enabler;
+    $this->groupRelationTypeManager = $group_relation_type_manager;
     $this->fileUrlGenerator = $file_url_generator;
   }
 
@@ -97,7 +97,7 @@ class SocialAlbumController extends ControllerBase {
       $container->get('entity.form_builder'),
       $container->get('current_user'),
       $container->get('config.factory'),
-      $container->get('plugin.manager.group_content_enabler'),
+      $container->get('group_relation_type.manager'),
       $container->get('file_url_generator')
     );
   }
@@ -247,7 +247,7 @@ class SocialAlbumController extends ControllerBase {
         !$node->field_album_creators->isEmpty() &&
         $node->field_album_creators->value
       ) {
-        /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $storage */
+        /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface $storage */
         $storage = $this->entityTypeManager()->getStorage('group_content');
 
         if ($group_content = $storage->loadByEntity($node)) {
@@ -340,7 +340,7 @@ class SocialAlbumController extends ControllerBase {
    *   The access result.
    */
   protected function checkGroupAccess(GroupInterface $group) {
-    $is_allow = $group->getGroupType()->hasContentPlugin('group_node:album');
+    $is_allow = $group->getGroupType()->hasPlugin('group_node:album');
     return AccessResult::allowedIf($is_allow);
   }
 
@@ -374,10 +374,10 @@ class SocialAlbumController extends ControllerBase {
     $access = $this->checkGroupAccess($group);
 
     if ($access->isAllowed()) {
-      /** @var \Drupal\group\Plugin\GroupContentAccessControlHandler $handler */
-      $handler = $this->gcContentEnabler->getAccessControlHandler('group_node:album');
+      /** @var \Drupal\group\Plugin\Group\RelationHandler\AccessControlInterface $handler */
+      $handler = $this->groupRelationTypeManager->getAccessControlHandler('group_node:album');
       // Reset the access, we are aware there is a plugin.
-      $access = $handler->relationCreateAccess($group, $this->currentUser(), TRUE);
+      $access = $handler->relationshipCreateAccess($group, $this->currentUser(), TRUE);
       if ($access instanceof AccessResultInterface) {
         return $access;
       }

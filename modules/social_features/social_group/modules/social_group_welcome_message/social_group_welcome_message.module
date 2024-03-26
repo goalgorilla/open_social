@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 
 /**
@@ -113,8 +113,8 @@ function social_group_welcome_message_form_alter(array &$form, FormStateInterfac
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_group_welcome_message_group_content_insert(GroupContentInterface $group_content) {
-  $type = $group_content->getContentPlugin()->getPluginId();
+function social_group_welcome_message_group_content_insert(GroupRelationshipInterface $group_content) {
+  $type = $group_content->getPluginId();
   $group = $group_content->getGroup();
 
   // If new membership is created.
