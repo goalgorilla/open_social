@@ -430,4 +430,73 @@ class TopicContext extends RawMinkContext {
     return $this->getNodeIdFromTitle("topic", $topic_title);
   }
 
+  /**
+   * Add translation for topics.
+   *
+   * Example: Add translations for topics:
+   *              | untranslated_title | title            | langcode |
+   *              | Title              | Translated title | nl       |
+   *
+   * @Given Add translations for topics:
+   */
+  public function addTranslationsForTopics(TableNode $topicsTable) : void {
+    if (!\Drupal::service('module_handler')->moduleExists('social_language')) {
+      throw new \Exception("Could not add translation because the Social Language module is disabled.");
+    }
+    foreach ($topicsTable->getHash() as $topicHash) {
+      if (!isset($topicHash['untranslated_title'])) {
+        throw new \Exception("You need to specify the translated title.");
+      }
+      if (!isset($topicHash['langcode'])) {
+        throw new \Exception("You need to specify the language into which you want to translate the topic.");
+      }
+      if (!isset($topicHash['title'])) {
+        throw new \Exception("You need to specify the title that should be translated.");
+      }
+
+      // The specified language should be available.
+      $langcode = $topicHash['langcode'];
+      $language_manager = \Drupal::service('language_manager');
+      $all_enabled_languages = $language_manager->getLanguages();
+      $all_enabled_languages = array_map(fn($language): string => $language->getId(), $all_enabled_languages);
+      if(!in_array($langcode, $all_enabled_languages)) {
+        throw new \Exception("The language with '${$langcode}' langcode that you specified does not exist or is not enabled.");
+      }
+
+      $untranslated_title = $topicHash['untranslated_title'];
+      $translated_title = $topicHash['title'];
+
+      // Get topic id.
+      $untranslated_topic_id = $this->getTopicIdFromTitle($untranslated_title);
+      if (!$untranslated_topic_id) {
+        throw new \Exception("Topic with '${untranslated_title}' title does not exist.");
+      }
+
+      $topic = Node::load($untranslated_topic_id);
+      // Add translation for the topic.
+      if (!$this->topicHasTranslation($topic, $langcode)) {
+        $topic->addTranslation($langcode, ['title' => $translated_title]);
+        $topic->save();
+      }
+
+    }
+  }
+
+  /**
+   * Check if topic has translation of specific language.
+   *
+   * @param object $topic
+   *   The node object.
+   * @param string $langcode
+   *   The langcode.
+   *
+   * @return bool
+   *   True (exists) or false (does not exist).
+   *
+   */
+  public function topicHasTranslation($topic, $langcode) {
+    $existing_translation = \Drupal::service('entity.repository')->getTranslationFromContext($topic, $langcode);
+    return ($existing_translation->langcode->value === $langcode) ? TRUE : FALSE;
+  }
+
 }
