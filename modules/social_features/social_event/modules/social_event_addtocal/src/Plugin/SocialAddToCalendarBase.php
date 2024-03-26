@@ -58,7 +58,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
    * {@inheritdoc}
    */
   public function getName() {
-    return $this->pluginDefinition['label'];
+    return $this->pluginDefinition['label'] ?? '';
   }
 
   /**
@@ -69,7 +69,9 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
       ->getPath('social_event_addtocal');
 
     $default_icon = $module_path . '/assets/icons/default-calendar.svg';
-    $plugin_icon = $module_path . '/assets/icons/' . $this->pluginDefinition['id'] . '.svg';
+    $plugin_icon = empty($this->pluginDefinition['id'])
+      ? $default_icon
+      : $module_path . '/assets/icons/' . $this->pluginDefinition['id'] . '.svg';
 
     return '/' . (file_exists($plugin_icon) ? $plugin_icon : $default_icon);
   }
@@ -106,17 +108,17 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
     $date_time = [];
 
     // Set formats for event dates.
-    $format = $this->pluginDefinition['dateFormat'];
+    $format = $this->pluginDefinition['dateFormat'] ?? 'Ymd\THis';
     if (date_default_timezone_get() === DateTimeItemInterface::STORAGE_TIMEZONE) {
-      $format = $this->pluginDefinition['utcDateFormat'];
+      $format = $this->pluginDefinition['utcDateFormat'] ?? 'Ymd\THis\Z';
     }
-    $all_day_format = $this->pluginDefinition['allDayFormat'];
+    $all_day_format = $this->pluginDefinition['allDayFormat'] ?? 'Ymd';
 
     // Convert date to correct format.
     // Set dates array.
     if ($all_day) {
       $date_time['start'] = $start_date->format($all_day_format);
-      $end_date->modify($this->pluginDefinition['endDateModification']);
+      $end_date->modify($this->pluginDefinition['endDateModification'] ?? '+ 1 day');
       $date_time['end'] = $end_date->format($all_day_format);
     }
     else {
