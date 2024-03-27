@@ -214,7 +214,7 @@ class SocialGroupController extends ControllerBase {
       $account,
       // Own profile?
       $user->id() === $account->id()
-        ? 'view groups on other profiles' : 'view groups on my profile',
+        ? 'view groups on my profile' : 'view groups on other profiles',
     );
   }
 
