@@ -69,13 +69,6 @@ class EnrollActionForm extends FormBase {
   protected $moduleHandler;
 
   /**
-   * The event enroll service.
-   *
-   * @var \Drupal\social_event\Service\SocialEventEnrollServiceInterface
-   */
-  protected $eventEnrollService;
-
-  /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
@@ -107,7 +100,6 @@ class EnrollActionForm extends FormBase {
     $instance->userStorage = $container->get('entity_type.manager')->getStorage('user');
     $instance->configFactory = $container->get('config.factory');
     $instance->moduleHandler = $container->get('module_handler');
-    $instance->eventEnrollService = $container->get('social_event.enroll');
     $instance->formBuilder = $container->get('form_builder');
     $instance->eventHelper = $container->get('social_event.status_helper');
     return $instance;

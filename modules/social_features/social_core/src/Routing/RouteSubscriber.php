@@ -52,12 +52,6 @@ class RouteSubscriber extends RouteSubscriberBase {
       if (!isset($titles['node']['bundles'])) {
         $titles['node']['bundles'] = [];
       }
-
-      $this->moduleHandler->alterDeprecated(
-        'Deprecated in social:11.4.0 and is removed from social:13.0.0. Use hook_social_core_title_alter instead. See https://www.drupal.org/node/3285045',
-        'social_node_title_prefix_articles',
-        $titles['node']['bundles'],
-      );
     }
 
     // Write our own page title resolver for creation pages.

@@ -15,7 +15,6 @@ use Drupal\node\NodeInterface;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\social_event\Service\SocialEventEnrollServiceInterface;
 use Drupal\social_event_max_enroll\Service\EventMaxEnrollService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -38,11 +37,6 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
    * The token service.
    */
   protected Token $token;
-
-  /**
-   * The social event enroll.
-   */
-  protected SocialEventEnrollServiceInterface $eventEnrollService;
 
   /**
    * The module handler service.
@@ -76,7 +70,6 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     $instance->entityStorage = $instance->entityTypeManager->getStorage('event_enrollment');
     $instance->tempStoreFactory = $container->get('tempstore.private');
     $instance->token = $container->get('token');
-    $instance->eventEnrollService = $container->get('social_event.enroll');
     $instance->moduleHandler = $container->get('module_handler');
     if ($instance->moduleHandler->moduleExists('social_event_max_enroll')) {
       $instance->eventMaxEnrollService = $container->get('social_event_max_enroll.service');

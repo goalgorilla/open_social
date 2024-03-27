@@ -1,4 +1,4 @@
-@api @group
+@api
 Feature: Limit access to group creation
   I want to limit who can create group to ensure a healthy community.
 
@@ -6,12 +6,14 @@ Feature: Limit access to group creation
     Given I disable that the registered users to be verified immediately
     And I am logged in as a user with the authenticated role
 
-    When I am on "group/add"
+    When I am on "group/add/flexible_group"
+
     Then I should see "Access denied"
 
   Scenario: Verified users should be able to create groups
     Given I disable that the registered users to be verified immediately
     And I am logged in as a user with the verified role
 
-    When I am on "group/add"
+    When I am on "group/add/flexible_group"
+
     Then I should not see "Access denied"

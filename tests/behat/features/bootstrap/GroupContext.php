@@ -186,24 +186,12 @@ class GroupContext extends RawMinkContext {
    * @When create a :group_type group using its creation page:
    */
   public function whenICreateAGroupUsingTheForm(string $group_type, TableNode $fields): void {
-    $group_types = [
-      'flexible' => 'flexible_group',
-    ];
-    $group_type_selector = $group_types[$group_type] ?? NULL;
-    if ($group_type_selector === NULL) {
-      $type_names = "'" . implode("', '", array_keys($group_types)) . "'";
-      throw new \Exception("Group type must be one of $type_names but got '$group_type'");
-    }
-
-    $this->visitPath("/group/add");
+    $this->visitPath("/group/add/flexible_group");
     if ($this->getSession()->getStatusCode() !== 200) {
-      throw new \Exception("Could not go to `/group/add` page.");
+      throw new \Exception("Could not go to `/group/add/flexible_group` page.");
     }
 
     $page = $this->getSession()->getPage();
-
-    $page->selectFieldOption("group_type", $group_type_selector);
-    $page->pressButton("Continue");
 
     $group = ['type' => $group_type];
     foreach ($fields->getRowsHash() as $field => $value) {
