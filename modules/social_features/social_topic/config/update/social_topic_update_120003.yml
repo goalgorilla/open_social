@@ -1,0 +1,26 @@
+block.block.socialblue_views_block__latest_topics_group_topics_block:
+  expected_config: {  }
+  update_actions:
+    delete:
+      visibility:
+        group_type: {  }
+views.view.latest_topics:
+  expected_config: {  }
+  update_actions:
+    change:
+      display:
+        group_topics_block:
+          display_options:
+            arguments:
+              gid:
+                specify_validation: false
+                validate:
+                  type: none
+                  fail: 'not found'
+    delete:
+      display:
+        group_topics_block:
+          display_options:
+            arguments:
+              gid:
+                validate_options: {  }
