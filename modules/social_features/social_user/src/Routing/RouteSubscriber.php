@@ -55,7 +55,7 @@ class RouteSubscriber extends RouteSubscriberBase {
     // Add custom access to routes.
     foreach ($disable_access_for as $route_name) {
       if ($route = $collection->get($route_name)) {
-        $route->setRequirement('_custom_access', '\Drupal\social_user\Controller\SocialUserController::accessUsersPages');
+        $route->setRequirement('_entity_access', 'user.view');
       }
     }
   }

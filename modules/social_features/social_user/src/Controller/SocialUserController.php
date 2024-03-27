@@ -5,7 +5,6 @@ namespace Drupal\social_user\Controller;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -79,41 +78,6 @@ class SocialUserController extends ControllerBase {
       'administer users',
       'view users',
     ], 'OR');
-  }
-
-  /**
-   * Checks access for user page.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The current user.
-   * @param \Drupal\Core\Routing\RouteMatch $routeMatch
-   *   The matched route.
-   *
-   * @return \Drupal\Core\Access\AccessResultInterface
-   *   The access result.
-   */
-  public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch) {
-    $user = $routeMatch->getParameter('user');
-    if ($user === NULL) {
-      return AccessResult::neutral();
-    }
-
-    if (is_numeric($user)) {
-      $user = $this->entityTypeManager->getStorage('user')
-        ->load($user);
-    }
-
-    if (!$user instanceof UserInterface) {
-      return AccessResult::neutral();
-    }
-
-    if ($user->isBlocked()) {
-      if ($account->hasPermission('view blocked user')) {
-        return AccessResult::allowed();
-      }
-      return AccessResult::forbidden();
-    }
-    return AccessResult::allowed();
   }
 
 }
