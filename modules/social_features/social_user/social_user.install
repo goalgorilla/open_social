@@ -152,3 +152,17 @@ function social_user_update_13000(): ?string {
   // Output logged messages to a related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Change search operator in views.view.user_admin_people.
+ */
+function social_user_update_12003(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_user', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
