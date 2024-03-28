@@ -190,3 +190,19 @@ function social_comment_update_11202(): void {
     $comment_view->save();
   }
 }
+
+/**
+ * Add profile's First Name and Last Name in combined filter to view Comments.
+ *
+ * Change search operator.
+ */
+function social_comment_update_12201(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_comment', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
