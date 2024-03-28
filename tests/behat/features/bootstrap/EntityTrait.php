@@ -95,6 +95,43 @@ trait EntityTrait {
       if ($field_definition !== NULL && in_array($field_definition->getType(), ["created", "changed"], TRUE)) {
         $values[$field_name] = strtotime($values[$field_name]);
       }
+      // Allow group fields to be a comma separated list of IDs or labels.
+      // We can only do this for the default handler because other handlers
+      // might have a different settings format so we can't know the target
+      // bundles.
+      if ($field_definition !== NULL && $field_definition->getType() === "entity_reference" && $field_definition->getSetting("target_type") === "group") {
+        $group_storage = $entity_type_manager->getStorage("group");
+        if ($field_definition->getSetting("handler") === "default:group") {
+          assert(is_string($field_value), "The group value for '$field_name' has already been converted to entities but this isn't needed.");
+          if (trim($field_value) === "") {
+            unset($values[$field_name]);
+            continue;
+          }
+          $allowed_bundles = $field_definition->getSetting("handler_settings")["target_bundles"];
+          // Split 0,1 to [0, 1] and convert 2,someLabel to [2, 4], making a
+          // lookup of the group id by name.
+          $values[$field_name] = array_map(
+            function ($id_or_name) use ($group_storage, $allowed_bundles) {
+              $id_or_name = trim($id_or_name);
+              if (is_numeric($id_or_name)) {
+                return ["target_id" => $id_or_name];
+              }
+
+              $group_ids = $group_storage->getQuery()
+                ->condition("type", $allowed_bundles, "IN")
+                ->condition("label", $id_or_name)
+                ->accessCheck(TRUE)
+                ->execute();
+
+              if (!is_array($group_ids) || empty($group_ids)) {
+                throw new \InvalidArgumentException("Group $id_or_name does not exist" . implode(", ", $allowed_bundles));
+              }
+              return ["target_id" => (int) reset($group_ids)];
+            },
+            explode(",", $field_value)
+          );
+        }
+      }
     }
   }
 
