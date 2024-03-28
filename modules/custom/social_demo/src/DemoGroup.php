@@ -108,6 +108,9 @@ abstract class DemoGroup extends DemoContent {
       'changed' => $item['changed'],
       'field_group_image' => $item['image'],
       'field_group_files' => $item['files'],
+      'field_flexible_group_visibility' => $item['field_flexible_group_visibility'],
+      'field_group_allowed_join_method' => $item['field_group_allowed_join_method'],
+      'field_group_allowed_visibility' => $item['field_group_allowed_visibility'],
     ];
 
     return $entry;
