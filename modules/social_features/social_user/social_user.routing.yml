@@ -47,3 +47,10 @@ social_user.stream:
   requirements:
     _user_is_logged_in: 'TRUE'
     _custom_access: '\Drupal\social_user\Controller\SocialUserController::accessUsersPages'
+
+social_user.my_settings:
+  path: '/my-settings'
+  defaults:
+    _controller: '\Drupal\user\Controller\UserController::userEditPage'
+  requirements:
+    _user_is_logged_in: 'TRUE'
