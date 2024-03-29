@@ -240,29 +240,6 @@ function _social_group_get_permissions($role) {
 }
 
 /**
- * Update the user admin view with our custom action.
- *
- * Action ID: 'social_group_add_members_to_group_action'.
- */
-function _social_group_alter_admin_people_view(): void {
-  // Get people view config.
-  $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
-  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
-
-  // Check if already have bulk action.
-  if (in_array('social_group_add_members_to_group_action', array_column(array_values($selected_actions), 'action_id'))) {
-    return;
-  }
-
-  // Add bulk action and save them.
-  $selected_actions[] = [
-    'action_id' => 'social_group_add_members_to_group_action',
-  ];
-  $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
-  $config->save();
-}
-
-/**
  * Install geolocation, geocoder and grolesync module.
  */
 function social_group_update_8001() {
