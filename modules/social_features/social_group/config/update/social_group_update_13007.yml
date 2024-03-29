@@ -8,3 +8,20 @@ views.view.group_members:
             relationships:
               gc__user:
                 table: group_relationship_field_data
+
+views.view.group_managers:
+  expected_config: { }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filter_groups:
+              groups: {  }
+    add:
+      display:
+        default:
+          display_options:
+            filter_groups:
+              groups:
+                1: AND
