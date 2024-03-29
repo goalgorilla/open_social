@@ -43,6 +43,7 @@ function social_group_install(): void {
       'edit group types',
       'flag mute_group_notifications',
       'unflag mute_group_notifications',
+      'access cross-group posting',
     ]
   );
   user_role_grant_permissions(
@@ -61,6 +62,7 @@ function social_group_install(): void {
       'set social group settings',
       'flag mute_group_notifications',
       'unflag mute_group_notifications',
+      'access cross-group posting',
     ]
   );
   // Add menu items.
@@ -898,4 +900,13 @@ function social_group_update_13010() : string {
 
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
+}
+
+/**
+ * Grand CM+ permission for access to cross-posting.
+ */
+function social_group_update_13008() : void {
+  foreach (['sitemanager', 'contentmanager'] as $rid) {
+    user_role_grant_permissions($rid, ['access cross-group posting']);
+  }
 }
