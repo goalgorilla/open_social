@@ -107,6 +107,16 @@ function social_flexible_group_book_update_12001(): string {
 }
 
 /**
+ * Replace deprecated group permissions.
+ */
+function social_flexible_group_book_update_13000(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_flexible_group_book', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
  * Update group_books views config to use a correct table.
  */
 function social_flexible_group_book_update_13001() : string {

@@ -905,8 +905,68 @@ function social_group_update_13010() : string {
 /**
  * Grand CM+ permission for access to cross-posting.
  */
-function social_group_update_13008() : void {
+function social_group_update_13011() : void {
   foreach (['sitemanager', 'contentmanager'] as $rid) {
     user_role_grant_permissions($rid, ['access cross-group posting']);
+  }
+}
+
+/**
+ * Replace deprecated group permissions.
+ */
+function social_group_update_13012(): string {
+  /** @var \Drupal\group\Entity\GroupTypeInterface[] $group_types */
+  $group_types = \Drupal::entityTypeManager()
+    ->getStorage('group_type')
+    ->loadMultiple();
+  foreach ($group_types as $group_type) {
+    _social_group_update_permissions($group_type, ' content');
+  }
+
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
+ * Helper function to replace deprecated group permissions.
+ *
+ * @param mixed $group_type
+ *   A machine name of group type or object of GroupType.
+ * @param string $permission
+ *   A search key of deprecated permission.
+ */
+function _social_group_update_permissions(mixed $group_type, string $permission): void {
+  if (!$group_type instanceof GroupType) {
+    /** @var \Drupal\group\Entity\GroupType $group_type */
+    $group_type = \Drupal::entityTypeManager()
+      ->getStorage('group_type')
+      ->load($group_type);
+  }
+
+  /** @var \Drupal\group\Access\GroupPermissionHandler $service */
+  $service = \Drupal::service('group.permissions');
+
+  $available_permissions = array_keys($service->getPermissionsByGroupType($group_type));
+
+  $group_roles = $group_type->getRoles();
+  foreach ($group_roles as $group_role) {
+    // Group admins don't have permissions list.
+    if ($group_role->isAdmin()) {
+      continue;
+    }
+
+    $broken_permissions = array_diff($group_role->getPermissions(), $available_permissions);
+    foreach ($broken_permissions as $broken_permission) {
+      // Group permission like "view gnode:event content" should be replaced
+      // with "view gnode:event relationship".
+      if (str_ends_with($broken_permission, $permission)) {
+        $group_role->grantPermission(str_replace('content', 'relationship', $broken_permission));
+        $group_role->revokePermission($broken_permission);
+      }
+    }
+
+    $group_role->save();
   }
 }

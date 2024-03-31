@@ -96,20 +96,16 @@ function social_album_uninstall() {
 function _social_album_set_group_permissions() {
   $common_permissions = [
     'anonymous' => [
-      'view group_node:album content',
+      'view group_node:album relationship',
       'view group_node:album entity',
     ],
     'outsider' => [
       'update own group_node:album entity',
-      'view group_node:album content',
-      'view group_node:album entity',
     ],
     'member' => [
       'create group_node:album entity',
-      'create group_node:album content',
+      'create group_node:album relationship',
       'delete own group_node:album entity',
-      'view group_node:album entity',
-      'view group_node:album content',
     ],
     'group_manager' => [
       'delete any group_node:album entity',
@@ -117,11 +113,10 @@ function _social_album_set_group_permissions() {
     'group_admin' => [
       'update any group_node:album entity',
       'view unpublished group_node:album entity',
-      'create group_node:album content',
-      'delete any group_node:album content',
-      'delete own group_node:album content',
-      'update any group_node:album content',
-      'update own group_node:album content',
+      'delete any group_node:album relationship',
+      'delete own group_node:album relationship',
+      'update any group_node:album relationship',
+      'update own group_node:album relationship',
     ],
     // Content manager.
     '83776d798' => [],
@@ -238,6 +233,10 @@ function social_album_update_13000(): void {
  * Replace deprecated group permissions.
  */
 function social_album_update_13001(): string {
+  // Update album group permissions.
+  _social_album_set_group_permissions();
+
+  // Update views.view.albums permissions.
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_album', __FUNCTION__);
