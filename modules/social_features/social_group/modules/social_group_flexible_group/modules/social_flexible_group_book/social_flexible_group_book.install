@@ -105,3 +105,13 @@ function social_flexible_group_book_update_12001(): string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Replace deprecated group permissions.
+ */
+function social_flexible_group_book_update_13000(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_flexible_group_book', __FUNCTION__);
+  return $updater->logger()->output();
+}

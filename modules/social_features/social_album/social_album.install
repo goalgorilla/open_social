@@ -234,3 +234,13 @@ function social_album_update_13000(): void {
   }
 
 }
+
+/**
+ * Replace deprecated group permissions.
+ */
+function social_album_update_13001(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_album', __FUNCTION__);
+  return $updater->logger()->output();
+}
