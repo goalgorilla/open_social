@@ -225,7 +225,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
             'position' => 2,
             'display_options' => [
               'display_extenders' => [],
-              'path' => 'group/%/membership-requests',
+              'path' => 'group/%group/membership-requests',
               'access' => [
                 'type' => 'role',
                 'options' => [

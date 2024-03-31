@@ -51,7 +51,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
       // by the grequest module and is not correct. So we add a redirect to the
       // custom one.
       $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_pending_members.membership_requests', [
-        'arg_0' => $group->id(),
+        'group' => $group->id(),
       ])->toString()));
     }
   }
