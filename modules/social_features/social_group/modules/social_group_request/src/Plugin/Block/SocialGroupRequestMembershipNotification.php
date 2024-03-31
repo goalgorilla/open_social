@@ -163,7 +163,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
           ),
           Url::fromRoute(
             'view.group_pending_members.membership_requests',
-            ['arg_0' => $this->group->id()],
+            ['group' => $this->group->id()],
           ),
         )->toString(),
       ]),

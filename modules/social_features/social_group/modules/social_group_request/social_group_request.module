@@ -254,7 +254,7 @@ function social_group_request_preprocess_activity(array &$variables) {
           $activity_entity = $activity->getRelatedEntity();
           if ($activity_entity instanceof GroupRelationshipInterface) {
             $variables['full_url'] = Url::fromRoute('view.group_pending_members.membership_requests', [
-              'arg_0' => $activity_entity->getGroup()->id(),
+              'group' => $activity_entity->getGroup()->id(),
             ]);
           }
           break;
@@ -280,7 +280,7 @@ function social_group_request_preprocess_page_title(&$variables) {
     return;
   }
 
-  $group_id = \Drupal::routeMatch()->getParameter('arg_0');
+  $group_id = \Drupal::routeMatch()->getParameter('group');
   if (!isset($group_id) || empty($group_id)) {
     return;
   }
