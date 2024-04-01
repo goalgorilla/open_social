@@ -67,7 +67,10 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
               ->load($nid);
             if ($node instanceof NodeInterface && $node->getType() === 'event') {
               $enrollments = \Drupal::service('social_event.status_helper');
-              $count = count($enrollments->getAllEventEnrollments((int) $node->id(), TRUE));
+              $count = count($enrollments->getEventEnrollmentsByStatus((int) $node->id(), [
+                EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED,
+                EventEnrollmentInterface::REQUEST_APPROVED,
+              ]));
               $enrollments = \Drupal::translation()->formatPlural(
                 $count,
                 ':count person has enrolled',
