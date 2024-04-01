@@ -17,3 +17,8 @@ services:
       - '@config.factory'
     tags:
       - { name: config.factory.override, priority: 10}
+
+  group.relation_handler.access_control.group_invitation:
+    class: Drupal\social_group_invite\Plugin\Group\RelationHandler\SocialGroupInviteAccessControl
+    arguments: [ '@group.relation_handler.access_control' ]
+    shared: false
