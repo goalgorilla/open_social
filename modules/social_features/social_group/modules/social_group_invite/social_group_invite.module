@@ -8,6 +8,8 @@
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -23,6 +25,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\social_group_invite\Plugin\Field\FieldFormatter\EntityReferenceLabelFormatterOverrider;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -847,4 +850,54 @@ function social_group_invite_field_formatter_info_alter(array &$info): void {
   if (isset($info['entity_reference_label'])) {
     $info['entity_reference_label']['class'] = EntityReferenceLabelFormatterOverrider::class;
   }
+}
+
+/**
+ * Implements hook_query_TAG_alter() for "group_content_access".
+ *
+ * @see group_query_entity_query_alter()
+ */
+function social_group_invite_query_group_content_access_alter(AlterableInterface $query): void {
+  if (!$query instanceof SelectInterface) {
+    return;
+  }
+
+  $view = $query->getMetaData('view');
+  if (!$view instanceof ViewExecutable) {
+    return;
+  }
+
+  if ($view->id() !== 'social_group_user_invitations') {
+    return;
+  }
+
+  /** @var \Drupal\Core\Database\Query\Condition $condition */
+  foreach (array_column($query->conditions(), 'field') as $condition) {
+    if (!isset($condition->conditions()['#conjunction'])) {
+      continue;
+    }
+
+    if ($condition->conditions()['#conjunction'] !== 'OR') {
+      continue;
+    }
+
+    /* @see \Drupal\group\QueryAccess\GroupRelationshipQueryAlter */
+    $group_relationship_query_conditions = $condition;
+  }
+
+  if (!isset($group_relationship_query_conditions)) {
+    return;
+  }
+
+  $data_table = 'group_relationship_field_data';
+
+  $see_own_invites_condition = $group_relationship_query_conditions->andConditionGroup()
+    ->condition("$data_table.type", '%-group_invitation', 'LIKE')
+    ->condition(
+      ($group_relationship_query_conditions->orConditionGroup())
+        ->condition("$data_table.uid", \Drupal::currentUser()->id())
+        ->condition("$data_table.entity_id", \Drupal::currentUser()->id())
+    );
+
+  $group_relationship_query_conditions->condition($see_own_invites_condition);
 }

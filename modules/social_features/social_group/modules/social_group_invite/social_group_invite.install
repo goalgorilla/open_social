@@ -50,3 +50,19 @@ function social_group_invite_update_13000(): ?string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Remove redundant blocks with pending notifications.
+ */
+function social_group_invite_update_13001(): void {
+  $deprecated_blocks = [
+    'block.block.membershipinvitenotification_3',
+    'block.block.membershipinvitenotification_4',
+  ];
+
+  foreach ($deprecated_blocks as $name) {
+    \Drupal::configFactory()
+      ->getEditable($name)
+      ->delete();
+  }
+}
