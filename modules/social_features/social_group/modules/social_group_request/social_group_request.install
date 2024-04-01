@@ -8,7 +8,7 @@
 /**
  * Implements hook_install().
  */
-function social_group_request_install() {
+function social_group_request_install(): void {
   // Set some default permissions.
   _social_group_request_set_permissions();
 
@@ -28,26 +28,37 @@ function social_group_request_update_dependencies(): array {
     'social_group_request' => 13000,
   ];
 
+  $dependencies['social_group_request'][13001] = [
+    'group' => 9208,
+  ];
+
   return $dependencies;
 }
 
 /**
  * Assign group request permission for closed and flexible group types.
  */
-function _social_group_request_set_permissions() {
+function _social_group_request_set_permissions(): void {
   if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
     /** @var \Drupal\group\Entity\GroupRoleInterface $outsider */
     $outsider = \Drupal::entityTypeManager()
       ->getStorage('group_role')
       ->load('flexible_group-outsider');
-    $outsider->grantPermissions(['request group membership'])->save();
+    $outsider->grantPermission('request group membership')->save();
+
+    /** @var \Drupal\group\Entity\GroupRoleInterface $group_manager */
+    $group_manager = \Drupal::entityTypeManager()
+      ->getStorage('group_role')
+      ->load('flexible_group-group_manager');
+    // Group managers should be able to manage membership requests.
+    $group_manager->grantPermission('view group_membership_request relationship')->save();
   }
 }
 
 /**
  * Implements hook_update_last_removed().
  */
-function social_group_request_update_last_removed() : int {
+function social_group_request_update_last_removed(): int {
   return 10301;
 }
 
@@ -67,4 +78,16 @@ function social_group_request_update_13000(): ?string {
   $updateHelper = \Drupal::service('update_helper.updater');
   $updateHelper->executeUpdate('social_group_request', __FUNCTION__);
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Group managers should be able to manage group memberships.
+ */
+function social_group_request_update_13001(): void {
+  /** @var \Drupal\group\Entity\GroupRoleInterface $group_manager */
+  $group_manager = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->load('flexible_group-group_manager');
+  // Group managers should be able to manage membership requests.
+  $group_manager->grantPermission('view group_membership_request relationship')->save();
 }
