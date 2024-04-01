@@ -79,6 +79,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->account = $account;
+    // @todo Replace with "context_definitions" group attribute.
     $this->group = _social_group_get_current_group();
     $this->entityTypeManager = $entity_type_manager;
     $this->setStringTranslation($translation);
@@ -135,15 +136,12 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       }
     }
 
-    $content_type_config_id = $group_type->getPlugin('group_membership_request')
-      ->getRelationTypeId();
-
     $requests = (int) $this->entityTypeManager->getStorage('group_content')
       ->getQuery()
-      ->condition('type', $content_type_config_id)
+      ->accessCheck()
+      ->condition('plugin_id', 'group_membership_request')
       ->condition('gid', $this->group->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
-      ->accessCheck()
       ->count()
       ->execute();
 
