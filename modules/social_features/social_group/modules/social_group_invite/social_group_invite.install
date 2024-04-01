@@ -120,6 +120,22 @@ function social_group_invite_update_13001(): void {
 }
 
 /**
+ * Remove redundant blocks with pending notifications.
+ */
+function social_group_invite_update_13002(): void {
+  $deprecated_blocks = [
+    'block.block.membershipinvitenotification_3',
+    'block.block.membershipinvitenotification_4',
+  ];
+
+  foreach ($deprecated_blocks as $name) {
+    \Drupal::configFactory()
+      ->getEditable($name)
+      ->delete();
+  }
+}
+
+/**
  * Update group_invite views config to use a correct table.
  */
 function social_group_invite_update_13003() : string {
