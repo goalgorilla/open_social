@@ -208,4 +208,39 @@ class EventEnrollmentStatusHelper {
       ->loadByProperties($conditions);
   }
 
+  /**
+   * Get event-enrollment without request-invite-status and filtering by it too.
+   *
+   * @param int $event_id
+   *   Event id to search enrollments.
+   * @param array $filter
+   *   Event enrollment status to be filtered.
+   *
+   * @return array
+   *   Return an array of EventEnrollmentEntity.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getEventEnrollmentsByStatus(int $event_id, array $filter): array {
+    // Get event-enrollment query.
+    $query = $this->entityTypeManager
+      ->getStorage('event_enrollment')
+      ->getQuery()
+      ->accessCheck(FALSE);
+
+    // Get event-enrollment with field_request_or_invite_status or filter by
+    // array parameter.
+    $status_group_condition = $query->orConditionGroup()
+      ->notExists('field_request_or_invite_status')
+      ->condition('field_request_or_invite_status', $filter, 'IN');
+    $event_nid = $query
+      ->condition('field_event', $event_id)
+      ->condition($status_group_condition)
+      ->execute();
+
+    return $this->entityTypeManager->getStorage('event_enrollment')
+      ->loadMultiple($event_nid);
+  }
+
 }
