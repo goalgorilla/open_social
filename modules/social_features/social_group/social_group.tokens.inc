@@ -80,7 +80,7 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                 if ($entity instanceof GroupRelationshipInterface) {
                   $group_content_type = $entity->getRelationshipType();
                   if ($group_content_type !== NULL) {
-                    $display_name = $group_content_type->label();
+                    $display_name = $group_content_type->getPlugin()->getRelationType()->getLabel();
                     $content_url = Url::fromRoute('entity.node.canonical',
                       ['node' => $entity->getEntity()->id()],
                       ['absolute' => TRUE]
