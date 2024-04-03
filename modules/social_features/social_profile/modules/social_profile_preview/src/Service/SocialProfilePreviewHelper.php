@@ -7,6 +7,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\Core\Url;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
@@ -78,14 +79,20 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
         $attributes = $attributes->toArray();
       }
 
-      $attributes['class'][] = 'profile-preview';
-      $attributes['data-profile'] = $profile->id();
+      $attributes['class'][] = 'preview-popup-link';
+
+      $preview_url = Url::fromRoute('social_profile_preview.canonical', [
+        'profile' => $profile->get('profile_id')->value,
+      ])->getInternalPath();
+      $attributes['data-preview-url'] = $preview_url;
+      $attributes['data-preview-id'] = $profile->get('profile_id')->value;
+      $attributes['aria-label'] = t('Open preview popup');
 
       if ($is_object || $return_as_object) {
         $attributes = new Attribute($attributes);
       }
 
-      $variables['#attached']['library'][] = 'social_profile_preview/base';
+      $variables['#attached']['library'][] = 'social_core/preview-el';
 
       if ($this->moduleHandler->moduleExists('social_follow_user')) {
         $variables['#attached']['library'][] = 'social_follow_user/counter';

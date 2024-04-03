@@ -48,6 +48,7 @@
       height: 84px;
       margin: 0;
       border-radius: 0;
+      background-color: var(--primary-color);
     }
 
     &-info {
@@ -90,6 +91,18 @@
         width: 42px;
         height: 42px;
         fill: #cecece;
+      }
+    }
+
+    &-footer {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 0 18px;
+
+
+      > *:not(:empty) {
+        padding: 20px 10px 0;
       }
     }
   }
@@ -137,7 +150,6 @@
   .preview-popup-title {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -196,8 +208,11 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 
-    .field {
+    &:not(:empty) {
       margin-top: 20px;
+    }
+
+    .field {
       p {
         font-size: 1rem;
         font-weight: 500;
@@ -213,14 +228,15 @@
   .btn-group--wrapper {
     display: flex;
     align-items: center;
-    margin: 28px -10px 0;
+    flex-wrap: wrap;
 
-    &:empty {
-      margin: 0;
+    &:not(:empty) {
+      margin: 0 -10px -10px;
     }
 
     > .btn {
-      margin: 0 10px;
+      width: auto !important;
+      margin: 0 10px 10px;
       padding: 4px 20px !important;
       font-size: .875rem;
       font-weight: 600;
@@ -229,6 +245,17 @@
       &.btn-primary {
         color: #fff;
       }
+    }
+  }
+
+  .followers-wrapper {
+    font-size: .875rem;
+    line-height: 20px;
+
+    b {
+      margin-right: 8px;
+      font-weight: 600;
+      text-decoration: underline;
     }
   }
 }
