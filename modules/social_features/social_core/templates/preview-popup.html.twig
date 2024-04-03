@@ -38,11 +38,10 @@
   <div class="card__block">
     <div class="media-wrapper">
       <div class="media">
-        <div class="media-header badge badge-primary"></div>
+        <div class="media-header"></div>
         <div class="media-info">
           <div class="media-logo">
-            {% block preview_popup_logo %}
-            {% endblock %}
+            {% block preview_popup_logo %}{% endblock %}
           </div>
           {% block preview_popup_user_number %}
             <div class="preview-popup-user-number">
@@ -84,25 +83,22 @@
                   </defs>
                 </svg>
               {% endif %}
-            {% endblock %}
-          </div>
+            </div>
+          {% endblock %}
         </div>
         <div class="media-body">
           <div{{ title_attributes }} class="card--text preview-popup-title">
-            <a href="{{ url }}" rel="bookmark">
-              {{ label }}
-              {% block preview_popup_user_icon %}
-              {% endblock %}
-            </a>
-          </div>
-          <div class="preview-popup-types">
-            {% block preview_popup_type %}
+            {% block preview_popup_user_link %}
+              <a href="{{ url }}" rel="bookmark">
+                {% block preview_popup_user_name %}
+                  {{ label }}
+                {% endblock %}
+                {% block preview_popup_user_icon %}{% endblock %}
+              </a>
             {% endblock %}
           </div>
-          <div class="preview-popup-description">
-            {% block preview_popup_description %}
-            {% endblock %}
-          </div>
+          <div class="preview-popup-types">{% block preview_popup_type %}{% endblock %}</div>
+          <div class="preview-popup-description">{% block preview_popup_description %}{% endblock %}</div>
         </div>
         <div class="media-footer">
           <div class="btn-group--wrapper">{% block preview_popup_buttons %}{% endblock %}</div>

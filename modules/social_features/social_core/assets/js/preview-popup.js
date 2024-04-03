@@ -11,11 +11,20 @@
       var delayClose = 200;
       var delta = 0;
 
-      $(once('previewPopupBehavior', $(context).find('[data-preview-url]')))
+      // Remove a preview popup if you use back button in the browser.ß
+      $(window).bind("pageshow", function(event) {
+        if (event.originalEvent.persisted) {
+          $('.ui-dialog').remove();
+          $(context).find('.ui-dialog').remove();
+        }
+      });
+
+      if ($('body.user-logged-in').length === 0) { return; }
+
+      $(once('previewPopupBehavior', $(context).find('[data-preview-url]'), context))
         .on('mouseover', function () {
           var $element = $(this);
           var selector = $element.attr('id');
-          var url = $element.data('preview-url');
 
           if (timeouts[selector] !== undefined) {
             window.clearTimeout(timeouts[selector]);
@@ -23,6 +32,7 @@
 
           timeouts[selector] = window.setTimeout(function () {
             var identifier = $element.data('preview-id');
+            var url = $element.data('preview-url');
 
             function dialog() {
               dialogs[selector] = Drupal.dialog(
@@ -65,7 +75,7 @@
                   },
                   open: function () {
                     $(this).find('a').blur();
-                    $('.ui-widget-overlay').addClass('hide');
+                    $('.ui-widget-overlay').remove();
                   }
                 }
               );
@@ -87,22 +97,23 @@
             }
             else {
               var ajax = Drupal.ajax({
-                url: Drupal.url(url.substring(1))
+                url: Drupal.url(url)
               });
 
-              ajax.commands.insert = function (ajax, response, status) {
+              ajax.commands.insert = function (ajax, response) {
                 if (response.method === null) {
                   previewPopup[identifier] = {
                     data: response.data,
                     popup_preview_id: identifier
                   };
-                }
 
-                dialog();
+                  dialog();
+                }
               };
 
               ajax.execute();
             }
+
             // When page structure has been changed bind Ajax functionality.
             $(document).ajaxComplete(function(event, request, settings) {
               Drupal.ajax.bindAjaxLinks(document.body);
@@ -129,6 +140,13 @@
         .each(function () {
           if ($(this).attr('id') === undefined) {
             $(this).attr('id', 'preview-popup-' + delta++);
+
+            // Add extra class to the parent link.
+            if ($('img').hasClass('preview-popup-link')) {
+              $('img.preview-popup-link')
+                .closest('a')
+                .addClass('preview-popup-link');
+            }
           }
         })
         .on('mouseout', function () {
@@ -137,7 +155,9 @@
 
           timeouts[selector] = window.setTimeout(function () {
             if (dialogs[selector] !== undefined && dialogs[selector].open) {
+              $('html').css('overflow', 'visible');
               $(context).find('.ui-dialog').remove();
+              $('.ui-dialog').remove();
             }
           }, delayClose);
         });
