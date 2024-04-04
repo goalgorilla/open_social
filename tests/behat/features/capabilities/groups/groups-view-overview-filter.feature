@@ -6,11 +6,11 @@ Feature: All group overview filters
 
   Scenario: As user I can not filter on the field group type if there are no types added
     Given I am an anonymous user
-    And I set the configuration item "social_group.settings" with key "social_group_type_required" to TRUE
+    And I enable group type settings
 
     When I am viewing the groups overview
-
-    Then I should not see "Type" in the "Sidebar second"
+    # By default we have at least "Flexible group" group type.
+    And I should not see "Type" in the "Sidebar second"
 
   Scenario: As user I can not filter on the field group type if the setting is disabled even if there are options
     Given I am an anonymous user
