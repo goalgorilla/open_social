@@ -20,28 +20,6 @@
 - [ ] The expected result F is attained when repeating the steps with this fix applied.
 -->
 
-## Definition of done
-### Before merge
-- [ ] Code/peer review is completed
-- [ ] All commit messages are [clear and clean](https://open-social.slite.com/app/docs/DnmermZDIx_0OQ). If applicable a rebase was performed
-- [ ] All automated tests are green
-- [ ] Functional/manual tests of the acceptance criteria are approved
-- [ ] All acceptance criteria were met
-- [ ] New features or changes to existing features are covered by tests, either unit (preferably) or behat
-- [ ] Update path is tested. New hook_updates should respect update order, right naming convention and consider hook_post_update code
-- [ ] Module can be safely uninstalled. Update/implement hook_uninstall and make sure that removed configuration or dependencies are removed/uninstalled
-- [ ] This pull request has all required labels (team/type/priority)
-- [ ] This pull request has a milestone
-- [ ] This pull request has an assignee (if applicable)
-- [ ] Any front end changes are tested on all major browsers
-- [ ] New UI elements, or changes on UI elements are approved by the design team
-- [ ] New features, or feature changes are approved by the product owner
-
-### After merge
-- [ ] Code is tested on all branches that it has been cherry-picked
-- [ ] Update hook number might need adjustment, make sure they have the correct order
-- [ ] The Drupal.org ticket(s) are updated according to this pull request status
-
 ## Screenshots
 <!-- *[Required if new feature, and if applicable] If this Pull Request makes visual changes then please include some screenshots that show what has changed here. A before and after screenshot helps the reviewer determine what changes were made.* -->
 
