@@ -289,6 +289,75 @@ function social_group_update_13000() : void {
     ],
   ];
 
+  // Add "Group type" field value to avoid losing groups identity for customers.
+  $taxonomy_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $types_query = \Drupal::database()->select('groups')
+    ->fields('groups', ['type'])
+    ->groupBy('type');
+  $types = (array) $types_query->execute()?->fetchCol();
+  [
+    $has_public_groups,
+    $has_open_groups,
+    $has_closed_groups,
+    $has_secret_groups,
+  ] = [
+    in_array('public_group', $types),
+    in_array('open_group', $types),
+    in_array('closed_group', $types),
+    in_array('secret_group', $types),
+  ];
+
+  $term_names = [
+    'public_group' => $has_public_groups ? 'Public group' : NULL,
+    'open_group' => $has_open_groups ? 'Open group' : NULL,
+    'closed_group' => $has_closed_groups ? 'Closed group' : NULL,
+    'secret_group' => $has_secret_groups ? 'Secret group' : NULL,
+    'default' => 'Flexible group',
+  ];
+
+  foreach ($term_names as $group_type => $name) {
+    if (!$name) {
+      // The platform doesn't have groups of such a type, skip.
+      continue;
+    }
+
+    if (
+      $group_type === 'default' &&
+      !array_filter([
+        $has_public_groups,
+        $has_open_groups,
+        $has_closed_groups,
+        $has_secret_groups,
+      ])
+    ) {
+      // Do not create "Flexible group" term if a platform has
+      // only flexible groups.
+      continue;
+    }
+
+    $tid = $taxonomy_storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('name', $name)
+      ->condition('vid', 'group_type')
+      ->execute();
+    $tid = reset($tid);
+
+    if (!$tid) {
+      $term = $taxonomy_storage->create([
+        'name' => $name,
+        'vid' => 'group_type',
+      ]);
+      $term->save();
+      $tid = $term->id();
+    }
+
+    if ($group_type === 'default') {
+      continue;
+    }
+
+    $group_type_mapping[$group_type]['fields']['field_group_type'] = [$tid];
+  }
+
   // If the secret group module isn't enabled we don't need to migrate secret
   // groups.
   if (!\Drupal::moduleHandler()->moduleExists("social_group_secret")) {
@@ -430,7 +499,7 @@ function social_group_update_13000() : void {
             $from->addField("from", "langcode", "langcode");
             $from->addExpression("'flexible_group'", "bundle");
             $from->addExpression($delta, "delta");
-            $from->addExpression("'$value'", $group_table_mapping->getFieldColumnName($field_storage, "value"));
+            $from->addExpression("'$value'", $group_table_mapping->getFieldColumnName($field_storage, $field_name === 'field_group_type' ? 'target_id' : 'value'));
 
             $database->insert($tableName)
               ->from($from)
