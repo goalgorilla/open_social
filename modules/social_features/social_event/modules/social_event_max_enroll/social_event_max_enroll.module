@@ -31,8 +31,16 @@ function social_event_max_enroll_views_post_render(ViewExecutable $view, &$outpu
     if ($event_max_enroll_service->isEnabled($node)) {
       // Count how many spots left.
       $left = $event_max_enroll_service->getEnrollmentsLeft($node);
-      $title_suffix = \Drupal::translation()->formatPlural($left, '(1 spot left)', '(@count spots left)');
-      $view->header['area_text_custom']->options['content'] .= ' ' . $title_suffix;
+      $title_suffix = \Drupal::translation()
+        ->formatPlural($left, '(1 spot left)', '(@count spots left)');
+      // Social_event_update_121001 changed 'result' to 'area_text_custom'
+      // Add backwards compatibility, in case of update hook failure.
+      if (isset($view->header['area_text_custom'])) {
+        $view->header['area_text_custom']->options['content'] .= ' ' . $title_suffix;
+      }
+      if (isset($view->header['result'])) {
+        $view->header['result']->options['content'] .= ' ' . $title_suffix;
+      }
     }
   }
 }
