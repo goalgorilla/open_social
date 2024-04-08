@@ -300,3 +300,48 @@ function social_core_update_123001() : void {
 function social_core_update_123002(): void {
   user_role_grant_permissions('sitemanager', ['administer site configuration']);
 }
+
+/**
+ * Set cache maximum age with 1 hour.
+ */
+function social_core_update_123003(): void {
+  // Get cache configuration.
+  $config = \Drupal::service('config.factory')->getEditable('system.performance');
+
+  // When the max-age is empty, set 1 hour.
+  if (empty($config->get('cache.page.max_age'))) {
+    $config->set('cache.page.max_age', 3600)
+      ->save();
+  }
+}
+
+/**
+ * Recreate views.view.message (module message) if it is corrupted.
+ */
+function social_core_update_123004(): void {
+  if (\Drupal::moduleHandler()->moduleExists('views') && \Drupal::moduleHandler()->moduleExists('message')) {
+    // Check if the message view exists.
+    $views = View::load('views.view.message');
+
+    // If the view does not exist, it can still be in the config table.
+    if ($views === NULL) {
+      $config = \Drupal::service('config.factory')
+        ->getEditable('views.view.message');
+
+      // If the config view does exist it means it's not a valid view
+      // and corrupted by the message update hook 8107.
+      if (!empty($config->getRawdata())) {
+        // Replace the view config with the new one.
+        $config_path = \Drupal::service('extension.list.module')->getPath('social_core') . '/config/static';
+        $source = new FileStorage($config_path);
+        /** @var \Drupal\Core\Config\StorageInterface $config_storage */
+        $config_storage = \Drupal::service('config.storage');
+
+        $data = $source->read('views.view.message_123003');
+        if (is_array($data)) {
+          $config_storage->write('views.view.message', $data);
+        }
+      }
+    }
+  }
+}
