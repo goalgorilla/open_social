@@ -22,7 +22,7 @@ class SocialEventManagersViewsBulkOperationsConfirmAction extends ConfirmAction 
       $form['description'] = [
         '#markup' => $this->formatPlural($form_data['selected_count'],
         'Are you sure you want to "%action" the following enrollee?',
-        'Are you sure you want to "%action" the following %count enrollees?',
+        'Are you sure you want to "%action" the following %count enrollees? ',
         [
           '%action' => $form_data['action_label'],
           '%count' => $form_data['selected_count'],
@@ -34,7 +34,7 @@ class SocialEventManagersViewsBulkOperationsConfirmAction extends ConfirmAction 
         $form['description'] = [
           '#markup' => $this->formatPlural($form_data['selected_count'],
             'Are you sure you want to send your email to the following enrollee?',
-            'Are you sure you want to send your email to to the following %count enrollees?',
+            'Are you sure you want to send your email to the following %count enrollees?',
             [
               '%action' => $form_data['action_label'],
               '%count' => $form_data['selected_count'],
