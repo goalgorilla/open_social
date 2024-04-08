@@ -179,3 +179,5 @@ new PluralTranslatableMarkup(0, '1 attachment.', '@count attachments.');
 // String added because original one was changed due to #3420469 issue.
 new TranslatableMarkup('Resend invites for group members');
 
+// String added because original one was changed due to #3439386 issue.
+new TranslatableMarkup('Are you sure you want to send your email to to the following %count enrollees?');

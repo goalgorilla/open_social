@@ -34,7 +34,7 @@ class SocialGroupViewsBulkOperationsConfirmAction extends ConfirmAction {
         $form['description'] = [
           '#markup' => $this->formatPlural($form_data['selected_count'],
             'Are you sure you want to send your email to the following member?',
-            'Are you sure you want to send your email to to the following %count members?',
+            'Are you sure you want to send your email to the following %count members? ',
             [
               '%action' => $form_data['action_label'],
               '%count' => $form_data['selected_count'],
