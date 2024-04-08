@@ -224,6 +224,19 @@ function _social_core_create_menu_links() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_core_update_dependencies(): array {
+  // Update 123003 fixes a view corruption from 8105,
+  // so that one needs to be executed first.
+  $dependencies['social_core'][123003] = [
+    'message' => 8105,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Implements hook_update_last_removed().
  */
 function social_core_update_last_removed() : int {
@@ -329,7 +342,7 @@ function social_core_update_123004(): void {
         ->getEditable('views.view.message');
 
       // If the config view does exist it means it's not a valid view
-      // and corrupted by the message update hook 8107.
+      // and corrupted by the message update hook 8105.
       if (!empty($config->getRawdata())) {
         // Replace the view config with the new one.
         $config_path = \Drupal::service('extension.list.module')->getPath('social_core') . '/config/static';
