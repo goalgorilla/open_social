@@ -1,0 +1,26 @@
+block.block.socialblue_views_block__upcoming_events_upcoming_events_group:
+  expected_config: {  }
+  update_actions:
+    delete:
+      visibility:
+        group_type: {  }
+views.view.upcoming_events:
+  expected_config: {  }
+  update_actions:
+    change:
+      display:
+        upcoming_events_group:
+          display_options:
+            arguments:
+              gid:
+                specify_validation: false
+                validate:
+                  type: none
+                  fail: 'not found'
+    delete:
+      display:
+        upcoming_events_group:
+          display_options:
+            arguments:
+              gid:
+                validate_options: {  }
