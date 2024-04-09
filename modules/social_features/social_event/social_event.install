@@ -154,6 +154,40 @@ function social_event_update_121002(): string {
 }
 
 /**
+ * Re-run: Change the More Link from Event Enrollments view.
+ *
+ * Due to an issue with expected config vs actual config
+ * having translated strings in it.
+ */
+function social_event_update_121003(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', __FUNCTION__);
+
+  // Output logged messages to a related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Re-run: Change the event enrollments view header to a token.
+ *
+ * Due to an issue with expected config vs actual config
+ * having translated strings in it.
+ */
+function social_event_update_121004(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Remove deprecated group types.
  */
 function social_event_update_130000(): ?string {
