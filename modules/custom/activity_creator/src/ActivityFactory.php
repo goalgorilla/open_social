@@ -7,6 +7,7 @@ use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -131,6 +132,11 @@ class ActivityFactory extends ControllerBase {
       return $activities;
     }
 
+    // Validate before creating the activity.
+    if (!$this->validateActivities($message)) {
+      return $activities;
+    }
+
     // Initialize fields for new activity entity.
     $activity_fields = [
       'created' => $this->getCreated($message),
@@ -157,6 +163,42 @@ class ActivityFactory extends ControllerBase {
     }
 
     return $activities;
+  }
+
+  /**
+   * Create the activities based on a data array.
+   *
+   * @param \Drupal\message\Entity\Message $message
+   *   The message entity.
+   *
+   * @return bool
+   *   Decision to skip the activity creation.
+   */
+  protected function validateActivities(Message $message): bool {
+    // If we don't have a related object we don't need to check if it exists.
+    if (!$message->hasField('field_message_related_object') || $message->get('field_message_related_object')->isEmpty()) {
+      return TRUE;
+    }
+
+    $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+    $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+
+    // If we have a related object but no target values it means it's malformed,
+    // and we want to skip the activity creation.
+    if (empty($target_type) || empty($target_id)) {
+      return FALSE;
+    }
+
+    $entity = $this->entityTypeManager
+      ->getStorage($target_type)
+      ->load($target_id);
+
+    // If the related object doesn't exist anymore we don't need to process.
+    if (!$entity instanceof EntityInterface) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 
   /**
