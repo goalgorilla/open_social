@@ -230,3 +230,41 @@ function social_embed_update_11005(): void {
     }
   }
 }
+
+/**
+ * Change lazy-filter to use the social lazy-filter.
+ */
+function social_embed_update_124001(): void {
+  $config_factory = \Drupal::configFactory();
+  $text_formats = [
+    'filter.format.full_html',
+    'filter.format.basic_html',
+    'filter.format.plain_text',
+    'filter.format.simple_text',
+    'filter.format.restricted_html',
+    'filter.format.mail_html',
+  ];
+
+  foreach ($text_formats as $text_format) {
+    $configuration = $config_factory->getEditable($text_format);
+    $filters = $configuration->get('filters');
+
+    // Removing old plugin when is enabled.
+    if (isset($filters['lazy_filter'])) {
+      unset($filters['lazy_filter']);
+    }
+
+    // Adding the lazy filter for all.
+    $filters['social_embed_lazy_filter'] = [
+      'id' => 'social_embed_lazy_filter',
+      'provider' => 'social_embed',
+      'status' => TRUE,
+      'weight' => 999,
+      'settings' => [],
+    ];
+
+    // Saving new filters.
+    $configuration->set('filters', $filters)
+      ->save();
+  }
+}
