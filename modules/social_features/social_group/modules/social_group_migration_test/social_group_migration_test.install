@@ -46,7 +46,10 @@ function social_group_migration_test_update_dependencies() : array {
   $dependencies['social_group'][13000] = [
     'social_group_migration_test' => 13001,
   ];
-
+  // Ensure the group migration runs after the group upgrade.
+  $dependencies['social_group_migration_test'][13001] = [
+    'group' => 9210,
+  ];
   // Ensure our test verification runs after the group migration has completed.
   $dependencies['social_group_migration_test'][13002] = [
     'social_group' => 13000,
@@ -136,7 +139,7 @@ function social_group_migration_test_update_13001(array &$sandbox) : string {
           'field_content_visibility' => $visibility,
         ]);
         $node->save();
-        $group->addContent($node, 'group_node:topic');
+        $group->addRelationship($node, 'group_node:topic');
         $sandbox['processed']++;
       }
 
@@ -242,13 +245,18 @@ function social_group_migration_test_update_13002(array &$sandbox) : string {
       assert($member_count === $expected_count, "Expected $expected_count members in group $type $group_n but got $member_count");
 
       for ($topic_n = 0; $topic_n < $topics_per_group; $topic_n++) {
-        $topics = $group->getContentEntities('group_node:topic', [
-          'entity_id.entity.title' => "$type $group_n topic $topic_n",
-        ]);
+        $topics = \Drupal::entityTypeManager()->getStorage('group_content')
+          ->loadByProperties([
+            'plugin_id' => 'group_node:topic',
+            'entity_id.entity.title' => "$type $group_n topic $topic_n",
+          ]);
+
         if (count($topics) !== 1) {
           throw new \RuntimeException("Expected 1 topic with title 'Group $group_n Topic $topic_n' to be part of the group but got " . count($topics));
         }
         $topic = reset($topics);
+        $topic = $topic->getEntity();
+
         assert($topic instanceof NodeInterface);
 
         // The body has the settings configured in it.
