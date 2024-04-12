@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>PR Manager Test</title>
+  <style type="text/css">
+    form {
+      max-width: 22rem;
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+    label {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #output {
+      margin-top: 1rem;
+      margin-bottom: .5rem;
+    }
+    #output:empty + #clear_output {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<form id="context">
+  <label><span>GitHub Access Token</span> <input type="text" id="token" placeholder="ghp_" /></label><br>
+  <label><span>Owner</span> <input type="text" id="owner" placeholder="goalgorilla" /></label><br>
+  <label><span>Repo</span> <input type="text" id="repo" placeholder="open_social" /></label><br>
+  <label><span>Pull Request</span> <input type="text" id="issue_number" placeholder="3859" /></label><br>
+  <input type="submit" value="Process" />
+</form>
+<div id="output"></div>
+<button id="clear_output">Clear Output</button>
+<script type="module">
+  import { Octokit } from "https://esm.sh/@octokit/rest";
+
+  window.context.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (window.token.value === "") {
+      error("Must specify a GitHub access token.");
+      return;
+    }
+
+    const github = new Octokit({
+      auth: window.token.value,
+      userAgent: 'Open Social PR Manager Development',
+    });
+
+    const context = {
+      issue: {
+        // number: 3859,
+        number: first(window.issue_number.value, window.issue_number.placeholder),
+      },
+      repo: {
+        owner: first(window.owner.value, window.owner.placeholder),
+        repo: first(window.repo.value, window.repo.placeholder),
+      }
+    }
+
+    const { default: script } = await import("./src/main.js");
+    await script({github, context, log});
+  })
+
+  window.clear_output.addEventListener("click", () => {
+    window.output.innerHTML = "";
+  })
+
+  function log(output) {
+    console.log(output);
+    window.output.innerHTML += `<pre>${JSON.stringify(output, null, 4)}</pre>`;
+  }
+
+  function error(error) {
+    console.error(error);
+    window.output.innerHTML += `<div style="color:red"><pre>${JSON.stringify(error, null, 4)}</pre></div>`;
+  }
+
+  function first() {
+    for (const arg of arguments) {
+      if (arg) {
+        return arg;
+      }
+    }
+
+    return null;
+  }
+
+  // ---------
+
+</script>
+</body>
+</html>
