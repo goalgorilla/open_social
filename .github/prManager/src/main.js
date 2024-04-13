@@ -46,6 +46,12 @@ export default async ({github, context, log = console.log}) => {
   const issue_number = context.issue.number;
   const owner = context.repo.owner;
   const repo = context.repo.repo;
+  const actor = context.actor;
+
+  // Dependabot is not a human so it doesn't adhere to our standards.
+  if (actor === "dependabot") {
+    return;
+  }
 
   const issueResponse = await github.rest.issues.get({
     owner,

@@ -389,3 +389,25 @@ test("it combines feedback for multiple errors", async () => {
     body: `${feedbackIntroduction}${expectedFeedback}${feedbackBotMarker}`,
   });
 })
+
+test("it does nothing for dependabot PRs", async () => {
+  const dependabotContext = {
+    ...context,
+    actor: "dependabot",
+  };
+  const github = {
+    rest: {
+      issues: {
+        get: jest.fn(() => prBase),
+        createComment: jest.fn(() => {}),
+        listComments: jest.fn(() => ({ data: [] })),
+      },
+    },
+  };
+
+  await script({ github, context: dependabotContext });
+
+  expect(github.rest.issues.get).toHaveBeenCalledTimes(0);
+  expect(github.rest.issues.listComments).toHaveBeenCalledTimes(0);
+  expect(github.rest.issues.createComment).toHaveBeenCalledTimes(0);
+});
