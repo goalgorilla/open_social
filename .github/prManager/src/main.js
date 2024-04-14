@@ -36,9 +36,13 @@ import { Issue } from "./Issue.js";
 import {
   feedbackDuplicatePriorityLabel,
   feedbackDuplicateTeamLabel,
-  feedbackDuplicateTypeLabel, feedbackMissingMilestone, feedbackMissingPriorityLabel,
+  feedbackDuplicateTypeLabel,
+  feedbackMissingMilestone,
+  feedbackMissingPriorityLabel,
   feedbackMissingTeamLabel,
-  feedbackMissingTypeLabel
+  feedbackMissingTypeLabel,
+  feedbackInvalidTitle,
+  feedbackDrupalTitleForJira,
 } from "./constants.js";
 
 export default async ({github, context, log = console.log}) => {
@@ -99,10 +103,64 @@ export default async ({github, context, log = console.log}) => {
     feedback += feedbackMissingMilestone;
   }
 
+  // We special case people setting `Issue #PROD-NNN` because we want more
+  // specific feedback.
+  if (isDrupalTitleForJira(issue.getTitle())) {
+    feedback += feedbackDrupalTitleForJira;
+  }
+  else if (!isValidTitle(issue.getTitle())) {
+    feedback += feedbackInvalidTitle;
+  }
+
   await issue.provideFeedback(feedback);
 }
 
+/**
+ * Check whether the title adheres to our standards.
+ *
+ * Whether the title correctly has the Jira ticket or Drupal.org issue,
+ * or one of the exempt prefix.
+ *
+ * @param title
+ *   The title.
+ * @returns {boolean}
+ *   Whether it adheres to our standards.
+ */
+function isValidTitle(title) {
+  const prefixes = ["Internal: ", "Updates: ", "Hotfix: "];
 
+  // Start with a specific prefix, don't end in a dot and have some text other than the prefix.
+  for (const prefix of prefixes) {
+    if (title.startsWith(prefix) && title.trim() !== prefix.trim() && !title.endsWith(".")) {
+      return true;
+    }
+  }
+
+  // "PROD-NNN: Some mandatory text".
+  if (/^PROD-\d+: /.test(title) && !/^PROD-\d+:$/.test(title.trim()) && !title.endsWith(".")) {
+    return true;
+  }
+
+  // Issue #NNNN: Some mandatory text".
+  if (/^Issue #\d+: /.test(title) && !/^Issue #\d+:$/.test(title.trim()) && !title.endsWith(".")) {
+    return true;
+  }
+  // Todo: PROD-NNN: Issue #NN: Issue #PROD-NNN:
+
+  return false;
+}
+
+/**
+ * Whether the title treats a Jira ticket as Drupal.org issue.
+ *
+ * @param title
+ *   The title.
+ * @returns {boolean}
+ *   Whether the Jira ticket is put in the Drupal issue format.
+ */
+function isDrupalTitleForJira(title) {
+  return /^Issue #PROD-\d+/.test(title);
+}
 
 
 
