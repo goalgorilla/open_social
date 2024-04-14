@@ -1,9 +1,16 @@
 import { jest } from "@jest/globals";
 import script from './main.js';
 import {
-  feedbackBotMarker, feedbackDuplicatePriorityLabel, feedbackDuplicateTeamLabel, feedbackDuplicateTypeLabel,
+  feedbackBotMarker,
+  feedbackDrupalTitleForJira,
+  feedbackDuplicatePriorityLabel,
+  feedbackDuplicateTeamLabel,
+  feedbackDuplicateTypeLabel,
   feedbackIntroduction,
-  feedbackMissingMilestone, feedbackMissingPriorityLabel, feedbackMissingTeamLabel,
+  feedbackInvalidTitle,
+  feedbackMissingMilestone,
+  feedbackMissingPriorityLabel,
+  feedbackMissingTeamLabel,
   feedbackMissingTypeLabel
 } from "./constants.js";
 
@@ -60,7 +67,7 @@ const author_association = {
 const prBase = {
   "data": {
     "number": 1337,
-    "title": "",
+    "title": "PROD-2506: Introduce the PR manager",
     "user": {
       "login": "foobar",
     },
@@ -410,4 +417,98 @@ test("it does nothing for dependabot PRs", async () => {
   expect(github.rest.issues.get).toHaveBeenCalledTimes(0);
   expect(github.rest.issues.listComments).toHaveBeenCalledTimes(0);
   expect(github.rest.issues.createComment).toHaveBeenCalledTimes(0);
+});
+
+
+const validTitles = [
+  ["PROD-1: This was a triumph"],
+  ["PROD-2506: We're making a note here"],
+  ["Issue #1: huge success"],
+  ["Issue #3394423: It's hard to overstate"],
+  ["Internal: My satisfaction"],
+  ["Updates: Aperture Science"],
+  ["Hotfix: We do what we must"],
+];
+
+test.each(validTitles)("it allows valid title '%s'", async (title) => {
+  const mockPr = {
+    ...prBase,
+    data: {
+      ...prBase.data,
+      labels: [
+        labels.type.feature,
+        labels.team.guardians,
+        labels.prio.medium,
+        labels.status.needs_review,
+      ],
+      title
+    },
+  };
+  const github = {
+    rest: {
+      issues: {
+        get: jest.fn(() => mockPr),
+        createComment: jest.fn(() => {}),
+        listComments: jest.fn(() => ({ data: [] })),
+      },
+    },
+  };
+
+  await script({ github, context });
+
+  expect(github.rest.issues.get).toHaveBeenCalledTimes(1);
+  expect(github.rest.issues.createComment).toHaveBeenCalledTimes(0);
+});
+
+const invalidTitles = [
+  ["PROD-1: ", feedbackInvalidTitle],
+  ["PROD-2506: ", feedbackInvalidTitle],
+  ["Issue #1: ", feedbackInvalidTitle],
+  ["Issue #3394423: ", feedbackInvalidTitle],
+  ["Internal: ", feedbackInvalidTitle],
+  ["Updates: ", feedbackInvalidTitle],
+  ["Hotfix: ", feedbackInvalidTitle],
+  ["Issue #PROD-1: Otherwise valid title", feedbackDrupalTitleForJira],
+  ["Issue #PROD-2506: Otherwise valid title", feedbackDrupalTitleForJira],
+  ["PROD-2506: This ends in a dot.", feedbackInvalidTitle],
+  ["Issue #3394423: This ends in a dot.", feedbackInvalidTitle],
+  ["Internal: This ends in a dot.", feedbackInvalidTitle],
+  ["Updates: This ends in a dot.", feedbackInvalidTitle],
+  ["Hotfix: This ends in a dot.", feedbackInvalidTitle],
+];
+
+test.each(invalidTitles)("it rejects invalid title '%s' with a message explaining the allowed title formats", async (title, expectedFeedback) => {
+  const mockPr = {
+    ...prBase,
+    data: {
+      ...prBase.data,
+      labels: [
+        labels.type.feature,
+        labels.team.guardians,
+        labels.prio.medium,
+        labels.status.needs_review,
+      ],
+      title
+    },
+  };
+  const github = {
+    rest: {
+      issues: {
+        get: jest.fn(() => mockPr),
+        createComment: jest.fn(() => {}),
+        listComments: jest.fn(() => ({ data: [] })),
+      },
+    },
+  };
+
+  await script({ github, context });
+
+  expect(github.rest.issues.get).toHaveBeenCalledTimes(1);
+  expect(github.rest.issues.createComment).toHaveBeenCalledTimes(1);
+  expect(github.rest.issues.createComment).toHaveBeenCalledWith({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    issue_number: context.issue.issue_number,
+    body: `${feedbackIntroduction}${expectedFeedback}${feedbackBotMarker}`,
+  });
 });
