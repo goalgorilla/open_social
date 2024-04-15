@@ -5,6 +5,9 @@
  * Install, update and uninstall functions for the social_language module.
  */
 
+use Drupal\Core\Database\Database;
+use Drupal\group\Entity\GroupType;
+
 /**
  * Implements hook_install().
  *
@@ -63,4 +66,21 @@ function social_language_update_12201(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Removing wrong language configuration for original-language from groups.
+ */
+function social_language_update_12301(): void {
+  $group_types = GroupType::loadMultiple();
+  foreach ($group_types as $group_type) {
+    $configuration_name = sprintf('group.type.%s', $group_type->id());
+    $collection_value = sprintf('language.%s', $group_type->language()->getId());
+
+    Database::getConnection()
+      ->delete('config')
+      ->condition('collection', $collection_value)
+      ->condition('name', $configuration_name)
+      ->execute();
+  }
 }
