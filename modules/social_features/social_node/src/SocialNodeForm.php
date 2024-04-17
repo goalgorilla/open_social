@@ -94,7 +94,11 @@ class SocialNodeForm extends NodeForm {
     $entity = $this->buildEntity($form, $form_state);
 
     // Get visibility options.
-    $visibilities = $form['field_content_visibility']['widget']['#options'];
+    $visibilities = $form['field_content_visibility']['widget']['#options'] ?? NULL;
+
+    if (!$visibilities) {
+      return $entity;
+    }
 
     // Check if the values are being altered while it's disabled.
     foreach ($visibilities as $visibility => $value) {
