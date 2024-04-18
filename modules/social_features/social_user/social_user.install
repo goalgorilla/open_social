@@ -146,6 +146,31 @@ function social_user_update_12201(): string {
 }
 
 /**
+ * Copy show-main-in-messages to new structure and delete old structure.
+ */
+function social_user_update_12301(): void {
+  $system_config = \Drupal::configFactory()
+    ->get('system.site');
+
+  // Return early when this configuration is empty.
+  if (empty($system_config->get('show_mail_in_messages'))) {
+    return;
+  }
+
+  // Copy configuration to new structure.
+  \Drupal::configFactory()
+    ->getEditable('social_user.settings')
+    ->set('show_mail_in_messages', (boolean) $system_config->get('show_mail_in_messages'))
+    ->save();
+
+  // Delete old structure.
+  \Drupal::configFactory()
+    ->getEditable('system.site')
+    ->clear('show_mail_in_messages')
+    ->save();
+}
+
+/**
  * Remove deprecated group types.
  */
 function social_user_update_13000(): ?string {
