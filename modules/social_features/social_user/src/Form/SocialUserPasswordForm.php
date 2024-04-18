@@ -89,7 +89,7 @@ class SocialUserPasswordForm extends UserPasswordForm {
           ]);
       }
     }
-    $site_config = $this->config('system.site');
+    $site_config = $this->config('social_user.settings');
     $site_mail = $site_config->get('mail');
     $show_mail = $site_config->get('show_mail_in_messages');
     $admin_link = ($site_mail && $show_mail) ? Link::fromTextAndUrl(t('site administrator'), Url::fromUri('mailto:' . $site_mail))->toString() : t('site administrator');
