@@ -570,7 +570,7 @@ function social_user_form_user_admin_settings_submit($form, FormStateInterface $
  * Alter Basic site settings form.
  */
 function social_user_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state) {
-  $config = \Drupal::config('system.site');
+  $config = \Drupal::config('social_user.settings');
 
   $form['site_information']['show_mail_in_messages'] = [
     '#type' => 'checkbox',
@@ -588,8 +588,8 @@ function social_user_form_system_site_information_settings_alter(&$form, FormSta
  */
 function social_user_form_system_site_information_settings_submit($form, FormStateInterface $form_state) {
   $config = \Drupal::configFactory()
-    ->getEditable('system.site');
-  $config->set('show_mail_in_messages', $form_state->getValue("show_mail_in_messages"));
+    ->getEditable('social_user.settings');
+  $config->set('show_mail_in_messages', (boolean) $form_state->getValue("show_mail_in_messages"));
   $config->save();
 }
 
