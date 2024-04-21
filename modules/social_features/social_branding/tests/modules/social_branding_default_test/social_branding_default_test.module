@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Social Branding Test.
+ */
+
+use Drupal\social_branding\PreferredFeature;
+
+/**
+ * Implements hook_social_branding_preferred_features().
+ */
+function social_branding_default_test_social_branding_preferred_features(): array {
+  // Will not be taken into account, as the default settings doesn't have
+  // discussion saved through the form.
+  return [
+    new PreferredFeature('discussion', 10),
+  ];
+}
+
+/**
+ * Implements hook_social_branding_preferred_features_alter().
+ */
+function social_branding_default_test_social_branding_preferred_features_alter(array &$preferred_features): void {
+  // Will not be taken into account, as the default settings doesn't have
+  // discussion saved through the form.
+  foreach ($preferred_features as $preferred_feature) {
+    if ($preferred_feature->getName() === 'discussion') {
+      $preferred_feature->setWeight(-10);
+    }
+  }
+  // Will be taken in to account, just to prove this alter hook does run.
+  $preferred_features[] = new PreferredFeature('cheese', -20);
+}

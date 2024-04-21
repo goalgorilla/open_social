@@ -1,0 +1,16 @@
+social_branding.settings:
+  type: config_object
+  label: "Features configured for Branding"
+  mapping:
+    features:
+      type: sequence
+      label: "List of configured features"
+      sequence:
+        type: mapping
+        mapping:
+          weight:
+            type: integer
+            label: 'Weight'
+          name:
+            type: string
+            label: 'Machine name'
