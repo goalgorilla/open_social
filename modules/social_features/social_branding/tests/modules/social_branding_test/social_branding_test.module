@@ -10,7 +10,7 @@ use Drupal\social_branding\PreferredFeature;
 /**
  * Implements hook_social_branding_preferred_features().
  */
-function social_branding_test_social_branding_preferred_features() {
+function social_branding_test_social_branding_preferred_features(): array {
   return [
     new PreferredFeature('feature0', 0),
     new PreferredFeature('feature1', 1),
@@ -21,10 +21,10 @@ function social_branding_test_social_branding_preferred_features() {
 /**
  * Implements hook_social_branding_preferred_features_alter().
  */
-function social_branding_test_social_branding_preferred_features_alter(&$preferred_features) {
+function social_branding_test_social_branding_preferred_features_alter(array &$preferred_features): void {
   foreach ($preferred_features as $preferred_feature) {
     if ($preferred_feature->getName() === 'feature0') {
-      $preferred_feature->setWeight(3);
+      $preferred_feature->setWeight(2);
     }
   }
 }

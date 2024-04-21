@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Install functions for the social_branding_default_test module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform installation of social_branding_default_test.
+ */
+function social_branding_default_test_install(): void {
+  // Set some default config.
+  $features = [
+    'home' => [
+      'weight' => 0,
+    ],
+    'events' => [
+      'weight' => 1,
+    ],
+    'topics' => [
+      'weight' => 2,
+    ],
+    'groups' => [
+      'weight' => 3,
+    ],
+    'search' => [
+      'weight' => 4,
+    ],
+  ];
+
+  \Drupal::configFactory()->getEditable('social_branding.settings')
+    ->set('features', $features)
+    ->save();
+}

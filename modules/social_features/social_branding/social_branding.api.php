@@ -38,11 +38,14 @@ function hook_social_branding_preferred_features() {
  * @ingroup social_branding_api
  */
 function hook_social_branding_preferred_features_alter(array &$preferred_features) {
+  // Set individual weight.
   foreach ($preferred_features as $preferred_feature) {
     if ($preferred_feature->getName() === 'first_feature') {
       $preferred_feature->setWeight(3);
     }
   }
+  // Or empty the features.
+  $preferred_features = [];
 }
 
 /**

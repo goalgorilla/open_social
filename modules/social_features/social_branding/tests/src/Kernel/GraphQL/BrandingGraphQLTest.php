@@ -314,15 +314,61 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
           ],
         ],
         'preferredFeatures' => [
+          ['machineName' => 'home'],
+          ['machineName' => 'events'],
           ['machineName' => 'feature1'],
-          ['machineName' => 'feature2'],
+          ['machineName' => 'groups'],
           ['machineName' => 'feature0'],
+          ['machineName' => 'feature2'],
+          ['machineName' => 'search'],
+          ['machineName' => 'topics'],
         ],
       ],
       $this->defaultCacheMetaData()
         ->addCacheableDependency($system_information)
         ->addCacheableDependency($system_theme)
         ->addCacheableDependency($config)
+    );
+  }
+
+  /**
+   * Test default configuration and the hooks combined.
+   */
+  public function testDefaultPreferredFeatures(): void {
+    // Set anonymous user.
+    $this->setUpCurrentUser();
+    // Uninstall social_branding_test to clean the provided preferred features.
+    \Drupal::service('module_installer')->uninstall(['social_branding_test'], FALSE);
+    $this->assertFalse(\Drupal::moduleHandler()->moduleExists('social_branding_test'), 'Test preferred features module is disabled.');
+
+    // Install social_branding_empty_test, to get a new default set of features.
+    // This module provides default config for the branding settings, also adds
+    // a new feature discussion, which isn't saved through the form, so will not
+    // be taken into account. However, cheese is added through the alter hook,
+    // always.
+    \Drupal::service('module_installer')->install(['social_branding_default_test']);
+
+    $this->assertResults(
+      '
+        query {
+          preferredFeatures {
+            machineName
+          }
+        }
+      ',
+      [],
+      [
+        'preferredFeatures' => [
+          ['machineName' => 'cheese'],
+          ['machineName' => 'home'],
+          ['machineName' => 'events'],
+          ['machineName' => 'topics'],
+          ['machineName' => 'groups'],
+          ['machineName' => 'search'],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
     );
   }
 
@@ -403,6 +449,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     // Uninstall social_branding_test to clean the provided preferred features.
     \Drupal::service('module_installer')->uninstall(['social_branding_test'], FALSE);
     $this->assertFalse(\Drupal::moduleHandler()->moduleExists('social_branding_test'), 'Test preferred features module is disabled.');
+
+    // Install social_branding_empty_test, and remove all preferred features.
+    \Drupal::service('module_installer')->install(['social_branding_empty_test']);
 
     $this->assertResults(
       '
