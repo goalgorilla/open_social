@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * The Social Branding module.
+ */
+
+use Drupal\social_branding\PreferredFeature;
+
+/**
+ * Implements hook_social_branding_preferred_features().
+ */
+function social_branding_social_branding_preferred_features(): array {
+  return [
+    new PreferredFeature('home', 0),
+    new PreferredFeature('events', 1),
+    new PreferredFeature('groups', 2),
+    new PreferredFeature('search', 3),
+    new PreferredFeature('topics', 5),
+  ];
+}
