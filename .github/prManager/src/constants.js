@@ -7,10 +7,10 @@ export const feedbackDuplicateTypeLabel = "**Multiple type labels selected**\nTh
 
 // @todo Provide links to documentation for picking the correct priority.
 export const feedbackMissingPriorityLabel = "**Missing priority label**\nThe pull request is missing a `prio: ` label which helps people prioritise contributing to open pull requests. Please choose a priority label appropriate for your pull request.\n\n";
-export const feedbackDuplicatePriorityLabel = "**Duplicate priority label**\nYour pull request has multiple priority labels. Please select only a single priority and remove the other priority labels.\n\n";
+export const feedbackDuplicatePriorityLabel = "**Multiple priority labels selected**\nYour pull request has multiple priority labels. Please select only a single priority and remove the other priority labels.\n\n";
 
 export const feedbackMissingTeamLabel = "**Missing team label**\nYour pull request is missing a `team: ` label. The team label helps others understand what work they should focus on and which team they can ask questions about a specific PR.\n\n";
-export const feedbackDuplicateTeamLabel = "**Duplicate team label**\nThe pull request hsa multiple `team: ` labels. Please select only the team label for the team that's responsible for the pull request and remove the others.\n\n";
+export const feedbackDuplicateTeamLabel = "**Multiple team labels selected**\nThe pull request has multiple `team: ` labels. Please select only the team label for the team that's responsible for the pull request and remove the others.\n\n";
 
 export const feedbackMissingMilestone = "**Missing milestone**\nThe issue is missing a milestone. Milestones are important to help release managers know whether they might need to postpone a release for a critical issue and to communicate what fixes and new features are included in a release. Before merging, please select the appropriate milestone for this pull request.\n\n";
 
