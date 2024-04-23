@@ -421,6 +421,13 @@ function social_core_update_124001(): void {
 }
 
 /**
+ * Install the secret file system.
+ */
+function social_core_update_130001() : void {
+  \Drupal::service('module_installer')->install(['secret_file_system']);
+}
+
+/**
  * Migrate private file system to secret file system.
  */
 function social_core_update_130002() : void {

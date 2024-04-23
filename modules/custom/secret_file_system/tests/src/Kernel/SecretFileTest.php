@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\social_core\Kernel;
+namespace Drupal\Tests\secret_file_system\Kernel;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -10,8 +10,8 @@ use Drupal\Core\Render\HtmlResponse;
 use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Site\Settings;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\social_core\SecretResponseCacheSubscriber;
-use Drupal\social_core\StreamWrapper\SecretStream;
+use Drupal\secret_file_system\SecretResponseCacheSubscriber;
+use Drupal\secret_file_system\StreamWrapper\SecretStream;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +31,7 @@ class SecretFileTest extends KernelTestBase {
   protected static $modules = [
     'user',
     'file',
-    'social_core',
+    'secret_file_system',
   ];
 
   protected const TEST_FILE = "secret://test/file.txt";
@@ -95,7 +95,7 @@ class SecretFileTest extends KernelTestBase {
    * should at some point change to ensure they don't live forever.
    */
   public function testDifferentTimeCreatesBucketedUrl() : void {
-    /** @var \Drupal\Tests\social_core\Kernel\TestTimeService $time */
+    /** @var \Drupal\Tests\secret_file_system\Kernel\TestTimeService $time */
     $time = $this->container->get("datetime.time");
     $bucket_length = $this->getBucketSetting();
     $current_time = $time->getRequestTime();
@@ -122,7 +122,7 @@ class SecretFileTest extends KernelTestBase {
    * Test that an expired URL causes a 404.
    */
   public function testOutdatedUrlCausesNotFound() : void {
-    /** @var \Drupal\Tests\social_core\Kernel\TestTimeService $time */
+    /** @var \Drupal\Tests\secret_file_system\Kernel\TestTimeService $time */
     $time = $this->container->get("datetime.time");
     $http_kernel = $this->container->get('http_kernel');
 
@@ -142,7 +142,7 @@ class SecretFileTest extends KernelTestBase {
    * Test that the stream wrapper exposes the max age to the renderer.
    */
   public function testSecretStreamWrapperLeaksRenderContext() : void {
-    /** @var \Drupal\Tests\social_core\Kernel\TestTimeService $time */
+    /** @var \Drupal\Tests\secret_file_system\Kernel\TestTimeService $time */
     $time = $this->container->get("datetime.time");
 
     $context = new RenderContext();
@@ -164,7 +164,7 @@ class SecretFileTest extends KernelTestBase {
    * Test that the secret response cache subscriber applies to the response.
    */
   public function testSecretResponseCacheSubscriber() : void {
-    /** @var \Drupal\Tests\social_core\Kernel\TestTimeService $time */
+    /** @var \Drupal\Tests\secret_file_system\Kernel\TestTimeService $time */
     $time = $this->container->get("datetime.time");
 
     $request = new Request();
