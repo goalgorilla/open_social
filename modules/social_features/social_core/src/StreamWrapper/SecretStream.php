@@ -66,6 +66,29 @@ class SecretStream extends LocalStream {
 
     $hash = SecretFileController::createHash($expires_at, $path);
 
+    // We use the renderer to leak the max age that we calculate for images.
+    // This ensures it's properly picked up by the dynamic page cache for the
+    // component that's currently being rendered.
+    // Until: https://www.drupal.org/project/drupal/issues/3358113
+    // We also leak it in attachments so that we can consistently override the
+    // entire page's max age in SecretResponseCacheSubscriber.
+    // Until: https://www.drupal.org/node/2352009.
+    $renderer = \Drupal::service('renderer');
+    // Allow running this code outside of render contexts too.
+    if ($renderer->hasRenderContext()) {
+      $cache_info = [
+        '#cache' => ['max-age' => (int) $expires_at - $current],
+        '#attached' => [
+          'drupalSettings' => [
+            'secretFiles' => [
+              $target => $expires_at,
+            ],
+          ],
+        ],
+      ];
+      $renderer->render($cache_info);
+    }
+
     return Url::fromRoute(
       'social_core.secret_file_download',
       [

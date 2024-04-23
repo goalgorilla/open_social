@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace Drupal\Tests\social_core\Kernel;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Render\HtmlResponse;
+use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Site\Settings;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\social_core\SecretResponseCacheSubscriber;
 use Drupal\social_core\StreamWrapper\SecretStream;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * Tests that the secret file stream-wrapper and controller function correctly.
@@ -116,9 +122,6 @@ class SecretFileTest extends KernelTestBase {
    * Test that an expired URL causes a 404.
    */
   public function testOutdatedUrlCausesNotFound() : void {
-    // @todo Remove skipped when https://www.drupal.org/i/3358113 is fixed.
-    $this->markTestSkipped("Drupal does not currently support cache metadata from a stream-wrapper so validity checking is disabled until that is fixed. Re-enable this when re-implementing the validity limit.");
-
     /** @var \Drupal\Tests\social_core\Kernel\TestTimeService $time */
     $time = $this->container->get("datetime.time");
     $http_kernel = $this->container->get('http_kernel');
@@ -133,6 +136,60 @@ class SecretFileTest extends KernelTestBase {
     $response = $http_kernel->handle($request);
 
     $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+  }
+
+  /**
+   * Test that the stream wrapper exposes the max age to the renderer.
+   */
+  public function testSecretStreamWrapperLeaksRenderContext() : void {
+    /** @var \Drupal\Tests\social_core\Kernel\TestTimeService $time */
+    $time = $this->container->get("datetime.time");
+
+    $context = new RenderContext();
+    $this->container->get('renderer')->executeInRenderContext(
+      $context,
+      fn () => $this->container->get("file_url_generator")->generateAbsoluteString(self::TEST_FILE),
+    );
+    $metadata = $context->pop();
+    assert($metadata instanceof BubbleableMetadata);
+
+    $this->assertGreaterThan(0, $metadata->getCacheMaxAge(), "Expected a positive max age to be provided as render cache context.");
+    $this->assertLessThanOrEqual($this->getBucketSetting() * 2, $metadata->getCacheMaxAge(), "Expected a max age below the bucket size setting to be provided as render cache context.");
+    $attachedMaxAge = reset($metadata->getAttachments()['drupalSettings']['secretFiles']);
+    $this->assertGreaterThan($time->getRequestTime(), $attachedMaxAge);
+    $this->assertLessThanOrEqual($time->getRequestTime() + $this->getBucketSetting() * 2, $attachedMaxAge);
+  }
+
+  /**
+   * Test that the secret response cache subscriber applies to the response.
+   */
+  public function testSecretResponseCacheSubscriber() : void {
+    /** @var \Drupal\Tests\social_core\Kernel\TestTimeService $time */
+    $time = $this->container->get("datetime.time");
+
+    $request = new Request();
+    $response = new HtmlResponse();
+    $response->setAttachments([
+      'drupalSettings' => [
+        'secretFiles' => [
+          'foo' => $time->getRequestTime() + 42,
+        ],
+      ],
+    ]);
+
+    $kernel = $this->container->get('kernel');
+    assert($kernel instanceof HttpKernelInterface);
+    $event = new ResponseEvent(
+      $kernel,
+      $request,
+      HttpKernelInterface::MAIN_REQUEST,
+      $response,
+    );
+
+    $subscriber = new SecretResponseCacheSubscriber($time);
+    $subscriber->onResponse($event);
+
+    $this->assertEquals(42, $response->getMaxAge());
   }
 
   /**
