@@ -66,6 +66,14 @@ class SecretStream extends LocalStream {
 
     $hash = SecretFileController::createHash($expires_at, $path);
 
+    // Leak the max age we calculate for images so we can set it in
+    // SecretResponseCacheSubscriber until Drupal supports propagating
+    // cache-ability metadata.
+    $request = \Drupal::request();
+    if (!$request->attributes->has('secret_file.max_age')) {
+      $request->attributes->set('secret_file.max_age', (int) $expires_at - $current);
+    }
+
     return Url::fromRoute(
       'social_core.secret_file_download',
       [
