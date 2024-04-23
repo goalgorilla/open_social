@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\social_core\PathProcessor;
+namespace Drupal\secret_file_system\PathProcessor;
 
 use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
 use Symfony\Component\HttpFoundation\Request;

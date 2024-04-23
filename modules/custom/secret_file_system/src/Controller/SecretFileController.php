@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\social_core\Controller;
+namespace Drupal\secret_file_system\Controller;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Crypt;

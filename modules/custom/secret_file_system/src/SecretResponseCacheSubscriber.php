@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\social_core;
+namespace Drupal\secret_file_system;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Render\AttachmentsInterface;

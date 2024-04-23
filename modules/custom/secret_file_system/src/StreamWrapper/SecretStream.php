@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Drupal\social_core\StreamWrapper;
+namespace Drupal\secret_file_system\StreamWrapper;
 
 use Drupal\Core\Site\Settings;
 use Drupal\Core\StreamWrapper\LocalStream;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
 use Drupal\Core\Url;
-use Drupal\social_core\Controller\SecretFileController;
+use Drupal\secret_file_system\Controller\SecretFileController;
 
 /**
  * Open Social's secret (secret://) stream wrapper class.
@@ -90,7 +90,7 @@ class SecretStream extends LocalStream {
     }
 
     return Url::fromRoute(
-      'social_core.secret_file_download',
+      'secret_file_system.secret_file_download',
       [
         'hash' => $hash,
         'expires_at' => $expires_at,
