@@ -431,6 +431,13 @@ function social_core_update_130001() : void {
  * Migrate private file system to secret file system.
  */
 function social_core_update_130002() : void {
+  // Allow platforms to opt out of the migration to using the secret file
+  // system.
+  if (\Drupal::state()->get("secret_file_system_opt_out", FALSE)) {
+    \Drupal::logger("social_core")->info("Platform has opted out of secret file system migration.");
+    return;
+  }
+
   $image_fields = \Drupal::entityTypeManager()
     ->getStorage('field_storage_config')
     ->loadByProperties(['type' => 'image']);
@@ -468,4 +475,11 @@ function social_core_update_130002() : void {
 
   // Update all managed files.
   \Drupal::database()->query("UPDATE {file_managed} SET uri = REPLACE(uri, 'private://', 'secret://')");
+}
+
+/**
+ * Clean up any secret file system opt-out that might be enabled.
+ */
+function social_core_update_130003() : void {
+  \Drupal::state()->delete("secret_file_system_opt_out");
 }
