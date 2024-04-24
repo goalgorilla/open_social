@@ -6,6 +6,7 @@
  */
 
 use Drupal\group\Entity\GroupType;
+use Drupal\language\ConfigurableLanguageManagerInterface;
 
 /**
  * Implements hook_install().
@@ -43,6 +44,67 @@ function social_group_invite_update_dependencies() : array {
  */
 function social_group_invite_update_last_removed() : int {
   return 11503;
+}
+
+/**
+ * Update email invitation messages with new token for the symfony mailer.
+ */
+function social_group_invite_update_12401(): void {
+  $config_factory = \Drupal::configFactory();
+
+  // Groups to look for translation.
+  $groups = [
+    'secret_group',
+    'closed_group',
+    'flexible_group',
+    'open_group',
+    'public_group',
+  ];
+
+  foreach ($groups as $group) {
+    $config_name = sprintf('group.content_type.%s-group_invitation', $group);
+    $configuration = $config_factory->getEditable($config_name);
+
+    $plugin_config_data = $configuration->getOriginal('plugin_config');
+    if (!empty($plugin_config_data['existing_user_invitation_subject'])) {
+      $plugin_config_data['existing_user_invitation_subject'] = str_replace('[current-user:display-name]', '[user:display-name]', $plugin_config_data['existing_user_invitation_subject']);
+    }
+    if (!empty($plugin_config_data['existing_user_invitation_body'])) {
+      $plugin_config_data['existing_user_invitation_body'] = str_replace('[current-user:display-name]', '[user:display-name]', $plugin_config_data['existing_user_invitation_body']);
+    }
+    $configuration->set('plugin_config', $plugin_config_data);
+    $configuration->save();
+
+    // When the Social Language is disabled, go to the next.
+    if (!\Drupal::service('module_handler')->moduleExists('social_language')) {
+      continue;
+    }
+
+    // Change token from email template from languages.
+    $language_manager = \Drupal::languageManager();
+    foreach ($language_manager->getLanguages() as $language) {
+      if (!$language_manager instanceof ConfigurableLanguageManagerInterface) {
+        continue;
+      }
+      $config_translation = $language_manager->getLanguageConfigOverride($language->getId(), $config_name);
+
+      // When the current language don't have translation, go to the next.
+      $plugin_config_data = $config_translation->get('plugin_config');
+      if (empty($plugin_config_data)) {
+        continue;
+      }
+
+      // Change tokens.
+      if (!empty($plugin_config_data['existing_user_invitation_subject'])) {
+        $plugin_config_data['existing_user_invitation_subject'] = str_replace('[current-user:display-name]', '[user:display-name]', $plugin_config_data['existing_user_invitation_subject']);
+      }
+      if (!empty($plugin_config_data['existing_user_invitation_body'])) {
+        $plugin_config_data['existing_user_invitation_body'] = str_replace('[current-user:display-name]', '[user:display-name]', $plugin_config_data['existing_user_invitation_body']);
+      }
+      $config_translation->set('plugin_config', $plugin_config_data);
+      $config_translation->save();
+    }
+  }
 }
 
 /**
