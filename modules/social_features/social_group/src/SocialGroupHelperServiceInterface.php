@@ -105,6 +105,10 @@ interface SocialGroupHelperServiceInterface {
    *
    * @return \Drupal\Core\Url|null
    *   URL of the group add page.
+   *
+   * @deprecated Use the default route with 'flexible_group' as param directly.
+   *
+   * @see https://www.drupal.org/node/3420070
    */
   public function getGroupsToAddUrl(AccountInterface $account);
 

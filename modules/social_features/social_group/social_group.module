@@ -2217,49 +2217,6 @@ function social_group_user_cancel_methods_alter(&$methods) {
 }
 
 /**
- * Implements hook_social_user_account_header_create_links().
- *
- * Adds the "Create Group" link to the content creation menu.
- * When the user can only create groups of one type, the user skips the
- * group type selection page.
- */
-function social_group_social_user_account_header_create_links($context) {
-
-  // If we have a user to work with, we can check if we should redirect it to
-  // the create group overview or a single group.
-  // If we do not have a user we'll default to the overview.
-  $route_add_group = NULL;
-  if (!empty($context['user'])) {
-    /** @var \Drupal\Core\Session\AccountInterface $user */
-    $account = $context['user'];
-    /** @var \Drupal\Core\Url|NULL $route_add_group */
-    $route_add_group = \Drupal::service('social_group.helper_service')
-      ->getGroupsToAddUrl($account);
-
-    // Get groups to add url can return Url service
-    // It will change it when necessary.
-    if ($route_add_group instanceof Url) {
-      $route_add_group = Link::fromTextAndUrl((new TranslatableMarkup('New Group')), $route_add_group);
-    }
-  }
-
-  if (empty($route_add_group)) {
-    $route_add_group = Link::createFromRoute((new TranslatableMarkup('New Group')), 'entity.group.add_page');
-  }
-
-  return [
-    'add_group' => [
-      '#type' => 'link',
-      '#attributes' => [
-        'title' => new TranslatableMarkup('Create New Group'),
-      ],
-      '#weight' => 500,
-      '#access' => $route_add_group->getUrl()->access(),
-    ] + $route_add_group->toRenderable(),
-  ];
-}
-
-/**
  * Implements hook_social_user_account_header_items().
  *
  * Adds the My Groups button to the account header block if it's enabled by a

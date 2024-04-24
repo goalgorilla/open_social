@@ -8999,14 +8999,14 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Function social_group_social_user_account_header_create_links\\(\\) has no return type specified\\.$#"
+			message: "#^Function social_group_flexible_group_social_user_account_header_create_links\\(\\) has no return type specified\\.$#"
 			count: 1
-			path: modules/social_features/social_group/social_group.module
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
 
 		-
-			message: "#^Function social_group_social_user_account_header_create_links\\(\\) has parameter \\$context with no type specified\\.$#"
+			message: "#^Function social_group_flexible_group_social_user_account_header_create_links\\(\\) has parameter \\$context with no type specified\\.$#"
 			count: 1
-			path: modules/social_features/social_group/social_group.module
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
 
 		-
 			message: "#^Function social_group_social_user_account_header_items\\(\\) has no return type specified\\.$#"
@@ -9080,11 +9080,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$role in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Variable \\$user in PHPDoc tag @var does not match assigned variable \\$account\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -9202,31 +9197,6 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_group/src/EventSubscriber/RedirectSubscriber.php
-
-		-
-			message: "#^Cannot call method getListCacheTags\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityTypeInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
-
-		-
-			message: "#^Method Drupal\\\\social_group\\\\Form\\\\SocialGroupAddForm\\:\\:create\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
-
-		-
-			message: "#^Method Drupal\\\\social_group\\\\Form\\\\SocialGroupAddForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$entity_bundle of method Drupal\\\\Core\\\\Entity\\\\EntityAccessControlHandlerInterface\\:\\:createAccess\\(\\) expects string\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
 
 		-
 			message: "#^Cannot access an offset on array\\<int\\|string, Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup\\|string\\>\\|Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup\\|int\\|string\\.$#"

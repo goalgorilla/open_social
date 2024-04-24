@@ -202,9 +202,6 @@ class GroupContext extends RawMinkContext {
 
     $page = $this->getSession()->getPage();
 
-    $page->selectFieldOption("group_type", $group_type_selector);
-    $page->pressButton("Continue");
-
     $group = ['type' => $group_type];
     foreach ($fields->getRowsHash() as $field => $value) {
       $key = strtolower($field);

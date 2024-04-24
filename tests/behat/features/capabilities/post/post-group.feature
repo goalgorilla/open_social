@@ -11,7 +11,6 @@ Feature: Create Post on Group
       | Group User Two | group_user_2@example.com | 1      | verified |
     And I am logged in as "Group User One"
     And I am on "group/add"
-    And I press "Continue"
 
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
