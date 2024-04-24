@@ -11,7 +11,6 @@ Feature: Revisions are disabled for open group
       | Group Member Two  | gm_2@example.com | Drupal                     | 1      | verified |
     And I am logged in as "Group Manager One"
     And I am on "group/add"
-    And I press "Continue"
     And I wait for AJAX to finish
 
     When I fill in "Title" with "Test open group"

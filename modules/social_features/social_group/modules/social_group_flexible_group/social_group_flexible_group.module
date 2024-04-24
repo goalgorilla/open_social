@@ -14,7 +14,9 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\block\Entity\Block;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
@@ -893,4 +895,26 @@ function _social_group_flexible_group_type_change_topic_icon_ajax(array $form, F
   $response->addCommand(new ReplaceCommand('.icon-svg-wrapper', $replaced));
 
   return $response;
+}
+
+/**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Group" link to the content creation menu.
+ */
+function social_group_flexible_group_social_user_account_header_create_links($context) {
+  $link = Link::createFromRoute((new TranslatableMarkup('New Group')), 'entity.group.add_form', [
+    'group_type' => 'flexible_group',
+  ]);
+
+  return [
+    'add_group' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Group'),
+      ],
+      '#weight' => 500,
+      '#access' => $link->getUrl()->access(),
+    ] + $link->toRenderable(),
+  ];
 }

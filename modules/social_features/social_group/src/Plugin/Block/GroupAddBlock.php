@@ -168,7 +168,7 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
    *   The URL object.
    */
   protected function getUrl() {
-    return $this->socialGroupHelper->getGroupsToAddUrl($this->currentUser) ?? Url::fromRoute('entity.group.add_page');
+    return Url::fromRoute('entity.group.add_page', ['group_type' => 'flexible_group']);
   }
 
 }

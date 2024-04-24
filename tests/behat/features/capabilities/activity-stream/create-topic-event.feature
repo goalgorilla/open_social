@@ -122,7 +122,6 @@ Feature: See and get notified when content is created
       | SeeUser     | 1      | SeeUser     | verified |
     And I am logged in as "CreateUser"
     And I am on "group/add"
-    And I press "Continue"
 
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
