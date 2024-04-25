@@ -32,8 +32,16 @@ function social_group_invite_update_dependencies() : array {
     'social_group' => 13000,
   ];
 
+  $dependencies['social_group_invite'][13001] = [
+    'social_group' => 13006,
+  ];
+
   $dependencies['social_group'][13001] = [
     'social_group_invite' => 13000,
+  ];
+
+  $dependencies['social_group'][13007] = [
+    'social_group_invite' => 13001,
   ];
 
   return $dependencies;
@@ -47,9 +55,31 @@ function social_group_invite_update_last_removed() : int {
 }
 
 /**
+ * Remove deprecated group types.
+ */
+function social_group_invite_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_invite', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Update email invitation messages with new token for the symfony mailer.
  */
-function social_group_invite_update_12401(): void {
+function social_group_invite_update_13001(): void {
   $config_factory = \Drupal::configFactory();
 
   // Groups to look for translation.
@@ -105,26 +135,4 @@ function social_group_invite_update_12401(): void {
       $config_translation->save();
     }
   }
-}
-
-/**
- * Remove deprecated group types.
- */
-function social_group_invite_update_13000(): ?string {
-  // Allow platforms to opt out of the group migration, for example if they want
-  // to build it themselves and take more scenario's into account than common
-  // Open Social installations will have.
-  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
-    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
-    return NULL;
-  }
-
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_group_invite', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
 }
