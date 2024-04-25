@@ -119,3 +119,17 @@ function social_page_update_130000(): ?string {
   // Output logged messages to a related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Rename "Basic Page" content type label into "Page".
+ */
+function social_page_update_130001(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_page', 'social_page_update_130001');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
