@@ -95,7 +95,13 @@ function social_group_invite_update_13001(): void {
     $config_name = sprintf('group.content_type.%s-group_invitation', $group);
     $configuration = $config_factory->getEditable($config_name);
 
+    // When the plugin is empty, go to the next.
     $plugin_config_data = $configuration->getOriginal('plugin_config');
+    if (empty($plugin_config_data)) {
+      continue;
+    }
+
+    // Change tokens.
     if (!empty($plugin_config_data['existing_user_invitation_subject'])) {
       $plugin_config_data['existing_user_invitation_subject'] = str_replace('[current-user:display-name]', '[user:display-name]', $plugin_config_data['existing_user_invitation_subject']);
     }
