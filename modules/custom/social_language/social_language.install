@@ -6,9 +6,8 @@
  */
 
 use Drupal\Core\Serialization\Yaml;
-
-use Drupal\Core\Database\Database;
 use Drupal\group\Entity\GroupType;
+use Drupal\language\ConfigurableLanguageManagerInterface;
 
 /**
  * Implements hook_install().
@@ -147,15 +146,24 @@ function social_language_update_12201(): string {
  * Removing wrong language configuration for original-language from groups.
  */
 function social_language_update_12301(): void {
-  $group_types = GroupType::loadMultiple();
-  foreach ($group_types as $group_type) {
-    $configuration_name = sprintf('group.type.%s', $group_type->id());
-    $collection_value = sprintf('language.%s', $group_type->language()->getId());
+  $language_manager = \Drupal::languageManager();
+  if (!$language_manager instanceof ConfigurableLanguageManagerInterface) {
+    return;
+  }
 
-    Database::getConnection()
-      ->delete('config')
-      ->condition('collection', $collection_value)
-      ->condition('name', $configuration_name)
-      ->execute();
+  $group_types = GroupType::loadMultiple();
+  $group_configs = [
+    'group_invitation',
+    'group_membership',
+    'group_node-event',
+    'group_node-topic',
+  ];
+  foreach ($group_types as $group_type) {
+    foreach ($group_configs as $group_config) {
+      $configuration_name = sprintf('group.content_type.%s-%s', $group_type->id(), $group_config);
+
+      $config_translation = $language_manager->getLanguageConfigOverride($group_type->language()->getId(), $configuration_name);
+      $config_translation->delete();
+    }
   }
 }
