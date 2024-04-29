@@ -81,6 +81,11 @@ class SocialUserLoginForm extends UserLoginForm {
 
     $link_options = [];
 
+    $link_options['attributes'] = [
+      'class' => ['button button--primary btn-raised btn-primary waves-effect waves-btn waves-light'],
+      'style' => ['padding: 0.3em'],
+    ];
+
     // Preserve the destination parameter when a user logs in instead.
     $request = \Drupal::request();
     if ($request->query->has('destination')) {
