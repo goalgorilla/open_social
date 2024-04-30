@@ -71,3 +71,13 @@ function social_group_flexible_group_update_120001(): void {
     }
   }
 }
+
+/**
+ * Remove redundant "social_group_type_required" settings.
+ */
+function social_group_flexible_group_update_130000(): void {
+  \Drupal::configFactory()
+    ->getEditable('social_group.settings')
+    ->clear('social_group_type_required')
+    ->save();
+}
