@@ -109,7 +109,6 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
       $group = $group_content->getGroup();
 
       $memberships = $group->getMembers($group->bundle() . '-group_manager');
-      $memberships = array_merge($memberships, $group->getMembers($group->bundle() . '-group_admin'));
 
       // List of managers which shouldn't receive notifications.
       $account_ids = [

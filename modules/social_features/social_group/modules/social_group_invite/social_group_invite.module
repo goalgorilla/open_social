@@ -492,10 +492,6 @@ function social_group_invite_set_default_permissions_for_group_type(GroupTypeInt
     $role = $roles[$group_type->id() . '-group_manager'];
     social_group_invite_set_default_permissions_for_role_on_group_type($role);
   }
-  if (!empty($roles[$group_type->id() . '-group_admin'])) {
-    $role = $roles[$group_type->id() . '-group_admin'];
-    social_group_invite_set_default_permissions_for_role_on_group_type($role);
-  }
 }
 
 /**

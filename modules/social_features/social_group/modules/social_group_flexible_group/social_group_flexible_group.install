@@ -5,6 +5,11 @@
  * Install and update functions for the social_group_flexible_group module.
  */
 
+use Drupal\Core\Config\FileStorage;
+use Drupal\group\GroupMembership;
+use Drupal\social_group\Entity\Group;
+use Drupal\user\Entity\User;
+
 /**
  * Implements hook_install().
  */
@@ -122,4 +127,86 @@ function social_group_flexible_group_update_130002(): void {
         ->save();
     }
   }
+}
+
+/**
+ * Move group_admin to group_manager group role.
+ *
+ * @param array $sandbox
+ *   Stores information for batch updates. See above for more information.
+ *
+ * @return string
+ *   Displays a message about results to user after the update has completed.
+ */
+function social_group_flexible_group_update_130002(array &$sandbox): string {
+  if (!isset($sandbox['progress'])) {
+    $db = \Drupal::database();
+
+    // Fetch users with group_admin role that should be updated.
+    $query = $db->select('group_content__group_roles', 'gcgr');
+    $query->addField('gcgr', 'entity_id');
+    $query->addField('grfd', 'entity_id', 'uid');
+    $query->addField('grfd', 'gid');
+    $query->condition('gcgr.group_roles_target_id', 'flexible_group-group_admin');
+
+    $query->join('group_relationship_field_data', 'grfd', 'grfd.id = gcgr.entity_id');
+
+    $sandbox['ids'] = $query->execute()->fetchAllAssoc('entity_id');
+
+    $sandbox['max'] = count($sandbox['ids']);
+    $sandbox['progress'] = 0;
+  }
+  $items = array_slice($sandbox['ids'], $sandbox['progress'], 25);
+  foreach ($items as $item) {
+    $account = User::load($item->uid);
+    $group = Group::load($item->gid);
+    $manager_role = 'flexible_group-group_manager';
+
+    /** @var \Drupal\group\GroupMembership $membership */
+    $membership = $group->getMember($account);
+
+    // Check what roles are there.
+    if ($membership instanceof GroupMembership) {
+      $group_relationship = $membership->getGroupRelationship();
+      $member_assigned_roles = array_column($group_relationship->get('group_roles')->getValue(), 'target_id');
+
+      // Assign manager role if it doesn't assigned yet.
+      if (!in_array($manager_role, $member_assigned_roles)) {
+        $member_assigned_roles[] = $manager_role;
+        $member_assigned_roles = array_map(function ($member_assigned_role) {
+          return ['target_id' => $member_assigned_role];
+        }, $member_assigned_roles);
+
+        $group_relationship->set('group_roles', $member_assigned_roles);
+        $group_relationship->save();
+      }
+    }
+    $sandbox['progress']++;
+  }
+  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+  // Show a status update for the current progress.
+  return t("Assigned @progress group manager role to @max users.", ['@progress' => $sandbox['progress'], '@max' => $sandbox['max']]);
+}
+
+/**
+ * Create Admin/CM/CS insider roles and delete "group admin" role.
+ */
+function social_group_flexible_group_update_130003(): void {
+  $config_factory = \Drupal::configFactory();
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group_flexible_group') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  // Created new roles.
+  foreach (['admin', 'cm', 'sm'] as $id) {
+    $config_name = "group.role.flexible_group-{$id}-insider";
+    $data = $source->read($config_name);
+    if (is_array($data)) {
+      $config_factory->getEditable($config_name)
+        ->setData($data)
+        ->save();
+    }
+  }
+
+  // Delete deprecated role.
+  $config_factory->getEditable('group.role.flexible_group-group_admin')->delete();
 }

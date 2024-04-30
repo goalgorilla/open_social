@@ -32,7 +32,6 @@ use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
-use Drupal\group\GroupMembership;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
@@ -1199,46 +1198,6 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
 }
 
 /**
- * This function checks if the user should get the admin role within a group.
- *
- * Also check if the user has already a membership.
- * If so, update it with the new role.
- */
-function _social_group_grant_admin_role($uid, $gid) {
-  $account = User::load($uid);
-  $group = Group::load($gid);
-
-  // Must be a valid account AND a valid group.
-  if ($account instanceof User && $group instanceof Group) {
-    // Must have manage all groups permission.
-    // Otherwise normal flow will be fine.
-    if (!$account->hasPermission('manage all groups')) {
-      return;
-    }
-    // Check if the user is already a member in the group
-    // (could be in update mode here).
-    $admin_role = $group->bundle() . '-group_admin';
-    /** @var \Drupal\group\GroupMembership $membership */
-    $membership = $group->getMember($account);
-
-    // Check what roles are there.
-    $roles = [];
-    if ($membership instanceof GroupMembership) {
-      foreach ($membership->getGroupRelationship()->get('group_roles') as $group_role_ref) {
-        /** @var \Drupal\Core\Field\EntityReferenceFieldItemList $group_role_ref */
-        $roles[] = $group_role_ref->getValue();
-      }
-
-      // No admin? Add it.
-      if (!in_array($admin_role, $roles)) {
-        $membership->getGroupRelationship()->set('group_roles', ['target_id' => $admin_role]);
-        $membership->getGroupRelationship()->save();
-      }
-    }
-  }
-}
-
-/**
  * When creating a new group membership or a node with group reference.
  *
  * @param \Drupal\group\Entity\GroupRelationshipInterface $group_content
@@ -1246,14 +1205,7 @@ function _social_group_grant_admin_role($uid, $gid) {
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function social_group_group_content_insert(GroupRelationshipInterface $group_content) {
-  if ($group_content->getEntity()->getEntityTypeId() === 'user') {
-    if ($group_content->bundle() === $group_content->getGroup()
-      ->bundle() . '-group_membership') {
-      _social_group_grant_admin_role($group_content->getEntity()
-        ->id(), $group_content->getGroup()->id());
-    }
-  }
+function social_group_group_content_insert(GroupRelationshipInterface $group_content): void {
   // When moving a node from 1 group to the other as SM
   // it means you as SM are the new owner, instead of the original author.
   // Which results in wrong activity authors being used.
