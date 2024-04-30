@@ -35,7 +35,7 @@ function social_flexible_group_book_install(): void {
   // Set group permissions.
   // Group anonymous.
   $group_permissions['flexible_group-anonymous'] = [
-    'view group_node:book content',
+    'view group_node:book relationship',
     'view group_node:book entity',
   ];
 
@@ -45,39 +45,22 @@ function social_flexible_group_book_install(): void {
   // Group member.
   $group_permissions['flexible_group-member'] = [
     ...$group_permissions['flexible_group-outsider'],
-    'create group_node:book content',
+    'create group_node:book relationship',
     'create group_node:book entity',
     'delete own group_node:book entity',
-    'delete own group_node:book content',
-    'update own group_node:book content',
+    'delete own group_node:book relationship',
+    'update own group_node:book relationship',
     'update own group_node:book entity',
   ];
 
   // Group manager.
   $group_permissions['flexible_group-group_manager'] = [
     ...$group_permissions['flexible_group-member'],
-    'delete any group_node:book content',
+    'delete any group_node:book relationship',
     'delete any group_node:book entity',
-    'update any group_node:book content',
+    'update any group_node:book relationship',
     'update any group_node:book entity',
   ];
-
-  // Group admin.
-  $group_permissions['flexible_group-group_admin'] = [
-    ...$group_permissions['flexible_group-group_manager'],
-    'update any group_node:book content',
-    'update any group_node:book entity',
-    'view unpublished group_node:book entity',
-  ];
-
-  // Group outside role: Content manager.
-  $group_permissions['flexible_group-83776d798'] = $group_permissions['flexible_group-group_manager'];
-
-  // Group outside role: Site manager.
-  $group_permissions['flexible_group-ba5854c29'] = $group_permissions['flexible_group-group_admin'];
-
-  // Group outside role: Administrator.
-  $group_permissions['flexible_group-a416e6833'] = $group_permissions['flexible_group-group_admin'];
 
   /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
   $group_type = \Drupal::entityTypeManager()

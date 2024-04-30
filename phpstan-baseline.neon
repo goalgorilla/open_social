@@ -8514,21 +8514,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Function _social_group_grant_admin_role\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function _social_group_grant_admin_role\\(\\) has parameter \\$gid with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function _social_group_grant_admin_role\\(\\) has parameter \\$uid with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Function _social_group_membership_edit_form_submit\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -8655,11 +8640,6 @@ parameters:
 
 		-
 			message: "#^Function social_group_get_allowed_visibility_options_per_group_type\\(\\) has parameter \\$group with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function social_group_group_content_insert\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -13450,3 +13430,23 @@ parameters:
 			message: "#^Cannot call method relationshipAccess\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Group/RelationHandler/SocialGroupInviteAccessControl.php
+
+		-
+			message: "#^Cannot call method fetchCol\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
+
+		-
+			message: "#^Cannot call method fetchAllAssoc\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
+
+		-
+			message: "#^Cannot call method getMember\\(\\) on Drupal\\\\social_group\\\\Entity\\\\Group\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
+
+		-
+			message: "#^Instanceof between Drupal\\\\group\\\\GroupMembership and Drupal\\\\group\\\\Entity\\\\GroupMembership will always evaluate to false.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
