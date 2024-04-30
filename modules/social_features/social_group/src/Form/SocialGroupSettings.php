@@ -8,9 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Render\Element\Checkboxes;
-use Drupal\Core\Url;
 use Drupal\crop\Entity\CropType;
 use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -168,22 +166,6 @@ class SocialGroupSettings extends ConfigFormBase {
       ],
     ];
 
-    // Add an option for site manager to enable/disable option to choose group
-    // type on page to add flexible groups.
-    if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
-      $form['social_group_type_required'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Require group types'),
-        '#description' => $this->t('When checked, a new option will appear on
-          the flexible group form which requires group creators to select a
-          group type, this allows for a better categorisation of groups in your
-          community. You can add or edit the available group types @link', [
-            '@link' => Link::fromTextAndUrl('here.', Url::fromUserInput('/admin/structure/taxonomy/manage/group_type/overview'))->toString(),
-          ]),
-        '#default_value' => $config->get('social_group_type_required'),
-      ];
-    }
-
     return parent::buildForm($form, $form_state);
   }
 
@@ -230,12 +212,8 @@ class SocialGroupSettings extends ConfigFormBase {
       ]))
       : []
     );
-    $config->set('social_group_type_required', $form_state->getValue('social_group_type_required'));
-    $config->save();
 
-    if ($form['social_group_type_required']['#default_value'] !== (bool) $form_state->getValue('social_group_type_required')) {
-      Cache::invalidateTags(['config:block.block.exposed_form_newest_groups_page_all_groups']);
-    }
+    $config->save();
 
     Cache::invalidateTags(['group_view']);
   }

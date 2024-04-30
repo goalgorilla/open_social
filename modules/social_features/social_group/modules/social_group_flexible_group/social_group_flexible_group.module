@@ -97,12 +97,7 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
         ],
       ];
     }
-    // Hide the flexible group field group type if the setting for it to be
-    // required is disabled even if there are values in the vocabulary.
-    if (!empty($form['field_group_type_target_id']) &&
-      !\Drupal::config('social_group.settings')->get('social_group_type_required')) {
-      $form['field_group_type_target_id']['#type'] = 'hidden';
-    }
+
     // Hide the flexible group field group type if there is only the
     // "All / any" option we hide it as well.
     if (!empty($form['field_group_type_target_id']) &&
@@ -182,20 +177,14 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
       }
     }
 
-    // Disable type field if there are no terms added in 'Group type' vocab.
-    // Also, check for settings by SM for enabling this field.
-    $group_type_settings = \Drupal::config('social_group.settings')->get('social_group_type_required');
-    if ($group_type_settings
-      && isset($form['field_group_type'])
-      && !empty(\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('group_type'))) {
-      $form['field_group_type']['widget']['#required'] = TRUE;
+    if (!empty($form['field_group_type'])) {
       // Unset the group type label for none.
       if (isset($form['field_group_type']['widget']['#options']['_none'])) {
         unset($form['field_group_type']['widget']['#options']['_none']);
       }
-    }
-    else {
-      $form['field_group_type']['#access'] = FALSE;
+
+      // Disable type field if there are no terms added in 'Group type' vocab.
+      $form['field_group_type']['#access'] = !empty($form['field_group_type']['widget']['#options']);
     }
 
     // Disable the public visibility option on group create/edit content option.
