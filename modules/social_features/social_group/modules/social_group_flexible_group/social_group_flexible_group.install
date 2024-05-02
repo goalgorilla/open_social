@@ -138,7 +138,7 @@ function social_group_flexible_group_update_130002(): void {
  * @return string
  *   Displays a message about results to user after the update has completed.
  */
-function social_group_flexible_group_update_130002(array &$sandbox): string {
+function social_group_flexible_group_update_130003(array &$sandbox): string {
   if (!isset($sandbox['progress'])) {
     $db = \Drupal::database();
 
@@ -191,7 +191,7 @@ function social_group_flexible_group_update_130002(array &$sandbox): string {
 /**
  * Create Admin/CM/CS insider roles and delete "group admin" role.
  */
-function social_group_flexible_group_update_130003(): void {
+function social_group_flexible_group_update_130004(): void {
   $config_factory = \Drupal::configFactory();
   $config_path = \Drupal::service('extension.list.module')->getPath('social_group_flexible_group') . '/config/static';
   $source = new FileStorage($config_path);

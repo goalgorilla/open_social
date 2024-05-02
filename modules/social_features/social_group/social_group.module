@@ -32,7 +32,6 @@ use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
-use Drupal\group\PermissionScopeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
@@ -1784,26 +1783,6 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
 }
 
 /**
- * Determine the amount of group_types a user can see.
- *
- * @param \Drupal\Core\Session\AccountInterface $account
- *   The user to check for.
- *
- * @return int
- *   The amount of group_types
- */
-function _social_group_get_current_group_types(AccountInterface $account) {
-  $group_types = 0;
-
-  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
-  foreach (GroupType::loadMultiple() as $group_type) {
-    $group_types += (int) social_group_can_view_groups_of_type($group_type->id(), $account);
-  }
-
-  return $group_types;
-}
-
-/**
  * Delete the group and all of its content.
  */
 function _social_group_delete_group() {
@@ -2264,69 +2243,6 @@ function social_group_social_user_account_header_account_links(array $context) {
       '#access' => $link->getUrl()->access(),
     ] + $link->toRenderable(),
   ];
-}
-
-/**
- * Determine whether a user can see groups of a given type as an outsider.
- *
- * @param string $type
- *   The group type to check.
- * @param \Drupal\Core\Session\AccountInterface $account
- *   The user to check for.
- *
- * @return bool
- *   Whether the user is allowed to view groups of the given type.
- */
-function social_group_can_view_groups_of_type(string $type, AccountInterface $account): bool {
-  $group_type = GroupType::load($type);
-
-  // If the group type doesn't exist then the user can't see the group type.
-  if ($group_type === NULL) {
-    return FALSE;
-  }
-
-  // Anonymous users have a special role.
-  if ($account->isAnonymous()) {
-    /** @var \Drupal\group\Entity\GroupRoleInterface $anonymous_role */
-    $anonymous_role = \Drupal::entityTypeManager()->getStorage('group_role')
-      ->load($group_type->id() . '-anonymous');
-    return $anonymous_role->hasPermission('view group');
-  }
-
-  // Authenticated is a locked Role,
-  // So first we check outsiders also easier on the performance :)
-  /** @var \Drupal\group\Entity\GroupRoleInterface $outsider */
-  $outsider = \Drupal::entityTypeManager()
-    ->getStorage('group_role')
-    ->load($group_type->id() . '-outsider');
-
-  if (NULL !== $outsider && $outsider->hasPermission('view group')) {
-    return TRUE;
-  }
-
-  /** @var \Drupal\group\Access\GroupPermissionCalculatorInterface $group_permission_calculator */
-  $group_permission_calculator = \Drupal::service('group_permission.calculator');
-  $calculated_permissions = $group_permission_calculator->calculateFullPermissions($account);
-
-  // If members can see it, we also need to show group types because
-  // we are not calculation memberships.
-  /** @var \Drupal\flexible_permissions\CalculatedPermissionsItemInterface|false $member */
-  $member = $calculated_permissions->getItem(PermissionScopeInterface::INSIDER_ID, (string) $group_type->id());
-  if (FALSE !== $member && $member->hasPermission('view group')) {
-    return TRUE;
-  }
-
-  // Check each role this user has whether its group counterpart has the correct
-  // permission. This counts for the advanced group permissions.
-  // Admin, SM, CM.
-  /** @var \Drupal\flexible_permissions\CalculatedPermissionsItemInterface|false $group_role */
-  $group_role = $calculated_permissions->getItem(PermissionScopeInterface::OUTSIDER_ID, (string) $group_type->id());
-  if (FALSE !== $group_role && $group_role->hasPermission('view group')) {
-    return TRUE;
-  }
-
-  // The user has no role that can view the group type.
-  return FALSE;
 }
 
 /**
