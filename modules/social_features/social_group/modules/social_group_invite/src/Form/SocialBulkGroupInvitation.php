@@ -221,9 +221,9 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     ];
 
     $form['users_fieldset']['user'] = [
-      '#title' => $this->t('Find people by name or email address'),
+      '#title' => $this->t('Invite any person inside or outside your community using their name or email'),
       '#type' => 'select2',
-      '#description' => $this->t('You can enter or paste multiple entries separated by comma or semicolon'),
+      '#description' => $this->t('For multiple invitees separate each name or email with a comma'),
       '#multiple' => TRUE,
       '#tags' => TRUE,
       '#autocomplete' => TRUE,

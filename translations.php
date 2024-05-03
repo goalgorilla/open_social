@@ -181,3 +181,7 @@ new TranslatableMarkup('Resend invites for group members');
 
 // String added because original one was changed due to #3439386 issue.
 new TranslatableMarkup('Are you sure you want to send your email to to the following %count enrollees?');
+
+// String added because original one was changed due to #3445024 issue.
+new TranslatableMarkup('Find people by name or email address');
+new TranslatableMarkup('You can enter or paste multiple entries separated by comma or semicolon');
