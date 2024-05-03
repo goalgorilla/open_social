@@ -19,7 +19,7 @@ Feature: Add event to calendar
 
     When I am logged in as "regular_user"
     And I am viewing the event "Walking in the park"
-    And the file downloaded from "iCalendar calendar" should contain individual lines:
+    And the file downloaded from "iCalendar" should contain individual lines:
       """
       BEGIN:VCALENDAR
       VERSION:2.0
@@ -65,7 +65,7 @@ Feature: Add event to calendar
       | Email address | john@doe.com |
     And I press "Enroll in event" in the "Modal"
     And I wait for AJAX to finish
-    And the file downloaded from "iCalendar calendar" should contain individual lines:
+    And the file downloaded from "iCalendar" should contain individual lines:
       """
       BEGIN:VCALENDAR
       VERSION:2.0
