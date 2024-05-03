@@ -460,19 +460,6 @@ function social_core_update_130002() : void {
     }
   }
 
-  $editors = \Drupal::entityTypeManager()
-    ->getStorage('editor')
-    ->loadMultiple();
-
-  foreach ($editors as $editor) {
-    $upload_settings = $editor->getImageUploadSettings();
-    if ($upload_settings['scheme'] === 'private') {
-      $upload_settings['scheme'] = 'secret';
-      $editor->setImageUploadSettings($upload_settings);
-      $editor->save();
-    }
-  }
-
   // Update all managed files.
   \Drupal::database()->query("UPDATE {file_managed} SET uri = REPLACE(uri, 'private://', 'secret://')");
 }
