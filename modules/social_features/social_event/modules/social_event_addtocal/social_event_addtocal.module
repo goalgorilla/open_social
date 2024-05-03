@@ -64,7 +64,7 @@ function social_event_addtocal_preprocess_event_enrollment_confirmation_add_to_c
         '#type' => 'html_tag',
         '#tag' => 'span',
         '#value' => Link::fromTextAndUrl(
-          t('@calendar calendar', ['@calendar' => $link['title']]),
+          t('@calendar', ['@calendar' => $link['title']]),
           $link['url']
         )->toString(),
         '#attributes' => [
@@ -111,7 +111,7 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
 
       // Update the 'Add to calendar' field rendering.
       $calendar_link = Link::fromTextAndUrl(
-        t('@calendar calendar', ['@calendar' => $link['title']]),
+        t('@calendar', ['@calendar' => $link['title']]),
         $link['url']
       );
       $build['field_event_addtocal'] = [
@@ -141,7 +141,7 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
             [
               '#type' => 'html_tag',
               '#tag' => 'span',
-              '#value' => t('@cal calendar', ['@cal' => $link['title']]),
+              '#value' => t('@cal', ['@cal' => $link['title']]),
             ],
           ];
 
