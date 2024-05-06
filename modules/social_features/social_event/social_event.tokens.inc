@@ -70,7 +70,7 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
               $count = count($enrollments->getEventEnrollmentsByStatus((int) $node->id(), [
                 EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED,
                 EventEnrollmentInterface::REQUEST_APPROVED,
-              ]));
+              ], TRUE));
               $enrollments = \Drupal::translation()->formatPlural(
                 $count,
                 ':count person has enrolled',

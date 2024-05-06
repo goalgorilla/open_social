@@ -215,6 +215,9 @@ class EventEnrollmentStatusHelper {
    *   Event id to search enrollments.
    * @param array $filter
    *   Event enrollment status to be filtered.
+   * @param bool $ids_only
+   *   (optional) Don't return a list of objects, but just their IDs. Defaults
+   *   to FALSE.
    *
    * @return array
    *   Return an array of EventEnrollmentEntity.
@@ -222,7 +225,7 @@ class EventEnrollmentStatusHelper {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getEventEnrollmentsByStatus(int $event_id, array $filter): array {
+  public function getEventEnrollmentsByStatus(int $event_id, array $filter, bool $ids_only = FALSE): array {
     // Get event-enrollment query.
     $query = $this->entityTypeManager
       ->getStorage('event_enrollment')
@@ -238,6 +241,12 @@ class EventEnrollmentStatusHelper {
       ->condition('field_event', $event_id)
       ->condition($status_group_condition)
       ->execute();
+
+    // If just IDs were requested we can return here without needing to do an
+    // expensive load for the enrollment entities.
+    if ($ids_only) {
+      return $event_nid;
+    }
 
     return $this->entityTypeManager->getStorage('event_enrollment')
       ->loadMultiple($event_nid);
