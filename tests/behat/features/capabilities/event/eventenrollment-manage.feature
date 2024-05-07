@@ -1,4 +1,4 @@
-@api @event @eventenrollment @javascript @stability @perfect @GPI-10 @profile @stability-2 @enrollment-manage
+@api @javascript
 Feature: Manage event enrollment
   Benefit: In order to attend an Event
   Role: As a Verified
@@ -9,8 +9,8 @@ Feature: Manage event enrollment
 
   Scenario: Can't manage an event by default
     Given events with non-anonymous author:
-      | title        | body                  | field_content_visibility | field_event_date    | langcode |
-      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end    | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00 | en       |
     And I am logged in as a user with the verified role
 
     When I am viewing the event "Test content"
@@ -22,8 +22,8 @@ Feature: Manage event enrollment
     # authors yet, we have solved this for groups but not yet for topics/events.
     Given I am logged in as a user with the verified role
     And events authored by current user:
-      | title        | body                  | field_content_visibility | field_event_date    | langcode |
-      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And users:
       | name     | pass            | mail                        | status | roles        |
       | Jane Doe | event_organiser | event_organiser@example.com | 1      | verified     |
@@ -40,8 +40,8 @@ Feature: Manage event enrollment
 
   Scenario: Event manager can see the manage enrollments link on events
     Given events with non-anonymous author:
-      | title        | body                  | field_content_visibility | field_event_date    | langcode |
-      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end    | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00 | en       |
     And I am logged in as a user with the verified role
     And I am an event manager for the "Test content" event
 
@@ -51,8 +51,8 @@ Feature: Manage event enrollment
 
   Scenario: Event manager can see the empty state when there are no enrollments
     Given events with non-anonymous author:
-      | title        | body                  | field_content_visibility | field_event_date    | langcode |
-      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am logged in as a user with the verified role
     And I am an event manager for the "Test content" event
 
@@ -63,8 +63,8 @@ Feature: Manage event enrollment
 
   Scenario: Event manager can see the event enrollments when there are enrollments
     Given events with non-anonymous author:
-      | title        | body                  | field_content_visibility | field_event_date    | langcode |
-      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And there are 2 event enrollments for the "Test content" event
     And I am logged in as a user with the verified role
     And I am an event manager for the "Test content" event
@@ -79,8 +79,8 @@ Feature: Manage event enrollment
 
   Scenario: Event manager gets a notification for an event enrollment
     Given events with non-anonymous author:
-      | title        | body                  | field_content_visibility | field_event_date    | langcode |
-      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am logged in as a user with the verified role
     And I am an event manager for the "Test content" event
 

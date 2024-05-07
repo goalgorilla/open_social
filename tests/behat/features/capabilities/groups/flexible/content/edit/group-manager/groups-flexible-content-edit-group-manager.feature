@@ -1,4 +1,4 @@
-@api @javascript @flexible-groups-content
+@api @javascript
 Feature: Test edit access for content in groups as group manager
 
   Background:
@@ -45,8 +45,8 @@ Feature: Test edit access for content in groups as group manager
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | <group_visibility>              |
     And events with non-anonymous author:
-      | title        | group      | body                  | field_content_visibility | field_event_date    | langcode |
-      | Test content | Test group | Body description text | <content_visibility>     | 2100-01-01T12:00:00 | en       |
+      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Test group | Body description text | <content_visibility>     | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am logged in as a user with the <role> role
     And I am a member of "Test group" with the "flexible_group-group_manager" role
 

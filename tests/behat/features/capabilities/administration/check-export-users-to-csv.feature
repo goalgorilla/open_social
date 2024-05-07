@@ -1,4 +1,4 @@
-@administration @account @stability @javascript @api @export-users
+@javascript @api
 Feature: Export users
   Benefit: A user with the SM role can export users.
   Role: SM
@@ -17,7 +17,7 @@ Feature: Export users
     And I disable module social_private_message and its dependants
     And I disable module social_profile_organization_tag and its dependants
 
-    Given topics:
+    And topics:
       | title        | author        | field_topic_type | body                   | field_content_visibility | langcode |
       | Topic content 1| ExportUser1 | News             | Body description text 1| public                   | en       |
       | Topic content 2| ExportUser2 | News             | Body description text 2| public                   | en       |
@@ -27,11 +27,11 @@ Feature: Export users
     And "1" comments with text "Behat Comment [id]" for "Topic content 2"
     And "1" comments with text "Behat Comment [id]" for "Topic content 3"
 
-    Given events:
-      | title          | author      | field_event_date    | body                   | field_content_visibility | langcode |
-      | Event content 1| ExportUser1 | 2100-01-01T12:00:00 | Body description text 1| public                   | en       |
-      | Event content 2| ExportUser2 | 2100-01-01T12:00:00 | Body description text 2| public                   | en       |
-      | Event content 3| ExportUser3 | 2100-01-01T12:00:00 | Body description text 3| public                   | en       |
+    And events:
+      | title          | author      | field_event_date    | field_event_date_end | body                   | field_content_visibility | langcode |
+      | Event content 1| ExportUser1 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | Body description text 1| public                   | en       |
+      | Event content 2| ExportUser2 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | Body description text 2| public                   | en       |
+      | Event content 3| ExportUser3 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | Body description text 3| public                   | en       |
 
     And event enrollees:
       | event          | user      |
@@ -43,13 +43,13 @@ Feature: Export users
       | title           | bundle       | author      |
       | Event content 1 | event        | ExportUser1 |
 
-    Given posts:
+    And posts:
       | field_post    | author      | type | status | field_visibility | langcode |
       | Post content 1| ExportUser1 | post | 1      | 0                | en       |
       | Post content 2| ExportUser2 | post | 1      | 0                | en       |
       | Post content 3| ExportUser3 | post | 1      | 0                | en       |
 
-    Given groups:
+    And groups:
       | label        | author      | field_group_description  | type           | langcode | field_flexible_group_visibility |
       | Test group 1 | ExportUser3 | Group description        | flexible_group | en       | public                          |
 
@@ -154,7 +154,7 @@ Feature: Export users
     # Needed while Social Profile Fields exists
     Given I set the configuration item "social_profile_fields.settings" with key "profile_profile_field_profile_nick_name" to 1
     # Enable all the profile fields
-    Given I set the configuration item "field.field.profile.profile.field_profile_address" with key "status" to 1
+    And I set the configuration item "field.field.profile.profile.field_profile_address" with key "status" to 1
     And I set the configuration item "field.field.profile.profile.field_profile_first_name" with key "status" to 1
     And I set the configuration item "field.field.profile.profile.field_profile_last_name" with key "status" to 1
     And I set the configuration item "field.field.profile.profile.field_profile_nick_name" with key "status" to 1
