@@ -92,7 +92,12 @@ trait EntityTrait {
         // Make sure we store them as UTC, so we don't have any scenarios where
         // system time influences behat test.
         $date = new DrupalDateTime($values[$field_name], 'UTC');
-        $values[$field_name] = $date->format('Y-m-d\TH:i:s');
+        if ($field_definition->getSetting('datetime_type') === 'date') {
+          $values[$field_name] = $date->format('Y-m-d');
+        }
+        else {
+          $values[$field_name] = $date->format('Y-m-d\TH:i:s');
+        }
       }
       // Created and changed fields are stored as a normal timestamp but require
       // the same human-readable input as datetime fields.
