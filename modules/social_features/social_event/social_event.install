@@ -222,3 +222,17 @@ function social_event_update_130001(): string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Set the end date of the event required.
+ */
+function social_event_update_130002(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', __FUNCTION__);
+
+  // Output logged messages to a related channel of update execution.
+  return $updateHelper->logger()->output();
+}
