@@ -1,0 +1,18 @@
+dependencies:
+  modules:
+    - metatag
+items:
+  metatag.metatag_defaults.node__page:
+    expected_config: { }
+    update_actions:
+      change:
+        tags:
+          title: '[current-page:title]'
+          og_description: '[node:body]'
+          og_image: '[node:field_page_image:entity:url]'
+          og_site_name: '[site:name]'
+          og_title: '[current-page:title]'
+          twitter_cards_description: '[node:body]'
+          twitter_cards_image: '[node:field_page_image:entity:url]'
+          twitter_cards_title: '[current-page:title]'
+          twitter_cards_type: summary_large_image
