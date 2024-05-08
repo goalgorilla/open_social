@@ -71,6 +71,8 @@ function social_metatag_update_13000(): ?string {
  */
 function social_metatag_update_13001(): void {
   if (\Drupal::service('module_handler')->moduleExists('metatag_twitter_cards')) {
-    \Drupal::service('module_installer')->install('metatag_twitter_cards');
+    \Drupal::service('module_installer')->install([
+      'metatag_twitter_cards',
+    ]);
   }
 }
