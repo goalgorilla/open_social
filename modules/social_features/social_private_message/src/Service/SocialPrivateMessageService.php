@@ -63,41 +63,46 @@ class SocialPrivateMessageService extends PrivateMessageService {
    *   The number of unread threads.
    */
   public function updateUnreadCount() {
-    $unread = 0;
+    $unread = &drupal_static(__FUNCTION__);
 
-    // Get the user.
-    $uid = $this->currentUser->id();
-    /** @var \Drupal\user\UserStorageInterface $user_storage */
-    $user_storage = $this->userManager;
-    /** @var \Drupal\user\UserInterface $user */
-    $user = $user_storage->load($uid);
+    if (!isset($unread)) {
+      $unread = 0;
 
-    // Get all the thread id's for this user.
-    $threads = $this->mapper->getThreadIdsForUser($user);
+      // Get the user.
+      $uid = $this->currentUser->id();
+      /** @var \Drupal\user\UserStorageInterface $user_storage */
+      $user_storage = $this->userManager;
+      /** @var \Drupal\user\UserInterface $user */
+      $user = $user_storage->load($uid);
 
-    if (empty($threads)) {
-      return $unread;
-    }
+      // Get all the thread id's for this user.
+      $threads = $this->mapper->getThreadIdsForUser($user);
 
-    // Check the last time someone other than the current user added
-    // something to the threads.
-    $thread_last_messages = $this->getLastMessagesFromOtherUsers($uid, $threads);
-    if (empty($thread_last_messages)) {
-      return $unread;
-    }
-
-    foreach ($thread_last_messages as $thread_id => $last_message) {
-      // Check if the user has a timestamp on the thread.
-      $thread_last_check = $this->userData->get('private_message', $uid, 'private_message_thread:' . $thread_id);
-      if ($thread_last_check === NULL) {
-        $thread_last_check = 0;
+      if (empty($threads)) {
+        return $unread;
       }
 
-      // Check if someone send a message after your last check.
-      if ($last_message > $thread_last_check) {
-        $unread++;
+      // Check the last time someone other than the current user added
+      // something to the threads.
+      $thread_last_messages = $this->getLastMessagesFromOtherUsers($uid, $threads);
+      if (empty($thread_last_messages)) {
+        return $unread;
+      }
+
+      foreach ($thread_last_messages as $thread_id => $last_message) {
+        // Check if the user has a timestamp on the thread.
+        $thread_last_check = $this->userData->get('private_message', $uid, 'private_message_thread:' . $thread_id);
+        if ($thread_last_check === NULL) {
+          $thread_last_check = 0;
+        }
+
+        // Check if someone send a message after your last check.
+        if ($last_message > $thread_last_check) {
+          $unread++;
+        }
       }
     }
+
     return $unread;
   }
 
