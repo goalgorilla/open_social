@@ -65,3 +65,12 @@ function social_metatag_update_13000(): ?string {
   $updateHelper->executeUpdate('social_metatag', __FUNCTION__);
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Enable the Metatag Twitter Card module.
+ */
+function social_metatag_update_13001(): void {
+  if (\Drupal::service('module_handler')->moduleExists('metatag_twitter_cards')) {
+    \Drupal::service('module_installer')->install('metatag_twitter_cards');
+  }
+}
