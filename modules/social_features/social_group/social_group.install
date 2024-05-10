@@ -820,3 +820,19 @@ function social_group_update_13004() : string {
 function social_group_update_13006() : void {
   \Drupal::state()->delete("social_group_group_type_migration_opt_out");
 }
+
+/**
+ * Adjust the group managers view AND/OR filter.
+ *
+ * They need to have group manager role AND a profile.
+ */
+function social_group_update_13007(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
