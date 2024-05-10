@@ -94,7 +94,7 @@ abstract class ShareUsageDataPluginBase extends PluginBase implements ShareUsage
     $usage_data_settings = $config->get('usage_data');
 
     $plugin_definition = $this->getPluginDefinition();
-    if (in_array($plugin_definition['setting'] ?? [], $usage_data_settings)) {
+    if (!empty($plugin_definition['setting']) && in_array($plugin_definition['setting'], $usage_data_settings)) {
       return TRUE;
     }
     return FALSE;

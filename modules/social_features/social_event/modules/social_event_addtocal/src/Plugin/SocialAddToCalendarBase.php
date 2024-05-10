@@ -21,6 +21,26 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   use StringTranslationTrait;
 
   /**
+   * Default date modifications for all day events.
+   */
+  const END_DATE_MODIFICATION_DEFAULT_VALUE = '+ 1 day';
+
+  /**
+   * Default date format for all day event.
+   */
+  const ALL_DAY_FORMAT_DEFAULT_VALUE = 'Ymd';
+
+  /**
+   * Default date format.
+   */
+  const DATE_FORMAT_DEFAULT_VALUE = 'Ymd\THis';
+
+  /**
+   * Default date format if users timezone is UTC.
+   */
+  const UTC_DATE_FORMAT_DEFAULT_VALUE = 'Ymd\THis\Z';
+
+  /**
    * The module extension list.
    */
   protected ModuleExtensionList $moduleExtensionList;
@@ -68,12 +88,11 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
     $module_path = $this->moduleExtensionList
       ->getPath('social_event_addtocal');
 
-    $default_icon = $module_path . '/assets/icons/default-calendar.svg';
     $plugin_icon = empty($this->pluginDefinition['id'])
-      ? $default_icon
-      : $module_path . '/assets/icons/' . $this->pluginDefinition['id'] . '.svg';
+      ? '/assets/icons/default-calendar.svg'
+      : '/assets/icons/' . $this->pluginDefinition['id'] . '.svg';
 
-    return '/' . (file_exists($plugin_icon) ? $plugin_icon : $default_icon);
+    return '/' . $module_path . $plugin_icon;
   }
 
   /**
@@ -108,17 +127,17 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
     $date_time = [];
 
     // Set formats for event dates.
-    $format = $this->pluginDefinition['dateFormat'] ?? 'Ymd\THis';
+    $format = $this->pluginDefinition['dateFormat'] ?? self::DATE_FORMAT_DEFAULT_VALUE;
     if (date_default_timezone_get() === DateTimeItemInterface::STORAGE_TIMEZONE) {
-      $format = $this->pluginDefinition['utcDateFormat'] ?? 'Ymd\THis\Z';
+      $format = $this->pluginDefinition['utcDateFormat'] ?? self::UTC_DATE_FORMAT_DEFAULT_VALUE;
     }
-    $all_day_format = $this->pluginDefinition['allDayFormat'] ?? 'Ymd';
+    $all_day_format = $this->pluginDefinition['allDayFormat'] ?? self::ALL_DAY_FORMAT_DEFAULT_VALUE;
 
     // Convert date to correct format.
     // Set dates array.
     if ($all_day) {
       $date_time['start'] = $start_date->format($all_day_format);
-      $end_date->modify($this->pluginDefinition['endDateModification'] ?? '+ 1 day');
+      $end_date->modify($this->pluginDefinition['endDateModification'] ?? self::END_DATE_MODIFICATION_DEFAULT_VALUE);
       $date_time['end'] = $end_date->format($all_day_format);
     }
     else {
