@@ -1018,35 +1018,15 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
   }
 
-  // Exposed Filter block on the all-groups overview.
-  if ($form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
+  // Exposed Filter block on the "all-groups" overview.
+  if (
+    $form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
     $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
-    $form['#id'] === 'views-exposed-form-search-groups-page') {
-    $account = \Drupal::currentUser();
-    if (!empty($form['type']['#options'])) {
-      // Make sure we add cache tags so whenever a type is added/removed in the
-      // vocabulary this gets cleared.
-      $form['#cache']['tags'][] = 'taxonomy_term_list:group_type';
-
-      foreach ($form['type']['#options'] as $type => $label) {
-        // All / Any we can skip they are optional translatable options
-        // and not group types.
-        if ($label instanceof TranslatableMarkup) {
-          continue;
-        }
-        if (!social_group_can_view_groups_of_type($type, $account)) {
-          unset($form['type']['#options'][$type]);
-        }
-      }
-      // If we determined the user can only see the All / Any option
-      // And perhaps one more group type, like flexible groups.
-      // this filter doesn't make sense, and we hide it.
-      // This also allows other filters, depending on the options to show up.
-      if (count($form['type']['#options']) === 2 &&
-        array_key_exists('All', $form['type']['#options'])) {
-        $form['type']['#type'] = 'hidden';
-      }
-    }
+    $form['#id'] === 'views-exposed-form-search-groups-page'
+  ) {
+    // Make sure we add cache tags, so whenever a type is added/removed
+    // in the vocabulary, this gets cleared.
+    $form['#cache']['tags'][] = 'taxonomy_term_list:group_type';
   }
 
   // Add custom validation for "group_type" group field.

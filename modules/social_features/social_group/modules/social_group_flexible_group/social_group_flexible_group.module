@@ -78,28 +78,6 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
   if ($form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
     $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
     $form['#id'] === 'views-exposed-form-search-groups-page') {
-    // Add states so this is only available when flexible groups is checked.
-    // Could be hidden when only flexible groups is enabled, so check that.
-    // @todo remove this once everything is migrated to flexible groups.
-    if (!empty($form['field_group_allowed_join_method']) &&
-      !empty($form['type']['#options']) &&
-      $form['type']['#type'] !== 'hidden') {
-      $form['field_group_allowed_join_method']['#states'] = [
-        'visible' => [
-          ':input[name="type"]' => ['value' => 'flexible_group'],
-        ],
-      ];
-    }
-    if (!empty($form['field_group_type_target_id']) &&
-      !empty($form['type']['#options']) &&
-      $form['type']['#type'] !== 'hidden') {
-      $form['field_group_type_target_id']['#states'] = [
-        'visible' => [
-          ':input[name="type"]' => ['value' => 'flexible_group'],
-        ],
-      ];
-    }
-
     // Hide the flexible group field group type if there is only the
     // "All / any" option we hide it as well.
     if (!empty($form['field_group_type_target_id']) &&

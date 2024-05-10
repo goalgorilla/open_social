@@ -836,3 +836,13 @@ function social_group_update_13007(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Remove redundant "Group types" filter from views.
+ */
+function social_group_update_13008(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+  return $updateHelper->logger()->output();
+}
