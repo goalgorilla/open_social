@@ -3,6 +3,7 @@
 namespace Drupal\social_event_addtocal\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
+use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarBase;
 
 /**
  * Defines a Social add to calendar item annotation object.
@@ -43,27 +44,27 @@ class SocialAddToCalendar extends Plugin {
    *
    * @var string
    */
-  public $endDateModification = '+ 1 day';
+  public $endDateModification = SocialAddToCalendarBase::END_DATE_MODIFICATION_DEFAULT_VALUE;
 
   /**
    * Date format for all day event.
    *
    * @var string
    */
-  public $allDayFormat = 'Ymd';
+  public $allDayFormat = SocialAddToCalendarBase::ALL_DAY_FORMAT_DEFAULT_VALUE;
 
   /**
    * Date format.
    *
    * @var string
    */
-  public $dateFormat = 'Ymd\THis';
+  public $dateFormat = SocialAddToCalendarBase::DATE_FORMAT_DEFAULT_VALUE;
 
   /**
    * Date format if users timezone is UTC.
    *
    * @var string
    */
-  public $utcDateFormat = 'Ymd\THis\Z';
+  public $utcDateFormat = SocialAddToCalendarBase::UTC_DATE_FORMAT_DEFAULT_VALUE;
 
 }
