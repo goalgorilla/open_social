@@ -846,3 +846,34 @@ function social_group_update_13008(): string {
   $updateHelper->executeUpdate('social_group', __FUNCTION__);
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Remove redundant flexible group manager filter from views.
+ *
+ * During the update to OS-13 we have added a filter with
+ * 'flexible_group-group_manager' which is redundant as we already have a
+ * '*-group_manager' filter, and this one is also causing issues with the filter
+ * groups, resulting in everyone showing as group manager.
+ */
+function social_group_update_13009(): void {
+  $config = \Drupal::configFactory()
+    ->getEditable('views.view.group_managers');
+
+  $displays = $config->getOriginal('display');
+  foreach ($displays as $key => $display) {
+    // We already have a filter that checks on '*-group_manager', so
+    // remove the flexible_group-group_manager one as it also blocks
+    // other group types.
+    if (!empty($display['display_options']['filters']['group_roles_target_id_3']) && $display['display_options']['filters']['group_roles_target_id_3']['value'] === 'flexible_group-group_manager') {
+      unset($displays[$key]['display_options']['filters']['group_roles_target_id_3']);
+
+      // Remove the filter_groups as it can be the default which is AND.
+      if (!empty($display['display_options']['filter_groups'])) {
+        unset($displays[$key]['display_options']['filter_groups']);
+      }
+    }
+  }
+
+  $config->set('display', $displays);
+  $config->save();
+}
