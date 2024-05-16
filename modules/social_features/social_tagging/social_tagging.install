@@ -19,6 +19,7 @@ function social_tagging_install(): void {
       'administer social_tagging',
       'delete terms in social_tagging',
       'edit terms in social_tagging',
+      'create terms in social_tagging',
     ]
   );
 
@@ -146,4 +147,11 @@ function _social_profile_field_definitions_update(string $field): void {
  */
 function social_tagging_update_last_removed() : int {
   return 11804;
+}
+
+/**
+ * Grant permissions for SM to create terms in social_tagging vocabulary.
+ */
+function social_tagging_update_130001(): void {
+  user_role_grant_permissions('sitemanager', ['create terms in social_tagging']);
 }

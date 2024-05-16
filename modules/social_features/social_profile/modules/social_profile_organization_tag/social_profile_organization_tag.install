@@ -14,7 +14,8 @@ function social_profile_organization_tag_install() {
     'contentmanager',
     [
       'delete terms in profile_organization_tag',
-      'edit terms in profile_tag',
+      'edit terms in profile_organization_tag',
+      'create terms in profile_organization_tag',
       'edit profile organization tags',
     ]
   );
@@ -22,7 +23,8 @@ function social_profile_organization_tag_install() {
     'sitemanager',
     [
       'delete terms in profile_organization_tag',
-      'edit terms in profile_tag',
+      'edit terms in profile_organization_tag',
+      'create terms in profile_organization_tag',
       'edit profile organization tags',
     ]
   );
@@ -146,4 +148,12 @@ function social_profile_organization_tag_update_121002(): void {
       $role->save();
     }
   }
+}
+
+/**
+ * Grant permissions for SM to create terms in event_types vocabulary.
+ */
+function social_profile_organization_tag_update_130001(): void {
+  user_role_grant_permissions('contentmanager', ['create terms in profile_organization_tag']);
+  user_role_grant_permissions('sitemanager', ['create terms in profile_organization_tag']);
 }
