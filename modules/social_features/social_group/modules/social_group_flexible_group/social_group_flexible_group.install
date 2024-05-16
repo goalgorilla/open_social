@@ -26,6 +26,9 @@ function social_group_flexible_group_install() {
     'sitemanager',
     [
       'create flexible_group group',
+      'create terms in group_type',
+      'edit terms in group_type',
+      'delete terms in group_type',
     ]
   );
 
@@ -80,4 +83,16 @@ function social_group_flexible_group_update_130000(): void {
     ->getEditable('social_group.settings')
     ->clear('social_group_type_required')
     ->save();
+}
+
+/**
+ * Grant permissions for site manager to manage terms in group_type vocabulary.
+ */
+function social_group_flexible_group_update_130001(): void {
+  $permissions = [
+    'create terms in group_type',
+    'edit terms in group_type',
+    'delete terms in group_type',
+  ];
+  user_role_grant_permissions('sitemanager', $permissions);
 }

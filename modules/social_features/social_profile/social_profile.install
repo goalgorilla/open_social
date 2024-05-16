@@ -50,6 +50,7 @@ function social_profile_install() {
       'edit profile tags',
       'delete terms in profile_tag',
       'edit terms in profile_tag',
+      'create terms in profile_tag',
       'administer profile settings',
       'view profile email',
       'view profile language',
@@ -193,4 +194,11 @@ function social_profile_update_121001(): void {
       $role->save();
     }
   }
+}
+
+/**
+ * Grant permissions for SM to create terms in profile_tag vocabulary.
+ */
+function social_profile_update_130001(): void {
+  user_role_grant_permissions('sitemanager', ['create terms in profile_tag']);
 }

@@ -93,11 +93,14 @@ function social_core_install() {
       'delete all revisions',
       'create url aliases',
       'use text format full_html',
-      'administer taxonomy',
+      'access taxonomy overview',
+      'create terms in expertise',
       'delete terms in expertise',
       'edit terms in expertise',
+      'create terms in interests',
       'delete terms in interests',
       'edit terms in interests',
+      'create terms in topic_types',
       'delete terms in topic_types',
       'edit terms in topic_types',
       'administer site configuration',
@@ -469,4 +472,18 @@ function social_core_update_130002() : void {
  */
 function social_core_update_130003() : void {
   \Drupal::state()->delete("secret_file_system_opt_out");
+}
+
+/**
+ * Replace permission administer taxonomy with access taxonomy overview for SM.
+ */
+function social_core_update_130004(): void {
+  user_role_revoke_permissions('sitemanager', ['administer taxonomy']);
+  $permissions = [
+    'access taxonomy overview',
+    'create terms in expertise',
+    'create terms in interests',
+    'create terms in topic_types',
+  ];
+  user_role_grant_permissions('sitemanager', $permissions);
 }
