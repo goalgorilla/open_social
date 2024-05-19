@@ -16,9 +16,9 @@ Feature: Event bulk actions
       | event_attendee_2 | event_attendee_2@example.com | 1      |
       | event_attendee_3 | event_attendee_3@example.com | 1      |
 
-    And event content:
-      | title            | field_event_date | status | field_content_visibility | field_event_an_enroll | author       |
-      | Bulk email Event | +2 days          | 1      | public                   | 1                     | event_author |
+    And events:
+      | title            | field_event_date | field_event_date_end | status | field_content_visibility | field_event_an_enroll | author       | body |
+      | Bulk email Event | +2 days          | +3 days              | 1      | public                   | 1                     | event_author | foo  |
 
     # Add enrollments to event
     When I am logged in as an "sitemanager"

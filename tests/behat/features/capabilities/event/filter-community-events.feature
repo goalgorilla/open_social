@@ -8,9 +8,9 @@ Feature: Filter community events
     Given users:
       | name            | status | timezone           | roles    |
       | Australian user | 1      | Australia/Victoria | verified |
-    And event content:
-      | title                                              | body        | field_content_visibility | field_event_date    | field_event_date_end  | field_event_all_day | langcode | author       |
-      | My awesome australian and and american pepsi-cola party | lorem ipsum | public                   | today               | today                 | 1                   | en       | regular user |
+    And events with non-anonymous author:
+      | title                                                   | body        | field_content_visibility | field_event_date    | field_event_date_end  | field_event_all_day | langcode |
+      | My awesome australian and and american pepsi-cola party | lorem ipsum | public                   | today               | today                 | 1                   | en       |
 
     When I am logged in as "Australian user"
     And I am on the event overview
@@ -23,9 +23,9 @@ Feature: Filter community events
     Given users:
       | name            | status | timezone           | roles    |
       | American user   | 1      | America/Anchorage  | verified |
-    And event content:
-      | title                                              | body        | field_content_visibility | field_event_date    | field_event_date_end  | field_event_all_day | langcode | author       |
-      | My awesome australian and and american pepsi-cola party | lorem ipsum | public                   | today               | today                 | 1                   | en       | regular user |
+    And events with non-anonymous author:
+      | title                                                   | body        | field_content_visibility | field_event_date    | field_event_date_end  | field_event_all_day | langcode |
+      | My awesome australian and and american pepsi-cola party | lorem ipsum | public                   | today               | today                 | 1                   | en       |
 
     When I am logged in as "American user"
     And I am on the event overview

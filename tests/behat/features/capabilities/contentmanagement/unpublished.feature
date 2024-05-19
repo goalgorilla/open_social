@@ -19,7 +19,7 @@ Feature: Un/publish a node
     Given I am logged in as an "verified"
     And topics authored by current user:
       | title    | body            | field_content_visibility | field_topic_type | langcode    | status |
-      | My title | My description  | public                   | News             | en          | 0         |
+      | My title | My description  | public                   | News             | en          | 0      |
 
     When I edit topic "My title" using its edit page:
       | Published    | True                   |
@@ -29,8 +29,8 @@ Feature: Un/publish a node
   Scenario: Normal user only sees published topics
     Given topics with non-anonymous author:
       | title                     | body            | field_content_visibility | field_topic_type | langcode    | status |
-      | This topic is published   | My description  | public                   | News             | en          | 1         |
-      | This topic is unpublished | My description  | public                   | News             | en          | 0         |
+      | This topic is published   | My description  | public                   | News             | en          | 1      |
+      | This topic is unpublished | My description  | public                   | News             | en          | 0      |
     And I am logged in as a user with the "authenticated" role
 
     When I am on the topic overview

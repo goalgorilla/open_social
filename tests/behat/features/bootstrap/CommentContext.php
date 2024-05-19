@@ -9,7 +9,10 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
+use Drupal\Component\EventDispatcher\Event;
 use Drupal\DrupalExtension\Context\DrupalContext;
+use Drupal\user\Entity\User;
+use Drupal\user\EntityOwnerInterface;
 
 /**
  * Defines test steps around the usage of comments.
@@ -112,6 +115,39 @@ class CommentContext extends RawMinkContext {
 
       $comment = $this->commentCreate($commentHash);
       $this->created[] = $comment->id();
+    }
+  }
+
+  /**
+   * Creates a large number of comments.
+   *
+   * @Given :count comments with text :text for :entity_type :bundle :label
+   */
+  public function massCreateComments(int $count, string $text, string $entity_type, string $bundle, string $label) : void {
+    $entity_id = $this->getEntityIdFromLabel($entity_type, $bundle, $label);
+    assert($entity_id !== NULL, "Could not find $entity_type entity of bundle $bundle with label $label");
+
+    $entity =\Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
+    assert($entity !== NULL);
+    assert($entity instanceof EntityOwnerInterface);
+
+    $author = $entity->getOwner();
+    assert($author !== NULL);
+
+    $comments = [];
+    for ($index = 0; $index < $count; $index++) {
+      $comments[] = [
+        'target_type' => "$entity_type:$bundle",
+        'target_label' => $label,
+        'author' => $author->getAccountName(),
+        'comment_type' => 'comment',
+        'status' => 1,
+        'field_comment_body' => str_replace('[id]', (string) $index, $text),
+      ];
+    }
+
+    foreach ($comments as $comment) {
+      $this->commentCreate($comment);
     }
   }
 

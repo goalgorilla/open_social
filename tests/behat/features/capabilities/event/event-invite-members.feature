@@ -12,9 +12,9 @@ Feature: Send invite event email notifications
       | name            | mail                        | status | roles       |
       | site_manager_1  | site_manager_1@example.com  | 1      | sitemanager |
       | existing_user_1 | existing_user_1@example.com | 1      | verified    |
-    Given event content:
-      | title         | field_event_date | status | field_content_visibility | field_event_an_enroll | author         |
-      | Invite Event  | +2 days          | 1      | public                   | 1                     | site_manager_1 |
+    Given events:
+      | title         | body | field_event_date | field_event_date_end | status | field_content_visibility | author         |
+      | Invite Event  | foo  | +2 days          | +3 days              | 1      | public                   | site_manager_1 |
 
     # Enable "Allow invited user to skip email verification" option
     Given I am logged in as an "administrator"

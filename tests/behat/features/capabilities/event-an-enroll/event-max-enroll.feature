@@ -13,13 +13,11 @@ Feature: Limitation event enrollments
     And I should see checked the box "Enable maximum number of event enrollments"
     And I should see unchecked the box "Maximum event enrollments field is required"
     And I should see the button "Save configuration"
-    When I am viewing my event:
-      | title                    | My Behat Event |
-      | field_event_date         | +8 days        |
-      | field_event_date_end     | +9 days        |
-      | body                     | Description    |
-      | status                   | 1              |
-      | field_content_visibility | community      |
+    And events authored by current user:
+      | title          | body | field_event_date | field_event_date_end | body        | status | field_content_visibility |
+      | My Behat Event | foo  | +8 days          | +9 days              | Description | 1      | community                |
+
+    When I am viewing the event "My Behat Event"
     Then I should see "0 people have enrolled"
     And I should not see "0 people have enrolled (7 spots left)"
     When I click "Edit content"

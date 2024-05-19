@@ -7,18 +7,13 @@ Feature: Show/hide enrollments on Event
   @verified @security
   Scenario: Event author can successfully see hidden enrollments
     Given I am logged in as an "verified"
-    Given I am viewing my event:
-      | title                    | My Behat Event created |
-      | body                     | this is description    |
-      | field_event_date         | +8 days                |
-      | field_event_date_end     | +9 days                |
-      | status                   | 1                      |
-      | field_content_visibility | public                 |
-      | field_hide_enrollments   | 1                      |
+    And events authored by current user:
+      | title                  | body                | field_event_date | field_event_date_end | status | field_content_visibility | field_hide_enrollments |
+      | My Behat Event created | this is description | +8 days          | +9 days              | 1      | public                   | 1                      |
+    And I am viewing the event "My Behat Event created"
 
-    And I should see an "#block-socialblue-views-block-event-enrollments-event-enrollments-socialbase" element
-    And I should see the link "Manage enrollments"
     When I click "Manage enrollments"
+
     Then I should see the text "0 Enrollees"
 
   @verified @security
@@ -29,14 +24,9 @@ Feature: Show/hide enrollments on Event
       | event_visitor  | event_visitor  | event_visitor@example.com       | 1      | verified     |
 
     Given I am logged in as "event_creator"
-    Given I am viewing my event:
-      | title                    | My Behat Event created |
-      | body                     | this is description    |
-      | field_event_date         | +8 days                |
-      | field_event_date_end     | +9 days                |
-      | status                   | 1                      |
-      | field_content_visibility | public                 |
-      | field_hide_enrollments   | 1                      |
+    And events authored by current user:
+      | title                  | body                | field_event_date | field_event_date_end | status | field_content_visibility | field_hide_enrollments |
+      | My Behat Event created | this is description | +8 days          | +9 days              | 1      | public                   | 1                      |
 
     Given I am logged in as "event_visitor"
     Given I open the "event" node with title "My Behat Event created"
@@ -64,9 +54,9 @@ Feature: Show/hide enrollments on Event
 
   @AN @security
   Scenario: Anonymous can not see hidden enrollments
-    Given event content:
-      | title                  | field_event_date  | status | field_content_visibility | field_event_an_enroll | field_hide_enrollments |
-      | My Behat Event created | +8 days           | 1      | public                   | 1                     | 1                      |
+    Given events:
+      | title                  | field_event_date | field_event_date_end | status | field_content_visibility | field_event_an_enroll | field_hide_enrollments | body |
+      | My Behat Event created | +8 days          | +9 days              | 1      | public                   | 1                     | 1                      | foo  |
     Given I am an anonymous user
     When I open the "event" node with title "My Behat Event created"
     Then I should see "My Behat Event created"

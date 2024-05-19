@@ -11,10 +11,10 @@ Feature: Create Mention in a Comment
       | user_2   | mail_2@example.com | 1      | Isaac                    | Newton                  | verified |
       | user_3   | mail_3@example.com | 1      | Stephen                  | Hawking                 | verified |
     And I am logged in as "user_1"
-    And I am viewing my topic:
-      | title                    | Mention in a comment test topic 2 |
-      | status                   | 1                                 |
-      | field_content_visibility | public                            |
+    And topics authored by current user:
+      | title                             | body | status | field_content_visibility | field_topic_type |
+      | Mention in a comment test topic 2 | foo  | 1      | public                   | News             |
+    And I am viewing the topic "Mention in a comment test topic 2"
     When I fill in the following:
       | Add a comment | [~user_2], [~user_3], see my comment. |
     And I press "Comment"

@@ -11,7 +11,7 @@ Feature: Deleting a user with activities related to it
       | BehatUserToDelete |      1 | usertodelete@example.com     | UserToDelete | verified    |
       | BehatSiteManager  |      1 | behatsitemanager@example.com | SiteManager  | sitemanager |
     And "1" topics with title "Behat Topic [id]" by "BehatUserToDelete"
-    And "1" comments with text "Behat Comment [id]" for "Behat Topic 1"
+    And "1" comments with text "Behat Comment [id]" for node topic "Behat Topic 1"
     And I wait for the queue to be empty
     And I am logged in as "BehatSiteManager"
     When I delete user "BehatUserToDelete" with method "user_cancel_delete"

@@ -24,7 +24,7 @@ Feature: Flexible groups content view access for anonymous users
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | public                          |
     And events with non-anonymous author:
-      | title        | group      | body                  | field_content_visibility | field_event_date | field_event_date_end     | langcode |
+      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
       | Test content | Test group | Body description text | public                   | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am an anonymous user
 
@@ -51,7 +51,7 @@ Feature: Flexible groups content view access for anonymous users
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | public                          |
     And events with non-anonymous author:
-      | title        | group      | body                  | field_content_visibility | field_event_date     | field_event_date_end    | langcode |
+      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end    | langcode |
       | Test content | Test group | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00     | en       |
     And I am an anonymous user
 
@@ -131,8 +131,8 @@ Feature: Flexible groups content view access for anonymous users
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | community                       |
     And events with non-anonymous author:
-      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end   | langcode |
-      | Test content | Test group | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00    | en       |
+      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Test group | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am an anonymous user
 
     When I am viewing the event "Test content"
@@ -157,8 +157,8 @@ Feature: Flexible groups content view access for anonymous users
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | community                       |
     And events with non-anonymous author:
-      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end   | langcode |
-      | Test content | Test group | Body description text | group                    | 2100-01-01T12:00:00 | 2100-01-01T12:00:00    | en       |
+      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Test group | Body description text | group                    | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am an anonymous user
 
     When I am viewing the event "Test content"
@@ -184,8 +184,8 @@ Feature: Flexible groups content view access for anonymous users
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | members                         |
     And events with non-anonymous author:
-      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end   | langcode |
-      | Test content | Test group | Body description text | public                   | 2100-01-01T12:00:00 | 2100-01-01T12:00:00    | en       |
+      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Test group | Body description text | public                   | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am an anonymous user
 
     When I am viewing the event "Test content"
@@ -211,8 +211,8 @@ Feature: Flexible groups content view access for anonymous users
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | members                       |
     And events with non-anonymous author:
-      | title        | group      | body                  | field_content_visibility |field_event_date     | field_event_date_end   | langcode |
-      | Test content | Test group | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00    | en       |
+      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Test group | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am an anonymous user
 
     When I am viewing the event "Test content"
@@ -237,8 +237,8 @@ Feature: Flexible groups content view access for anonymous users
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | members                       |
     And events with non-anonymous author:
-      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end   | langcode |
-      | Test content | Test group | Body description text | group                    | 2100-01-01T12:00:00 | 2100-01-01T12:00:00    | en       |
+      | title        | group      | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Test group | Body description text | group                    | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am an anonymous user
 
     When I am viewing the event "Test content"
@@ -250,10 +250,10 @@ Feature: Flexible groups content view access for anonymous users
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | public                          |
     And events with non-anonymous author:
-      | title                   | group      | body                  | field_content_visibility  | field_event_date    | field_event_date_end   | langcode |
-      | This is public event    | Test group | Body description text | public                    | 2100-01-01T12:00:00 | 2100-01-01T12:00:00    | en       |
-      | This is community event | Test group | Body description text | community                 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00    | en       |
-      | This is secret event    | Test group | Body description text | group                     | 2100-01-01T12:00:00 | 2100-01-01T12:00:00    | en       |
+      | title                   | group      | body                  | field_content_visibility  | field_event_date    | field_event_date_end | langcode |
+      | This is public event    | Test group | Body description text | public                    | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
+      | This is community event | Test group | Body description text | community                 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
+      | This is secret event    | Test group | Body description text | group                     | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am an anonymous user
 
     When I am on the event overview

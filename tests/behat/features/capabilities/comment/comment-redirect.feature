@@ -10,10 +10,15 @@ Feature: Redirect comment page
       | name              | mail                     | status | roles    |
       | Comment view user | comment-view@example.com | 1      | verified |
     And I am logged in as "Comment view user"
-    And I am viewing a "topic" with the title "Comment redirect topic"
+    And topics with non-anonymous author:
+      | title                  | status | body          | field_content_visibility | field_topic_type |
+      | Comment redirect topic | 1      | Description   | public                   | News             |
+    And I am viewing the topic "Comment redirect topic"
+
     When I fill in the following:
          | Add a comment | This is a test comment |
     And I press "Comment"
     And I should see the success message "Your comment has been posted."
     And I click the xth "1" link with the text "ago"
+
     Then I should see "Comment redirect topic" in the "Hero block"

@@ -11,7 +11,7 @@ Feature: See Comments
       | name       | roles    |
       | Behat User | verified |
     Given "15" topics with title "Behat Topic [id]" by "Behat User"
-    Given "60" comments with text "Behat Comment [id]" for "Behat Topic 15"
+    Given "60" comments with text "Behat Comment [id]" for node topic "Behat Topic 15"
 
     When I am logged in as "Behat User"
     And I am at "/all-topics"

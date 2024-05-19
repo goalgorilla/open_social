@@ -7,11 +7,15 @@ Feature: Set alternative frontpage
   Scenario: Successfully set alternative frontpage
 
     Given I enable the module "alternative_frontpage"
-    Given page content:
-      | title          | status | field_content_visibility | alias         |
-      | Frontpage AN   | 1      | public                   | /frontpage-an |
-      | Frontpage LU   | 1      | community                | /frontpage-lu |
-    Given users:
+    And pages with non-anonymous author:
+      | title          | status | field_content_visibility | body |
+      | Frontpage AN   | 1      | public                   | foo  |
+      | Frontpage LU   | 1      | community                | foo  |
+    And aliases:
+      | target_type | target_label | alias         |
+      | node:page   | Frontpage AN | /frontpage-an |
+      | node:page   | Frontpage LU | /frontpage-lu |
+    And users:
       | name             | mail                         | status | roles       |
       | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
     # Configure the settings

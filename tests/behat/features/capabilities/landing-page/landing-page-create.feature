@@ -7,17 +7,17 @@ Feature: Create Landing Page
   Scenario: Successfully create Landing Page
 
     Given I enable the module "social_landing_page"
-    Given event content:
-      | title          | field_event_date | status | field_content_visibility |
-      | Featured Event | +10 minutes      | 1      | public                   |
+    Given events with non-anonymous author:
+      | title          | field_event_date | field_event_date_end | status | field_content_visibility | body |
+      | Featured Event | +10 minutes      | +30 minutes          | 1      | public                   | foo  |
     Given "topic_types" terms:
       | name                  |
       | News                  |
       | Blog                  |
-    Given topic content:
-      | title            | field_topic_type | status | field_content_visibility |
-      | Featured Topic 1 | News             | 1      | public                   |
-      | Featured Topic 2 | Blog             | 1      | public                   |
+    Given topics with non-anonymous author:
+      | title            | field_topic_type | status | field_content_visibility | body |
+      | Featured Topic 1 | News             | 1      | public                   | foo  |
+      | Featured Topic 2 | Blog             | 1      | public                   | foo  |
     # Create Landing Page Hero
     Given I am logged in as an "contentmanager"
     When I am on "node/add/landing_page"
