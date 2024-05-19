@@ -21,11 +21,11 @@ Feature: Create Landing Page and add Custom Content section
 
     # Create Landing Page featured content section with Custom Content list of Pages
     And I am logged in as an "contentmanager"
-    And page content:
-      | title        | status |
-      | Page 1 | 1      |
-      | Page 2 | 1      |
-      | Page 3 | 1      |
+    And pages with non-anonymous author:
+      | title  | status | body | field_content_visibility |
+      | Page 1 | 1      | Foo  | public                   |
+      | Page 2 | 1      | Foo  | public                   |
+      | Page 3 | 1      | Foo  | public                   |
     And I am on "node/add/landing_page"
     And I fill in the following:
       | Title | This is a landing page with Pages |
@@ -59,11 +59,11 @@ Feature: Create Landing Page and add Custom Content section
 
     # Create Landing Page featured content section with Custom Content list of Books
     And I am logged in as an "contentmanager"
-    And book content:
-      | title       | status |
-      | Book page 1 | 1      |
-      | Book page 2 | 1      |
-      | Book page 3 | 1      |
+    And books:
+      | title       | status | field_content_visibility |
+      | Book page 1 | 1      | community                |
+      | Book page 2 | 1      | community                |
+      | Book page 3 | 1      | community                |
     And I am on "node/add/landing_page"
     And I fill in the following:
       | Title | This is a landing page with Books |

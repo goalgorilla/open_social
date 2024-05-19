@@ -183,6 +183,30 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
+   * Creates a large number of topics.
+   *
+   * @Given :count topics with title :title by :username
+   */
+  public function massCreateTopics(int $count, string $title, string $username) : void {
+    $topics = [];
+    for ($index = 1; $index <= $count; $index++) {
+      $topics[] = [
+        'author' => $username,
+        'title' => str_replace('[id]', (string) $index, $title),
+        'body' => "foobar",
+        'field_topic_type' => "News",
+        'field_content_visibility' => "public",
+        'created' => "+$index minutes",
+        'changed' => "+$index minutes",
+      ];
+    }
+
+    foreach ($topics as $topic) {
+      $this->topicCreate($topic);
+    }
+  }
+
+  /**
    * Fill out the topic creation form and submit.
    *
    * Example: When I create a topic using its creation page:

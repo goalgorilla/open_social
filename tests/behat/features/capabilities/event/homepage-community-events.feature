@@ -11,10 +11,10 @@ Feature: See upcoming events in the community
     Then I should not see "Behat Event 1"
     And I should not see "Behat Event 2"
 
-    Given event content:
-      | title         | field_event_date | status | field_content_visibility |
-      | Behat Event 1 | +10 minutes      | 1      | public                   |
-      | Behat Event 2 | +20 minutes      | 1      | public                   |
+    Given events with non-anonymous author:
+      | title         | field_event_date | field_event_date_end | status | field_content_visibility | body |
+      | Behat Event 1 | +10 minutes      | +15 minutes          | 1      | public                   | foo  |
+      | Behat Event 2 | +20 minutes      | +25 minutes          | 1      | public                   | foo  |
 
     Given I am on the homepage
 
@@ -41,10 +41,10 @@ Feature: See upcoming events in the community
     And I press "Filter"
     And "Behat Event 1" should precede "Behat Event 2" for the query ".teaser__title"
 
-    Given event content:
-      | title         | field_event_date | status | field_content_visibility |
-      | Behat Event 1 | -10 minutes      | 1      | public                   |
-      | Behat Event 2 | -20 minutes      | 1      | public                   |
+    Given events with non-anonymous author:
+      | title         | field_event_date | field_event_date_end | status | field_content_visibility | body |
+      | Behat Event 1 | -10 minutes      | -5 minutes           | 1      | public                   | foo  |
+      | Behat Event 2 | -20 minutes      | -15 minutes          | 1      | public                   | foo  |
 
     When I click radio button "Past events"
     And "Behat Event 1" should precede "Behat Event 2" for the query ".teaser__title"

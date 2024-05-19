@@ -14,7 +14,10 @@ Feature: Create Comments
 
     Then I should see an ".comment-post-comment-form" element
 
-    Given I am viewing a "topic" with the title "Comment test topic"
+    Given topics with non-anonymous author:
+      | title              | status | body          | field_content_visibility | field_topic_type |
+      | Comment test topic | 1      | Description   | public                   | News             |
+    And I am viewing the topic "Comment test topic"
 
     When I fill in the following:
          | Add a comment | This is a test comment |

@@ -5,11 +5,11 @@ Feature: Search
   Goal/desire: I want to search the site for content
 
   Scenario: Successfully search content
-    Given "event" content:
-      | title             | body          | status | field_content_visibility |
-      | Event one         | Description   | 1      | public                   |
-      | Event two         | Description   | 1      | public                   |
-    And "topic" content:
+    Given events with non-anonymous author:
+      | title             | body          | status | field_content_visibility | field_event_date | field_event_date_end |
+      | Event one         | Description   | 1      | public                   | +1 day           | +2 days              |
+      | Event two         | Description   | 1      | public                   | +1 day           | +2 days              |
+    And topics:
       | title             | body          | status | field_content_visibility |
       | Topic one         | Shenanigans   | 1      | public                   |
       | Topic two         | Shenanigans   | 1      | community                |

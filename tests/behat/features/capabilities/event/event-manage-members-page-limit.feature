@@ -32,9 +32,9 @@ Feature: Items per page limit on the Manage members overview page
       | member24   | mail_user24@example.com | 1      | verified |
       | member25   | mail_user25@example.com | 1      | verified |
       | member26   | mail_user26@example.com | 1      | verified |
-    And event content:
-      | title         | field_event_date | status | field_content_visibility | field_event_an_enroll | author  |
-      | Test Event    | +2 days          | 1      | public                   | 1                     | member1 |
+    And events:
+      | title         | field_event_date | field_event_date_end | status | field_content_visibility  | author  | body |
+      | Test Event    | +2 days          | +3 days              | 1      | public                    | member1 | foo  |
     And event enrollees:
       | event       | user     |
       | Test Event  | member1  |
