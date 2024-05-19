@@ -11,6 +11,9 @@ use Drupal\Core\Database\Query\TableSortExtender;
 use Drupal\Core\Database\StatementWrapperIterator;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Driver\DrushDriver;
+use Drupal\DrupalExtension\Context\DrupalContext;
+use Drupal\DrupalExtension\Context\DrushContext;
 
 /**
  * Ensures that logs are clean at the end of tests.
@@ -21,6 +24,22 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * stability.
  */
 class LogContext implements Context {
+
+  /**
+   * The test bridge that allows running code in the Drupal installation.
+   */
+  private TestBridgeContext $testBridge;
+
+  /**
+   * Make some contexts available here so we can delegate steps.
+   *
+   * @BeforeScenario
+   */
+  public function gatherContexts(BeforeScenarioScope $scope) {
+    $environment = $scope->getEnvironment();
+
+    $this->testBridge = $environment->getContext(TestBridgeContext::class);
+  }
 
   /**
    * Gets an array of log level labels.
@@ -49,7 +68,7 @@ class LogContext implements Context {
    * every time a database is imported.
    */
   public function onDatabaseLoaded() : void {
-    \Drupal::service('module_installer')->install(['dblog']);
+    $this->testBridge->installModules(['dblog']);
 
     $this->deleteAllLogMessages();
   }
@@ -63,12 +82,16 @@ class LogContext implements Context {
    * @AfterStep
    */
   public function afterStep(AfterStepScope $scope) : void {
-    $messages = $this->getLogMessages();
+    $response = $this->testBridge->command('watchdog-list');
+    assert(isset($response['messages']));
+    $messages = $response['messages'];
 
     $error_labels = static::getLogLevelLabelMap();
 
     $problems = [];
     foreach ($messages as $dblog) {
+      $dblog = (object) $dblog;
+
       // Ignore debug information and only trigger on errors.
       if (!isset($error_labels[$dblog->severity])) {
         continue;
@@ -93,18 +116,17 @@ class LogContext implements Context {
    * @Then I should see log message :value
    */
   public function iShouldSeeLogMessage($value) {
-    $log_messages = $this->getLogMessages();
-    $log_message_exist = FALSE;
+    $response = $this->testBridge->command('watchdog-list');
+    assert(isset($response['messages']));
+    $log_messages = $response['messages'];
 
     foreach ($log_messages as $log_message) {
-      if ($log_message->message === $value) {
+      if ($log_message['message'] === $value) {
         return TRUE;
       }
     }
 
-    if (!$log_message_exist) {
-      throw new \Exception('The log message with value "' . $value . '" was not found in logs.');
-    }
+    throw new \Exception('The log message with value "' . $value . '" was not found in logs.');
   }
 
   /**
@@ -196,35 +218,8 @@ class LogContext implements Context {
    * Clear out the watchdog table.
    */
   private function deleteAllLogMessages() : void {
-    \Drupal::database()->truncate('watchdog')->execute();
-  }
-
-  /**
-   * Get the messages stored in the watchdog table.
-   *
-   * We must query for this manually taking inspiration from the DbLogController
-   * because there's no service that provides proper non-database access.
-   *
-   * @return \Drupal\Core\Database\StatementWrapperIterator
-   *   The result of the log message query.
-   */
-  private function getLogMessages() : StatementWrapperIterator {
-    $query = \Drupal::database()->select('watchdog', 'w')
-      ->extend(PagerSelectExtender::class)
-      ->extend(TableSortExtender::class);
-    $query->fields('w', [
-      'wid',
-      'uid',
-      'severity',
-      'type',
-      'timestamp',
-      'message',
-      'variables',
-      'link',
-    ]);
-    $query->leftJoin('users_field_data', 'ufd', '[w].[uid] = [ufd].[uid]');
-
-    return $query->execute();
+    $response = $this->testBridge->command('watchdog-clear');
+    assert($response['status'] === 'ok');
   }
 
 }

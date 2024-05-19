@@ -21,6 +21,22 @@ class SocialDrupalContext extends DrupalContext {
   use NodeTrait;
 
   /**
+   * The test bridge that allows running code in the Drupal installation.
+   */
+  private TestBridgeContext $testBridge;
+
+  /**
+   * Make some contexts available here so we can delegate steps.
+   *
+   * @BeforeScenario
+   */
+  public function gatherContexts(BeforeScenarioScope $scope) {
+    $environment = $scope->getEnvironment();
+
+    $this->testBridge = $environment->getContext(TestBridgeContext::class);
+  }
+
+  /**
    * Prepares Big Pipe NOJS cookie if needed.
    *
    * Add support for Bigpipe in Behat tests.

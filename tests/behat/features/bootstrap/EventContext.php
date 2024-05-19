@@ -63,6 +63,11 @@ class EventContext extends RawMinkContext {
   private DrupalContext $drupalContext;
 
   /**
+   * The test bridge that allows running code in the Drupal installation.
+   */
+  private TestBridgeContext $testBridge;
+
+  /**
    * Make some contexts available here so we can delegate steps.
    *
    * @BeforeScenario
@@ -73,6 +78,7 @@ class EventContext extends RawMinkContext {
     $this->cKEditorContext = $environment->getContext(CKEditorContext::class);
     $this->minkContext = $environment->getContext(SocialMinkContext::class);
     $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
+    $this->testBridge = $environment->getContext(TestBridgeContext::class);
   }
 
   /**
@@ -141,81 +147,6 @@ class EventContext extends RawMinkContext {
       throw new \Exception("Event '${event}' does not exist.");
     }
     $this->visitPath("/node/${event_id}/all-enrollments");
-  }
-
-  /**
-   * Create multiple events at the start of a test.
-   *
-   * Creates events provided in the form:
-   * | title    | body            | author   | field_content_visibility | field_event_type | language  | status |
-   * | My title | My description  | username | public                   | News             | en        | 1         |
-   * | ...      | ...             | ...      | ...                      | ...              | ...       |
-   *
-   * @Given events:
-   */
-  public function createEvents(TableNode $eventsTable) : void {
-    foreach ($eventsTable->getHash() as $eventHash) {
-      $event = $this->eventCreate($eventHash);
-      $this->created[] = $event->id();
-    }
-  }
-
-  /**
-   * Create multiple events at the start of a test.
-   *
-   * Creates events provided in the form:
-   * | title    | body            | field_content_visibility | field_event_type | language  | status |
-   * | My title | My description  | public                   | News             | en        | 1         |
-   * | ...      | ...             | ...                      | ...              | ...       |
-   *
-   * @Given events with non-anonymous author:
-   */
-  public function createEventsWithAuthor(TableNode $eventsTable) : void {
-    // Create a new random user to own the content, this ensures the author
-    // isn't anonymous.
-    $user = (object) [
-      'name' => $this->drupalContext->getRandom()->name(8),
-      'pass' => $this->drupalContext->getRandom()->name(16),
-      'role' => "authenticated",
-    ];
-    $user->mail = "{$user->name}@example.com";
-
-    $this->drupalContext->userCreate($user);
-
-    foreach ($eventsTable->getHash() as $eventHash) {
-      if (isset($groupHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'events with non-anonymous owner:' step, use 'events:' instead.");
-      }
-
-      $eventHash['author'] = $user->name;
-
-      $event = $this->eventCreate($eventHash);
-      $this->created[] = $event->id();
-    }
-  }
-
-  /**
-   * Create multiple events at the start of a test.
-   *
-   * Creates events provided in the form:
-   * | title    | body            | field_content_visibility | field_event_type | language  | status |
-   * | My title | My description  | public                   | News             | en        | 1         |
-   * | ...      | ...             | ...                      | ...              | ...       |
-   *
-   * @Given events authored by current user:
-   */
-  public function createEventsAuthoredByCurrentUser(TableNode $eventsTable) : void {
-    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-    foreach ($eventsTable->getHash() as $eventHash) {
-      if (isset($eventHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'events authored by current user:' step, use 'events:' instead.");
-      }
-
-      $eventHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
-
-      $event = $this->eventCreate($eventHash);
-      $this->created[] = $event->id();
-    }
   }
 
   /**
@@ -418,16 +349,13 @@ class EventContext extends RawMinkContext {
       throw new \Exception("Event '${title}' does not exist.");
     }
 
-    $event = Node::load($event_id);
-    assert($event instanceof Node);
+    $response = $this->testBridge->command(
+      'add-event-manager',
+      uid: $current_user->uid,
+      event_id: $event_id,
+    );
 
-    if (!$event->hasField("field_event_managers")) {
-      throw new \RuntimeException("Field 'field_event_managers' not found, make sure you have the social_event_managers module enabled.");
-    }
-
-    $event->get('field_event_managers')
-      ->appendItem(['target_id' => $current_user->uid]);
-    $event->save();
+    assert($response['status'] !== 'error', $response['error']);
   }
 
   /**
@@ -444,60 +372,49 @@ class EventContext extends RawMinkContext {
       throw new \Exception("Event '${title}' does not exist.");
     }
 
-    for ($i = 0; $i<$count; $i++) {
+    $users = [];
+    for ($i = 0; $i < $count; $i++) {
       // Create a new random user to add as enrollee.
-      $user = (object) [
+      $user = [
         'name' => $this->drupalContext->getRandom()->name(8),
         'pass' => $this->drupalContext->getRandom()->name(16),
         'role' => "authenticated",
       ];
-      $user->mail = "{$user->name}@example.com";
-
-      $user = $this->drupalContext->userCreate($user);
-      assert(isset($user->uid));
-
-      // Event enrollments should get cleaned up when users are deleted.
-      EventEnrollment::create([
-        'user_id' => $user->uid,
-        'field_event' => $event_id,
-        'field_enrollment_status' => '1',
-        'field_account' => $user->uid,
-      ])->save();
+      $user['mail'] = "{$user['name']}@example.com";
+      $users[] = $user;
     }
-  }
 
-  /**
-   * Add enrollees to event.
-   *
-   * Adds enrollees to a specific event
-   * | event    | user      |
-   * | My event | Jane Doe  |
-   * | ...      | ...       |
-   *
-   * @Given event enrollees:
-   */
-  public function createEventEnrollees(TableNode $eventEnrolleesTable) {
+    $response = $this->testBridge->command(
+      "create-users",
+      users: $users
+    );
+    assert(isset($response['errors']) && $response['errors'] === [], "Could not create all required users: \n - " . implode("\n - ", $response['errors']));
 
-    foreach ($eventEnrolleesTable->getHash() as $eventEnrolleesHash) {
-      $event_title = $eventEnrolleesHash['event'];
-      $event_id = $this->getEventIdFromTitle($event_title);
-      if ($event_id === NULL) {
-        throw new \Exception("Event '${event_title}' does not exist.");
-      }
-
-      $event = Event::load($event_id);
-      assert($event instanceof Node);
-
-      $user = User::load($this->drupalContext->getUserManager()->getUser($eventEnrolleesHash['user'])->uid);
-      assert($user instanceof UserInterface);
-      assert($user->id() !== null, "Enrollment of anonymous users is not allowed for '@Given event enrollees'. Please use '@Given anonymous event enrollees:' instead.");
-
-      EventEnrollment::create([
-        'user_id' => $user->id(),
+    $enrollments = [];
+    foreach ($response['created'] as $user_id) {
+      // Event enrollments should get cleaned up when users are deleted.
+      $enrollments[] = [
+        'user_id' => $user_id,
         'field_event' => $event_id,
         'field_enrollment_status' => '1',
-        'field_account' => $user->id(),
-      ])->save();
+        'field_account' => $user_id,
+      ];
+    }
+
+    $response = $this->testBridge->command(
+      "create-event-enrollments",
+      event_enrollments: $enrollments,
+    );
+    if (isset($response['status'], $response['error']) && $response['error'] === "Command 'create-$entity_type' not found") {
+      throw new \InvalidArgumentException("There's no bridge command registered to create $entity_type. Expected command 'create-$entity_type' to be available.");
+    }
+
+    if (!isset($response['created'], $response['errors'])) {
+      throw new \RuntimeException("Invalid response from test bridge: " . json_encode($response));
+    }
+
+    if ($response['errors'] !== []) {
+      throw new \InvalidArgumentException("Could not create all requested entities: \n - " . implode("\n - ", $response['errors']));
     }
   }
 
@@ -512,6 +429,7 @@ class EventContext extends RawMinkContext {
    * @Given anonymous event enrollees:
    */
   public function createAnonymousEventEnrollees(TableNode $eventAnonymousEnrolleesTable) {
+    $enrollments = [];
     foreach ($eventAnonymousEnrolleesTable->getHash() as $eventEnrolleesHash) {
       $event_title = $eventEnrolleesHash['event'];
       $event_id = $this->getEventIdFromTitle($event_title);
@@ -519,15 +437,10 @@ class EventContext extends RawMinkContext {
         throw new \Exception("Event '${event_title}' does not exist.");
       }
 
-      $event = Event::load($event_id);
-      assert($event instanceof Node);
-
-      if ($event->field_event_an_enroll->value !== '1') {
-        throw new \Exception("Event '${event_title}' is not suitable to enroll anonymous users.");
-      }
-
       $token = Crypt::randomBytesBase64();
 
+      // @todo Remove the indirection here.
+      $values = [];
       $values['user_id'] = '0';
       $values['field_account'] = '0';
       $values['field_email'] = $eventEnrolleesHash['email'];
@@ -537,7 +450,23 @@ class EventContext extends RawMinkContext {
       $values['field_last_name'] = $eventEnrolleesHash['lastname'];
       $values['field_token'] = $token;
 
-      EventEnrollment::create($values)->save();
+      $enrollments[] = $values;
+    }
+
+    $response = $this->testBridge->command(
+      "create-event-enrollments",
+      event_enrollments: $enrollments,
+    );
+    if (isset($response['status'], $response['error']) && $response['error'] === "Command 'create-$entity_type' not found") {
+      throw new \InvalidArgumentException("There's no bridge command registered to create $entity_type. Expected command 'create-$entity_type' to be available.");
+    }
+
+    if (!isset($response['created'], $response['errors'])) {
+      throw new \RuntimeException("Invalid response from test bridge: " . json_encode($response));
+    }
+
+    if ($response['errors'] !== []) {
+      throw new \InvalidArgumentException("Could not create all requested entities: \n - " . implode("\n - ", $response['errors']));
     }
   }
 
@@ -547,81 +476,11 @@ class EventContext extends RawMinkContext {
    * @Given add to calendar is enabled for :calendar
    */
   public function enableCalendarOption(string $calendar) {
-    if (!\Drupal::service('module_handler')->moduleExists('social_event_addtocal')) {
-      throw new \Exception("Could not enable calendar button because the Social Event Add To Calendar module is disabled.");
-    }
-
-    $calendar = strtolower($calendar);
-
-    $available_calendars = (array) \Drupal::configFactory()
-      ->get('social_event_addtocal.settings')
-      ->get('allowed_calendars');
-
-    // Enable given calendar.
-    $available_calendars[$calendar] = $calendar;
-
-    \Drupal::configFactory()->getEditable('social_event_addtocal.settings')
-      ->set('enable_add_to_calendar', TRUE)
-      ->set('allowed_calendars', $available_calendars)
-      ->save();
-  }
-
-  /**
-   * Create a event.
-   *
-   * @return \Drupal\node\Entity\Node
-   *   The event values.
-   */
-  private function eventCreate($event) : Node {
-    if (!isset($event['author'])) {
-      throw new \Exception("You must specify an `author` when creating an event. Specify the `author` field if using `@Given events:` or use one of `@Given events with non-anonymous author:` or `@Given events authored by current user:` instead.");
-    }
-
-    $account = user_load_by_name($event['author']);
-    if ($account === FALSE) {
-      throw new \Exception(sprintf("User with username '%s' does not exist.", $event['author']));
-    }
-    $event['uid'] = $account->id();
-    unset($event['author']);
-
-    if (isset($event['group'])) {
-      $group_id = $this->getNewestGroupIdFromTitle($event['group']);
-      if ($group_id === NULL) {
-        throw new \Exception("Group '{$event['group']}' does not exist.");
-      }
-      unset($event['group']);
-    }
-
-    $event['type'] = 'event';
-
-    if (isset($event['field_event_type'])) {
-      $type_id = $this->getEventTypeIdFromLabel($event['field_event_type']);
-      if ($type_id === NULL) {
-        throw new \Exception("Event Type with label '{$event['field_event_type']}' does not exist.");
-      }
-      $event['field_event_type'] = $type_id;
-    }
-
-    $this->validateEntityFields("node", $event);
-    $event_object = Node::create($event);
-    $violations = $event_object->validate();
-    if ($violations->count() !== 0) {
-      throw new \Exception("The event you tried to create is invalid: $violations");
-    }
-    $event_object->save();
-
-    // Adding to group usually happens in a form handler so for initialization
-    // we must do that ourselves.
-    if (isset($group_id)) {
-      try {
-        Group::load($group_id)?->addRelationship($event_object, "group_node:event");
-      }
-      catch (PluginNotFoundException $_) {
-        throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
-      }
-    }
-
-    return $event_object;
+    $response = $this->testBridge->command(
+      'enable-event-add-to-calendar',
+      calendar: $calendar
+    );
+    assert(isset($response['error']) && $response['error'] === [], "Could not enable add to calendar: {$response['error']}");
   }
 
   /**
@@ -634,37 +493,14 @@ class EventContext extends RawMinkContext {
    *   The integer ID of the event or NULL if no event could be found.
    */
   private function getEventIdFromTitle(string $event_title) : ?int {
-    return $this->getNodeIdFromTitle("event", $event_title);
-  }
-
-  /**
-   * Get the Term ID for a event type from its label.
-   *
-   * @param string $label
-   *   The label.
-   *
-   * @return int|null
-   *   The event type ID or NULL if it can't be found.
-   */
-  private function getEventTypeIdFromLabel(string $label) : ?int {
-    $query = \Drupal::entityQuery('taxonomy_term')
-      ->accessCheck(FALSE)
-      ->condition('vid', 'event_types')
-      ->condition('name', $label);
-
-    $term_ids = $query->execute();
-    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadMultiple($term_ids);
-
-    if (count($terms) !== 1) {
-      return NULL;
+    $response = $this->testBridge->command(
+      "event-id-from-title",
+      title: $event_title
+    );
+    if (!isset($response['id'])) {
+      throw new \RuntimeException("Missing 'id' in response from test bridge: " . json_encode($response));
     }
-
-    $term_id = reset($terms)->id();
-    if ($term_id !== 0) {
-      return $term_id;
-    }
-
-    return NULL;
+    return $response['id'];
   }
 
 }

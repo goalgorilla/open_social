@@ -82,10 +82,10 @@ class GroupContext extends RawMinkContext {
    * Create multiple groups at the start of a test.
    *
    * Creates group of a given type provided in the form:
-   * | author | title      | description     | author   | type        | language | field_group_allowed_visibility |
-   * | user-1 | My title 1 | My description  | username | flexible_group  | en       | public                         |
-   * | user-1 | My title 2 | My description  | username | flexible_group  | en       | public,community,group         |
-   * | ...    | ...        | ...             | ...      | ...         | ...      | ...                            |
+   * | author | title   | description    | author   | type           |
+   * | user-1 | Group 1 | My description | username | flexible_group |
+   * | user-1 | Group 2 | My description | username | flexible_group |
+   * | ...    | ...     | ...            | ...      | ...            |
    *
    * @Given groups:
    */
@@ -486,6 +486,21 @@ class GroupContext extends RawMinkContext {
   }
 
   /**
+   * Open the quick join link directly.
+   *
+   * @When I visit the group quick join link for :group
+   * @When am visiting the group quick join link for :group
+   */
+  public function visitGroupQuickJoin(string $group) : void {
+    $group_id = $this->getNewestGroupIdFromTitle($group);
+    if ($group_id === NULL) {
+      throw new \Exception("Group '${group}' does not exist.");
+    }
+
+    $this->visitPath("/group/${group_id}/quickjoin");
+  }
+
+  /**
    * Assert we're on the group page.
    *
    * Can be used to check that a redirect was implemented correctly.
@@ -760,4 +775,22 @@ class GroupContext extends RawMinkContext {
     }
   }
 
+  /**
+   * Switch "group type" settings.
+   *
+   * @param string $switch
+   *   Should be either "enable" or "disable".
+   *
+   * @Given I :switch group type settings
+   */
+  public function iSwitchGroupTypeSettings(string $switch): void {
+     if (!in_array($switch, ['enable', 'disable'])) {
+       throw new \InvalidArgumentException('Invalid parameter $switch');
+     }
+
+    \Drupal::configFactory()
+      ->getEditable('social_group.settings')
+      ->set('social_group_type_required', $switch === 'enable')
+      ->save();
+  }
 }

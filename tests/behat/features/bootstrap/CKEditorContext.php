@@ -2,6 +2,7 @@
 
 namespace Drupal\social\Behat;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 
@@ -10,18 +11,32 @@ use Behat\MinkExtension\Context\RawMinkContext;
  */
 class CKEditorContext extends RawMinkContext {
 
+  /**
+   * The test bridge that allows running code in the Drupal installation.
+   */
+  private TestBridgeContext $testBridge;
+
+  /**
+   * Make some contexts available here so we can delegate steps.
+   *
+   * @BeforeScenario
+   */
+  public function gatherContexts(BeforeScenarioScope $scope) {
+    $environment = $scope->getEnvironment();
+
+    $this->testBridge = $environment->getContext(TestBridgeContext::class);
+  }
 
   /**
    * Turn off ckeditor.
    *
    * @Given I turn off ckeditor
    */
-  public function turnOffCkeditor()
-  {
-    // Disable ckeditor for basic and full html.
-    \Drupal::configFactory()->getEditable('editor.editor.basic_html')->delete();
-    \Drupal::configFactory()->getEditable('editor.editor.full_html')->delete();
-
+  public function turnOffCkeditor() {
+    $response = $this->testBridge->command(
+      "disable-ckeditor",
+    );
+    assert($response['status'] === "ok");
   }
 
   /**

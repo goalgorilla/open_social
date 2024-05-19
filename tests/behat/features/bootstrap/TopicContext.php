@@ -6,11 +6,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
-use Drupal\group\Entity\Group;
-use Drupal\node\Entity\Node;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -18,22 +14,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class TopicContext extends RawMinkContext {
 
-  use EntityTrait;
-  use NodeTrait;
-  use GroupTrait;
-
   private const CREATE_PAGE = "/node/add/topic";
-
-  /**
-   * Keep track of the topics that were created.
-   *
-   * This allows us to clean up at the end of the scenario. The array contains
-   * the ID if we already have it in the step or the title otherwise. We avoid
-   * looking up the topic because a user may be testing an error state.
-   *
-   * @var array<int|string>
-   */
-  private array $created = [];
 
   /**
    * Topic data that was changed in a previous step.
@@ -53,9 +34,9 @@ class TopicContext extends RawMinkContext {
   private MinkContext $minkContext;
 
   /**
-   * The Drupal context which gives us access to user management.
+   * The test bridge that allows running code in the Drupal installation.
    */
-  private DrupalContext $drupalContext;
+  private TestBridgeContext $testBridge;
 
   /**
    * Make some contexts available here so we can delegate steps.
@@ -67,7 +48,7 @@ class TopicContext extends RawMinkContext {
 
     $this->cKEditorContext = $environment->getContext(CKEditorContext::class);
     $this->minkContext = $environment->getContext(SocialMinkContext::class);
-    $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
+    $this->testBridge = $environment->getContext(TestBridgeContext::class);
   }
 
   /**
@@ -108,81 +89,6 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
-   * Create multiple topics at the start of a test.
-   *
-   * Creates topics provided in the form:
-   * | title    | body            | author   | field_content_visibility | field_topic_type | language  | status |
-   * | My title | My description  | username | public                   | News             | en        | 1         |
-   * | ...      | ...             | ...      | ...                      | ...              | ...       |
-   *
-   * @Given topics:
-   */
-  public function createTopics(TableNode $topicsTable) : void {
-    foreach ($topicsTable->getHash() as $topicHash) {
-      $topic = $this->topicCreate($topicHash);
-      $this->created[] = $topic->id();
-    }
-  }
-
-  /**
-   * Create multiple topics at the start of a test.
-   *
-   * Creates topics provided in the form:
-   * | title    | body            | field_content_visibility | field_topic_type | language  | status |
-   * | My title | My description  | public                   | News             | en        | 1         |
-   * | ...      | ...             | ...                      | ...              | ...       |
-   *
-   * @Given topics with non-anonymous author:
-   */
-  public function createTopicsWithAuthor(TableNode $topicsTable) : void {
-    // Create a new random user to own the content, this ensures the author
-    // isn't anonymous.
-    $user = (object) [
-      'name' => $this->drupalContext->getRandom()->name(8),
-      'pass' => $this->drupalContext->getRandom()->name(16),
-      'role' => "authenticated",
-    ];
-    $user->mail = "{$user->name}@example.com";
-
-    $this->drupalContext->userCreate($user);
-
-    foreach ($topicsTable->getHash() as $topicHash) {
-      if (isset($topicHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'topics with non-anonymous owner:' step, use 'topics:' instead.");
-      }
-
-      $topicHash['author'] = $user->name;
-
-      $topic = $this->topicCreate($topicHash);
-      $this->created[] = $topic->id();
-    }
-  }
-
-  /**
-   * Create multiple topics at the start of a test.
-   *
-   * Creates topics provided in the form:
-   * | title    | body            | field_content_visibility | field_topic_type | language  | status |
-   * | My title | My description  | public                   | News             | en        | 1         |
-   * | ...      | ...             | ...                      | ...              | ...       |
-   *
-   * @Given topics authored by current user:
-   */
-  public function createTopicsAuthoredByCurrentUser(TableNode $topicsTable) : void {
-    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-    foreach ($topicsTable->getHash() as $topicHash) {
-      if (isset($topicHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'topics authored by current user:' step, use 'topics:' instead.");
-      }
-
-      $topicHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
-
-      $topic = $this->topicCreate($topicHash);
-      $this->created[] = $topic->id();
-    }
-  }
-
-  /**
    * Creates a large number of topics.
    *
    * @Given :count topics with title :title by :username
@@ -201,9 +107,11 @@ class TopicContext extends RawMinkContext {
       ];
     }
 
-    foreach ($topics as $topic) {
-      $this->topicCreate($topic);
-    }
+    $response = $this->testBridge->command(
+      "create-topics",
+      topics: $topics,
+    );
+    $this->assertEntityCreationSuccessful("topics", $response);
   }
 
   /**
@@ -389,59 +297,6 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
-   * Create a topic.
-   *
-   * @return \Drupal\node\Entity\Node
-   *   The topic values.
-   */
-  private function topicCreate($topic) : Node {
-    if (!isset($topic['author'])) {
-      throw new \Exception("You must specify an `author` when creating a topic. Specify the `author` field if using `@Given topics:` or use one of `@Given topics with non-anonymous author:` or `@Given topics authored by current user:` instead.");
-    }
-
-    $account = user_load_by_name($topic['author']);
-    if ($account === FALSE) {
-      throw new \Exception(sprintf("User with username '%s' does not exist.", $topic['author']));
-    }
-    $topic['uid'] = $account->id();
-    unset($topic['author']);
-
-    if (isset($topic['group'])) {
-      $group_id = $this->getNewestGroupIdFromTitle($topic['group']);
-      if ($group_id === NULL) {
-        throw new \Exception("Group '{$topic['group']}' does not exist.");
-      }
-      unset($topic['group']);
-    }
-
-    $topic['type'] = 'topic';
-
-    $this->validateEntityFields("node", $topic);
-    $topic_object = Node::create($topic);
-    $violations = $topic_object->validate();
-    if ($violations->count() !== 0) {
-      throw new \Exception("The topic you tried to create is invalid: $violations");
-    }
-    if (!$topic_object->body->format) {
-      $topic_object->body->format = 'basic_html';
-    }
-    $topic_object->save();
-
-    // Adding to group usually happens in a form handler so for initialization
-    // we must do that ourselves.
-    if (isset($group_id)) {
-      try {
-        Group::load($group_id)?->addRelationship($topic_object, "group_node:topic");
-      }
-      catch (PluginNotFoundException $_) {
-        throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
-      }
-    }
-
-    return $topic_object;
-  }
-
-  /**
    * Get the topic from a topic title.
    *
    * @param string $topic_title
@@ -451,7 +306,39 @@ class TopicContext extends RawMinkContext {
    *   The integer ID of the topic or NULL if no topic could be found.
    */
   private function getTopicIdFromTitle(string $topic_title) : ?int {
-    return $this->getNodeIdFromTitle("topic", $topic_title);
+    $response = $this->testBridge->command(
+      "topic-id-from-title",
+      title: $topic_title
+    );
+    if (!isset($response['id'])) {
+      throw new \RuntimeException("Missing 'id' in response from test bridge: " . json_encode($response));
+    }
+    return $response['id'];
+  }
+
+  /**
+   * Ensure entity creation did not have any errors.
+   *
+   * @param array $response
+   *   The response provided by the test bridge.
+   *
+   * @throws \RuntimeException
+   *   In case the bridge provided unexpected output.
+   * @throws \InvalidArgumentException
+   *   In case creation failed due to invalid input.
+   */
+  private function assertEntityCreationSuccessful(string $entity_type, array $response) : void {
+    if (isset($response['status'], $response['error']) && $response['error'] === "Command 'create-$entity_type' not found") {
+      throw new \InvalidArgumentException("There's no bridge command registered to create $entity_type. Expected command 'create-$entity_type' to be available.");
+    }
+
+    if (!isset($response['created'], $response['errors'])) {
+      throw new \RuntimeException("Invalid response from test bridge: " . json_encode($response));
+    }
+
+    if ($response['errors'] !== []) {
+      throw new \InvalidArgumentException("Could not create all requested entities: \n - " . implode("\n - ", $response['errors']));
+    }
   }
 
 }

@@ -2,11 +2,8 @@
 
 namespace Drupal\social\Behat;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Drupal\Core\Database\Query\PagerSelectExtender;
-use Drupal\Core\Database\Query\TableSortExtender;
-use Drupal\Core\Database\StatementWrapper;
-use Drupal\taxonomy\TermInterface;
 
 /**
  * Defines test steps around the usage of user.
@@ -14,23 +11,30 @@ use Drupal\taxonomy\TermInterface;
 class TaggingContext extends RawMinkContext {
 
   /**
+   * The test bridge that allows running code in the Drupal installation.
+   */
+  private TestBridgeContext $testBridge;
+
+  /**
+   * Make some contexts available here so we can delegate steps.
+   *
+   * @BeforeScenario
+   */
+  public function gatherContexts(BeforeScenarioScope $scope) {
+    $environment = $scope->getEnvironment();
+
+    $this->testBridge = $environment->getContext(TestBridgeContext::class);
+  }
+
+  /**
    * Fill placement data to show tag for entities.
    *
    * @Given I enable content tag :term_name for all entities
    */
   public function enableContentTagForAllEntities(string $term_name): void {
-    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties(['name' => $term_name]);
-    $term = reset($term);
-    if (!$term instanceof TermInterface) {
-      throw new \Exception("Term '{$term_name}' does not exist.");
-    }
-    /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $helper */
-    $helper = \Drupal::service('social_tagging.tag_service');
-    $options = $helper->getKeyValueOptions();
-    // Option contains key=>value array where values are a label.
-    // Get keys, and serialize like in TaggingUsageWidget.
-    $values = array_keys($options);
-    $term->set('field_category_usage', serialize($values))->save();
+    $response = $this->testBridge->command('enable-content-tagging-for-all-entities');
+
+    assert(!isset($response['error']), $response['error']);
   }
 
 }

@@ -19,6 +19,8 @@ default:
         # driver and should load the database first.
         - Drupal\social\Behat\DatabaseContext:
             - '%paths.base%/fixture'
+        - Drupal\social\Behat\TestBridgeContext
+        - Drupal\social\Behat\EntityContext
         - Drupal\DrupalExtension\Context\BatchContext
         - Drupal\social\Behat\AlbumContext
         - Drupal\social\Behat\BookContext
@@ -29,8 +31,6 @@ default:
         - Drupal\social\Behat\EventContext
         - Drupal\social\Behat\GroupContext
         - Drupal\social\Behat\GDPRContext
-        - Drupal\social\Behat\PageContext
-        - Drupal\social\Behat\PathContext
         - Drupal\social\Behat\PostContext
         - Drupal\social\Behat\FeatureContext
         - Drupal\social\Behat\FileContext

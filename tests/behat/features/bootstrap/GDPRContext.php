@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\social\Behat;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\data_policy\Entity\DataPolicy;
@@ -15,31 +16,19 @@ use Drupal\data_policy\Entity\InformBlock;
 class GDPRContext extends RawMinkContext {
 
   /**
-   * Keep track of the data policies that were created.
-   *
-   * This allows us to clean up at the end of the scenario. The array contains
-   * the ID if we already have it in the step or the title otherwise. We avoid
-   * looking up the topic because a user may be testing an error state.
-   *
-   * @var array<int|string>
+   * The test bridge that allows running code in the Drupal installation.
    */
-  private array $created = [];
+  private TestBridgeContext $testBridge;
 
   /**
-   * Create multiple data policies at the start of a test.
+   * Make some contexts available here so we can delegate steps.
    *
-   * Creates data policies provided in the form:
-   * | name               | field_description       | revision_log_message |
-   * | Terms & Conditions | No rights in this test  |                      |
-   * | ...                | ...                     | ...                  |
-   *
-   * @Given data_policies:
+   * @BeforeScenario
    */
-  public function createDataPolicies(TableNode $dataPoliciesTable) : void {
-    foreach ($dataPoliciesTable->getHash() as $dataPolicyHash) {
-      $dataPolicy = $this->dataPolicyCreate($dataPolicyHash);
-      $this->created[] = $dataPolicy->id();
-    }
+  public function gatherContexts(BeforeScenarioScope $scope) {
+    $environment = $scope->getEnvironment();
+
+    $this->testBridge = $environment->getContext(TestBridgeContext::class);
   }
 
   /**
@@ -79,31 +68,11 @@ class GDPRContext extends RawMinkContext {
    * @Given /^(?:|I )set the GDPR Consent Text to "(?P<text>[^"]+)"$/
    */
   public function setGdprContsentText(string $text) {
-    $config = \Drupal::configFactory()
-      ->getEditable('data_policy.data_policy');
-
-    if ($config->isNew()) {
-      throw new \Exception("The data_policy.data_policy configuration did not yet exist, is the social_Gdpr module enabled?");
-    }
-
-    $config->set('consent_text', $text)->save();
-  }
-
-  /**
-   * Create a data policy.
-   *
-   * @return \Drupal\data_policy\Entity\DataPolicy
-   *   The data policy values.
-   */
-  private function dataPolicyCreate($data_policy) : DataPolicy {
-    $data_policy_object = DataPolicy::create($data_policy);
-    $violations = $data_policy_object->validate();
-    if ($violations->count() !== 0) {
-      throw new \Exception("The data policy you tried to create is invalid: $violations");
-    }
-    $data_policy_object->save();
-
-    return $data_policy_object;
+    $response = $this->testBridge->command(
+      'set-gdpr-consent-text',
+      text: $text,
+    );
+    assert(!isset($response['error']), $response['error']);
   }
 
 }
