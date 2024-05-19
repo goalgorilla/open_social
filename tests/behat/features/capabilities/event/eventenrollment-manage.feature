@@ -9,8 +9,8 @@ Feature: Manage event enrollment
 
   Scenario: Can't manage an event by default
     Given events with non-anonymous author:
-      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end    | langcode |
-      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00 | en       |
+      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am logged in as a user with the verified role
 
     When I am viewing the event "Test content"
@@ -40,8 +40,8 @@ Feature: Manage event enrollment
 
   Scenario: Event manager can see the manage enrollments link on events
     Given events with non-anonymous author:
-      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end    | langcode |
-      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00 | en       |
+      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And I am logged in as a user with the verified role
     And I am an event manager for the "Test content" event
 

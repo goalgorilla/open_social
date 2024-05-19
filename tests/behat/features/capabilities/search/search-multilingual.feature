@@ -20,7 +20,7 @@ Feature: Search
       | user-de  | 1      | de       |
       | user-it  | 1      | it       |
 
-    And "topic" content:
+    And topics:
       | title            | body                 | status | field_content_visibility | langcode |
       | Topic-fr         | Topic description FR | 1      | public                   | fr       |
       | Topic-de         | Topic description DE | 1      | community                | de       |

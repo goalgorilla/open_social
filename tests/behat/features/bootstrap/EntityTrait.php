@@ -41,7 +41,9 @@ trait EntityTrait {
 
     $entityClass = $definition->getClass();
     /** @var \Drupal\Core\Entity\EntityInterface $dummy */
-    $dummy = $entityClass::create([$bundle => $values[$bundle]]);
+    $dummy = $bundle !== NULL
+      ? $entityClass::create([$bundle => $values[$bundle]])
+      : $entityClass::create();
 
     foreach ($values as $field_name => $field_value) {
       if ($definition->get($field_name) === NULL && !($dummy instanceof FieldableEntityInterface && $dummy->hasField($field_name))) {

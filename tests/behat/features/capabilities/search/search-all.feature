@@ -12,13 +12,13 @@ Feature: Search
       | label            | field_group_description | author      | type           | field_flexible_group_visibility | field_group_allowed_visibility | field_group_allowed_join_method | langcode |
       | Tjakka group two | Tjakka group            | tjakka user | flexible_group | community                       | group                          | added                           | en       |
       | Tjakka group     | Tjakka group            | tjakka user | flexible_group | public                          | public                         | direct                          | en       |
-    And "event" content:
-      | title             | body          | status | field_content_visibility |
-      | Tjakka event      | Description   | 1      | public                   |
-    And "topic" content:
-      | title             | body          | status | field_content_visibility |
-      | Tjakka topic      | Description   | 1      | public                   |
-      | Tjakka topic two  | Description   | 1      | community                |
+    And events:
+      | title             | body          | author      | status | field_content_visibility | field_event_date | field_event_date_end |
+      | Tjakka event      | Description   | tjakka user | 1      | public                   | +1 day           | +2 days              |
+    And topics:
+      | title             | body          | author      | status | field_content_visibility | field_topic_type |
+      | Tjakka topic      | Description   | tjakka user | 1      | public                   | News             |
+      | Tjakka topic two  | Description   | tjakka user | 1      | community                | News             |
 
     When Search indexes are up to date
     And I am on "search/all/tjakka"

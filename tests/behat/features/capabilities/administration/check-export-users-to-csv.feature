@@ -23,15 +23,15 @@ Feature: Export users
       | Topic content 2| ExportUser2 | News             | Body description text 2| public                   | en       |
       | Topic content 3| ExportUser3 | News             | Body description text 3| public                   | en       |
 
-    And "1" comments with text "Behat Comment [id]" for "Topic content 1"
-    And "1" comments with text "Behat Comment [id]" for "Topic content 2"
-    And "1" comments with text "Behat Comment [id]" for "Topic content 3"
+    And "1" comments with text "Behat Comment [id]" for node topic "Topic content 1"
+    And "1" comments with text "Behat Comment [id]" for node topic "Topic content 2"
+    And "1" comments with text "Behat Comment [id]" for node topic "Topic content 3"
 
     And events:
-      | title          | author      | field_event_date    | field_event_date_end | body                   | field_content_visibility | langcode |
-      | Event content 1| ExportUser1 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | Body description text 1| public                   | en       |
-      | Event content 2| ExportUser2 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | Body description text 2| public                   | en       |
-      | Event content 3| ExportUser3 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | Body description text 3| public                   | en       |
+      | title          | author      | field_event_date    | field_event_date_end | body                    | field_content_visibility | langcode |
+      | Event content 1| ExportUser1 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | Body description text 1 | public                   | en       |
+      | Event content 2| ExportUser2 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | Body description text 2 | public                   | en       |
+      | Event content 3| ExportUser3 | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | Body description text 3 | public                   | en       |
 
     And event enrollees:
       | event          | user      |
