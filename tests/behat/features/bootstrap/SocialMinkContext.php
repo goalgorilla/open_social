@@ -3,6 +3,7 @@
 
 namespace Drupal\social\Behat;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Drupal\DrupalExtension\Context\MinkContext;
 use Behat\Gherkin\Node\TableNode;
@@ -11,6 +12,22 @@ use Behat\Gherkin\Node\TableNode;
  * Defines application features from the specific context.
  */
 class SocialMinkContext extends MinkContext {
+
+  /**
+   * The test bridge that allows running code in the Drupal installation.
+   */
+  private TestBridgeContext $testBridge;
+
+  /**
+   * Make some contexts available here so we can delegate steps.
+   *
+   * @BeforeScenario
+   */
+  public function gatherContexts(BeforeScenarioScope $scope) {
+    $environment = $scope->getEnvironment();
+
+    $this->testBridge = $environment->getContext(TestBridgeContext::class);
+  }
 
   /**
    * @override MinkContext::assertRegionHeading()
@@ -183,7 +200,7 @@ class SocialMinkContext extends MinkContext {
    */
   public function iSetAlias($value) {
     // Uncheck "Generate automatic URL alias" if social_path_manager is enabled.
-    if (\Drupal::service('module_handler')->moduleExists('social_path_manager')) {
+    if ($this->testBridge->moduleExists('social_path_manager')) {
       $option = $this->fixStepArgument('Generate automatic URL alias');
       $this->getSession()->getPage()->uncheckField($option);
     }

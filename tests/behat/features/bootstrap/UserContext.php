@@ -4,12 +4,29 @@ declare(strict_types=1);
 
 namespace Drupal\social\Behat;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
 
 /**
  * Defines test steps around users and user management.
  */
 class UserContext extends RawMinkContext {
+
+  /**
+   * The test bridge that allows running code in the Drupal installation.
+   */
+  private TestBridgeContext $testBridge;
+
+  /**
+   * Make some contexts available here so we can delegate steps.
+   *
+   * @BeforeScenario
+   */
+  public function gatherContexts(BeforeScenarioScope $scope) {
+    $environment = $scope->getEnvironment();
+
+    $this->testBridge = $environment->getContext(TestBridgeContext::class);
+  }
 
   private const REGISTRATION_PAGE = "/user/register";
 
@@ -20,19 +37,18 @@ class UserContext extends RawMinkContext {
    *  user_cancel_block: disable user, leave content
    *  user_cancel_block_unpublish: disable user, unpublish content
    *  user_cancel_reassign: delete user, reassign content to uid=0
-   *  user_cancel_delete: delete user, delete content
+   *  user_cancel_delete: delete user, delete content.
    *
    * @When I delete user :username
    * @When I delete user :username with method :method
    */
   public function cancelUser($username, $method = 'user_cancel_delete') {
-    $uid = $this->userLoadByName($username);
-    user_cancel([], $uid, $method);
-
-    // user_cancel() initiates a batch process. Run it manually.
-    $batch =& batch_get();
-    $batch['progressive'] = FALSE;
-    batch_process();
+    $response = $this->testBridge->command(
+      'cancel-user',
+      username: $username,
+      method: $method,
+    );
+    assert(!isset($response['error']), $response['error']);
   }
 
   /**
@@ -43,27 +59,6 @@ class UserContext extends RawMinkContext {
   public function whenIViewTheUserRegistrationPage(): void {
     $this->visitPath(self::REGISTRATION_PAGE);
     $this->assertSession()->statusCodeEquals(200);
-  }
-
-  /**
-   * Get user id from username.
-   *
-   * Throws an error if user id with given username does not exist.
-   *
-   * @param string $username
-   *  Username string
-   * @return mixed
-   *  User account ID.
-   * @throws \Exception
-   */
-  private function userLoadByName(string $username) {
-    $account = user_load_by_name($username);
-    if ($account->id() !== 0) {
-      return $account->id();
-    }
-    else {
-      throw new \Exception(sprintf("User with username '%s' does not exist.", $username));
-    }
   }
 
 }

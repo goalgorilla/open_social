@@ -2,9 +2,7 @@
 
 namespace Drupal\social\Behat;
 
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Drupal\DrupalExtension\Context\DrupalContext;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Cookie\SetCookie;
@@ -14,22 +12,6 @@ use Psr\Http\Message\ResponseInterface;
  * Steps related to handling files such as the user export.
  */
 class FileContext extends RawMinkContext {
-
-  /**
-   * The Drupal context which gives us access to user management.
-   */
-  private DrupalContext $drupalContext;
-
-  /**
-   * Make some contexts available here so we can delegate steps.
-   *
-   * @BeforeScenario
-   */
-  public function gatherContexts(BeforeScenarioScope $scope) {
-    $environment = $scope->getEnvironment();
-
-    $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
-  }
 
   /**
    * Try to download file from url.
@@ -95,10 +77,9 @@ class FileContext extends RawMinkContext {
   public function iShouldSeeInTheHeader($header, $value) {
     if ($this->iTryToDownloadFileResponse) {
       if (!empty($this->iTryToDownloadFileResponse->getHeader($header)) && $this->iTryToDownloadFileResponse->getHeader($header)[0] !== $value) {
-        throw new \RuntimeException('There is no response header ' . $header . ' with value "' . $value . '"');
+        throw new \RuntimeException('There is no response header ' . $header . ' with value "' . $value. '"');
       }
-    }
-    else {
+    } else {
       throw new \RuntimeException('Response is missing or is not valid. Response code: "' . $this->iTryToDownloadFileStatusCode . '". Also check if "I try to download :url" behat step was correctly triggered in previous step.');
     }
   }
@@ -187,25 +168,6 @@ class FileContext extends RawMinkContext {
     $response = $this->getUrlWithGuzzle($cookies, $url);
 
     return $response->getBody()->getContents();
-  }
-
-  /**
-   * Check if the correct amount of files were uploaded.
-   *
-   * @Then I should have uploaded :count :scheme files
-   */
-  public function assertUploadedCount(int $count, string $scheme) : void {
-    $uid = $this->drupalContext->getUserManager()->getCurrentUser()?->uid ?? 0;
-
-    $query = \Drupal::database()->select('file_managed', 'fm');
-    $query->addField('fm', 'fid');
-    $query->condition('fm.uid', $uid, '=');
-    $query->condition('fm.uri', "$scheme://%", 'LIKE');
-    $actual = count($query->execute()->fetchAllAssoc('fid'));
-
-    if ($actual !== $count) {
-      throw new \RuntimeException("Expected $count uploaded $scheme files but found $actual.");
-    }
   }
 
 }
