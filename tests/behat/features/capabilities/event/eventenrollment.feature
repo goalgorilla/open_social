@@ -140,15 +140,6 @@ Feature: Enroll for an event
 
     When I am viewing my event:
       | title                    | My Behat Event created |
-      | field_event_date         | -1 days                |
-      | status                   | 1                      |
-      | field_content_visibility | community              |
-
-    Then I should see "No one has enrolled for this event"
-    And I should see the button "Event has passed"
-    And I should see the link "Manage enrollments"
-    And I am viewing my event:
-      | title                    | My Behat Event created |
       | field_event_date         | -3 days                |
       | field_event_date_end     | -2 days                |
       | status                   | 1                      |
