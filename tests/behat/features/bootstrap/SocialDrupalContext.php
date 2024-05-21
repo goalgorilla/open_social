@@ -72,13 +72,6 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * @When I empty the queue
-   */
-  public function iEmptyTheQueue() {
-    $this->processQueue(TRUE);
-  }
-
-  /**
    * @When I wait for the queue to be empty
    */
   public function iWaitForTheQueueToBeEmpty() {
