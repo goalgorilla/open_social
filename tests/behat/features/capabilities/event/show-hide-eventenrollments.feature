@@ -52,13 +52,27 @@ Feature: Show/hide enrollments on Event
     When I click "Enrollments"
     Then I should see "No one has enrolled for this event"
 
-  @AN @security
-  Scenario: Anonymous can not see hidden enrollments
-    Given events with non-anonymous author:
+  Scenario: Anonymous can not see hidden enrollments with AN event enroll
+    Given I enable the module social_event_an_enroll
+    And events with non-anonymous author:
       | title                  | field_event_date | field_event_date_end | status | field_content_visibility | field_event_an_enroll | field_hide_enrollments | body |
       | My Behat Event created | +8 days          | +9 days              | 1      | public                   | 1                     | 1                      | foo  |
-    Given I am an anonymous user
+    And I am an anonymous user
+
     When I open the "event" node with title "My Behat Event created"
+
+    Then I should see "My Behat Event created"
+    And I should not see an "#block-socialblue-views-block-event-enrollments-event-enrollments-socialbase" element
+    And I should not see the link "Enrollments"
+
+  Scenario: Anonymous can not see hidden enrollments
+    Given events with non-anonymous author:
+      | title                  | field_event_date | field_event_date_end | status | field_content_visibility | field_hide_enrollments | body |
+      | My Behat Event created | +8 days          | +9 days              | 1      | public                   | 1                      | foo  |
+    And I am an anonymous user
+
+    When I open the "event" node with title "My Behat Event created"
+
     Then I should see "My Behat Event created"
     And I should not see an "#block-socialblue-views-block-event-enrollments-event-enrollments-socialbase" element
     And I should not see the link "Enrollments"

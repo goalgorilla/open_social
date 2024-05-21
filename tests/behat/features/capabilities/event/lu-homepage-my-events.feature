@@ -15,12 +15,12 @@ Feature: See my upcoming events
     And I should see "No upcoming events"
 
     Given events authored by current user:
-      | title                  | body | field_event_date | field_event_date_end | status |
-      | My Behat Event created | foo  | +8 days          | +9 days              | 1      |
+      | title                  | body | field_event_date | field_event_date_end | status | field_content_visibility |
+      | My Behat Event created | foo  | +8 days          | +9 days              | 1      | public                   |
 
     Given events with non-anonymous author:
-      | title                   | body | field_event_date | field_event_date_end | status |
-      | My Behat Event enrolled | foo  | +8 days          | +9 days              | 1      |
+      | title                   | body | field_event_date | field_event_date_end | status | field_content_visibility |
+      | My Behat Event enrolled | foo  | +8 days          | +9 days              | 1      | public                   |
     And I am viewing the event "My Behat Event enrolled"
 
     When I press the "Enroll" button

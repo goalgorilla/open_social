@@ -9,21 +9,21 @@ Feature: Search
       | title             | body          | status | field_content_visibility | field_event_date | field_event_date_end |
       | Event one         | Description   | 1      | public                   | +1 day           | +2 days              |
       | Event two         | Description   | 1      | public                   | +1 day           | +2 days              |
-    And topics:
-      | title             | body          | status | field_content_visibility |
-      | Topic one         | Shenanigans   | 1      | public                   |
-      | Topic two         | Shenanigans   | 1      | community                |
-      | Topic three       | Shenanigans   | 1      | community                |
-      | Topic four        | Shenanigans   | 1      | community                |
-      | Topic five        | Shenanigans   | 1      | community                |
-      | Topic six         | Shenanigans   | 1      | community                |
-      | Topic seven       | Shenanigans   | 1      | community                |
-      | Topic eight       | Shenanigans   | 1      | community                |
-      | Topic nine        | Shenanigans   | 1      | community                |
-      | Topic ten         | Shenanigans   | 1      | community                |
-      | Topic eleven      | Shenanigans   | 1      | community                |
-      | Topic twelve      | Shenanigans   | 1      | community                |
-      | Topic thirteen    | Shenanigans   | 1      | community                |
+    And topics with non-anonymous author:
+      | title             | body          | status | field_content_visibility | field_topic_type |
+      | Topic one         | Shenanigans   | 1      | public                   | News             |
+      | Topic two         | Shenanigans   | 1      | community                | News             |
+      | Topic three       | Shenanigans   | 1      | community                | News             |
+      | Topic four        | Shenanigans   | 1      | community                | News             |
+      | Topic five        | Shenanigans   | 1      | community                | News             |
+      | Topic six         | Shenanigans   | 1      | community                | News             |
+      | Topic seven       | Shenanigans   | 1      | community                | News             |
+      | Topic eight       | Shenanigans   | 1      | community                | News             |
+      | Topic nine        | Shenanigans   | 1      | community                | News             |
+      | Topic ten         | Shenanigans   | 1      | community                | News             |
+      | Topic eleven      | Shenanigans   | 1      | community                | News             |
+      | Topic twelve      | Shenanigans   | 1      | community                | News             |
+      | Topic thirteen    | Shenanigans   | 1      | community                | News             |
     And Search indexes are up to date
     And I am on "search/content"
     When I fill in the following:
