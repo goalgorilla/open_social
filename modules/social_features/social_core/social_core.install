@@ -86,6 +86,7 @@ function social_core_install() {
       'access toolbar',
       'administer nodes',
       'administer menu',
+      'administer taxonomy',
       'access site reports',
       'access administration pages',
       'view all revisions',
@@ -486,4 +487,11 @@ function social_core_update_130004(): void {
     'create terms in topic_types',
   ];
   user_role_grant_permissions('sitemanager', $permissions);
+}
+
+/**
+ * Add administer taxonomy back again, this had side effects we need to fix.
+ */
+function social_core_update_130005(): void {
+  user_role_grant_permissions('sitemanager', ['administer taxonomy']);
 }
