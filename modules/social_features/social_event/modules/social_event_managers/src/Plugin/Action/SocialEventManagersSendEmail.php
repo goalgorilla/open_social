@@ -86,7 +86,8 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
 
       $users += $this->entityTypeManager->getStorage('user')->loadMultiple($entities);
     }
-    // Pass it back to our parent who handles creation of queue items.
+
+    // Pass it back to our parent who handles the creation of queue items.
     return parent::executeMultiple($users);
   }
 

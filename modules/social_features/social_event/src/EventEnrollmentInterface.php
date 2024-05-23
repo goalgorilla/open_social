@@ -6,6 +6,7 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\EntityOwnerInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Provides an interface for defining Event enrollment entities.
@@ -146,5 +147,13 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    *   The user entity id.
    */
   public function getAccount(): ?string;
+
+  /**
+   * Gets enroller entity.
+   *
+   * @return \Drupal\user\UserInterface|null
+   *   The user entity or NULL.
+   */
+  public function getAccountEntity(): ?UserInterface;
 
 }
