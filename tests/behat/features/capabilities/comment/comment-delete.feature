@@ -6,7 +6,10 @@ Feature: Delete Comment
 
   Scenario: Successfully delete comment
     Given I am logged in as an "verified"
-    And I am viewing a "topic" with the title "Comment delete topic"
+    And topics with non-anonymous author:
+      | title                | status | body          | field_content_visibility | field_topic_type |
+      | Comment delete topic | 1      | Description   | public                   | News             |
+    And I am viewing the topic "Comment delete topic"
     When I fill in the following:
          | Add a comment | This is my comment |
     And I press "Comment"

@@ -7,12 +7,10 @@ Feature: Enroll for an event
   @verified @critical
   Scenario: Successfully enroll for an event
     Given I am logged in as an "verified"
-    And I am viewing my event:
-      | title                    | My Behat Event created |
-      | field_event_date         | +8 days                |
-      | field_event_date_end     | +9 days                |
-      | status                   | 1                      |
-      | field_content_visibility | community              |
+    And events authored by current user:
+      | title                  | body | field_event_date | field_event_date_end | status | field_content_visibility |
+      | My Behat Event created | foo  | +8 days          | +9 days              | 1      | community                |
+    And I am viewing the event "My Behat Event created"
 
     And I should see "No one has enrolled for this event"
     And I should see the button "Enroll"
@@ -76,12 +74,10 @@ Feature: Enroll for an event
   Scenario: Successfully cancel enrollment for an event
     Given I am logged in as an "verified"
 
-    When I am viewing my event:
-      | title                    | My Behat Event created |
-      | field_event_date         | +8 days                |
-      | field_event_date_end     | +9 days                |
-      | status                   | 1                      |
-      | field_content_visibility | community              |
+    When events authored by current user:
+      | title                  | body | field_event_date | field_event_date_end | status | field_content_visibility |
+      | My Behat Event created | foo  | +8 days          | +9 days              | 1      | community                |
+    And I am viewing the event "My Behat Event created"
 
     Then I should see "No one has enrolled for this event"
     And I should see the button "Enroll"
@@ -117,10 +113,10 @@ Feature: Enroll for an event
       | eventenrollment | eventenrollment | eventenrollment@example.com | 1      | verified |
 
     When I am logged in as "eventenrollment"
-    And I am viewing my event:
-      | title            | Enrollment test event |
-      | field_event_date | 3014-10-17 8:00am     |
-      | status           | 1                     |
+    And events authored by current user:
+      | title                 | body | field_event_date  | field_event_date_end | status | field_content_visibility |
+      | Enrollment test event | foo  | 3014-10-17 8:00am | 3014-10-18 8:00am    | 1      | public                   |
+    And I am viewing the event "Enrollment test event"
     And I click "eventenrollment" in the "Main content"
     And I click "Events"
 
@@ -138,20 +134,18 @@ Feature: Enroll for an event
   Scenario: Can no longer enroll to an event when it has finished.
     Given I am logged in as an "verified"
 
-    When I am viewing my event:
-      | title                    | My Behat Event created |
-      | field_event_date         | -3 days                |
-      | field_event_date_end     | -2 days                |
-      | status                   | 1                      |
-      | field_content_visibility | community              |
+    When events authored by current user:
+      | title                  | body | field_event_date | field_event_date_end | status | field_content_visibility |
+      | My Behat Event created | foo  | -3 days          | -2 days              | 1      | community                |
+    And I am viewing the event "My Behat Event created"
 
-    And I should see "No one has enrolled for this event"
+    Then I should see "No one has enrolled for this event"
     And I should see the button "Event has passed"
 
   Scenario: Showing the correct total enrollment count.
     Given events with non-anonymous author:
-      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end    | langcode |
-      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00 | en       |
+      | title        | body                  | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | 2100-01-01T12:00:00  | en       |
     And there are 13 event enrollments for the "Test content" event
 
     When I am logged in as an "verified"

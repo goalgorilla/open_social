@@ -102,33 +102,6 @@ class EmailContext implements Context {
   }
 
   /**
-   * I run the digest cron.
-   *
-   * @Then I run the :arg1 digest cron
-   */
-  public function iRunTheDigestCron(string $frequency) : void {
-    // Update the timings in the digest table.
-    $query =  \Drupal::database()->update('user_activity_digest');
-    $query->fields(['timestamp' => 1]);
-    $query->condition('frequency', $frequency);
-    $query->execute();
-
-    // Update last run time to make sure we can run the digest cron.
-    \Drupal::state()->set('digest.' . $frequency . '.last_run', 1);
-
-    \Drupal::service('cron')->run();
-
-    if (\Drupal::moduleHandler()->moduleExists('ultimate_cron')) {
-      $jobs = CronJob::loadMultiple();
-
-      /** @var CronJob $job */
-      foreach($jobs as $job) {
-        $job->run(t('Launched by drush'));
-      }
-    }
-  }
-
-  /**
    * I read an email.
    *
    * @Then /^(?:|I )should have an email with subject "([^"]*)" and "([^"]*)" in the body$/

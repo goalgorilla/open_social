@@ -795,23 +795,6 @@ class FeatureContext extends RawMinkContext {
     }
 
     /**
-     * @When I close the open tip
-     */
-    public function iCloseTheOpenTip()
-    {
-      $locator = 'a.joyride-close-tip';
-      $session = $this->getSession();
-      $element = $session->getPage()->find('css', $locator);
-
-      if ($element === NULL) {
-        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS selector: "%s"', $locator));
-      }
-
-      // Now click the element.
-      $element->click();
-    }
-
-    /**
      * Turn off translations import.
      *
      * @Given I turn off translations import
