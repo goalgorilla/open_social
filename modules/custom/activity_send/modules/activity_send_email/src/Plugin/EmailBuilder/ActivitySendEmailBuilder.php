@@ -78,6 +78,10 @@ class ActivitySendEmailBuilder extends EmailBuilderBase implements ContainerFact
     }
 
     $email->setBody($params['body']);
+
+    if (!empty($params['reply-to'])) {
+      $email->setReplyTo($params['reply-to']);
+    }
   }
 
   /**

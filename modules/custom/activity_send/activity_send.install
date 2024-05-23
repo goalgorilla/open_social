@@ -8,7 +8,7 @@
 /**
  * Implements hook_schema().
  */
-function activity_send_schema() {
+function activity_send_schema(): array {
   $schema['user_activity_send'] = [
     'fields' => [
       'uid' => [
@@ -24,8 +24,15 @@ function activity_send_schema() {
         'not null' => TRUE,
         'default' => '',
       ],
-      'message_template' => [
-        'description' => 'The message template name.',
+      'type' => [
+        'description' => 'The type of message deliver.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'name' => [
+        'description' => 'The name of message deliverer.',
         'type' => 'varchar',
         'length' => 32,
         'not null' => TRUE,
@@ -42,7 +49,7 @@ function activity_send_schema() {
     'indexes' => [
       'uas_uid' => ['uid'],
       'uas_destination' => ['destination'],
-      'uas_message_template' => ['message_template'],
+      'uas_name' => ['name'],
       'uas_frequency' => ['frequency'],
     ],
   ];
@@ -55,4 +62,39 @@ function activity_send_schema() {
  */
 function activity_send_update_last_removed() : int {
   return 8002;
+}
+
+/**
+ * Rename column and add a new column in "user_activity_send" table.
+ */
+function activity_send_update_13000() : void {
+  $table = 'user_activity_send';
+  $spec = [
+    'description' => 'The name of message deliverer.',
+    'type' => 'varchar',
+    'length' => 32,
+    'not null' => TRUE,
+    'default' => '',
+  ];
+  \Drupal::database()->schema()->changeField($table, 'message_template', 'name', $spec);
+
+  // Add a new column.
+  $spec = [
+    'description' => 'The type of message deliver.',
+    'type' => 'varchar',
+    'length' => 32,
+    'not null' => TRUE,
+    'default' => '',
+  ];
+  \Drupal::database()->schema()->addField($table, 'type', $spec);
+
+  // Drop old index.
+  \Drupal::database()->schema()->dropIndex($table, 'uas_message_template');
+  // Add a new index.
+  \Drupal::database()->schema()->addIndex($table, 'uas_name', ['name'], activity_send_schema()[$table]);
+
+  // Update values.
+  \Drupal::database()->update($table)
+    ->fields(['type' => 'message_template'])
+    ->execute();
 }
