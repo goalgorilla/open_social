@@ -781,9 +781,9 @@ parameters:
 			path: modules/custom/activity_logger/src/Service/ActivityLoggerFactory.php
 
 		-
-			message: "#^Function activity_send_schema\\(\\) has no return type specified\\.$#"
+			message: "#^Method Drupal\\\\activity_logger\\\\Service\\\\ActivityLoggerFactory\\:\\:createFieldInstances\\(\\) has no return type specified\\.$#"
 			count: 1
-			path: modules/custom/activity_send/activity_send.install
+			path: modules/custom/activity_logger/src/Service/ActivityLoggerFactory.php
 
 		-
 			message: "#^Function activity_send_email_schema\\(\\) has no return type specified\\.$#"
@@ -802,11 +802,6 @@ parameters:
 
 		-
 			message: "#^Cannot call method fetchAll\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module
-
-		-
-			message: "#^Function _activity_send_email_form_user_form_submit\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module
 
@@ -1057,11 +1052,6 @@ parameters:
 
 		-
 			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/activity_send/src/Plugin/SendActivityDestinationBase.php
-
-		-
-			message: "#^Method Drupal\\\\activity_send\\\\Plugin\\\\SendActivityDestinationBase\\:\\:setSendUserSettings\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/activity_send/src/Plugin/SendActivityDestinationBase.php
 
@@ -6503,6 +6493,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event\\\\Entity\\\\EventEnrollment\\:\\:preSave\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/src/Entity/EventEnrollment.php
+
+		-
+			message: "#^Method Drupal\\\\social_event\\\\Entity\\\\EventEnrollment\\:\\:getAccountEntity\\(\\) should return Drupal\\\\user\\\\UserInterface\\|null but returns Drupal\\\\Core\\\\Entity\\\\EntityInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Entity/EventEnrollment.php
 
@@ -13120,11 +13115,6 @@ parameters:
 			path: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php
 
 		-
-			message: "#^Method Drupal\\\\social_user\\\\Plugin\\\\AdvancedQueue\\\\JobType\\\\UserMailQueueJob\\:\\:sendMail\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user/src/Plugin/AdvancedQueue/JobType/UserMailQueueJob.php
-
-		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user/src/Plugin/Block/SocialUserLoginBlock.php
@@ -13151,11 +13141,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_user\\\\Plugin\\\\QueueWorker\\\\UserMailQueueProcessor\\:\\:processItem\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user/src/Plugin/QueueWorker/UserMailQueueProcessor.php
-
-		-
-			message: "#^Method Drupal\\\\social_user\\\\Plugin\\\\QueueWorker\\\\UserMailQueueProcessor\\:\\:sendMail\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/Plugin/QueueWorker/UserMailQueueProcessor.php
 

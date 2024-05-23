@@ -5,6 +5,7 @@ namespace Drupal\activity_send\Plugin;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Base class for Activity send destination plugins.
@@ -43,16 +44,19 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    *
    * @param string $destination
    *   The destination of notification.
-   * @param \Drupal\social_user\Entity\User $account
+   * @param \Drupal\user\UserInterface $account
    *   The user account object.
+   * @param string $type
+   *   The type of notifier.
    *
    * @return mixed
    *   The array of user settings.
    */
-  public static function getSendUserSettings(string $destination, User $account) {
+  public static function getSendUserSettings(string $destination, UserInterface $account, string $type = 'message_template') {
     $query = \Drupal::database()->select('user_activity_send', 'uas');
-    $query->fields('uas', ['message_template', 'frequency']);
+    $query->fields('uas', ['name', 'frequency']);
     $query->condition('uas.uid', $account->id());
+    $query->condition('uas.type', $type);
     $query->condition('uas.destination', $destination);
     return $query->execute()->fetchAllKeyed();
   }
@@ -75,7 +79,8 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $query->fields('uas', ['uid', 'frequency']);
     $query->condition('uas.uid', $account_ids, 'IN');
     $query->condition('uas.destination', $destination);
-    $query->condition('uas.message_template', $message_template_id);
+    $query->condition('uas.type', 'message_template');
+    $query->condition('uas.name', $message_template_id);
     return $query->execute()->fetchAllKeyed();
   }
 
@@ -100,7 +105,8 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $query->condition('uas.uid', $account_ids, 'IN');
     $query->condition('uas.frequency', $frequency);
     $query->condition('uas.destination', $destination);
-    $query->condition('uas.message_template', $message_template_id);
+    $query->condition('uas.type', 'message_template');
+    $query->condition('uas.name', $message_template_id);
     $query->distinct();
     return $query->execute()->fetchAllKeyed(0, 0);
   }
@@ -110,30 +116,34 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    *
    * @param string $destination
    *   The destination of notification.
-   * @param \Drupal\social_user\Entity\User $account
+   * @param \Drupal\user\UserInterface $account
    *   The user entity object.
    * @param array $values
    *   The values to set.
-   *
-   * @throws \Exception
+   * @param string $type
+   *   The type of notifier.
    */
-  public static function setSendUserSettings(string $destination, User $account, array $values) {
-    if (is_object($account) && !empty($values)) {
-      foreach ($values as $message_template => $frequency) {
-        $query = \Drupal::database()->merge('user_activity_send');
-        $query->fields([
-          'uid' => $account->id(),
-          'destination' => $destination,
-          'message_template' => $message_template,
-          'frequency' => $frequency,
-        ]);
-        $query->keys([
-          'uid' => $account->id(),
-          'destination' => $destination,
-          'message_template' => $message_template,
-        ]);
-        $query->execute();
-      }
+  public static function setSendUserSettings(string $destination, UserInterface $account, array $values, string $type = 'message_template'): void {
+    if (empty($values)) {
+      return;
+    }
+
+    foreach ($values as $name => $frequency) {
+      $query = \Drupal::database()->merge('user_activity_send');
+      $query->fields([
+        'uid' => $account->id(),
+        'destination' => $destination,
+        'type' => $type,
+        'name' => $name,
+        'frequency' => $frequency,
+      ]);
+      $query->keys([
+        'uid' => $account->id(),
+        'destination' => $destination,
+        'type' => $type,
+        'name' => $name,
+      ]);
+      $query->execute();
     }
   }
 

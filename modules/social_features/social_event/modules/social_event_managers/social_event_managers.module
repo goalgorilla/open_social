@@ -64,6 +64,11 @@ function social_event_managers_activity_send_email_notifications_alter(array &$i
   if (isset($email_message_templates['member_added_by_event_organiser'])) {
     $items['message_to_me']['templates'][] = 'member_added_by_event_organiser';
   }
+
+  $items['community_updates']['bulk_mailing'][] = [
+    'name' => 'event_enrollees',
+    'label' => t("Event managers can keep me posted on events I've enrolled in."),
+  ];
 }
 
 /**
@@ -187,8 +192,8 @@ function social_event_managers_form_alter(&$form, FormStateInterface $form_state
   }
   elseif ($form_id === 'views_bulk_operations_configure_action') {
     $data = $form_state->get('views_bulk_operations');
-    $view_id = $data['view_id'];
-    $display_id = $data['display_id'];
+    $view_id = $data['view_id'] ?? NULL;
+    $display_id = $data['display_id'] ?? NULL;
   }
 
   if (isset($view_id) && $view_id === 'event_manage_enrollments' && $display_id === 'page_manage_enrollments') {
@@ -576,20 +581,20 @@ function social_event_managers_social_event_managers_action_social_event_manager
     // background.
     if (\Drupal::moduleHandler()->moduleExists('social_queue_storage')) {
       return [
-        'singular' => 'Your email will be send to 1 selected enrollee',
-        'plural' => 'Your email will be send to @count selected enrollees',
+        'singular' => 'Based on the users settings, your email will be sent to 1 of the selected enrollees',
+        'plural' => 'Based on the users settings, your email will be sent to @count of the selected enrollees',
       ];
     }
 
     return [
-      'singular' => 'Your email has been sent to 1 selected enrollee successfully',
-      'plural' => 'Your email has been sent to @count selected enrollees successfully',
+      'singular' => 'Based on the users settings, your email will be sent to 1 of the selected enrollees',
+      'plural' => 'Based on the users settings, your email will be sent to 1 of the selected enrollees',
     ];
   }
 
   return [
-    'singular' => 'Your email has not been sent to 1 selected enrollee successfully',
-    'plural' => 'Your email has not been sent to @count selected enrollees successfully',
+    'singular' => 'Your email has not been sent to 1 selected enrollee',
+    'plural' => 'Your email has not been sent to @count selected enrollees',
   ];
 }
 

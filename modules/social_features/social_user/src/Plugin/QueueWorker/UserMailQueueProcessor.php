@@ -6,13 +6,17 @@ use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\social_queue_storage\Entity\QueueStorageEntity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -66,9 +70,35 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
   protected $emailValidator;
 
   /**
+   * The Drupal module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandler
+   */
+  public $moduleHandler;
+
+  /**
+   * The renderer service.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation, Connection $database, LanguageManagerInterface $language_manager, EmailValidatorInterface $email_validator) {
+  public function __construct(
+    array $configuration,
+          $plugin_id,
+          $plugin_definition,
+    MailManagerInterface $mail_manager,
+    EntityTypeManagerInterface $entity_type_manager,
+    TranslationInterface $string_translation,
+    Connection $database,
+    LanguageManagerInterface $language_manager,
+    EmailValidatorInterface $email_validator,
+    ModuleHandler $module_handler,
+    RendererInterface $renderer,
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->mailManager = $mail_manager;
     $this->storage = $entity_type_manager;
@@ -76,6 +106,8 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
     $this->setStringTranslation($string_translation);
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
+    $this->moduleHandler = $module_handler;
+    $this->renderer = $renderer;
   }
 
   /**
@@ -91,7 +123,9 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
       $container->get('string_translation'),
       $container->get('database'),
       $container->get('language_manager'),
-      $container->get('email.validator')
+      $container->get('email.validator'),
+      $container->get('module_handler'),
+      $container->get('renderer')
     );
   }
 
@@ -107,7 +141,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
       // Check if it's from the configured email bundle type.
       if ($queue_storage->bundle() === 'email') {
         // When there are user ID's configured.
-        if ($data['users']) {
+        if (!empty($data['users'])) {
           // Load the users that are in the batch.
           $users = $this->storage->getStorage('user')->loadMultiple($data['users']);
 
@@ -152,33 +186,63 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    * Send the email.
    *
    * @param string $user_mail
-   *   The recipient email address.
+   *   The recipient's email address.
    * @param string $langcode
    *   The recipient language.
    * @param \Drupal\social_queue_storage\Entity\QueueStorageEntity $mail_params
    *   The email content from the storage entity.
-   * @param string $display_name
-   *   In case of anonymous users a display name will be given.
+   * @param string|null $display_name
+   *   In the case of anonymous users, a display name will be given.
    */
-  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, $display_name = NULL) {
-    $context = [
-      'subject' => $mail_params->get('field_subject')->value,
-      'message' => $mail_params->get('field_message')->value,
-    ];
+  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, string $display_name = NULL): void {
+    $subject = $mail_params->get('field_subject')->value;
+    $body = $mail_params->get('field_message')->value;
+    $reply_to = $mail_params->get('field_reply_to')->value;
 
-    if ($display_name) {
-      $context['display_name'] = $display_name;
+    if ($this->moduleHandler->moduleExists('activity_send_email')) {
+      $params = ['subject' => $subject, 'body' => $body];
+
+      $settings_link = Link::fromTextAndUrl($this->t('email notification settings', [], ['langcode' => $langcode]),
+        Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString();
+
+      // Construct the render array for email.
+      $notification = [
+        '#theme' => 'directmail',
+        '#notification' => $params['body'],
+        '#notification_settings' => $this->t('You receive community updates and announcements emails according to your @settings', [
+          '@settings' => $settings_link,
+        ], ['langcode' => $langcode]),
+      ];
+
+      $params['body'] = $this->renderer->renderPlain($notification);
+      $params['reply-to'] = $reply_to;
+
+      // Attempt sending mail.
+      $this->mailManager->mail(
+        'activity_send_email',
+        'activity_send_email',
+        $user_mail,
+        $langcode,
+        $params
+      );
     }
+    else {
+      $context = ['subject' => $subject, 'message' => $body];
 
-    // Attempt sending mail.
-    $this->mailManager->mail(
-      'system',
-      'action_send_email',
-      $user_mail,
-      $langcode,
-      ['context' => $context],
-      $mail_params->get('field_reply_to')->value,
-    );
+      if ($display_name) {
+        $context['display_name'] = $display_name;
+      }
+
+      // Attempt sending mail.
+      $this->mailManager->mail(
+        'system',
+        'action_send_email',
+        $user_mail,
+        $langcode,
+        ['context' => $context],
+        $reply_to,
+      );
+    }
   }
 
   /**
