@@ -139,7 +139,6 @@ class ActivityFactory extends ControllerBase {
 
     // Initialize fields for new activity entity.
     $activity_fields = [
-      'created' => $this->getCreated($message),
       'field_activity_destinations' => $this->getFieldDestinations($data),
       'field_activity_entity' => $this->getFieldEntity($data),
       'field_activity_message' => $this->getFieldMessage($data),
