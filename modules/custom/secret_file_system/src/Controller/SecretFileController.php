@@ -109,12 +109,18 @@ class SecretFileController extends ControllerBase {
     $expires_at = $request->attributes->get('expires_at');
     $target = $request->attributes->get('filepath');
 
-    // For some reason Drupal core is incorrect in how it invokes our
-    // SecretFiles path processor which can cause the 'filepath' attribute to be
-    // unset, in that case we just manually try to find it again here.
+    // In case of a cached route, RouteProvider will pull the route from the
+    // cache and not run all inbound route processors. However, attributes don't
+    // currently get cached. This means that for cached requests our filepath is
+    // always unset. This means we need to process the URL ourselves here.
+    // We'll also have to decode the URL since this normally happens in
+    // `PathProcessorDecode` which was also not called for cached route matches.
+    // We can take a slightly quicker route than our path processor since we
+    // already know our hash and expiry attributes.
     // Once Drupal finally allows arbitrary length arguments like Symfony does
     // we can remove our PathProcessor and our workaround here and things should
-    // be reliably handled by Symfony for us.
+    // be reliably handled by Symfony and Drupal core for us. See
+    // https://www.drupal.org/project/drupal/issues/3085360#comment-15614838.
     if ($target === NULL) {
       $path = $request->getPathInfo();
       $prefix = "/system/file/$hash/$expires_at/";
@@ -122,7 +128,7 @@ class SecretFileController extends ControllerBase {
         throw new NotFoundHttpException();
       }
 
-      $target = substr($path, strlen($prefix));
+      $target = urldecode(substr($path, strlen($prefix)));
       if ($target === '') {
         throw new NotFoundHttpException();
       }
