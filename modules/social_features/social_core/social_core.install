@@ -495,3 +495,14 @@ function social_core_update_130004(): void {
 function social_core_update_130005(): void {
   user_role_grant_permissions('sitemanager', ['administer taxonomy']);
 }
+
+/**
+ * Revert inline-images to private file system.
+ */
+function social_core_update_130006(): void {
+  // This does not check if the secret file system was opted in, since in that
+  // case it matches no rows.
+  // The inline-images was omitted from the update hook but the query was not
+  // updated to ignore those files, this causes them to error.
+  \Drupal::database()->query("UPDATE {file_managed} SET uri = REPLACE(uri, 'secret://', 'private://') WHERE uri LIKE 'secret://inline-images/%'");
+}
