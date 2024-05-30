@@ -325,7 +325,9 @@ function social_group_preprocess_group(array &$variables) {
     $term = $group->get('field_group_type')->entity;
 
     if ($term instanceof Term) {
-      $variables['group_type'] = $term->getName();
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
+      $entity = \Drupal::service('entity.repository')->getTranslationFromContext($term);
+      $variables['group_type'] = $entity->label();
       $variables['group_type_icon'] = $term->get('field_group_type_icon')->getString();
     }
   }
