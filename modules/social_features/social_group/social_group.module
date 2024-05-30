@@ -13,7 +13,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -2105,22 +2104,6 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
     ->alter('social_group_allowed_visibilities', $visibility_options, $group_type_id);
 
   return $visibility_options;
-}
-
-/**
- * Implements hook_query_alter().
- */
-function social_group_query_alter(AlterableInterface $query): void {
-  // Distinct result with "GROUP BY" for views.view.newest_group (/all-groups).
-  if ($query->getMetaData('view') && $query->getMetaData('view')->id() === 'newest_groups') {
-    /** @var \Drupal\Core\Database\Query\Select $query */
-    $tables = array_column($query->getTables(), 'alias', 'table');
-    if (empty($tables['groups_field_data'])) {
-      return;
-    }
-
-    $query->groupBy("{$tables['groups_field_data']}.id");
-  }
 }
 
 /**
