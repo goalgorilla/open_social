@@ -9,6 +9,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\activity_creator\ActivityInterface;
+use Drupal\Core\Url;
 use Drupal\flag\Entity\Flagging;
 use Drupal\user\UserInterface;
 use Drupal\node\NodeInterface;
@@ -228,10 +229,13 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    * Get related entity url.
    *
    * @return \Drupal\Core\Url|string
-   *   Returns empty string or URL object of related entity canonical url.
+   *   URL object of related entity canonical url or NULL.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function getRelatedEntityUrl() {
-    $link = "";
+  public function getRelatedEntityUrl(): string|Url {
     $related_object = $this->get('field_activity_entity')->getValue();
 
     if (!empty($related_object)) {
@@ -268,6 +272,9 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       }
       elseif ($target_type === 'flagging') {
         $flagging = Flagging::load($target_id);
+        if (!$flagging) {
+          return '';
+        }
         $target_type = $flagging->getFlaggableType();
         $target_id = $flagging->getFlaggableId();
       }
@@ -281,7 +288,8 @@ class Activity extends ContentEntityBase implements ActivityInterface {
         $link = $entity->toUrl('canonical');
       }
     }
-    return $link;
+
+    return $link ?? '';
   }
 
   /**
