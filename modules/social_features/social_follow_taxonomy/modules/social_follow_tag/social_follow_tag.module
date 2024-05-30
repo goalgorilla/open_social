@@ -401,12 +401,12 @@ function social_follow_tag_taxonomy_term_view_alter(array &$build, TermInterface
   $flag_count = \Drupal::service('flag.count');
   $follower_count = !empty($result = $flag_count->getEntityFlagCounts($term)) ?
     (float) $result['follow_term'] : 0;
-  $build['follower_count'] = [
-    '#type' => 'markup',
-    '#markup' => number_format($follower_count),
-  ];
 
   if ($build['#view_mode'] === 'followers_count') {
+    $build['follower_count'] = [
+      '#type' => 'markup',
+      '#markup' => number_format($follower_count),
+    ];
     $build['#cache']['tags'][] = "flagging_list:follow_term";
   }
 }
