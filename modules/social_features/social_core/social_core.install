@@ -506,3 +506,28 @@ function social_core_update_130006(): void {
   // updated to ignore those files, this causes them to error.
   \Drupal::database()->query("UPDATE {file_managed} SET uri = REPLACE(uri, 'secret://', 'private://') WHERE uri LIKE 'secret://inline-images/%'");
 }
+
+/**
+ * Revert field_files to use private:// instead of secret://.
+ */
+function social_core_update_130007(): void {
+  // Change storage uri-scheme to private for file-field.
+  $file_fields = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->loadByProperties([
+      'type' => 'file',
+    ]);
+
+  foreach ($file_fields as $field_storage) {
+    if (
+      $field_storage->get('field_name') === 'field_files'
+      && $field_storage->getSetting('uri_scheme') === 'secret'
+    ) {
+      $field_storage->setSetting('uri_scheme', 'private');
+      $field_storage->save();
+    }
+  }
+
+  // Change file_managed table only files from field_file field.
+  \Drupal::database()->query("UPDATE {file_managed} SET {file_managed}.uri = REPLACE({file_managed}.uri, 'secret://', 'private://') WHERE fid IN (SELECT {node__field_files}.field_files_target_id FROM {node__field_files})");
+}
