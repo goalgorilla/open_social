@@ -60,13 +60,13 @@ Feature: Event bulk actions
     And I click the xth "0" element with the css "#vbo-action-form-wrapper .dropdown .dropdown-toggle"
     And I should see the link "Email selected enrollees"
     And I click "Email selected enrollees"
-    And I should see "Configure the email you want to send to the 3 enrollees you have selected."
+    And I should see "Configure the email you want to send to the enrollees you have selected."
     And I fill in the following:
       | Subject | Test subject |
 
     And I fill in the "edit-message-value" WYSIWYG editor with "Test message"
     And I press "Send email"
-    And I should see "Are you sure you want to send your email to the following 3 enrollees?"
+    And I should see "Are you sure you want to send your email to the following enrollees?"
     And I press "Execute action"
     And I wait for AJAX to finish
     # And I wait for the queue to be empty
