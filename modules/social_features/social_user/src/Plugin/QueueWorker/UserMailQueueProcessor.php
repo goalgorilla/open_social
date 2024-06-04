@@ -149,7 +149,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
           foreach ($users as $user) {
             // Attempt sending mail.
             if ($user->getEmail()) {
-              $this->sendMail($user->getEmail(), $user->language()->getId(), $queue_storage, $user->getDisplayName(), change_mail_footer: $data['bulk_mail_footer'] ?? FALSE);
+              $this->sendMail($user->getEmail(), $user->language()->getId(), $queue_storage, $user->getDisplayName(), include_mail_footer: $data['bulk_mail_footer'] ?? FALSE);
             }
           }
         }
@@ -193,13 +193,15 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    *   The email content from the storage entity.
    * @param string|null $display_name
    *   In the case of anonymous users, a display name will be given.
+   * @param bool $include_mail_footer
+   *   TRUE if need to include the email footer.
    */
-  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, string $display_name = NULL, bool $change_mail_footer = FALSE): void {
+  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, string $display_name = NULL, bool $include_mail_footer = FALSE): void {
     $subject = $mail_params->get('field_subject')->value;
     $body = $mail_params->get('field_message')->value;
     $reply_to = $mail_params->get('field_reply_to')->value;
 
-    if ($change_mail_footer && $this->moduleHandler->moduleExists('activity_send_email')) {
+    if ($include_mail_footer && $this->moduleHandler->moduleExists('activity_send_email')) {
       $params = ['subject' => $subject, 'body' => $body];
 
       $settings_link = Link::fromTextAndUrl($this->t('email notification settings', [], ['langcode' => $langcode]),

@@ -163,7 +163,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
             foreach ($data['user_mail_addresses'] as $mail_address) {
               if ($this->emailValidator->isValid($mail_address['email_address'])) {
                 // Attempt sending mail.
-                $this->sendMail($mail_address['email_address'], $this->languageManager->getDefaultLanguage()->getId(), $queue_storage, $mail_address['display_name'], change_mail_footer: $data['bulk_mail_footer'] ?? FALSE);
+                $this->sendMail($mail_address['email_address'], $this->languageManager->getDefaultLanguage()->getId(), $queue_storage, $mail_address['display_name'], include_mail_footer: $data['bulk_mail_footer'] ?? FALSE);
               }
             }
           }
@@ -197,13 +197,15 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
    *   The email content from the storage entity.
    * @param string|null $display_name
    *   In the case of anonymous users, a display name will be given.
+   * @param bool $include_mail_footer
+   *   TRUE if need to include the email footer.
    */
-  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, string $display_name = NULL, bool $change_mail_footer = FALSE): void {
+  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, string $display_name = NULL, bool $include_mail_footer = FALSE): void {
     $subject = $mail_params->get('field_subject')->value;
     $body = $mail_params->get('field_message')->value;
     $reply_to = $mail_params->get('field_reply_to')->getString();
 
-    if ($change_mail_footer && $this->moduleHandler->moduleExists('activity_send_email')) {
+    if ($include_mail_footer && $this->moduleHandler->moduleExists('activity_send_email')) {
       $params = ['subject' => $subject, 'body' => $body];
 
       $settings_link = Link::fromTextAndUrl($this->t('email notification settings', [], ['langcode' => $langcode]),

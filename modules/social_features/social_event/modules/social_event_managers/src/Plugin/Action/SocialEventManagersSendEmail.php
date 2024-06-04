@@ -114,11 +114,11 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
 
       // Get the user from the even enrollment.
       /** @var \Drupal\user\Entity\User $user */
-      $user = User::load($enrollment->getAccount());
+      $user = User::load((int) $enrollment->getAccount());
 
       // Prevent sending emails for all enrollees if all selected users
       // are unsubscribed from receiving emails.
-      if ($user && $this->isUnsubscribedFromEmails($user)) {
+      if ($this->isUnsubscribedFromEmails($user)) {
         continue;
       }
 
@@ -183,12 +183,20 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
         ));
     }
 
+    // If all selected users have unsubscribed from emails, we should return
+    // empty form.
+    if (!empty($this->context['selected_removed']) && empty($this->context['list'])) {
+      return [
+        '#markup' => $this->t('No items selected. Go back and try again.'),
+      ];
+    }
+
     // Add title to the form as well.
     if ($form['#title'] !== NULL) {
       $selected_count = $this->context['selected_count'];
       $subtitle = $this->formatPlural($selected_count,
         'Configure the email you want to send to the one enrollee you have selected.',
-        'Configure the email you want to send to the enrollees you have selected.'
+        'Configure the email you want to send to the @count enrollees you have selected.'
       );
 
       $form['subtitle'] = [
@@ -210,10 +218,15 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   public function setContext(array &$context): void {
     parent::setContext($context);
 
-    // @todo Rely on something solid then dynamic data for batch.
+    // @todo Rely on something more solid then dynamic data for batch.
     // We don't want to run this code if batch was started.
     // "prepopulated" key is adding exactly on batch start.
     if (isset($context['prepopulated'])) {
+      return;
+    }
+
+    if (!isset($context['list'], $context['bulk_form_keys'])) {
+      // Probably, the method is executed on batch processing.
       return;
     }
 
@@ -221,7 +234,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     // settings.
     // We need to remove the selected users from temporary data and update
     // form data passed through the further forms.
-    if (empty($context['list'])) {
+    if ($select_all = empty($context['list'])) {
       $selected_options = $context['bulk_form_keys'];
     }
     else {
@@ -237,13 +250,13 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     // Go through each enrollment and check if a user doesn't have
     // a disabled bulk mailing.
     foreach ($selected_options as $key => $name) {
-      $item = $this->getListItem($name);
+      $item = (array) $this->getListItem($name);
       if (!in_array('event_enrollment', $item)) {
         continue;
       }
 
       // First element is the enrollment ID.
-      $eid = $item[0];
+      $eid = $item[0] ?? 0;
       $enrollment = EventEnrollment::load($eid);
       if (!$enrollment) {
         continue;
@@ -261,8 +274,43 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     }
 
     // All selected users can receive the email.
-    $removed = array_diff($origin, $selected_options);
-    $this->context['selected_removed'] = count($removed);
+    if (!$removed = array_diff($origin, $selected_options)) {
+      $context['selected_removed'] = 0;
+      return;
+    }
+
+    // If some of the selected enrollees unsubscribed from emails, we should
+    // prevent executing action for all enrolles.
+    if ($select_all) {
+      $context['exclude_mode'] = FALSE;
+    }
+
+    $context['selected_removed'] = count($removed);
+    $context['selected_count'] = count($selected_options);
+    $context['bulk_form_keys'] = $selected_options;
+
+    // If event managers pressed "Select all" button, and we found the
+    // enrollees that have disabled bulk mailing, we should change below
+    // options to prevent sending emails for all users.
+    if ($select_all) {
+      foreach ($selected_options as $name) {
+        $context['list'][$name] = $this->getListItem($name);
+      }
+    }
+    else {
+      foreach ($removed as $name) {
+        unset($context['list'][$name]);
+      }
+    }
+
+    // Prevent sending emails for all users.
+    if (empty($context['list'])) {
+      $context['bulk_form_keys'] = [];
+    }
+
+    // As context was changed, we need to update the appropriate tempstore.
+    $this->setTempstoreData($context, view_id: 'event_manage_enrollments', display_id: 'page_manage_enrollments');
+    parent::setContext($context);
   }
 
   /**
