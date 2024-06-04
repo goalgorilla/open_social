@@ -34,7 +34,6 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    */
   protected $socialEventAnEnrollManager;
 
-
   /**
    * {@inheritdoc}
    */
