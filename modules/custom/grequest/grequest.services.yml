@@ -1,26 +1,26 @@
 services:
   # Specific group relation handlers.
-  group.relation_handler.operation_provider.grequest:
+  group.relation_handler.operation_provider.group_membership_request:
     class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestOperationProvider'
     arguments: [ '@group.relation_handler.operation_provider', '@current_user', '@string_translation' ]
     shared: false
 
-  group.relation_handler.permission_provider.grequest:
+  group.relation_handler.permission_provider.group_membership_request:
     class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestPermissionProvider'
     arguments: [ '@group.relation_handler.permission_provider' ]
     shared: false
 
-  group.relation_handler.post_install.grequest:
+  group.relation_handler.post_install.group_membership_request:
     class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestPostInstall'
     arguments: [ '@group.relation_handler.post_install', '@entity_type.manager', '@string_translation' ]
     shared: false
 
-  group.relation_handler.access_control.grequest:
+  group.relation_handler.access_control.group_membership_request:
     class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestAccessControl'
     arguments: [ '@group.relation_handler.access_control' ]
     shared: false
 
-  group.relation_handler.entity_reference.grequest:
+  group.relation_handler.entity_reference.group_membership_request:
     class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestEntityReference'
     arguments: [ '@group.relation_handler.entity_reference' ]
     shared: false
