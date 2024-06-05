@@ -55,14 +55,6 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
       'allowed for' => ['outsider'],
     ];
 
-    // These are handled by 'administer members'.
-    unset($permissions['update own group_membership_request content']);
-    unset($permissions['view group_membership_request content']);
-    unset($permissions['create group_membership_request content']);
-    unset($permissions['update any group_membership_request content']);
-    unset($permissions['delete any group_membership_request content']);
-    unset($permissions['delete own group_membership_request content']);
-
     return $permissions;
   }
 
