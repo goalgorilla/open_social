@@ -94,6 +94,9 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
     $message = $data['message'];
 
     if ($message instanceof Message) {
+      // Tokens to apply variations.
+      $tokens_to_apply_variations = [];
+
       foreach ($tokens as $name => $original) {
         switch ($name) {
 
@@ -190,8 +193,17 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
             break;
 
           case 'commented_content_type':
+          case 'commented_content_type:uppercase':
+          case 'commented_content_type:lowercase':
+          case 'commented_content_type:capitalize':
           case 'commented_entity_link':
+          case 'commented_entity_link:uppercase':
+          case 'commented_entity_link:lowercase':
+          case 'commented_entity_link:capitalize':
           case 'commented_entity_link_html':
+          case 'commented_entity_link_html:uppercase':
+          case 'commented_entity_link_html:lowercase':
+          case 'commented_entity_link_html:capitalize':
 
             if (!$message->get('field_message_related_object')->isEmpty()) {
               $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
@@ -218,15 +230,18 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                     }
                   }
 
-                  if ($name === 'commented_content_type') {
+                  if (str_starts_with($name, 'commented_content_type')) {
                     if (!empty($commented_content_type)) {
+                      $tokens_to_apply_variations['commented_content_type'] = $commented_content_type;
                       $replacements[$original] = $commented_content_type;
                     }
                   }
-                  if ($name === 'commented_entity_link') {
-                    $replacements[$original] = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
+                  if (str_starts_with($name, 'commented_entity_link')) {
+                    $commented_entity_link = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
+                    $tokens_to_apply_variations['commented_entity_link'] = $commented_entity_link;
+                    $replacements[$original] = $commented_entity_link;
                   }
-                  if ($name === 'commented_entity_link_html') {
+                  if (str_starts_with($name, 'commented_entity_link_html')) {
                     $url_options = ['absolute' => TRUE];
                     $link = $entity->toUrl('canonical', $url_options)->toString();
 
@@ -238,6 +253,8 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                     else {
                       $entity_link_html = '<a href="' . $link . '">' . $commented_content_type . '</a>';
                     }
+
+                    $tokens_to_apply_variations['commented_entity_link_html'] = $entity_link_html;
                     $replacements[$original] = Markup::create($entity_link_html);
                   }
                 }
@@ -247,6 +264,12 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
             break;
 
         }
+      }
+
+      // Add token variations.
+      if (!empty($tokens_to_apply_variations)) {
+        \Drupal::service('social_core.token_variations')
+          ->variations($tokens, $replacements, $tokens_to_apply_variations);
       }
     }
   }

@@ -60,12 +60,21 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
       ($message instanceof Message) &&
       $vote = Vote::load($message->getFieldValue('field_message_related_object', 'target_id'))
     ) {
+      // Tokens to apply variations.
+      $tokens_to_apply_variations = [];
+
       foreach ($tokens as $name => $original) {
         switch ($name) {
 
           case 'liked_entity':
           case 'liked_content_type':
+          case 'liked_content_type:uppercase':
+          case 'liked_content_type:lowercase':
+          case 'liked_content_type:capitalize':
           case 'liked_entity_link_html':
+          case 'liked_entity_link_html:uppercase':
+          case 'liked_entity_link_html:lowercase':
+          case 'liked_entity_link_html:capitalize':
             /** @var \Drupal\votingapi\Entity\Vote $vote */
             $storage = \Drupal::entityTypeManager()->getStorage($vote->getVotedEntityType());
             $entity = $storage->load($vote->getVotedEntityId());
@@ -87,11 +96,12 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
             if ($content_type === 'post' || $content_type === 'photo' || $content_type === 'comment') {
               $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
             }
-            if ($name === 'liked_content_type') {
+            if (str_starts_with($name, 'liked_content_type')) {
+              $tokens_to_apply_variations['liked_content_type'] = $content_type_label;
               $replacements[$original] = $content_type_label;
             }
 
-            if ($name === 'liked_entity_link_html') {
+            if (str_starts_with($name, 'liked_entity_link_html')) {
               // We should only use the label of entities who have a label.
               if ($content_type !== 'comment' && $link_label = $entity->label()) {
                 $liked_entity_link_html = $content_type_label . ' <a href="' . $link . '">' . $link_label . '</a>';
@@ -125,14 +135,22 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
                 }
               }
 
+              $tokens_to_apply_variations['liked_entity_link_html'] = $liked_entity_link_html;
               $replacements[$original] = Markup::create($liked_entity_link_html);
             }
             break;
 
         }
       }
+
+      // Add token variations.
+      if (!empty($tokens_to_apply_variations)) {
+        \Drupal::service('social_core.token_variations')
+          ->variations($tokens, $replacements, $tokens_to_apply_variations);
+      }
     }
   }
+
   return $replacements;
 }
 

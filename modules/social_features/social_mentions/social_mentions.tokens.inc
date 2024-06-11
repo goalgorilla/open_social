@@ -83,6 +83,9 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
+    // Tokens to apply variations.
+    $tokens_to_apply_variations = [];
+
     if ($message instanceof Message) {
       foreach ($tokens as $name => $original) {
         switch ($name) {
@@ -109,6 +112,9 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
             break;
 
           case 'commented_entity_link_html':
+          case 'commented_entity_link_html:uppercase':
+          case 'commented_entity_link_html:lowercase':
+          case 'commented_entity_link_html:capitalize':
 
             if (!$message->get('field_message_related_object')->isEmpty()) {
               $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
@@ -158,12 +164,19 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
                 $entity_link_html = '<a href="' . $link . '">' . $content_type_label . '</a>';
               }
 
+              $tokens_to_apply_variations['commented_entity_link_html'] = $entity_link_html;
               $replacements[$original] = Markup::create($entity_link_html);
             }
 
             break;
         }
       }
+    }
+
+    // Add token variations.
+    if (!empty($tokens_to_apply_variations)) {
+      \Drupal::service('social_core.token_variations')
+        ->variations($tokens, $replacements, $tokens_to_apply_variations);
     }
   }
 

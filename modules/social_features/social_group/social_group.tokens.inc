@@ -60,12 +60,21 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
     $message = $data['message'];
 
     if ($message instanceof Message) {
+      // Tokens to apply variations.
+      $tokens_to_apply_variations = [];
+
       foreach ($tokens as $name => $original) {
         switch ($name) {
 
-          case 'content_type':
           case 'content_url':
+          case 'content_type':
+          case 'content_type:uppercase':
+          case 'content_type:lowercase':
+          case 'content_type:capitalize':
           case 'created_entity_link_html':
+          case 'created_entity_link_html:uppercase':
+          case 'created_entity_link_html:lowercase':
+          case 'created_entity_link_html:capitalize':
 
             // Get the related entity.
             if (!$message->get('field_message_related_object')->isEmpty()) {
@@ -121,12 +130,13 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                     $replacements[$original] = $content_url->toString();
                   }
                 }
-                elseif ($name === 'content_type') {
+                elseif (str_starts_with($name, 'content_type')) {
                   if (isset($display_name)) {
+                    $tokens_to_apply_variations['content_type'] = $display_name;
                     $replacements[$original] = $display_name;
                   }
                 }
-                elseif ($name === 'created_entity_link_html' && isset($display_name)) {
+                elseif (str_starts_with($name, 'created_entity_link_html') && isset($display_name)) {
                   // We should only use the label of entities who have a label.
                   if ($link_label = $entity->label()) {
                     $entity_link_html = $display_name . ' <a href="' . $content_url->toString() . '">' . $link_label . '</a>';
@@ -135,6 +145,7 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                     $entity_link_html = '<a href="' . $content_url->toString() . '">' . $display_name . '</a>';
                   }
 
+                  $tokens_to_apply_variations['created_entity_link_html'] = $entity_link_html;
                   $replacements[$original] = Markup::create($entity_link_html);
                 }
 
@@ -144,6 +155,12 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
             break;
         }
       }
+    }
+
+    // Add token variations.
+    if (!empty($tokens_to_apply_variations)) {
+      \Drupal::service('social_core.token_variations')
+        ->variations($tokens, $replacements, $tokens_to_apply_variations);
     }
   }
 

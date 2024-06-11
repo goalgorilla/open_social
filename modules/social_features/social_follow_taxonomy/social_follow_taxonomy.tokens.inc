@@ -64,10 +64,19 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
   }
 
   if ($type === 'social_taxonomy') {
+    // Tokens to apply variations.
+    $tokens_to_apply_variations = [];
+
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'content_type':
+        case 'content_type:uppercase':
+        case 'content_type:lowercase':
+        case 'content_type:capitalize':
         case 'indefinite_article':
+        case 'indefinite_article:uppercase':
+        case 'indefinite_article:lowercase':
+        case 'indefinite_article:capitalize':
         case 'taxonomy_i_follow':
           /** @var \Drupal\message\Entity\Message $message */
           $message = $data['message'];
@@ -121,11 +130,12 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
             }
           }
 
-          if ($name === 'content_type') {
+          if (str_starts_with($name, 'content_type')) {
+            $tokens_to_apply_variations['content_type'] = $display_name;
             $replacements[$original] = $display_name;
           }
 
-          if ($name === 'indefinite_article') {
+          if (str_starts_with($name, 'indefinite_article')) {
             if (!empty($display_name)) {
               // Prepares a replacement token: content name.
               // When a name of content name starts from a vowel letter then
@@ -136,6 +146,8 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
               else {
                 $indefinite_article = t('a');
               }
+
+              $tokens_to_apply_variations['indefinite_article'] = $indefinite_article;
               $replacements[$original] = $indefinite_article;
             }
             else {
@@ -143,15 +155,22 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
             }
           }
 
-          if ($name === 'taxonomy_i_follow' && !empty($term_names)) {
+          if (str_starts_with($name, 'taxonomy_i_follow') && !empty($term_names)) {
             // Prepares a replacement token: a string with term names.
             // Wrap the names in quotation marks and separate it with commas.
             $replacement_string = "'" . implode("', '", $term_names) . "'";
             $replacements[$original] = $replacement_string;
+            $tokens_to_apply_variations['taxonomy_i_follow'] = $replacement_string;
           }
 
           break;
       }
+    }
+
+    // Add token variations.
+    if (!empty($tokens_to_apply_variations)) {
+      \Drupal::service('social_core.token_variations')
+        ->variations($tokens, $replacements, $tokens_to_apply_variations);
     }
   }
 
