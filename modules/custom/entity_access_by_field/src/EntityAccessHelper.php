@@ -216,7 +216,7 @@ class EntityAccessHelper {
           ->getStorage('event_enrollment')
           ->load(reset($ids));
 
-        if ($enrollment !== NULL) {
+        if ($enrollment !== NULL && (isset($entity->status) && $entity->status->value)) {
           $status = (int) $enrollment->field_request_or_invite_status->value;
 
           if (
