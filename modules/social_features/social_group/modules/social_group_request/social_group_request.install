@@ -5,6 +5,8 @@
  * Install/Uninstall/Update hooks for social_group_request module.
  */
 
+use Drupal\Core\Config\FileStorage;
+
 /**
  * Implements hook_install().
  */
@@ -104,4 +106,19 @@ function social_group_request_update_13002(): void {
     ->getStorage('group_role')
     ->load('flexible_group-group_manager');
   $group_manager->grantPermission('administer membership requests')->save();
+}
+
+/**
+ * Apply the new config directly without the override.
+ */
+function social_group_request_update_13003(): void {
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group_request') . '/config/static';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+
+  $data = $source->read('views.view.group_pending_members_13002');
+  if (is_array($data)) {
+    $config_storage->write('views.view.group_pending_members', $data);
+  }
 }
