@@ -51,7 +51,10 @@ function _social_group_request_set_permissions(): void {
       ->getStorage('group_role')
       ->load('flexible_group-group_manager');
     // Group managers should be able to manage membership requests.
-    $group_manager->grantPermission('view group_membership_request relationship')->save();
+    $group_manager->grantPermissions([
+      'administer membership requests',
+      'view group_membership_request relationship',
+    ])->save();
   }
 }
 
@@ -90,4 +93,15 @@ function social_group_request_update_13001(): void {
     ->load('flexible_group-group_manager');
   // Group managers should be able to manage membership requests.
   $group_manager->grantPermission('view group_membership_request relationship')->save();
+}
+
+/**
+ * Add new group permissions to group-manager role.
+ */
+function social_group_request_update_13002(): void {
+  /** @var \Drupal\group\Entity\GroupRoleInterface $group_manager */
+  $group_manager = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->load('flexible_group-group_manager');
+  $group_manager->grantPermission('administer membership requests')->save();
 }
