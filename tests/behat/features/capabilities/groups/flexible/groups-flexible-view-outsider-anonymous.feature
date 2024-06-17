@@ -1,19 +1,29 @@
-@api @javascript @flexible-groups
+@api @javascript
 Feature: Flexible groups view access for anonymous users
   Background:
     Given I enable the module "social_group_flexible_group"
     And I disable that the registered users to be verified immediately
 
-#  @todo Broken by https://www.drupal.org/project/social/issues/3314447
-#  Scenario: As anonymous user view a public group
-#    Given groups with non-anonymous owner:
-#      | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
-#      | Test group | Public visibility       | flexible_group | en       | public                          |
-#    And I am an anonymous user
-#
-#    When I am viewing the group "Test group"
-#
-#    Then I should see "Test group"
+  Scenario: As anonymous user view a public group
+    Given groups with non-anonymous owner:
+      | label      | field_group_description | type           | langcode | field_flexible_group_visibility | field_group_allowed_join_method |
+      | Test group | Public visibility       | flexible_group | en       | public                          | direct                          |
+    And I am an anonymous user
+
+    When I am viewing the "stream" page of group "Test group"
+
+    Then I should see "Test group"
+
+  Scenario: As anonymous redirect to the group when visiting the request membership
+    Given groups with non-anonymous owner:
+      | label      | field_group_description | type           | langcode | field_flexible_group_visibility | field_group_allowed_join_method |
+      | Test group | Public visibility       | flexible_group | en       | public                          | request                         |
+    And I am an anonymous user
+
+    When I am viewing the "anonymous-request-membership" page of group "Test group"
+
+    Then I should see "Test group"
+    And I should see "Request to join"
 
   Scenario: As anonymous user I can't view a community group
     Given groups with non-anonymous owner:
