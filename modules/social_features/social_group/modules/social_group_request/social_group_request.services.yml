@@ -12,3 +12,8 @@ services:
     class: Drupal\social_group_request\Routing\SocialGroupRequestRouteSubscriber
     tags:
       - { name: event_subscriber }
+  social_group_request.redirect_subscriber:
+    class: Drupal\social_group_request\EventSubscriber\RedirectSubscriber
+    arguments: [ '@current_route_match', '@request_stack', '@entity_type.manager' ]
+    tags:
+      - { name: event_subscriber }

@@ -72,9 +72,18 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
       '#value' => $this->t('In order to send your request, please first sign up or log in.'),
     ];
 
-    $previous_url = $this->requestStack->getCurrentRequest()->headers->get('referer');
-    $request = Request::create($previous_url);
-    $referer_path = $request->getRequestUri();
+    $destination = [];
+
+    // By default, we use the current (group canonical) url.
+    if ($this->requestStack->getCurrentRequest()) {
+      $referer_path = $this->requestStack->getCurrentRequest()->getRequestUri();
+      if ($this->requestStack->getCurrentRequest()->headers->get('referer')) {
+        $request = Request::create($this->requestStack->getCurrentRequest()->headers->get('referer'));
+        $referer_path = $request->getRequestUri();
+      }
+
+      $destination = ['destination' => $referer_path . '?requested-membership=' . $this->group->id()];
+    }
 
     $form['actions']['#type'] = 'actions';
     $form['actions']['sign_up'] = [
@@ -88,9 +97,7 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
           'waves-btn',
         ],
       ],
-      '#url' => Url::fromRoute('user.register', [
-        'destination' => $referer_path . '?requested-membership=' . $this->group->id(),
-      ]),
+      '#url' => Url::fromRoute('user.register', $destination),
     ];
 
     $form['actions']['log_in'] = [
@@ -104,9 +111,7 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
           'waves-btn',
         ],
       ],
-      '#url' => Url::fromRoute('user.login', [
-        'destination' => $referer_path . '?requested-membership=' . $this->group->id(),
-      ]),
+      '#url' => Url::fromRoute('user.login', $destination),
     ];
 
     return $form;
