@@ -194,12 +194,10 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
       // Initialize it again.
       $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
+      // Add the Event ID to the data.
+      $tempstoreData['event_id'] = $event->id();
+      $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
     }
-    // Add the Event ID to the data.
-    $tempstoreData['event_id'] = $event->id();
-
-    /** @var array $tempstoreData */
-    $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
 
     // Reorder the form array.
     if (!empty($form['header'])) {
@@ -222,32 +220,38 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     // Styling related for the wrapper div.
     $wrapper['#attributes']['class'][] = 'card';
     $wrapper['#attributes']['class'][] = 'card__block';
+
+    // Add some JS for altering titles and switches.
     $form['#attached']['library'][] = 'social_event_managers/views_bulk_operations.frontUi';
 
-    // Render select all results checkbox.
+    // Render select all result checkboxes.
     if (!empty($wrapper['select_all'])) {
-      $total_results = is_array($this->tempStoreData) ? $this->tempStoreData['total_results'] : 0;
+      $total_results = $this->tempStoreData['total_results'] ?? 0;
       $wrapper['select_all']['#title'] = $this->t('Select / unselect all @count members across all the pages', [
         '@count' => ' ' . $total_results,
       ]);
       // Styling attributes for the select box.
       $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'form-no-label';
       $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'checkbox';
-    }
+      // Initialize the count.
+      $count = 0;
+      if (isset($this->tempStoreData['list'])) {
+        // Set the count for selected enrollees.
+        $count = empty($this->tempStoreData['exclude_mode']) ? \count($this->tempStoreData['list']) : $this->tempStoreData['total_results'] - \count($this->tempStoreData['list']);
+      }
 
-    $count = 0;
-    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $title */
-    if (!empty($wrapper['multipage']) && !empty($wrapper['multipage']['#title'])) {
-      $title = $wrapper['multipage']['#title'];
-      $arguments = $title->getArguments();
-      $count = empty($arguments['%count']) ? 0 : $arguments['%count'];
+      $title = $this->formatPlural($count, '<b><em class="placeholder">@count</em> enrollee</b> is selected', '<b><em class="placeholder">@count</em> enrollees</b> are selected');
+      $wrapper['multipage']['#title'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#value' => $title,
+        '#attributes' => [
+          'class' => [
+            'vbo-info-list-wrapper',
+          ],
+        ],
+      ];
     }
-    $title = $this->formatPlural($count, '<b><em class="placeholder">@count</em> enrollee</b> is selected', '<b><em class="placeholder">@count</em> enrollees</b> are selected');
-    $wrapper['multipage']['#title'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'div',
-      '#value' => $title,
-    ];
 
     // Add selector so the JS of VBO applies correctly.
     $wrapper['multipage']['#attributes']['class'][] = 'vbo-multipage-selector';
@@ -268,6 +272,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       $wrapper['multipage']['clear']['#attributes']['class'][] = 'btn-default dropdown-toggle waves-effect waves-btn margin-top-l margin-left-m';
     }
 
+    // Actions are not a select list but a dropbutton list.
     $actions = &$wrapper['actions'];
     if (!empty($actions) && !empty($wrapper['action'])) {
       $actions['#theme'] = 'links__dropbutton__operations__actions';
