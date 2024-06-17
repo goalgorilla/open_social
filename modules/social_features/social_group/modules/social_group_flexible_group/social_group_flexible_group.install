@@ -6,9 +6,11 @@
  */
 
 use Drupal\Core\Config\FileStorage;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\GroupMembership;
 use Drupal\social_group\Entity\Group;
 use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_install().
@@ -132,6 +134,9 @@ function social_group_flexible_group_update_130002(): void {
 /**
  * Move group_admin to group_manager group role.
  *
+ * Note: this action will be applied only for Site Managers and Content Manager
+ * that are already creators of the group.
+ *
  * @param array $sandbox
  *   Stores information for batch updates. See above for more information.
  *
@@ -165,27 +170,35 @@ function social_group_flexible_group_update_130003(array &$sandbox): string {
     /** @var \Drupal\group\GroupMembership $membership */
     $membership = $group->getMember($account);
 
-    // Check what roles are there.
-    if ($membership instanceof GroupMembership) {
+    // Apply group role update only for SM/CM role.
+    if (
+      $membership instanceof GroupMembership &&
+      $account instanceof UserInterface &&
+      $group instanceof GroupInterface &&
+      ($account->hasRole('sitemanager') || $account->hasRole('contentmanager'))
+    ) {
       $group_relationship = $membership->getGroupRelationship();
       $member_assigned_roles = array_column($group_relationship->get('group_roles')->getValue(), 'target_id');
 
-      // Assign manager role if it doesn't assigned yet.
-      if (!in_array($manager_role, $member_assigned_roles)) {
-        $member_assigned_roles[] = $manager_role;
-        $member_assigned_roles = array_map(function ($member_assigned_role) {
-          return ['target_id' => $member_assigned_role];
-        }, $member_assigned_roles);
+      // Assign owner a GM role group.
+      if ($account->id() === $group->getOwnerId()) {
+        // Only if it doesn't assigned yet.
+        if (!in_array($manager_role, $member_assigned_roles)) {
+          $member_assigned_roles[] = $manager_role;
+          $member_assigned_roles = array_map(function ($member_assigned_role) {
+            return ['target_id' => $member_assigned_role];
+          }, $member_assigned_roles);
 
-        $group_relationship->set('group_roles', $member_assigned_roles);
-        $group_relationship->save();
+          $group_relationship->set('group_roles', $member_assigned_roles);
+          $group_relationship->save();
+        }
       }
     }
     $sandbox['progress']++;
   }
   $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
   // Show a status update for the current progress.
-  return t("Assigned @progress group manager role to @max users.", ['@progress' => $sandbox['progress'], '@max' => $sandbox['max']]);
+  return t("Checked @progress from @max users.", ['@progress' => $sandbox['progress'], '@max' => $sandbox['max']]);
 }
 
 /**
