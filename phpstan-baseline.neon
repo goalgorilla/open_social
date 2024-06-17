@@ -1601,9 +1601,39 @@ parameters:
 			path: modules/custom/grequest/src/Form/GroupRequestMembershipRejectForm.php
 
 		-
+			message: "#^Property Drupal\\\\grequest\\\\Form\\\\GroupRequestMembershipRejectForm\\:\\:\\$groupContent \\(Drupal\\\\group\\\\Entity\\\\GroupRelationshipInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupRelationshipInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Form/GroupRequestMembershipRejectForm.php
+
+		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/custom/grequest/src/Form/GroupRequestMembershipRejectForm.php
+
+		-
+			message: "#^Cannot call method configureField\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Plugin/Group/RelationHandler/GroupMembershipRequestEntityReference.php
+
+		-
+			message: "#^Cannot call method getGroupOperations\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Plugin/Group/RelationHandler/GroupMembershipRequestOperationProvider.php
+
+		-
+			message: "#^Cannot call method buildPermissions\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Plugin/Group/RelationHandler/GroupMembershipRequestPermissionProvider.php
+
+		-
+			message: "#^Cannot call method getPermission\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Plugin/Group/RelationHandler/GroupMembershipRequestPermissionProvider.php
+
+		-
+			message: "#^Cannot call method getInstallTasks\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Plugin/Group/RelationHandler/GroupMembershipRequestPostInstall.php
 
 		-
 			message: "#^Function group_core_comments_install\\(\\) has no return type specified\\.$#"
@@ -5822,6 +5852,11 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php
 
 		-
+			message: "#^Cannot call method entityAccess\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
+			count: 3
+			path: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Group/RelationHandler/EventsGroupContentAccessControl.php
+
+		-
 			message: "#^Method Drupal\\\\social_event_managers\\\\Plugin\\\\views\\\\access\\\\ManageByOrganizersOnlyAccess\\:\\:alterRouteDefinition\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/access/ManageByOrganizersOnlyAccess.php
@@ -7282,6 +7317,11 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module
 
 		-
+			message: "#^Constant Drupal\\\\social_group_default_route\\\\EventSubscriber\\\\RedirectSubscriber\\:\\:DEFAULT_CLOSED_ROUTE is unused\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
+
+		-
 			message: "#^Method Drupal\\\\social_group_default_route\\\\EventSubscriber\\\\RedirectSubscriber\\:\\:groupLandingPage\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
@@ -7305,6 +7345,16 @@ parameters:
 			message: "#^Not allowed to call private function _social_group_get_current_group from module social_flexible_group_book\\.$#"
 			count: 2
 			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/Block/GroupAddBookBlock.php
+
+		-
+			message: "#^Cannot call method fetchAllAssoc\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
+
+		-
+			message: "#^Cannot call method getMember\\(\\) on Drupal\\\\social_group\\\\Entity\\\\Group\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
 
 		-
 			message: "#^Function social_group_flexible_group_install\\(\\) has no return type specified\\.$#"
@@ -7423,6 +7473,16 @@ parameters:
 
 		-
 			message: "#^Function social_group_flexible_group_social_group_types_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
+
+		-
+			message: "#^Function social_group_flexible_group_social_user_account_header_create_links\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
+
+		-
+			message: "#^Function social_group_flexible_group_social_user_account_header_create_links\\(\\) has parameter \\$context with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
 
@@ -7807,6 +7867,15 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
 
 		-
+			message: """
+				#^Parameter \\$group_membership_loader of method Drupal\\\\social_group_invite\\\\Form\\\\SocialBulkGroupInvitation\\:\\:__construct\\(\\) has typehint with deprecated interface Drupal\\\\group\\\\GroupMembershipLoaderInterface\\:
+				in group\\:3\\.2\\.0 and is removed from group\\:4\\.0\\.0\\. Use the static
+				  methods on \\\\Drupal\\\\group\\\\Entity\\\\GroupMembership instead\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
+
+		-
 			message: "#^Property Drupal\\\\social_group_invite\\\\Form\\\\SocialBulkGroupInvitation\\:\\:\\$configFactory \\(Drupal\\\\Core\\\\Config\\\\ConfigFactory\\) does not accept Drupal\\\\Core\\\\Config\\\\ConfigFactoryInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
@@ -7842,7 +7911,17 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php
 
 		-
+			message: "#^Cannot call method relationshipAccess\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Group/RelationHandler/SocialGroupInviteAccessControl.php
+
+		-
 			message: "#^Method Drupal\\\\social_group_invite\\\\Plugin\\\\Join\\\\SocialGroupInviteJoin\\:\\:create\\(\\) should return static\\(Drupal\\\\social_group_invite\\\\Plugin\\\\Join\\\\SocialGroupInviteJoin\\) but returns Drupal\\\\social_group_invite\\\\Plugin\\\\Join\\\\SocialGroupInviteJoin\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Join/SocialGroupInviteJoin.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Join/SocialGroupInviteJoin.php
 
@@ -8097,13 +8176,13 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php
 
 		-
-			message: "#^Cannot access property \\$headers on Symfony\\\\Component\\\\HttpFoundation\\\\Request\\|null\\.$#"
+			message: "#^Property Drupal\\\\social_group_request\\\\Form\\\\GroupRequestMembershipRejectForm\\:\\:\\$groupContent \\(Drupal\\\\group\\\\Entity\\\\GroupRelationshipInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupRelationshipInterface\\|null\\.$#"
 			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php
+			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php
 
 		-
 			message: "#^Cannot call method id\\(\\) on Drupal\\\\group\\\\Entity\\\\GroupInterface\\|null\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php
 
 		-
@@ -8113,11 +8192,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_group_request\\\\Form\\\\GroupRequestMembershipRequestAnonymousForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$uri of static method Symfony\\\\Component\\\\HttpFoundation\\\\Request\\:\\:create\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php
 
@@ -8697,16 +8771,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Function social_group_flexible_group_social_user_account_header_create_links\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
-
-		-
-			message: "#^Function social_group_flexible_group_social_user_account_header_create_links\\(\\) has parameter \\$context with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
-
-		-
 			message: "#^Function social_group_social_user_account_header_items\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -8742,6 +8806,11 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
+			message: "#^Function template_preprocess_group_settings_help\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.module
+
+		-
 			message: "#^Parameter \\#1 \\$account of method Drupal\\\\group\\\\Entity\\\\GroupInterface\\:\\:addMember\\(\\) expects Drupal\\\\user\\\\UserInterface, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -8754,11 +8823,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$group_type_id of function social_group_get_allowed_visibility_options_per_group_type expects string\\|null, int\\|string\\|null given\\.$#"
 			count: 2
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Function template_preprocess_group_settings_help\\(\\) has no return type specified\\.$#"
-			count: 1
 			path: modules/social_features/social_group/social_group.module
 
 		-
@@ -13249,77 +13313,3 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
-		-
-
-			message: "#^Property Drupal\\\\grequest\\\\Form\\\\GroupRequestMembershipRejectForm\\:\\:\\$groupContent \\(Drupal\\\\group\\\\Entity\\\\GroupRelationshipInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupRelationshipInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/grequest/src/Form/GroupRequestMembershipRejectForm.php
-
-		-
-			message: "#^Constant Drupal\\\\social_group_default_route\\\\EventSubscriber\\\\RedirectSubscriber\\:\\:DEFAULT_CLOSED_ROUTE is unused.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
-
-		-
-			message: "#^Negated boolean expression is always false.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Join/SocialGroupInviteJoin.php
-
-		-
-			message: "#^Property Drupal\\\\social_group_request\\\\Form\\\\GroupRequestMembershipRejectForm\\:\\:\\$groupContent \\(Drupal\\\\group\\\\Entity\\\\GroupRelationshipInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupRelationshipInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php
-
-		-
-			message: "#^Cannot call method configureField\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/grequest/src/Plugin/Group/RelationHandler/GroupMembershipRequestEntityReference.php
-
-		-
-			message: "#^Cannot call method entityAccess\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
-			count: 3
-			path: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Group/RelationHandler/EventsGroupContentAccessControl.php
-
-		-
-			message: "#^Cannot call method getInstallTasks\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/grequest/src/Plugin/Group/RelationHandler/GroupMembershipRequestPostInstall.php
-
-		-
-			message: "#^Cannot call method getPermission\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/grequest/src/Plugin/Group/RelationHandler/GroupMembershipRequestPermissionProvider.php
-
-		-
-			message: "#^Cannot call method buildPermissions\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/grequest/src/Plugin/Group/RelationHandler/GroupMembershipRequestPermissionProvider.php
-
-		-
-			message: "#^Cannot call method getGroupOperations\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/grequest/src/Plugin/Group/RelationHandler/GroupMembershipRequestOperationProvider.php
-
-		-
-			message: """
-				#^Parameter \\$group_membership_loader of method Drupal\\\\social_group_invite\\\\Form\\\\SocialBulkGroupInvitation\\:\\:__construct\\(\\) has typehint with deprecated interface Drupal\\\\group\\\\GroupMembershipLoaderInterface\\:
-				in group\\:3\\.2\\.0 and is removed from group\\:4\\.0\\.0\\. Use the static
-				  methods on \\\\Drupal\\\\group\\\\Entity\\\\GroupMembership instead\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
-
-		-
-			message: "#^Cannot call method relationshipAccess\\(\\) on Drupal\\\\group\\\\Plugin\\\\Group\\\\RelationHandler\\\\RelationHandlerInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Group/RelationHandler/SocialGroupInviteAccessControl.php
-
-		-
-			message: "#^Cannot call method fetchAllAssoc\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
-
-		-
-			message: "#^Cannot call method getMember\\(\\) on Drupal\\\\social_group\\\\Entity\\\\Group\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
