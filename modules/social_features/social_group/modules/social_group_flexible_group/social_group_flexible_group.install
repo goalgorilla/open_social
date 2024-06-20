@@ -163,6 +163,7 @@ function social_group_flexible_group_update_130003(array &$sandbox): string {
   }
   $items = array_slice($sandbox['ids'], $sandbox['progress'], 25);
   foreach ($items as $item) {
+    $updated = FALSE;
     $account = User::load($item->uid);
     $group = Group::load($item->gid);
     $manager_role = 'flexible_group-group_manager';
@@ -170,28 +171,45 @@ function social_group_flexible_group_update_130003(array &$sandbox): string {
     /** @var \Drupal\group\GroupMembership $membership */
     $membership = $group->getMember($account);
 
-    // Apply group role update only for SM/CM role.
     if (
       $membership instanceof GroupMembership &&
       $account instanceof UserInterface &&
-      $group instanceof GroupInterface &&
-      ($account->hasRole('sitemanager') || $account->hasRole('contentmanager'))
+      $group instanceof GroupInterface
     ) {
       $group_relationship = $membership->getGroupRelationship();
       $member_assigned_roles = array_column($group_relationship->get('group_roles')->getValue(), 'target_id');
 
-      // Assign owner a GM role group.
-      if ($account->id() === $group->getOwnerId()) {
-        // Only if it doesn't assigned yet.
-        if (!in_array($manager_role, $member_assigned_roles)) {
-          $member_assigned_roles[] = $manager_role;
-          $member_assigned_roles = array_map(function ($member_assigned_role) {
-            return ['target_id' => $member_assigned_role];
-          }, $member_assigned_roles);
+      // Apply group role update only for SM/CM role.
+      if ($account->hasRole('sitemanager') || $account->hasRole('contentmanager')) {
 
-          $group_relationship->set('group_roles', $member_assigned_roles);
-          $group_relationship->save();
+        // Assign owner a GM role group.
+        if ($account->id() === $group->getOwnerId()) {
+          // Only if it doesn't assigned yet.
+          if (!in_array($manager_role, $member_assigned_roles)) {
+            $member_assigned_roles[] = $manager_role;
+            $member_assigned_roles = array_map(function ($member_assigned_role) {
+              return ['target_id' => $member_assigned_role];
+            }, $member_assigned_roles);
+            $updated = TRUE;
+          }
         }
+      }
+      // Remove deprecated Group Admin role.
+      $admin_role = 'flexible_group-group_admin';
+      if (in_array($admin_role, $member_assigned_roles)) {
+        $key = array_search($admin_role, $member_assigned_roles);
+        unset($member_assigned_roles[$key]);
+
+        $member_assigned_roles = array_map(function ($member_assigned_role) {
+          return ['target_id' => $member_assigned_role];
+        }, $member_assigned_roles);
+        $updated = TRUE;
+      }
+
+      // Save updated assigned roles.
+      if ($updated) {
+        $group_relationship->set('group_roles', $member_assigned_roles);
+        $group_relationship->save();
       }
     }
     $sandbox['progress']++;
