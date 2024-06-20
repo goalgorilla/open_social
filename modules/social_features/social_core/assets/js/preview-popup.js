@@ -14,8 +14,8 @@
       // Remove a preview popup if you use back button in the browser.ß
       $(window).bind("pageshow", function(event) {
         if (event.originalEvent.persisted) {
-          $('.ui-dialog').remove();
-          $(context).find('.ui-dialog').remove();
+          $('.social-dialog--user-preview').remove();
+          $(context).find('.social-dialog--user-preview').remove();
         }
       });
 
@@ -46,13 +46,13 @@
                     of: $element,
                   },
                   create: function () {
-                    var currentDialog = $(this).closest('.ui-dialog');
+                    var currentDialog = $(this).closest('.social-dialog--user-preview');
 
                     $(this).closest('.ui-dialog')
                       .on('mouseover', function () {
                         window.clearTimeout(timeouts[selector]);
                       })
-                      .on('mouseleave', function () {
+                      .on('mouseleave scroll', function () {
                         timeouts[selector] = window.setTimeout(function () {
                           currentDialog.remove();
 
@@ -76,6 +76,9 @@
                   open: function () {
                     $(this).find('a').blur();
                     $('.ui-widget-overlay').remove();
+                    setTimeout(function () {
+                      $('html').css('overflow', 'visible');
+                    }, 0);
                   }
                 }
               );
@@ -149,15 +152,15 @@
             }
           }
         })
-        .on('mouseout', function () {
+        .on('mouseout scroll', function () {
           var selector = $(this).attr('id');
           window.clearTimeout(timeouts[selector]);
 
           timeouts[selector] = window.setTimeout(function () {
             if (dialogs[selector] !== undefined && dialogs[selector].open) {
               $('html').css('overflow', 'visible');
-              $(context).find('.ui-dialog').remove();
-              $('.ui-dialog').remove();
+              $(context).find('.social-dialog--user-preview').remove();
+              $('.social-dialog--user-preview').remove();
             }
           }, delayClose);
         });
