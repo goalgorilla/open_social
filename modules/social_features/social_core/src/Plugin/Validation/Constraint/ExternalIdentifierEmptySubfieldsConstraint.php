@@ -20,6 +20,6 @@ class ExternalIdentifierEmptySubfieldsConstraint extends Constraint {
    *
    * @var string
    */
-  public $requredSubfieldsAreNotSet = 'Not all required subfields have been set. Please insert values for: %empty_required_subfield_list.';
+  public $requiredSubfieldsAreNotSet = 'Not all required subfields have been set. Please insert values for: %empty_required_subfield_list.';
 
 }

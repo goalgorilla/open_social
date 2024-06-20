@@ -63,7 +63,7 @@ class ExternalIdentifierEmptySubfieldsConstraintValidator extends ConstraintVali
       foreach ($empty_subfields as $empty_subfield) {
         $nice_subfield_labels[] = $field_labels[$empty_subfield] . ' (' . $empty_subfield . ')';
       }
-      $this->context->addViolation($constraint->requredSubfieldsAreNotSet, [
+      $this->context->addViolation($constraint->requiredSubfieldsAreNotSet, [
         '%empty_required_subfield_list' => implode(', ', $nice_subfield_labels),
       ]);
     }
