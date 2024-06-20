@@ -47,7 +47,7 @@ jobs:
     name: "Install previous Open Social major version"
     runs-on: ubuntu-22.04
     container:
-      image: goalgorilla/open_social_docker:ci-drupal10-php8.1
+      image: goalgorilla/open_social_docker:ci-drupal10-php8.1-v2
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -97,6 +97,8 @@ jobs:
       - name: Set-up the previous major version of Open Social
         run: |
           set -e
+
+          apt-get update
 
           apt-get install -y jq
           # This gets all version info from composer for Open Social. We then
@@ -171,7 +173,7 @@ jobs:
     name: "Install Open Social"
     runs-on: ubuntu-22.04
     container:
-      image: goalgorilla/open_social_docker:ci-drupal10-php8.1
+      image: goalgorilla/open_social_docker:ci-drupal10-php8.1-v2
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -340,7 +342,7 @@ jobs:
     name: 'Tests'
     runs-on: ubuntu-22.04
     container:
-      image: goalgorilla/open_social_docker:ci-drupal10-php8.1
+      image: goalgorilla/open_social_docker:ci-drupal10-php8.1-v2
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -357,7 +359,7 @@ jobs:
 
     services:
       web:
-        image: goalgorilla/open_social_docker:ci-drupal10-php8.1
+        image: goalgorilla/open_social_docker:ci-drupal10-php8.1-v2
         env:
           DRUPAL_SETTINGS: production
         volumes:
