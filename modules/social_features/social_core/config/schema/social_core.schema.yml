@@ -12,3 +12,28 @@ field.formatter.settings.comment_node:
     always_show_all_comments:
       type: boolean
       label: 'Always show all comments'
+
+field.value.social_external_identifier:
+  type: mapping
+  label: Default value
+  mapping:
+    external_id:
+      type: string
+      label: External ID
+    external_owner_target_type:
+      type: string
+      label: External Owner Target type
+    external_owner_id:
+      type: integer
+      label: External Owner ID
+
+field.storage_settings.social_external_identifier:
+  type: mapping
+  label: "Social External Identifier field storage settings"
+  mapping:
+    target_types:
+      type: sequence
+      label: 'Target entity types'
+      sequence:
+        type: string
+        label: 'Target entity type'
