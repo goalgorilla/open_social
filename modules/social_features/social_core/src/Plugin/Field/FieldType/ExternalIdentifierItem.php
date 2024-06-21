@@ -36,8 +36,22 @@ final class ExternalIdentifierItem extends FieldItemBase {
    * {@inheritdoc}
    */
   public function isEmpty(): bool {
+    // If at least one of 3 subfields is not empty, field is not empty.
+    // Subfields are:
+    // - external_id,
+    // - external_owner_target_type
+    // - external_owner_id
+    //
+    // Note, even that external_owner_id is int, we are checking is as string
+    // because of some Drupal bugs that int values ane not matching typehints.
+    // See: https://www.drupal.org/project/drupal/issues/3441689
+    // See: https://www.drupal.org/project/drupal/issues/3224376
+    //
+    // Also note that the ExternalIdentifierEmptySubfieldsConstraintValidator
+    // prevents the field from being saved if all subfields do not have set
+    // values.
     foreach ($this->getValue() as $value) {
-      if ($value !== '') {
+      if ($value !== '' && $value !== NULL) {
         return FALSE;
       }
     }
@@ -58,7 +72,7 @@ final class ExternalIdentifierItem extends FieldItemBase {
     $properties['external_owner_target_type'] = DataReferenceTargetDefinition::create('string')
       ->setLabel($externalIdentifierManager->getSubfieldLabel('external_owner_target_type'))
       ->setRequired(TRUE);
-    $properties['external_owner_id'] = DataDefinition::create('string')
+    $properties['external_owner_id'] = DataDefinition::create('integer')
       ->setLabel($externalIdentifierManager->getSubfieldLabel('external_owner_id'))
       ->setRequired(TRUE);
 

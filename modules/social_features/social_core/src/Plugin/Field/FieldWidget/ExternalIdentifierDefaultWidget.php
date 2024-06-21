@@ -90,9 +90,10 @@ final class ExternalIdentifierDefaultWidget extends WidgetBase {
     //   from, but we need to build it in a way that we can support more than
     //   one entity type.
     $element['external_owner_id'] = [
-      '#type' => 'textfield',
+      '#type' => 'number',
       '#title' => $this->t('External Owner'),
       '#default_value' => $items[$delta]->external_owner_id ?? NULL,
+      '#min' => 1,
       '#required' => FALSE,
     ];
 
