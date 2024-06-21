@@ -59,9 +59,8 @@ class ExternalIdentifierEmptySubfieldsConstraintValidator extends ConstraintVali
     if (count($empty_subfields) > 0) {
       // Add label beside subfield machine name.
       $nice_subfield_labels = [];
-      $field_labels = $this->externalIdentifierManager->getSubfieldLabels();
       foreach ($empty_subfields as $empty_subfield) {
-        $nice_subfield_labels[] = $field_labels[$empty_subfield] . ' (' . $empty_subfield . ')';
+        $nice_subfield_labels[] = $item->getProperties()[$empty_subfield]->getDataDefinition()->getLabel() . ' (' . $empty_subfield . ')';
       }
       $this->context->addViolation($constraint->requiredSubfieldsAreNotSet, [
         '%empty_required_subfield_list' => implode(', ', $nice_subfield_labels),

@@ -67,13 +67,13 @@ final class ExternalIdentifierItem extends FieldItemBase {
     $externalIdentifierManager = \Drupal::service('social_core.external_identifier_manager');
 
     $properties['external_id'] = DataDefinition::create('string')
-      ->setLabel($externalIdentifierManager->getSubfieldLabel('external_id'))
+      ->setLabel(t('External ID'))
       ->setRequired(TRUE);
     $properties['external_owner_target_type'] = DataReferenceTargetDefinition::create('string')
-      ->setLabel($externalIdentifierManager->getSubfieldLabel('external_owner_target_type'))
+      ->setLabel(t('Target Entity Type'))
       ->setRequired(TRUE);
     $properties['external_owner_id'] = DataDefinition::create('integer')
-      ->setLabel($externalIdentifierManager->getSubfieldLabel('external_owner_id'))
+      ->setLabel(t('External Owner'))
       ->setRequired(TRUE);
 
     return $properties;
