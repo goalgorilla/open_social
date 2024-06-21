@@ -43,7 +43,7 @@ final class ExternalIdentifierItem extends FieldItemBase {
     // - external_owner_id
     //
     // Note, even that external_owner_id is int, we are checking is as string
-    // because of some Drupal bugs that int values ane not matching typehints.
+    // because of some Drupal bugs that int values ane not matching type hints.
     // See: https://www.drupal.org/project/drupal/issues/3441689
     // See: https://www.drupal.org/project/drupal/issues/3224376
     //
