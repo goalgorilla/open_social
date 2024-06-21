@@ -86,7 +86,6 @@ function social_core_install() {
       'access toolbar',
       'administer nodes',
       'administer menu',
-      'administer taxonomy',
       'access site reports',
       'access administration pages',
       'view all revisions',
@@ -530,4 +529,11 @@ function social_core_update_130007(): void {
 
   // Change file_managed table only files from field_file field.
   \Drupal::database()->query("UPDATE {file_managed} SET {file_managed}.uri = REPLACE({file_managed}.uri, 'secret://', 'private://') WHERE fid IN (SELECT {node__field_files}.field_files_target_id FROM {node__field_files})");
+}
+
+/**
+ * Revoke administer taxonomy permission for sitemanager.
+ */
+function social_core_update_130008(): void {
+  user_role_revoke_permissions('sitemanager', ['administer taxonomy']);
 }
