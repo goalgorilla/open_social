@@ -42,20 +42,20 @@ class ExternalIdentifierExternalOwnerIdConstraintValidator extends ConstraintVal
       return;
     }
 
-    $external_owner_target_type = $item->external_owner_target_type;
-    $external_owner_id = $item->external_owner_id;
+    $target_type = $item->target_type;
+    $target_id = $item->target_id;
 
     // Nonexistent entity type validation is handled by
     // ExternalIdentifierExternalOwnerTargetTypeConstraint.
-    if (!$this->entityTypeManager->hasDefinition($external_owner_target_type)) {
+    if (!$this->entityTypeManager->hasDefinition($target_type)) {
       return;
     }
 
-    $entity = $this->entityTypeManager->getStorage($external_owner_target_type)->load($external_owner_id);
+    $entity = $this->entityTypeManager->getStorage($target_type)->load($target_id);
     if (empty($entity)) {
       $this->context->addViolation($constraint->nonexistentIdMessage, [
-        '%entity_type' => $external_owner_target_type,
-        '%entity_id' => $external_owner_id,
+        '%entity_type' => $target_type,
+        '%entity_id' => $target_id,
       ]);
 
     }

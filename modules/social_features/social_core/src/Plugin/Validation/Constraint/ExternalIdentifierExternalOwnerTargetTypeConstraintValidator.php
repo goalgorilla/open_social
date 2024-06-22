@@ -41,20 +41,20 @@ class ExternalIdentifierExternalOwnerTargetTypeConstraintValidator extends Const
     if (!$constraint instanceof ExternalIdentifierExternalOwnerTargetTypeConstraint) {
       return;
     }
-    $external_owner_target_type = $item->external_owner_target_type;
+    $target_type = $item->target_type;
 
     // Empty constraint is handled by
     // ExternalIdentifierEmptySubfieldsConstraint.
-    if (empty($external_owner_target_type)) {
+    if (empty($target_type)) {
       return;
     }
     // Check if entity type is on list of allowed external owner target types.
     $field_storage_definition = $item->getFieldDefinition()->getFieldStorageDefinition();
     $storage_settings = $field_storage_definition->getSettings();
     $target_types = $storage_settings['target_types'] ?? [];
-    if (!in_array($external_owner_target_type, $target_types)) {
+    if (!in_array($target_type, $target_types)) {
       $this->context->addViolation($constraint->invalidTargetTypeMessage, [
-        '%invalid_target_type' => $external_owner_target_type,
+        '%invalid_target_type' => $target_type,
         '%allowed_target_types' => implode(', ', array_keys($target_types)),
       ]);
     }
@@ -62,8 +62,8 @@ class ExternalIdentifierExternalOwnerTargetTypeConstraintValidator extends Const
     // Check if the entity type exists (this is triggered only if entity type is
     // listed on allowed external owner target types list, while entity type
     // does not exist as such.
-    if (!$this->entityTypeManager->hasDefinition($external_owner_target_type)) {
-      $this->context->addViolation($constraint->nonexistentTargetTypeMessage, ['%entity_type' => $external_owner_target_type]);
+    if (!$this->entityTypeManager->hasDefinition($target_type)) {
+      $this->context->addViolation($constraint->nonexistentTargetTypeMessage, ['%entity_type' => $target_type]);
     }
   }
 

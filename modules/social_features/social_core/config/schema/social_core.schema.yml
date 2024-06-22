@@ -15,14 +15,18 @@ field.formatter.settings.comment_node:
 
 field.value.social_external_identifier:
   type: mapping
-  label: Default value
+  label: "Default value"
   mapping:
     external_id:
       type: string
       label: External ID
-    external_owner_target_type:
+    # From Dynamic entity reference
+    target_id:
       type: string
-      label: External Owner Target type
-    external_owner_id:
-      type: integer
-      label: External Owner ID
+      label: "Entity ID"
+    target_uuid:
+      type: string
+      label: "Target UUID"
+    target_type:
+      type: string
+      label: "Type of item to reference"

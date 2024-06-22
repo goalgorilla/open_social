@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\social_core\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\FormatterBase;
+use Drupal\dynamic_entity_reference\Plugin\Field\FieldFormatter\DynamicEntityReferenceEntityFormatter;
 
 /**
  * Plugin implementation of the 'External Identifier Default' formatter.
@@ -16,7 +16,7 @@ use Drupal\Core\Field\FormatterBase;
  *   field_types = {"social_external_identifier"},
  * )
  */
-final class ExternalIdentifierDefaultFormatter extends FormatterBase {
+final class ExternalIdentifierDefaultFormatter extends DynamicEntityReferenceEntityFormatter {
 
   /**
    * {@inheritdoc}
@@ -27,8 +27,8 @@ final class ExternalIdentifierDefaultFormatter extends FormatterBase {
       $element[$delta] = [
         '#theme' => 'external_id_formatter',
         '#external_id' => $item->external_id,
-        '#external_owner_target_type' => $item->external_owner_target_type,
-        '#external_owner_id' => $item->external_owner_id,
+        '#target_type' => $item->target_type,
+        '#target_id' => $item->target_id,
       ];
     }
     return $element;
