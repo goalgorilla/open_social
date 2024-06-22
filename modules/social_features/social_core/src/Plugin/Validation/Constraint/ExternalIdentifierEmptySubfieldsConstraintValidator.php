@@ -2,37 +2,13 @@
 
 namespace Drupal\social_core\Plugin\Validation\Constraint;
 
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\social_core\ExternalIdentifierManager\ExternalIdentifierManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 /**
  * Validates the ExternalIdentifierEmptySubfieldsConstraint constraint.
  */
-class ExternalIdentifierEmptySubfieldsConstraintValidator extends ConstraintValidator implements ContainerInjectionInterface {
-
-  /**
-   * Constructs a new ExternalIdentifierEmptySubfieldsConstraintValidator.
-   *
-   * @param \Drupal\social_core\ExternalIdentifierManager\ExternalIdentifierManager $externalIdentifierManager
-   *   The external identifier manager service.
-   */
-  public function __construct(
-    protected ExternalIdentifierManager $externalIdentifierManager
-  ) {
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container): static {
-    return new static(
-      $container->get('social_core.external_identifier_manager')
-    );
-  }
+class ExternalIdentifierEmptySubfieldsConstraintValidator extends ConstraintValidator {
 
   /**
    * {@inheritdoc}

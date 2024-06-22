@@ -4,7 +4,6 @@ namespace Drupal\social_core\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\social_core\ExternalIdentifierManager\ExternalIdentifierManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -17,13 +16,10 @@ class ExternalIdentifierExternalOwnerTargetTypeConstraintValidator extends Const
   /**
    * Constructs a new constraint validator.
    *
-   * @param \Drupal\social_core\ExternalIdentifierManager\ExternalIdentifierManager $externalIdentifierManager
-   *   The external identifier manager service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager service.
    */
   public function __construct(
-    protected ExternalIdentifierManager $externalIdentifierManager,
     protected EntityTypeManagerInterface $entityTypeManager
   ) {
 
@@ -34,8 +30,7 @@ class ExternalIdentifierExternalOwnerTargetTypeConstraintValidator extends Const
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('social_core.external_identifier_manager'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
     );
   }
 
@@ -54,10 +49,13 @@ class ExternalIdentifierExternalOwnerTargetTypeConstraintValidator extends Const
       return;
     }
     // Check if entity type is on list of allowed external owner target types.
-    if (!in_array($external_owner_target_type, array_keys($this->externalIdentifierManager->getAllowedExternalOwnerTargetTypes()))) {
+    $field_storage_definition = $item->getFieldDefinition()->getFieldStorageDefinition();
+    $storage_settings = $field_storage_definition->getSettings();
+    $target_types = $storage_settings['target_types'] ?? [];
+    if (!in_array($external_owner_target_type, $target_types)) {
       $this->context->addViolation($constraint->invalidTargetTypeMessage, [
         '%invalid_target_type' => $external_owner_target_type,
-        '%allowed_target_types' => $this->externalIdentifierManager->getValidTargetTypesAsString(),
+        '%allowed_target_types' => implode(', ', array_keys($target_types)),
       ]);
     }
 
@@ -67,7 +65,6 @@ class ExternalIdentifierExternalOwnerTargetTypeConstraintValidator extends Const
     if (!$this->entityTypeManager->hasDefinition($external_owner_target_type)) {
       $this->context->addViolation($constraint->nonexistentTargetTypeMessage, ['%entity_type' => $external_owner_target_type]);
     }
-
   }
 
 }

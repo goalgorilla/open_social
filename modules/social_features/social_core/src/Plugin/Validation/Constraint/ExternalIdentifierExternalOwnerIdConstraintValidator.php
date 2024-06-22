@@ -4,7 +4,6 @@ namespace Drupal\social_core\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\social_core\ExternalIdentifierManager\ExternalIdentifierManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -17,13 +16,10 @@ class ExternalIdentifierExternalOwnerIdConstraintValidator extends ConstraintVal
   /**
    * Constructs a new ExternalIdentifierExternalOwnerIdConstraintValidator.
    *
-   * @param \Drupal\social_core\ExternalIdentifierManager\ExternalIdentifierManager $externalIdentifierManager
-   *   The external identifier manager service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager service.
    */
   public function __construct(
-    protected ExternalIdentifierManager $externalIdentifierManager,
     protected EntityTypeManagerInterface $entityTypeManager
   ) {
 
@@ -34,7 +30,6 @@ class ExternalIdentifierExternalOwnerIdConstraintValidator extends ConstraintVal
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('social_core.external_identifier_manager'),
       $container->get('entity_type.manager')
     );
   }

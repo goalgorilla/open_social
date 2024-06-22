@@ -6,11 +6,16 @@ namespace Drupal\social_core\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\TypedData\DataReferenceTargetDefinition;
 
 /**
  * Defines the 'social_external_identifier' field type.
+ *
+ * Supported settings (below the definition's 'settings' key) are:
+ * - target_type: The entity type to reference. Required.
  *
  * @FieldType(
  *   id = "social_external_identifier",
@@ -63,8 +68,7 @@ final class ExternalIdentifierItem extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition): array {
-    /** @var \Drupal\social_core\ExternalIdentifierManager\ExternalIdentifierManager $externalIdentifierManager */
-    $externalIdentifierManager = \Drupal::service('social_core.external_identifier_manager');
+    $settings = $field_definition->getSettings();
 
     $properties['external_id'] = DataDefinition::create('string')
       ->setLabel(t('External ID'))
@@ -72,11 +76,45 @@ final class ExternalIdentifierItem extends FieldItemBase {
     $properties['external_owner_target_type'] = DataReferenceTargetDefinition::create('string')
       ->setLabel(t('Target Entity Type'))
       ->setRequired(TRUE);
+    // @todo See if we can improve this subfield to use
+    //   DataReferenceDefinition or DataDynamicReferenceDefinition.
     $properties['external_owner_id'] = DataDefinition::create('integer')
       ->setLabel(t('External Owner'))
       ->setRequired(TRUE);
 
+//    $properties['external_owner_id'] = DataReferenceDefinition::create('entity')
+//      ->setLabel(t('External Owner'))
+//      ->setRequired(TRUE)
+//      ->setTargetDefinition(EntityDataDefinition::create($settings['target_types']))
+//      // We can add a constraint for the target entity type. The list of
+//      // referenceable bundles is a field setting, so the corresponding
+//      // constraint is added dynamically in ::getConstraints().
+//      ->addConstraint('EntityType', $settings['target_types']);
+
     return $properties;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function storageSettingsSummary(FieldStorageDefinitionInterface $storage_definition): array {
+    $summary = parent::storageSettingsSummary($storage_definition);
+    $target_types = $storage_definition->getSetting('target_types');
+    if (!empty($target_types)) {
+      $entity_type_labels = [];
+      foreach ($target_types as $target_type) {
+        $target_type_info = \Drupal::entityTypeManager()->getDefinition($target_type);
+        if (!empty($target_type_info)) {
+          $entity_type_labels[] = $target_type_info->getLabel();
+        }
+      }
+      $summary[] = new TranslatableMarkup('Reference type: @entity_type_labels', [
+        '@entity_type_labels' => implode(', ', $entity_type_labels),
+      ]);
+
+    }
+
+    return $summary;
   }
 
   /**
@@ -124,6 +162,44 @@ final class ExternalIdentifierItem extends FieldItemBase {
     else {
       parent::setValue($values, $notify);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultStorageSettings() {
+    return [
+        'target_types' => [],
+      ] + parent::defaultStorageSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
+    $element['target_types'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Allowed external owner target types'),
+      '#description' => $this->t('Entity type of item to referenced (Example: consumer)'),
+      '#default_value' => $this->getSetting('target_types'),
+      '#multiple' => TRUE,
+      '#required' => FALSE,
+      '#disabled' => $has_data,
+      '#size' => 10,
+    ];
+
+    // Only allow the field to target entity types that have an ID key. This
+    // is enforced in ::propertyDefinitions().
+    $entity_type_manager = \Drupal::entityTypeManager();
+    $filter = function (string $entity_type_id) use ($entity_type_manager): bool {
+      return $entity_type_manager->getDefinition($entity_type_id)
+        ->hasKey('id');
+    };
+    $options = \Drupal::service('entity_type.repository')->getEntityTypeLabels(TRUE);
+    foreach ($options as $group_name => $group) {
+      $element['target_types']['#options'][$group_name] = array_filter($group, $filter, ARRAY_FILTER_USE_KEY);
+    }
+    return $element;
   }
 
 }

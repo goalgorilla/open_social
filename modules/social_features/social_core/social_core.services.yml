@@ -42,9 +42,3 @@ services:
   social_core.members_page_helper:
     class: Drupal\social_core\Service\MembersPageHelperService
     arguments: [ '@user.data', '@current_user' ]
-
-  social_core.external_identifier_manager:
-    class: Drupal\social_core\ExternalIdentifierManager\ExternalIdentifierManager
-    arguments:
-      - '@module_handler'
-      - '@string_translation'

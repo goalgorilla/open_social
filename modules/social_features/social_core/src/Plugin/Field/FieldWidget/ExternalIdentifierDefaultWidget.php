@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\social_core\Plugin\Field\FieldWidget;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\social_core\ExternalIdentifierManager\ExternalIdentifierManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,8 +35,8 @@ final class ExternalIdentifierDefaultWidget extends WidgetBase {
    *   The widget settings.
    * @param array $third_party_settings
    *   Any third party settings.
-   * @param \Drupal\social_core\ExternalIdentifierManager\ExternalIdentifierManager $externalIdentifierManager
-   *   The external identifier manager service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager service.
    */
   public function __construct(
     $plugin_id,
@@ -44,7 +44,7 @@ final class ExternalIdentifierDefaultWidget extends WidgetBase {
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    protected ExternalIdentifierManager $externalIdentifierManager
+    protected EntityTypeManagerInterface $entityTypeManager
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
@@ -59,7 +59,7 @@ final class ExternalIdentifierDefaultWidget extends WidgetBase {
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('social_core.external_identifier_manager')
+      $container->get('entity_type.manager'),
     );
   }
 
@@ -77,7 +77,7 @@ final class ExternalIdentifierDefaultWidget extends WidgetBase {
     $element['external_owner_target_type'] = [
       '#type' => 'select',
       '#title' => $this->t('External Owner Target Type'),
-      '#options' => $this->externalIdentifierManager->getAllowedExternalOwnerTargetTypes(),
+      '#options' => $this->getAllowedExternalOwnerTargetTypes(),
       '#empty_value' => '',
       '#default_value' => $items[$delta]->external_owner_target_type ?? NULL,
       '#required' => FALSE,
@@ -98,6 +98,29 @@ final class ExternalIdentifierDefaultWidget extends WidgetBase {
     ];
 
     return $element;
+  }
+
+  /**
+   * Returns list of allowed External Owner Entity Types.
+   *
+   * @return array
+   *   Returns an array of allowed target types, where key is target type
+   *   machine name and value is label.
+   */
+  protected function getAllowedExternalOwnerTargetTypes(): array {
+    $allowed_target_types = [];
+
+    $field_storage_definition = $this->fieldDefinition->getFieldStorageDefinition();
+    $storage_settings = $field_storage_definition->getSettings();
+    $target_types = $storage_settings['target_types'] ?? [];
+    foreach ($target_types as $target_type) {
+      $target_type_info = $this->entityTypeManager->getDefinition($target_type);
+      if (!empty($target_type_info)) {
+        $allowed_target_types[$target_type] = $target_type_info->getLabel();
+      }
+    }
+
+    return $allowed_target_types;
   }
 
 }
