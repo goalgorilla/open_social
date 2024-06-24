@@ -71,3 +71,32 @@ function social_activity_update_13000(): ?string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Change token-replacement from create message template.
+ */
+function social_activity_update_13001(): void {
+  $message_templates = [
+    'message.template.create_topic_community',
+    'message.template.create_topic_gc',
+    'message.template.create_topic_group',
+    'message.template.create_event_group',
+    'message.template.create_event_gc',
+    'message.template.create_event_community',
+    'message.template.create_content_in_joined_group',
+  ];
+
+  $config_factory = \Drupal::configFactory();
+  foreach ($message_templates as $message_template) {
+    $config = $config_factory->getEditable($message_template);
+
+    $texts = array_map(function ($text) {
+      $text['value'] = str_replace('message:author', 'message:revision_author', $text['value']);
+
+      return $text;
+    }, $config->get('text'));
+
+    $config->set('text', $texts)
+      ->save();
+  }
+}

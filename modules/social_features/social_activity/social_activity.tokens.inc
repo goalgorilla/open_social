@@ -172,7 +172,10 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
           $related_object_content = \Drupal::entityTypeManager()
             ->getStorage($related_object_value['target_type'])
             ->load($related_object_value['target_id']);
-          if (empty($related_object_content)) {
+          if (
+            empty($related_object_content)
+            || !$related_object_content instanceof NodeInterface
+          ) {
             return $replacements;
           }
 
