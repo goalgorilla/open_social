@@ -112,3 +112,19 @@ function social_flexible_group_book_update_13001() : string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Change token-replacement from create message template.
+ */
+function social_flexible_group_book_update_13002(): void {
+  $config = \Drupal::configFactory()
+    ->getEditable('create_book_group');
+
+  $texts = array_map(function ($text) {
+    $text['value'] = str_replace('message:author', 'message:revision_author', $text['value']);
+    return $text;
+  }, $config->get('text'));
+
+  $config->set('text', $texts)
+    ->save();
+}
