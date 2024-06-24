@@ -37,6 +37,11 @@ function social_activity_token_info() {
     'description' => t('Number of groups where node is added.'),
   ];
 
+  $tokens['revision_author'] = [
+    'name' => t("Author"),
+    'type' => 'user',
+  ];
+
   return [
     'tokens' => [
       'message' => $tokens,
@@ -154,6 +159,24 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
               }
               break;
           }
+        }
+
+        // Loading user data to user token as "object".
+        $token_service = \Drupal::token();
+        if ($author_tokens = $token_service->findWithPrefix($tokens, 'revision_author')) {
+          if ($message->field_message_related_object->isEmpty()) {
+            return $replacements;
+          }
+
+          $related_object_value = current($message->field_message_related_object->getValue());
+          $related_object_content = \Drupal::entityTypeManager()
+            ->getStorage($related_object_value['target_type'])
+            ->load($related_object_value['target_id']);
+          if (empty($related_object_content)) {
+            return $replacements;
+          }
+
+          $replacements += $token_service->generate('user', $author_tokens, ['user' => $related_object_content->getOwner()], $options, $bubbleable_metadata);
         }
       }
     }
