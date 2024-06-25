@@ -174,7 +174,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             ->load($related_object_value['target_id']);
           if (
             empty($related_object_content)
-            || !$related_object_content instanceof NodeInterface
+            || !method_exists($related_object_content, 'getOwner')
           ) {
             return $replacements;
           }
