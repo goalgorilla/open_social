@@ -205,3 +205,17 @@ function social_user_update_13002(): void {
     ->clear('show_mail_in_messages')
     ->save();
 }
+
+/**
+ * Add an external identifier field to the user entity.
+ */
+function social_user_update_13003() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_user', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
