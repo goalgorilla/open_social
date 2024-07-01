@@ -43,6 +43,19 @@ function social_group_flexible_group_social_group_types_alter(array &$social_gro
 }
 
 /**
+ * Implements hook_social_email_broadcast_notifications_alter().
+ */
+function social_group_flexible_group_social_email_broadcast_notifications_alter(array &$items): void {
+  $items['community_updates']['bulk_mailing'][] = [
+    'name' => 'flexible_group_bulk_mailing',
+    'label' => t('Groups: Group managers can update me on groups I belong to'),
+    'entity_type' => [
+      'group' => ['flexible_group'],
+    ],
+  ];
+}
+
+/**
  * Implements hook_form_FORM_ID_form_alter().
  */
 function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {

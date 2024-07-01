@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function social_email_broadcast_schema(): array {
+  $schema['user_email_send'] = [
+    'fields' => [
+      'uid' => [
+        'description' => 'The {user}.uid of user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'name' => [
+        'description' => 'The name of bulk mail.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'frequency' => [
+        'description' => 'The frequency the emails should be sent.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'immediately',
+      ],
+    ],
+    'indexes' => [
+      'ues_uid' => ['uid'],
+      'ues_name' => ['name'],
+    ],
+  ];
+
+  return $schema;
+}

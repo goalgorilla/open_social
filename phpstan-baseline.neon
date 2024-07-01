@@ -781,9 +781,9 @@ parameters:
 			path: modules/custom/activity_logger/src/Service/ActivityLoggerFactory.php
 
 		-
-			message: "#^Method Drupal\\\\activity_logger\\\\Service\\\\ActivityLoggerFactory\\:\\:createFieldInstances\\(\\) has no return type specified\\.$#"
+			message: "#^Function activity_send_schema\\(\\) has no return type specified\\.$#"
 			count: 1
-			path: modules/custom/activity_logger/src/Service/ActivityLoggerFactory.php
+			path: modules/custom/activity_send/activity_send.install
 
 		-
 			message: "#^Function activity_send_email_schema\\(\\) has no return type specified\\.$#"
@@ -802,6 +802,11 @@ parameters:
 
 		-
 			message: "#^Cannot call method fetchAll\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module
+
+		-
+			message: "#^Function _activity_send_email_form_user_form_submit\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module
 
@@ -1052,6 +1057,11 @@ parameters:
 
 		-
 			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/activity_send/src/Plugin/SendActivityDestinationBase.php
+
+		-
+			message: "#^Method Drupal\\\\activity_send\\\\Plugin\\\\SendActivityDestinationBase\\:\\:setSendUserSettings\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/activity_send/src/Plugin/SendActivityDestinationBase.php
 
