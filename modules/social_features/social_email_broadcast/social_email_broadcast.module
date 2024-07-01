@@ -1,0 +1,158 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Social Email Broadcast module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\social_email_broadcast\SocialEmailBroadcast;
+
+/**
+ * Implements hook_theme().
+ */
+function social_email_broadcast_theme(array $existing, string $type, string $theme, string $path): array {
+  // We should not register the template again if it's already registered by
+  // "activity_send_email" module.
+  if (!empty($existing['directmail'])) {
+    return [];
+  }
+
+  return [
+    'directmail' => [
+      'template' => 'directmail',
+      'variables' => [
+        'notification' => NULL,
+        'notification_settings' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_form().
+ *
+ * @throws \Exception
+ */
+function social_email_broadcast_form_user_form_alter(array &$form, FormStateInterface $form_state): void {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+
+  /** @var \Drupal\social_user\Entity\User $account */
+  $account = $form_object->getEntity();
+
+  // Only expose these settings to existing users, so it's not shown on the
+  // user create form.
+  if ($account->isNew()) {
+    return;
+  }
+
+  if (empty($form['email_notifications'])) {
+    $form['email_notifications'] = [
+      '#type' => 'fieldset',
+      '#title' => new TranslatableMarkup('Email notifications'),
+      '#description' => new TranslatableMarkup('For each email notification below, you can choose to turn it off, receive it immediately or in a daily or weekly digest. Email notifications will only be sent when you are not active in the platform.'),
+      '#tree' => TRUE,
+      '#attributes' => [
+        'class' => [
+          'form-horizontal',
+          'form-email-notification',
+        ],
+      ],
+    ];
+  }
+
+  $items = _social_email_broadcast_default_bulk_email_items();
+
+  \Drupal::moduleHandler()
+    ->alter('social_email_broadcast_notifications', $items);
+
+  /** @var \Drupal\social_email_broadcast\SocialEmailBroadcast $service */
+  $service = \Drupal::service(SocialEmailBroadcast::class);
+  $user_bulk_mailing_settings = $service->getBulkEmailUserSettings($account);
+
+  foreach ($items as $item_id => $item) {
+    // Don't render the fieldset when there is no bulk mailing.
+    if (empty($item['bulk_mailing'])) {
+      continue;
+    }
+
+    $form['email_notifications'][$item_id] = [
+      '#type' => 'fieldset',
+      '#title' => [
+        'text' => [
+          '#markup' => $item['title'],
+        ],
+        'icon' => [
+          '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
+          '#allowed_tags' => ['svg', 'use'],
+        ],
+      ],
+      '#attributes' => [
+        'class' => ['form-fieldset'],
+      ],
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#open' => TRUE,
+    ];
+
+    foreach ($item['bulk_mailing'] as $bulk_mailing) {
+      $name = $bulk_mailing['name'];
+
+      $form['email_notifications'][$item_id][$name] = [
+        '#type' => 'select',
+        '#title' => $bulk_mailing['label'],
+        '#options' => [
+          SocialEmailBroadcast::FREQUENCY_IMMEDIATELY => t('Always'),
+          SocialEmailBroadcast::FREQUENCY_NONE => t('Never'),
+        ],
+        '#default_value' => $user_bulk_mailing_settings[$name] ?? SocialEmailBroadcast::FREQUENCY_IMMEDIATELY,
+      ];
+    }
+  }
+
+  // Submit function to save send email settings.
+  $form['actions']['submit']['#submit'][] = '_social_email_broadcast_form_user_form_submit';
+}
+
+/**
+ * Form submit for user_form.
+ *
+ * @param array $form
+ *   Form build array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ *
+ * @throws \Exception
+ */
+function _social_email_broadcast_form_user_form_submit(array $form, FormStateInterface $form_state): void {
+  /** @var \Drupal\social_user\Entity\User $account */
+  $account = \Drupal::routeMatch()->getParameter('user');
+  $community_updates = $form_state->getValue([
+    'email_notifications',
+    'community_updates',
+  ]);
+
+  if ($account instanceof AccountInterface && !empty($community_updates)) {
+    /** @var \Drupal\social_email_broadcast\SocialEmailBroadcast $service */
+    $service = \Drupal::service(SocialEmailBroadcast::class);
+    $service->setBulkEmailUserSettings($account, $community_updates);
+  }
+}
+
+/**
+ * Returns default templates grouped by specific category.
+ *
+ * @return array[]
+ *   Grouped default templates.
+ */
+function _social_email_broadcast_default_bulk_email_items(): array {
+  return [
+    'community_updates' => [
+      'title' => t('Community updates and announcements'),
+      'bulk_mailing' => [],
+    ],
+  ];
+}

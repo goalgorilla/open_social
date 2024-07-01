@@ -2447,14 +2447,14 @@ function social_group_social_group_action_social_group_send_email_action_finish(
     // background.
     if (\Drupal::moduleHandler()->moduleExists('social_queue_storage')) {
       return [
-        'singular' => 'Your email will be send to 1 selected member',
-        'plural' => 'Your email will be send to @count selected members',
+        'singular' => 'Based on the users settings this email will be sent to 1 member.',
+        'plural' => 'Based on the users settings this email will be sent to @count of the selected members.',
       ];
     }
 
     return [
-      'singular' => 'Your email has been sent to 1 selected member successfully',
-      'plural' => 'Your email has been sent to @count selected members successfully',
+      'singular' => 'Based on the users settings this email will be sent to 1 member.',
+      'plural' => 'Based on the users settings this email will be sent to @count of the selected members.',
     ];
   }
 
