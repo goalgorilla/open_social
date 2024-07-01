@@ -164,17 +164,6 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function getAccountEntity(): ?UserInterface {
-    if ($this->get('field_account')->isEmpty()) {
-      return NULL;
-    }
-
-    return $this->get('field_account')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function setOwnerId($uid) {
     $this->set('user_id', $uid);
     return $this;

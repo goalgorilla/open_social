@@ -2,9 +2,16 @@
 
 namespace Drupal\social_event_an_enroll\Plugin\Action;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Utility\Token;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_managers\Plugin\Action\SocialEventManagersSendEmail;
+use Egulias\EmailValidator\EmailValidator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,12 +42,76 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
   protected $socialEventAnEnrollManager;
 
   /**
+   * Constructs a SocialEventAnEnrollSendEmail object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Utility\Token $token
+   *   The token service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   A logger instance.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
+   * @param \Egulias\EmailValidator\EmailValidator $email_validator
+   *   The email validator.
+   * @param \Drupal\Core\Queue\QueueFactory $queue_factory
+   *   The queue factory.
+   * @param bool $allow_text_format
+   *   TRUE if the current user can use the "Mail HTML" text format.
+   * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $event_an_enroller
+   *   The social event anonymous manager.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    Token $token,
+    EntityTypeManagerInterface $entity_type_manager,
+    LoggerInterface $logger,
+    LanguageManagerInterface $language_manager,
+    EmailValidator $email_validator,
+    QueueFactory $queue_factory,
+    $allow_text_format,
+    EventAnEnrollManager $event_an_enroller
+  ) {
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $token,
+      $entity_type_manager,
+      $logger,
+      $language_manager,
+      $email_validator,
+      $queue_factory,
+      $allow_text_format
+    );
+    $this->socialEventAnEnrollManager = $event_an_enroller;
+  }
+
+  /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
-    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    $instance->socialEventAnEnrollManager = $container->get('social_event_an_enroll.manager');
-    return $instance;
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition,
+      $container->get('token'),
+      $container->get('entity_type.manager'),
+      $container->get('logger.factory')->get('action'),
+      $container->get('language_manager'),
+      $container->get('email.validator'),
+      $container->get('queue'),
+      $container->get('current_user')->hasPermission('use text format mail_html'),
+      $container->get('social_event_an_enroll.manager')
+    );
   }
 
   /**
@@ -77,7 +148,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
     // Before parent remove the guest from the objects list.
     // Otherwise they will be processed as users and it will break as there
     // is no user account.
-    $objects = array_diff_key($objects, $guests);
+    $objects = array_diff_key($objects, array_keys($guests));
 
     // Execute parent as we still need to check if there are users enrolled.
     return parent::executeMultiple($objects);
