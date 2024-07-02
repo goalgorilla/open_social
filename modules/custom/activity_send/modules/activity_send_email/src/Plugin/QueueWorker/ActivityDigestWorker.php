@@ -179,7 +179,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
               [
                 '@settings' => Link::fromTextAndUrl(
                   $this->t('email notification settings'),
-                  Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
+                  Url::fromRoute('social_email_broadcast.user_edit_page')->setAbsolute())->toString(),
                 ':frequency' => $frequency_translated,
               ],
               ['langcode' => $langcode]
