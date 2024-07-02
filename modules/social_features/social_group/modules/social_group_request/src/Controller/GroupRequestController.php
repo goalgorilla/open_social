@@ -16,9 +16,9 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\social_group\Entity\Group;
 use Drupal\social_group_request\Form\GroupRequestMembershipRequestAnonymousForm;
-use Drupal\social_group_request\Form\GroupRequestMembershipRequestForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -141,7 +141,20 @@ class GroupRequestController extends ControllerBase {
       ->execute();
 
     if ($request == 0) {
-      $request_form = $this->formBuilder()->getForm(GroupRequestMembershipRequestForm::class, $group);
+      $storage = $this->entityTypeManager->getStorage('group_content_type');
+      assert($storage instanceof GroupRelationshipTypeStorageInterface);
+
+      $group_type_id = (string) $group->getGroupType()->id();
+      $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
+      $group_content = $this->entityTypeManager->getStorage('group_content')->create([
+        'type' => $relation_type_id,
+        'gid' => $group->id(),
+        'entity_id' => $this->currentUser()->id(),
+        'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
+      ]);
+
+      $request_form = $this->entityFormBuilder()->getForm($group_content, 'request-membership');
+
       $response->addCommand(new OpenModalDialogCommand($this->t('Request to join'), $request_form, [
         'width' => '582px',
         'dialogClass' => 'social_group-popup',
