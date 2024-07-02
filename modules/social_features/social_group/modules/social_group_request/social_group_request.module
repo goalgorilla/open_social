@@ -14,31 +14,10 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
-use Drupal\group\Entity\GroupRelationshipTypeInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\message\Entity\Message;
-
-/**
- * Implements hook_ENTITY_TYPE_insert() for group_content_type.
- */
-function social_group_request_group_content_type_insert(GroupRelationshipTypeInterface $group_content_type) {
-  if ($group_content_type->getPluginId() === 'group_membership_request') {
-    // Add Message field.
-    FieldConfig::create([
-      'field_storage' => FieldStorageConfig::loadByName('group_content', 'field_grequest_message'),
-      'bundle' => $group_content_type->id(),
-      'label' => t('Message'),
-      'description' => '',
-      'required' => FALSE,
-      'settings' => [],
-      'field_type' => 'string_long',
-    ])->save();
-  }
-}
 
 /**
  * Implements hook_entity_base_field_info().
