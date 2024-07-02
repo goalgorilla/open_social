@@ -42,3 +42,7 @@ services:
   social_core.members_page_helper:
     class: Drupal\social_core\Service\MembersPageHelperService
     arguments: [ '@user.data', '@current_user' ]
+
+  social_core.token_variations:
+    class: Drupal\social_core\Service\TokenVariationsService
+    arguments: ['@token', '@string_translation']
