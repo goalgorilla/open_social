@@ -165,7 +165,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
       '#theme' => 'directmail',
       '#notification' => $body_text,
       '#notification_settings' => $this->t('Based on your @settings, the notification above is sent to you <strong>:frequency</strong>', [
-        '@settings' => Link::fromTextAndUrl($this->t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
+        '@settings' => Link::fromTextAndUrl($this->t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('social_email_broadcast.user_edit_page')->setAbsolute())->toString(),
         ':frequency' => $frequency_translated,
       ],
       ['langcode' => $langcode]),

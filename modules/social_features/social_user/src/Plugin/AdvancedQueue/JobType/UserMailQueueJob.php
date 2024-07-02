@@ -209,7 +209,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
       $params = ['subject' => $subject, 'body' => $body];
 
       $settings_link = Link::fromTextAndUrl($this->t('email notification settings', [], ['langcode' => $langcode]),
-        Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString();
+        Url::fromRoute('social_email_broadcast.user_edit_page')->setAbsolute())->toString();
 
       // Construct the render array for email.
       $notification = [
