@@ -5,6 +5,8 @@
  * Install/Uninstall/Update hooks for social_group_request module.
  */
 
+use Drupal\Core\Config\FileStorage;
+
 /**
  * Implements hook_install().
  */
@@ -104,4 +106,30 @@ function social_group_request_update_13002(): void {
     ->getStorage('group_role')
     ->load('flexible_group-group_manager');
   $group_manager->grantPermission('administer membership requests')->save();
+}
+
+/**
+ * Apply the config for the grequest_message field.
+ */
+function social_group_request_update_13003(): string {
+  // Add new config.
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group_request') . '/config/static';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+
+  $data = $source->read('core.entity_form_display.group_content.group_content_type_7fcb76fdf61a9.default_13003');
+  if (is_array($data)) {
+    $config_storage->write('core.entity_form_display.group_content.group_content_type_7fcb76fdf61a9.default', $data);
+  }
+
+  // Apply updates.
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_group_request', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
 }
