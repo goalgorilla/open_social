@@ -276,6 +276,14 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
         $overrides[$config_name]['dependencies']['config'][] = 'taxonomy.vocabulary.social_tagging';
         $overrides[$config_name]['display'][$display]['cache_metadata']['contexts'][] = 'user';
 
+        // "Social tagging" exposed filters in views has "OR" operator which
+        // cause issues with duplications.
+        // We need to enable aggregation for these view pages.
+        $overrides[$config_name]['display'][$display]['display_options']['group_by'] = TRUE;
+        if ($config_name === 'views.view.newest_groups') {
+          $overrides[$config_name]['display']['default']['display_options']['group_by'] = TRUE;
+        }
+
         $group = 1;
 
         if (count($fields) > 1) {
