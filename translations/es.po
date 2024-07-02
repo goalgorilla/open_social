@@ -1497,7 +1497,19 @@
 # modules/social_features/social_user_export/config/install/system.action.user_export_user_action.yml: n/a
 #
 msgid ""
-msgstr "Project-Id-Version: Open Social\nPOT-Creation-Date: 2024-06-25 20:23+0000\nPO-Revision-Date: 2024-06-28 08:18+0000\nLast-Translator: Anonymous <noreply@weblate.org>\nLanguage-Team: Spanish <https://translate.getopensocial.com/projects/open-social/distribution/es/>\nLanguage: es\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 4.16.4\n"
+msgstr ""
+"Project-Id-Version: Open Social\n"
+"POT-Creation-Date: 2024-07-02 07:30+0000\n"
+"PO-Revision-Date: 2024-06-28 08:18+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Spanish <https://translate.getopensocial.com/projects/open-"
+"social/distribution/es/>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.16.4\n"
 
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:258
 msgid ""
@@ -4798,6 +4810,10 @@ msgstr "Permitir a las personas etiquetar contenido en contenido."
 msgid "Allowed calendars"
 msgstr "Calendarios permitidos"
 
+#: modules/social_features/social_core/src/Plugin/Field/FieldType/ExternalIdentifierItem.php:177
+msgid "Allowed external owner target types"
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_flexible_group/src/SocialGroupFlexibleGroupConfigOverride.php:102
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_group_allowed_join_method.yml:0
 msgid "Allowed join method"
@@ -7157,12 +7173,17 @@ msgstr "Índice de personas predeterminado creado para la distribución Social."
 
 #: modules/custom/dropdown/config/schema/dropdown.schema.yml:0
 #: modules/custom/entity_access_by_field/config/schema/entity_access_by_field.schema.yml:0
+#: modules/social_features/social_core/config/schema/social_core.schema.yml:0
 msgid "Default value"
 msgstr "Valor predeterminado"
 
 #: modules/custom/entity_access_by_field/src/Form/EntityVisibilityForm.php:47
 msgid "Default visibility"
 msgstr "Visibilidad predeterminada"
+
+#: modules/social_features/social_core/src/Plugin/Field/FieldType/ExternalIdentifierItem.php:16
+msgid "Define external Identifier and external Owner/Consumer."
+msgstr ""
 
 #: modules/custom/activity_creator/activity_creator.links.task.yml:0
 #: modules/custom/alternative_frontpage/src/Form/AlternativeFrontpageDeleteForm.php:32
@@ -8361,6 +8382,10 @@ msgstr "Tipo de entidad"
 msgid "Entity type of entity that contains mention"
 msgstr "Tipo de entidad de entidad que contiene mención"
 
+#: modules/social_features/social_core/src/Plugin/Field/FieldType/ExternalIdentifierItem.php:178
+msgid "Entity type of item to reference (Example: consumer)"
+msgstr ""
+
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Entity/EntityUrl.php:8
 msgid "Entity url"
 msgstr "URL de la entidad"
@@ -8637,7 +8662,7 @@ msgstr "Ejecutar acción"
 msgid "Expertise"
 msgstr "Habilidades"
 
-#: modules/social_features/social_core/social_core.install:220
+#: modules/social_features/social_core/social_core.install:219
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream.yml:0
 msgid "Explore"
 msgstr "Explorar"
@@ -8713,6 +8738,39 @@ msgstr ""
 #: modules/custom/social_lets_connect/modules/social_lets_connect_contact/social_lets_connect_contact.links.menu.yml:0
 msgid "Extensions"
 msgstr "Extensiones"
+
+#: modules/social_features/social_core/config/schema/social_core.schema.yml:0
+#: modules/social_features/social_core/src/Plugin/Field/FieldType/ExternalIdentifierItem.php:80
+#: modules/social_features/social_core/src/Plugin/Field/FieldWidget/ExternalIdentifierDefaultWidget.php:72
+msgid "External ID"
+msgstr ""
+
+#: modules/social_features/social_core/src/Plugin/Field/FieldType/ExternalIdentifierItem.php:16
+#: modules/social_features/social_user/config/install/field.field.user.user.field_external_identifier.yml:0
+msgid "External Identifier"
+msgstr ""
+
+#: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/ExternalIdentifierDefaultFormatter.php:10
+#: modules/social_features/social_core/src/Plugin/Field/FieldWidget/ExternalIdentifierDefaultWidget.php:14
+msgid "External Identifier Default"
+msgstr ""
+
+#: modules/social_features/social_core/src/Plugin/Field/FieldType/ExternalIdentifierItem.php:86
+#: modules/social_features/social_core/src/Plugin/Field/FieldWidget/ExternalIdentifierDefaultWidget.php:94
+msgid "External Owner"
+msgstr ""
+
+#: modules/social_features/social_core/config/schema/social_core.schema.yml:0
+msgid "External Owner ID"
+msgstr ""
+
+#: modules/social_features/social_core/src/Plugin/Field/FieldWidget/ExternalIdentifierDefaultWidget.php:79
+msgid "External Owner Target Type"
+msgstr ""
+
+#: modules/social_features/social_core/config/schema/social_core.schema.yml:0
+msgid "External Owner Target type"
+msgstr ""
 
 #: modules/social_features/social_landing_page/src/Plugin/Field/FieldWidget/BlockFieldWidget.php:56
 msgid "Extra"
@@ -9852,7 +9910,7 @@ msgid "Hide the list of enrollees from other members"
 msgstr "Ocultar la lista de inscritos a los demás miembros"
 
 #: modules/social_features/social_comment/src/SocialCommentBreadcrumbBuilder.php:59;60
-#: modules/social_features/social_core/social_core.install:211
+#: modules/social_features/social_core/social_core.install:210
 #: modules/social_features/social_search/src/SocialSearchBreadcrumbBuilder.php:57
 msgid "Home"
 msgstr "Inicio"
@@ -10696,7 +10754,7 @@ msgstr "Listas (Vistas)"
 msgid "Load default profile"
 msgstr "Cargar perfil por defecto"
 
-#: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install:43
+#: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install:51
 msgid "Loaded search index"
 msgstr "Índice de búsqueda cargado"
 
@@ -10765,7 +10823,7 @@ msgstr "Texto de Ayuda de Inicio de sesión"
 msgid "Log in with <b>username</b> or <b>email</b>"
 msgstr "Iniciar sesión con <b>username</b> o <b>email</b>"
 
-#: modules/social_features/social_core/social_core.install:196
+#: modules/social_features/social_core/social_core.install:195
 #: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:11
 msgid "Login"
 msgstr "Inicia sesión"
@@ -10836,6 +10894,16 @@ msgstr "Contenido principal de la página"
 msgid "Make sure body text has mail_html format."
 msgstr "Asegúrese de que el cuerpo del texto tiene el formato mail_html."
 
+#: modules/social_features/social_core/src/Plugin/Validation/Constraint/ExternalIdentifierExternalOwnerIdConstraint.php:7
+msgctxt "Validation"
+msgid "Makes sure that External Owner Entity exist"
+msgstr ""
+
+#: modules/social_features/social_core/src/Plugin/Validation/Constraint/ExternalIdentifierEmptySubfieldsConstraint.php:7
+msgctxt "Validation"
+msgid "Makes sure that all required subfields values are set"
+msgstr ""
+
 #: modules/social_features/social_search/src/Plugin/search_api/processor/BlockedUsers.php:11
 msgid "Makes sure that blocked users are not added to the index."
 msgstr "Se asegura de que las personas bloqueadas no se agreguen al índice."
@@ -10843,6 +10911,11 @@ msgstr "Se asegura de que las personas bloqueadas no se agreguen al índice."
 #: modules/social_features/social_search/src/Plugin/search_api/processor/VerifiedUsers.php:10
 msgid "Makes sure that only Verified users are added to the index."
 msgstr "Asegura que sólo los usuarios verificados son añadidos al índice."
+
+#: modules/social_features/social_core/src/Plugin/Validation/Constraint/ExternalIdentifierExternalOwnerTargetTypeConstraint.php:7
+msgctxt "Validation"
+msgid "Makes sure that target type exist and is allowed"
+msgstr ""
 
 #: modules/social_features/social_search/src/Plugin/search_api/processor/SuperUser.php:10
 msgid "Makes sure that user 1 is not added to the index."
@@ -12435,7 +12508,7 @@ msgstr "Contexto de actividad de plataforma"
 msgid "Platform has opted out of group migration."
 msgstr "La plataforma ha optado por no migrar en grupo."
 
-#: modules/social_features/social_core/social_core.install:441
+#: modules/social_features/social_core/social_core.install:440
 msgid "Platform has opted out of secret file system migration."
 msgstr ""
 "La plataforma ha optado por no migrar a un sistema de archivos secreto."
@@ -13633,6 +13706,10 @@ msgstr "Referencia"
 msgid "Reference some block"
 msgstr "Referencia a algún bloque"
 
+#: modules/social_features/social_core/src/Plugin/Field/FieldType/ExternalIdentifierItem.php:106
+msgid "Reference type: @entity_type_labels"
+msgstr ""
+
 #: modules/social_features/social_core/social_core.links.menu.yml:0
 msgid "Regional Settings"
 msgstr "Ajustes regionales"
@@ -14251,15 +14328,15 @@ msgstr "Bloque de contenido de búsqueda"
 msgid "Search hero block"
 msgstr "Buscar bloque héroe"
 
-#: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install:56
+#: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install:64
 msgid "Search index disabled"
 msgstr "Índice de búsqueda desactivado"
 
-#: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install:58
+#: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install:66
 msgid "Search index enabled"
 msgstr "Índice de búsqueda activado"
 
-#: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install:47
+#: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install:55
 msgid "Search index exists"
 msgstr "Existe un índice de búsqueda"
 
@@ -14919,7 +14996,7 @@ msgstr "Muestra las invitaciones a eventos de un usuario."
 msgid "Sign Up"
 msgstr "Regístrate"
 
-#: modules/social_features/social_core/social_core.install:192
+#: modules/social_features/social_core/social_core.install:191
 #: modules/social_features/social_event/src/Form/EnrollRequestAnonymousForm.php:38
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php:91
 #: modules/social_features/social_user/social_user.links.menu.yml:0
@@ -15343,6 +15420,10 @@ msgstr "Tipo de Evento social"
 #: modules/social_features/social_event/modules/social_event_type/config/schema/social_event_type.schema.yml:0
 msgid "Social Event Type settings"
 msgstr "Configuración de Tipo de Evento social"
+
+#: modules/social_features/social_core/config/schema/social_core.schema.yml:0
+msgid "Social External Identifier field storage settings"
+msgstr ""
 
 #: modules/social_features/social_featured_content/social_featured_content.info.yml:0
 msgid "Social Featured Content"
@@ -16122,6 +16203,24 @@ msgstr "Etiquetas"
 msgid "Tags I follow"
 msgstr "Etiquetas a las que sigo"
 
+#: modules/social_features/social_core/src/Plugin/Field/FieldType/ExternalIdentifierItem.php:83
+msgid "Target Entity Type"
+msgstr ""
+
+#: modules/social_features/social_core/config/schema/social_core.schema.yml:0
+msgid "Target entity type"
+msgstr ""
+
+#: modules/social_features/social_core/config/schema/social_core.schema.yml:0
+msgid "Target entity types"
+msgstr ""
+
+#: modules/social_features/social_core/src/Plugin/Validation/Constraint/ExternalIdentifierExternalOwnerTargetTypeConstraint.php:27
+msgid ""
+"Target type \"%invalid_target_type\" is not valid. Valid target types are: "
+"\"%allowed_target_types\"."
+msgstr ""
+
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:36
 msgid "Taxonomy I follow."
 msgstr "Taxonomía que sigo."
@@ -16531,9 +16630,18 @@ msgstr "La condición de entidad para este mensaje"
 msgid "The entity condition that are affected for this message"
 msgstr "La condición de entidad que se ve afectada por este mensaje"
 
+#: modules/social_features/social_core/src/Plugin/Validation/Constraint/ExternalIdentifierExternalOwnerIdConstraint.php:25
+msgid ""
+"The entity of type \"%entity_type\" and ID \"%entity_id\" does not exist."
+msgstr ""
+
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
 msgid "The entity type"
 msgstr "El tipo de entidad"
+
+#: modules/social_features/social_core/src/Plugin/Validation/Constraint/ExternalIdentifierExternalOwnerTargetTypeConstraint.php:34
+msgid "The entity type \"%entity_type\" does not exist."
+msgstr ""
 
 #: modules/custom/mentions/src/Entity/Mentions.php:78
 msgid "The entity type to which this mention is attached."
