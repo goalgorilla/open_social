@@ -67,7 +67,9 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'content_type':
+        case 'content_type:capitalized':
         case 'indefinite_article':
+        case 'indefinite_article:capitalized':
         case 'taxonomy_i_follow':
           /** @var \Drupal\message\Entity\Message $message */
           $message = $data['message'];
@@ -121,11 +123,15 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
             }
           }
 
-          if ($name === 'content_type') {
+          if ($display_name && str_ends_with($name, ':capitalized')) {
+            $display_name = ucfirst($display_name);
+          }
+
+          if (str_starts_with($name, 'content_type')) {
             $replacements[$original] = $display_name;
           }
 
-          if ($name === 'indefinite_article') {
+          if (str_starts_with($name, 'indefinite_article')) {
             if (!empty($display_name)) {
               // Prepares a replacement token: content name.
               // When a name of content name starts from a vowel letter then
@@ -136,6 +142,7 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
               else {
                 $indefinite_article = t('a');
               }
+
               $replacements[$original] = $indefinite_article;
             }
             else {
@@ -143,7 +150,7 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
             }
           }
 
-          if ($name === 'taxonomy_i_follow' && !empty($term_names)) {
+          if (str_starts_with($name, 'taxonomy_i_follow') && !empty($term_names)) {
             // Prepares a replacement token: a string with term names.
             // Wrap the names in quotation marks and separate it with commas.
             $replacement_string = "'" . implode("', '", $term_names) . "'";

@@ -190,8 +190,11 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
             break;
 
           case 'commented_content_type':
+          case 'commented_content_type:capitalized':
           case 'commented_entity_link':
+          case 'commented_entity_link:capitalized':
           case 'commented_entity_link_html':
+          case 'commented_entity_link_html:capitalized':
 
             if (!$message->get('field_message_related_object')->isEmpty()) {
               $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
@@ -218,15 +221,19 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                     }
                   }
 
-                  if ($name === 'commented_content_type') {
+                  if (isset($commented_content_type) && str_ends_with($name, ':capitalized')) {
+                    $commented_content_type = ucfirst($commented_content_type);
+                  }
+
+                  if (str_starts_with($name, 'commented_content_type')) {
                     if (!empty($commented_content_type)) {
                       $replacements[$original] = $commented_content_type;
                     }
                   }
-                  if ($name === 'commented_entity_link') {
+                  if (str_starts_with($name, 'commented_entity_link')) {
                     $replacements[$original] = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
                   }
-                  if ($name === 'commented_entity_link_html') {
+                  if (str_starts_with($name, 'commented_entity_link_html')) {
                     $url_options = ['absolute' => TRUE];
                     $link = $entity->toUrl('canonical', $url_options)->toString();
 
@@ -238,6 +245,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                     else {
                       $entity_link_html = '<a href="' . $link . '">' . $commented_content_type . '</a>';
                     }
+
                     $replacements[$original] = Markup::create($entity_link_html);
                   }
                 }
@@ -245,7 +253,6 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
             }
 
             break;
-
         }
       }
     }
