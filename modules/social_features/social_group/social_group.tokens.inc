@@ -63,9 +63,11 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
       foreach ($tokens as $name => $original) {
         switch ($name) {
 
-          case 'content_type':
           case 'content_url':
+          case 'content_type':
+          case 'content_type:capitalized':
           case 'created_entity_link_html':
+          case 'created_entity_link_html:capitalized':
 
             // Get the related entity.
             if (!$message->get('field_message_related_object')->isEmpty()) {
@@ -104,6 +106,10 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                   );
                 }
 
+                if (isset($display_name) && str_ends_with($name, ':capitalized')) {
+                  $display_name = ucfirst($display_name);
+                }
+
                 // When a name of content name starts from a vowel letter then
                 // will be added "an" before this name. For example "an
                 // event".
@@ -121,12 +127,12 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                     $replacements[$original] = $content_url->toString();
                   }
                 }
-                elseif ($name === 'content_type') {
+                elseif (str_starts_with($name, 'content_type')) {
                   if (isset($display_name)) {
                     $replacements[$original] = $display_name;
                   }
                 }
-                elseif ($name === 'created_entity_link_html' && isset($display_name)) {
+                elseif (str_starts_with($name, 'created_entity_link_html') && isset($display_name)) {
                   // We should only use the label of entities who have a label.
                   if ($link_label = $entity->label()) {
                     $entity_link_html = $display_name . ' <a href="' . $content_url->toString() . '">' . $link_label . '</a>';

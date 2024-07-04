@@ -109,6 +109,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
             break;
 
           case 'commented_entity_link_html':
+          case 'commented_entity_link_html:capitalized':
 
             if (!$message->get('field_message_related_object')->isEmpty()) {
               $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
@@ -144,7 +145,10 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
                 case 'comment':
                   $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
                   break;
+              }
 
+              if (isset($content_type_label) && str_ends_with($name, ':capitalized')) {
+                $content_type_label = ucfirst($content_type_label);
               }
 
               $url_options = ['absolute' => TRUE];

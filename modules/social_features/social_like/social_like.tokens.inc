@@ -62,10 +62,11 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
     ) {
       foreach ($tokens as $name => $original) {
         switch ($name) {
-
           case 'liked_entity':
           case 'liked_content_type':
+          case 'liked_content_type:capitalized':
           case 'liked_entity_link_html':
+          case 'liked_entity_link_html:capitalized':
             /** @var \Drupal\votingapi\Entity\Vote $vote */
             $storage = \Drupal::entityTypeManager()->getStorage($vote->getVotedEntityType());
             $entity = $storage->load($vote->getVotedEntityId());
@@ -87,11 +88,14 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
             if ($content_type === 'post' || $content_type === 'photo' || $content_type === 'comment') {
               $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
             }
-            if ($name === 'liked_content_type') {
+            if (str_ends_with($name, ':capitalized')) {
+              $content_type_label = ucfirst($content_type_label);
+            }
+            if (str_starts_with($name, 'liked_content_type')) {
               $replacements[$original] = $content_type_label;
             }
 
-            if ($name === 'liked_entity_link_html') {
+            if (str_starts_with($name, 'liked_entity_link_html')) {
               // We should only use the label of entities who have a label.
               if ($content_type !== 'comment' && $link_label = $entity->label()) {
                 $liked_entity_link_html = $content_type_label . ' <a href="' . $link . '">' . $link_label . '</a>';
@@ -116,10 +120,18 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
                     else {
                       $commented_content_type = $commented_entity->bundle();
                     }
+
+                    if ($commented_content_type && str_ends_with($name, ':capitalized')) {
+                      $commented_content_type = ucfirst($commented_content_type);
+                    }
                     $liked_entity_link_html .= ' ' . t('on the') . ' ' . $commented_content_type . ' <a href="' . $ref_link . '">' . $ref_link_label . '</a>';
                   }
                   else {
                     $commented_content_type = mb_strtolower($commented_entity->getEntityType()->getLabel());
+
+                    if (str_ends_with($name, ':capitalized')) {
+                      $commented_content_type = ucfirst($commented_content_type);
+                    }
                     $liked_entity_link_html .= ' ' . t('on a') . ' <a href="' . $ref_link . '">' . $commented_content_type . '</a>';
                   }
                 }
@@ -133,6 +145,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
       }
     }
   }
+
   return $replacements;
 }
 
