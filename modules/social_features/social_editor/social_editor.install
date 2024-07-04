@@ -11,3 +11,21 @@
 function social_editor_update_last_removed() : int {
   return 9002;
 }
+
+/**
+ * Enable the responsive table filter module.
+ */
+function social_editor_update_13001(): string {
+  if (!\Drupal::service('module_handler')->moduleExists('responsive_table_filter')) {
+    \Drupal::service('module_installer')->install(['responsive_table_filter']);
+  }
+
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_editor', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
