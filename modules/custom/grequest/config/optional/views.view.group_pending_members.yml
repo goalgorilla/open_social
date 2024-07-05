@@ -1,10 +1,15 @@
-uuid: f61b5823-cf3b-46d3-8eb5-9623ca226621
 langcode: en
 status: true
 dependencies:
   module:
+    - grequest
     - group
+    - state_machine
     - user
+  enforced:
+    module:
+      - group
+      - grequest
 id: group_pending_members
 label: 'Group pending members'
 module: views
@@ -12,83 +17,121 @@ description: ''
 tag: ''
 base_table: group_relationship_field_data
 base_field: id
-core_version_requirement: ^9
 display:
   default:
-    display_plugin: default
     id: default
     display_title: Master
+    display_plugin: default
     position: 0
     display_options:
-      access:
-        type: group_permission
-        options:
-          group_permission: 'administer members'
-      cache:
-        type: tag
-        options: {  }
-      query:
-        type: views_query
-        options:
-          disable_sql_rewrite: false
-          distinct: false
-          replica: false
-          query_comment: ''
-          query_tags: {  }
-      exposed_form:
-        type: basic
-        options:
-          submit_button: Filter
-          reset_button: false
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      pager:
-        type: mini
-        options:
-          items_per_page: 10
-          offset: 0
-          id: 0
-          total_pages: null
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
-          tags:
-            previous: â€¹â€¹
-            next: â€ºâ€º
-      style:
-        type: table
-        options:
-          grouping: {  }
-          row_class: ''
-          default_row_class: true
-          override: true
-          sticky: false
-          caption: ''
-          summary: ''
-          description: ''
-          columns:
-            label: label
-          info:
-            label:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-          default: '-1'
-          empty_table: false
-      row:
-        type: fields
+      title: 'Group pending members'
       fields:
+        approve_membership_request:
+          id: approve_membership_request
+          table: group_relationship
+          field: approve_membership_request
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: group_content
+          plugin_id: approve_membership_request
+          label: 'Approve membership'
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          text: 'Approve membership'
+          output_url_as_text: false
+          absolute: false
+        reject_membership_request:
+          id: reject_membership_request
+          table: group_relationship
+          field: reject_membership_request
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: group_content
+          plugin_id: reject_membership_request
+          label: 'Reject membership '
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          text: 'Reject membership'
+          output_url_as_text: false
+          absolute: false
         name:
           id: name
           table: users_field_data
@@ -96,6 +139,9 @@ display:
           relationship: gc__user
           group_type: group
           admin_label: ''
+          entity_type: user
+          entity_field: name
+          plugin_id: field
           label: Name
           exclude: false
           alter:
@@ -151,9 +197,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: user
-          entity_field: name
-          plugin_id: field
         created:
           id: created
           table: group_relationship_field_data
@@ -161,6 +204,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: group_content
+          entity_field: created
+          plugin_id: field
           label: 'Requested on'
           exclude: false
           alter:
@@ -218,9 +264,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: group_content
-          entity_field: created
-          plugin_id: field
         gid:
           id: gid
           table: group_relationship_field_data
@@ -228,6 +271,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: group_content
+          entity_field: gid
+          plugin_id: field
           label: 'Parent group'
           exclude: true
           alter:
@@ -282,9 +328,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: group_content
-          entity_field: gid
-          plugin_id: field
         id:
           id: id
           table: group_relationship_field_data
@@ -292,6 +335,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: group_content
+          entity_field: id
+          plugin_id: field
           label: ID
           exclude: true
           alter:
@@ -348,107 +394,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: group_content
-          entity_field: id
-          plugin_id: field
-        nothing_1:
-          id: nothing_1
-          table: views
-          field: nothing
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Reject Membership'
-          exclude: true
-          alter:
-            alter_text: true
-            text: '<a href="/group/{{ gid }}/content/{{ id }}/reject-membership?destination=/group/{{ gid }}/members-pending">Reject Membership</a>'
-            make_link: false
-            path: '/group/{{ gid }}/content/{{ id }}/reject-membership'
-            absolute: true
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: 'Reject Membership'
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: false
-          plugin_id: custom
-        nothing:
-          id: nothing
-          table: views
-          field: nothing
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Approve membership'
-          exclude: true
-          alter:
-            alter_text: true
-            text: '<a href="/group/{{ gid }}/content/{{ id }}/approve-membership?destination=/group/{{ gid }}/members-pending">Approve membership</a>'
-            make_link: false
-            path: '/group/{{ gid }}/content/{{ id }}/approve-membership'
-            absolute: true
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: 'Approve membership'
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: false
-          plugin_id: custom
         dropbutton:
           id: dropbutton
           table: views
@@ -456,6 +401,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: dropbutton
           label: Operations
           exclude: false
           alter:
@@ -497,62 +443,49 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
+          destination: true
           fields:
-            nothing_1: nothing_1
-            nothing: nothing
+            approve_membership_request: approve_membership_request
+            reject_membership_request: reject_membership_request
             name: '0'
             created: '0'
             gid: '0'
             id: '0'
-          destination: true
-          plugin_id: dropbutton
-      filters:
-        grequest_status_value:
-          id: grequest_status_value
-          table: group_content__grequest_status
-          field: grequest_status_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: '0'
-          group: 1
-          exposed: false
+      pager:
+        type: mini
+        options:
+          offset: 0
+          items_per_page: 10
+          total_pages: null
+          id: 0
+          tags:
+            next: ››
+            previous: ‹‹
           expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: numeric
-      sorts: {  }
-      title: 'Group pending members'
-      header: {  }
-      footer: {  }
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      access:
+        type: group_permission
+        options:
+          group_permission: 'administer membership requests'
+      cache:
+        type: tag
+        options: {  }
       empty:
         area_text_custom:
           id: area_text_custom
@@ -561,24 +494,11 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          empty: true
-          tokenize: false
-          content: 'No membership requests available.'
           plugin_id: text_custom
-      relationships:
-        gc__user:
-          id: gc__user
-          table: group_relationship_field_data
-          field: gc__user
-          relationship: none
-          group_type: group
-          admin_label: 'Group content User'
-          required: true
-          group_content_plugins:
-            group_membership_request: group_membership_request
-            group_membership: '0'
-          entity_type: group_content
-          plugin_id: group_content_to_entity
+          empty: true
+          content: 'No membership requests available.'
+          tokenize: false
+      sorts: {  }
       arguments:
         gid:
           id: gid
@@ -587,6 +507,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: group_content
+          entity_field: gid
+          plugin_id: group_id
           default_action: 'access denied'
           exception:
             value: all
@@ -601,8 +524,8 @@ display:
           summary_options:
             base_path: ''
             count: true
-            items_per_page: 25
             override: false
+            items_per_page: 25
           summary:
             sort_order: asc
             number_of_records: 0
@@ -614,23 +537,111 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
+      filters:
+        grequest_status_value:
+          id: grequest_status_value
+          table: group_content__grequest_status
+          field: grequest_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: state_machine_state
+          operator: in
+          value:
+            pending: pending
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      style:
+        type: table
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          columns:
+            label: label
+          default: '-1'
+          info:
+            label:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          override: true
+          sticky: false
+          summary: ''
+          empty_table: false
+          caption: ''
+          description: ''
+      row:
+        type: fields
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_tags: {  }
+      relationships:
+        gc__user:
+          id: gc__user
+          table: group_relationship_field_data
+          field: gc__user
+          relationship: none
+          group_type: group
+          admin_label: 'Group relationship User'
           entity_type: group_content
-          entity_field: gid
-          plugin_id: group_id
+          plugin_id: group_content_to_entity
+          required: true
+          group_content_plugins:
+            group_membership_request: group_membership_request
+            group_membership: '0'
+      header: {  }
+      footer: {  }
       display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
-        - user.group_permissions
         - 'languages:language_content'
         - 'languages:language_interface'
+        - route.group
         - url
         - url.query_args
+        - user.group_permissions
       tags: {  }
   page_1:
-    display_plugin: page
     id: page_1
     display_title: Page
+    display_plugin: page
     position: 1
     display_options:
       display_extenders: {  }
@@ -639,17 +650,18 @@ display:
         type: tab
         title: 'Membership requests'
         description: ''
-        expanded: false
-        parent: ''
         weight: 21
-        context: '0'
+        expanded: false
         menu_name: main
+        parent: ''
+        context: '0'
     cache_metadata:
       max-age: -1
       contexts:
-        - user.group_permissions
         - 'languages:language_content'
         - 'languages:language_interface'
+        - route.group
         - url
         - url.query_args
+        - user.group_permissions
       tags: {  }
