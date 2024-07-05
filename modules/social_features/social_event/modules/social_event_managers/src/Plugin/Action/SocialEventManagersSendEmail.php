@@ -4,7 +4,7 @@ namespace Drupal\social_event_managers\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
@@ -48,7 +48,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   /**
    * The Drupal module handler service.
    */
-  protected ModuleHandler $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The tempstore service.
@@ -70,15 +70,19 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     Token $token,
     EntityTypeManagerInterface $entity_type_manager,
     LoggerInterface $logger,
     LanguageManagerInterface $language_manager,
     EmailValidator $email_validator,
     QueueFactory $queue_factory,
-    $allow_text_format
+    $allow_text_format,
+    ModuleHandlerInterface $module_handler,
+    PrivateTempStoreFactory $temp_store_factory,
+    AccountInterface $current_user,
+    SocialEmailBroadcast $email_broadcast_service
   ) {
     parent::__construct(
       $configuration,
@@ -94,18 +98,29 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     );
 
     $this->entityTypeManager = $entity_type_manager;
+    $this->moduleHandler = $module_handler;
+    $this->tempStoreFactory = $temp_store_factory;
+    $this->currentUser = $current_user;
+    $this->emailBroadcast = $email_broadcast_service;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    $instance->moduleHandler = $container->get('module_handler');
-    $instance->tempStoreFactory = $container->get('tempstore.private');
-    $instance->currentUser = $container->get('current_user');
-    $instance->emailBroadcast = $container->get(SocialEmailBroadcast::class);
-    return $instance;
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+    return new static($configuration, $plugin_id, $plugin_definition,
+      $container->get('token'),
+      $container->get('entity_type.manager'),
+      $container->get('logger.factory')->get('action'),
+      $container->get('language_manager'),
+      $container->get('email.validator'),
+      $container->get('queue'),
+      $container->get('current_user')->hasPermission('use text format mail_html'),
+      $container->get('module_handler'),
+      $container->get('tempstore.private'),
+      $container->get('current_user'),
+      $container->get(SocialEmailBroadcast::class),
+    );
   }
 
   /**
@@ -285,6 +300,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
 
     // Go through each enrollment and check if a user doesn't have
     // a disabled bulk mailing.
+    $event_enrollment_ids = [];
     foreach ($selected_options as $key => $name) {
       $item = (array) $this->getListItem($name);
       if (!in_array('event_enrollment', $item)) {
@@ -292,19 +308,30 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
       }
 
       // First element is the enrollment ID.
-      $eid = $item[0] ?? 0;
-      $enrollment = EventEnrollment::load($eid);
-      if (!$enrollment) {
+      if (isset($item[0])) {
+        $event_enrollment_ids[$key] = $item[0];
+      }
+    }
+
+    $event_enrollments = EventEnrollment::loadMultiple($event_enrollment_ids);
+
+    // Get all accounts from enrollments.
+    $account_ids = [];
+    foreach ($event_enrollment_ids as $key => $eid) {
+      if (!isset($event_enrollments[$eid])) {
         continue;
       }
 
-      $account = $enrollment->getAccountEntity();
+      $account_ids[$key] = $event_enrollments[$eid]->getAccount();
+    }
 
-      // Check user frequency settings for event bulk mailing.
-      // If a user has disabled mailing, we remove enrollment from
-      // the selected list.
-      // Only authenticated users have frequency settings.
-      if ($account && $this->isUnsubscribedFromEmails($account)) {
+    $accounts = User::loadMultiple($account_ids);
+    foreach ($account_ids as $key => $uid) {
+      if (!isset($accounts[$uid])) {
+        continue;
+      }
+
+      if ($this->isUnsubscribedFromEmails($accounts[$uid])) {
         unset($selected_options[$key]);
       }
     }
@@ -316,7 +343,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     }
 
     // If some of the selected enrollees unsubscribed from emails, we should
-    // prevent executing action for all enrolles.
+    // prevent executing action for all enrollees.
     if ($select_all) {
       $context['exclude_mode'] = FALSE;
     }

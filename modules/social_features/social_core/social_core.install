@@ -537,10 +537,3 @@ function social_core_update_130007(): void {
 function social_core_update_130008(): void {
   user_role_revoke_permissions('sitemanager', ['administer taxonomy']);
 }
-
-/**
- * Install the "Social Email Broadcast" module.
- */
-function social_core_update_130009() : void {
-  \Drupal::service('module_installer')->install(['social_email_broadcast']);
-}
