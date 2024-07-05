@@ -6,14 +6,14 @@ use Drupal\group\Plugin\Group\RelationHandler\PermissionProviderInterface;
 use Drupal\group\Plugin\Group\RelationHandler\PermissionProviderTrait;
 
 /**
- * Provides group permissions for the grequest relation plugin.
+ * Provides group permissions for the group_membership_request relation plugin.
  */
 class GroupMembershipRequestPermissionProvider implements PermissionProviderInterface {
 
   use PermissionProviderTrait;
 
   /**
-   * Constructs a new GroupMembershipRequestPermissionProvider.
+   * Constructs a new GroupMembershipPermissionProvider.
    *
    * @param \Drupal\group\Plugin\Group\RelationHandler\PermissionProviderInterface $parent
    *   The default permission provider.
@@ -31,6 +31,8 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
     if ($target === 'relationship') {
       switch ($operation) {
         case 'view':
+          return "view $scope $this->pluginId $target";
+
         case 'update':
         case 'create':
         case 'delete':
@@ -49,11 +51,13 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
     // Update the title to make user friendly.
     $permissions[$this->getAdminPermission()]['title'] = 'Administer membership requests';
 
-    // Add extra permissions specific to membership group content entities.
     $permissions[$this->getRequestGroupMembershipPermission()] = [
       'title' => 'Request group membership',
       'allowed for' => ['outsider'],
     ];
+
+    $permissions[$this->getPermission('view', 'relationship')]['title'] = 'View any membership requests';
+    $permissions[$this->getPermission('view', 'relationship', 'own')]['title'] = 'View own membership requests';
 
     return $permissions;
   }
@@ -62,7 +66,7 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
    * Get request membership permission.
    *
    * @return string
-   *   Permission name.
+   *  Permission name.
    */
   public function getRequestGroupMembershipPermission() {
     return 'request group membership';

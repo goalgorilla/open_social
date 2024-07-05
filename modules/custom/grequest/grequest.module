@@ -2,43 +2,96 @@
 
 /**
  * @file
- * Primary module hooks for grequest module.
+ * Contains hooks for grequest module.
  */
-
-use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 
 /**
- * Updates status of membership requests when membership is created.
- *
- * Implements hook_ENTITY_TYPE_insert().
+ * Implements hook_entity_type_build().
  */
-function grequest_group_content_insert(GroupRelationshipInterface $group_content) {
-  $type = $group_content->getPluginId();
-  $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasPlugin('group_membership_request');
+function grequest_entity_type_build(array &$entity_types) {
+  $entity_types['group_content']
+    ->setFormClass('group-approve-membership', 'Drupal\grequest\Entity\Form\GroupMembershipApproveForm')
+    ->setLinkTemplate('group-approve-membership', '/group/{group}/content/{group_content}/approve-membership')
+    ->setFormClass('group-reject-membership', 'Drupal\grequest\Entity\Form\GroupMembershipRejectForm')
+    ->setLinkTemplate('group-reject-membership', '/group/{group}/content/{group_content}/reject-membership')
+    ->setFormClass('group-request-membership', 'Drupal\grequest\Entity\Form\GroupMembershipRequestForm');
 
-  // If new membership is created, check related membership request exists.
-  // if so - mark request as accepted.
-  if ($type == 'group_membership' && $membership_request_enabled) {
-    $approver = \Drupal::currentUser();
-    $storage = \Drupal::entityTypeManager()->getStorage('group_content');
-    $properties = [
-      'gid' => $group_content->getGroup()->id(),
-      'plugin_id' => 'group_membership_request',
-      'entity_id' => $group_content->get('entity_id')->getString(),
-      'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
-    ];
-    // loadByGroup() doesn't support filters param anymore,
-    // so, lets use loadByProperties() instead.
-    $requests = $storage->loadByProperties($properties);
+  $entity_types['group']->setLinkTemplate('group-request-membership', '/group/{group}/request-membership');
+}
 
-    /** @var \Drupal\group\Entity\GroupRelationshipInterface $request */
-    foreach ($requests as $request) {
-      $request
-        ->set('grequest_status', GroupMembershipRequest::REQUEST_ACCEPTED)
-        // Who created request will become an 'approver' for Membership request.
-        ->set('grequest_updated_by', $approver->id())
-        ->save();
+/**
+ * Implements hook_menu_local_actions_alter().
+ */
+function grequest_menu_local_tasks_alter(&$data, $route_name) {
+  $route_matcher = \Drupal::service('current_route_match');
+  $group = $route_matcher->getParameter('group');
+
+  if ($group instanceof GroupInterface && !$group->getGroupType()->hasPlugin('group_membership_request')) {
+    unset($data['tabs'][0]['views_view:view.group_pending_members.page_1']);
+  }
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function grequest_entity_type_alter(array &$entity_types) {
+  $entity_types['group_content']->addConstraint('GroupMembershipRequest');
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function grequest_group_content_delete(GroupRelationshipInterface $group_relationship) {
+  _grequest_delete_group_membership_request($group_relationship);
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function grequest_group_content_insert(GroupRelationshipInterface $group_relationship) {
+  _grequest_delete_group_membership_request($group_relationship, TRUE);
+}
+
+/**
+ * Delete a group membership request if given entity is a matching membership.
+ *
+ * If the given entity is a membership that matches with a membership request
+ * (same user, same group), delete the membership request.
+ *
+ * @param \Drupal\group\Entity\GroupRelationshipInterface $group_relationship
+ *   Group content.
+ * @param $check_settings
+ *   Check if plugin settings to remove group membership requests is enabled.
+ */
+function _grequest_delete_group_membership_request(GroupRelationshipInterface $group_relationship, $check_settings = FALSE) {
+  if (empty($group_relationship->getEntity())) {
+    return;
+  }
+
+  if ($group_relationship->getPlugin()->getPluginId() === 'group_membership') {
+    $membership_request = \Drupal::service('grequest.membership_request_manager')->getMembershipRequest($group_relationship->getEntity(), $group_relationship->getGroup());
+    if (!empty($membership_request)) {
+      // We want to delete group membership request only if the settings
+      // for removal is enabled.
+      if ($check_settings && !$membership_request->getPlugin()->getConfiguration()['remove_group_membership_request']) {
+        return;
+      }
+      $membership_request->delete();
     }
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function grequest_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.grequest':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Group Membership Request module extends Group module. It allows users to request a membership to a group and managers (administrators) to approve these requests.') . '</p>';
+      return $output;
   }
 }

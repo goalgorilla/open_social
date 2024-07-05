@@ -1,5 +1,14 @@
 services:
+  grequest.membership_request_manager:
+    class: 'Drupal\grequest\MembershipRequestManager'
+    arguments: ['@entity_type.manager', '@current_user']
+
   # Specific group relation handlers.
+  group.relation_handler.entity_reference.group_membership_request:
+    class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestEntityReference'
+    arguments: [ '@group.relation_handler.entity_reference' ]
+    shared: false
+
   group.relation_handler.operation_provider.group_membership_request:
     class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestOperationProvider'
     arguments: [ '@group.relation_handler.operation_provider', '@current_user', '@string_translation' ]
@@ -15,7 +24,13 @@ services:
     arguments: [ '@group.relation_handler.post_install', '@entity_type.manager', '@string_translation' ]
     shared: false
 
-  group.relation_handler.entity_reference.group_membership_request:
-    class: 'Drupal\grequest\Plugin\Group\RelationHandler\GroupMembershipRequestEntityReference'
-    arguments: [ '@group.relation_handler.entity_reference' ]
-    shared: false
+  grequest.pending_group_membership_request_access_checker:
+    class: Drupal\grequest\Access\PendingGroupMembershipRequestAccessChecker
+    tags:
+      - { name: access_check, applies_to: _pending_group_membership_request }
+
+  grequest.group_membership_request_access_checker:
+    class: Drupal\grequest\Access\GroupMembershipRequestAccessChecker
+    arguments: [ '@grequest.membership_request_manager' ]
+    tags:
+      - { name: access_check, applies_to: _group_membership_request }
