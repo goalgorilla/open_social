@@ -25,7 +25,7 @@ class SocialEmailBroadcast {
   /**
    * Bulk emails user's frequencies table name.
    */
-  const TABLE = 'user_email_send';
+  private const TABLE = 'user_email_send';
 
   /**
    * Constructs a SocialEmailBroadcast object.

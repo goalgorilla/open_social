@@ -9,6 +9,11 @@
  * Implements hook_schema().
  */
 function social_email_broadcast_schema(): array {
+  // This table contains users' attitude to receiving emails from a platform.
+  // The email could be sent from different places (from events - to enrollees,
+  // from groups - to group members, etc.) and usually performed by VBO feature.
+  // This table contains information regarding users' preferences to receive
+  // or not receive such emails.
   $schema['user_email_send'] = [
     'fields' => [
       'uid' => [

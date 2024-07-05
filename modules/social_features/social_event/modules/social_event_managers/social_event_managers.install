@@ -59,3 +59,12 @@ function social_event_managers_update_12201(array &$sandbox): string {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Install the "Social Email Broadcast" module.
+ */
+function social_event_managers_update_13000() : void {
+  if (!\Drupal::moduleHandler()->moduleExists('social_email_broadcast')) {
+    \Drupal::service('module_installer')->install(['social_email_broadcast']);
+  }
+}

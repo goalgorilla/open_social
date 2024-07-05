@@ -113,7 +113,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
@@ -132,7 +132,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
   /**
    * {@inheritdoc}
    */
-  public function process(Job $job): JobResult {
+  public function process(Job $job) {
     try {
       // Get the Job data.
       $data = $job->getPayload();
@@ -209,7 +209,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
       $params = ['subject' => $subject, 'body' => $body];
 
       $settings_link = Link::fromTextAndUrl($this->t('email notification settings', [], ['langcode' => $langcode]),
-        Url::fromRoute('social_email_broadcast.user_edit_page')->setAbsolute())->toString();
+        Url::fromRoute('social_user.my_settings')->setAbsolute())->toString();
 
       // Construct the render array for email.
       $notification = [

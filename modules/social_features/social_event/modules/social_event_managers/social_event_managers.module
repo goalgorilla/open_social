@@ -589,19 +589,19 @@ function social_event_managers_social_event_managers_action_social_event_manager
     // background.
     if (\Drupal::moduleHandler()->moduleExists('social_queue_storage')) {
       return [
-        'singular' => 'Based on the users settings, your email will be sent to 1 of the selected enrollees.',
+        'singular' => 'Based on the users settings, your email will be sent to @count of the selected enrollees.',
         'plural' => 'Based on the users settings, your email will be sent to @count of the selected enrollees.',
       ];
     }
 
     return [
-      'singular' => 'Based on the users settings, your email will be sent to 1 of the selected enrollees.',
-      'plural' => 'Based on the users settings, your email will be sent to 1 of the selected enrollees.',
+      'singular' => 'Based on the users settings, your email will be sent to @count of the selected enrollees.',
+      'plural' => 'Based on the users settings, your email will be sent to @count of the selected enrollees.',
     ];
   }
 
   return [
-    'singular' => 'Your email has not been sent to 1 selected enrollee.',
+    'singular' => 'Your email has not been sent to @count selected enrollee.',
     'plural' => 'Your email has not been sent to @count selected enrollees.',
   ];
 }

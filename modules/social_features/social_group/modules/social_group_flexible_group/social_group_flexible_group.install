@@ -241,3 +241,12 @@ function social_group_flexible_group_update_130004(): void {
   // Delete deprecated role.
   $config_factory->getEditable('group.role.flexible_group-group_admin')->delete();
 }
+
+/**
+ * Install the "Social Email Broadcast" module.
+ */
+function social_group_flexible_group_update_130005() : void {
+  if (!\Drupal::moduleHandler()->moduleExists('social_email_broadcast')) {
+    \Drupal::service('module_installer')->install(['social_email_broadcast']);
+  }
+}

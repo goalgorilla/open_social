@@ -2,9 +2,20 @@
 
 namespace Drupal\social_event_an_enroll\Plugin\Action;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\Core\Utility\Token;
+use Drupal\social_email_broadcast\SocialEmailBroadcast;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_managers\Plugin\Action\SocialEventManagersSendEmail;
+use Egulias\EmailValidator\EmailValidator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,18 +40,67 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
 
   /**
    * The event an enroll manager.
-   *
-   * @var \Drupal\social_event_an_enroll\EventAnEnrollManager
    */
-  protected $socialEventAnEnrollManager;
+  protected EventAnEnrollManager $socialEventAnEnrollManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(
+    array $configuration,
+          $plugin_id,
+          $plugin_definition,
+    Token $token,
+    EntityTypeManagerInterface $entity_type_manager,
+    LoggerInterface $logger,
+    LanguageManagerInterface $language_manager,
+    EmailValidator $email_validator,
+    QueueFactory $queue_factory,
+    $allow_text_format,
+    ModuleHandlerInterface $module_handler,
+    PrivateTempStoreFactory $temp_store_factory,
+    AccountInterface $current_user,
+    SocialEmailBroadcast $email_broadcast_service,
+    EventAnEnrollManager $event_an_enroll_manager
+  ) {
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $token,
+      $entity_type_manager,
+      $logger,
+      $language_manager,
+      $email_validator,
+      $queue_factory,
+      $allow_text_format,
+      $module_handler,
+      $temp_store_factory,
+      $current_user,
+      $email_broadcast_service
+    );
+
+    $this->socialEventAnEnrollManager = $event_an_enroll_manager;
+  }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
-    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    $instance->socialEventAnEnrollManager = $container->get('social_event_an_enroll.manager');
-    return $instance;
+    return new static($configuration, $plugin_id, $plugin_definition,
+      $container->get('token'),
+      $container->get('entity_type.manager'),
+      $container->get('logger.factory')->get('action'),
+      $container->get('language_manager'),
+      $container->get('email.validator'),
+      $container->get('queue'),
+      $container->get('current_user')->hasPermission('use text format mail_html'),
+      $container->get('module_handler'),
+      $container->get('tempstore.private'),
+      $container->get('current_user'),
+      $container->get(SocialEmailBroadcast::class),
+      $container->get('social_event_an_enroll.manager'),
+    );
   }
 
   /**

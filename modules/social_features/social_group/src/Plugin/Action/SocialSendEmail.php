@@ -4,10 +4,14 @@ namespace Drupal\social_group\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
-use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\Core\Utility\Token;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationship;
@@ -16,6 +20,8 @@ use Drupal\social_email_broadcast\SocialEmailBroadcast;
 use Drupal\social_user\Plugin\Action\SocialSendEmail as SocialSendEmailBase;
 use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
+use Egulias\EmailValidator\EmailValidator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -36,7 +42,7 @@ class SocialSendEmail extends SocialSendEmailBase {
   /**
    * The Drupal module handler service.
    */
-  protected ModuleHandler $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The tempstore service.
@@ -56,13 +62,58 @@ class SocialSendEmail extends SocialSendEmailBase {
   /**
    * {@inheritdoc}
    */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    Token $token,
+    EntityTypeManagerInterface $entity_type_manager,
+    LoggerInterface $logger,
+    LanguageManagerInterface $language_manager,
+    EmailValidator $email_validator,
+    QueueFactory $queue_factory,
+    $allow_text_format,
+    ModuleHandlerInterface $module_handler,
+    PrivateTempStoreFactory $temp_store_factory,
+    AccountInterface $current_user,
+    SocialEmailBroadcast $email_broadcast_service
+  ) {
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $token,
+      $entity_type_manager,
+      $logger,
+      $language_manager,
+      $email_validator,
+      $queue_factory,
+      $allow_text_format
+    );
+
+    $this->moduleHandler = $module_handler;
+    $this->tempStoreFactory = $temp_store_factory;
+    $this->currentUser = $current_user;
+    $this->emailBroadcast = $email_broadcast_service;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
-    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    $instance->moduleHandler = $container->get('module_handler');
-    $instance->tempStoreFactory = $container->get('tempstore.private');
-    $instance->currentUser = $container->get('current_user');
-    $instance->emailBroadcast = $container->get(SocialEmailBroadcast::class);
-    return $instance;
+    return new static($configuration, $plugin_id, $plugin_definition,
+      $container->get('token'),
+      $container->get('entity_type.manager'),
+      $container->get('logger.factory')->get('action'),
+      $container->get('language_manager'),
+      $container->get('email.validator'),
+      $container->get('queue'),
+      $container->get('current_user')->hasPermission('use text format mail_html'),
+      $container->get('module_handler'),
+      $container->get('tempstore.private'),
+      $container->get('current_user'),
+      $container->get(SocialEmailBroadcast::class),
+    );
   }
 
   /**
