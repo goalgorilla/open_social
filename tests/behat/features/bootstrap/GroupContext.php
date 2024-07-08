@@ -2,28 +2,33 @@
 
 namespace Drupal\social\Behat;
 
-use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
+use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRole;
-use Drupal\group\Entity\GroupType;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
  * Defines test steps around the usage of groups.
+ *
+ * It's important to note that this means Open Social (flexible) groups and does
+ * not consider other types of objects built on the group module.
  */
 class GroupContext extends RawMinkContext {
 
   use EntityTrait;
   use GroupTrait;
+
+  private const CREATE_PAGE = "/group/add/flexible_group";
 
   /**
    * Keep track of all groups that are created, so they can easily be removed.
@@ -61,6 +66,16 @@ class GroupContext extends RawMinkContext {
     $this->cKEditorContext = $environment->getContext(CKEditorContext::class);
     $this->minkContext = $environment->getContext(SocialMinkContext::class);
     $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
+  }
+
+  /**
+   * View the group creation page.
+   *
+   * @When /^(?:|I )view the group creation page$/
+   */
+  public function whenIViewTheGroupCreationPage() : void {
+    $this->visitPath(self::CREATE_PAGE);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
   /**
@@ -142,6 +157,61 @@ class GroupContext extends RawMinkContext {
 
       $group = $this->groupCreate($groupHash);
       $this->groups[$group->id()] = $group;
+    }
+  }
+
+  /**
+   * Create membership requests for users in a specified group.
+   *
+   * The membership requests are created in a `pending` state if none is
+   * specified.
+   *
+   * This function does not create group memberships, which should be created
+   * separately for approved requests. This ensures that it's easy to simulate
+   * a situation in which a user may have left after an approved request.
+   *
+   * ```
+   * Given group membership requests:
+   *   | group    | user      | status   |
+   *   | My group | Jane Doe  |          |
+   *   | My group | Jane Doe  | approved |
+   * ```
+   *
+   * @Given group membership requests:
+   */
+  public function createGroupMembershipRequests(TableNode $groupMembershipRequestsTable) {
+    $plugin_id = 'group_membership_request';
+    $relationship_type_storage = \Drupal::entityTypeManager()->getStorage('group_content_type');
+
+    // These are currently numbers but will be switched to states when adopting
+    // the contrib version of grequest.
+    $statuses = [
+      'pending' => 0,
+      'approved' => 1,
+      'rejected' => 2,
+    ];
+
+    foreach ($groupMembershipRequestsTable->getHash() as $groupMemberHash) {
+      $status = ($groupMemberHash['status'] ?? NULL) ?: "pending";
+      assert(isset($statuses[$status]), "status must be one of " . implode(", ", array_keys($statuses)) . " got '$status'.");
+      $group_id = $this->getNewestGroupIdFromTitle($groupMemberHash['group']);
+      if ($group_id === NULL) {
+        throw new \InvalidArgumentException("Group '{$groupMemberHash['group']}' not found.");
+      }
+      $group = Group::load($group_id);
+      assert($group instanceof GroupInterface);
+
+      $user = user_load_by_name($groupMemberHash['user']);
+      assert($user !== NULL && $user->id() !== 0, "User {$groupMemberHash['user']} does not exist.");
+
+      $group_type_id = $group->getGroupType()->id();
+      $group_content = GroupRelationship::create([
+        'type' => $relationship_type_storage->getRelationshipTypeId($group_type_id, $plugin_id),
+        'gid' => $group->id(),
+        'entity_id' => $user->id(),
+        'grequest_status' => $statuses[$status],
+      ]);
+      $group_content->save();
     }
   }
 
