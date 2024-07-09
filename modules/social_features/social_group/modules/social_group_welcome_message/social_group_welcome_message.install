@@ -11,3 +11,42 @@
 function social_group_welcome_message_update_last_removed() : int {
   return 10101;
 }
+
+/**
+ * Add private message permission if Social Chat is enabled.
+ */
+function social_group_welcome_message_update_13000(): void {
+  // If Social Chat module isn't enabled, we don't add permission.
+  if (\Drupal::service('module_handler')->moduleExists('social_chat')) {
+    return;
+  }
+
+  // Add Private Message permission.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'use private messaging system',
+      'create private messages thread',
+      'reply to private messages thread',
+      'delete private messages thread',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'use private messaging system',
+      'create private messages thread',
+      'reply to private messages thread',
+      'delete private messages thread',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'use private messaging system',
+      'create private messages thread',
+      'reply to private messages thread',
+      'delete private messages thread',
+    ]
+  );
+}
