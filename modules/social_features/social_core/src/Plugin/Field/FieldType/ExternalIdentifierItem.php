@@ -29,6 +29,7 @@ use Drupal\Core\TypedData\DataReferenceTargetDefinition;
  *     "ExternalIdentifierEmptySubfieldsConstraint" = {},
  *     "ExternalIdentifierExternalOwnerTargetTypeConstraint" = {},
  *     "ExternalIdentifierExternalOwnerIdConstraint" = {},
+ *     "ExternalIdentifierUniqueExternalIdConstraint" = {},
  *     "ComplexData" = {
  *       "external_id" = {
  *         "Length" = {"max" = 225}

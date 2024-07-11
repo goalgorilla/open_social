@@ -8,7 +8,10 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\social_core_test_entity_provider\Entity\ConsumerATestProvider;
+use Drupal\social_core_test_entity_provider\Entity\ConsumerBTestProvider;
 use Drupal\social_core_test_entity_provider\Entity\ExternalOwnerEntityTestProvider;
+use Drupal\user\Entity\User;
 
 /**
  * Tests the social_external_identifier field type.
@@ -40,6 +43,8 @@ class ExternalIdFieldTypeTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
     $this->installEntitySchema('test_external_owner_entity');
+    $this->installEntitySchema('test_consumer_a');
+    $this->installEntitySchema('test_consumer_b');
     $this->installConfig(['field', 'node', 'user']);
 
     // Create a node type.
@@ -50,45 +55,24 @@ class ExternalIdFieldTypeTest extends KernelTestBase {
     $node_type->save();
 
     // Create the field storage.
-    $field_storage_field_social_external_identifier = FieldStorageConfig::create([
-      'field_name' => 'field_social_external_identifier',
-      'entity_type' => 'node',
-      'type' => 'social_external_identifier',
-      'settings' => [
-        'target_types' => [
-          'test_external_owner_entity' => 'test_external_owner_entity',
-        ],
+    $this->createSocialExternalIdentifierFieldStorage(
+      'node',
+      'test',
+      'field_social_external_identifier',
+      [
+        'test_external_owner_entity' => 'test_external_owner_entity',
       ],
-      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
-    ]);
-    $field_storage_field_social_external_identifier->save();
-    // Create the field.
-    $field_field_social_external_identifier = FieldConfig::create([
-      'field_storage' => $field_storage_field_social_external_identifier,
-      'bundle' => 'test',
-      'label' => 'External Identifier example',
-    ]);
-    $field_field_social_external_identifier->save();
+      'External Identifier example'
+    );
 
     // Create the field storage for field without target types defined.
-    $field_storage_field_sei_no_target_types = FieldStorageConfig::create([
-      // `sei` stands for social_external_identifier.
-      'field_name' => 'field_sei_no_target_types',
-      'entity_type' => 'node',
-      'type' => 'social_external_identifier',
-      'settings' => [
-        'target_types' => [],
-      ],
-      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
-    ]);
-    $field_storage_field_sei_no_target_types->save();
-    // Create the field.
-    $field_field_storage_field_sei_no_target_types = FieldConfig::create([
-      'field_storage' => $field_storage_field_sei_no_target_types,
-      'bundle' => 'test',
-      'label' => 'External Identifier example',
-    ]);
-    $field_field_storage_field_sei_no_target_types->save();
+    $this->createSocialExternalIdentifierFieldStorage(
+      'node',
+      'test',
+      'field_sei_no_target_types',
+      [],
+      'External Identifier example'
+    );
   }
 
   // TOC
@@ -109,6 +93,7 @@ class ExternalIdFieldTypeTest extends KernelTestBase {
   // Case 8: Not allowed target type.
   // Case 9: Invalid target type.
   // Case 10: Target types are not defined.
+  // Case 11: External id uniqueness.
 
   /**
    * Case 0: Test external identifier field settings.
@@ -394,6 +379,371 @@ class ExternalIdFieldTypeTest extends KernelTestBase {
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup; $message_1 */
     $message_1 = $violations->get(0)->getMessage();
     $this->assertSame('Currently, there are no available target types (allowed entity types). Please contact the system administrator to enable at least one target type.', $message_1->render());
+  }
+
+  /**
+   * Case 11: External id uniqueness.
+   *
+   * Validates the ExternalIdentifierUniqueExternalIdConstraint constraint.
+   *
+   * @dataProvider provideTestExternalIdentifierUniqueExternalIdConstraintData
+   */
+  public function testExternalIdentifierUniqueExternalIdConstraint(
+    int $expected_number_of_violations,
+    string $expected_violation_message,
+    string $new_entity_type,
+    array $new_entity_data
+  ): void {
+
+    // Create entities to which all other scenarios will be validated against.
+    // Create a node type article.
+    $node_type_article = NodeType::create([
+      'type' => 'article',
+      'name' => 'Article',
+    ]);
+    $node_type_article->save();
+
+    // Create a node type event.
+    $node_type_event = NodeType::create([
+      'type' => 'event',
+      'name' => 'Event',
+    ]);
+    $node_type_event->save();
+
+    // test_consumer_a:1.
+    $test_consumer_a = ConsumerATestProvider::create([
+      'name' => 'Consumer A (1)',
+    ]);
+    $test_consumer_a->save();
+
+    // test_consumer_a:2.
+    $test_consumer_b = ConsumerATestProvider::create([
+      'name' => 'Consumer A (2)',
+    ]);
+    $test_consumer_b->save();
+
+    // test_consumer_b:1.
+    $test_owner_entity = ConsumerBTestProvider::create([
+      'name' => 'Consumer B (1)',
+    ]);
+    $test_owner_entity->save();
+
+    // Create the field storage for field_ex_id_1 (article).
+    $this->createSocialExternalIdentifierFieldStorage(
+      'node',
+      'article',
+      'field_ex_id_1',
+      [
+        'test_consumer_a' => 'test_consumer_a',
+        'test_consumer_b' => 'test_consumer_b',
+      ],
+      'External Identifier 1 (article)'
+    );
+
+    // Create the field storage for field_ex_id_2 (article).
+    $this->createSocialExternalIdentifierFieldStorage(
+      'node',
+      'article',
+      'field_ex_id_2',
+      [
+        'test_consumer_a' => 'test_consumer_a',
+        'test_consumer_b' => 'test_consumer_b',
+      ],
+      'External Identifier 2 (article)'
+    );
+
+    // Create the field storage for field_ex_id_1 (event).
+    $this->createSocialExternalIdentifierFieldStorage(
+      'node',
+      'event',
+      'field_ex_id_1',
+      [
+        'test_consumer_a' => 'test_consumer_a',
+        'test_consumer_b' => 'test_consumer_b',
+      ],
+      'External Identifier 1 (event)'
+    );
+
+    // Create the field storage for field_ex_id_1 (user).
+    $this->createSocialExternalIdentifierFieldStorage(
+      'user',
+      'user',
+      'field_ex_id_1',
+      [
+        'test_consumer_a' => 'test_consumer_a',
+        'test_consumer_b' => 'test_consumer_b',
+      ],
+      'External Identifier 1 (user)'
+    );
+
+    // Node:1.
+    $node = Node::create([
+      'type' => 'article',
+      'title' => 'Article 1',
+      'field_ex_id_1' => [
+        'external_id' => '123',
+        'external_owner_target_type' => 'test_consumer_a',
+        'external_owner_id' => '1',
+      ],
+    ]);
+    $node->save();
+
+    // Validation.
+    $entity_storage = \Drupal::entityTypeManager()->getStorage($new_entity_type);
+    $new_entity = $entity_storage->create($new_entity_data);
+
+    if ($new_entity instanceof Node || $new_entity instanceof User) {
+      $violations = $new_entity->validate();
+      $this->assertCount($expected_number_of_violations, $violations);
+      if ($violations->count() > 0) {
+        $this->assertInstanceOf('Drupal\social_core\Plugin\Validation\Constraint\ExternalIdentifierUniqueExternalIdConstraint', $violations->get(0)->getConstraint());
+        /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $message */
+        $message = $violations->get(0)->getMessage();
+        $constraint_message = $message->render();
+      }
+      else {
+        $constraint_message = '';
+      }
+      $this->assertSame($expected_violation_message, $constraint_message);
+    }
+    else {
+      throw new \Exception('Unsupported entity type');
+    }
+
+  }
+
+  /**
+   * Data set provider for testExternalIdentifierUniqueExternalIdConstraint.
+   *
+   * In the scenarios we are only validating second node creation (node:1 is
+   * part of the setup and is the same per each data set).
+   *
+   * @return array[]
+   *   Data provider array.
+   */
+  public function provideTestExternalIdentifierUniqueExternalIdConstraintData() {
+    return [
+
+      // Scenario 1:
+      // | Entity | Bundle  | Field         | External ID | External owner    |
+      // | ------ | ------- | ------------- | ----------- | ----------------- |
+      // | node:1 | article | field_ex_id_1 | 123         | test_consumer_a:1 |
+      // | node:2 | article | field_ex_id_1 | 123         | test_consumer_a:1 |
+      //
+      // Expected result:
+      // Scenario should trigger constraint error as External ID is not unique.
+      [
+        1,
+        'External identifier id should be unique. External identifier id "<em class="placeholder">123</em>" is already used, with external owner "<em class="placeholder">test_consumer_a</em>" of id "<em class="placeholder">1</em>".',
+        'node',
+        [
+          'type' => 'article',
+          'title' => 'Article 2',
+          'field_ex_id_1' => [
+            'external_id' => '123',
+            'external_owner_target_type' => 'test_consumer_a',
+            'external_owner_id' => '1',
+          ],
+        ],
+      ],
+
+      // Scenario 2:
+      // | Entity | Bundle  | Field         | External ID | External owner    |
+      // | ------ | ------- | ------------- | ----------- | ----------------- |
+      // | node:1 | article | field_ex_id_1 | 123         | test_consumer_a:1 |
+      // | node:2 | article | field_ex_id_2 | 123         | test_consumer_a:1 |
+      //
+      // Expected result:
+      // Scenario should trigger constraint error as External ID is not unique
+      // even withing two different fields within same entity type.
+      [
+        1,
+        'External identifier id should be unique. External identifier id "<em class="placeholder">123</em>" is already used, with external owner "<em class="placeholder">test_consumer_a</em>" of id "<em class="placeholder">1</em>".',
+        'node',
+        [
+          'type' => 'article',
+          'title' => 'Article 2',
+          'field_ex_id_2' => [
+            'external_id' => '123',
+            'external_owner_target_type' => 'test_consumer_a',
+            'external_owner_id' => '1',
+          ],
+        ],
+      ],
+
+      // Scenario 3:
+      // | Entity | Bundle  | Field         | External ID | External owner    |
+      // | ------ | ------- | ------------- | ----------- | ----------------- |
+      // | node:1 | article | field_ex_id_1 | 123         | test_consumer_a:1 |
+      // | node:2 | event   | field_ex_id_1 | 123         | test_consumer_a:1 |
+      //
+      // Expected result:
+      // Scenario should trigger constraint error as External ID is not unique
+      // even within two different entity bundles within same entity type.
+      [
+        1,
+        'External identifier id should be unique. External identifier id "<em class="placeholder">123</em>" is already used, with external owner "<em class="placeholder">test_consumer_a</em>" of id "<em class="placeholder">1</em>".',
+        'node',
+        [
+          'type' => 'event',
+          'title' => 'Event 1',
+          'field_ex_id_1' => [
+            'external_id' => '123',
+            'external_owner_target_type' => 'test_consumer_a',
+            'external_owner_id' => '1',
+          ],
+        ],
+      ],
+
+      // Scenario 4:
+      // | Entity | Bundle  | Field         | External ID | External owner    |
+      // | ------ | ------- | ------------- | ----------- | ----------------- |
+      // | node:1 | article | field_ex_id_1 | 123         | test_consumer_a:1 |
+      // | user:1 | /       | field_ex_id_1 | 123         | test_consumer_a:1 |
+      //
+      // Expected result:
+      // This situation is allowed as External ID is unique per entity type.
+      [
+        0,
+        '',
+        'user',
+        [
+          'type' => 'user',
+          'name' => 'user1',
+          'mail' => 'user1@example.com',
+          'field_ex_id_1' => [
+            'external_id' => '123',
+            'external_owner_target_type' => 'test_consumer_a',
+            'external_owner_id' => '1',
+          ],
+        ],
+      ],
+
+      // Scenario 5:
+      // | Entity | Bundle  | Field         | External ID | External owner    |
+      // | ------ | ------- | ------------- | ----------- | ----------------- |
+      // | node:1 | article | field_ex_id_1 | 123         | test_consumer_a:1 |
+      // | node:2 | article | field_ex_id_1 | 123         | test_consumer_a:2 |
+      //
+      // Expected result:
+      // This situation is allowed as External ID is unique per external owner.
+      [
+        0,
+        '',
+        'node',
+        [
+          'type' => 'article',
+          'title' => 'Article 2',
+          'field_ex_id_1' => [
+            'external_id' => '123',
+            'external_owner_target_type' => 'test_consumer_a',
+            'external_owner_id' => '2',
+          ],
+        ],
+      ],
+
+      // Scenario 6:
+      // | Entity | Bundle  | Field         | External ID | External owner    |
+      // | ------ | ------- | ------------- | ----------- | ----------------- |
+      // | node:1 | article | field_ex_id_1 | 123         | test_consumer_a:1 |
+      // | node:2 | article | field_ex_id_1 | 123         | test_consumer_b:1 |
+      //
+      // Expected result:
+      // This situation is allowed as External ID is unique per external owner.
+      [
+        0,
+        '',
+        'node',
+        [
+          'type' => 'article',
+          'title' => 'Article 2',
+          'field_ex_id_1' => [
+            'external_id' => '123',
+            'external_owner_target_type' => 'test_consumer_b',
+            'external_owner_id' => '1',
+          ],
+        ],
+      ],
+
+      // Scenario 6:
+      // | Entity | Bundle  | Field         | External ID | External owner    |
+      // | ------ | ------- | ------------- | ----------- | ----------------- |
+      // | node:1 | article | field_ex_id_1 | 123         | test_consumer_a:1 |
+      // | node:2 | article | field_ex_id_1 | 1234        | test_consumer_a:1 |
+      //
+      // Expected result:
+      // This situation is allowed as External ID is unique.
+      [
+        0,
+        '',
+        'node',
+        [
+          'type' => 'article',
+          'title' => 'Article 2',
+          'field_ex_id_1' => [
+            'external_id' => '1234',
+            'external_owner_target_type' => 'test_consumer_a',
+            'external_owner_id' => '1',
+          ],
+        ],
+      ],
+    ];
+
+  }
+
+  /**
+   * Create social_external_identifier field storage.
+   *
+   * @param string $entity_type
+   *   Entity type.
+   * @param string $bundle
+   *   Bundle.
+   * @param string $field_machine_name
+   *   Field machine name.
+   * @param array $allowed_target_types
+   *   Allowed target types for social_external_identifier field.
+   *   Example: ['consumer_a' => 'consumer_a', 'consumer_b' => 'consumer_b'].
+   * @param string $label
+   *   Field label.
+   *
+   * @return void
+   *   Return void.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  private function createSocialExternalIdentifierFieldStorage(
+    string $entity_type,
+    string $bundle,
+    string $field_machine_name,
+    array $allowed_target_types,
+    string $label
+  ): void {
+
+    if (!FieldStorageConfig::load($entity_type . '.' . $field_machine_name)) {
+      // Create the field storage.
+      $field_storage = FieldStorageConfig::create([
+        'field_name' => $field_machine_name,
+        'entity_type' => $entity_type,
+        'type' => 'social_external_identifier',
+        'settings' => [
+          'target_types' => $allowed_target_types,
+        ],
+        'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+      ]);
+      $field_storage->save();
+    }
+    else {
+      $field_storage = FieldStorageConfig::load($entity_type . '.' . $field_machine_name);
+    }
+
+    // Create the field.
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => $bundle,
+      'label' => $label,
+    ]);
+    $field->save();
+
   }
 
 }
