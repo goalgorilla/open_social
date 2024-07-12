@@ -25,7 +25,7 @@ Feature: I want to have a profile
          | City | Lviv |
          | Street address | Fedkovycha 60a |
          | Postal code | 79000 |
-    And I select "Lviv oblast" from "Region"
+    And I select "Lvivska oblast" from "Region"
     And I fill in the "edit-field-profile-self-introduction-0-value" WYSIWYG editor with "Self intro text."
     And I press "Save"
     Then I should see "Edit"
@@ -36,5 +36,5 @@ Feature: I want to have a profile
     And I should see "Fedkovycha 60a"
     And I should see "79000"
     And I should see "Lviv"
-    And I should see "Lviv oblast"
+    And I should see "Lvivska oblast"
     And I should see "Self intro text"

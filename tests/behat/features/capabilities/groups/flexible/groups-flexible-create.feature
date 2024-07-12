@@ -24,7 +24,7 @@ Feature: Create flexible groups
       | Street address                   | Fedkovycha 60a      |
       | Postal code                      | 79000               |
     # @todo https://www.drupal.org/project/social/issues/3314737
-    # | Oblast                           | Lviv Oblast         |
+    # | Oblast                           | Lvivska Oblast         |
 
     Then I should see the group I just created
 
