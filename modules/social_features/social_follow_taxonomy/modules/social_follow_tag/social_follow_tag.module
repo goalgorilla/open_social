@@ -5,6 +5,7 @@
  * Contains social_follow_tag.module.
  */
 
+use Drupal\activity_creator\ActivityInterface;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -14,6 +15,7 @@ use Drupal\node\NodeInterface;
 use Drupal\social_follow_taxonomy\Plugin\views\filter\FollowTaxonomyViewsFilter;
 use Drupal\taxonomy\TermInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme().
@@ -583,5 +585,55 @@ function _social_follow_tag_update_term_list(array &$form): array {
   }
   else {
     return $form['field_terms'];
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function social_follow_tag_activity_view(array &$build, ActivityInterface $activity, EntityViewDisplayInterface $display, string $view_mode): void {
+  /** @var \Drupal\activity_creator\Entity\Activity $activity */
+  $view = $activity->view ?? NULL;
+  if (!$view instanceof ViewExecutable) {
+    return;
+  }
+
+  if ($view->id() !== 'activity_stream' && $view->current_display !== 'block_stream_homepage') {
+    return;
+  }
+
+  /** @var \Drupal\message\MessageInterface $message */
+  $message = $activity->get('field_activity_message')->entity;
+  if ($message->bundle() !== 'update_node_following_tag') {
+    return;
+  }
+
+  // We should hide all activities created for "update_node_following_tag"
+  // template for anonymous and LU who aren't followers of tags added in a node.
+  if (\Drupal::currentUser()->isAnonymous()) {
+    // Hide the activity.
+    $build['#printed'] = TRUE;
+  }
+  else {
+    // Check if current user followed related node.
+    $entity = $activity->getRelatedEntity();
+    if ($entity instanceof NodeInterface) {
+      $tags = $entity->hasField('social_tagging')
+        ? array_column($entity->get('social_tagging')->getValue(), 'target_id')
+        : [];
+
+      $is_node_follower = \Drupal::database()->select($flagging = 'flagging')
+        ->fields($flagging)
+        ->condition('entity_id', $tags ?: [0], 'IN')
+        ->condition('entity_type', 'taxonomy_term')
+        ->condition('flag_id', 'follow_term')
+        ->condition('uid', \Drupal::currentUser()->id())
+        ->execute()?->fetchAll();
+
+      if (!$is_node_follower) {
+        // Hide the activity.
+        $build['#printed'] = TRUE;
+      }
+    }
   }
 }
