@@ -24,7 +24,7 @@ Feature: I want to be able to hide certain profile information
       | City | Lviv |
       | Street address | Fedkovycha 60a |
       | Postal code | 79000 |
-    And I select "Lviv oblast" from "Region"
+    And I select "Lvivska oblast" from "Region"
     And I press "Save"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
@@ -38,7 +38,7 @@ Feature: I want to be able to hide certain profile information
     And I should see "Fedkovycha 60a"
     And I should see "79000"
     And I should see "Lviv"
-    And I should see "Lviv oblast"
+    And I should see "Lvivska oblast"
 
     Given I am logged in as "user_1"
     And I click the xth "0" element with the css ".navbar-nav .profile"
@@ -60,7 +60,7 @@ Feature: I want to be able to hide certain profile information
     And I should not see "Fedkovycha 60a"
     And I should not see "79000"
     And I should not see "Lviv"
-    And I should not see "Lviv oblast"
+    And I should not see "Lvivska oblast"
 
     # Enable the privacy setting.
     Given I am logged in as an "administrator"
@@ -70,4 +70,4 @@ Feature: I want to be able to hide certain profile information
     And I should see "Fedkovycha 60a"
     And I should see "79000"
     And I should see "Lviv"
-    And I should see "Lviv oblast"
+    And I should see "Lvivska oblast"
