@@ -1558,7 +1558,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2024-07-02 13:23+0000\n"
+"POT-Creation-Date: 2024-07-15 09:33+0000\n"
 "PO-Revision-Date: 2022-03-21 12:09+0000\n"
 "Last-Translator: Maja <maja.stanisic+1@gmail.com>\n"
 "Language-Team: Croatian <https://translate.getopensocial.com/projects/gpcee/"
@@ -1866,6 +1866,17 @@ msgid_plural "@count members"
 msgstr[0] "1 član"
 msgstr[1] "@count člana"
 msgstr[2] "@count člana"
+
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php:231
+#: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php:353
+msgid ""
+"1 member won't receive this email due to their communication preferences."
+msgid_plural ""
+"@count members won't receive this email due to their communication "
+"preferences."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:352
 msgid "1 membership invite for group: @group_name"
@@ -3011,7 +3022,7 @@ msgstr[0] "@usernames je već član @type, ne možeš ga dodati opet"
 msgstr[1] "@usernames su već članovi @type, ne možeš ih dodati opet"
 msgstr[2] "@usernames su već članovi @type, ne možeš ih dodati opet"
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:192;205
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:205;218
 #: modules/social_features/social_node/src/SocialNodeForm.php:104
 msgid "@visibility visibility is not allowed"
 msgstr ""
@@ -3040,7 +3051,7 @@ msgstr "Odjeljak bloka u kojem se može odabrati blok ili odlomak"
 msgid "A boolean indicating whether the Activity is published."
 msgstr "Booleov operator naznačuje je li Aktivnost objavljena."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:277
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:288
 msgid "A boolean indicating whether the Event enrollment is published."
 msgstr "Booleov operator naznačuje je li objavljeno sudjelovanje na Događaju."
 
@@ -3741,7 +3752,7 @@ msgstr "Dodaj ulogu označenim korisnicima"
 msgid "Add alternative frontpage settings"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:413
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:426
 msgid "Add another organizer"
 msgstr "Dodaj organizatora"
 
@@ -4729,7 +4740,7 @@ msgid ""
 "picture or name."
 msgstr ""
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:50
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:63
 msgid ""
 "Altering the visibility options could result in changes in access for "
 "content within this group and the group itself."
@@ -4746,6 +4757,10 @@ msgstr "Alternativna naslovnica"
 #: modules/custom/alternative_frontpage/alternative_frontpage.routing.yml:0
 msgid "Alternative Frontpage Settings"
 msgstr "Postavke alternativne naslovnice"
+
+#: modules/social_features/social_email_broadcast/social_email_broadcast.module:108
+msgid "Always"
+msgstr ""
 
 #: modules/social_features/social_core/config/schema/social_core.schema.yml:0
 msgid "Always show all comments"
@@ -5077,7 +5092,7 @@ msgstr "Korisnički id autora"
 #: modules/custom/activity_creator/src/Entity/Activity.php:149
 #: modules/custom/social_font/src/Entity/Font.php:152
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:167
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:230
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:241
 #: modules/social_features/social_post/src/Entity/Post.php:322
 msgid "Authored by"
 msgstr "Autor"
@@ -5309,6 +5324,10 @@ msgstr "Breadcrumbs (putanje)"
 msgid "Bulk action"
 msgstr "Skupna radnja"
 
+#: modules/social_features/social_email_broadcast/src/Plugin/EmailBuilder/SocialEmailBroadcastEmailBuilder.php:13;13
+msgid "Bulk emails"
+msgstr ""
+
 #: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.hero.default.yml:0
 #: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.hero_small.default.yml:0
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.button.yml:0
@@ -5514,7 +5533,7 @@ msgstr "Ovdje promijeni vremensku zonu"
 #: modules/custom/activity_creator/src/Entity/Activity.php:193
 #: modules/custom/social_font/src/Entity/Font.php:206
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:216
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:294
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:305
 #: modules/social_features/social_post/src/Entity/Post.php:374
 msgid "Changed"
 msgstr "Promijenjeno"
@@ -5613,7 +5632,7 @@ msgid ""
 msgstr ""
 
 #: translations.php:116
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:81
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:94
 msgid "Choose the visibility options allowed for the group content."
 msgstr "Odaberi opcije vidljivosti za sadržaj grupe."
 
@@ -5882,6 +5901,10 @@ msgstr "Stranica događaja u zajednici"
 msgid "Community statistics"
 msgstr "Statistike zajednice"
 
+#: modules/social_features/social_email_broadcast/social_email_broadcast.module:154
+msgid "Community updates and announcements"
+msgstr ""
+
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.compact.yml:0
 msgid "Compact Avatar"
 msgstr "Kompaktni avatar"
@@ -5980,7 +6003,7 @@ msgstr ""
 msgid "Configure the display of icons in the main navigation."
 msgstr "Konfiguriraj prikaz ikona u glavnoj navigaciji."
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php:129
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php:248
 msgid ""
 "Configure the email you want to send to the one enrollee you have selected."
 msgid_plural ""
@@ -5990,7 +6013,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php:50
+#: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php:370
 msgid ""
 "Configure the email you want to send to the one member you have selected."
 msgid_plural ""
@@ -6323,7 +6346,7 @@ msgstr "Kreiraj novi sadržaj"
 msgid "Create New Event"
 msgstr "Kreiraj novi događaj"
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:874
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:887
 msgid "Create New Group"
 msgstr "Kreiraj novu grupu"
 
@@ -6539,7 +6562,7 @@ msgstr "Kreiraj temu u grupi"
 #: modules/custom/mentions/src/Entity/Mentions.php:73
 #: modules/custom/social_font/src/Entity/Font.php:202
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:212
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:290
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:301
 #: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php:106
 #: modules/social_features/social_post/src/PostListBuilder.php:23
 #: modules/social_features/social_post/src/Entity/Post.php:370
@@ -7499,7 +7522,7 @@ msgid "Edit report details"
 msgstr "Uredi pojedinosti prijave"
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/ActivityDestination/EmailActivityDestination.php:8
-#: modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/Action/SocialEventAnEnrollSendEmail.php:17
+#: modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/Action/SocialEventAnEnrollSendEmail.php:21
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserEmail.php:8
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserEmail.php:23;8
 #: modules/custom/social_queue_storage/config/install/social_queue_storage.queue_storage_entity_type.email.yml:0
@@ -7528,6 +7551,7 @@ msgid "Email notification settings"
 msgstr "Postavke obavijesti e-poštom"
 
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:133
+#: modules/social_features/social_email_broadcast/social_email_broadcast.module:55
 msgid "Email notifications"
 msgstr "Obavijesti e-poštom"
 
@@ -7864,7 +7888,7 @@ msgid ""
 msgstr ""
 "Upis bez računa može se omogućiti samo kada je vidljivost događaja javna."
 
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:377
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:390
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0;0
 msgid "Enrollments"
 msgstr "Upisi"
@@ -8145,6 +8169,10 @@ msgstr "Upravitelji događaja mogu dopustiti korisnicima slanje poziva"
 msgid "Event managers are able to allow users send invites."
 msgstr "Upravitelji događaja mogu dopustiti korisnicima slanje poziva."
 
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:75
+msgid "Event managers can keep me posted on events I've enrolled in."
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.menu.yml:0
 msgid "Event managers settings"
 msgstr "Postavke upravitelja događaja"
@@ -8268,7 +8296,7 @@ msgstr "Istraži stranicu za LU"
 msgid "Explore tag"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.tokens.inc:186
+#: modules/social_features/social_group/social_group.tokens.inc:192
 msgid "Explore the group"
 msgstr "Istraži grupu"
 
@@ -8822,6 +8850,7 @@ msgid "Footer region to put the JS in."
 msgstr "Podnožje u koje treba staviti JS."
 
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:134
+#: modules/social_features/social_email_broadcast/social_email_broadcast.module:56
 msgid ""
 "For each email notification below, you can choose to turn it off, receive it "
 "immediately or in a daily or weekly digest. Email notifications will only be "
@@ -9065,7 +9094,7 @@ msgstr "Vrsta grupe"
 msgid "Group Views Bulk Operations"
 msgstr ""
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:372
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:385
 msgid "Group Visibility"
 msgstr "Vidljivost grupe"
 
@@ -9127,12 +9156,12 @@ msgid "Group content in my group activity context"
 msgstr "Sadržaj u grupi u mom kontekstu aktivnosti u grupi"
 
 #: modules/social_features/social_group/social_group.module:372
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:376
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:389
 msgid "Group content visibility"
 msgstr "Vidljivost sadržaja u grupi"
 
 #: translations.php:115
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:78
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:91
 msgid "Group content visibility options"
 msgstr "Opcije vidljivosti sadržaja u grupi"
 
@@ -9307,8 +9336,12 @@ msgstr "Naziv grupe"
 msgid "Groups url"
 msgstr "URL grupe"
 
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:51
+msgid "Groups: Group managers can update me on groups I belong to"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/EventAnEnrollManager.php:32
-#: modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/Action/SocialEventAnEnrollSendEmail.php:170
+#: modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/Action/SocialEventAnEnrollSendEmail.php:159
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserDisplayName.php:85
 msgid "Guest"
 msgstr "Gost"
@@ -9475,7 +9508,7 @@ msgid "Homepage stream block (with post form)"
 msgstr ""
 
 #: translations.php:118
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:101
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:114
 msgid ""
 "How can people join this group. Group managers can always add members "
 "directly, regardless of the chosen join method."
@@ -9492,7 +9525,7 @@ msgstr "Koliko prijedloga želiš prikazati kada nekoga spominješ."
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
 #: modules/custom/social_queue_storage/config/schema/queue_storage_entity_type.schema.yml:0
 #: modules/custom/social_queue_storage/src/QueueStorageEntityListBuilder.php:21
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:221
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:232
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:515
 #: modules/social_features/social_post/config/schema/post.schema.yml:0
 #: modules/social_features/social_post/config/schema/post_type.schema.yml:0
@@ -9949,7 +9982,7 @@ msgstr "Metoda pridruživanja"
 
 #: translations.php:117
 #: modules/social_features/social_group/social_group.module:2688
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:98
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:111
 msgid "Join methods"
 msgstr "Metode pridruživanja"
 
@@ -10030,7 +10063,7 @@ msgstr "Jezik"
 #: modules/custom/mentions/src/Entity/Mentions.php:82
 #: modules/custom/social_language/src/Plugin/UserExportPlugin/UserLanguageCode.php:23;8
 #: modules/social_features/social_event/config/schema/social_event.schema.yml:0
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:281
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:292
 #: modules/social_features/social_post/src/Entity/Post.php:361
 msgid "Language code"
 msgstr "Kôd jezika"
@@ -10961,7 +10994,7 @@ msgstr "Blok mojih nadolazećih događaja"
 #: modules/custom/social_font/src/Entity/Font.php:177
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:191
 #: modules/social_features/social_event/src/EventEnrollmentListBuilder.php:23
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:256
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:267
 #: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php:88
 #: modules/custom/grequest/config/optional/views.view.group_pending_members.yml:0
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
@@ -10994,6 +11027,7 @@ msgid "Navigation Settings"
 msgstr "Postavke navigacije"
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/None.php:10
+#: modules/social_features/social_email_broadcast/social_email_broadcast.module:109
 msgid "Never"
 msgstr "Nikada"
 
@@ -11013,7 +11047,7 @@ msgstr "Novi sadržaj"
 msgid "New Event"
 msgstr "Novi događaj"
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:866
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:879
 msgid "New Group"
 msgstr "Nova grupa"
 
@@ -11202,6 +11236,11 @@ msgstr "Nema dostupnih poziva."
 #: modules/social_features/social_event/modules/social_event_invite/src/SocialEventInviteBulkHelper.php:273
 msgid "No invites were sent, recipients already received one before."
 msgstr "Pozivi nisu poslani, primatelji su već pozvani."
+
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php:241
+#: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php:363
+msgid "No items selected. Go back and try again."
+msgstr ""
 
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 msgid "No likes yet"
@@ -12969,7 +13008,7 @@ msgstr "Objavljeni status"
 
 #: modules/custom/activity_creator/src/Entity/Activity.php:175
 #: modules/custom/social_font/src/Entity/Font.php:197
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:276
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:287
 msgid "Publishing status"
 msgstr "Objava statusa"
 
@@ -13033,7 +13072,7 @@ msgstr "Ponovno indeksirano pretraživanje radi uključivanja demo sadržaja."
 msgid "Read more"
 msgstr "Pročitaj više"
 
-#: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:220
+#: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:227
 msgid "Read more about it"
 msgstr "Pročitaj više o tome"
 
@@ -13316,8 +13355,8 @@ msgstr "Odgovori na komentar"
 msgid "Reply to private messages"
 msgstr "Odgovori na privatne poruke"
 
-#: modules/social_features/social_comment/social_comment.tokens.inc:293
-#: modules/social_features/social_mentions/social_mentions.tokens.inc:248
+#: modules/social_features/social_comment/social_comment.tokens.inc:300
+#: modules/social_features/social_mentions/social_mentions.tokens.inc:252
 msgid "Reply to this comment"
 msgstr "Odgovori na ovaj komentar"
 
@@ -13823,11 +13862,11 @@ msgstr "Odjeljak"
 msgid "Sections"
 msgstr "Odjeljci"
 
-#: modules/social_features/social_like/social_like.tokens.inc:185
+#: modules/social_features/social_like/social_like.tokens.inc:198
 msgid "See all likes"
 msgstr "Vidi sve lajkove"
 
-#: modules/social_features/social_group/social_group.tokens.inc:200
+#: modules/social_features/social_group/social_group.tokens.inc:206
 msgid "See all members"
 msgstr "Vidi sve članove"
 
@@ -14106,11 +14145,11 @@ msgstr ""
 msgid "Send email"
 msgstr "Pošalji email"
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php:19
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php:26
 msgid "Send email to event enrollment users"
 msgstr "Pošalji e-poruku korisnicima upisanima na događaj"
 
-#: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php:11
+#: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php:27
 msgid "Send email to group members"
 msgstr "Pošalji e-poruku članovima grupe"
 
@@ -14534,6 +14573,7 @@ msgstr "Kratki uvod"
 #: modules/social_features/social_core/social_core.info.yml:0
 #: modules/social_features/social_download_count/social_download_count.info.yml:0
 #: modules/social_features/social_editor/social_editor.info.yml:0
+#: modules/social_features/social_email_broadcast/social_email_broadcast.info.yml:0
 #: modules/social_features/social_embed/social_embed.info.yml:0
 #: modules/social_features/social_event/social_event.module:487
 #: modules/social_features/social_event/social_event.info.yml:0
@@ -14725,6 +14765,10 @@ msgstr "Social Broj preuzimanja"
 #: modules/social_features/social_editor/social_editor.info.yml:0
 msgid "Social Editor"
 msgstr "Social Urednik"
+
+#: modules/social_features/social_email_broadcast/social_email_broadcast.info.yml:0
+msgid "Social Email Broadcast"
+msgstr ""
 
 #: modules/social_features/social_embed/social_embed.info.yml:0
 msgid "Social Embed"
@@ -15514,6 +15558,7 @@ msgstr "Sufiks"
 msgid "Suggestions format"
 msgstr "Format prijedloga"
 
+#: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserSummary.php:28;8
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_summary.yml:0
 msgid "Summary"
 msgstr ""
@@ -15584,7 +15629,7 @@ msgstr "Polje za označavanje."
 
 #: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:164
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php:144
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:426
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:439
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/src/SocialProfileOrgTagConfigOverride.php:54;57
 #: modules/social_features/social_tagging/social_tagging.module:282;312;484
 #: modules/social_features/social_tagging/src/SocialTaggingOverrides.php:131;242
@@ -15771,7 +15816,7 @@ msgstr ""
 msgid "The ID of the Activity entity."
 msgstr "ID entiteta aktivnost."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:222
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:233
 msgid "The ID of the Event enrollment entity."
 msgstr "ID entiteta upisa na događaj."
 
@@ -15784,7 +15829,7 @@ msgid "The JS to add to the site."
 msgstr "JS za dodavanje na stranicu."
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/AdvancedQueue/JobType/ActivitySendEmailJobType.php:178
-#: modules/social_features/social_user/src/Plugin/AdvancedQueue/JobType/UserMailQueueJob.php:146
+#: modules/social_features/social_user/src/Plugin/AdvancedQueue/JobType/UserMailQueueJob.php:180
 msgid "The Job was not finished correctly, no error thrown."
 msgstr ""
 
@@ -15812,7 +15857,7 @@ msgstr "URL grupnog url-a nizane privatne poruke."
 msgid "The UUID of the Activity entity."
 msgstr "UUID entiteta aktivnost."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:226
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:237
 msgid "The UUID of the Event enrollment entity."
 msgstr "UUID entiteta upisa na događaj."
 
@@ -16117,7 +16162,7 @@ msgstr ""
 msgid "The language code for the Activity entity."
 msgstr "Kôd jezika za entitet Aktivnost."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:282
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:293
 msgid "The language code for the Event enrollment entity."
 msgstr "Kôd jezika za entitet upisa na događaj."
 
@@ -16169,7 +16214,17 @@ msgid ""
 msgstr ""
 "Član(ovi) nizanih privatnih poruka. Dodaj više članova odvajajući ih zarezom."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:257
+#: modules/social_features/social_email_broadcast/social_email_broadcast.info.yml:0
+msgid ""
+"The module contains useful features for sending and processing emails for "
+"users. \n"
+"Use it in the following cases: \n"
+"  - sending bulk emails to users;\n"
+"  - ability to subscribe/unsubscribe users from receiving emails;\n"
+"  - etc."
+msgstr ""
+
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:268
 msgid "The name of the Event enrollment entity."
 msgstr "Naziv entiteta upisa na događaj."
 
@@ -16374,7 +16429,7 @@ msgstr ""
 #: modules/custom/activity_creator/src/Entity/Activity.php:190
 #: modules/custom/social_font/src/Entity/Font.php:203
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:213
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:291
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:302
 #: modules/social_features/social_post/src/Entity/Post.php:371
 msgid "The time that the entity was created."
 msgstr "Vrijeme kada je entitet kreiran."
@@ -16382,7 +16437,7 @@ msgstr "Vrijeme kada je entitet kreiran."
 #: modules/custom/activity_creator/src/Entity/Activity.php:194
 #: modules/custom/social_font/src/Entity/Font.php:207
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:217
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:295
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:306
 #: modules/social_features/social_post/src/Entity/Post.php:375
 msgid "The time that the entity was last edited."
 msgstr "Vrijeme posljednjeg uređivanja entiteta."
@@ -16436,7 +16491,7 @@ msgstr "URL sadržaja koji je kreiran u grupi."
 msgid "The user ID of author of the Activity entity."
 msgstr "Korisnički ID autora entiteta aktivnosti."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:231
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:242
 msgid "The user ID of author of the Event enrollment entity."
 msgstr "Korisnički ID autora entiteta upisa na događaj."
 
@@ -17029,7 +17084,7 @@ msgstr "URL prijavljenog sadržaja."
 
 #: modules/custom/activity_creator/src/Entity/Activity.php:144
 #: modules/custom/mentions/src/Entity/Mentions.php:61
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:225
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:236
 #: modules/social_features/social_post/src/Entity/Post.php:317
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserUuid.php:23;8
 msgid "UUID"
@@ -17303,8 +17358,8 @@ msgstr "Korisnička veza"
 msgid "User consent overview"
 msgstr "Pregled pristanka korisnika"
 
-#: modules/social_features/social_user/src/Plugin/AdvancedQueue/JobType/UserMailQueueJob.php:19
-#: modules/social_features/social_user/src/Plugin/QueueWorker/UserMailQueueProcessor.php:19
+#: modules/social_features/social_user/src/Plugin/AdvancedQueue/JobType/UserMailQueueJob.php:23
+#: modules/social_features/social_user/src/Plugin/QueueWorker/UserMailQueueProcessor.php:23
 msgid "User email processor"
 msgstr "Procesor korisničke e-pošte"
 
@@ -17407,6 +17462,10 @@ msgid ""
 msgstr ""
 "Korisnici s ovim dopuštenjem vidjet će puno ime korisnika čak i kada je "
 "modul za privatnost profila na Socialu konfiguriran da ga sakrije."
+
+#: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php:142
+msgid "Using action @action out of the group context!"
+msgstr ""
 
 #: modules/custom/dropdown/config/schema/dropdown.schema.yml:0;0
 #: modules/custom/entity_access_by_field/config/schema/entity_access_by_field.schema.yml:0;0
@@ -18264,6 +18323,13 @@ msgstr ""
 msgid "You need to set your password in order to log in."
 msgstr "Trebaš postaviti lozinku da se možeš prijaviti."
 
+#: modules/social_features/social_user/src/Plugin/AdvancedQueue/JobType/UserMailQueueJob.php:218
+#: modules/social_features/social_user/src/Plugin/QueueWorker/UserMailQueueProcessor.php:214
+msgid ""
+"You receive community updates and announcements emails according to your "
+"@settings"
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_quickjoin/src/Controller/SocialQuickJoinController.php:85
 msgid "You're already a member of this group."
 msgstr "Već si član ove grupe."
@@ -18320,6 +18386,13 @@ msgid_plural "Your email will be send to @count selected members"
 msgstr[0] "Tvoj email će biti poslan 1 odabranom članu"
 msgstr[1] "Tvoj email će biti poslan @count odabrana člana"
 msgstr[2] "Tvoj email će biti poslan @count odabranih članova"
+
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php:229
+#: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php:351
+msgid ""
+"Your email will be sent to members who have opted to receive community "
+"updates and announcements"
+msgstr ""
 
 #: modules/social_features/social_footer/src/Form/FooterSettingsForm.php:152
 msgid "Your footer settings have been updated"
@@ -18398,11 +18471,11 @@ msgid "[user:display-name] has invited you to join a group on [site:name]."
 msgstr ""
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:276
-#: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:137
+#: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:143
 msgid "a"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.tokens.inc:115
+#: modules/social_features/social_group/social_group.tokens.inc:121
 msgid "a @content_type"
 msgstr "@content_type"
 
@@ -18432,11 +18505,11 @@ msgid "alternative_frontpage config"
 msgstr ""
 
 #: modules/social_features/social_event/social_event.module:1462
-#: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:134
+#: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:140
 msgid "an"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.tokens.inc:112
+#: modules/social_features/social_group/social_group.tokens.inc:118
 msgid "an @content_type"
 msgstr "@content_type"
 
@@ -18504,6 +18577,8 @@ msgstr "silazno"
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:168
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php:181
+#: modules/social_features/social_user/src/Plugin/AdvancedQueue/JobType/UserMailQueueJob.php:211
+#: modules/social_features/social_user/src/Plugin/QueueWorker/UserMailQueueProcessor.php:207
 msgid "email notification settings"
 msgstr "postavke obavijesti e-poštom"
 
@@ -18815,12 +18890,12 @@ msgid "next ›"
 msgstr "sljedeća ›"
 
 #: translations.php:100
-#: modules/social_features/social_like/social_like.tokens.inc:123
+#: modules/social_features/social_like/social_like.tokens.inc:135
 msgid "on a"
 msgstr "na"
 
 #: translations.php:101
-#: modules/social_features/social_like/social_like.tokens.inc:119
+#: modules/social_features/social_like/social_like.tokens.inc:127
 msgid "on the"
 msgstr "na"
 
