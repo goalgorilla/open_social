@@ -167,7 +167,8 @@ function social_group_request_update_13004() {
   // things fail if they do.
   foreach ($tables as $table) {
     $logger->debug("Updating table mapping for group_content.grequest_status table {$table}.");
-    $schema->addField($table, $column_name . "_new", $new_spec);
+    // Allow nullable initially since our existing content won't have data yet.
+    $schema->addField($table, $column_name . "_new", [...$new_spec, 'not null' => FALSE]);
     $logger->debug("Added new field.");
     $database->query("Update $table SET {$column_name}_new = 'pending' WHERE $column_name = 0");
     $logger->debug("Updated pending states.");
