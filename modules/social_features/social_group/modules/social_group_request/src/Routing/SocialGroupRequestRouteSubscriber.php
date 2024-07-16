@@ -16,12 +16,6 @@ class SocialGroupRequestRouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
-    if ($route = $collection->get('grequest.request_membership')) {
-      $route->setDefaults([
-        '_controller' => GroupRequestController::class . '::requestMembership',
-      ]);
-    }
-
     if ($route = $collection->get('grequest.group_request_membership_approve')) {
       $route->setDefaults([
         '_title_callback' => GroupRequestController::class . '::getTitleApproveRequest',

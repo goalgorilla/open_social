@@ -18,7 +18,6 @@ use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\Entity\Group;
 use Drupal\social_group_request\Form\GroupRequestMembershipRequestAnonymousForm;
-use Drupal\social_group_request\Form\GroupRequestMembershipRequestForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -118,37 +117,6 @@ class GroupRequestController extends ControllerBase {
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
 
     return $this->entityFormBuilder()->getForm($group_content, 'add');
-  }
-
-  /**
-   * Callback to request membership.
-   */
-  public function requestMembership(GroupInterface $group) {
-    $response = new AjaxResponse();
-
-    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
-    $storage = $this->entityTypeManager()->getStorage('group_content_type');
-    $group_type_id = (string) $group->getGroupType()->id();
-    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
-
-    $request = $this->entityTypeManager()->getStorage('group_content')->getQuery()
-      ->condition('type', $relation_type_id)
-      ->condition('gid', $group->id())
-      ->condition('entity_id', $this->currentUser()->id())
-      ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
-      ->accessCheck()
-      ->count()
-      ->execute();
-
-    if ($request == 0) {
-      $request_form = $this->formBuilder()->getForm(GroupRequestMembershipRequestForm::class, $group);
-      $response->addCommand(new OpenModalDialogCommand($this->t('Request to join'), $request_form, [
-        'width' => '582px',
-        'dialogClass' => 'social_group-popup',
-      ]));
-    }
-
-    return $response;
   }
 
   /**
