@@ -503,6 +503,15 @@ function social_event_views_data_alter(array &$data) {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
+function social_event_node_insert(NodeInterface $node): void {
+  if ($node->bundle() == 'event') {
+    \Drupal::service('social_event.eda_handler')->eventCreate($node);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
 function social_event_flagging_insert(EntityInterface $entity) {
   $group_type_ids = \Drupal::config('social_event.settings')->get('enroll');
 
