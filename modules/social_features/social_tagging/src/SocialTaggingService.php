@@ -13,6 +13,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\group\Entity\Group;
 use Drupal\social_core\Service\MachineNameInterface;
 use Drupal\taxonomy\TermInterface;
 
@@ -201,9 +202,28 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function groupActive(): bool {
-    return (bool) $this->configFactory->get('social_tagging.settings')
-      ->get('tag_type_group');
+  public function groupTypeActive(Group $group = NULL): bool {
+    if ($group) {
+      return (bool) $this->configFactory->get('social_tagging.settings')
+        ->get('tag_group_type_' . $group->bundle());
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function groupsActive(): bool {
+    $configs = $this->configFactory->get('social_tagging.settings')->getRawData();
+
+    foreach ($configs as $cid => $data) {
+      if (str_contains($cid, 'tag_group_type_')) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
   /**
@@ -520,8 +540,7 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
       }
       $item = array_filter($item);
       // Empty value means there is no bundles.
-      // For groups there is only one option as well.
-      if (empty($item) || $entity_type == 'group') {
+      if (empty($item)) {
         // Filter entities that are not enabled for the platform.
         if (!empty($settings->get("tag_type_$entity_type"))) {
           $options[$entity_type] = $definition->getLabel();

@@ -8,6 +8,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\group\Entity\Group;
 use Drupal\social_core\Service\MachineNameInterface;
 
 /**
@@ -88,9 +89,23 @@ interface SocialTaggingServiceInterface {
   ): bool;
 
   /**
-   * Returns whether the feature is turned on for groups or not.
+   * Returns whether the feature is turned on for certain group.
+   *
+   * @param \Drupal\group\Entity\Group|null $group
+   *   Group.
+   *
+   * @return bool
+   *   TRUE if the feature is turned, otherwise FALSE.
    */
-  public function groupActive(): bool;
+  public function groupTypeActive(Group $group = NULL): bool;
+
+  /**
+   * Returns whether the feature is turned on for groups.
+   *
+   * @return bool
+   *   TRUE if the feature is turned, otherwise FALSE.
+   */
+  public function groupsActive(): bool;
 
   /**
    * Returns whether the feature is turned on for profiles or not.
