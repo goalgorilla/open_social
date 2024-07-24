@@ -534,7 +534,7 @@ class ExternalIdFieldTypeTest extends KernelTestBase {
       // Scenario should trigger constraint error as External ID is not unique.
       [
         1,
-        'External identifier id should be unique. External identifier id "<em class="placeholder">123</em>" is already used, with external owner "<em class="placeholder">test_consumer_a</em>" of id "<em class="placeholder">1</em>".',
+        'The external identifier ID must be unique. The External ID "<em class="placeholder">123</em>" is already in use.',
         'node',
         [
           'type' => 'article',
@@ -558,7 +558,7 @@ class ExternalIdFieldTypeTest extends KernelTestBase {
       // even withing two different fields within same entity type.
       [
         1,
-        'External identifier id should be unique. External identifier id "<em class="placeholder">123</em>" is already used, with external owner "<em class="placeholder">test_consumer_a</em>" of id "<em class="placeholder">1</em>".',
+        'The external identifier ID must be unique. The External ID "<em class="placeholder">123</em>" is already in use.',
         'node',
         [
           'type' => 'article',
@@ -582,7 +582,7 @@ class ExternalIdFieldTypeTest extends KernelTestBase {
       // even within two different entity bundles within same entity type.
       [
         1,
-        'External identifier id should be unique. External identifier id "<em class="placeholder">123</em>" is already used, with external owner "<em class="placeholder">test_consumer_a</em>" of id "<em class="placeholder">1</em>".',
+        'The external identifier ID must be unique. The External ID "<em class="placeholder">123</em>" is already in use.',
         'node',
         [
           'type' => 'event',
