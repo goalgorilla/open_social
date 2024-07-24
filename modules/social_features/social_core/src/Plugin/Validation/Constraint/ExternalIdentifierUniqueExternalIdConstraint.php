@@ -23,6 +23,6 @@ class ExternalIdentifierUniqueExternalIdConstraint extends Constraint {
    *
    * @var string
    */
-  public $externalIdNotUniqueMessage = 'External identifier id should be unique. External identifier id "%external_id" is already used, with external owner "%external_owner_target_type" of id "%external_owner_id".';
+  public $externalIdNotUniqueMessage = 'The external identifier ID must be unique. The External ID "%external_id" is already in use.';
 
 }
