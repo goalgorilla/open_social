@@ -1,4 +1,11 @@
 parameters:
+	excludePaths:
+		- modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/ContentExportPlugin/ContentEventEnrolleesAn.php
+		- modules/social_features/social_event/modules/social_event_type/src/Plugin/ContentExportPlugin/ContentEventType.php
+		- modules/social_features/social_event/src/Plugin/ContentExportPlugin/ContentEventEnrollees.php
+		- modules/social_features/social_tagging/src/Plugin/ContentExportPlugin/ContentTags.php
+		- modules/social_features/social_topic/src/Plugin/ContentExportPlugin/ContentTopicType.php
+
 	ignoreErrors:
 		-
 			message: "#^Method Drupal\\\\activity_basics\\\\Plugin\\\\ActivityAction\\\\CreateActivityAction\\:\\:create\\(\\) has no return type specified\\.$#"
