@@ -4,6 +4,7 @@ namespace Drupal\social_core\Service;
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\StringTranslation\TranslationManager;
 
 /**
  * Class ConfigLanguageManager.
@@ -62,6 +63,13 @@ use Drupal\Core\Language\LanguageManagerInterface;
 class ConfigLanguageManager {
 
   /**
+   * The translation manager.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationManager
+   */
+  protected TranslationManager $translationManager;
+
+  /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
@@ -90,8 +98,9 @@ class ConfigLanguageManager {
    * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
    *   The language manager.
    */
-  public function __construct(LanguageManagerInterface $languageManager) {
+  public function __construct(LanguageManagerInterface $languageManager, TranslationManager $translationManager) {
     $this->languageManager = $languageManager;
+    $this->translationManager = $translationManager;
   }
 
   /**
@@ -119,6 +128,32 @@ class ConfigLanguageManager {
       throw new \InvalidArgumentException('configOverrideLanguageStart($langcode) method must be called before configOverrideLanguageEnd().');
     }
 
+  }
+
+  /**
+   * Define language in which strings should be processed.
+   *
+   * @param string $langcode
+   *   The language code.
+   */
+  public function stringTranslationOverrideLanguageStart(string $langcode): void {
+    if (empty($this->originalLanguage)) {
+      $this->originalLanguage = $this->languageManager->getConfigOverrideLanguage();
+    }
+
+    $this->translationManager->setDefaultLangcode($langcode);
+  }
+
+  /**
+   * Revert to original language defined by StringTranslationOverrideLanguageStart().
+   */
+  public function stringTranslationOverrideLanguageEnd(): void {
+    if ($this->originalLanguage) {
+      $this->translationManager->setDefaultLangcode($this->originalLanguage->getId());
+    }
+    else {
+      throw new \InvalidArgumentException('StringTranslationOverrideLanguageStart($langcode) method must be called before stringTranslationOverrideLanguageEnd().');
+    }
   }
 
 }
