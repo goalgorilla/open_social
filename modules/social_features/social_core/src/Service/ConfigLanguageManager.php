@@ -97,6 +97,8 @@ class ConfigLanguageManager {
    *
    * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
    *   The language manager.
+   * @param \Drupal\Core\StringTranslation\TranslationManager $translationManager
+   *   The translation manager.
    */
   public function __construct(LanguageManagerInterface $languageManager, TranslationManager $translationManager) {
     $this->languageManager = $languageManager;
@@ -145,7 +147,9 @@ class ConfigLanguageManager {
   }
 
   /**
-   * Revert to original language defined by StringTranslationOverrideLanguageStart().
+   * Revert to original language.
+   *
+   * Defined by StringTranslationOverrideLanguageStart().
    */
   public function stringTranslationOverrideLanguageEnd(): void {
     if ($this->originalLanguage) {
