@@ -527,12 +527,38 @@ function social_core_menu_local_tasks_alter(&$data, $route_name) {
   }
 
   // Remove Revisions tab if revisions for the node not exist.
-  $node = \Drupal::routeMatch()->getParameter('node');
-  if ($node instanceof NodeInterface) {
-    $revisions = \Drupal::entityTypeManager()->getStorage('node')->revisionIds($node);
+  $entity = \Drupal::routeMatch()->getParameter('node') ?: \Drupal::routeMatch()->getParameter('group');
+  if ($entity instanceof EntityInterface) {
+    // Get the configuration factory service.
+    $config_factory = \Drupal::service('config.factory');
 
-    if ($revisions && count($revisions) === 1) {
-      unset($data['tabs'][0]['entity.node.version_history']);
+    // Load the configuration for the entity type.
+    $config = $config_factory->get($entity->getEntityTypeId() . '.type.' . $entity->bundle());
+
+    // If new revision is disabled.
+    if (!$config->get('new_revision')) {
+      if ($entity instanceof NodeInterface) {
+        // Handle node entities.
+        $storage = \Drupal::entityTypeManager()->getStorage('node');
+        $revisions = $storage->revisionIds($entity);
+
+        if ($revisions && count($revisions) === 1) {
+          unset($data['tabs'][0]['entity.node.version_history']);
+        }
+      }
+      elseif ($entity instanceof GroupInterface) {
+        // Query for all revisions of the group entity.
+        $query = \Drupal::entityQuery('group')
+          ->condition('id', $entity->id())
+          ->accessCheck(FALSE);
+
+        // Execute the query to get revision IDs.
+        $revision_ids = $query->execute();
+
+        if ($revision_ids && count($revision_ids) === 1) {
+          unset($data['tabs'][0]['entity.version_history:group.version_history']);
+        }
+      }
     }
   }
 
