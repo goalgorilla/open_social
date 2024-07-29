@@ -1,6 +1,6 @@
 services:
   social_language.override:
-    class: \Drupal\social_language\SocialLanguageConfigOverride
+    class: Drupal\social_language\SocialLanguageConfigOverride
     tags:
       - {name: config.factory.override, priority: 5}
   social_language.access:
@@ -18,3 +18,11 @@ services:
     calls:
       - [setContext, ['@?router.request_context']]
     deprecated: The "%service_id%" service is deprecated. You should use the 'url_generator' service instead. See https://www.drupal.org/project/social/issues/3098046
+  social_language.path_processor:
+    class: Drupal\social_language\PathProcessor\SocialLanguagePathProcessor
+    arguments: ['@path_alias.manager', '@language_manager']
+    tags:
+      # Priority should be higher than \Drupal\path_alias\PathProcessor\AliasPathProcessor::processInbound().
+      - { name: path_processor_inbound, priority: 101 }
+      # Priority should be higher than \Drupal\path_alias\PathProcessor\AliasPathProcessor::processOutbound().
+      - { name: path_processor_outbound, priority: 301 }
