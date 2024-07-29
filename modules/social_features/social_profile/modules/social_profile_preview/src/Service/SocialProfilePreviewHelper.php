@@ -79,7 +79,12 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
         $attributes = $attributes->toArray();
       }
 
-      $attributes['class'][] = 'preview-popup-link';
+      if (isset($attributes['loading']) && $attributes['loading']) {
+        $attributes['class'][] = 'preview-popup-link--image';
+      }
+      else {
+        $attributes['class'][] = 'preview-popup-link--text';
+      }
 
       $preview_url = Url::fromRoute('social_profile_preview.canonical', [
         'profile' => $profile->get('profile_id')->value,

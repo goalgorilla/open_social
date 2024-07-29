@@ -7,7 +7,35 @@
   height: 100%;
   cursor: pointer;
 }
-.preview-popup-link:before {
+.preview-popup-link,
+.preview-popup-link img {
+  border-radius: 50% !important;
+}
+.teaser--small__media .preview-popup-link {
+  width: 44px;
+  height: 44px;
+}
+
+.preview-popup-link--image {
+  position: relative;
+  display: block;
+}
+
+img.preview-popup-link--image,
+.preview-popup-link--text img {
+  border: 2px solid transparent;
+}
+img.preview-popup-link--image:before,
+.preview-popup-link--text img:before {
+  display: none;
+}
+img.preview-popup-link--image:hover,
+.preview-popup-link--text img:hover {
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.preview-popup-link:before,
+.preview-popup-link--image:before {
   content: "";
   position: absolute;
   height: calc(100% + 6px);
@@ -17,104 +45,13 @@
   left: -3px;
   border-radius: 50%;
 }
-.preview-popup-link:hover:before {
+.preview-popup-link:hover:before,
+.preview-popup-link--image:hover:before {
   border-color: var(--primary-color);
 }
 
-.card--stream img.preview-popup-link,
-.img-grid img.preview-popup-link {
-  width: 44px;
-  height: 44px;
-}
-
-.teaser--small span.preview-popup-link,
-.teaser--small a.preview-popup-link,
-.card--stream .media-body span.preview-popup-link,
-.card--stream .media-body a.preview-popup-link,
-.comment .comment__content span.preview-popup-link,
-.comment .comment__content a.preview-popup-link,
-.teaser span.preview-popup-link,
-.teaser a.preview-popup-link,
-.hero__banner .metainfo__content span.preview-popup-link,
-.hero__banner .metainfo__content a.preview-popup-link,
-.message span.preview-popup-link,
-.message a.preview-popup-link,
-.view--group-managers .list-item__text span.preview-popup-link,
-.view--group-managers .list-item__text a.preview-popup-link,
-.view-group-pending-members span.preview-popup-link,
-.view-group-pending-members a.preview-popup-link,
-.views-field.views-field-name span.preview-popup-link,
-.views-field.views-field-name a.preview-popup-link,
-.list-item__text span.preview-popup-link,
-.list-item__text a.preview-popup-link,
-.social-post-album--popup .media-heading span.preview-popup-link,
-.social-post-album--popup .media-heading a.preview-popup-link,
-.field--name-requests span.preview-popup-link,
-.field--name-requests a.preview-popup-link {
-  display: inline;
-  width: auto;
-  height: auto;
-}
-.teaser--small span.preview-popup-link:before,
-.teaser--small a.preview-popup-link:before,
-.card--stream .media-body span.preview-popup-link:before,
-.card--stream .media-body a.preview-popup-link:before,
-.comment .comment__content span.preview-popup-link:before,
-.comment .comment__content a.preview-popup-link:before,
-.teaser span.preview-popup-link:before,
-.teaser a.preview-popup-link:before,
-.hero__banner .metainfo__content span.preview-popup-link:before,
-.hero__banner .metainfo__content a.preview-popup-link:before,
-.message span.preview-popup-link:before,
-.message a.preview-popup-link:before,
-.view--group-managers .list-item__text span.preview-popup-link:before,
-.view--group-managers .list-item__text a.preview-popup-link:before,
-.view-group-pending-members span.preview-popup-link:before,
-.view-group-pending-members a.preview-popup-link:before,
-.views-field.views-field-name span.preview-popup-link:before,
-.views-field.views-field-name a.preview-popup-link:before,
-.list-item__text span.preview-popup-link:before,
-.list-item__text a.preview-popup-link:before,
-.social-post-album--popup .media-heading span.preview-popup-link:before,
-.social-post-album--popup .media-heading a.preview-popup-link:before,
-.field--name-requests span.preview-popup-link:before,
-.field--name-requests a.preview-popup-link:before {
-  display: none;
-}
-.teaser--small span.preview-popup-link:hover,
-.teaser--small a.preview-popup-link:hover,
-.card--stream .media-body span.preview-popup-link:hover,
-.card--stream .media-body a.preview-popup-link:hover,
-.comment .comment__content span.preview-popup-link:hover,
-.comment .comment__content a.preview-popup-link:hover,
-.teaser span.preview-popup-link:hover,
-.teaser a.preview-popup-link:hover,
-.hero__banner .metainfo__content span.preview-popup-link:hover,
-.hero__banner .metainfo__content a.preview-popup-link:hover,
-.message span.preview-popup-link:hover,
-.message a.preview-popup-link:hover,
-.view--group-managers .list-item__text span.preview-popup-link:hover,
-.view--group-managers .list-item__text a.preview-popup-link:hover,
-.view-group-pending-members span.preview-popup-link:hover,
-.view-group-pending-members a.preview-popup-link:hover,
-.views-field.views-field-name span.preview-popup-link:hover,
-.views-field.views-field-name a.preview-popup-link:hover,
-.list-item__text span.preview-popup-link:hover,
-.list-item__text a.preview-popup-link:hover,
-.social-post-album--popup .media-heading span.preview-popup-link:hover,
-.social-post-album--popup .media-heading a.preview-popup-link:hover,
-.field--name-requests span.preview-popup-link:hover,
-.field--name-requests a.preview-popup-link:hover {
+.preview-popup-link--text:hover {
   text-decoration: underline;
-}
-
-.views-field.views-field-name a.preview-popup-link {
-  margin-left: 10px;
-}
-
-.img-grid a.preview-popup-link {
-  width: auto;
-  height: auto;
 }
 
 /*# sourceMappingURL=preview-el.css.map */
