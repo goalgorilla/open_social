@@ -8,6 +8,7 @@
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -75,6 +76,8 @@ function social_event_type_preprocess_node(array &$variables): void {
     $variables['event_type'] = NULL;
     $event_type = empty($event_types) ? NULL : reset($event_types);
     if ($event_type instanceof TermInterface) {
+      /** @var \Drupal\Core\Entity\EntityInterface $event_type */
+      $event_type = \Drupal::service('entity.repository')->getTranslationFromContext($event_type);
       $variables['metadata'] = t('in @event', [
         '@event' => $event_type->toLink()
           ->toString(),
@@ -93,6 +96,7 @@ function social_event_type_preprocess_node(array &$variables): void {
         ->toString();
       $variables['event_type'] = $event_type_link;
       if (
+        $event_type instanceof FieldableEntityInterface &&
         $event_type->hasField('field_event_type_icon') &&
         !$event_type->get('field_event_type_icon')->isEmpty()
       ) {
