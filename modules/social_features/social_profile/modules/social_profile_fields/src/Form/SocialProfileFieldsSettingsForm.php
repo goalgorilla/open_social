@@ -219,15 +219,28 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
             '#default_value' => is_null($config->get('profile_address_field_administrative_area')) ? TRUE : $config->get('profile_address_field_administrative_area'),
           ];
         }
+
+        if ($type === 'profile' && $id === 'profile_profile_field_profile_nick_name') {
+          $form[$type]['profile_profile_nickname_wrapper']['nickname_settings'] = [
+            '#type' => 'details',
+            '#title' => $this->t('Nickname field settings'),
+            '#open' => TRUE,
+            '#states' => [
+              'visible' => [
+                ':input[name="' . $id . '"]' => ['checked' => TRUE],
+              ],
+            ],
+          ];
+
+          $form[$type]['profile_profile_nickname_wrapper']['nickname_settings']['nickname_unique_validation'] = [
+            '#type' => 'checkbox',
+            '#title' => $this->t('Unique nicknames'),
+            '#description' => $this->t('If you check this, validation is applied that verifies the users nickname is unique whenever they save their profile.'),
+            '#default_value' => $config->get('nickname_unique_validation'),
+          ];
+        }
       }
     }
-
-    $form['nickname_unique_validation'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Unique nicknames'),
-      '#description' => $this->t('If you check this, validation is applied that verifies the users nickname is unique whenever they save their profile.'),
-      '#default_value' => $config->get('nickname_unique_validation'),
-    ];
 
     $form['actions']['social_profile_fields_confirm_flush'] = [
       '#type' => 'submit',
@@ -262,7 +275,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     $config->set('profile_address_field_postalcode', $main_address_value ? $form_state->getValue('profile_address_field_postalcode') : FALSE);
     $config->set('profile_address_field_administrative_area', $main_address_value ? $form_state->getValue('profile_address_field_administrative_area') : FALSE);
 
-    $config->set('nickname_unique_validation', $form_state->getValue('nickname_unique_validation'));
+    $nickname_unique_validation = $form_state->getValue('profile_profile_field_profile_nick_name') ? $form_state->getValue('nickname_unique_validation') : FALSE;
+    $config->set('nickname_unique_validation', $nickname_unique_validation);
     $config->save();
 
     parent::submitForm($form, $form_state);
