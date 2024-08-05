@@ -4,6 +4,7 @@ namespace Drupal\social_core;
 
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\social_eda_dispatcher\Dispatcher as SocialEdaDispatcher;
 
 /**
  * Class SocialCoreServiceProvider.
@@ -15,7 +16,7 @@ class SocialCoreServiceProvider extends ServiceProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alter(ContainerBuilder $container) {
+  public function alter(ContainerBuilder $container): void {
     // Overrides language_manager class to test domain language negotiation.
     $definition = $container->getDefinition('entity.autocomplete_matcher');
     $definition->setClass('Drupal\social_core\Entity\EntityAutocompleteMatcher');
@@ -27,6 +28,17 @@ class SocialCoreServiceProvider extends ServiceProviderBase {
       if (isset($modules['select2'])) {
         $definition = $container->getDefinition('select2.autocomplete_matcher');
         $definition->setClass('Drupal\social_core\Entity\Select2EntityAutocompleteMatcher');
+      }
+    }
+
+    // Replaces all EDA Handlers with dummies if there is no Publisher.
+    // In this case we expect the class not to be found because it exists
+    // outside the Open Social distribution.
+    // @phpstan-ignore class.notFound
+    if (!$container->hasDefinition(SocialEdaDispatcher::class)) {
+      foreach ($container->findTaggedServiceIds('social.eda.handler') as $id => $attributes) {
+        $definition = $container->getDefinition($id);
+        $definition->setClass(EdaDummyHandler::class);
       }
     }
   }
