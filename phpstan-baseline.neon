@@ -4764,11 +4764,6 @@ parameters:
 			path: modules/social_features/social_core/src/Routing/RouteSubscriber.php
 
 		-
-			message: "#^Method Drupal\\\\social_core\\\\SocialCoreServiceProvider\\:\\:alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/SocialCoreServiceProvider.php
-
-		-
 			message: "#^Method Drupal\\\\social_download_count\\\\SocialDownloadCountConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
 			count: 1
 			path: modules/social_features/social_download_count/src/SocialDownloadCountConfigOverride.php
@@ -13400,3 +13395,8 @@ parameters:
 			message: "#^Property Drupal\\\\social_event\\\\Event\\\\EventCreateEventData::\\$href has unknown class Drupal\\\\social_eda\\\\Types\\\\Href as its type\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Event/EventCreateEventData.php
+
+		-
+			message: "#^Class Drupal\\\\social_eda_dispatcher\\\\Dispatcher not found\\.$#"
+			count: 1
+			path: modules/social_features/social_core/src/SocialCoreServiceProvider.php
