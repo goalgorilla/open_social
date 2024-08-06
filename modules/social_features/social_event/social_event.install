@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_event module.
  */
 
+use Drupal\field\Entity\FieldConfig;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\RoleInterface;
 
@@ -249,4 +250,49 @@ function social_event_update_130003() : string {
 
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
+}
+
+/**
+ * Update default location from system configuration to event.
+ */
+function social_event_update_130004(): void {
+  $default_country = \Drupal::config('system.date')->get('country.default');
+  $event_address_field = FieldConfig::loadByName('node', 'event', 'field_event_address');
+  if (empty($event_address_field)) {
+    return;
+  }
+
+  // Init and fill default values variable.
+  $default_values = [];
+  if (!empty($default_country)) {
+    $default_values = $event_address_field->getDefaultValueLiteral();
+    // When the default values isn't initiated, so init it.
+    if (empty($default_values)) {
+      $default_values[] = [
+        'langcode' => NULL,
+        'administrative_area' => "",
+        'locality' => "",
+        'dependent_locality' => NULL,
+        'postal_code' => "",
+        'sorting_code' => NULL,
+        'address_line1' => "",
+        'address_line2' => NULL,
+        'address_line3' => NULL,
+        'organization' => NULL,
+        'given_name' => NULL,
+        'additional_name' => NULL,
+        'family_name' => NULL,
+      ];
+
+    }
+
+    // Add country code from site default country.
+    $default_values[0]['country_code'] = $default_country;
+  }
+
+  // Save field with new default value.
+  if (method_exists($event_address_field, 'setDefaultValue')) {
+    $event_address_field->setDefaultValue($default_values)
+      ->save();
+  }
 }
