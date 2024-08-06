@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldStorageConfigInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
@@ -968,5 +969,49 @@ function _social_group_update_permissions(mixed $group_type, string $permission)
     }
 
     $group_role->save();
+  }
+}
+
+/**
+ * Update default location from system configuration to group.
+ */
+function social_group_update_13013(): void {
+  $default_country = \Drupal::config('system.date')->get('country.default');
+  $group_address_field = FieldConfig::loadByName('group', 'flexible_group', 'field_group_address');
+  if (empty($group_address_field)) {
+    return;
+  }
+
+  // Init and fill default values variable.
+  $default_values = [];
+  if (!empty($default_country)) {
+    $default_values = $group_address_field->getDefaultValueLiteral();
+    // When the default values isn't initiated, so init it.
+    if (empty($default_values)) {
+      $default_values[] = [
+        'langcode' => NULL,
+        'administrative_area' => "",
+        'locality' => "",
+        'dependent_locality' => NULL,
+        'postal_code' => "",
+        'sorting_code' => NULL,
+        'address_line1' => "",
+        'address_line2' => NULL,
+        'address_line3' => NULL,
+        'organization' => NULL,
+        'given_name' => NULL,
+        'additional_name' => NULL,
+        'family_name' => NULL,
+      ];
+    }
+
+    // Add country code from site default country.
+    $default_values[0]['country_code'] = $default_country;
+  }
+
+  // Save field with new default value.
+  if (method_exists($group_address_field, 'setDefaultValue')) {
+    $group_address_field->setDefaultValue($default_values)
+      ->save();
   }
 }
