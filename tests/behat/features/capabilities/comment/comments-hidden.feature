@@ -7,7 +7,7 @@ Feature: Comments settings
 Scenario: I add a comment on a topic
   Given I am logged in as a user with the contentmanager role
   When I go to "/node/add/topic"
-  I fill in "Title" with "Topic with comments"
+  And I fill in "Title" with "Topic with comments"
   And I fill in the "edit-body-0-value" WYSIWYG editor with "Topic description"
   And I check the box "News"
   And I press "Create topic"
