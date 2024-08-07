@@ -23,9 +23,9 @@ Scenario: I add a comment on a topic
 
 #Scenario: I hide comments on the topic
 	When I am editing the topic "Topic with comments"
-	Then I fill in "Title" with "Topic with hidden comments"
-  And I click radio button "Hidden"
+	And I fill in "Title" with "Topic with hidden comments"
+	And I click radio button "Hidden"
 	And I press "Save"
-  Then I should see "Topic Topic with hidden comments has been updated."
+	Then I should see "Topic Topic with hidden comments has been updated."
 	And I should see "Topic with hidden comments" in the "Hero block"
- 	And I should not see "This is a test comment" in the "Main content"
+	And I should not see "This is a test comment" in the "Main content"
