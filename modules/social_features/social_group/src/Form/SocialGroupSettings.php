@@ -103,8 +103,8 @@ class SocialGroupSettings extends ConfigFormBase {
       '#type' => 'checkboxes',
       '#title' => $this->t('Group permissions'),
       '#options' => [
-        'allow_group_create' => $this->t('Allow regular users to create new groups'),
-        'allow_group_selection_in_node' => $this->t('Allow regular users to change the group their content belong to'),
+        'allow_group_create' => $this->t('Allow verified users to create new groups'),
+        'allow_group_selection_in_node' => $this->t('Allow verified users to change the group their content belong to'),
         'address_visibility_settings' => $this->t('Only show the group address to the group members'),
       ],
       '#weight' => 10,
