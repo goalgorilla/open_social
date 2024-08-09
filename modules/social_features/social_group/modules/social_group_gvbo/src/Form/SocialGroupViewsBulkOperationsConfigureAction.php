@@ -30,7 +30,7 @@ class SocialGroupViewsBulkOperationsConfigureAction extends GroupViewsBulkOperat
       /** @var \Drupal\Core\Url $url */
       $url = $form_state->getRedirect();
 
-      if ($url->getRouteName() === 'views_bulk_operations.confirm') {
+      if ($url->isRouted() && $url->getRouteName() === 'views_bulk_operations.confirm') {
         $parameters = $url->getRouteParameters();
 
         if (
