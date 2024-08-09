@@ -282,7 +282,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       $entity_storage = \Drupal::entityTypeManager()
         ->getStorage($target_type);
       $entity = $entity_storage->load($target_id);
-      if ($entity !== NULL) {
+      if ($entity !== NULL && $entity->hasLinkTemplate('canonical')) {
         /** @var \Drupal\Core\Url $link */
         /** @var \Drupal\Core\Entity\EntityInterface $entity */
         $link = $entity->toUrl('canonical');
