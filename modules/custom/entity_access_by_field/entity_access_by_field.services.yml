@@ -2,3 +2,8 @@ services:
   entity_access_by_field.permissions:
     class: Drupal\entity_access_by_field\EntityAccessByFieldPermissions
     arguments: ['@entity_type.manager', '@entity_field.manager']
+
+  entity_access_by_field.query_access_subscriber:
+    class: Drupal\entity_access_by_field\EventSubscriber\QueryAccessSubscriber
+    tags:
+      - { name: event_subscriber }
