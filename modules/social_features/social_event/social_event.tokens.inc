@@ -197,8 +197,9 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
               /** @var \Drupal\node\Entity\Node $event */
               $view_builder = \Drupal::entityTypeManager()->getViewBuilder('node');
               $preview_info = $view_builder->view($event, 'email_card');
-              $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')
-                ->renderPlain($preview_info);
+              $renderer = \Drupal::service('renderer');
+              $renderer->addCacheableDependency($preview_info, $translation_options);
+              $replacements[$context['tokens']['preview']] = $renderer->renderPlain($preview_info);
             }
           }
         }
