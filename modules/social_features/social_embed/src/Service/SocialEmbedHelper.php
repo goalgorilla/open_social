@@ -90,30 +90,20 @@ class SocialEmbedHelper {
   }
 
   /**
-   * Checks if item is on the whitelist.
+   * Checks if a given URL is whitelisted.
    *
-   * @param string $text
-   *   The item to check for.
+   * @param string $url
+   *   The URL to check.
    *
    * @return bool
-   *   Return if the item is on the whitelist or not.
+   *   Returns TRUE if the URL is whitelisted, otherwise FALSE.
    */
-  public function whiteList(string $text): bool {
+  public function whiteList(string $url): bool {
     // Fetch allowed patterns.
-    $patterns = $this->getPatterns();
+    $patterns = $this->getCombinedPatterns();
 
-    // Check if the URL provided is from a whitelisted site.
-    foreach ($patterns as $pattern) {
-      // Testing pattern.
-      $testing_pattern = '/' . $pattern . '/';
-
-      // Check if it matches.
-      if (preg_match($testing_pattern, $text)) {
-        return TRUE;
-      }
-    }
-
-    return FALSE;
+    // Check if the URL matches any of the allowed patterns.
+    return preg_match($patterns, $url) === 1;
   }
 
   /**
@@ -132,11 +122,29 @@ class SocialEmbedHelper {
       '(instagram.com\/p\/(.*))',
       '(open.spotify.com\/track\/(.*))',
       '(twitter.com\/(.*)\/status\/(.*))',
+      '(x.com\/(.*)\/status\/(.*))',
       '(vimeo.com\/\d{7,9})',
       '(youtube.com\/watch[?]v=(.*))',
       '(youtu.be\/(.*))',
       '(ted.com\/talks\/(.*))',
     ];
+  }
+
+  /**
+   * The combined version of the patterns.
+   *
+   * @return string
+   *   The string of combined patterns.
+   */
+  public function getCombinedPatterns(): string {
+    // Fetch allowed patterns.
+    $patterns = $this->getPatterns();
+
+    // Combine the patterns in a single string.
+    $combined_patterns = implode('|', $patterns);
+
+    // Return the combined version of the patterns.
+    return "/\b(?:https?:\/\/)?(?:www\.)?($combined_patterns)/i";
   }
 
   /**
