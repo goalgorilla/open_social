@@ -975,6 +975,32 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         $found = TRUE;
         break;
       }
+
+      // These conditions are here to check exactly the same as the code above
+      // except that `!isset($data['method']) &&` is replaced by
+      // `$data['field'] === 'field_group_allowed_join_method'` instead.
+      // The reason why we did this is that initial architecture of
+      // `@Join` plugins predicted that plugins where "method" is defined,
+      // should not be altered in this process, but there are groups which have
+      // "method" defined for fallback reasons and this is why we need to
+      // process them the same way as there would be no "method" defined.
+      // Currently, we are limiting this exception only for the groups with
+      // field field_group_allowed_join_method. In the future we can change this
+      // logic in a way that it would not be based on field name but rather on
+      // plugin setting.
+      if (
+        isset($data['field'], $form[$data['field']]) &&
+        $data['field'] === 'field_group_allowed_join_method' &&
+        $data['entity_type'] === $entity_type_id &&
+        (
+          !isset($data['bundle']) &&
+          $bundle === NULL ||
+          in_array($bundle, (array) $data['bundle'])
+        )
+      ) {
+        $found = TRUE;
+        break;
+      }
     }
 
     if ($found && isset($data)) {

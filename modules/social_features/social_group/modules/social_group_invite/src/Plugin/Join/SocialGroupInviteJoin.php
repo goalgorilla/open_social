@@ -106,6 +106,15 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
       $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:entity:' . $this->currentUser->id();
     }
     elseif (
+      $entity->hasField('field_group_allowed_join_method') &&
+      $entity->field_group_allowed_join_method->value === 'direct'
+    ) {
+      $items = parent::actions($entity, $variables);
+      $variables['#cache']['contexts'][] = 'user';
+      $variables['#cache']['tags'][] = 'group_content_list:entity:' . $this->currentUser->id();
+      $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:entity:' . $this->currentUser->id();
+    }
+    elseif (
       count($items = parent::actions($entity, $variables)) === 1 &&
       in_array($entity->bundle(), $this->types())
     ) {
