@@ -5,7 +5,7 @@ namespace Drupal\social_footer\Plugin\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ExtensionList;
-use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileExists;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -202,7 +202,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
 
       if (!file_exists($file_path)) {
         $logo_path = $this->extensionList->getPath('social_footer') . DIRECTORY_SEPARATOR . 'open_social_logo.png';
-        $uri = \Drupal::service('file_system')->copy($logo_path, $file_path, FileSystemInterface::EXISTS_REPLACE);
+        $uri = \Drupal::service('file_system')->copy($logo_path, $file_path, FileExists::Replace);
 
         // Create a file.
         /** @var \Drupal\file\FileInterface $file */

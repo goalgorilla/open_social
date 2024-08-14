@@ -228,7 +228,7 @@ function social_group_preprocess_group(array &$variables) {
 
   // Render the group settings help, gear icon with popover.
   $group_settings_help = _social_group_render_group_settings_hero($group);
-  $variables['group_settings_help'] = $renderer->renderPlain($group_settings_help);
+  $variables['group_settings_help'] = $renderer->renderInIsolation($group_settings_help);
 
   $account = \Drupal::currentUser();
 
@@ -343,7 +343,7 @@ function social_group_preprocess_group__hero(array &$variables) {
   // Render the group settings help, gear icon with popover.
   $group_settings_help = _social_group_render_group_settings_hero($group);
   $variables['group_settings_help'] = \Drupal::service('renderer')
-    ->renderPlain($group_settings_help);
+    ->renderInIsolation($group_settings_help);
 }
 
 /**

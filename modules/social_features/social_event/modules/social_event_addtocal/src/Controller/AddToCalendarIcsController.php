@@ -3,6 +3,7 @@
 namespace Drupal\social_event_addtocal\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Presentation\Factory\TimeZoneFactory;
@@ -133,7 +134,7 @@ class AddToCalendarIcsController extends ControllerBase {
       $data = implode("\r\n", $file_data);
 
       // Save datta to file.
-      $this->fileSystem->saveData($data, $file, FileSystemInterface::EXISTS_REPLACE);
+      $this->fileSystem->saveData($data, $file, FileExists::Replace);
     }
 
     // Set response for file download.
