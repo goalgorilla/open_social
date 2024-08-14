@@ -183,7 +183,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
     ];
 
     // Construct the body & subject for email sending.
-    $params['body'] = $this->renderer->renderPlain($notification);
+    $params['body'] = $this->renderer->renderInIsolation($notification);
     if ($subject !== '') {
       $params['subject'] = $subject;
     }

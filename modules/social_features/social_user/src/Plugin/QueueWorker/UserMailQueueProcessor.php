@@ -216,7 +216,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
         ], ['langcode' => $langcode]),
       ];
 
-      $params['body'] = $this->renderer->renderPlain($notification);
+      $params['body'] = $this->renderer->renderInIsolation($notification);
       $params['reply-to'] = $reply_to;
 
       // Attempt sending mail.

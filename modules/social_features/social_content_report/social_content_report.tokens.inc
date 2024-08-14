@@ -106,7 +106,7 @@ function social_content_report_tokens_alter(array &$replacements, array $context
             if (isset($context['tokens']['cta_button'])) {
               $link = Url::fromRoute('view.report_overview.overview');
               $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Check the reported contents', [], $translation_options));
-              $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderPlain($cta_button);
+              $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderInIsolation($cta_button);
             }
 
             // Replace the preview token.
@@ -125,7 +125,7 @@ function social_content_report_tokens_alter(array &$replacements, array $context
                     if ($entity instanceof PostInterface) {
                       /** @var \Drupal\social_post\Entity\Post $entity */
                       $preview_info = $email_token_services->getPostPreview($entity);
-                      $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+                      $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderInIsolation($preview_info);
                     }
                     break;
 
@@ -133,20 +133,20 @@ function social_content_report_tokens_alter(array &$replacements, array $context
                     if ($entity instanceof NodeInterface) {
                       /** @var \Drupal\node\Entity\Node $entity */
                       $preview_info = $email_token_services->getContentPreview($entity);
-                      $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+                      $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderInIsolation($preview_info);
                     }
                     break;
 
                   case 'comment':
                     /** @var \Drupal\comment\Entity\Comment $entity */
                     $preview_info = $email_token_services->getCommentPreview($entity);
-                    $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+                    $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderInIsolation($preview_info);
                     break;
                 }
               }
               else {
                 $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')
-                  ->renderPlain($preview_info);
+                  ->renderInIsolation($preview_info);
               }
             }
           }
