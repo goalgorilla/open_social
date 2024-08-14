@@ -2,17 +2,17 @@
 
 namespace Drupal\dropdown\Element;
 
-use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\Core\Render\Element\CompositeFormElementTrait;
+use Drupal\Core\Render\Element\FormElementBase;
 
 /**
  * Provides an dropdown element.
  *
  * @RenderElement("dropdown")
  */
-class Dropdown extends FormElement {
+class Dropdown extends FormElementBase {
 
   use CompositeFormElementTrait;
 

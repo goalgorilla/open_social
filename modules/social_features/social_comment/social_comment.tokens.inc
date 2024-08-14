@@ -298,13 +298,13 @@ function social_comment_tokens_alter(array &$replacements, array $context, Bubbl
                 $link = $commented_entity->toUrl('canonical', ['absolute' => TRUE, 'fragment' => 'comment-' . $comment->id()]);
 
                 $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Reply to this comment', [], $translation_options));
-                $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderPlain($cta_button);
+                $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderInIsolation($cta_button);
               }
 
               // Replace the preview token.
               if (isset($context['tokens']['preview'])) {
                 $preview_info = $email_token_services->getCommentPreview($comment);
-                $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+                $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderInIsolation($preview_info);
               }
               break;
           }
