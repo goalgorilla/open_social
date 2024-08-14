@@ -226,7 +226,7 @@ function social_follow_taxonomy_tokens_alter(array &$replacements, array $contex
                 $link = $entity->toUrl('canonical', ['absolute' => TRUE]);
                 $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more about it', [], $translation_options));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                  ->renderPlain($cta_button);
+                  ->renderInIsolation($cta_button);
               }
 
               // Replace the preview token.
@@ -244,7 +244,7 @@ function social_follow_taxonomy_tokens_alter(array &$replacements, array $contex
                     break;
                 }
                 $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')
-                  ->renderPlain($preview_info);
+                  ->renderInIsolation($preview_info);
               }
               break;
           }

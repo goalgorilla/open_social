@@ -7,7 +7,7 @@
 
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Field\FieldItemList;
-use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileExists;
 use Drupal\crop\Entity\CropType;
 use Drupal\file\Entity\File;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
@@ -136,7 +136,7 @@ function _social_core_create_an_homepage_block() {
   // Block image.
   $path = \Drupal::service('extension.list.module')->getPath('social_core');
   $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
-  $uri = \Drupal::service('file_system')->copy($image_path, 'public://homepage-block.jpg', FileSystemInterface::EXISTS_REPLACE);
+  $uri = \Drupal::service('file_system')->copy($image_path, 'public://homepage-block.jpg', FileExists::Replace);
 
   $media = File::create([
     'langcode' => 'en',
