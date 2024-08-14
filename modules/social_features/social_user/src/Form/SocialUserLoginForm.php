@@ -210,8 +210,13 @@ class SocialUserLoginForm extends UserLoginForm {
       }
       // We are not limited by flood control, so try to authenticate.
       // Store $uid in form state as a flag for self::validateFinal().
-      $uid = $this->userAuth->authenticate($name, $password);
-      $form_state->set('uid', $uid);
+      if (method_exists($this->userAuth, 'authenticate')) {
+        $uid = $this->userAuth->authenticate($name, $password);
+        $form_state->set('uid', $uid);
+      }
+      else {
+        $this->setGeneralErrorMessage($form, $form_state);
+      }
     }
   }
 

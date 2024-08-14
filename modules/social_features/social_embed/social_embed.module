@@ -6,8 +6,7 @@
  */
 
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\File\FileSystemInterface;
-
+use Drupal\Core\File\FileExists;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\embed\Entity\EmbedButton;
 use Drupal\file\Entity\File;
@@ -20,7 +19,7 @@ function _social_embed_create_media_button() :void {
   // Create a File entity for the icon.
   $path = \Drupal::service('extension.list.module')->getPath('social_embed');
   $image_path = $path . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'icons' . DIRECTORY_SEPARATOR . 'urlembed.png';
-  $uri = \Drupal::service('file_system')->copy($image_path, 'public://urlembed.png', FileSystemInterface::EXISTS_REPLACE);
+  $uri = \Drupal::service('file_system')->copy($image_path, 'public://urlembed.png', FileExists::Replace);
 
   $media = File::create([
     'langcode' => 'en',

@@ -128,7 +128,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             // will be removed in 11.x release of Open Social.
             case 'additional_information':
               if (!empty($additional_information)) {
-                $replacements[$original] = \Drupal::service('renderer')->renderPlain($additional_information);
+                $replacements[$original] = \Drupal::service('renderer')->renderInIsolation($additional_information);
               }
               break;
 
@@ -150,13 +150,13 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
 
             case 'preview':
               if (!empty($preview_info)) {
-                $replacements[$original] = \Drupal::service('renderer')->renderPlain($preview_info);
+                $replacements[$original] = \Drupal::service('renderer')->renderInIsolation($preview_info);
               }
               break;
 
             case 'cta_button':
               if (!empty($cta_button)) {
-                $replacements[$original] = \Drupal::service('renderer')->renderPlain($cta_button);
+                $replacements[$original] = \Drupal::service('renderer')->renderInIsolation($cta_button);
               }
               break;
           }

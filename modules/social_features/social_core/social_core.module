@@ -10,7 +10,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Field\FieldItemList;
-use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileExists;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
@@ -1236,7 +1236,7 @@ function _social_core_set_default_email_logo_for_socialblue() {
       // socialblue logo we can continue.
       if (empty($default_image) || $default_image === $basetheme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
         $file_system = \Drupal::service('file_system');
-        $uri = $file_system->copy($basetheme_url . DIRECTORY_SEPARATOR . 'logo_email.png', 'public://logo_email.png', FileSystemInterface::EXISTS_REPLACE);
+        $uri = $file_system->copy($basetheme_url . DIRECTORY_SEPARATOR . 'logo_email.png', 'public://logo_email.png', FileExists::Replace);
 
         $media = File::create([
           'uri' => $uri,

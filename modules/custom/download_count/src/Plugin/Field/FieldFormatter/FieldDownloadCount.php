@@ -8,6 +8,7 @@ use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\ByteSizeMarkup;
 use Drupal\Core\Theme\ThemeManagerInterface;
+use Drupal\file\IconMimeTypes;
 use Drupal\file\Plugin\Field\FieldFormatter\GenericFileFormatter;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Link;
@@ -160,7 +161,7 @@ class FieldDownloadCount extends GenericFileFormatter {
           '.' => '-',
         ]),
         // Add a more general class for groups of well known mime types.
-        'file--' . file_icon_class($file->getMimeType()),
+        'file--' . IconMimeTypes::getIconClass($file->getMimeType()),
       ];
 
       $attributes = new Attribute(['class' => $classes]);
@@ -185,7 +186,7 @@ class FieldDownloadCount extends GenericFileFormatter {
       }
 
       $mime_type = $file->getMimeType();
-      $generic_mime_type = file_icon_class($mime_type);
+      $generic_mime_type = IconMimeTypes::getIconClass($mime_type);
 
       // Set new icons for the mime types.
       switch ($generic_mime_type) {

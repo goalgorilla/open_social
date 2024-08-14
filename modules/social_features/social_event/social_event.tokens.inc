@@ -162,14 +162,14 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
                   $link = Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $event->id()]);
                   $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollments', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                    ->renderPlain($cta_button);
+                    ->renderInIsolation($cta_button);
                   break;
 
                 case 'request_event_enrollment':
                   $link = Url::fromRoute('view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $event->id()]);
                   $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollment requests', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                    ->renderPlain($cta_button);
+                    ->renderInIsolation($cta_button);
                   break;
 
                 case 'member_added_by_event_organiser':
@@ -177,14 +177,14 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
                   $link = $event->toUrl('canonical');
                   $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See the event', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                    ->renderPlain($cta_button);
+                    ->renderInIsolation($cta_button);
                   break;
 
                 case 'user_was_enrolled_to_event':
                   $link = $event->toUrl();
                   $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See event details', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                    ->renderPlain($cta_button);
+                    ->renderInIsolation($cta_button);
                   break;
 
               }
@@ -199,7 +199,7 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
               $preview_info = $view_builder->view($event, 'email_card');
               $renderer = \Drupal::service('renderer');
               $renderer->addCacheableDependency($preview_info, $translation_options);
-              $replacements[$context['tokens']['preview']] = $renderer->renderPlain($preview_info);
+              $replacements[$context['tokens']['preview']] = $renderer->renderInIsolation($preview_info);
             }
           }
         }
