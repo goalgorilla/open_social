@@ -797,9 +797,7 @@ class FeatureContext extends RawMinkContext {
       // Since Drupal 10.3 logout is redirect to confirm if is missing token.
       // I check if user is in confirmation page.
       $session = $this->getSession();
-      // Remove query string to avoid check destination parameter.
-      $url = strtok($session->getCurrentUrl(), '?');
-      if (!str_contains($url, '/user/logout/confirm')) {
+      if (!str_contains($session->getCurrentUrl(), '/user/logout/confirm')) {
         return;
       }
 
