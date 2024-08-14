@@ -2,7 +2,7 @@
 [![Packagist Version](https://img.shields.io/packagist/v/goalgorilla/open_social.svg)](https://packagist.org/packages/goalgorilla/open_social)
 [![Twitter Follow](https://img.shields.io/twitter/follow/OpenSocialHQ.svg)](https://twitter.com/OpenSocialHQ)
 
-# Open Social
+# Open Social test
 The install profile for the
 <a target="_blank" href="http://www.drupal.org/project/social">Open Social
 distribution</a>.
