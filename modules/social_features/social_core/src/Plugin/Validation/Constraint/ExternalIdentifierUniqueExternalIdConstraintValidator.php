@@ -148,18 +148,18 @@ class ExternalIdentifierUniqueExternalIdConstraintValidator extends ConstraintVa
     }
 
     $entity = $item->getEntity();
-    $entity_type = $entity->getEntityTypeId();
+    $entity_type = $entity->getEntityType();
 
     // Check per each field of type "social_external_identifier" in given
     // entity type, if external_id is unique per external owner.
-    foreach ($this->getFieldNamesByFieldType($entity_type) as $field) {
-      $query = $this->entityTypeManager->getStorage($entity_type)->getQuery();
+    foreach ($this->getFieldNamesByFieldType($entity_type->id()) as $field) {
+      $query = $this->entityTypeManager->getStorage($entity_type->id())->getQuery();
       $query->condition($field . '.external_id', $item->external_id);
       $query->condition($field . '.external_owner_target_type', $item->external_owner_target_type);
       $query->condition($field . '.external_owner_id', $item->external_owner_id);
       // Exclude existing current entity.
       if (!$entity->isNew()) {
-        $query->condition('id', $entity->id(), '<>');
+        $query->condition($entity_type->getKey('id'), $entity->id(), '<>');
       }
       $query->accessCheck(FALSE);
       $result = $query->execute();
