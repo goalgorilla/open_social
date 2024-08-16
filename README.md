@@ -38,7 +38,7 @@ We are testing [Tugboat](https://www.tugboat.qa/) to achieve the following:
 3. Use this live preview to run Cypress tests on
 
 ## GitHub actions
-We use github actions to trigger
+We use Github actions to trigger
 1. PHPStan for static analysis of the code being contributed
 2. PHPCS for coding standards of the code being contributed
 3. PHPUnit for our unit tests instead of running it in Travis CI
