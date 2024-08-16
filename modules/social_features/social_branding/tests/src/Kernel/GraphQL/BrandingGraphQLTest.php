@@ -16,6 +16,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
   protected static $modules = [
     "social_branding",
     "social_branding_test",
+    "jquery_ui",
+    "jquery_ui_draggable",
+    "jquery_ui_resizable",
   ];
 
   /**
