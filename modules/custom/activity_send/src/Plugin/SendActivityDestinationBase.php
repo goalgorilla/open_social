@@ -192,8 +192,16 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    *
    * @return bool
    *   Status of user.
+   *
+   * @throws \Exception
    */
-  public static function isUserOffline(User $account) {
+  public static function isUserOffline(User $account): bool {
+    // When the session table doesn't exist, the user is off.
+    $session_exist = \Drupal::database()->schema()->tableExists('sessions');
+    if (!$session_exist && PHP_SAPI === 'cli') {
+      return TRUE;
+    }
+
     $query = \Drupal::database()->select('sessions', 's');
     $query->addField('s', 'timestamp');
     $query->condition('s.uid', $account->id());
