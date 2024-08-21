@@ -32,7 +32,7 @@ Feature: Comment on a Post
     And I click "Edit"
     And I fill in "Comment #1 to be deleted" for "Post comment"
     And I press "Submit"
-   Then I should see the success message "Your comment has been posted."
+   Then I should see the success message "Your comment has been updated."
 
         # Scenario: delete comment
    When I am on the homepage
