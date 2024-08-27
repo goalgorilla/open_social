@@ -537,3 +537,18 @@ function social_core_update_130007(): void {
 function social_core_update_130008(): void {
   user_role_revoke_permissions('sitemanager', ['administer taxonomy']);
 }
+
+/**
+ * Bootstrap 8.x-3.32 #3427365.
+ *
+ * Due to themes not having update hooks this needs to be added for Open Social.
+ * Otherwise, it will result in dependencies not met.
+ */
+function social_core_update_130009(): void {
+  $modules = [
+    'jquery_ui',
+    'jquery_ui_draggable',
+    'jquery_ui_resizable',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+}

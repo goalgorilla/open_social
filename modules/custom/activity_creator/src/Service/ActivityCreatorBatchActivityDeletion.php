@@ -3,6 +3,7 @@
 namespace Drupal\activity_creator\Service;
 
 use Drupal\Core\Batch\BatchBuilder;
+use Drupal\Core\Site\Settings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -47,9 +48,9 @@ class ActivityCreatorBatchActivityDeletion {
     $activity_storage = \Drupal::entityTypeManager()->getStorage('activity');
 
     // Elements per operation.
-    $limit = 50;
+    $limit = Settings::get('entity_update_batch_size', 25);
 
-    // Set default progress values.
+    // Ensure the platform can determine how many items we process.
     if (empty($context['sandbox']['progress'])) {
       $context['sandbox']['progress'] = 0;
       $context['sandbox']['max'] = count($items);

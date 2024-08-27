@@ -10,6 +10,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
+use Drupal\user\EntityOwnerInterface;
 
 /**
  * Implements hook_token_info().
@@ -168,18 +169,29 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             return $replacements;
           }
 
+          // Get related content to change tokens.
           $related_object_value = current($message->field_message_related_object->getValue());
           $related_object_content = \Drupal::entityTypeManager()
             ->getStorage($related_object_value['target_type'])
             ->load($related_object_value['target_id']);
-          if (
-            empty($related_object_content)
-            || !method_exists($related_object_content, 'getOwner')
-          ) {
+          if (empty($related_object_content)) {
             return $replacements;
           }
 
-          $replacements += $token_service->generate('user', $author_tokens, ['user' => $related_object_content->getOwner()], $options, $bubbleable_metadata);
+          // Get the Entity when the entity type is group_content.
+          // The owner from group_content didn't update, so is outdated.
+          if (
+            $related_object_content->getEntityTypeId() === 'group_content'
+            && method_exists($related_object_content, 'getEntity')
+          ) {
+            $related_object_content = $related_object_content->getEntity();
+          }
+
+          if ($related_object_content instanceof EntityOwnerInterface) {
+            $replacements += $token_service->generate('user', $author_tokens, ['user' => $related_object_content->getOwner()], $options, $bubbleable_metadata);
+          }
+
+          return $replacements;
         }
       }
     }

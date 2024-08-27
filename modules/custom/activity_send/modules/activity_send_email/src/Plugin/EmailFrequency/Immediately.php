@@ -130,7 +130,9 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
 
       // If no body text is provided, get it from message for given language.
       if (!$body_text) {
+        $this->configLanguageManager->stringTranslationOverrideLanguageStart($langcode);
         $body_text = EmailActivityDestination::getSendEmailOutputText($message, $langcode);
+        $this->configLanguageManager->stringTranslationOverrideLanguageEnd();
       }
 
       if ($langcode && !empty($body_text)) {

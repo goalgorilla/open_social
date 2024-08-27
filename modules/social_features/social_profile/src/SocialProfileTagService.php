@@ -173,7 +173,8 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
       else {
         $parent = $term;
       }
-      $parent_label = $parent->getName();
+      $current_lang = $this->languageManager->getCurrentLanguage()->getId();
+      $parent_label = $parent->hasTranslation($current_lang) ? $parent->getTranslation($current_lang)->getName() : $parent->getName();
       $route = 'view.search_users.page_no_value';
       $route_parameters = [
         'created_op' => '<',
@@ -182,11 +183,12 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
 
       // Prepare the URL for the search by term.
       $url = Url::fromRoute($route, $route_parameters)->toString();
+      $options[$term->id()] = $term->hasTranslation($current_lang) ? $term->getTranslation($current_lang)->label() : $term->label();
 
       $tree[$parent->id()]['title'] = $parent_label;
       $tree[$parent->id()]['tags'][$term->id()] = [
         'url' => $url,
-        'name' => $term->getName(),
+        'name' => $parent->hasTranslation($current_lang) ? $term->getTranslation($current_lang)->getName() : $term->getName(),
       ];
     }
     return $tree;
@@ -204,7 +206,8 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
     /** @var \Drupal\taxonomy\TermInterface[] $terms */
     $terms = $this->taxonomyStorage->loadMultiple($term_ids);
     foreach ($terms as $term) {
-      $options[$term->id()] = $term->label();
+      $current_lang = $this->languageManager->getCurrentLanguage()->getId();
+      $options[$term->id()] = $term->hasTranslation($current_lang) ? $term->getTranslation($current_lang)->label() : $term->label();
     }
 
     return $options;

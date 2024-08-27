@@ -17,6 +17,7 @@ use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\social_core\Service\ConfigLanguageManager;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -84,6 +85,13 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
   protected $languageManager;
 
   /**
+   * The config language manager object.
+   *
+   * @var \Drupal\social_core\Service\ConfigLanguageManager
+   */
+  protected ConfigLanguageManager $configLanguageManager;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -96,7 +104,8 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
     ConfigFactoryInterface $config_factory,
     EntityTypeManagerInterface $entity_type_manager,
     QueueFactory $queue_factory,
-    LanguageManager $language_manager
+    LanguageManager $language_manager,
+    ConfigLanguageManager $config_language_manager
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->frequencyManager = $frequency_manager;
@@ -106,6 +115,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
     $this->entityTypeManager = $entity_type_manager;
     $this->queueFactory = $queue_factory;
     $this->languageManager = $language_manager;
+    $this->configLanguageManager = $config_language_manager;
   }
 
   /**
@@ -122,7 +132,8 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('queue'),
-      $container->get('language_manager')
+      $container->get('language_manager'),
+      $container->get('social_core.config_language_manager')
     );
   }
 
@@ -274,7 +285,9 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
     $user_storage = $this->entityTypeManager->getStorage('user');
     if (!empty($parameters['langcode'])) {
       // Get the message text according to language.
+      $this->configLanguageManager->stringTranslationOverrideLanguageStart($parameters['langcode']);
       $body_text = EmailActivityDestination::getSendEmailOutputText($parameters['message'], $parameters['langcode']);
+      $this->configLanguageManager->stringTranslationOverrideLanguageEnd();
     }
     else {
       // We get the default body text.
@@ -300,10 +313,12 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
             // is not processed in a batch and thus we can't be sure if all
             // users in the queue have the same language.
             if (empty($parameters['langcode']) && $this->languageManager->isMultilingual()) {
+              $this->configLanguageManager->stringTranslationOverrideLanguageStart($target_account->getPreferredLangcode());
               $body_text = EmailActivityDestination::getSendEmailOutputText(
                 $parameters['message'],
                 $target_account->getPreferredLangcode()
               );
+              $this->configLanguageManager->stringTranslationOverrideLanguageEnd();
             }
             // Send item to EmailFrequency instance.
             if ($this->frequencyManager->hasDefinition($parameters['frequency'])) {
