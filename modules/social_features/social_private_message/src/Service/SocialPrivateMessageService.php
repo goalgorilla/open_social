@@ -71,7 +71,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
       // Get the user.
       $uid = $this->currentUser->id();
       /** @var \Drupal\user\UserStorageInterface $user_storage */
-      $user_storage = $this->userManager;
+      $user_storage = $this->entityTypeManager->getStorage('user');
       /** @var \Drupal\user\UserInterface $user */
       $user = $user_storage->load($uid);
 

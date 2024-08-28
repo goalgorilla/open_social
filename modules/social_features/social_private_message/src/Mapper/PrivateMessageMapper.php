@@ -17,7 +17,7 @@ class PrivateMessageMapper extends PrivateMessageMapperBase {
   /**
    * {@inheritdoc}
    */
-  public function getUserIdsFromString($string, $count) {
+  public function getUserIdsFromString($string, $count): array {
     if ($this->currentUser->hasPermission('access user profiles') && $this->currentUser->hasPermission('use private messaging system')) {
       return $this->getUserIdsFromName($string, $count);
     }
