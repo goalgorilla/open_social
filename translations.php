@@ -185,3 +185,7 @@ new TranslatableMarkup('Are you sure you want to send your email to to the follo
 // String added because original one was changed due to #3445024 issue.
 new TranslatableMarkup('Find people by name or email address');
 new TranslatableMarkup('You can enter or paste multiple entries separated by comma or semicolon');
+
+// String added because original one was changed due to #3470967 issue.
+new TranslatableMarkup('Registered users are verified immediately');
+new TranslatableMarkup('New users will be required to validate their email address prior to logging into the site, and will be assigned a system-generated password. With this setting disabled, users will be logged in immediately upon registering, and may select their own passwords during registration.');
