@@ -543,11 +543,12 @@ function social_user_form_user_admin_settings_alter(&$form, FormStateInterface $
 
   $form['registration_cancellation']['verified_immediately'] = [
     '#type' => 'checkbox',
-    '#title' => new TranslatableMarkup('Registered users are verified immediately'),
+    '#title' => new TranslatableMarkup('New users automatically get the Verified User role assigned'),
     '#description' => new TranslatableMarkup('New registered users get the "verified user & authenticated" role when they are registered. With this setting disabled, new registered users get the "authenticated" role when they are registered.'),
     '#default_value' => $config->get('verified_immediately'),
     '#weight' => -10,
   ];
+    $form['registration_cancellation']['user_email_verification']['#description'] = new TranslatableMarkup('New users will be required to confirm their email address via an account activation email prior to logging in. With this setting disabled, users will be logged in immediately upon registering, and may select their own passwords during registration. ');
 
   $form['#submit'][] = 'social_user_form_user_admin_settings_submit';
 }
@@ -702,7 +703,7 @@ function social_user_module_implements_alter(&$implementations, $hook) {
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function social_user_user_insert(UserInterface $user): void {
-  // If site setting "Registered users are verified immediately" is enabled:
+  // If site setting "New users automatically get the Verified User role assigned" is enabled:
   // new registered users get the "verified user & authenticated" role when they
   // are registered.
   $config = \Drupal::config('social_user.settings');

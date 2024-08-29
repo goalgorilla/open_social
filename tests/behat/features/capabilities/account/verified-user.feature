@@ -5,7 +5,7 @@ Feature: User is Verified
   Goal/desire: New registered users get the "verified user & authenticated" role when they are registered.
 
   @verified-immediately-enabled
-  Scenario: "Registered users are verified immediately" is enabled.
+  Scenario: "New users automatically get the Verified User role assigned" is enabled.
     # User registration.
     Given I am on the homepage
     When I click "Sign up"
@@ -15,11 +15,11 @@ Feature: User is Verified
       And I press "Create new account"
     Then I should see the success message "A welcome message with further instructions has been sent to your email address."
 
-    # Be sure that "Registered users are verified immediately" is enabled by
+    # Be sure that "RNew users automatically get the Verified User role assigned" is enabled by
     # default.
     Given I am logged in as an "sitemanager"
     When I am on "admin/config/people/accounts"
-    Then I should see checked the box "Registered users are verified immediately"
+    Then I should see checked the box "New users automatically get the Verified User role assigned"
 
     # Check that the registered user has a Verified role.
     Given I am logged in as an "administrator"
@@ -32,12 +32,12 @@ Feature: User is Verified
       And I should see checked the box "Verified user"
 
   @verified-immediately-disable
-  Scenario: "Registered users are verified immediately" is disable.
-    # Be sure that "Registered users are verified immediately" is disable.
+  Scenario: "New users automatically get the Verified User role assigned" is disable.
+    # Be sure that "New users automatically get the Verified User role assigned" is disable.
     Given I am logged in as an "sitemanager"
     When I am on "admin/config/people/accounts"
-    Then I should see checked the box "Registered users are verified immediately"
-      And I uncheck the box "Registered users are verified immediately"
+    Then I should see checked the box "New users automatically get the Verified User role assigned"
+      And I uncheck the box "New users automatically get the Verified User role assigned"
       And I press "Save configuration"
       And I logout
 
