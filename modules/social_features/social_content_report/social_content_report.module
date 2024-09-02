@@ -5,9 +5,13 @@
  * The Social Content Report module file.
  */
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\comment\CommentInterface;
+use Drupal\flag\FlaggingInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 
@@ -90,6 +94,22 @@ function social_content_report_mandatory_reason_validate(array $form, FormStateI
  */
 function _social_content_report_submit(array $form, FormStateInterface $form_state) {
   $form_state->setRedirectUrl(Url::fromUri($form_state->get('referer')));
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function social_content_report_flagging_access(FlaggingInterface $flagging, string $operation, AccountInterface $account): AccessResultInterface {
+  if ($operation !== 'view') {
+    return AccessResult::neutral();
+  }
+
+  if (!in_array($flagging->bundle(), ['report_comment', 'report_node', 'report_post'])) {
+    return AccessResult::neutral();
+  }
+
+  // Allow users with appropriate permission view flagging entity.
+  return AccessResult::allowedIfHasPermission($account, 'view inappropriate reports');
 }
 
 /**
