@@ -59,7 +59,7 @@ function social_embed_form_alter(array &$form, FormStateInterface $form_state, s
  */
 function _social_embed_submit_max_embeds_per_content(array $form, FormStateInterface $form_state): void {
   foreach ($form_state->getValues() as $field_name => $field_value) {
-    // Only if it contains a formatted longtext field.
+    // Only if it contains a formatted field.
     if (is_array($field_value) && isset($field_value[0]['format']) && in_array($field_value[0]['format'], ['full_html', 'basic_html'])) {
       $value = $field_value[0]['value'];
       $matches = [];
