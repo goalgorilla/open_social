@@ -126,21 +126,41 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
    */
   public function process($text, $langcode) {
     $result = new FilterProcessResult($text);
+
+    // Add settings in case we need to use _filter_url().
+    $this->setConfiguration([
+      'settings' => [
+        'filter_url_length' => 72,
+      ],
+    ]);
+
     if (strpos($text, 'data-embed-url') !== FALSE) {
+      // Load settings.
+      $embed_settings = $this->configFactory->get('social_embed.settings');
+
       $dom = Html::load($text);
       /** @var \DOMXPath $xpath */
       $xpath = new \DOMXPath($dom);
       /** @var \DOMNode[] $matching_nodes */
       $matching_nodes = $xpath->query('//drupal-url[@data-embed-url]');
+
+      $count = 1;
       foreach ($matching_nodes as $node) {
         /** @var \DOMElement $node */
         $url = $node->getAttribute('data-embed-url');
+
+        // Abort if the URL is not whitelisted,
+        // or if achieved max_embed_per_content.
+        if (!$this->embedHelper->isWhitelisted($url) || $count > $embed_settings->get('max_embeds_per_content')) {
+          $this->replaceNodeContent($node, _filter_url($url, $this));
+          continue;
+        }
+
         $url_output = '';
         try {
           $info = $this->urlEmbed->getUrlInfo($url);
           /** @var \Drupal\user\Entity\User $user */
           $user = $this->currentUser->isAnonymous() ? NULL : User::load($this->currentUser->id());
-          $embed_settings = $this->configFactory->get('social_embed.settings');
           if (!empty($info['code'])
             && (($user instanceof User
                 && $embed_settings->get('embed_consent_settings_lu')
@@ -170,6 +190,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
         }
 
         $this->replaceNodeContent($node, $url_output);
+        $count++;
       }
 
       $result->setProcessedText(Html::serialize($dom));
