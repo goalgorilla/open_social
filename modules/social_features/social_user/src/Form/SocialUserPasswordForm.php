@@ -55,7 +55,7 @@ class SocialUserPasswordForm extends UserPasswordForm {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    // No validation necessary to protect the privacy of users.
+    parent::validateForm($form, $form_state);
   }
 
   /**
