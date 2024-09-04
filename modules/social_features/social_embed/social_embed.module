@@ -91,7 +91,7 @@ function _social_embed_submit_max_embeds_per_content(array $form, FormStateInter
       // Display warning message if $count exceeds $max.
       if ($count > $max) {
         \Drupal::messenger()->addWarning(t('Some URLs may not be embedded due to a limit of up to %max links per content.', [
-          '%max' => $max
+          '%max' => $max,
         ]));
       }
     }
@@ -116,7 +116,6 @@ function _social_embed_form_url_embed_dialog_cke5_validate(array $form, FormStat
     $form_state->setErrorByName('attributes', t('This is not a supported URL to embed.'));
   }
 }
-
 
 /**
  * Implements hook_form_FORM_ID_alter().
