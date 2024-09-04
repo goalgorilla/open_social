@@ -4,6 +4,7 @@ namespace Drupal\social_group\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -93,6 +94,15 @@ class GroupHeroBlock extends BlockBase implements ContainerFactoryPluginInterfac
     }
 
     return parent::blockAccess($account);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getCacheContexts(): array {
+    return Cache::mergeContexts(parent::getCacheContexts(), [
+      'user',
+    ]);
   }
 
 }
