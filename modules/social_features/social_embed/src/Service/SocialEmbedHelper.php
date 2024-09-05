@@ -123,7 +123,7 @@ class SocialEmbedHelper {
       '(open.spotify.com\/track\/(.*))',
       '(twitter.com\/(.*)\/status\/(.*))',
       '(x.com\/(.*)\/status\/(.*))',
-      '(vimeo.com\/\d{7,9})',
+      '(vimeo.com\/[a-zA-Z0-9]+(?:\/[a-zA-Z0-9]+)?\/?)',
       '(youtube.com\/watch[?]v=(.*))',
       '(youtu.be\/(.*))',
       '(ted.com\/talks\/(.*))',
