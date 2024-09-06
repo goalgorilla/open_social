@@ -64,3 +64,17 @@ function social_event_type_update_last_removed() : int {
 function social_event_type_update_130001(): void {
   user_role_grant_permissions('sitemanager', ['create terms in event_types']);
 }
+
+/**
+ * Update "Type" field reference method.
+ */
+function social_event_type_update_130002() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_event_type', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}

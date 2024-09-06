@@ -1,0 +1,15 @@
+__global_actions:
+  import_configs:
+    - views.view.event_types
+
+field.field.node.event.field_event_type:
+  expected_config: {}
+  update_actions:
+    change:
+      settings:
+        handler: views
+        handler_settings:
+          view:
+            view_name: event_types
+            display_name: event_types_reference
+            arguments: { }
