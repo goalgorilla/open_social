@@ -5,7 +5,7 @@
 
   (function($) {
     "use strict";
-    var Mentions, MentionsCKEditor, MentionsHandlerBase, MentionsInput;
+    var Mentions, MentionsHandlerBase, MentionsInput;
     $.widget("ui.mentionsAutocomplete", $.ui.autocomplete, {
       options: $.extend({}, $.ui.autocomplete.prototype.options, {
         messages: {
@@ -281,201 +281,6 @@
       return MentionsInput;
 
     })(MentionsHandlerBase);
-    MentionsCKEditor = (function(superClass) {
-      extend(MentionsCKEditor, superClass);
-
-      function MentionsCKEditor(mentions1) {
-        var editor, element, mentions;
-        this.mentions = mentions1;
-        MentionsCKEditor.__super__.constructor.call(this, this.mentions);
-        this.createHiddenField();
-        this.editor = CKEDITOR.instances[this.element.attr("id")];
-        this.mentions.settings.suffix = this.mentions.settings.suffix.replace(" ", "\u00A0");
-        editor = this.editor;
-        element = this.element;
-        mentions = this.mentions;
-        this.element.mentionsAutocomplete(jQuery.extend({}, this.mentions.settings.autocomplete, {
-          select: (function(_this) {
-            return function(event, ui) {
-              return _this.onSelect(event, ui);
-            };
-          })(this),
-          appendTo: this.element.parent(),
-          open: function(event, ui) {
-            var offset, position, top, bodyHeight;
-            position = $(editor.document.$.body).caret("position", {
-              iframe: editor.window.$.frameElement
-            });
-            offset = $(editor.document.$.body).caret("offset", {
-              iframe: editor.window.$.frameElement
-            });
-            bodyHeight = $('.cke_contents').height();
-            top = 5 + position.height + position.top + $(editor.ui.space("top").$).outerHeight(true) + offset.height;
-
-            function menshinBlockPosition(X, Y) {
-              element.data("ui-mentionsAutocomplete").menu.element.css({
-                left: X,
-                top: Y
-              });
-            }
-
-            if(top >= bodyHeight) {
-              menshinBlockPosition(0, bodyHeight + 45);
-            } else {
-              menshinBlockPosition(0, top);
-            }
-
-            if (mentions.settings.autocomplete.open) {
-              return mentions.settings.autocomplete.open.call(this, event, ui);
-            }
-          }
-        }));
-      }
-
-      MentionsCKEditor.prototype.initEvents = function() {
-        this.editor.on("change", (function(_this) {
-          return function() {
-            return _this.handleInput();
-          };
-        })(this));
-        this.editor.document.on("keyup", (function(_this) {
-          return function() {
-            return _this.handleInput();
-          };
-        })(this));
-        return $(this.editor.window.$.document.body).on("click", (function(_this) {
-          return function() {
-            return _this.element.mentionsAutocomplete("close");
-          };
-        })(this));
-      };
-
-      MentionsCKEditor.prototype.handleInput = function() {
-        var match, node, position, query, selection, trigger, value;
-        this.refreshMentions();
-        this.updateValues();
-        selection = this.editor.window.$.getSelection();
-        node = selection.focusNode;
-        value = node.textContent;
-        position = selection.focusOffset;
-        value = value.substring(0, position);
-        if (this.timer) {
-          window.clearTimeout(this.timer);
-        }
-        trigger = this.mentions.settings.trigger;
-        match = new RegExp("[" + trigger + "]([^" + trigger + "]{" + this.mentions.settings.length.join(",") + "})$").exec(value);
-        if (!match) {
-          this.element.mentionsAutocomplete("close");
-          return;
-        }
-        this.start = match.index;
-        this.end = this.start + match[0].length;
-        query = match[1];
-        return this.timer = window.setTimeout((function(_this) {
-          return function() {
-            return _this.mentions.fetchData(query, function(response) {
-              _this.element.mentionsAutocomplete("option", "source", function(req, add) {
-                return add(response);
-              });
-              return _this.element.mentionsAutocomplete("search", query);
-            });
-          };
-        })(this), this.mentions.settings.delay);
-      };
-
-      MentionsCKEditor.prototype.createHiddenField = function() {
-        this.hidden = $("<input />", {
-          type: "hidden",
-          name: this.element.attr("name"),
-          value: this.element.text()
-        });
-        return this.element.after(this.hidden).removeAttr("name");
-      };
-
-      MentionsCKEditor.prototype.updateValues = function() {
-        return this.hidden.val(this.getValue());
-      };
-
-      MentionsCKEditor.prototype.refreshMentions = function() {
-        var j, key, len, mention, ref, results;
-        ref = this.cache.mentions;
-        results = [];
-        for (key = j = 0, len = ref.length; j < len; key = ++j) {
-          mention = ref[key];
-          if (mention.$node.html() !== this.mentions.settings.template(mention.item)) {
-            results.push(this.cache.mentions.splice(key, 1));
-          } else {
-            results.push(void 0);
-          }
-        }
-        return results;
-      };
-
-      MentionsCKEditor.prototype.onSelect = function(event, ui) {
-        var $node, _id, mention, position;
-        _id = Math.random().toString().split(".")[1];
-        mention = this.mentions.settings.template(ui.item);
-        position = {
-          start: this.start,
-          end: this.end
-        };
-        $node = $("<mention />", {
-          id: _id
-        }).html(mention).data("mentionItem", ui.item);
-        ui.item._id = _id;
-        this.insertMention($node, position, ui.item);
-        this.updateValues();
-        return this.editor.focus();
-      };
-
-      MentionsCKEditor.prototype.insertMention = function($node, position, item) {
-        var node, range, selection, suffix;
-        selection = this.editor.window.$.getSelection();
-        node = selection.focusNode;
-        range = selection.getRangeAt(0);
-        range.setStart(node, position.start);
-        range.setEnd(node, position.end);
-        range.deleteContents();
-        if (this.mentions.settings.suffix) {
-          suffix = document.createTextNode(this.mentions.settings.suffix);
-          range.insertNode($node.get(0));
-          $node.after(suffix);
-          range.setStartAfter(suffix);
-        } else {
-          range.insertNode($node.get(0));
-        }
-        this.cache.mentions.push({
-          position: position,
-          item: item,
-          $node: $node
-        });
-        range.collapse(true);
-        selection.removeAllRanges();
-        return selection.addRange(range);
-      };
-
-      MentionsCKEditor.prototype.getValue = function() {
-        var container, j, len, markup, mention, ref, reg;
-        container = this.editor.getData();
-        ref = this.cache.mentions;
-        for (j = 0, len = ref.length; j < len; j++) {
-          mention = ref[j];
-          markup = this.mentions.settings.markup(mention.item);
-          reg = new RegExp("<mention id=\"" + mention.item._id + "\">[^>]+>");
-          container = container.replace(reg, markup);
-        }
-        return container;
-      };
-
-      MentionsCKEditor.prototype.setValue = function(value) {
-        this.editor.setData(value);
-        this.updateValues();
-        return this.refreshMentions();
-      };
-
-      return MentionsCKEditor;
-
-    })(MentionsHandlerBase);
     Mentions = (function() {
       function Mentions(element1, settings) {
         var ref;
@@ -497,9 +302,7 @@
         $(this.element).wrap($("<div />", {
           "class": "mentions-input"
         }));
-        if (window.CKEDITOR && window.CKEDITOR.instances[this.element.id]) {
-          this.handler = new MentionsCKEditor(this);
-        } else if ((ref = this.element.tagName) === "INPUT" || ref === "TEXTAREA") {
+        if ((ref = this.element.tagName) === "INPUT" || ref === "TEXTAREA") {
           this.handler = new MentionsInput(this);
         } else {
           throw "Element " + this.element.tagName + " is not supported";
@@ -522,14 +325,6 @@
       return Mentions;
 
     })();
-    return $.fn.extend({
-      mentionsOldInput: function(settings) {
-        return this.each(function(i, e) {
-          return $(e).data("mentionsInput", new Mentions(e, settings));
-        });
-      }
-    });
   })(jQuery);
 
 }).call(this);
-
