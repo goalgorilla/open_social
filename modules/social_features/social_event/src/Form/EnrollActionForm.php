@@ -304,7 +304,6 @@ class EnrollActionForm extends FormBase {
       '#ajax' => [
         'callback' => [$form_state->getFormObject(), 'ajaxSubmitEnrollForm'],
         'disable-refocus' => TRUE,
-        'progress' => 'none',
       ],
     ];
 
