@@ -589,7 +589,7 @@ function _social_follow_tag_update_term_list(array &$form): array {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_view().
+ * Implements hook_ENTITY_TYPE_view() for "activity".
  */
 function social_follow_tag_activity_view(array &$build, ActivityInterface $activity, EntityViewDisplayInterface $display, string $view_mode): void {
   /** @var \Drupal\activity_creator\Entity\Activity $activity */
@@ -598,7 +598,7 @@ function social_follow_tag_activity_view(array &$build, ActivityInterface $activ
     return;
   }
 
-  if ($view->id() !== 'activity_stream' && $view->current_display !== 'block_stream_homepage') {
+  if ($view->storage->get('base_table') !== 'activity_field_data') {
     return;
   }
 
@@ -622,13 +622,13 @@ function social_follow_tag_activity_view(array &$build, ActivityInterface $activ
         ? array_column($entity->get('social_tagging')->getValue(), 'target_id')
         : [];
 
-      $is_node_follower = \Drupal::database()->select($flagging = 'flagging')
+      $is_node_follower = (bool) \Drupal::database()->select($flagging = 'flagging')
         ->fields($flagging)
         ->condition('entity_id', $tags ?: [0], 'IN')
         ->condition('entity_type', 'taxonomy_term')
         ->condition('flag_id', 'follow_term')
         ->condition('uid', \Drupal::currentUser()->id())
-        ->execute()?->fetchAll();
+        ->execute()?->fetchCol();
 
       if (!$is_node_follower) {
         // Hide the activity.
