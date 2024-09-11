@@ -123,6 +123,13 @@ function social_swiftmail_preprocess_email(array &$variables): void {
   /** @var \Drupal\symfony_mailer\EmailInterface $email */
   $email = $variables['email'];
   $context = $email->getParam('context');
+  if (empty($context)) {
+    // Symfony Mailer moves all parameters to a new property, so we
+    // should get the context from it if possible.
+    /* @see \Drupal\symfony_mailer\Plugin\EmailBuilder\LegacyEmailBuilder::createParams() */
+    $context = $email->getParam('legacy_message');
+    $context = $context['params']['context'] ?? NULL;
+  }
 
   // In our Symfony Mailer we have the EmailAdjuster reroute plugin.
   // If this is being applied to the emails we need a different way of getting
