@@ -5,9 +5,12 @@ dependencies:
   config:
     - core.entity_view_mode.profile.small_teaser
     - core.entity_view_mode.profile.teaser
+    - profile.type.profile
   module:
     - profile
     - user
+_core:
+  default_config_hash: O3zkqLu6Fh3UiJLuyJAOKbItIKmy01YXbkbuhdrDQsY
 id: newest_users
 label: 'Newest users'
 module: views
@@ -130,6 +133,18 @@ display:
           granularity: minute
       arguments: {  }
       filters:
+        type:
+          id: type
+          table: profile
+          field: type
+          entity_type: profile
+          entity_field: type
+          plugin_id: bundle
+          value:
+            profile: profile
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
         status:
           id: status
           table: users_field_data
@@ -170,6 +185,90 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        uid_raw:
+          id: uid_raw
+          table: users_field_data
+          field: uid_raw
+          relationship: uid
+          group_type: group
+          admin_label: filter_no_admin
+          entity_type: user
+          plugin_id: numeric
+          operator: '>'
+          value:
+            min: ''
+            max: ''
+            value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        roles_target_id:
+          id: roles_target_id
+          table: user__roles
+          field: roles_target_id
+          relationship: uid
+          group_type: group
+          admin_label: ''
+          entity_type: user
+          entity_field: roles
+          plugin_id: user_roles
+          operator: 'not empty'
+          value: {  }
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
       style:
         type: default
       row:
@@ -214,8 +313,6 @@ display:
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.medium_teaser'
-        - 'config:core.entity_view_display.profile.profile.moderator_small_teaser'
-        - 'config:core.entity_view_display.profile.profile.moderator_teaser'
         - 'config:core.entity_view_display.profile.profile.name'
         - 'config:core.entity_view_display.profile.profile.search_index'
         - 'config:core.entity_view_display.profile.profile.small'
@@ -270,8 +367,6 @@ display:
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.medium_teaser'
-        - 'config:core.entity_view_display.profile.profile.moderator_small_teaser'
-        - 'config:core.entity_view_display.profile.profile.moderator_teaser'
         - 'config:core.entity_view_display.profile.profile.name'
         - 'config:core.entity_view_display.profile.profile.search_index'
         - 'config:core.entity_view_display.profile.profile.small'
@@ -330,8 +425,6 @@ display:
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.medium_teaser'
-        - 'config:core.entity_view_display.profile.profile.moderator_small_teaser'
-        - 'config:core.entity_view_display.profile.profile.moderator_teaser'
         - 'config:core.entity_view_display.profile.profile.name'
         - 'config:core.entity_view_display.profile.profile.search_index'
         - 'config:core.entity_view_display.profile.profile.small'
