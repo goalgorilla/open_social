@@ -1,0 +1,23 @@
+dependencies:
+  module:
+    - social_content_export
+items:
+  views.view.content:
+    expected_config: { }
+    update_actions:
+      add:
+        display:
+          default:
+            display_options:
+              fields:
+                views_bulk_operations_bulk_form:
+                  id: views_bulk_operations_bulk_form
+                  table: views
+                  field: views_bulk_operations_bulk_form
+                  selected_actions:
+                    - action_id: flag_action:follow_content_flag
+                      preconfiguration:
+                        add_confirmation: FALSE
+                    - action_id: flag_action:follow_content_unflag
+                      preconfiguration:
+                        add_confirmation: FALSE
