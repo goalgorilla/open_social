@@ -3,7 +3,7 @@
  * Provides an emoji picker via emoji-picker-element.
  */
 
-(function (Drupal, drupalSettings, once, tabbable, CKEDITOR) {
+(function (Drupal, drupalSettings, once, tabbable) {
 
   /**
    * Social emoji picker object instance.
@@ -112,7 +112,7 @@
    * Handle an emoji selection event.
    *
    * Upon emoji click the selected emoji will be inserted to the
-   * corresponding trigger element (both plain textareas and CKEDITOR-enabled
+   * corresponding trigger element (both plain textareas
    * ones are supported). Then the Emoji Picker will be closed.
    */
   Drupal.emojiPicker.prototype.onEmojiClick = function() {
@@ -146,7 +146,7 @@
       this.focusableElements = this.focusableElements.length ? this.focusableElements : tabbable.tabbable(this.pickerElement.shadowRoot);
 
       const firstFocusableEl = this.focusableElements[0],
-              lastFocusableEl = this.focusableElements[this.focusableElements.length - 1];
+        lastFocusableEl = this.focusableElements[this.focusableElements.length - 1];
 
       if (this.state === Drupal.emojiPicker.STATE_OPEN && e.keyCode === TAB_KEY_CODE) {
         // Rotate focus within the picker.
@@ -216,7 +216,7 @@
           this.bindCloseOnClickOutside();
         }
       }
-    // Bind an event once and capture it for performance reasons.
+      // Bind an event once and capture it for performance reasons.
     }, {capture: true, once: true});
   };
 
@@ -256,13 +256,15 @@
    * @constructor
    */
   Drupal.emojiPickerTrigger = function (input, emojiPicker) {
-    this.input = input;
+    this.input = !input.hasAttribute('data-ckeditor5-id') ? input : undefined;
     this.emojiPicker = emojiPicker;
     this.inputHasBeenFocused = false;
 
-    this.createTriggerButton();
-    this.bindInputFocus();
-    this.bindButtonClick();
+    if (this.input !== undefined) {
+      this.createTriggerButton();
+      this.bindInputFocus();
+      this.bindButtonClick();
+    }
   };
 
   /**
@@ -274,11 +276,6 @@
     this.button.setAttribute('type', 'button');
     this.button.innerText = Drupal.t('Pick an emoji');
     this.button.classList.add('social-emoji-trigger');
-
-    if (this.hasEditor()) {
-      this.button.classList.add('with-editor');
-    }
-
     this.input.after(this.button);
   };
 
@@ -288,8 +285,6 @@
    * By default, caret position is set to the start of the text, which creates
    * a weird bug when the picker is being used without touching the input
    * beforehand.
-   *
-   * This makes sense for plain inputs only, as CKEditor tracks this by itself.
    */
   Drupal.emojiPickerTrigger.prototype.bindInputFocus = function() {
     this.input.addEventListener('focus', e => {
@@ -311,15 +306,8 @@
    * Moves caret (cursor position) to the end of the text.
    */
   Drupal.emojiPickerTrigger.prototype.moveCaretToTheEnd = function() {
-    if (this.hasEditor()) {
-      const range = CKEDITOR.instances[this.input.id].createRange();
-      range.moveToElementEditEnd(range.root);
-      CKEDITOR.instances[this.input.id].getSelection().selectRanges([range]);
-    }
-    else {
-      const newCursorPosition = this.input.value.length;
-      this.input.setSelectionRange(newCursorPosition, newCursorPosition);
-    }
+    const newCursorPosition = this.input.value.length;
+    this.input.setSelectionRange(newCursorPosition, newCursorPosition);
   };
 
   /**
@@ -340,22 +328,17 @@
       this.moveCaretToTheEnd();
     }
 
-    if (this.hasEditor()) {
-      CKEDITOR.instances[input.id].insertText(emoji);
-    }
-    else {
-      const currentValue = this.input.value,
-            newCursorPosition = input.selectionStart + emoji.length;
-      input.value = currentValue.slice(0, input.selectionStart) + emoji + currentValue.slice(input.selectionEnd);
-      input.setSelectionRange(newCursorPosition, newCursorPosition);
+    const currentValue = this.input.value,
+      newCursorPosition = input.selectionStart + emoji.length;
+    input.value = currentValue.slice(0, input.selectionStart) + emoji + currentValue.slice(input.selectionEnd);
+    input.setSelectionRange(newCursorPosition, newCursorPosition);
 
-      // Mentions.js creates a hidden element and (unfortunately) does not
-      // update it when text is being changed programatically. Fix this by doing
-      // so manually.
-      const parent = input.parentElement;
-      if (parent.classList.contains('mentions-input')) {
-        parent.querySelector('input[type="hidden"]').value = input.value;
-      }
+    // Mentions.js creates a hidden element and (unfortunately) does not
+    // update it when text is being changed programatically. Fix this by doing
+    // so manually.
+    const parent = input.parentElement;
+    if (parent.classList.contains('mentions-input')) {
+      parent.querySelector('input[type="hidden"]').value = input.value;
     }
   };
 
@@ -368,22 +351,7 @@
       this.moveCaretToTheEnd();
     }
 
-    if (this.hasEditor()) {
-      CKEDITOR.instances[this.input.id].focus();
-    }
-    else {
-      this.input.focus();
-    }
-  };
-
-  /**
-   * Checks if the input DOM element has an attached CKEditor.
-   *
-   * @return {bool}
-   *   Whether the input DOM element is CKEditor-powered or not.
-   */
-  Drupal.emojiPickerTrigger.prototype.hasEditor = function() {
-    return typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[this.input.id];
+    this.input.focus();
   };
 
   /**
@@ -393,12 +361,7 @@
    *   Whether the input DOM element has been manually focused or not.
    */
   Drupal.emojiPickerTrigger.prototype.hasBeenFocused = function() {
-    if (this.hasEditor()) {
-      return CKEDITOR.instances[this.input.id].getSelection().getRanges().length !== 0;
-    }
-    else {
-      return this.inputHasBeenFocused;
-    }
+    return this.inputHasBeenFocused;
   };
 
-})(Drupal, drupalSettings, once, tabbable, window.CKEDITOR);
+})(Drupal, drupalSettings, once, tabbable);
