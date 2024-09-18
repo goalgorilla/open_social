@@ -2,7 +2,7 @@
 
 namespace Drupal\social_language\PathProcessor;
 
-use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\path_alias\AliasManagerInterface;
@@ -20,27 +20,35 @@ class SocialLanguagePathProcessor extends AliasPathProcessor {
   protected LanguageManagerInterface $languageManager;
 
   /**
+   * The entity type manager.
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
    * Constructs a SocialLanguagePathProcessor object.
    *
    * @param \Drupal\path_alias\AliasManagerInterface $alias_manager
    *   An alias manager for looking up the system path.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(AliasManagerInterface $alias_manager, LanguageManagerInterface $language_manager) {
+  public function __construct(AliasManagerInterface $alias_manager, LanguageManagerInterface $language_manager, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($alias_manager);
 
     $this->languageManager = $language_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public function processInbound($path, Request $request): string {
-    $possible_alias = $path;
-    $path = parent::processInbound($possible_alias, $request);
+    $alias = $path;
+    $path = parent::processInbound($alias, $request);
 
-    if ($path !== $possible_alias) {
+    if ($path !== $alias) {
       return $path;
     }
 
@@ -48,17 +56,29 @@ class SocialLanguagePathProcessor extends AliasPathProcessor {
       return $path;
     }
 
-    $langcode = $this->languageManager->getCurrentLanguage(LanguageInterface::TYPE_URL)->getId();
     $default_langcode = $this->languageManager->getDefaultLanguage()->getId();
-    if ($langcode === $default_langcode) {
-      return $path;
-    }
 
     // Case: when we have a topic in "English" version but a user has "Dutch"
     // and try to visit the topic the result will be "Page not found".
     // There we're trying to find path for alias in default language and
     // prevent 404 exception.
-    return $this->aliasManager->getPathByAlias($path, $default_langcode);
+    $path = $this->aliasManager->getPathByAlias($path, $default_langcode);
+
+    if ($path !== $alias) {
+      return $path;
+    }
+
+    // Otherwise, try to find canonical url.
+    $aliases = $this->entityTypeManager->getStorage('path_alias')
+      ->loadByProperties(['alias' => $path]);
+
+    if (empty($aliases)) {
+      return $path;
+    }
+
+    /** @var \Drupal\path_alias\Entity\PathAlias $alias */
+    $alias = reset($aliases);
+    return $alias->getPath();
   }
 
   /**
