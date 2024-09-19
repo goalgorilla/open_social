@@ -26,5 +26,21 @@ function hook_social_embed_formats_alter(array &$formats) {
 }
 
 /**
+ * Provide a method to alter the output array of the embedded video placeholder.
+ *
+ * @param array $output
+ *   The output array of the embedded video placeholder.
+ *
+ * @ingroup social_embed_api
+ *
+ * @see \Drupal\social_embed\Service\SocialEmbedHelper::getPlaceholderMarkupForProvider()
+ */
+function hook_social_embed_placeholder_alter(array &$output) {
+  if (isset($output[0]['#context']['show_edit_link'])) {
+    $output[0]['#context']['show_edit_link'] = FALSE;
+  }
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
