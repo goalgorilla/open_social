@@ -49,54 +49,63 @@ final class EdaHandler {
       return;
     }
 
+    // Transform the node into a CloudEvent.
+    $event = $this->fromEntity($node);
+
+    // Dispatch the event to the message broker.
+    $this->dispatcher->dispatch(self::TOPIC_NAME, $event);
+  }
+
+  /**
+   * Transforms a NodeInterface into a CloudEvent.
+   *
+   * @throws \Drupal\Core\Entity\EntityMalformedException
+   */
+  public function fromEntity(NodeInterface $node): CloudEvent {
     // Get current request.
     $request = $this->requestStack->getCurrentRequest();
 
     // List enrollment methods.
     $enrollment_methods = ['open', 'request', 'invite'];
 
-    // Dispatch the event to the message broker.
-    $this->dispatcher->dispatch(
-      topic: self::TOPIC_NAME,
-      event: new CloudEvent(
-        id: $this->uuid->generate(),
-        source: $request ? $request->getUri() : '',
-        type: self::EVENT_TYPE,
-        data: [
-          'event' => new EventCreateEventData(
-            id: $node->get('uuid')->value,
-            created: DateTime::fromTimestamp($node->getCreatedTime())->toString(),
-            updated: DateTime::fromTimestamp($node->getChangedTime())->toString(),
-            status: $node->get('status')->value,
-            label: (string) $node->label(),
-            visibility: $node->get('field_content_visibility')->value,
-            group: !$node->get('groups')->isEmpty() ? Entity::fromEntity($node->get('groups')->entity) : NULL,
-            author: User::fromEntity($node->get('uid')->entity),
-            allDay: $node->get('field_event_all_day')->value,
-            start: $node->get('field_event_date')->value,
-            end: $node->get('field_event_date_end')->value,
-            timezone: date_default_timezone_get(),
-            address: Address::fromFieldItem(
-              item: $node->get('field_event_address')->first(),
-              label: $node->get('field_event_location')->value
-            ),
-            enrollment: [
-              'enabled' => (bool) $node->get('field_event_enroll')->value,
-              'method' => $enrollment_methods[$node->get('field_enroll_method')->value],
-            ],
-            href: Href::fromEntity($node),
-            type: $node->hasField('field_event_type') && !$node->get('field_event_type')->isEmpty() ? $node->get('field_event_type')->entity->label() : NULL,
+    return new CloudEvent(
+      id: $this->uuid->generate(),
+      source: $request ? $request->getUri() : '/node/add/event',
+      type: self::EVENT_TYPE,
+      data: [
+        'event' => new EventCreateEventData(
+          id: $node->get('uuid')->value,
+          created: DateTime::fromTimestamp($node->getCreatedTime())->toString(),
+          updated: DateTime::fromTimestamp($node->getChangedTime())->toString(),
+          status: $node->get('status')->value,
+          label: (string) $node->label(),
+          visibility: $node->get('field_content_visibility')->value,
+          group: !$node->get('groups')->isEmpty() ? Entity::fromEntity($node->get('groups')->getEntity()) : NULL,
+          author: User::fromEntity($node->get('uid')->entity),
+          allDay: $node->get('field_event_all_day')->value,
+          start: $node->get('field_event_date')->value,
+          end: $node->get('field_event_date_end')->value,
+          timezone: date_default_timezone_get(),
+          address: Address::fromFieldItem(
+            item: $node->get('field_event_address')->first(),
+            label: $node->get('field_event_location')->value
           ),
-          'actor' => [
-            'application' => NULL,
-            'user' => User::fromEntity($node->get('uid')->entity),
+          enrollment: [
+            'enabled' => (bool) $node->get('field_event_enroll')->value,
+            'method' => $enrollment_methods[$node->get('field_enroll_method')->value],
           ],
+          href: Href::fromEntity($node),
+          type: $node->hasField('field_event_type') && !$node->get('field_event_type')->isEmpty() ? $node->get('field_event_type')->getEntity()->label() : NULL,
+        ),
+        'actor' => [
+          'application' => NULL,
+          'user' => User::fromEntity($node->get('uid')->entity),
         ],
-        dataContentType: 'application/json',
-        dataSchema: NULL,
-        subject: NULL,
-        time: DateTime::fromTimestamp($node->getCreatedTime())->toImmutableDateTime(),
-      )
+      ],
+      dataContentType: 'application/json',
+      dataSchema: NULL,
+      subject: NULL,
+      time: DateTime::fromTimestamp($node->getCreatedTime())->toImmutableDateTime(),
     );
   }
 
