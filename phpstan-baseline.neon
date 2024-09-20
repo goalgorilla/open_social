@@ -13307,6 +13307,11 @@ parameters:
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
 
 		-
+			message: "#^Class Drupal\\\\social_eda_dispatcher\\\\Dispatcher not found\\.$#"
+			count: 1
+			path: modules/social_features/social_core/src/SocialCoreServiceProvider.php
+
+		-
 			message: "#^Parameter \\$dispatcher of method Drupal\\\\social_event\\\\EdaHandler::__construct\\(\\) has invalid type Drupal\\\\social_eda_dispatcher\\\\Dispatcher\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/EdaHandler.php
@@ -13322,76 +13327,6 @@ parameters:
 			path: modules/social_features/social_event/src/EdaHandler.php
 
 		-
-			message: "#^Instantiated class CloudEvents\\\\V1\\\\CloudEvent not found\\.$#"
+			message: "#^Parameter \\$item of static method Drupal\\\\social_eda\\\\Types\\\\Address::fromFieldItem\\(\\) expects Drupal\\\\address\\\\Plugin\\\\Field\\\\FieldType\\\\AddressItem\\|null, Drupal\\\\Core\\\\Field\\\\FieldItemInterface\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/EdaHandler.php
-
-		-
-			message: "#^Call to static method fromTimestamp\\(\\) on an unknown class Drupal\\\\social_eda\\\\Types\\\\DateTime\\.$#"
-			count: 3
-			path: modules/social_features/social_event/src/EdaHandler.php
-
-		-
-			message: "#^Call to static method fromEntity\\(\\) on an unknown class Drupal\\\\social_eda\\\\Types\\\\Entity\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/EdaHandler.php
-
-		-
-			message: "#^Call to static method fromEntity\\(\\) on an unknown class Drupal\\\\social_eda\\\\Types\\\\User\\.$#"
-			count: 2
-			path: modules/social_features/social_event/src/EdaHandler.php
-
-		-
-			message: "#^Call to static method fromFieldItem\\(\\) on an unknown class Drupal\\\\social_eda\\\\Types\\\\Address\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/EdaHandler.php
-
-		-
-			message: "#^Call to static method fromEntity\\(\\) on an unknown class Drupal\\\\social_eda\\\\Types\\\\Href\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/EdaHandler.php
-
-		-
-			message: "#^Parameter \\$group of method Drupal\\\\social_event\\\\Event\\\\EventCreateEventData::__construct\\(\\) has invalid type Drupal\\\\social_eda\\\\Types\\\\Entity\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Event/EventCreateEventData.php
-
-		-
-			message: "#^Property Drupal\\\\social_event\\\\Event\\\\EventCreateEventData::\\$group has unknown class Drupal\\\\social_eda\\\\Types\\\\Entity as its type\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Event/EventCreateEventData.php
-
-		-
-			message: "#^Parameter \\$author of method Drupal\\\\social_event\\\\Event\\\\EventCreateEventData::__construct\\(\\) has invalid type Drupal\\\\social_eda\\\\Types\\\\User\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Event/EventCreateEventData.php
-
-		-
-			message: "#^Property Drupal\\\\social_event\\\\Event\\\\EventCreateEventData::\\$author has unknown class Drupal\\\\social_eda\\\\Types\\\\User as its type\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Event/EventCreateEventData.php
-
-		-
-			message: "#^Parameter \\$address of method Drupal\\\\social_event\\\\Event\\\\EventCreateEventData::__construct\\(\\) has invalid type Drupal\\\\social_eda\\\\Types\\\\Address\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Event/EventCreateEventData.php
-
-		-
-			message: "#^Property Drupal\\\\social_event\\\\Event\\\\EventCreateEventData::\\$address has unknown class Drupal\\\\social_eda\\\\Types\\\\Address as its type\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Event/EventCreateEventData.php
-
-		-
-			message: "#^Parameter \\$href of method Drupal\\\\social_event\\\\Event\\\\EventCreateEventData::__construct\\(\\) has invalid type Drupal\\\\social_eda\\\\Types\\\\Href\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Event/EventCreateEventData.php
-
-		-
-			message: "#^Property Drupal\\\\social_event\\\\Event\\\\EventCreateEventData::\\$href has unknown class Drupal\\\\social_eda\\\\Types\\\\Href as its type\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Event/EventCreateEventData.php
-
-		-
-			message: "#^Class Drupal\\\\social_eda_dispatcher\\\\Dispatcher not found\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/SocialCoreServiceProvider.php
