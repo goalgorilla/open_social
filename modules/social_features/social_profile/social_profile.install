@@ -228,3 +228,10 @@ function social_profile_update_130002(): void {
     ->save();
   \Drupal::logger('social_profile')->info('The view "newest_users" has been updated with new configuration.');
 }
+
+/**
+ * Enable social path manager module to be user generate url feature.
+ */
+function social_profile_update_130003(): void {
+  \Drupal::service('module_installer')->install(['social_path_manager']);
+}
