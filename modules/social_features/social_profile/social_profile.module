@@ -1065,3 +1065,39 @@ function social_profile_social_core_default_main_menu_links_alter(array &$links)
 function social_profile_social_tagging_type(): string {
   return 'profile';
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_taxonomy_term_topic_types_form_alter(&$form) {
+  _social_profile_hide_path_field($form);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_taxonomy_term_interests_form_alter(&$form) {
+  _social_profile_hide_path_field($form);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_taxonomy_term_expertise_form_alter(&$form) {
+  _social_profile_hide_path_field($form);
+}
+
+/**
+ * Hide path field from a form.
+ *
+ * @param $form
+ *   Nested array of form elements that comprise the form.
+ *
+ * @return void
+ */
+function _social_profile_hide_path_field(&$form) {
+  if (empty($form['path'])) {
+    return;
+  }
+  $form['path']['#access'] = FALSE;
+}
