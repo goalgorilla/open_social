@@ -179,6 +179,9 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
 
     $this->alter($or);
 
+    // Alter query for custom conditions.
+    $this->moduleHandler->alter('activity_viewer_personalized_homepage_query', $filter_query, $or, $account);
+
     // Lets add all the or conditions to the Views query.
     if (!empty($or->conditions()[0])) {
       $and_wrapper->condition($or);
