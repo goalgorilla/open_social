@@ -153,6 +153,17 @@ class TopicContext extends RawMinkContext {
 
       $topicHash['author'] = $user->name;
 
+      // When the Social Path Manager is enabled, I add option to disable automatically generate.
+      if (
+        \Drupal::service('module_handler')->moduleExists('social_path_manager')
+        && isset($topicHash['path'])
+      ) {
+        $topicHash['path'] = [
+          'alias' => $topicHash['path'],
+          'pathauto' => FALSE,
+        ];
+      }
+
       $topic = $this->topicCreate($topicHash);
       $this->created[] = $topic->id();
     }
