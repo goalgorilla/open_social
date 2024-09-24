@@ -19,6 +19,9 @@ function social_emoji_field_widget_single_element_text_textarea_form_alter(array
   if ($context['widget']->getThirdPartySetting('social_emoji', 'display_emoji_picker')) {
     $element['#attributes']['class'][] = 'social-emoji-capable';
     $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
+    $element['#attached']['drupalSettings']['social_emoji'] = [
+      'searchLabel' => t('Search'),
+    ];
   }
 }
 

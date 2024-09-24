@@ -7,6 +7,7 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Utility\Error;
 use Drupal\filter\FilterProcessResult;
@@ -84,6 +85,8 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
    *   Current user object.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
    *   The logger channel factory service.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
+   *   The route match service.
    */
   public function __construct(
     array $configuration,
@@ -94,7 +97,8 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
     ConfigFactory $config_factory,
     SocialEmbedHelper $embed_helper,
     AccountProxyInterface $current_user,
-    LoggerChannelFactoryInterface $loggerFactory
+    LoggerChannelFactoryInterface $loggerFactory,
+    protected RouteMatchInterface $routeMatch,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $url_embed);
     $this->uuid = $uuid;
@@ -118,6 +122,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
       $container->get('social_embed.helper_service'),
       $container->get('current_user'),
       $container->get('logger.factory'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -162,6 +167,8 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
           /** @var \Drupal\user\Entity\User $user */
           $user = $this->currentUser->isAnonymous() ? NULL : User::load($this->currentUser->id());
           if (!empty($info['code'])
+            // Do not add consent button on embed preview during adding url.
+            && $this->routeMatch->getRouteName() != 'embed.preview'
             && (($user instanceof User
                 && $embed_settings->get('embed_consent_settings_lu')
                 && $user->hasField('field_user_embed_content_consent')

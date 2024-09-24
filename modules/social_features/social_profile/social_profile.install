@@ -13,6 +13,7 @@ use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\RoleInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -201,4 +202,29 @@ function social_profile_update_121001(): void {
  */
 function social_profile_update_130001(): void {
   user_role_grant_permissions('sitemanager', ['create terms in profile_tag']);
+}
+
+/**
+ * Update views /all-members to hide blocked members.
+ */
+function social_profile_update_130002(): void {
+  $moduleHandler = \Drupal::moduleHandler();
+  if ($moduleHandler->moduleExists('views') === FALSE ||
+    $moduleHandler->moduleExists('user') === FALSE ||
+    $moduleHandler->moduleExists('profile') === FALSE
+  ) {
+    return;
+  }
+
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_profile') . '/config/install/views.view.newest_users.yml';
+  if (file_exists($config_file) === FALSE) {
+    \Drupal::logger('social_profile')->info('Configuration file for view "newest_users" not found.');
+    return;
+  }
+
+  $view_config = Yaml::parseFile($config_file);
+  \Drupal::configFactory()->getEditable('views.view.newest_users')
+    ->setData($view_config)
+    ->save();
+  \Drupal::logger('social_profile')->info('The view "newest_users" has been updated with new configuration.');
 }

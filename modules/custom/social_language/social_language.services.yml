@@ -20,7 +20,7 @@ services:
     deprecated: The "%service_id%" service is deprecated. You should use the 'url_generator' service instead. See https://www.drupal.org/project/social/issues/3098046
   social_language.path_processor:
     class: Drupal\social_language\PathProcessor\SocialLanguagePathProcessor
-    arguments: ['@path_alias.manager', '@language_manager']
+    arguments: ['@path_alias.manager', '@language_manager', '@entity_type.manager']
     tags:
       # Priority should be higher than \Drupal\path_alias\PathProcessor\AliasPathProcessor::processInbound().
       - { name: path_processor_inbound, priority: 101 }

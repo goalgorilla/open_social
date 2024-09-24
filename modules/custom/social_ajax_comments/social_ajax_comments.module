@@ -14,7 +14,6 @@ use Drupal\ajax_comments\Utility;
 use Drupal\comment\CommentInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\social_comment\SocialCommentViewBuilder;
 use Drupal\social_post\Entity\Post;
 use Drupal\social_post\Entity\PostInterface;
 
@@ -218,8 +217,7 @@ function social_ajax_comments_ajax_render_alter(array &$data) {
  */
 function social_ajax_comments_preprocess_pager(&$variables) {
   if (
-    isset($variables['pager']['#tags']) &&
-    in_array(SocialCommentViewBuilder::PAGER_TAG, $variables['pager']['#tags']) &&
+    !empty($variables['pager']['#ajaxify']) &&
     ($items = &$variables['items'])
   ) {
     _social_ajax_comments_pager($items);
