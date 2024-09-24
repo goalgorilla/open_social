@@ -111,8 +111,12 @@ class EventContext extends RawMinkContext {
     if ($event_id === NULL) {
       throw new \Exception("Event '${event}' does not exist.");
     }
+
+    $alias = \Drupal::service('path_alias.manager')
+      ->getAliasByPath("/node/${event_id}");
+
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->addressEquals("/node/${event_id}");
+    $this->assertSession()->addressEquals($alias);
   }
 
   /**
