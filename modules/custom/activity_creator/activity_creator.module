@@ -10,6 +10,7 @@
  */
 
 use Drupal\activity_creator\ActivityInterface;
+use Drupal\activity_creator\Commands\CleanUpActivitiesDrushCommands;
 use Drupal\activity_creator\Service\ActivityCreatorBatchActivityDeletion;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\message\Entity\Message;
@@ -435,4 +436,13 @@ function activity_creator_set_entity_view_mode(string $entity_type_id, string $v
   $activity_display
     ->setComponent('field_activity_entity', $field)
     ->save();
+}
+
+
+/**
+ * Implements hook_form_alter().
+ */
+function activity_creator_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $d = new CleanUpActivitiesDrushCommands();
+  $d->cleanupActivities();
 }
