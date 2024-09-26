@@ -569,6 +569,48 @@ class ActivityFactory extends ControllerBase {
   }
 
   /**
+   * Get message subject.
+   *
+   * @param \Drupal\message\Entity\Message $message
+   *   Message object we get the text for.
+   * @param string $langcode
+   *   The language code we try to get the translation for.
+   *
+   * @return array
+   *   Message subject array.
+   */
+  public function getMessageSubject(Message $message, $langcode = '') {
+    /** @var \Drupal\message\Entity\MessageTemplate $message_template */
+    $message_template = $message->getTemplate();
+
+    $message_arguments = $message->getArguments();
+
+    // When the 'email_subject' is migrated to the 'Message' fields
+    // instead of relying on third-party settings, code needs to be added to
+    // retrieve the translation for the 'email_subject' field, similar to how
+    // it's done in the 'getMessageText' method.
+    // @todo Add code to retrieve the translation.
+    $settings = $message_template->getThirdPartySettings('activity_logger');
+    if (!isset($settings['email_subject'])) {
+      return [];
+    }
+
+    $output = $this->processArguments($message_arguments, ['#markup' => $settings['email_subject']], $message);
+
+    $token_options = $message_template->getSetting('token options', []);
+    if (!empty($token_options['token replace'])) {
+      $options = [
+        'langcode' => !empty($langcode) ? $langcode : '',
+        'clear' => !empty($token_options['clear']),
+      ];
+      // Token should be processed.
+      $output = $this->processTokens($output, $options, $message);
+    }
+
+    return $output;
+  }
+
+  /**
    * Process the message given the arguments saved with it.
    *
    * @param array $arguments
