@@ -2,15 +2,15 @@
 
 namespace Drupal\social_event\Entity;
 
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
-use Drupal\Core\Cache\Cache;
-use Drupal\node\NodeInterface;
 
 /**
  * Defines the Event enrollment entity.
@@ -110,10 +110,19 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
    * {@inheritdoc}
    */
   public function label() {
+    // When the guest is allowed to enjoin, the name and account will be empty,
+    // but it will have field_email, the first and last name isn't mandatory,
+    // because that the field_name is being used to validate.
+    if ($this->hasField('field_email') && !$this->get('field_email')->isEmpty()) {
+      $label = trim(sprintf('%s %s', $this->get('field_first_name')->value, $this->get('field_last_name')->value));
+      return empty($label) ? $this->get('field_email')->value : $label;
+    }
+
     $label = $this->getName();
     if (empty($label)) {
       $label = $this->get('field_account')->entity->label();
     }
+
     return $label;
   }
 
