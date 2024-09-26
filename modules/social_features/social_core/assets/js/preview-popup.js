@@ -11,11 +11,22 @@
       var delayClose = 200;
       var delta = 0;
 
-      // Remove a preview popup if you use back button in the browser.ß
+      // Remove a preview popup if you use back button in the browser.
       $(window).bind("pageshow", function(event) {
         if (event.originalEvent.persisted) {
           $('.social-dialog--user-preview').remove();
           $(context).find('.social-dialog--user-preview').remove();
+        }
+      });
+
+      // Disable a preview popup link if this link does not have a path to the content.
+      var previewEl = '.preview-popup-link, .preview-popup-link, .preview-popup-link--text';
+      $(once('previewElBehavior', previewEl, context)).on('click', function (e) {
+        var $linkHref = $(this).attr('href');
+
+        if($linkHref === '#' || $linkHref === '') {
+          e.preventDefault();
+          return false;
         }
       });
 
@@ -54,6 +65,10 @@
                       })
                       .on('mouseleave scroll', function () {
                         timeouts[selector] = window.setTimeout(function () {
+                          // Trigger click on the close dialog button.
+                          currentDialog.find('.ui-dialog-titlebar-close').trigger('click');
+
+                          // Remove the current dialog is the trigger click on the close dialog button does not work.
                           currentDialog.remove();
 
                           if (refresh === 1) {
@@ -61,8 +76,7 @@
                             cleanupUserData(previewPopup);
                           }
                         }, delayClose);
-                      })
-                      .find('.ui-dialog-titlebar-close').remove();
+                      });
 
                     // Clean up stored user data and display actual info.
                     var cleanupUserData = function (items) {
@@ -76,9 +90,6 @@
                   open: function () {
                     $(this).find('a').blur();
                     $('.ui-widget-overlay').remove();
-                    setTimeout(function () {
-                      $('html').css('overflow', 'visible');
-                    }, 0);
                   }
                 }
               );
@@ -158,9 +169,17 @@
 
           timeouts[selector] = window.setTimeout(function () {
             if (dialogs[selector] !== undefined && dialogs[selector].open) {
-              $('html').css('overflow', 'visible');
-              $(context).find('.social-dialog--user-preview').remove();
-              $('.social-dialog--user-preview').remove();
+              var $contextDialog = $(context).find('.social-dialog--user-preview');
+              var $dialog = $('.social-dialog--user-preview');
+              var closeDialogButton = '.ui-dialog-titlebar-close';
+
+              // Trigger click on the close dialog button.
+              $contextDialog.find(closeDialogButton).trigger('click');
+              $dialog.find(closeDialogButton).trigger('click');
+
+              // Remove the current dialog is the trigger click on the close dialog button does not work.
+              $contextDialog.remove();
+              $dialog.remove();
             }
           }, delayClose);
         });
