@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send_email\Plugin\EmailFrequency;
 
+use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\activity_send_email\EmailFrequencyBase;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
@@ -61,6 +62,13 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
   protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
+   * The activity factory service.
+   *
+   * @var \Drupal\activity_creator\ActivityFactory
+   */
+  private ActivityFactory $activityFactory;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -71,12 +79,14 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
     MailManagerInterface $mail_manager,
     RendererInterface $renderer,
     EntityTypeManagerInterface $entity_type_manager,
+    ActivityFactory $activity_factory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configLanguageManager = $config_language_manager;
     $this->mailManager = $mail_manager;
     $this->renderer = $renderer;
     $this->entityTypeManager = $entity_type_manager;
+    $this->activityFactory = $activity_factory;
   }
 
   /**
@@ -90,7 +100,8 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
       $container->get('social_core.config_language_manager'),
       $container->get('plugin.manager.mail'),
       $container->get('renderer'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('activity_creator.activity_factory'),
     );
   }
 
@@ -119,10 +130,8 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
       $template = $storage->load($message->bundle());
 
       if ($template !== NULL) {
-        $settings = $template->getThirdPartySettings('activity_logger');
-        if ($settings['email_subject']) {
-          $subject = $settings['email_subject'];
-        }
+        $subject_array = $this->activityFactory->getMessageSubject($message);
+        $subject = $this->renderer->renderPlain($subject_array);
       }
 
       // Revert the config override.
@@ -176,9 +185,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
     // Construct the body & subject for email sending.
     $params['body'] = $this->renderer->renderPlain($notification);
     if ($subject !== '') {
-      // We don't support tokens in our subject at the moment, if needs be
-      // we can check out how the ActivityFactory processTokens method does it.
-      $params['subject'] = $this->t('%subject', ['%subject' => $subject], ['langcode' => $langcode])->render();
+      $params['subject'] = $subject;
     }
 
     if (!empty($target->getEmail())) {
