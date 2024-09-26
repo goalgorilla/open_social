@@ -31,7 +31,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
 
   const ACTIVITIES_TARGET_TYPE = [
     ['comment', 'cid'],
-	  ['event_enrollment', 'id'],
+    ['event_enrollment', 'id'],
     ['groups', 'id'],
     ['mentions', 'mid'],
     ['node', 'nid'],
