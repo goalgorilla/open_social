@@ -22,7 +22,7 @@ Feature: Delete Event
       | Test group | Event manager    |
     And event content:
       | title                   | body                   | field_event_date | field_event_date_end | groups     | field_content_visibility    | author            |
-      | Public event in group   | Body description text. | +2 days          | +3 days              | 6          | public                      | Event manager     |
+      | Public event in group   | Body description text. | +2 days          | +3 days              | 1          | public                      | Event manager     |
     And event enrollees:
       | event                 | user             |
       | Public event in group | Event enrollee 1 |
