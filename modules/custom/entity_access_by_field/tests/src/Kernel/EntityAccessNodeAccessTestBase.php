@@ -14,7 +14,7 @@ abstract class EntityAccessNodeAccessTestBase extends EntityKernelTestBase {
   /**
    * Modules to enable.
    *
-   * @var array
+   * @var string[]
    */
   protected static $modules = ['group', 'options', 'entity', 'variationcache', 'node', 'gnode', 'social_group', 'flag', 'address', 'image', 'file', 'entity_access_by_field', 'flexible_permissions'];
 

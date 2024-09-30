@@ -23,7 +23,7 @@ class MediaBridgeFileTest extends FieldKernelTestBase {
   /**
    * Modules to enable.
    *
-   * @var array
+   * @var string[]
    */
   protected static $modules = [
     'file',
