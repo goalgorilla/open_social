@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drush\Commands\DrushCommands;
-use Psr\Log\LoggerAwareTrait;
 
 /**
  * A Drush command file.
@@ -25,7 +24,6 @@ use Psr\Log\LoggerAwareTrait;
 class CleanUpActivitiesDrushCommands extends DrushCommands {
 
   use StringTranslationTrait;
-  use LoggerAwareTrait;
 
   const ACTIVITIES_TARGET_TYPE = [
     ['comment', 'cid'],
@@ -35,7 +33,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
     ['node', 'nid'],
     ['post', 'id'],
     ['message', 'mid'],
-    ['profile','profile_id'],
+    ['profile', 'profile_id'],
     ['queue_storage_entity', 'id'],
     ['votingapi_vote', 'id'],
   ];
