@@ -32,6 +32,11 @@ services:
       - { name: event_subscriber }
   social_group.redirect_subscriber:
     class: Drupal\social_group\EventSubscriber\RedirectSubscriber
+    arguments:
+      - '@current_route_match'
+      - '@current_user'
+      - '@config.factory'
+      - '@request_stack'
     tags:
       - { name: event_subscriber }
   social_group.overrider:

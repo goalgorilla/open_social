@@ -4,13 +4,16 @@ namespace Drupal\social_group\Form;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Menu\LocalTaskManager;
 use Drupal\Core\Render\Element\Checkboxes;
 use Drupal\crop\Entity\CropType;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
+use Drupal\social_group\EventSubscriber\RedirectSubscriber;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -42,6 +45,20 @@ class SocialGroupSettings extends ConfigFormBase {
   protected $moduleHandler;
 
   /**
+   * The local task manager.
+   *
+   * @var \Drupal\Core\Menu\LocalTaskManager
+   */
+  protected LocalTaskManager $localTaskManager;
+
+  /**
+   * The entity type bundles info.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  protected EntityTypeBundleInfoInterface $entityTypeBundleInfo;
+
+  /**
    * Constructs a \Drupal\system\ConfigFormBase object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -52,17 +69,25 @@ class SocialGroupSettings extends ConfigFormBase {
    *   The module handler service.
    * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $group_content_plugin_manager
    *   The group content plugin manager.
+   * @param \Drupal\Core\Menu\LocalTaskManager $local_task_manager
+   *   The local task manager.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity bundle info.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     EntityTypeManagerInterface $entity_type_manager,
     ModuleHandlerInterface $module_handler,
-    GroupRelationTypeManagerInterface $group_content_plugin_manager
+    GroupRelationTypeManagerInterface $group_content_plugin_manager,
+    LocalTaskManager $local_task_manager,
+    EntityTypeBundleInfoInterface $entity_type_bundle_info,
   ) {
     parent::__construct($config_factory);
     $this->entityTypeManager = $entity_type_manager;
     $this->moduleHandler = $module_handler;
     $this->groupRelationTypeManager = $group_content_plugin_manager;
+    $this->localTaskManager = $local_task_manager;
+    $this->entityTypeBundleInfo = $entity_type_bundle_info;
   }
 
   /**
@@ -73,7 +98,9 @@ class SocialGroupSettings extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('module_handler'),
-      $container->get('group_relation_type.manager')
+      $container->get('group_relation_type.manager'),
+      $container->get('plugin.manager.menu.local_task'),
+      $container->get('entity_type.bundle.info'),
     );
   }
 
@@ -166,6 +193,29 @@ class SocialGroupSettings extends ConfigFormBase {
       ],
     ];
 
+    // Redirects settings.
+    $form['redirection'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Redirect settings'),
+      '#open' => FALSE,
+      '#weight' => 40,
+      '#tree' => TRUE,
+    ];
+
+    $form['redirection']['redirection_route'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Select fallback route when current is inaccessible (Access Denied Exception)'),
+      '#default_value' => $config->get('redirection.redirection_route') ?? $this->getDefaultRoute(),
+      '#options' => $this->getGroupTabs(),
+    ];
+
+    $form['redirection']['group_bundles'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Applicable for Groups'),
+      '#default_value' => $config->get('redirection.group_bundles') ?? [],
+      '#options' => $this->getGroupBundles(),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -211,6 +261,14 @@ class SocialGroupSettings extends ConfigFormBase {
         'cross_posting', 'group_types',
       ]))
       : []
+    );
+
+    $redirection_tab = $form_state->getValue(['redirection', 'redirection_route']);
+    $config->set('redirection.redirection_route', $redirection_tab);
+
+    $group_bundles = $form_state->getValue(['redirection', 'group_bundles']);
+    $config->set('redirection.group_bundles', $group_bundles
+      ? Checkboxes::getCheckedCheckboxes($group_bundles) : []
     );
 
     $config->save();
@@ -293,6 +351,54 @@ class SocialGroupSettings extends ConfigFormBase {
     }
 
     return $options ?? [];
+  }
+
+  /**
+   * Fetch all available group tabs.
+   *
+   * @return array
+   *   The group tabs.
+   */
+  protected function getGroupTabs(): array {
+    $tabs = [];
+
+    $group_tabs = $this->localTaskManager->getLocalTasksForRoute('entity.group.canonical');
+    $group_tabs = $group_tabs[0];
+
+    // Loop over the available tabs on a group.
+    foreach ($group_tabs as $tab) {
+      // Add to the array.
+      $tabs[$tab->getRouteName()] = $tab->getTitle();
+    }
+
+    return $tabs;
+  }
+
+  /**
+   * Get default redirection route.
+   *
+   * @return string|null
+   *   The route of default route.
+   */
+  protected function getDefaultRoute(): ?string {
+    $tabs = $this->getGroupTabs();
+    return isset($tabs[RedirectSubscriber::DEFAULT_REDIRECTION_ROUTE]) ?
+      RedirectSubscriber::DEFAULT_REDIRECTION_ROUTE : NULL;
+  }
+
+  /**
+   * Get group bundles.
+   *
+   * @return array
+   *   The array of group bundles.
+   */
+  protected function getGroupBundles(): array {
+    $bundles = $this->entityTypeBundleInfo->getBundleInfo('group');
+    $options = [];
+    foreach ($bundles as $key => $data) {
+      $options[$key] = $data['label'];
+    }
+    return $options;
   }
 
 }
