@@ -57,9 +57,9 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
 
 
   /**
-   * @var \Psr\Log\LoggerInterface
-   *
    * The logger channel factory.
+   *
+   * @var \Psr\Log\LoggerInterface
    */
   protected ?LoggerInterface $logger;
 
@@ -82,7 +82,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
     $this->connection = $database;
     $this->entityTypeManager = $entityTypeManager;
     $this->logger = $loggerChannelFactory->get('activity_creator');
-    assert($this->logger !== NULL, "Our application is misconfigured and Drush has no loggers"); // This only runs in dev/CI.
+    assert($this->logger !== NULL, "Our application is misconfigured and Drush has no loggers");
   }
 
   /**
@@ -100,7 +100,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
 
     foreach (self::ACTIVITIES_TARGET_TYPE as [$target_type, $column_id]) {
       if ($this->tableExist($target_type) === FALSE) {
-        $this->logger()->debug($this->t('Table :table does not exist in the database', [
+        $this->logger->info($this->t('Table :table does not exist in the database', [
           ':table' => $target_type,
         ]));
         continue;
@@ -112,14 +112,14 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
           $activity_storage->delete([$activity_storage->loadUnchanged($activity_id)]);
         }
 
-        $this->logger()->debug($this->t(':count orphaned activities with target_type ":type" have been removed', [
+        $this->logger->info($this->t(':count orphaned activities with target_type ":type" have been removed', [
           ':count' => count($activity_ids),
           ':type' => $target_type,
         ]));
 
       }
       catch (EntityStorageException | \Exception $e) {
-        $this->logger()->error($e->getMessage());
+        $this->logger->error($e->getMessage());
       }
     }
   }
@@ -164,7 +164,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
       return [];
     }
     catch (\Exception $e) {
-      $this->logger()->error($e->getMessage());
+      $this->logger->error($e->getMessage());
       return [];
     }
   }
