@@ -63,18 +63,14 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
    *   The database connection service.
    * @param EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager service.
-   * @param LoggerChannelFactoryInterface $logger
-   *   The logger channel factory service.
    */
   public function __construct(
     Connection $database,
     EntityTypeManagerInterface $entityTypeManager,
-    LoggerChannelFactoryInterface $logger,
   ) {
     parent::__construct();
     $this->connection = $database;
     $this->entity_type_manager = $entityTypeManager;
-    $this->logger = $logger->get('activity_creator');
   }
 
   /**
@@ -92,7 +88,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
 
     foreach (self::ACTIVITIES_TARGET_TYPE as [$target_type, $column_id]) {
       if ($this->tableExist($target_type) === FALSE) {
-        $this->logger->debug($this->t('Table :table does not exist in the database', [
+        $this->logger()->debug($this->t('Table :table does not exist in the database', [
           ':table' => $target_type
         ]));
         continue;
@@ -104,13 +100,13 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
           $activity_storage->delete([$activity_storage->loadUnchanged($activity_id)]);
         }
 
-        $this->logger->debug($this->t(':count orphaned activities with target_type ":type" have been removed', [
+        $this->logger()->debug($this->t(':count orphaned activities with target_type ":type" have been removed', [
           ':count' => count($activity_ids),
           ':type' => $target_type,
         ]));
 
       } catch (EntityStorageException|\Exception $e) {
-        $this->logger->error($e->getMessage());
+        $this->logger()->error($e->getMessage());
       }
     }
   }
@@ -148,7 +144,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
       return $query->execute()
         ->fetchCol();
     } catch (\Exception $e) {
-      $this->logger->error($e->getMessage());
+      $this->logger()->error($e->getMessage());
       return [];
     }
   }
