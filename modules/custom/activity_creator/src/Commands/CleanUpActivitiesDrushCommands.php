@@ -3,10 +3,13 @@
 namespace Drupal\activity_creator\Commands;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drush\Commands\DrushCommands;
+use Psr\Log\LoggerInterface;
 
 /**
  * A Drush command file.
@@ -52,6 +55,14 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
    */
   private EntityTypeManagerInterface $entityTypeManager;
 
+
+  /**
+   * @var \Psr\Log\LoggerInterface
+   *
+   * The logger channel factory.
+   */
+  protected ?LoggerInterface $logger;
+
   /**
    * CleanUpActivitiesDrushCommands constructor.
    *
@@ -59,14 +70,19 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
    *   The database connection service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager service.
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerChannelFactory
+   *   The logger channel factory.
    */
   public function __construct(
     Connection $database,
     EntityTypeManagerInterface $entityTypeManager,
+    LoggerChannelFactory $loggerChannelFactory,
   ) {
     parent::__construct();
     $this->connection = $database;
     $this->entityTypeManager = $entityTypeManager;
+    $this->logger = $loggerChannelFactory->get('activity_creator');
+    assert($this->logger !== NULL, "Our application is misconfigured and Drush has no loggers"); // This only runs in dev/CI.
   }
 
   /**
@@ -141,8 +157,11 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
     $query->isNull("target_entity.{$column_id}");
 
     try {
-      return $query->execute()
-        ->fetchCol();
+      $statement = $query->execute();
+      if ($statement instanceof StatementInterface) {
+        return $statement->fetchCol();
+      }
+      return [];
     }
     catch (\Exception $e) {
       $this->logger()->error($e->getMessage());
