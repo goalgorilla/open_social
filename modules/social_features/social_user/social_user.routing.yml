@@ -54,3 +54,10 @@ social_user.my_settings:
     _controller: '\Drupal\user\Controller\UserController::userEditPage'
   requirements:
     _user_is_logged_in: 'TRUE'
+
+social_user.my_profile:
+  path: '/my-profile'
+  defaults:
+    _controller: '\Drupal\social_user\Controller\SocialUserController::myProfileRedirect'
+  requirements:
+    _user_is_logged_in: 'TRUE'
