@@ -52,7 +52,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  private EntityTypeManagerInterface $entity_type_manager;
+  private EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * CleanUpActivitiesDrushCommands constructor.
@@ -68,7 +68,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
   ) {
     parent::__construct();
     $this->connection = $database;
-    $this->entity_type_manager = $entityTypeManager;
+    $this->entityTypeManager = $entityTypeManager;
   }
 
   /**
@@ -79,10 +79,10 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
    * @description Deletes activity entities that have no attached entities anymore.
    */
   public function cleanupActivities(): void {
-    if (!$this->entity_type_manager->hasDefinition('activity')) {
+    if (!$this->entityTypeManager->hasDefinition('activity')) {
       return;
     }
-    $activity_storage = $this->entity_type_manager->getStorage('activity');
+    $activity_storage = $this->entityTypeManager->getStorage('activity');
 
     foreach (self::ACTIVITIES_TARGET_TYPE as [$target_type, $column_id]) {
       if ($this->tableExist($target_type) === FALSE) {
@@ -131,7 +131,8 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
    *   The database table of the orphan.
    * @param string $column_id
    *   The column-id of the orphan table.
-   * @return array $column_id
+   *
+   * @returns {array}
    *   The list of activity ids.
    */
   private function getOrphanedActivityIds(string $target_type, string $column_id): array {
