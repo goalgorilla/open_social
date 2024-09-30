@@ -5,11 +5,9 @@ namespace Drupal\activity_creator\Commands;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drush\Commands\DrushCommands;
 use Psr\Log\LoggerAwareTrait;
-
 
 /**
  * A Drush command file.
@@ -45,23 +43,23 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
   /**
    * The database connection service.
    *
-   * @var Connection
+   * @var \Drupal\Core\Database\Connection
    */
   private Connection $connection;
 
   /**
    * The entity type manager service.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   private EntityTypeManagerInterface $entity_type_manager;
 
   /**
    * CleanUpActivitiesDrushCommands constructor.
    *
-   * @param Connection $database
+   * @param \Drupal\Core\Database\Connection $database
    *   The database connection service.
-   * @param EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager service.
    */
   public function __construct(
@@ -89,7 +87,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
     foreach (self::ACTIVITIES_TARGET_TYPE as [$target_type, $column_id]) {
       if ($this->tableExist($target_type) === FALSE) {
         $this->logger()->debug($this->t('Table :table does not exist in the database', [
-          ':table' => $target_type
+          ':table' => $target_type,
         ]));
         continue;
       }
@@ -105,7 +103,8 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
           ':type' => $target_type,
         ]));
 
-      } catch (EntityStorageException|\Exception $e) {
+      }
+      catch (EntityStorageException | \Exception $e) {
         $this->logger()->error($e->getMessage());
       }
     }
@@ -116,6 +115,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
    *
    * @param string $table
    *   The table name.
+   *
    * @return bool
    *   Return if database table exists.
    */
@@ -126,11 +126,12 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
 
   /**
    * Get orphaned activity ids.
+   *
    * @param string $target_type
    *   The database table of the orphan.
    * @param string $column_id
    *   The column-id of the orphan table.
-   * @return array
+   * @return array $column_id
    *   The list of activity ids.
    */
   private function getOrphanedActivityIds(string $target_type, string $column_id): array {
@@ -143,7 +144,8 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
     try {
       return $query->execute()
         ->fetchCol();
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->logger()->error($e->getMessage());
       return [];
     }
