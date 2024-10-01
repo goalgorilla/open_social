@@ -10,6 +10,7 @@ use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drush\Commands\DrushCommands;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * A Drush command file.
@@ -64,6 +65,13 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
   protected ?LoggerInterface $logger;
 
   /**
+   * The output interface.
+   *
+   * @var OutputInterface
+   */
+  protected $output;
+
+  /**
    * CleanUpActivitiesDrushCommands constructor.
    *
    * @param \Drupal\Core\Database\Connection $database
@@ -115,10 +123,12 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
           ':count' => count($activity_ids),
           ':type' => $target_type,
         ]));
+        $this->output()->writeln(sprintf('%d orphaned activities with target_type "%s" have been removed', count($activity_ids), $target_type));
 
       }
       catch (EntityStorageException | \Exception $e) {
         $this->logger?->error($e->getMessage());
+        $this->output->write('An error occurred, check your logs.');
       }
     }
   }
