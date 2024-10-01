@@ -10,7 +10,6 @@ use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drush\Commands\DrushCommands;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * A Drush command file.
@@ -67,7 +66,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
   /**
    * The output interface.
    *
-   * @var OutputInterface
+   * @var \Symfony\Component\Console\Output\OutputInterface
    */
   protected $output;
 
