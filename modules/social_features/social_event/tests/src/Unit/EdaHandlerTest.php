@@ -225,6 +225,8 @@ class EdaHandlerTest extends UnitTestCase {
     $nodeMock = $this->prophesize(NodeInterface::class);
     $nodeMock->label()->willReturn('Event Title');
     $nodeMock->getCreatedTime()->willReturn(1692614400);
+    $nodeMock->hasField('field_content_visibility')->willReturn(TRUE);
+    $nodeMock->hasField('groups')->willReturn(TRUE);
     $nodeMock->getChangedTime()->willReturn(1692618000);
     $nodeMock->get('groups')->willReturn($this->fieldItemList);
     $nodeMock->get('uuid')
