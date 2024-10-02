@@ -10,6 +10,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_eda\Types\Address;
+use Drupal\social_eda\Types\ContentVisibility;
 use Drupal\social_eda\Types\Application;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Entity;
@@ -126,7 +127,7 @@ final class EdaHandler {
           updated: DateTime::fromTimestamp($node->getChangedTime())->toString(),
           status: $node->get('status')->value ? 'published' : 'unpublished',
           label: (string) $node->label(),
-          visibility: $node->get('field_content_visibility')->value,
+          visibility: ContentVisibility::fromEntity($node),
           group: !$node->get('groups')->isEmpty() ? Entity::fromEntity($node->get('groups')->getEntity()) : NULL,
           author: User::fromEntity($node->get('uid')->entity),
           allDay: $node->get('field_event_all_day')->value,

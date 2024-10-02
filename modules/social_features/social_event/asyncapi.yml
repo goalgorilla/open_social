@@ -32,8 +32,17 @@ channels:
                       type: string
                       description: The label of the event.
                     visibility:
-                      type: string
-                      description: The visibility of the event content.
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          description: The visibility type.
+                        groups:
+                          type: array
+                          description: The list of groups.
+                        roles:
+                          type: array
+                          description: The list of roles ids.
                     group:
                       type: object
                       nullable: true
@@ -167,8 +176,17 @@ channels:
                       type: string
                       description: The label of the event.
                     visibility:
-                      type: string
-                      description: The visibility of the event content.
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          description: The visibility type.
+                        groups:
+                          type: array
+                          description: The list of groups.
+                        roles:
+                          type: array
+                          description: The list of roles ids.
                     group:
                       type: object
                       nullable: true
@@ -302,8 +320,17 @@ channels:
                       type: string
                       description: The label of the event.
                     visibility:
-                      type: string
-                      description: The visibility of the event content.
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          description: The visibility type.
+                        groups:
+                          type: array
+                          description: The list of groups.
+                        roles:
+                          type: array
+                          description: The list of roles ids.
                     group:
                       type: object
                       nullable: true

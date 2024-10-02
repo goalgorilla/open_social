@@ -3,6 +3,7 @@
 namespace Drupal\social_event\Event;
 
 use Drupal\social_eda\Types\Address;
+use Drupal\social_eda\Types\ContentVisibility;
 use Drupal\social_eda\Types\Entity;
 use Drupal\social_eda\Types\Href;
 use Drupal\social_eda\Types\User;
@@ -21,7 +22,7 @@ class EventEntityData {
     public readonly string $updated,
     public readonly string $status,
     public readonly string $label,
-    public readonly string $visibility,
+    public readonly ContentVisibility|null $visibility,
     public readonly Entity|null $group,
     public readonly User $author,
     public readonly bool $allDay,
