@@ -183,10 +183,7 @@ class SocialMinkContext extends MinkContext {
    */
   public function iSetAlias($value) {
     // Uncheck "Generate automatic URL alias" if social_path_manager is enabled.
-    if (
-      \Drupal::service('module_handler')->moduleExists('social_path_manager')
-      && $this->getSession()->getPage()->hasField('Generate automatic URL alias')
-    ) {
+    if (\Drupal::service('module_handler')->moduleExists('social_path_manager')) {
       $option = $this->fixStepArgument('Generate automatic URL alias');
       $this->getSession()->getPage()->uncheckField($option);
     }
