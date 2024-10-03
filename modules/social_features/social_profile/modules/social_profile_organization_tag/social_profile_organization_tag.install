@@ -157,10 +157,3 @@ function social_profile_organization_tag_update_130001(): void {
   user_role_grant_permissions('contentmanager', ['create terms in profile_organization_tag']);
   user_role_grant_permissions('sitemanager', ['create terms in profile_organization_tag']);
 }
-
-/**
- * Enable social path manager module to be user generate url feature.
- */
-function social_profile_organization_tag_update_130002(): void {
-  \Drupal::service('module_installer')->install(['social_path_manager']);
-}
