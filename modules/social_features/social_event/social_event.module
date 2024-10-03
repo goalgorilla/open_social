@@ -1103,6 +1103,8 @@ function social_event_node_update(EntityInterface $entity) {
         }
       }
     }
+
+    \Drupal::service('social_event.eda_handler')->eventUpdate($entity);
   }
 }
 
