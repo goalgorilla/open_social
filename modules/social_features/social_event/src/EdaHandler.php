@@ -21,14 +21,24 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class EdaHandler {
 
   /**
-   * The Kafka topic name.
+   * The Kafka create topic name.
    */
-  const TOPIC_NAME = 'com.getopensocial.cms.event.create';
+  const TOPIC_CREATE_NAME = 'com.getopensocial.cms.event.create';
 
   /**
-   * The Event type.
+   * The Kafka update topic name.
    */
-  const EVENT_TYPE = 'com.getopensocial.cms.event.create';
+  const TOPIC_UPDATE_NAME = 'com.getopensocial.cms.event.update';
+
+  /**
+   * The Event create type.
+   */
+  const EVENT_CREATE_TYPE = 'com.getopensocial.cms.event.create';
+
+  /**
+   * The Event update type.
+   */
+  const EVENT_UPDATE_TYPE = 'com.getopensocial.cms.event.update';
 
   /**
    * {@inheritDoc}
@@ -50,10 +60,26 @@ final class EdaHandler {
     }
 
     // Transform the node into a CloudEvent.
-    $event = $this->fromEntity($node);
+    $event = $this->fromEntity($node, self::EVENT_CREATE_TYPE);
 
     // Dispatch the event to the message broker.
-    $this->dispatcher->dispatch(self::TOPIC_NAME, $event);
+    $this->dispatcher->dispatch(self::TOPIC_CREATE_NAME, $event);
+  }
+
+  /**
+   * Create update event handler.
+   */
+  public function eventUpdate(NodeInterface $node): void {
+    // Skip if required modules are not enabled.
+    if (!$this->moduleHandler->moduleExists('social_eda') || !$this->dispatcher) {
+      return;
+    }
+
+    // Transform the node into a CloudEvent.
+    $event = $this->fromEntity($node, self::EVENT_UPDATE_TYPE);
+
+    // Dispatch the event to the message broker.
+    $this->dispatcher->dispatch(self::TOPIC_UPDATE_NAME, $event);
   }
 
   /**
@@ -61,7 +87,7 @@ final class EdaHandler {
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function fromEntity(NodeInterface $node): CloudEvent {
+  public function fromEntity(NodeInterface $node, string $type): CloudEvent {
     // Get current request.
     $request = $this->requestStack->getCurrentRequest();
 
@@ -71,7 +97,7 @@ final class EdaHandler {
     return new CloudEvent(
       id: $this->uuid->generate(),
       source: $request ? $request->getUri() : '/node/add/event',
-      type: self::EVENT_TYPE,
+      type: $type,
       data: [
         'event' => new EventCreateEventData(
           id: $node->get('uuid')->value,
