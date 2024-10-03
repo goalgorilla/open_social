@@ -3,14 +3,15 @@ services:
     class: Drupal\social_event_managers\SocialEventManagersConfigOverride
     tags:
       - {name: config.factory.override, priority: 5}
-
   social_event_managers.route_subscriber:
     class: Drupal\social_event_managers\EventSubscriber\RouteSubscriber
     arguments: ['@module_handler']
     tags:
       - { name: 'event_subscriber' }
-
   social_event_managers.add_enrollee.permission:
     class: 'Drupal\social_event_managers\Access\AddEnrolleeAccessCheck'
     tags:
       - { name: 'access_check', applies_to: '_enrollee_permission', priority: 249 }
+  Drupal\social_event_managers\EventSubscriber\NodeQueryAccessAlterSubscriber:
+    tags:
+      - { name: event_subscriber }
