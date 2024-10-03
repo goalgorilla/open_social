@@ -180,3 +180,39 @@ function hook_social_core_default_main_menu_links_alter(array &$links) {
 /**
  * @} End of "defaultmainmenulinks hooks".
  */
+
+/**
+ * Act on an entity being published.
+ *
+ * This hook is fired when an entity's status is changed to "published."
+ * It works for any entity type that has a `status` field, such as nodes or
+ * taxonomy terms. The hook is dynamically invoked based on the entity type.
+ * For example:
+ * - hook_social_core_node_published() for nodes
+ * - hook_social_core_taxonomy_term_published() for taxonomy terms.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity being published.
+ *
+ * @ingroup hooks
+ */
+function hook_social_core_ENTITY_TYPE_published(\Drupal\Core\Entity\EntityInterface $entity) {
+}
+
+/**
+ * Act on an entity being unpublished.
+ *
+ * This hook is fired when an entity's status is changed to "unpublished."
+ * It works for any entity type that has a `status` field, such as nodes or
+ * taxonomy terms. The hook is dynamically invoked based on the entity type.
+ * For example:
+ * - hook_social_core_node_unpublished() for nodes
+ * - hook_social_core_taxonomy_term_unpublished() for taxonomy terms.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity being unpublished.
+ *
+ * @ingroup hooks
+ */
+function hook_social_core_ENTITY_TYPE_unpublished(\Drupal\Core\Entity\EntityInterface $entity) {
+}
