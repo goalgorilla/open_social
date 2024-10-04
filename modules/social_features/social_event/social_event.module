@@ -511,6 +511,15 @@ function social_event_node_insert(NodeInterface $node): void {
 }
 
 /**
+ * Implements hook_social_core_ENTITY_TYPE_published().
+ */
+function social_event_social_core_node_published(EntityInterface $entity): void {
+  if ($entity instanceof NodeInterface && $entity->bundle() == 'event') {
+    \Drupal::service('social_event.eda_handler')->eventPublish($entity);
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_event_flagging_insert(EntityInterface $entity) {

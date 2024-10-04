@@ -10,7 +10,7 @@ use Drupal\social_eda\Types\User;
 /**
  * Contains data about the creation of an Open Social event.
  */
-class EventCreateEventData {
+class EventEntityData {
 
   /**
    * {@inheritDoc}
@@ -19,7 +19,7 @@ class EventCreateEventData {
     public readonly string $id,
     public readonly string $created,
     public readonly string $updated,
-    public readonly bool $status,
+    public readonly string $status,
     public readonly string $label,
     public readonly string $visibility,
     public readonly Entity|null $group,

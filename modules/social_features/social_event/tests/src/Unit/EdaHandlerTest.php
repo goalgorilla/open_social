@@ -3,6 +3,8 @@
 namespace Drupal\Tests\social_event\Unit;
 
 use CloudEvents\V1\CloudEvent;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -12,6 +14,8 @@ use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_eda_dispatcher\Dispatcher as SocialEdaDispatcher;
@@ -98,6 +102,23 @@ class EdaHandlerTest extends UnitTestCase {
   protected Request $request;
 
   /**
+   * Manages entity types and their storage handlers.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * Represents the route match.
+   */
+  protected RouteMatchInterface $routeMatch;
+
+  /**
+   * Represents the account proxy.
+   */
+  protected AccountProxyInterface $account;
+
+  /**
    * {@inheritDoc}
    */
   protected function setUp(): void {
@@ -124,8 +145,22 @@ class EdaHandlerTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->uuid = $this->prophesize(UuidInterface::class)->reveal();
-    $this->requestStack = $this->prophesize(RequestStack::class)->reveal();
+    // Mock the EntityTypeManagerInterface and the corresponding storage.
+    $entityStorageMock = $this->prophesize(EntityStorageInterface::class);
+    $entityTypeManagerMock = $this->prophesize(EntityTypeManagerInterface::class);
+    $entityTypeManagerMock->getStorage('user')
+      ->willReturn($entityStorageMock->reveal());
+    $this->entityTypeManager = $entityTypeManagerMock->reveal();
+
+    // Mock the AccountProxyInterface.
+    $accountMock = $this->prophesize(AccountProxyInterface::class);
+    $accountMock->id()->willReturn(1);
+    $this->account = $accountMock->reveal();
+
+    // Mock the RouteMatchInterface.
+    $routeMatchMock = $this->prophesize(RouteMatchInterface::class);
+    $routeMatchMock->getRouteName()->willReturn('entity.node.edit_form');
+    $this->routeMatch = $routeMatchMock->reveal();
 
     // Resolve UUID.
     $uuidMock = $this->prophesize(UuidInterface::class);
@@ -135,6 +170,7 @@ class EdaHandlerTest extends UnitTestCase {
     // Resolve Request.
     $requestMock = $this->prophesize(Request::class);
     $requestMock->getUri()->willReturn('http://example.com/node/add/event');
+    $requestMock->getPathInfo()->willReturn('/node/add/event');
     $this->request = $requestMock->reveal();
 
     $requestStackMock = $this->prophesize(RequestStack::class);
@@ -225,10 +261,13 @@ class EdaHandlerTest extends UnitTestCase {
       $this->uuid,
       $this->requestStack,
       $this->moduleHandler,
+      $this->entityTypeManager,
+      $this->account,
+      $this->routeMatch
     );
 
     // Create the event object.
-    $event = $handler->fromEntity($this->node);
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.create');
 
     // Assert the result is an instance of CloudEvent.
     $this->assertInstanceOf(CloudEvent::class, $event);
