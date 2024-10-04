@@ -94,6 +94,15 @@ final class EdaHandler {
   }
 
   /**
+   * Unpublish event handler.
+   */
+  public function eventUnpublish(NodeInterface $node): void {
+    $event_type = 'com.getopensocial.cms.event.unpublish';
+    $topic_name = 'com.getopensocial.cms.event.unpublish';
+    $this->dispatch($topic_name, $event_type, $node);
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
