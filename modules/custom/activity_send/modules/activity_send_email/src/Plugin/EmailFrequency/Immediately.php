@@ -130,7 +130,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
       $template = $storage->load($message->bundle());
 
       if ($template !== NULL) {
-        $subject_array = $this->activityFactory->getMessageSubject($message);
+        $subject_array = $this->activityFactory->getMessageSubject($message, $langcode);
         $subject = $this->renderer->renderPlain($subject_array);
       }
 

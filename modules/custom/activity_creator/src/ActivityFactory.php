@@ -585,17 +585,26 @@ class ActivityFactory extends ControllerBase {
 
     $message_arguments = $message->getArguments();
 
-    // When the 'email_subject' is migrated to the 'Message' fields
-    // instead of relying on third-party settings, code needs to be added to
-    // retrieve the translation for the 'email_subject' field, similar to how
-    // it's done in the 'getMessageText' method.
-    // @todo Add code to retrieve the translation.
     $settings = $message_template->getThirdPartySettings('activity_logger');
     if (!isset($settings['email_subject'])) {
       return [];
     }
 
-    $output = $this->processArguments($message_arguments, ['#markup' => $settings['email_subject']], $message);
+    $subject = $settings['email_subject'];
+    // If we have a language code here we can try to get a translated subject.
+    if (!empty($langcode)) {
+      $language_manager = $this->languageManager;
+      if ($language_manager instanceof ConfigurableLanguageManagerInterface) {
+        // Load the language override for the message template.
+        $config_translation = $language_manager->getLanguageConfigOverride($langcode, 'message.template.' . $message_template->id());
+        $settings = $config_translation->get('third_party_settings');
+        if (isset($settings['activity_logger']['email_subject'])) {
+          $subject = $settings['activity_logger']['email_subject'];
+        }
+      }
+    }
+
+    $output = $this->processArguments($message_arguments, ['#markup' => $subject], $message);
 
     $token_options = $message_template->getSetting('token options', []);
     if (!empty($token_options['token replace'])) {
