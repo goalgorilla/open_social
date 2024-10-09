@@ -110,7 +110,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
    * {@inheritdoc}
    */
   public function label() {
-    // When a guest is allowed to join, the name and account fields can be empty,
+    // When a guest is allowed to join, the name and account fields can be empty
     // but the field for email will be provided.
     // The first and last name are not mandatory,
     // so the field_name is used for validation instead.
