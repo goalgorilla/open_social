@@ -296,10 +296,3 @@ function social_event_update_130004(): void {
       ->save();
   }
 }
-
-/**
- * Enable social path manager module to be user generate url feature.
- */
-function social_event_update_130005(): void {
-  \Drupal::service('module_installer')->install(['social_path_manager']);
-}

@@ -16,11 +16,6 @@ use Drupal\group\Entity\GroupType;
  * Implements hook_form_alter().
  */
 function social_path_manager_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // The Social Path Manager shouldn't be applied to alternative front-page.
-  if ($form_id === 'alternative_frontpage_add_form') {
-    return;
-  }
-
   $social_group_types = _social_path_manager_group_types();
 
   $group_forms = [
