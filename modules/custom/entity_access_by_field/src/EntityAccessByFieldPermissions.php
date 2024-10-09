@@ -108,65 +108,6 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
   }
 
   /**
-   * Get the realms array with permissions as value.
-   */
-  public function getRealmWithPermission(): array {
-    $realms = &drupal_static(__FUNCTION__);
-
-    // If realms is not yet cached, let's populate it now.
-    if (!isset($realms)) {
-      $realms = [];
-      $entity_access_field_map = $this->entityFieldManager->getFieldMapByFieldType('entity_access_field');
-
-      foreach ($entity_access_field_map as $entity_type => $fields) {
-        foreach ($fields as $field_name => $field) {
-          if (!empty($field['bundles'])) {
-            foreach ($field['bundles'] as $bundle_id) {
-              /** @var \Drupal\field\Entity\FieldConfig $field_storage */
-              $field_storage = FieldStorageConfig::loadByName($entity_type, $field_name);
-
-              // Gets allowed values from function if exists.
-              $function = $field_storage->getSetting('allowed_values_function');
-              if (!empty($function)) {
-                $allowed_values = $function($field_storage);
-              }
-              else {
-                $allowed_values = $field_storage->getSetting('allowed_values');
-              }
-
-              if (!empty($allowed_values)) {
-                $op = 'view';
-
-                foreach ($allowed_values as $field_key => $field_label) {
-                  // e.g. label = node.article.field_content_visibility:public.
-                  $permission_label = "$entity_type.{$bundle_id}.{$field_storage->getName()}:$field_key";
-                  $permission = $op . ' ' . $permission_label . ' content';
-                  $field_name = $field_storage->getName();
-                  $realm = $this->getRealmForFieldValue($op, $entity_type, $bundle_id, $field_name, $field_key);
-                  $realms[$realm] = $permission;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    return $realms;
-  }
-
-  /**
-   * Returns a realm for a field value in order to create access.
-   *
-   * @return string
-   *   The string with the realm created.
-   */
-  public function getRealmForFieldValue($op, $entity_type, $bundle_id, $field_name, $field_value) {
-    $realm = $op . '_' . $entity_type . '_' . $bundle_id . '_' . $field_name . '_' . $field_value;
-    return $realm;
-  }
-
-  /**
    * Get all the content types.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]

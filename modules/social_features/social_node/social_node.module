@@ -5,8 +5,11 @@
  * The social node module alterations.
  */
 
+use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_node\Entity\Node;
+use Drupal\social_node\QueryAccess\NodeEntityQueryAlter;
 use Drupal\social_node\SocialNodeForm;
 use Drupal\social_node\NodeViewBuilder;
 
@@ -65,3 +68,47 @@ function social_node_node_access_records_alter(array &$grants, NodeInterface $no
     }
   }
 }
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_node_query_entity_query_alter(AlterableInterface $query): void {
+  if (!$query instanceof SelectInterface) {
+    return;
+  }
+
+  $entity_type_id = $query->getMetaData('entity_type');
+  if ($entity_type_id !== 'node' && !$query->hasTag('node_access')) {
+    return;
+  }
+
+  $plugin_ids = \Drupal::service('group_relation_type.manager')->getPluginIdsByEntityTypeAccess('node');
+  if (empty($plugin_ids)) {
+    // If no group relationship plugins for "node" entity type is enabled.
+    return;
+  }
+
+  \Drupal::service('class_resolver')
+    ->getInstanceFromDefinition(NodeEntityQueryAlter::class)
+    ->alterQuery($query);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_node_query_views_entity_query_alter(AlterableInterface $query): void {
+  if (!$query instanceof SelectInterface) {
+    return;
+  }
+
+  if ($query->getMetaData('entity_type') !== 'node') {
+    return;
+  }
+
+  if (!$query->hasTag('node_access')) {
+    $query->addTag('node_access');
+  }
+
+  social_node_query_entity_query_alter($query);
+}
+
