@@ -7,6 +7,7 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\hux\HuxModuleHandler;
 
 /**
  * Provides content translation for the Social Content Block module.
@@ -25,8 +26,10 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   /**
    * Constructs the service with DI.
    */
-  public function __construct() {
-    $this->moduleHandler = \Drupal::service('module_handler');
+  public function __construct(
+    ModuleHandlerInterface $module_handler,
+  ) {
+    $this->moduleHandler = ($module_handler instanceof HuxModuleHandler) ? \Drupal::service('module_handler.drupal_core') : $module_handler;
   }
 
   /**
