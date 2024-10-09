@@ -5,3 +5,10 @@ services:
       - '@session.flash_bag'
       - '@page_cache_kill_switch'
       - '@module_handler'
+
+  Drupal\social_node\EventSubscriber\NodeQueryAccessAlterSubscriber:
+    arguments:
+      - '@entity_field.manager'
+      - '@event_dispatcher'
+    tags:
+      - { name: event_subscriber }
