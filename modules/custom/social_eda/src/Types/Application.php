@@ -40,8 +40,12 @@ class Application {
         'name' => 'Cron',
       ],
       'graphql' => [
-        'uuid' => '123e4567-e89b-12d3-a456-426614174001',
+        'uuid' => 'fd4b26f6-ec5e-47c2-8bf1-d8db7fc9d094',
         'name' => 'GraphQL',
+      ],
+      'scim' => [
+        'uuid' => 'd7197e1c-ba49-4c13-a030-2e730e1839f0',
+        'name' => 'SCIM',
       ],
     ];
 
