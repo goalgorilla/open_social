@@ -105,7 +105,7 @@ function social_group_request_tokens_alter(array &$replacements, array $context,
                     ['absolute' => TRUE]);
                   $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View the requests', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                    ->renderPlain($cta_button);
+                    ->renderInIsolation($cta_button);
                 }
 
                 // Replace the preview token.
@@ -114,7 +114,7 @@ function social_group_request_tokens_alter(array &$replacements, array $context,
                   $user = $group_content->getEntity();
                   if ($user instanceof UserInterface) {
                     $preview_info = $email_token_services->getUserPreview($user);
-                    $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+                    $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderInIsolation($preview_info);
                   }
                 }
                 break;
