@@ -140,7 +140,6 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
         '#ajax' => [
           'callback' => [$form_state->getFormObject(), 'cancelEnrollmentAjax'],
           'disable-refocus' => TRUE,
-          'progress' => 'none',
         ],
       ];
 
