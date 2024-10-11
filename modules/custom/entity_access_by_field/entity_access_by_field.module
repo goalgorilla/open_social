@@ -19,14 +19,6 @@ use Drupal\entity_access_by_field\EntityAccessHelper;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
-use Drupal\entity_access_by_field\QueryAccess\GroupContentQueryAlter;
-use Drupal\Core\Database\Query\SelectInterface;
-use Drupal\Core\Database\Query\AlterableInterface;
-
-/**
- * Here we define a constant for our node access grant ID.
- */
-const ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM = 1;
 
 /**
  * Implements hook_ENTITY_TYPE_access().
@@ -214,43 +206,4 @@ function _entity_access_by_field_get_default_visibility(EntityInterface $entity)
   }
 
   return $default_visibility;
-}
-
-/**
- * Implements hook_query_TAG_alter().
- */
-function entity_access_by_field_query_entity_query_alter(AlterableInterface $query): void {
-
-  $class_name = '';
-
-  if (!$query instanceof SelectInterface) {
-    return;
-  }
-
-  $entity_type_id = $query->getMetaData('entity_type');
-  if ($query->hasTag($entity_type_id . '_access')) {
-    $entity_type_manager = \Drupal::entityTypeManager();
-
-    /** @var Drupal\Core\Entity\EntityTypeInterface $entity_type */
-    $entity_type = $entity_type_manager->getDefinition($entity_type_id);
-
-    if ($entity_type_id === 'group_content') {
-      \Drupal::service('class_resolver')
-        ->getInstanceFromDefinition(GroupContentQueryAlter::class)
-        ->alter($query, $entity_type);
-    }
-  }
-}
-
-/**
- * Implements hook_query_TAG_alter().
- */
-function entity_access_by_field_query_views_entity_query_alter(AlterableInterface $query): void {
-  if (!$query instanceof SelectInterface) {
-    return;
-  }
-
-  $entity_type_id = $query->getMetaData('entity_type');
-  $query->addTag($entity_type_id . '_access');
-  entity_access_by_field_query_entity_query_alter($query);
 }
