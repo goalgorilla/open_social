@@ -8,9 +8,33 @@
 /**
  * Implements hook_install().
  */
-function social_node_install() {
+function social_node_install(): void {
   // Set the view mode to use when shown in activities.
   activity_creator_set_entity_view_mode('node', 'activity');
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function social_node_requirements(string $phase): array {
+  // Make sure there are no "hook_node_grands()" implementations.
+  // If at least one exists, a node entity query will be broken.
+  if ($phase === 'runtime') {
+    $hooks_exist = \Drupal::moduleHandler()->hasImplementations('node_grants');
+
+    $requirements['unwanted_node_grands']['title'] = t('"hook_node_grands()" absence');
+    if ($hooks_exist) {
+      $requirements['unwanted_node_grands']['value'] = t('"hook_node_grands()" implementations exist');
+      $requirements['unwanted_node_grands']['description'] = t('This hook implementations break your node entity queries. You should remove remove them and implement event subscriber with query altering instead (see "\Drupal\social_node\SocialNodeQueryAccessAlterInterface")');
+      $requirements['unwanted_node_grands']['severity'] = REQUIREMENT_ERROR;
+    }
+    else {
+      $requirements['unwanted_node_grands']['value'] = t('"hook_node_grands()" implementations does not exist');
+      $requirements['unwanted_node_grands']['severity'] = REQUIREMENT_OK;
+    }
+  }
+
+  return $requirements ?? [];
 }
 
 /**
