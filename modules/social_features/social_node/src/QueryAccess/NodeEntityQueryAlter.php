@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Drupal\social_node\QueryAccess;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\social_node\Event\NodeQueryAccessEvent;
 use Drupal\social_node\Event\SocialNodeEvents;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Defines a class for altering node entity queries.
@@ -34,23 +36,25 @@ class NodeEntityQueryAlter implements ContainerInjectionInterface {
   protected CacheableMetadata $cacheableMetadata;
 
   /**
-   * Constructs a new RoleVisibilityNodeEntityQueryAlter object.
+   * Constructs a new NodeEntityQueryAlter object.
    *
+   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   *   The request stack.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer.
    * @param \Drupal\Core\Session\AccountInterface $currentUser
    *   The current user.
-   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager
-   *   The entities field manager.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher
    *   The event dispatcher.
    * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entityTypeBundleInfo
    *   The entity bundle info provider.
    */
   public function __construct(
+    private readonly RequestStack $requestStack,
+    private readonly RendererInterface $renderer,
     private readonly AccountInterface $currentUser,
-    private readonly EntityFieldManagerInterface $entityFieldManager,
     private readonly EventDispatcherInterface $eventDispatcher,
     private readonly EntityTypeBundleInfoInterface $entityTypeBundleInfo,
-
   ) {
     $this->cacheableMetadata = new CacheableMetadata();
   }
@@ -60,8 +64,9 @@ class NodeEntityQueryAlter implements ContainerInjectionInterface {
    */
   public static function create(ContainerInterface $container): NodeEntityQueryAlter {
     return new static(
+      $container->get('request_stack'),
+      $container->get('renderer'),
       $container->get('current_user'),
-      $container->get('entity_field.manager'),
       $container->get('event_dispatcher'),
       $container->get('entity_type.bundle.info'),
     );
@@ -103,16 +108,54 @@ class NodeEntityQueryAlter implements ContainerInjectionInterface {
       }
     }
 
+    // Apply related cache context by user permissions.
+    $this->cacheableMetadata->addCacheContexts(['user.permissions']);
+
     // Allow altering the access conditions.
-    $event = new NodeQueryAccessEvent($query, $or, $this->currentUser);
+    $event = new NodeQueryAccessEvent($query, $or, $this->currentUser, $this->cacheableMetadata);
     $this->eventDispatcher->dispatch($event, SocialNodeEvents::NODE_QUERY_ACCESS_ALTER);
 
-    if (!count(Element::children($or->conditions()))) {
+    $conditions = $or->conditions();
+    if (!count(Element::children($conditions))) {
       // If no access rule was met, we should hardly restrict access.
       $or->alwaysFalse();
     }
 
     $this->query->condition($or);
+
+    $this->applyCacheability();
+  }
+
+  /**
+   * Applies the cacheability metadata to the current request.
+   *
+   * @throws \Exception
+   */
+  protected function applyCacheability(): void {
+    $request = $this->requestStack->getCurrentRequest();
+    if (!$request) {
+      return;
+    }
+
+    if ($request->isMethodCacheable() && $this->renderer->hasRenderContext() && $this->hasCacheableMetadata()) {
+      $build = [];
+      $this->cacheableMetadata->applyTo($build);
+      $this->renderer->render($build);
+    }
+  }
+
+  /**
+   * Check if the cacheable metadata is not empty.
+   *
+   * An empty cacheable metadata object has no context, tags, and is permanent.
+   *
+   * @return bool
+   *   TRUE if there is cacheability metadata, otherwise FALSE.
+   */
+  protected function hasCacheableMetadata(): bool {
+    return $this->cacheableMetadata->getCacheMaxAge() !== Cache::PERMANENT
+      || count($this->cacheableMetadata->getCacheContexts()) > 0
+      || count($this->cacheableMetadata->getCacheTags()) > 0;
   }
 
 }

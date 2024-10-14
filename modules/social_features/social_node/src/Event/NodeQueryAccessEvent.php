@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\social_node\Event;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\social_node\QueryAccess\SocialNodeEnsureTablesTrait;
 
 /**
- * Defines the access by visibility conditions alter event.
+ * Defines node entity query alter event.
  */
 class NodeQueryAccessEvent {
 
@@ -24,12 +25,15 @@ class NodeQueryAccessEvent {
    * @param \Drupal\Core\Database\Query\ConditionInterface $conditions
    *   The condition group.
    * @param \Drupal\Core\Session\AccountInterface $account
-   *   The user account.
+   *   The query cacheable metadata.
+   * @param \Drupal\Core\Cache\CacheableMetadata $cacheableMetadata
+   *   The query cacheable metadata.
    */
   public function __construct(
     protected SelectInterface $query,
     protected ConditionInterface $conditions,
-    protected AccountInterface $account
+    protected AccountInterface $account,
+    protected CacheableMetadata $cacheableMetadata,
   ) {}
 
   /**
@@ -60,6 +64,16 @@ class NodeQueryAccessEvent {
    */
   public function query(): SelectInterface {
     return $this->query;
+  }
+
+  /**
+   * Returns the cache object.
+   *
+   * @return \Drupal\Core\Cache\CacheableMetadata
+   *   The cache object.
+   */
+  public function cacheableMetadata(): CacheableMetadata {
+    return $this->cacheableMetadata;
   }
 
 }

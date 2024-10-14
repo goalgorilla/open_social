@@ -6,6 +6,9 @@ namespace Drupal\social_node\QueryAccess;
 
 use Drupal\Core\Database\Query\SelectInterface;
 
+/**
+ * Contains helper functions for node entity query alters.
+ */
 trait SocialNodeEnsureTablesTrait {
 
   /**
@@ -82,4 +85,5 @@ trait SocialNodeEnsureTablesTrait {
       "$base_table.nid = %alias.nid"
     );
   }
+
 }

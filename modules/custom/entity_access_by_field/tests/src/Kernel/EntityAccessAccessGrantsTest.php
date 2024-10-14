@@ -14,43 +14,6 @@ class EntityAccessAccessGrantsTest extends EntityAccessNodeAccessTestBase {
    */
   public function testGrantsAlter() :void {
     // @todo Rewrite test with entity query access check.
-
-//    // Create a grants array.
-//    // We focus on the node types, which is what
-//    // entity_access_by_field_node_grants_alter() attempts to influence.
-//    $grants = [
-//      'gnode:a' => [$this->group1->id(), $this->group2->id()],
-//      'gnode:b' => [$this->group1->id(), $this->group2->id()],
-//    ];
-//
-//    // Verify that when a member is part of both groups, nothing will be
-//    // altered.
-//    $altered_grants_groups12 = $grants;
-//    $this->assertEquals($grants, $altered_grants_groups12);
-//
-//    drupal_static_reset('getAllGroupsForUser');
-//    // Verify that when a member is removed from one group, it is altered as
-//    // such.
-//    $this->group1->removeMember($this->account);
-//    $altered_grants_groups2 = $grants;
-//
-//    $expected_result_groups2 = [
-//      'gnode:a' => [1 => $this->group2->id()],
-//      'gnode:b' => [1 => $this->group2->id()],
-//    ];
-//    $this->assertEquals($expected_result_groups2, $altered_grants_groups2);
-//
-//    drupal_static_reset('getAllGroupsForUser');
-//    // Verify that when a member is not a member of any group, it is altered as
-//    // such.
-//    $this->group2->removeMember($this->account);
-//    $altered_grants_groups_none = $grants;
-//
-//    $expected_result_groups_none = [
-//      'gnode:a' => [],
-//      'gnode:b' => [],
-//    ];
-//    $this->assertEquals($expected_result_groups_none, $altered_grants_groups_none);
   }
 
 }
