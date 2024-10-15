@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -56,7 +57,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   /**
    * The module handler.
    */
-  protected ModuleHandler $moduleHander;
+  protected ModuleHandlerInterface $moduleHander;
 
   /**
    * The current user.
@@ -78,7 +79,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler, GroupRelationTypeManagerInterface $pluginManager, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandlerInterface $moduleHandler, GroupRelationTypeManagerInterface $pluginManager, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->configFactory = $configFactory;
     $this->moduleHander = $moduleHandler;
