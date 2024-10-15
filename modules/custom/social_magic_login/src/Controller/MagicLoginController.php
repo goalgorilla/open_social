@@ -6,6 +6,7 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
@@ -48,12 +49,12 @@ class MagicLoginController extends ControllerBase {
    *   The user storage.
    * @param \Psr\Log\LoggerInterface $logger
    *   The logger service.
-   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
    * @param \Drupal\Core\Config\ConfigFactory $config
    *   The configuration.
    */
-  public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger, ModuleHandler $module_handler, ConfigFactory $config) {
+  public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger, ModuleHandlerInterface $module_handler, ConfigFactory $config) {
     $this->userStorage = $user_storage;
     $this->logger = $logger;
     $this->moduleHandler = $module_handler;
