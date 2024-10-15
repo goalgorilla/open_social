@@ -122,6 +122,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     $authenticated = $account->isAuthenticated();
 
     // Nodes: check if user has appropriate nodes access by realms.
+    // @todo replace this part.
     $node_access_subquery = $this->database->select('node_access', 'node_access');
     $node_access_subquery->addField('afae', 'entity_id');
     $node_access_subquery->join('activity__field_activity_entity', 'afae', 'node_access.nid = afae.field_activity_entity_target_id');

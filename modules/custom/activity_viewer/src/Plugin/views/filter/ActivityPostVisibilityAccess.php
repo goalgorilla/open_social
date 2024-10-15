@@ -141,6 +141,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $this->query->addRelationship('group_content', $join, 'group_content');
 
     // Join node table(s).
+    // @todo replace this part.
     $configuration = [
       'left_table' => 'activity__field_activity_entity',
       'left_field' => 'field_activity_entity_target_id',
