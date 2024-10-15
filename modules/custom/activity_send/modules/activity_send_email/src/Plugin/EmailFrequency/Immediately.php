@@ -131,7 +131,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
 
       if ($template !== NULL) {
         $subject_array = $this->activityFactory->getMessageSubject($message, $langcode);
-        $subject = $this->renderer->renderPlain($subject_array);
+        $subject = $this->renderer->renderInIsolation($subject_array);
       }
 
       // Revert the config override.
