@@ -1504,12 +1504,15 @@ function _social_core_install_blocks(array $items, callable $function = NULL): v
 function social_core_entity_update(EntityInterface $entity): void {
   // Get the original status from the current entity.
   $original_status = NULL;
-  if (isset($entity->original) && isset($entity->original->status)) {
-    $original_status = (bool) $entity->original->status->value;
+  if (isset($entity->original, $entity->original->status)) {
+    $original_status = is_bool($entity->original->status) ? $entity->original->status : (bool) $entity->original->status->value;
   }
 
   // Get the new status from the current entity.
-  $new_status = isset($entity->status) ? (bool) $entity->status->value : NULL;
+  $new_status = NULL;
+  if (isset($entity->status)) {
+    $new_status = is_bool($entity->status) ? $entity->status : (bool) $entity->status->value;
+  }
 
   // If the status changed (published/unpublished), trigger the custom hooks.
   if ($original_status != $new_status) {
