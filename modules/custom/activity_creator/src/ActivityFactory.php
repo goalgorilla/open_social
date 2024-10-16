@@ -569,6 +569,57 @@ class ActivityFactory extends ControllerBase {
   }
 
   /**
+   * Get message subject.
+   *
+   * @param \Drupal\message\Entity\Message $message
+   *   Message object we get the text for.
+   * @param string $langcode
+   *   The language code we try to get the translation for.
+   *
+   * @return array
+   *   Message subject array.
+   */
+  public function getMessageSubject(Message $message, $langcode = '') {
+    /** @var \Drupal\message\Entity\MessageTemplate $message_template */
+    $message_template = $message->getTemplate();
+
+    $message_arguments = $message->getArguments();
+
+    $settings = $message_template->getThirdPartySettings('activity_logger');
+    if (!isset($settings['email_subject'])) {
+      return [];
+    }
+
+    $subject = $settings['email_subject'];
+    // If we have a language code here we can try to get a translated subject.
+    if (!empty($langcode)) {
+      $language_manager = $this->languageManager;
+      if ($language_manager instanceof ConfigurableLanguageManagerInterface) {
+        // Load the language override for the message template.
+        $config_translation = $language_manager->getLanguageConfigOverride($langcode, 'message.template.' . $message_template->id());
+        $settings = $config_translation->get('third_party_settings');
+        if (isset($settings['activity_logger']['email_subject'])) {
+          $subject = $settings['activity_logger']['email_subject'];
+        }
+      }
+    }
+
+    $output = $this->processArguments($message_arguments, ['#markup' => $subject], $message);
+
+    $token_options = $message_template->getSetting('token options', []);
+    if (!empty($token_options['token replace'])) {
+      $options = [
+        'langcode' => !empty($langcode) ? $langcode : '',
+        'clear' => !empty($token_options['clear']),
+      ];
+      // Token should be processed.
+      $output = $this->processTokens($output, $options, $message);
+    }
+
+    return $output;
+  }
+
+  /**
    * Process the message given the arguments saved with it.
    *
    * @param array $arguments

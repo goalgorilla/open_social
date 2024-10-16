@@ -1497,3 +1497,29 @@ function _social_core_install_blocks(array $items, callable $function = NULL): v
     }
   }
 }
+
+/**
+ * Implements hook_entity_update().
+ */
+function social_core_entity_update(EntityInterface $entity): void {
+  // Get the original status from the current entity.
+  $original_status = NULL;
+  if (isset($entity->original) && isset($entity->original->status)) {
+    $original_status = (bool) $entity->original->status->value;
+  }
+
+  // Get the new status from the current entity.
+  $new_status = isset($entity->status) ? (bool) $entity->status->value : NULL;
+
+  // If the status changed (published/unpublished), trigger the custom hooks.
+  if ($original_status != $new_status) {
+    // Entity has been published.
+    if ($new_status == 1) {
+      \Drupal::moduleHandler()->invokeAll('social_core_' . $entity->getEntityTypeId() . '_published', [$entity]);
+    }
+    // Entity has been unpublished.
+    elseif ($new_status == 0) {
+      \Drupal::moduleHandler()->invokeAll('social_core_' . $entity->getEntityTypeId() . '_unpublished', [$entity]);
+    }
+  }
+}
