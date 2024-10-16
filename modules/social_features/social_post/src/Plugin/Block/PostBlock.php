@@ -8,8 +8,10 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\social_group\CurrentGroupService;
 use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -49,28 +51,43 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
+
+  /**
+   * The current rouge match.
+   *
+   * @var CurrentRouteMatch
+   */
+  protected CurrentRouteMatch $routeMatch;
+
+  /**
+   * The current group service.
+   *
+   * @var CurrentGroupService
+   */
+  protected CurrentGroupService $currentGroupService;
+
 
   /**
    * PostBlock constructor.
@@ -92,6 +109,8 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
    *   The form builder.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\social_group\CurrentGroupService $current_group_service
+   *   The current group service.
    */
   public function __construct(
     array $configuration,
@@ -100,7 +119,9 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
     EntityTypeManagerInterface $entity_type_manager,
     AccountProxyInterface $current_user,
     FormBuilderInterface $form_builder,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
+    CurrentRouteMatch $route_match,
+    CurrentGroupService $current_group_service,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -111,6 +132,8 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
     $this->currentUser = $current_user;
     $this->formBuilder = $form_builder;
     $this->moduleHandler = $module_handler;
+    $this->routeMatch = $route_match;
+    $this->currentGroupService = $current_group_service;
 
     if ($module_handler->moduleExists('social_post_photo')) {
       $this->bundle = 'photo';
@@ -128,7 +151,9 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('form_builder'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('current_route_match'),
+      $container->get('social_group.current_group'),
     );
   }
 
@@ -170,6 +195,12 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
     $form_state = (new FormState())->setFormState([]);
     $form_state->set('form_display', $display);
+
+    // Add the current group from the runtime context.
+    $form_state->set('currentGroup', $this->currentGroupService->fromRunTimeContexts());
+    // Add recipient user from the url.
+    $form_state->set('recipientUser', $this->routeMatch->getParameter('user'));
+
     return $this->formBuilder->buildForm($form_object, $form_state);
   }
 
