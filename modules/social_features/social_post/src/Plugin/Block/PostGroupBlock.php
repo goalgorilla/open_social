@@ -5,10 +5,12 @@ namespace Drupal\social_post\Plugin\Block;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\CurrentGroupService;
 
 /**
  * Provides a 'PostGroupBlock' block.
@@ -30,7 +32,9 @@ class PostGroupBlock extends PostBlock {
     EntityTypeManagerInterface $entity_type_manager,
     AccountProxyInterface $current_user,
     FormBuilderInterface $form_builder,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
+    CurrentRouteMatch $route_match,
+    CurrentGroupService $current_group_service,
   ) {
     parent::__construct(
       $configuration,
@@ -39,7 +43,9 @@ class PostGroupBlock extends PostBlock {
       $entity_type_manager,
       $current_user,
       $form_builder,
-      $module_handler
+      $module_handler,
+      $route_match,
+      $current_group_service,
     );
 
     $this->entityType = 'post';
