@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event_managers\EventSubscriber;
 
-use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\Route;

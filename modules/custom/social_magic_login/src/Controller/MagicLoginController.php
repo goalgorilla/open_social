@@ -5,7 +5,6 @@ namespace Drupal\social_magic_login\Controller;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
