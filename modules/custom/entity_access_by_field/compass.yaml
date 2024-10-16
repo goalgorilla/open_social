@@ -1,0 +1,31 @@
+configVersion: 1
+name: Entity Access by Field
+id: null
+description: |-
+  Provides a way to configure visibility of an entity based on the field of that
+  entity.
+
+  Currently uses node grants and although some flexibility around visibility is
+  provided, this is done by a single "allowed_values_function" from the
+  underlying list_item. Although in theory the values for the list-item can be
+  changed per entity (e.g. in posts they're 1 and 2 while in nodes they're
+  public and community), there is code that relies on the values being specific.
+  Only public visibility can currently be disabled.
+
+  This should be reworked so that it no longer uses node-grants. Additionally we
+  should likely create a plugin system for the visibility types since both our
+  group implementation and our "visibility_by_role" extension alter the
+  available values and behaviour here. This indicates an incorrect
+  responsibility direction. This module should provide a system for the storage
+  of the visibility setting as well as control over which values are available
+  for which types of object (ensuring disabling 'public' is not a special case).
+typeId: LIBRARY
+ownerId: null
+fields:
+  tier: null
+  lifecycle: Active
+links: []
+relationships: {}
+customFields: []
+labels:
+  - 'architect:rework'

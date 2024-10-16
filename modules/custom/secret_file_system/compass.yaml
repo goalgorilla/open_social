@@ -1,0 +1,29 @@
+configVersion: 1
+name: Secret File System
+id: null
+description: |-
+  The Secret file system provides a StreamWrapper that generates static,
+  unguessable, time-limited URLs. Files are stored in the same place as when
+  Drupal's built-in Private file system would be used.
+
+  When this file system is used the assumption is made that if a user can view a
+  link to a file then they can also access the file. The URL that's generated is
+  bucketed into time-slots so that multiple people viewing something referencing
+  the file within the same bucket receive the same URL. The URL contains all the
+  needed information to validate the URL. This has the benefit that the URLs can
+  be validated only using the information in the URL. The responses of the URL
+  can also be statically cached until the URL expires.
+
+  This system provides a significant performance improvement over the private
+  filesystem by not requiring run-time access checks. Unfortunately, due to
+  image styles, it's not yet possible to eliminate a Drupal bootstrap entirely
+  when handling the uncached response to a secret file URL.
+typeId: LIBRARY
+ownerId: null
+fields:
+  tier: null
+  lifecycle: Active
+links: []
+relationships: {}
+customFields: []
+labels: []
