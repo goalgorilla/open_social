@@ -206,6 +206,12 @@ class CommentContext extends RawMinkContext {
       ->accessCheck(FALSE)
       ->condition($entity_type->getKey('label'), $label);
 
+    if ($type === 'post') {
+      $query = $storage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('field_post', $label);
+    }
+
     if ($bundle !== NULL) {
       $query->condition($entity_type->getKey('bundle'), $bundle);
     }
