@@ -30,21 +30,21 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
    *
    * @var string
    */
-  public $entityType;
+  public string $entityType;
 
   /**
    * The bundle.
    *
    * @var string
    */
-  public $bundle;
+  public string $bundle;
 
   /**
    * The form display.
    *
    * @var string
    */
-  public $formDisplay;
+  public string $formDisplay;
 
   /**
    * The entity type manager.
@@ -77,17 +77,16 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
   /**
    * The current rouge match.
    *
-   * @var CurrentRouteMatch
+   * @var \Drupal\Core\Routing\CurrentRouteMatch
    */
   protected CurrentRouteMatch $routeMatch;
 
   /**
    * The current group service.
    *
-   * @var CurrentGroupService
+   * @var \Drupal\social_group\CurrentGroupService
    */
   protected CurrentGroupService $currentGroupService;
-
 
   /**
    * PostBlock constructor.
@@ -109,6 +108,8 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
    *   The form builder.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\Core\Routing\CurrentRouteMatch $route_match
+   *   The current route match.
    * @param \Drupal\social_group\CurrentGroupService $current_group_service
    *   The current group service.
    */

@@ -5,7 +5,6 @@ namespace Drupal\social_post_photo\Plugin\Block;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
-use Drupal\Core\Plugin\Context\ContextProviderInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_group\CurrentGroupService;
@@ -32,8 +31,8 @@ class PostPhotoGroupBlock extends PostGroupBlock {
     AccountProxyInterface $current_user,
     FormBuilderInterface $form_builder,
     ModuleHandlerInterface $module_handler,
-    CurrentGroupService $current_group_service,
     CurrentRouteMatch $route_match,
+    CurrentGroupService $current_group_service,
   ) {
     parent::__construct(
       $configuration,
