@@ -5,7 +5,6 @@ namespace Drupal\social_post_photo\Plugin\Block;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
-use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_group\CurrentGroupService;
 use Drupal\social_post\Plugin\Block\PostGroupBlock;
