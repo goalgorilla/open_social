@@ -1,0 +1,25 @@
+configVersion: 1
+name: Social Follow Content
+id: null
+description: |-
+  Allows the user to follow content and get notified about updates (e.g. new
+  comments).
+
+  Marked for rework because this is currently a feature that makes changes to
+  content. However, this should really be a system to which different types of
+  objects can opt in and make decisions of when a following user should get an
+  update (e.g. event date changes should also trigger this).
+
+  There's also duplication between this and the follow "taxonomy" and "user"
+  systems which further indicates the concept of "following" should be a system
+  that other features can opt-in to.
+typeId: CAPABILITY
+ownerId: null
+fields:
+  tier: null
+  lifecycle: Active
+links: []
+relationships: {}
+customFields: []
+labels:
+  - 'architect:rework'
