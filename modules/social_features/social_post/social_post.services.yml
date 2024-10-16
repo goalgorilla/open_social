@@ -11,3 +11,14 @@ services:
   social_post.helper:
     class: Drupal\social_post\Service\SocialPostHelper
     arguments: ['@entity_type.manager', '@current_user']
+
+
+  #hooks replacement
+  social_post.form.hooks:
+    class: Drupal\social_post\Hooks\SocialPostFormHooks
+    arguments:
+    - '@social_post.helper'
+    - '@current_route_match'
+    - '@current_user'
+    tags:
+      - { name: hooks }
