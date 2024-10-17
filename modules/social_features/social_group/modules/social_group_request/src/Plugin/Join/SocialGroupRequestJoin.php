@@ -143,14 +143,24 @@ class SocialGroupRequestJoin extends JoinBase {
       );
     }
     else {
+      $link = $group->toLink(
+        $this->t("Request to join"),
+        'group-request-membership',
+      );
+      // We convert to an array manually rather than use `toRenderable` because
+      // JoinManager is very particular about its array shape. Additionally, we
+      // can't pass the `Link` instance because it can't transfer the needed
+      // attributes.
       $items[] = [
-        'label' => $this->t('Request to join'),
-        'url' => Url::fromRoute(
-          'grequest.request_membership',
-          ['group' => $group->id()],
-        ),
+        'label' => $link->getText(),
+        'url' => $link->getUrl(),
         'attributes' => [
           'class' => ['btn-accent', 'use-ajax'],
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => json_encode([
+            'width' => '582px',
+            'dialogClass' => 'social_group-popup'
+          ]),
         ],
       ];
     }
