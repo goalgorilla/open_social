@@ -1130,6 +1130,16 @@ function social_event_node_update(EntityInterface $entity): void {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function social_event_node_delete(EntityInterface $entity): void {
+  if ($entity instanceof NodeInterface && $entity->getType() === 'event') {
+    // Trigger the EDA event.
+    \Drupal::service('social_event.eda_handler')->eventDelete($entity);
+  }
+}
+
+/**
  * Implements template_preprocess_views_view().
  */
 function social_event_preprocess_views_view(&$variables) {
