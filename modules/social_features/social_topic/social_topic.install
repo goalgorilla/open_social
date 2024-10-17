@@ -252,3 +252,13 @@ function social_topic_update_130002(): string {
   // Output logged messages to a related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Remove redundant "node_access" views filter.
+ */
+function social_topic_update_130003(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_topic', __FUNCTION__);
+  return $updater->logger()->output();
+}
