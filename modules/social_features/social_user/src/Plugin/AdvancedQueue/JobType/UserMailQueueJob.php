@@ -8,7 +8,7 @@ use Drupal\advancedqueue\Plugin\AdvancedQueue\JobType\JobTypeBase;
 use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Logger\LoggerChannelTrait;
@@ -72,9 +72,9 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
   /**
    * The Drupal module handler service.
    *
-   * @var \Drupal\Core\Extension\ModuleHandler
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  public $moduleHandler;
+  public ModuleHandlerInterface $moduleHandler;
 
   /**
    * The renderer service.
@@ -96,7 +96,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
     Connection $database,
     LanguageManagerInterface $language_manager,
     EmailValidatorInterface $email_validator,
-    ModuleHandler $module_handler,
+    ModuleHandlerInterface $module_handler,
     RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);

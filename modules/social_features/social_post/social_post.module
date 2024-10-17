@@ -17,45 +17,6 @@ use Drupal\user\UserInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
- */
-function social_post_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-
-  if (
-    $form_state->getFormObject()->getEntity()->isNew() &&
-    ($content = \Drupal::service('social_post.helper')->buildCurrentUserImage())
-  ) {
-    $form['current_user_image'] = $content;
-  }
-
-  // Reset title display.
-  $form['field_post']['widget'][0]['#title_display'] = "";
-
-  // Set submit button caption to Post instead of Save.
-  $form['actions']['submit']['#value'] = t('Post', [], ['context' => 'Post button']);
-
-  if (!empty($form['field_post']) && !empty($form['field_post']['widget'][0])) {
-    // For posting on the stream on the group stream.
-    if (!empty(_social_group_get_current_group())) {
-      $form['field_post']['widget'][0]['#placeholder'] = t('Say something to the group');
-      $form['field_post']['widget'][0]['#title'] = t('Say something to the group');
-    }
-    // For the post on a users profile.
-    elseif (!empty(\Drupal::routeMatch()->getParameter('user')) && \Drupal::routeMatch()->getParameter('user')->id() != \Drupal::currentUser()->id()) {
-      $user_profile = \Drupal::routeMatch()->getParameter('user');
-      $name = $user_profile->getDisplayName();
-      $form['field_post']['widget'][0]['#placeholder'] = t('Leave a message to @name', ['@name' => $name]);
-      $form['field_post']['widget'][0]['#title'] = t('Leave a message to @name', ['@name' => $name]);
-    }
-    else {
-      $title = t('Say something to the Community');
-      $form['field_post']['widget'][0]['#title'] = $title;
-      $form['field_post']['widget'][0]['#placeholder'] = $title;
-    }
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
  *
  * Alter the comment_post_comment_form form.
  */
