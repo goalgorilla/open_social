@@ -260,3 +260,25 @@ function social_event_an_enroll_node_presave(EntityInterface $entity) {
 function social_event_an_enroll_social_event_managers_action_social_event_an_enroll_send_email_action_finish($success) {
   return social_event_managers_social_event_managers_action_social_event_managers_send_email_action_finish($success);
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_event_an_enroll_preprocess_views_view(array &$variables): void {
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = &$variables['view'];
+
+  // When the enrolled user is a guest, the first and last name can be empty,
+  // so it will add the email to checkbox label when these fields are empty.
+  if ($view->id() === 'event_manage_enrollments') {
+    foreach ($view->result as $result) {
+      /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
+      $entity = $result->_entity;
+
+      if ($variables['rows']['social_views_bulk_operations_bulk_form_enrollments_1'][$result->index]['#title'] === '') {
+        $variables['rows']['social_views_bulk_operations_bulk_form_enrollments_1'][$result->index]['#title'] = $entity->get('field_email')->value;
+      }
+    }
+  }
+
+}
