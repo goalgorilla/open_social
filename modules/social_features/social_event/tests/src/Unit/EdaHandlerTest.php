@@ -24,6 +24,7 @@ use Drupal\social_event\EdaHandler;
 use Drupal\taxonomy\TermInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -40,7 +41,7 @@ class EdaHandlerTest extends UnitTestCase {
   /**
    * Mocked dispatcher service for sending CloudEvents.
    */
-  protected Dispatcher $dispatcher;
+  protected MockObject $dispatcher;
 
   /**
    * Handles UUID generation.
@@ -147,7 +148,7 @@ class EdaHandlerTest extends UnitTestCase {
     $moduleHandlerProphecy->moduleExists('social_eda')->willReturn(TRUE);
     $this->moduleHandler = $moduleHandlerProphecy->reveal();
 
-    // Prophesize the SocialEdaDispatcher service.
+    // Prophesize the Dispatcher service.
     $this->dispatcher = $this->getMockBuilder('\Drupal\social_eda_dispatcher\Dispatcher')
       ->disableOriginalConstructor()
       ->onlyMethods(['dispatch'])
