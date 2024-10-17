@@ -40,7 +40,7 @@ class EdaHandlerTest extends UnitTestCase {
   /**
    * Mocked dispatcher service for sending CloudEvents.
    */
-  protected ?Dispatcher $dispatcher;
+  protected Dispatcher $dispatcher;
 
   /**
    * Handles UUID generation.
@@ -148,7 +148,7 @@ class EdaHandlerTest extends UnitTestCase {
     $this->moduleHandler = $moduleHandlerProphecy->reveal();
 
     // Prophesize the Dispatcher service.
-    $this->dispatcher = $this->getMockBuilder(Dispatcher::class)
+    $this->dispatcher = $this->getMockBuilder('Drupal\social_eda_dispatcher\Dispatcher')
       ->disableOriginalConstructor()
       ->onlyMethods(['dispatch'])
       ->getMock();
