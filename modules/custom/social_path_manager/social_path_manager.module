@@ -5,6 +5,8 @@
  * The Social Path Manager module.
  */
 
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -43,7 +45,13 @@ function social_path_manager_form_alter(&$form, FormStateInterface $form_state, 
   }
 
   // Add custom validation function.
-  $form['#validate'][] = "_social_path_manager_path_alias_validate";
+  // This is only applicable on all content entities which has field
+  // 'path' in the form.
+  if ($form_state->getFormObject() instanceof EntityFormInterface
+    && $form_state->getFormObject()->getEntity() instanceof ContentEntityInterface
+  ) {
+    $form['#validate'][] = "_social_path_manager_path_alias_validate";
+  }
 }
 
 /**
