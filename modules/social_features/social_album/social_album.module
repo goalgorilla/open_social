@@ -336,7 +336,7 @@ function social_album_form_comment_form_alter(&$form, FormStateInterface $form_s
     /** @var \Drupal\social_post\Entity\PostInterface $post */
     $post = \Drupal::routeMatch()->getParameter('entity');
 
-    if (!$post->field_album->isEmpty()) {
+    if ($post->hasField('field_album') && !$post->field_album->isEmpty()) {
       /** @var \Drupal\node\NodeInterface $album */
       $album = $post->field_album->entity;
 
