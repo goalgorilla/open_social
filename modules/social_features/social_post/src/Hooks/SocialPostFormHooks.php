@@ -60,12 +60,13 @@ final class SocialPostFormHooks {
   #[Alter('form_post_form')]
   public function formPostFormAlter(array &$form, FormStateInterface $form_state): void {
     $content = $this->socialPostHelper->buildCurrentUserImage();
+    $form_object = $form_state->getFormObject();
 
-    if ($form_state->getFormObject() instanceof ContentEntityForm === FALSE) {
+    if ($form_object instanceof ContentEntityForm === FALSE) {
       return;
     }
 
-    if ($form_state->getFormObject()->getEntity()->isNew()
+    if ($form_object->getEntity()->isNew()
       && $content !== NULL) {
       $form['current_user_image'] = $content;
     }
@@ -90,8 +91,8 @@ final class SocialPostFormHooks {
     // $user_profile = $this->routeMatch->getParameter('user');
     $user_profile = $form_state->get('recipientUser');
     if ($user_profile !== NULL
-      && $user_profile->id() != $this->currentUser->id()) {
-      $this->setFormTitleAndPlaceholder($form, t('Leave a message to @name', [
+      && $user_profile->id() !== $this->currentUser->id()) {
+      $form = $this->setFormTitleAndPlaceholder($form, t('Leave a message to @name', [
         '@name' => $user_profile->getDisplayName(),
       ]));
     }
