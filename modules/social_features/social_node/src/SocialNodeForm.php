@@ -40,8 +40,8 @@ class SocialNodeForm extends NodeForm {
   public function __construct(
     EntityRepositoryInterface $entity_repository,
     PrivateTempStoreFactory $temp_store_factory,
-    EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL,
-    TimeInterface $time = NULL,
+    EntityTypeBundleInfoInterface $entity_type_bundle_info,
+    TimeInterface $time,
     AccountInterface $current_user,
     DateFormatterInterface $date_formatter,
     SocialNodeMessengerInterface $messenger

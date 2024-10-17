@@ -41,6 +41,13 @@ class DashboardController extends SystemController {
   private ?int $homePageHeroBlockId = NULL;
 
   /**
+   * The theme handler.
+   *
+   * @var \Drupal\Core\Extension\ThemeHandlerInterface
+   */
+  protected $themeHandler;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): self {
@@ -48,6 +55,7 @@ class DashboardController extends SystemController {
 
     $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->configFactory = $container->get('config.factory');
+    $instance->themeHandler = $container->get('theme_handler');
 
     return $instance;
   }

@@ -251,7 +251,7 @@ function social_mentions_tokens_alter(array &$replacements, array $context, Bubb
                 $link = $entity->toUrl('canonical', $options);
                 $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Reply to this comment', [], $translation_options));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                  ->renderPlain($cta_button);
+                  ->renderInIsolation($cta_button);
               }
 
               // Prepare the comment preview.
@@ -278,7 +278,7 @@ function social_mentions_tokens_alter(array &$replacements, array $context, Bubb
                     break;
                 }
                 $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')
-                  ->renderPlain($preview_info);
+                  ->renderInIsolation($preview_info);
               }
             }
             break;

@@ -3,7 +3,7 @@
 namespace Drupal\social_user\Element;
 
 use Drupal\Core\Render\Element;
-use Drupal\Core\Render\Element\RenderElement;
+use Drupal\Core\Render\Element\RenderElementBase;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 
@@ -21,7 +21,7 @@ use Drupal\Core\Url;
  *
  * @RenderElement("account_header_element")
  */
-class AccountHeaderElement extends RenderElement {
+class AccountHeaderElement extends RenderElementBase {
 
   /**
    * {@inheritdoc}

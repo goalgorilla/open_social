@@ -22,6 +22,8 @@
     <!-- Will be removed in Open Social 12.0.0 -->
     <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled" />
     <!-- End remove. -->
+    <!-- Add an empty string, because is return bool because the variable doesn't exist -->
+    <env name="SIMPLETEST_IGNORE_DIRECTORIES" value="" />
   </php>
   <testsuites>
     <testsuite name="phpstan">
