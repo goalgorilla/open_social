@@ -296,3 +296,13 @@ function social_event_update_130004(): void {
       ->save();
   }
 }
+
+/**
+ * Remove redundant "node_access" views filter.
+ */
+function social_event_update_130005(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_event', __FUNCTION__);
+  return $updater->logger()->output();
+}
