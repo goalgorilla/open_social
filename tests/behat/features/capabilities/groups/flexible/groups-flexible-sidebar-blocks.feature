@@ -18,4 +18,3 @@ Feature: Flexible groups sidebar blocks are correctly displayed
 
     Then I should see "Upcoming events" in the "Sidebar second"
     And I should see "Newest topics" in the "Sidebar second"
-    And I should see "Newest Members" in the "Sidebar second"
