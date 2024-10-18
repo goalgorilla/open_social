@@ -1106,7 +1106,7 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
  *
  * Delete the event enrollments request if type is changed to directly.
  */
-function social_event_node_update(EntityInterface $entity) {
+function social_event_node_update(EntityInterface $entity): void {
   if ($entity instanceof NodeInterface && $entity->getType() === 'event') {
     $enroll_state_original = $entity->original->get('field_enroll_method')->getString();
     $enroll_new_state = $entity->get('field_enroll_method')->getString();
@@ -1123,6 +1123,9 @@ function social_event_node_update(EntityInterface $entity) {
         }
       }
     }
+
+    // Trigger the EDA event.
+    \Drupal::service('social_event.eda_handler')->eventUpdate($entity);
   }
 }
 
