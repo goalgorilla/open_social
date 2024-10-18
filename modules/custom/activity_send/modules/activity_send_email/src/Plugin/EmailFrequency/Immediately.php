@@ -131,7 +131,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
 
       if ($template !== NULL) {
         $subject_array = $this->activityFactory->getMessageSubject($message, $langcode);
-        $subject = $this->renderer->renderPlain($subject_array);
+        $subject = $this->renderer->renderInIsolation($subject_array);
       }
 
       // Revert the config override.
@@ -183,7 +183,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
     ];
 
     // Construct the body & subject for email sending.
-    $params['body'] = $this->renderer->renderPlain($notification);
+    $params['body'] = $this->renderer->renderInIsolation($notification);
     if ($subject !== '') {
       $params['subject'] = $subject;
     }
