@@ -7,6 +7,7 @@ use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\social_group\SocialGroupInterface;
+use Drupal\social_group_default_route\RedirectRoutesService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -22,11 +23,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class RedirectSubscriber implements EventSubscriberInterface {
 
   /**
-   * The route name of the default page of any group type except closed groups.
-   */
-  private const DEFAULT_ROUTE = 'social_group.stream';
-
-  /**
    * The route name of the group default page is provided by the current module.
    */
   private const ALTERNATIVE_ROUTE = 'social_group_default.group_home';
@@ -37,35 +33,20 @@ class RedirectSubscriber implements EventSubscriberInterface {
   private const DEFAULT_GROUP_ROUTE = 'entity.group.canonical';
 
   /**
-   * The route name of the default page of closed groups.
-   */
-  private const DEFAULT_CLOSED_ROUTE = 'view.group_information.page_group_about';
-
-  /**
-   * The current route.
-   *
-   * @var \Drupal\Core\Routing\CurrentRouteMatch
-   */
-  protected $currentRoute;
-
-  /**
-   * The current user.
-   *
-   * @var \Drupal\Core\Session\AccountProxy
-   */
-  protected $currentUser;
-
-  /**
    * RedirectSubscriber constructor.
    *
-   * @param \Drupal\Core\Routing\CurrentRouteMatch $route_match
-   *   The current route.
-   * @param \Drupal\Core\Session\AccountProxy $current_user
+   * @param \Drupal\Core\Routing\CurrentRouteMatch $currentRoute
+   *   The current route service.
+   * @param \Drupal\Core\Session\AccountProxy $currentUser
    *   The current user.
+   * @param \Drupal\social_group_default_route\RedirectRoutesService $redirectRoutesService
+   *   The redirect routes service.
    */
-  public function __construct(CurrentRouteMatch $route_match, AccountProxy $current_user) {
-    $this->currentRoute = $route_match;
-    $this->currentUser = $current_user;
+  public function __construct(
+    protected CurrentRouteMatch $currentRoute,
+    protected AccountProxy $currentUser,
+    protected RedirectRoutesService $redirectRoutesService,
+  ) {
   }
 
   /**
@@ -146,34 +127,35 @@ class RedirectSubscriber implements EventSubscriberInterface {
    */
   protected function doRedirect(ExceptionEvent|RequestEvent $event, SocialGroupInterface $group): void {
     $route_name = $this->currentRoute->getRouteName();
+
     // Check if current user is a member.
     if (!$group->hasMember($this->currentUser)) {
-      /** @var string|null $route */
-      $route = $group->default_route_an->value;
-
-      if ($route === NULL) {
-        $route = self::DEFAULT_CLOSED_ROUTE;
-      }
+      $route = ($group->get('default_route_an')->isEmpty() || !$group->get('tab_settings_enabled')->getString()) ?
+        $this->redirectRoutesService->getDefaultNonMemberRoute() :
+        $group->get('default_route_an')->getString();
     }
     else {
-      /** @var string|null $route */
-      $route = $group->default_route->value;
-
-      // Still no route here? Then we use the normal default.
-      if ($route === NULL) {
-        $route = self::DEFAULT_ROUTE;
-      }
+      $route = ($group->get('default_route')->isEmpty() || !$group->get('tab_settings_enabled')->getString()) ?
+        $this->redirectRoutesService->getDefaultMemberRoute() :
+        $group->get('default_route')->getString();
     }
 
     // Determine the URL we want to redirect to.
     $url = Url::fromRoute($route, ['group' => $group->id()]);
-
-    // If it's not set, set to canonical, or the current user has no access.
-    if ($route === $route_name || $url->access($this->currentUser) === FALSE) {
+    // If it's not set, set to canonical.
+    if ($route === $route_name) {
       // This basically means that the normal flow remains intact.
       return;
     }
+    // If  current user has no access.
+    if ($url->access($this->currentUser) === FALSE) {
+      $route = $group->hasMember($this->currentUser) ?
+        $this->redirectRoutesService->getDefaultMemberRoute() :
+        $this->redirectRoutesService->getDefaultNonMemberRoute();
 
+      $url = Url::fromRoute($route, ['group' => $group->id()]);
+      $event->setResponse(new RedirectResponse($url->toString()));
+    }
     // Redirect.
     $event->setResponse(new RedirectResponse($url->toString()));
   }
