@@ -65,6 +65,8 @@ jobs:
 
       # Install the version of Open Social under test.
       - name: Composer require Open Social of current branch's latest commit.
+        env:
+          COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_AUTH}}"}}}' # [tl! **]
         run: composer require goalgorilla/open_social:dev-${{ github.sha }}#${{ github.sha }}
 
       - name: Set file permissions
