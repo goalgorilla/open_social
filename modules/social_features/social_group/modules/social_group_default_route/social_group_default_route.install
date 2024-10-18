@@ -5,6 +5,8 @@
  * Installation file for social_group_default_route module.
  */
 
+use Drupal\Core\Field\BaseFieldDefinition;
+
 /**
  * Implements hook_install().
  */
@@ -15,4 +17,19 @@ function social_group_default_route_install() {
   $this_module = $group_weight + 1;
   // Set the weight of this module.
   module_set_weight('social_group_default_route', $this_module);
+}
+
+/**
+ * Add "Enable tab settings" field to group entity.
+ */
+function social_group_default_route_update_130001(): void {
+  $field_storage_definition = BaseFieldDefinition::create('boolean')
+    ->setLabel(t('Enable tab management'))
+    ->setDescription(t('This checkbox allows to customize the default landing page for the group, determining which tabs are shown first to group members and non-members.'))
+    ->setRequired(FALSE)
+    ->setTranslatable(FALSE)
+    ->setDefaultValue(FALSE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('tab_settings_enabled', 'group', 'social_group_default_route', $field_storage_definition);
 }
