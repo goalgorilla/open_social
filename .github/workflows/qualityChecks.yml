@@ -8,6 +8,9 @@ on:
       - main
       - "[0-9]+.[0-9]+.x"
 
+env:
+  COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_AUTH}}"}}}'
+
 # We use the default concurrency grouping of allowing a single workflow per branch/PR/tag to run at the same time.
 # In case of PRs we only care about the results for the last workflow run, so we cancel workflows already in progress
 # when new code is pushed, in all other cases (branches/tags) we want to have a history for commits so it's easier to
@@ -65,8 +68,6 @@ jobs:
 
       # Install the version of Open Social under test.
       - name: Composer require Open Social of current branch's latest commit.
-        env:
-          COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_AUTH}}"}}}' # [tl! **]
         run: composer require goalgorilla/open_social:dev-${{ github.sha }}#${{ github.sha }}
 
       - name: Set file permissions
