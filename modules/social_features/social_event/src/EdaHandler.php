@@ -104,6 +104,15 @@ final class EdaHandler {
   }
 
   /**
+   * Update event handler.
+   */
+  public function eventUpdate(NodeInterface $node): void {
+    $event_type = 'com.getopensocial.cms.event.update';
+    $topic_name = 'com.getopensocial.cms.event.update';
+    $this->dispatch($topic_name, $event_type, $node);
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
