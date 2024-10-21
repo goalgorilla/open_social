@@ -49,3 +49,9 @@ services:
     arguments: []
     tags:
       - { name: cache.context }
+
+  social_group.current_group:
+    class: Drupal\social_group\CurrentGroupService
+    arguments:
+      - '@entity_type.manager'
+      - '@group.group_route_context'
