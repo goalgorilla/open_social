@@ -9,7 +9,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -56,7 +56,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   /**
    * The module handler.
    */
-  protected ModuleHandler $moduleHander;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The current user.
@@ -69,7 +69,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   protected GroupRelationTypeManagerInterface $pluginManager;
 
   /**
-   * The user entity storage..
+   * The user entity storage.
    */
   protected UserStorageInterface $userManager;
 
@@ -78,10 +78,21 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler, GroupRelationTypeManagerInterface $pluginManager, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    array $third_party_settings,
+    ConfigFactoryInterface $configFactory,
+    AccountProxyInterface $currentUser,
+    ModuleHandlerInterface $moduleHandler,
+    GroupRelationTypeManagerInterface $pluginManager,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->configFactory = $configFactory;
-    $this->moduleHander = $moduleHandler;
+    $this->moduleHandler = $moduleHandler;
     $this->currentUser = $currentUser;
     $this->pluginManager = $pluginManager;
     $this->entityTypeManager = $entity_type_manager;
@@ -203,7 +214,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       'entity' => $entity,
     ];
 
-    $this->moduleHander->alter('options_list', $options, $context);
+    $this->moduleHandler->alter('options_list', $options, $context);
 
     array_walk_recursive($options, [$this, 'sanitizeLabel']);
 
@@ -293,6 +304,9 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   Response changing values of the visibility field and set status message.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public static function validateGroupSelection(array $form, FormStateInterface $form_state) {
     $ajax_response = new AjaxResponse();
@@ -401,6 +415,9 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *
    * @return array
    *   A list of options for the field containing groups with create access.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   private function removeGroupsWithoutCreateAccess(
     array $options,
@@ -438,6 +455,12 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *   The user to check for.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The node bundle to check for.
+   *
+   * @return bool
+   *   TRUE if the user has permission to create the entity in the group.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   private function checkGroupContentCreateAccess(
     int $gid,
