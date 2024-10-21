@@ -1499,7 +1499,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2024-09-06 12:39+0000\n"
+"POT-Creation-Date: 2024-10-21 13:18+0000\n"
 "PO-Revision-Date: 2022-06-16 22:03+0000\n"
 "Last-Translator: Daria Mytareva <dmytarev@greenpeace.org>\n"
 "Language-Team: Russian <https://translate.getopensocial.com/projects/gpru/"
@@ -1512,7 +1512,7 @@ msgstr ""
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.4.2\n"
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:258
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:270
 msgid ""
 "\n"
 "        <p>Oops, there was an error. This may have happened for the "
@@ -1568,10 +1568,6 @@ msgstr ""
 #: modules/social_features/social_swiftmail/social_swiftmail.module:93
 msgid "#MadeToShare"
 msgstr "#MadeToShare"
-
-#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:181
-msgid "%subject"
-msgstr ""
 
 #: modules/social_features/social_comment/social_comment.module:256
 #: modules/social_features/social_post/post.page.inc:40
@@ -1747,7 +1743,7 @@ msgstr ""
 msgid "/node/{{ raw_arguments.nid }}/enrollments"
 msgstr ""
 
-#: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php:174
+#: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php:175
 msgid "0 downloads"
 msgstr "0 скачиваний"
 
@@ -1765,7 +1761,7 @@ msgstr[0] "1 вложение."
 msgstr[1] "@count вложения."
 msgstr[2] "@count вложений."
 
-#: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php:171
+#: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php:172
 msgid "1 download"
 msgid_plural "@count downloads"
 msgstr[0] "1 скачивание"
@@ -1884,6 +1880,10 @@ msgid_plural "@count selected members have been removed successfully"
 msgstr[0] "1 выбранный участник не был успешно удалён"
 msgstr[1] "@count выбранных участника не были успешно удалены"
 msgstr[2] "@count выбранных участников не были успешно удалены"
+
+#: modules/custom/activity_creator/src/Commands/CleanUpActivitiesDrushCommands.php:121
+msgid ":count orphaned activities with target_type \":type\" have been removed"
+msgstr ""
 
 #: modules/social_features/social_event/social_event.tokens.inc:74
 msgid ":count person has enrolled"
@@ -3134,7 +3134,7 @@ msgstr ""
 msgid "@err"
 msgstr "@err"
 
-#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:159
+#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:168
 msgid "@frequency_name"
 msgstr ""
 
@@ -3168,7 +3168,7 @@ msgstr "@node"
 msgid "@time ago"
 msgstr "@time назад"
 
-#: modules/social_features/social_event/social_event.module:671
+#: modules/social_features/social_event/social_event.module:691
 msgid "@timezone time"
 msgstr "@timezone время"
 
@@ -3248,7 +3248,7 @@ msgstr "Раздел блока, где можно выбрать блок ил�
 msgid "A boolean indicating whether the Activity is published."
 msgstr "Булево значение, указывающее на место публикации Действия."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:288
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:298
 msgid "A boolean indicating whether the Event enrollment is published."
 msgstr ""
 "Булево значение, указывающее на место публикации Регистрации на мероприятие."
@@ -4511,7 +4511,7 @@ msgstr "Все мероприятия"
 msgid "All groups"
 msgstr "Все группы"
 
-#: modules/social_features/social_profile/social_profile.install:65
+#: modules/social_features/social_profile/social_profile.install:67
 #: modules/social_features/social_group/config/optional/views.view.group_members.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0
 msgid "All members"
@@ -5098,7 +5098,7 @@ msgstr "Применить"
 msgid "Apply mail_html to body text"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1069
+#: modules/social_features/social_event/social_event.module:1089
 msgid "Approve"
 msgstr "Одобрить"
 
@@ -5329,7 +5329,7 @@ msgstr "ID автора"
 #: modules/custom/activity_creator/src/Entity/Activity.php:149
 #: modules/custom/social_font/src/Entity/Font.php:152
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:167
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:241
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:251
 #: modules/social_features/social_post/src/Entity/Post.php:322
 msgid "Authored by"
 msgstr "Автор"
@@ -5366,7 +5366,7 @@ msgstr ""
 msgid "Avatar settings"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1117
+#: modules/social_features/social_event/social_event.module:1137
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:128
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:156
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:94
@@ -5386,7 +5386,7 @@ msgstr "Фоновый процесс завершён"
 msgid "Banner Image"
 msgstr "Картинка баннера"
 
-#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:169
+#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:178
 msgid ""
 "Based on your @settings, the notification above is sent to you <strong>:"
 "frequency</strong>"
@@ -5669,7 +5669,7 @@ msgid "Cancel"
 msgstr "Отмена"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:132
-#: modules/social_features/social_event/src/Form/EnrollActionForm.php:353
+#: modules/social_features/social_event/src/Form/EnrollActionForm.php:352
 msgid "Cancel enrollment"
 msgstr "Отменить регистрацию"
 
@@ -5766,14 +5766,14 @@ msgstr ""
 msgid "Change which profile fields are used / not used"
 msgstr "Изменить, какие поля профиля используются / не используются"
 
-#: modules/social_features/social_event/social_event.module:821
+#: modules/social_features/social_event/social_event.module:841
 msgid "Change your timezone here"
 msgstr "Изменить часовой пояс здесь"
 
 #: modules/custom/activity_creator/src/Entity/Activity.php:193
 #: modules/custom/social_font/src/Entity/Font.php:206
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:216
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:305
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:315
 #: modules/social_features/social_post/src/Entity/Post.php:374
 msgid "Changed"
 msgstr "Изменено"
@@ -6177,6 +6177,10 @@ msgstr "Полная лента активности в сообществе (с
 #: modules/social_features/social_core/social_core.links.menu.yml:0
 #: modules/social_features/social_core/social_core.routing.yml:0
 msgid "Configuration"
+msgstr ""
+
+#: modules/social_features/social_profile/social_profile.install:222
+msgid "Configuration file for view \"newest_users\" not found."
 msgstr ""
 
 #: modules/custom/activity_creator/activity_creator.links.menu.yml:0
@@ -6600,11 +6604,11 @@ msgstr "Создать новую страницу книги"
 msgid "Create New Content"
 msgstr "Создать новый контент"
 
-#: modules/social_features/social_event/social_event.module:688
+#: modules/social_features/social_event/social_event.module:708
 msgid "Create New Event"
 msgstr "Создать новое мероприятие"
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:885
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:876
 msgid "Create New Group"
 msgstr "Создать Новую Группу"
 
@@ -6822,7 +6826,7 @@ msgstr "Создать тему в группе"
 #: modules/custom/mentions/src/Entity/Mentions.php:73
 #: modules/custom/social_font/src/Entity/Font.php:202
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:212
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:301
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:311
 #: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php:106
 #: modules/social_features/social_post/src/PostListBuilder.php:23
 #: modules/social_features/social_post/src/Entity/Post.php:370
@@ -7034,7 +7038,7 @@ msgstr "День Месяц"
 msgid "Day Month Time"
 msgstr "День Месяц Время"
 
-#: modules/social_features/social_event/social_event.module:1076
+#: modules/social_features/social_event/social_event.module:1096
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php:112
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Join/SocialGroupInviteJoin.php:98
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0;0
@@ -7465,16 +7469,16 @@ msgstr "Показать варианты действий как кнопки"
 msgid "Display configuration form on a separate page"
 msgstr "Показать форму конфигурации на отдельной странице"
 
-#: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlEmbedFilter.php:19
+#: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlEmbedFilter.php:20
 msgid "Display embedded URLs with consent"
 msgstr ""
 
-#: modules/social_features/social_emoji/social_emoji.module:34
+#: modules/social_features/social_emoji/social_emoji.module:37
 #: modules/social_features/social_emoji/config/schema/social_emoji.schema.yml:0;0;0
 msgid "Display emoji picker"
 msgstr ""
 
-#: modules/social_features/social_emoji/social_emoji.module:49
+#: modules/social_features/social_emoji/social_emoji.module:52
 msgid "Display emoji picker: @display_emoji_picker"
 msgstr ""
 
@@ -7579,7 +7583,7 @@ msgstr "Не считайте загрузки для пользователей
 msgid "Do not show threads a user deleted."
 msgstr "Не показывать посты, удаленные пользователем."
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:96
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:103
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:48
 msgid "Don't have an account yet? @link"
 msgstr "У вас пока нет аккаунта?@link"
@@ -7830,7 +7834,7 @@ msgstr "Настройки электронных уведомлений"
 msgid "Email notifications"
 msgstr "Уведомления по email"
 
-#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:195
+#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:202
 msgid "Email of the @id is missing"
 msgstr ""
 
@@ -7867,7 +7871,7 @@ msgstr ""
 msgid "Embedded content user consent settings"
 msgstr ""
 
-#: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlEmbedFilter.php:19
+#: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlEmbedFilter.php:20
 msgid "Embeds URLs using data attribute: data-embed-url."
 msgstr ""
 
@@ -8051,7 +8055,7 @@ msgstr ""
 msgid "End"
 msgstr "Конец"
 
-#: modules/social_features/social_event/social_event.module:935
+#: modules/social_features/social_event/social_event.module:955
 msgid "End date is required!"
 msgstr ""
 
@@ -8067,7 +8071,7 @@ msgstr ""
 msgid "Enforce consent for all embedded content for registered users."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:186
+#: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:185
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:189
 msgid "Enroll"
 msgstr "Участвовать"
@@ -8098,7 +8102,7 @@ msgstr ""
 msgid "Enroll date"
 msgstr "Дата регистрации"
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:179
+#: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:178
 msgid "Enroll in"
 msgstr "Участвовать в"
 
@@ -8110,7 +8114,7 @@ msgstr "Участвовать в мероприятие @label"
 msgid "Enroll in event"
 msgstr "Участвовать в мероприятие"
 
-#: modules/social_features/social_event/social_event.module:1424
+#: modules/social_features/social_event/social_event.module:1444
 #: modules/social_features/social_event/config/install/field.field.node.event.field_enroll_method.yml:0
 msgid "Enroll method"
 msgstr "Способ регистрации"
@@ -8410,7 +8414,7 @@ msgstr "Настройки регистрации на мероприятие"
 msgid "Event enrollments"
 msgstr "Заявки на участие в мероприятии"
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:153
+#: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:152
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:120
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:237
 msgid "Event has passed"
@@ -9245,7 +9249,7 @@ msgstr[2] "Созданы синонимы вкладки для @count груп
 msgid "Generating embedded content "
 msgstr ""
 
-#: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php:19
+#: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php:20
 msgid "Generic file with download count"
 msgstr "Базовый файл с подсчётом скачиваний"
 
@@ -9737,7 +9741,7 @@ msgstr "Маленький раздел Hero"
 msgid "Hex Color"
 msgstr "Hex-код цвета"
 
-#: modules/social_features/social_swiftmail/social_swiftmail.module:148
+#: modules/social_features/social_swiftmail/social_swiftmail.module:155
 msgid "Hi <strong>@display_name</strong>"
 msgstr "Привет, <strong>@display_name</strong>"
 
@@ -9821,7 +9825,7 @@ msgstr "Сколько предложений вы хотите показыва
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
 #: modules/custom/social_queue_storage/config/schema/queue_storage_entity_type.schema.yml:0
 #: modules/custom/social_queue_storage/src/QueueStorageEntityListBuilder.php:21
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:232
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:242
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:515
 #: modules/social_features/social_post/config/schema/post.schema.yml:0
 #: modules/social_features/social_post/config/schema/post_type.schema.yml:0
@@ -9963,7 +9967,7 @@ msgstr "Изображения"
 msgid "Images posted in album %album"
 msgstr "Изображения, опубликованные в альбоме %album"
 
-#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:21
+#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:22
 msgid "Immediately"
 msgstr "Немедленно"
 
@@ -10121,7 +10125,7 @@ msgstr ""
 msgid "Invite(s) have been successfully sent."
 msgstr "Приглашение(я) успешно отправлены."
 
-#: modules/social_features/social_event/social_event.module:180;1332
+#: modules/social_features/social_event/social_event.module:180;1352
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid "Invite-only"
 msgstr "Только по приглашению"
@@ -10362,7 +10366,7 @@ msgstr "Язык"
 #: modules/custom/mentions/src/Entity/Mentions.php:82
 #: modules/custom/social_language/src/Plugin/UserExportPlugin/UserLanguageCode.php:23;8
 #: modules/social_features/social_event/config/schema/social_event.schema.yml:0
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:292
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:302
 #: modules/social_features/social_post/src/Entity/Post.php:361
 msgid "Language code"
 msgstr "Код языка"
@@ -10674,7 +10678,7 @@ msgstr "Войти"
 #: modules/social_features/social_event/src/Form/EnrollRequestAnonymousForm.php:52
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php:105
 #: modules/social_features/social_user/social_user.module:165
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:105
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:112
 #: modules/social_features/social_user/src/Routing/RouteSubscriber.php:24
 msgid "Log in"
 msgstr "Войти"
@@ -10696,11 +10700,11 @@ msgstr "Имя пользователя"
 msgid "Login and Registration help texts"
 msgstr "Тексты для помощи при входе и регистрации"
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:238
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:250
 msgid "Login attempt failed for %user."
 msgstr "Ошибка входа в систему для пользователя %user."
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:243
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:255
 msgid "Login attempt failed from %ip."
 msgstr "Попытка войти не удалась с %ip."
 
@@ -10957,7 +10961,7 @@ msgstr ""
 "0, если не хотите ставить ограничение."
 
 #: modules/custom/secret_file_system/secret_file_system.info.yml:0
-#: modules/social_features/social_embed/social_embed.module:36
+#: modules/social_features/social_embed/social_embed.module:35
 msgid "Media"
 msgstr "Медиа"
 
@@ -11266,7 +11270,7 @@ msgstr "Мои приглашения"
 msgid "My albums"
 msgstr "Мои альбомы"
 
-#: modules/social_features/social_event/social_event.module:707
+#: modules/social_features/social_event/social_event.module:727
 msgid "My events"
 msgstr "Мои мероприятия"
 
@@ -11301,7 +11305,7 @@ msgstr "Блок моих предстоящих мероприятий"
 #: modules/custom/social_font/src/Entity/Font.php:177
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:191
 #: modules/social_features/social_event/src/EventEnrollmentListBuilder.php:23
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:267
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:277
 #: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php:88
 #: modules/custom/grequest/config/optional/views.view.group_pending_members.yml:0
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
@@ -11350,11 +11354,11 @@ msgstr "Новая Страница Книги"
 msgid "New Content"
 msgstr "Новое содержимое"
 
-#: modules/social_features/social_event/social_event.module:680
+#: modules/social_features/social_event/social_event.module:700
 msgid "New Event"
 msgstr "Новое мероприятие"
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:877
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:868
 msgid "New Group"
 msgstr "Новая группа"
 
@@ -11509,7 +11513,7 @@ msgstr "Ник"
 msgid "Nickname field settings"
 msgstr ""
 
-#: modules/social_features/social_emoji/social_emoji.module:49
+#: modules/social_features/social_emoji/social_emoji.module:52
 msgid "No"
 msgstr ""
 
@@ -11991,7 +11995,7 @@ msgstr ""
 msgid "Open preview popup"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:174;1320
+#: modules/social_features/social_event/social_event.module:174;1340
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid "Open to enroll"
 msgstr "Открыто для регистрации"
@@ -12272,7 +12276,7 @@ msgstr "Родительская сущность"
 msgid "Parent group"
 msgstr ""
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:73
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:72
 msgid "Password"
 msgstr "Пароль"
 
@@ -12418,7 +12422,7 @@ msgstr ""
 "Блок с вводной информацией о платформе, предназначенный для использования в "
 "регионах контента."
 
-#: modules/social_features/social_event/src/Form/EnrollActionForm.php:406
+#: modules/social_features/social_event/src/Form/EnrollActionForm.php:405
 msgid ""
 "Please @log_in or @create_account_link so that you can enroll to the event."
 msgstr "Пожалуйста @log_in или @create_account_link чтобы присоединиться."
@@ -12428,7 +12432,7 @@ msgstr "Пожалуйста @log_in или @create_account_link чтобы пр
 msgid "Please @log_in or @sign_up to comment."
 msgstr ""
 
-#: modules/social_features/social_event/src/Form/EnrollActionForm.php:398
+#: modules/social_features/social_event/src/Form/EnrollActionForm.php:397
 msgid "Please @log_in so that you can enroll to the event."
 msgstr "Пожалуйста, @log_in, чтобы присоединиться к мероприятию."
 
@@ -13368,7 +13372,7 @@ msgstr "Статус публикации"
 
 #: modules/custom/activity_creator/src/Entity/Activity.php:175
 #: modules/custom/social_font/src/Entity/Font.php:197
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:287
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:297
 msgid "Publishing status"
 msgstr "Статус публикации"
 
@@ -13839,7 +13843,7 @@ msgstr ""
 msgid "Request status"
 msgstr "Статус запроса"
 
-#: modules/social_features/social_event/social_event.module:177;1326
+#: modules/social_features/social_event/social_event.module:177;1346
 #: modules/social_features/social_event/src/Controller/EnrollRequestDialogController.php:88;95
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:211;226;280
 #: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php:94
@@ -14116,6 +14120,7 @@ msgstr "Сказать что-нибудь сообществу"
 msgid "Say something to the group"
 msgstr "Сказать что-нибудь в группе"
 
+#: modules/social_features/social_emoji/social_emoji.module:23
 #: modules/social_features/social_search/social_search.module:203
 #: modules/social_features/social_search/src/SocialSearchBreadcrumbBuilder.php:53
 #: modules/social_features/social_search/src/Form/SearchHeroForm.php:73;84
@@ -14822,7 +14827,7 @@ msgstr "Зарегистрироваться"
 #: modules/social_features/social_event/src/Form/EnrollRequestAnonymousForm.php:38
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php:91
 #: modules/social_features/social_user/social_user.links.menu.yml:0
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:93
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:100
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:45
 msgid "Sign up"
 msgstr "Зарегистрироваться"
@@ -14939,6 +14944,7 @@ msgstr "Небольшой тизер"
 #: modules/custom/social_advanced_queue/social_advanced_queue.info.yml:0
 #: modules/custom/social_ajax_comments/social_ajax_comments.info.yml:0
 #: modules/custom/social_demo/social_demo.info.yml:0
+#: modules/custom/social_eda/social_eda.info.yml:0
 #: modules/custom/social_gdpr/social_gdpr.info.yml:0
 #: modules/custom/social_language/social_language.info.yml:0
 #: modules/custom/social_lazy_loading/social_lazy_loading.info.yml:0
@@ -15148,6 +15154,14 @@ msgstr "Демо Social"
 #: modules/social_features/social_download_count/social_download_count.info.yml:0
 msgid "Social Download Count"
 msgstr "Подсчёт скачиваний Social"
+
+#: modules/custom/social_eda/social_eda.info.yml:0
+msgid "Social EDA (Experimental)"
+msgstr ""
+
+#: modules/custom/social_eda/social_eda.info.yml:0
+msgid "Social EDA core module"
+msgstr ""
 
 #: modules/social_features/social_editor/social_editor.info.yml:0
 msgid "Social Editor"
@@ -15716,7 +15730,7 @@ msgstr "Блок входа пользователя в Social"
 msgid "Social user selection"
 msgstr "Выбор пользователя в Social"
 
-#: modules/social_features/social_embed/social_embed.module:93
+#: modules/social_features/social_embed/social_embed.module:92
 msgid ""
 "Some URLs may not be embedded due to a limit of up to %max links per content."
 msgstr ""
@@ -15985,6 +15999,10 @@ msgstr "Управление вкладками"
 msgid "Table"
 msgstr "Таблица"
 
+#: modules/custom/activity_creator/src/Commands/CleanUpActivitiesDrushCommands.php:109
+msgid "Table :table does not exist in the database"
+msgstr ""
+
 #: modules/social_features/social_book/config/optional/block.block.booknavigation.yml:0
 #: modules/social_features/social_book/config/optional/block.block.booknavigation_2.yml:0
 msgid "Table of contents"
@@ -16154,7 +16172,7 @@ msgid "Textarea"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:206
-#: modules/social_features/social_event/src/Form/EnrollActionForm.php:500
+#: modules/social_features/social_event/src/Form/EnrollActionForm.php:499
 msgid "Thanks for enrolling!"
 msgstr ""
 
@@ -16211,7 +16229,7 @@ msgstr "Hex-цвет."
 msgid "The ID of the Activity entity."
 msgstr "Идентификатор сущности Активности."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:233
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:243
 msgid "The ID of the Event enrollment entity."
 msgstr "Идентификатор сущности запросов на участие в мероприятие."
 
@@ -16252,7 +16270,7 @@ msgstr "URL группового url-адреса личной переписк�
 msgid "The UUID of the Activity entity."
 msgstr "UUID-идентификатор сущности Активности."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:237
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:247
 msgid "The UUID of the Event enrollment entity."
 msgstr "UUID-идентификатор сущности запросов на участие в мероприятие."
 
@@ -16475,12 +16493,12 @@ msgstr ""
 msgid "The entity type to which this mention is attached."
 msgstr "Тип сущности, к которой привязано данное упоминание."
 
-#: modules/social_features/social_event/social_event.module:834
+#: modules/social_features/social_event/social_event.module:854
 msgid "The event date and time are set based on the site's default timezone."
 msgstr ""
 "Время и дата мероприятия указаны с учётом часового пояса сайта по умолчанию."
 
-#: modules/social_features/social_event/social_event.module:819
+#: modules/social_features/social_event/social_event.module:839
 msgid ""
 "The event date and time are set based on your timezone. @change_timezone."
 msgstr ""
@@ -16566,7 +16584,7 @@ msgstr "Задача выполнена правильно."
 msgid "The language code for the Activity entity."
 msgstr "Код языка для сущности Активности."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:293
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:303
 msgid "The language code for the Event enrollment entity."
 msgstr "Код языка для сущности запросов на участие в мероприятие."
 
@@ -16627,7 +16645,7 @@ msgid ""
 "  - etc."
 msgstr ""
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:268
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:278
 msgid "The name of the Event enrollment entity."
 msgstr "Название сущности запросов на участие в мероприятие."
 
@@ -16839,7 +16857,7 @@ msgstr ""
 #: modules/custom/activity_creator/src/Entity/Activity.php:190
 #: modules/custom/social_font/src/Entity/Font.php:203
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:213
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:302
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:312
 #: modules/social_features/social_post/src/Entity/Post.php:371
 msgid "The time that the entity was created."
 msgstr "Время создания сущности."
@@ -16847,7 +16865,7 @@ msgstr "Время создания сущности."
 #: modules/custom/activity_creator/src/Entity/Activity.php:194
 #: modules/custom/social_font/src/Entity/Font.php:207
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:217
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:306
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:316
 #: modules/social_features/social_post/src/Entity/Post.php:375
 msgid "The time that the entity was last edited."
 msgstr "Время последнего редактирования сущности."
@@ -16901,7 +16919,7 @@ msgstr "URL-адрес контента, созданного в группе."
 msgid "The user ID of author of the Activity entity."
 msgstr "Идентификатор автора сущности Активности."
 
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:242
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:252
 msgid "The user ID of author of the Event enrollment entity."
 msgstr "Идентификатор автора сущности регистрации на мероприятия."
 
@@ -16933,7 +16951,7 @@ msgstr "Автор упоминания"
 msgid "The user that is mentioned"
 msgstr "Упомянутый пользователь"
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:149
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:156
 msgid "The username %name has not been activated or is blocked."
 msgstr "Имя пользователя %name не активировано или заблокировано."
 
@@ -16948,6 +16966,10 @@ msgid ""
 msgstr ""
 "Значение сохранено в памяти. Ярлык и описание будут использоваться в "
 "отображаемых значениях и формах редактирования."
+
+#: modules/social_features/social_profile/social_profile.install:230
+msgid "The view \"newest_users\" has been updated with new configuration."
+msgstr ""
 
 #: modules/social_features/social_featured_content/templates/node--featured.html.twig:170
 msgid "The visibility of this content is set to @visibility_label"
@@ -17070,7 +17092,7 @@ msgstr ""
 "Это секретная группа. Пользователи могут присоединиться только по "
 "приглашению, а группа и её содержание скрыты от посторонних."
 
-#: modules/social_features/social_embed/social_embed.module:116
+#: modules/social_features/social_embed/social_embed.module:115
 msgid "This is not a supported URL to embed."
 msgstr ""
 
@@ -17172,7 +17194,7 @@ msgstr ""
 msgid "Time frame"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:813
+#: modules/social_features/social_event/social_event.module:833
 msgid "Time zone"
 msgstr "Часовой пояс"
 
@@ -17495,7 +17517,7 @@ msgstr "URL неуместного контента."
 
 #: modules/custom/activity_creator/src/Entity/Activity.php:144
 #: modules/custom/mentions/src/Entity/Mentions.php:61
-#: modules/social_features/social_event/src/Entity/EventEnrollment.php:236
+#: modules/social_features/social_event/src/Entity/EventEnrollment.php:246
 #: modules/social_features/social_post/src/Entity/Post.php:317
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserUuid.php:23;8
 msgid "UUID"
@@ -17903,6 +17925,10 @@ msgstr "Значение (медиа-источник или FileItem)"
 msgid "Values"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-verified.yml:0
+msgid "Verified"
+msgstr ""
+
 #: modules/social_features/social_user/config/schema/social_user.schema.yml:0
 msgid "Verified immediately"
 msgstr "Мгновенное подтверждение"
@@ -18025,7 +18051,7 @@ msgstr "Режим просмотра"
 msgid "View my albums"
 msgstr "Посмотреть мои альбомы"
 
-#: modules/social_features/social_event/social_event.module:715
+#: modules/social_features/social_event/social_event.module:735
 msgid "View my events"
 msgstr "Посмотреть мои события"
 
@@ -18478,7 +18504,7 @@ msgstr ""
 msgid "Yahoo"
 msgstr ""
 
-#: modules/social_features/social_emoji/social_emoji.module:49
+#: modules/social_features/social_emoji/social_emoji.module:52
 #: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:181
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:189
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:146
@@ -18501,7 +18527,7 @@ msgstr "Вы уже состоите в @group."
 msgid "You are enrolled in the event [node:title]"
 msgstr "Вы зарегистрированы на мероприятие [node:title]"
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:232
+#: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:231
 msgid ""
 "You are no longer enrolled in this event. Your personal data used for the "
 "enrollment is also deleted."
@@ -18595,7 +18621,7 @@ msgstr ""
 msgid "You do not follow any tags."
 msgstr "Вы не подписаны ни на один тег."
 
-#: modules/social_features/social_core/src/Controller/DashboardController.php:104
+#: modules/social_features/social_core/src/Controller/DashboardController.php:112
 msgid "You do not have any administrative items."
 msgstr ""
 
@@ -18971,7 +18997,7 @@ msgstr ""
 msgid "alternative_frontpage config"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1472
+#: modules/social_features/social_event/social_event.module:1492
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:140
 msgid "an"
 msgstr ""
@@ -19014,7 +19040,7 @@ msgstr "комментарии"
 msgid "content @type: deleted @label."
 msgstr "контент @type: удалённый @label."
 
-#: modules/social_features/social_event/src/Form/EnrollActionForm.php:405
+#: modules/social_features/social_event/src/Form/EnrollActionForm.php:404
 msgid "create a new account"
 msgstr "создать новый аккаунт"
 
@@ -19042,7 +19068,7 @@ msgstr "термины таксономии по умолчанию"
 msgid "descending"
 msgstr "убывание"
 
-#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:170
+#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:179
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php:181
 #: modules/social_features/social_user/src/Plugin/AdvancedQueue/JobType/UserMailQueueJob.php:211
 #: modules/social_features/social_user/src/Plugin/QueueWorker/UserMailQueueProcessor.php:207
@@ -19337,7 +19363,7 @@ msgid "located at:"
 msgstr "местоположение:"
 
 #: modules/custom/group_core_comments/src/Plugin/Field/FieldFormatter/CommentGroupContentFormatter.php:270
-#: modules/social_features/social_event/src/Form/EnrollActionForm.php:397
+#: modules/social_features/social_event/src/Form/EnrollActionForm.php:396
 #: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostFormatter.php:142
 msgid "log in"
 msgstr "войти"
@@ -19537,7 +19563,7 @@ msgstr "не опубликовано"
 msgid "users"
 msgstr "пользователи"
 
-#: modules/social_features/social_event/social_event.module:1327
+#: modules/social_features/social_event/social_event.module:1347
 msgid ""
 "users can \"request to enroll\" for this event which event organisers "
 "approve/decline"
@@ -19557,7 +19583,7 @@ msgid ""
 "managers approve/decline."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1321
+#: modules/social_features/social_event/social_event.module:1341
 msgid "users can enroll for this event without approval"
 msgstr "пользователи могут зарегистрироваться на это мероприятие без одобрения"
 
@@ -19566,7 +19592,7 @@ msgstr "пользователи могут зарегистрироваться
 msgid "users can join this @entity_type_id without approval."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1333
+#: modules/social_features/social_event/social_event.module:1353
 msgid ""
 "users can only enroll for this event if they are added/invited by event "
 "organisers"
