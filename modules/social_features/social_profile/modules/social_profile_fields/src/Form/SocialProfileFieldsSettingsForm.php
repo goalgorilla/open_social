@@ -8,7 +8,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\profile\Entity\ProfileType;
@@ -25,42 +25,42 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *
    * @var \Drupal\social_profile_fields\SocialProfileFieldsHelper
    */
-  protected $profileFieldsHelper;
+  protected SocialProfileFieldsHelper $profileFieldsHelper;
 
   /**
    * The database.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidator
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidator $cacheTagsInvalidator;
 
   /**
    * Module handler.
    *
-   * @var \Drupal\Core\Extension\ModuleHandler
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Entity field manager.
    *
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
-  protected $entityFieldManager;
+  protected EntityFieldManagerInterface $entityFieldManager;
 
   /**
    * SocialProfileSettingsForm constructor.
@@ -73,7 +73,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *   Database connection for invalidating caches.
    * @param \Drupal\Core\Cache\CacheTagsInvalidator $cache_tags_invalidator
    *   Cache tags invalidator for clearing tags.
-   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   Module handler for checking if modules exist.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager for clearing cached definitions.
@@ -85,7 +85,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     SocialProfileFieldsHelper $profile_fields_helper,
     Connection $database,
     CacheTagsInvalidator $cache_tags_invalidator,
-    ModuleHandler $module_handler,
+    ModuleHandlerInterface $module_handler,
     EntityTypeManagerInterface $entity_type_manager,
     EntityFieldManagerInterface $entity_field_manager
   ) {
