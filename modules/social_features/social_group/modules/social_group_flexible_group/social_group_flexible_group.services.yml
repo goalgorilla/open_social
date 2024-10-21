@@ -21,7 +21,7 @@ services:
 
   social_group_flexible_group.redirect_subscriber:
     class: Drupal\social_group_flexible_group\EventSubscriber\RedirectSubscriber
-    arguments: ['@current_user', '@current_route_match']
+    arguments: ['@current_user', '@current_route_match', '@social_group_default_route.redirect_service']
     tags:
       - { name: event_subscriber }
 
