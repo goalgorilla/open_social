@@ -33,7 +33,7 @@ Feature: Flexible groups view access for authenticated but unverified users
 
     When I am viewing the group "Test group"
 
-    Then I should see "You are not authorized to access this page"
+    Then I should not see "Test group"
 
   Scenario: As unverified user I can view a public group I'm not a member of on the groups search
     Given groups with non-anonymous owner:

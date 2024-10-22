@@ -5,13 +5,10 @@ namespace Drupal\social_group_default_route\EventSubscriber;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Url;
-use Drupal\group\Entity\Group;
 use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -73,7 +70,6 @@ class RedirectSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     $events[KernelEvents::REQUEST][] = ['groupLandingPage'];
-    $events[KernelEvents::EXCEPTION][] = ['onKernelException', 100];
     return $events;
   }
 
@@ -84,6 +80,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    *   The event.
    */
   public function groupLandingPage(RequestEvent $event) {
+
     // First check if the current route is the group canonical.
     $route_name = $this->currentRoute->getRouteName();
 
@@ -103,56 +100,13 @@ class RedirectSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $this->doRedirect($event, $group);
-  }
-
-  /**
-   * Redirect on exceptions.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\ExceptionEvent $event
-   *   The exception event.
-   */
-  public function onKernelException(ExceptionEvent $event): void {
-    $exception = $event->getThrowable();
-    if ($exception instanceof AccessDeniedHttpException) {
-      // Check if there is a group object on the current route.
-      $group = $this->currentRoute->getParameter('group');
-      // On some routes group param could be string.
-      if (is_string($group)) {
-        $group = Group::load($group);
-      }
-
-      if (!$group instanceof SocialGroupInterface) {
-        return;
-      }
-      // Do not redirect form access denied if user doesn't have access to
-      // view the group (secret group, etc.).
-      if (!$group->access('view', $this->currentUser)) {
-        return;
-      }
-
-      $this->doRedirect($event, $group);
-    }
-
-  }
-
-  /**
-   * Do redirect.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\ExceptionEvent|\Symfony\Component\HttpKernel\Event\RequestEvent $event
-   *   The event object.
-   * @param \Drupal\social_group\SocialGroupInterface $group
-   *   The group object.
-   */
-  protected function doRedirect(ExceptionEvent|RequestEvent $event, SocialGroupInterface $group): void {
-    $route_name = $this->currentRoute->getRouteName();
     // Check if current user is a member.
     if (!$group->hasMember($this->currentUser)) {
       /** @var string|null $route */
       $route = $group->default_route_an->value;
 
       if ($route === NULL) {
-        $route = self::DEFAULT_CLOSED_ROUTE;
+        $route = self::DEFAULT_ROUTE;
       }
     }
     else {
