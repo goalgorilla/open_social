@@ -9,4 +9,4 @@ Feature: Redirect user to their settings page
 
     When I go to "/my-settings"
 
-    Then the URL should match "^\/user\/[^\/]+\/edit$"
+    Then the url should match "^\/user\/[^\/]+\/edit$"
