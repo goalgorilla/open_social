@@ -197,7 +197,7 @@ function social_like_tokens_alter(array &$replacements, array $context, Bubbleab
                 }
                 $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all likes', [], $translation_options));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                  ->renderPlain($cta_button);
+                  ->renderInIsolation($cta_button);
               }
               // Replace the preview token.
               if (isset($context['tokens']['preview'])) {
@@ -221,7 +221,7 @@ function social_like_tokens_alter(array &$replacements, array $context, Bubbleab
                     break;
                 }
                 // Render the preview.
-                $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+                $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderInIsolation($preview_info);
               }
           }
         }

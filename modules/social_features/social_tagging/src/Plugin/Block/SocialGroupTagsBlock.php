@@ -76,8 +76,11 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
    * Logic to display the block in the sidebar.
    */
   protected function blockAccess(AccountInterface $account) {
+    // Get group from route.
+    $group = $this->routeMatch->getParameter('group');
+
     // If tagging is off, deny access always.
-    if (!$this->tagService->active() || !$this->tagService->groupActive()) {
+    if (!$this->tagService->active() || !$this->tagService->groupTypeActive($group)) {
       return AccessResult::forbidden();
     }
 
@@ -95,9 +98,6 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
     if (in_array($this->routeMatch->getRouteName(), $ignore_routes)) {
       return AccessResult::forbidden();
     }
-
-    // Get group from route.
-    $group = $this->routeMatch->getParameter('group');
 
     if ($group instanceof Group) {
       if ($group->hasField('social_tagging')) {

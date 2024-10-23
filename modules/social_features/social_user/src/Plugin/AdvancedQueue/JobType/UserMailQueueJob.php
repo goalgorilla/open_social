@@ -8,7 +8,7 @@ use Drupal\advancedqueue\Plugin\AdvancedQueue\JobType\JobTypeBase;
 use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Logger\LoggerChannelTrait;
@@ -39,49 +39,49 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
    *
    * @var \Drupal\Core\Mail\MailManagerInterface
    */
-  protected $mailManager;
+  protected MailManagerInterface $mailManager;
 
   /**
    * The entity storage.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $storage;
+  protected EntityTypeManagerInterface $storage;
 
   /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $connection;
+  protected Connection $connection;
 
   /**
    * The language manager interface.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  protected $languageManager;
+  protected LanguageManagerInterface $languageManager;
 
   /**
    * The Email validator service.
    *
    * @var \Drupal\Component\Utility\EmailValidatorInterface
    */
-  protected $emailValidator;
+  protected EmailValidatorInterface $emailValidator;
 
   /**
    * The Drupal module handler service.
    *
-   * @var \Drupal\Core\Extension\ModuleHandler
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  public $moduleHandler;
+  public ModuleHandlerInterface $moduleHandler;
 
   /**
    * The renderer service.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * {@inheritdoc}
@@ -96,7 +96,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
     Connection $database,
     LanguageManagerInterface $language_manager,
     EmailValidatorInterface $email_validator,
-    ModuleHandler $module_handler,
+    ModuleHandlerInterface $module_handler,
     RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -220,7 +220,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
         ], ['langcode' => $langcode]),
       ];
 
-      $params['body'] = $this->renderer->renderPlain($notification);
+      $params['body'] = $this->renderer->renderInIsolation($notification);
       $params['reply-to'] = $reply_to;
 
       // Attempt sending mail.

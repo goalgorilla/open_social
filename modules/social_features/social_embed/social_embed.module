@@ -6,8 +6,7 @@
  */
 
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\File\FileSystemInterface;
-
+use Drupal\Core\File\FileExists;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\embed\Entity\EmbedButton;
 use Drupal\file\Entity\File;
@@ -20,7 +19,7 @@ function _social_embed_create_media_button() :void {
   // Create a File entity for the icon.
   $path = \Drupal::service('extension.list.module')->getPath('social_embed');
   $image_path = $path . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'icons' . DIRECTORY_SEPARATOR . 'urlembed.png';
-  $uri = \Drupal::service('file_system')->copy($image_path, 'public://urlembed.png', FileSystemInterface::EXISTS_REPLACE);
+  $uri = \Drupal::service('file_system')->copy($image_path, 'public://urlembed.png', FileExists::Replace);
 
   $media = File::create([
     'langcode' => 'en',
@@ -42,6 +41,79 @@ function _social_embed_create_media_button() :void {
   ]);
   $button->save();
 
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_embed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  // Add custom validation handler to the node form.
+  if (isset($form['actions']['submit']['#submit'])) {
+    $form['actions']['submit']['#submit'][] = '_social_embed_submit_max_embeds_per_content';
+  }
+}
+
+/**
+ * Submit handler to alert users about max embeds per content.
+ */
+function _social_embed_submit_max_embeds_per_content(array $form, FormStateInterface $form_state): void {
+  foreach ($form_state->getValues() as $field_name => $field_value) {
+    // Only if it contains a formatted field.
+    if (is_array($field_value) && isset($field_value[0]['format']) && in_array($field_value[0]['format'], ['full_html', 'basic_html'])) {
+      $value = $field_value[0]['value'];
+      $matches = [];
+
+      switch ($field_value[0]['format']) {
+        case 'full_html':
+          // Match URLs in all <drupal-url> tags.
+          preg_match_all('/<drupal-url\s[^>]*data-embed-url="([^"]*)"/i', $value, $matches);
+          break;
+
+        case 'basic_html':
+          // Remove URLs that are part of `<a href="...">` tags.
+          $filtered_value = preg_replace('/<a\s[^>]*href=["\'](?:https?:\/\/)?(?:www\.)?[^"\'\s]+["\'][^>]*>(.*?)<\/a>/is', '$1', $value);
+
+          // Load patterns from service.
+          $pattern = \Drupal::service('social_embed.helper_service')->getCombinedPatterns();
+
+          // Match URLs.
+          preg_match_all($pattern, $filtered_value, $matches);
+          break;
+      }
+
+      // Count the numbers of matched URLs.
+      $count = count($matches[1]);
+
+      // Get the max embeds per content from config.
+      $max = \Drupal::config('social_embed.settings')->get('max_embeds_per_content');
+
+      // Display warning message if $count exceeds $max.
+      if ($count > $max) {
+        \Drupal::messenger()->addWarning(t('Some URLs may not be embedded due to a limit of up to %max links per content.', [
+          '%max' => $max,
+        ]));
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_embed_form_url_embed_dialog_cke5_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  $form['actions']['save_modal']['#validate'][] = '_social_embed_form_url_embed_dialog_cke5_validate';
+}
+
+/**
+ * Validate if URL is whitelisted on url_embed_dialog_cke5 form.
+ */
+function _social_embed_form_url_embed_dialog_cke5_validate(array $form, FormStateInterface $form_state): void {
+  $helper = \Drupal::service('social_embed.helper_service');
+  $values = $form_state->getValues();
+
+  if (!$helper->isWhitelisted($values['attributes']['data-embed-url'])) {
+    $form_state->setErrorByName('attributes', t('This is not a supported URL to embed.'));
+  }
 }
 
 /**

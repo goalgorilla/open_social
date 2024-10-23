@@ -10,7 +10,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Field\FieldItemList;
-use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileExists;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
@@ -527,12 +527,46 @@ function social_core_menu_local_tasks_alter(&$data, $route_name) {
   }
 
   // Remove Revisions tab if revisions for the node not exist.
-  $node = \Drupal::routeMatch()->getParameter('node');
-  if ($node instanceof NodeInterface) {
-    $revisions = \Drupal::entityTypeManager()->getStorage('node')->revisionIds($node);
+  if ($entity = \Drupal::routeMatch()->getParameter('node') ?: \Drupal::routeMatch()->getParameter('group')) {
+    // Make sure $entity contains the entity object.
+    if (!$entity instanceof EntityInterface) {
+      $entity_type = \Drupal::routeMatch()->getParameter('node') ? 'node' : 'group';
+      $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity);
+    }
 
-    if ($revisions && count($revisions) === 1) {
-      unset($data['tabs'][0]['entity.node.version_history']);
+    // Check again to ensure $entity is an instance of EntityInterface.
+    if ($entity instanceof EntityInterface) {
+      // Get the configuration factory service.
+      $config_factory = \Drupal::service('config.factory');
+
+      // Load the configuration for the entity type.
+      $config = $config_factory->get($entity->getEntityTypeId() . '.type.' . $entity->bundle());
+
+      // If new revision is disabled.
+      if (!$config->get('new_revision')) {
+        if ($entity instanceof NodeInterface) {
+          // Handle node entities.
+          $storage = \Drupal::entityTypeManager()->getStorage('node');
+          $revisions = $storage->revisionIds($entity);
+
+          if ($revisions && count($revisions) === 1) {
+            unset($data['tabs'][0]['entity.node.version_history']);
+          }
+        }
+        elseif ($entity instanceof GroupInterface) {
+          // Query for all revisions of the group entity.
+          $query = \Drupal::entityQuery('group')
+            ->condition('id', $entity->id())
+            ->accessCheck(FALSE);
+
+          // Execute the query to get revision IDs.
+          $revision_ids = $query->execute();
+
+          if ($revision_ids && count($revision_ids) === 1) {
+            unset($data['tabs'][0]['entity.version_history:group.version_history']);
+          }
+        }
+      }
     }
   }
 
@@ -786,10 +820,6 @@ function social_core_field_widget_single_element_form_alter(&$element, FormState
     }
 
     $element['#element_validate'] = ['social_core_path_validate'];
-  }
-  if ($field_definition->getType() === 'address') {
-    $default_country = \Drupal::config('system.date')->get('country.default');
-    $element['address']['#default_value']['country_code'] = $element['address']['#default_value']['country_code'] ?? $default_country;
   }
 }
 
@@ -1206,7 +1236,7 @@ function _social_core_set_default_email_logo_for_socialblue() {
       // socialblue logo we can continue.
       if (empty($default_image) || $default_image === $basetheme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
         $file_system = \Drupal::service('file_system');
-        $uri = $file_system->copy($basetheme_url . DIRECTORY_SEPARATOR . 'logo_email.png', 'public://logo_email.png', FileSystemInterface::EXISTS_REPLACE);
+        $uri = $file_system->copy($basetheme_url . DIRECTORY_SEPARATOR . 'logo_email.png', 'public://logo_email.png', FileExists::Replace);
 
         $media = File::create([
           'uri' => $uri,
@@ -1464,6 +1494,32 @@ function _social_core_install_blocks(array $items, callable $function = NULL): v
     if ($configuration['pages'] !== $pages) {
       $configuration['pages'] = $pages;
       $block->setVisibilityConfig('request_path', $configuration)->save();
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function social_core_entity_update(EntityInterface $entity): void {
+  // Get the original status from the current entity.
+  $original_status = NULL;
+  if (isset($entity->original) && isset($entity->original->status)) {
+    $original_status = (bool) $entity->original->status->value;
+  }
+
+  // Get the new status from the current entity.
+  $new_status = isset($entity->status) ? (bool) $entity->status->value : NULL;
+
+  // If the status changed (published/unpublished), trigger the custom hooks.
+  if ($original_status != $new_status) {
+    // Entity has been published.
+    if ($new_status == 1) {
+      \Drupal::moduleHandler()->invokeAll('social_core_' . $entity->getEntityTypeId() . '_published', [$entity]);
+    }
+    // Entity has been unpublished.
+    elseif ($new_status == 0) {
+      \Drupal::moduleHandler()->invokeAll('social_core_' . $entity->getEntityTypeId() . '_unpublished', [$entity]);
     }
   }
 }

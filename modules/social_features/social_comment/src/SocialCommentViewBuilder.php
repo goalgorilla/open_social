@@ -12,11 +12,6 @@ use Drupal\comment\CommentViewBuilder;
 class SocialCommentViewBuilder extends CommentViewBuilder {
 
   /**
-   * The pager tag.
-   */
-  const PAGER_TAG = 'comments';
-
-  /**
    * {@inheritdoc}
    */
   protected function alterBuild(array &$build, EntityInterface $comment, EntityViewDisplayInterface $display, $view_mode) {
@@ -77,12 +72,10 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
   public function buildMultiple(array $build_list) {
     $build_list = parent::buildMultiple($build_list);
 
-    // Since PAGER_TAG need for social_ajax_comments_preprocess_pager(), let's
-    // add it only if the module social_ajax_comments is enabled.
+    // Tell to social_ajax_comments_preprocess_pager() make pager works
+    // with ajax.
     if ($this->moduleHandler->moduleExists('social_ajax_comments')) {
-      $tags = $build_list['pager']['#tags'] ?? [];
-      $tags[] = self::PAGER_TAG;
-      $build_list['pager']['#tags'] = $tags;
+      $build_list['pager']['#ajaxify'] = TRUE;
     }
 
     return $build_list;

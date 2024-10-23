@@ -19,7 +19,7 @@ class MediaBridgeMediaTest extends MediaKernelTestBase {
   /**
    * Modules to install.
    *
-   * @var array
+   * @var string[]
    */
   protected static $modules = [
     'graphql',

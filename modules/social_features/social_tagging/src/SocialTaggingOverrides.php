@@ -105,7 +105,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     }
 
     // Remove tagging field from search index if not needed.
-    if (!$tag_service->groupActive()) {
+    if (!$tag_service->groupsActive()) {
       $field_settings = $config
         ->getEditable('search_api.index.social_groups')
         ->get('field_settings');
@@ -154,7 +154,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     $config_views = [
       'views.view.search_content' => 'search_api_index_social_content',
     ];
-    if ($tag_service->groupActive()) {
+    if ($tag_service->groupsActive()) {
       $config_views['views.view.search_groups'] = 'search_api_index_social_groups';
     }
     if ($tag_service->profileActive()) {

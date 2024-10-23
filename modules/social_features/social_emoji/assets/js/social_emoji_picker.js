@@ -98,6 +98,9 @@
    */
   Drupal.emojiPicker.prototype.createPickerElement = function(Picker) {
     this.pickerElement = new Picker();
+    // Override the i18n property to get the translated searchLabel from drupalSettings.
+    this.pickerElement.i18n.searchLabel = drupalSettings.social_emoji.searchLabel;
+    // Add custom attributes.
     this.pickerElement.setAttribute('aria-modal', 'true');
     // OS doesn't support light/dark themes. Let's stick to a light one atm.
     this.pickerElement.classList.add('light');

@@ -9,6 +9,7 @@ use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Class SocialUserController.
@@ -46,10 +47,10 @@ class SocialUserController extends ControllerBase {
   /**
    * OtherUserPage.
    *
-   * @return RedirectResponse
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Return Redirect to the user account.
    */
-  public function otherUserPage(UserInterface $user) {
+  public function otherUserPage(UserInterface $user): RedirectResponse {
     return $this->redirect('entity.user.canonical', ['user' => $user->id()]);
   }
 
@@ -114,6 +115,18 @@ class SocialUserController extends ControllerBase {
       return AccessResult::forbidden();
     }
     return AccessResult::allowed();
+  }
+
+  /**
+   * Redirects users from /my-profile to stream page of current user.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a redirect to the stream page of current user.
+   */
+  public function myProfileRedirect(): RedirectResponse {
+    return $this->redirect('social_user.stream', [
+      'user' => $this->currentUser()->id(),
+    ]);
   }
 
 }

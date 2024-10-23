@@ -7,6 +7,7 @@ namespace Drupal\social\Behat;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\data_policy\Entity\DataPolicy;
+use Drupal\data_policy\Entity\InformBlock;
 
 /**
  * Defines test steps around the usage of the GPDR module.
@@ -38,6 +39,37 @@ class GDPRContext extends RawMinkContext {
     foreach ($dataPoliciesTable->getHash() as $dataPolicyHash) {
       $dataPolicy = $this->dataPolicyCreate($dataPolicyHash);
       $this->created[] = $dataPolicy->id();
+    }
+  }
+
+  /**
+   * Create inform blocks at the start of a test.
+   *
+   * Creates inform blocks provided in the form:
+   * | label               | page           | summary              | body
+   * | Inform block title  | /path/example  | Inform block summary | Inform block description
+   * | ...                 | ...            | ...                  | ...
+   *
+   * @Given inform_blocks:
+   */
+  public function createInformBlock(TableNode $informBlocksTable) : void {
+    foreach ($informBlocksTable->getHash() as $informBlock) {
+      if (isset($informBlock['body'])) {
+        $informBlock['body'] = [
+          'value' => $informBlock['body'],
+          'format' => 'basic_html',
+        ];
+      }
+
+      if (isset($informBlock['summary'])) {
+        $informBlock['summary'] = [
+          'value' => $informBlock['summary'],
+          'format' => 'basic_html',
+        ];
+      }
+
+      $inform_block_content = InformBlock::create($informBlock);
+      $inform_block_content->save();
     }
   }
 

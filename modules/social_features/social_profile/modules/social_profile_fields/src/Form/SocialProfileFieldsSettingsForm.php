@@ -8,7 +8,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\profile\Entity\ProfileType;
@@ -25,42 +25,42 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *
    * @var \Drupal\social_profile_fields\SocialProfileFieldsHelper
    */
-  protected $profileFieldsHelper;
+  protected SocialProfileFieldsHelper $profileFieldsHelper;
 
   /**
    * The database.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidator
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidator $cacheTagsInvalidator;
 
   /**
    * Module handler.
    *
-   * @var \Drupal\Core\Extension\ModuleHandler
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Entity field manager.
    *
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
-  protected $entityFieldManager;
+  protected EntityFieldManagerInterface $entityFieldManager;
 
   /**
    * SocialProfileSettingsForm constructor.
@@ -73,7 +73,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *   Database connection for invalidating caches.
    * @param \Drupal\Core\Cache\CacheTagsInvalidator $cache_tags_invalidator
    *   Cache tags invalidator for clearing tags.
-   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   Module handler for checking if modules exist.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager for clearing cached definitions.
@@ -85,7 +85,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     SocialProfileFieldsHelper $profile_fields_helper,
     Connection $database,
     CacheTagsInvalidator $cache_tags_invalidator,
-    ModuleHandler $module_handler,
+    ModuleHandlerInterface $module_handler,
     EntityTypeManagerInterface $entity_type_manager,
     EntityFieldManagerInterface $entity_field_manager
   ) {
@@ -219,15 +219,28 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
             '#default_value' => is_null($config->get('profile_address_field_administrative_area')) ? TRUE : $config->get('profile_address_field_administrative_area'),
           ];
         }
+
+        if ($type === 'profile' && $id === 'profile_profile_field_profile_nick_name') {
+          $form[$type]['profile_profile_nickname_wrapper']['nickname_settings'] = [
+            '#type' => 'details',
+            '#title' => $this->t('Nickname field settings'),
+            '#open' => TRUE,
+            '#states' => [
+              'visible' => [
+                ':input[name="' . $id . '"]' => ['checked' => TRUE],
+              ],
+            ],
+          ];
+
+          $form[$type]['profile_profile_nickname_wrapper']['nickname_settings']['nickname_unique_validation'] = [
+            '#type' => 'checkbox',
+            '#title' => $this->t('Unique nicknames'),
+            '#description' => $this->t('If you check this, validation is applied that verifies the users nickname is unique whenever they save their profile.'),
+            '#default_value' => $config->get('nickname_unique_validation'),
+          ];
+        }
       }
     }
-
-    $form['nickname_unique_validation'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Unique nicknames'),
-      '#description' => $this->t('If you check this, validation is applied that verifies the users nickname is unique whenever they save their profile.'),
-      '#default_value' => $config->get('nickname_unique_validation'),
-    ];
 
     $form['actions']['social_profile_fields_confirm_flush'] = [
       '#type' => 'submit',
@@ -262,7 +275,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     $config->set('profile_address_field_postalcode', $main_address_value ? $form_state->getValue('profile_address_field_postalcode') : FALSE);
     $config->set('profile_address_field_administrative_area', $main_address_value ? $form_state->getValue('profile_address_field_administrative_area') : FALSE);
 
-    $config->set('nickname_unique_validation', $form_state->getValue('nickname_unique_validation'));
+    $nickname_unique_validation = $form_state->getValue('profile_profile_field_profile_nick_name') ? $form_state->getValue('nickname_unique_validation') : FALSE;
+    $config->set('nickname_unique_validation', $nickname_unique_validation);
     $config->save();
 
     parent::submitForm($form, $form_state);

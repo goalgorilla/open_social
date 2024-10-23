@@ -790,8 +790,26 @@ class FeatureContext extends RawMinkContext {
      */
     public function iLogOut()
     {
+      // Go to logout page.
       $page = '/user/logout';
       $this->visitPath($page);
+
+      // Since Drupal 10.3 logout is redirect to confirm if is missing token.
+      // I check if user is in confirmation page.
+      $session = $this->getSession();
+      // Remove query string to avoid check destination parameter.
+      $url = strtok($session->getCurrentUrl(), '?');
+      if (!str_contains($url, '/user/logout/confirm')) {
+        return;
+      }
+
+      // I found the confirmation form and the submit button to confirm.
+      $locator = 'form.user-logout-confirm button';
+      $element = $session->getPage()->find('css', $locator);
+      if ($element === NULL) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate ID selector: "%s"', $locator));
+      }
+      $element->click();
     }
 
     /**

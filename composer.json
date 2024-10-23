@@ -36,9 +36,6 @@
             "drupal/ajax_comments": {
                 "Ajax not working when using non-default view mode": "https://www.drupal.org/files/issues/2023-01-30/ajax_comments-ajax_non_default_view_mode-2896916-beta5-60.patch"
             },
-            "drupal/bootstrap": {
-                "Issue #3409370: PHP error when form has entity reference in Drupal 10.2.0": "https://www.drupal.org/files/issues/2023-12-19/Issues-3409370-PHP-error-when-form-has-entity-reference.patch"
-            },
             "drupal/color" : {
                 "Issue #1236098: Notice: Undefined index: 'base' in _color_rewrite_stylesheet()": "https://www.drupal.org/files/issues/2023-10-30/undefined-index-in-_color_rewrite_stylesheet-1236098-59.patch"
             },
@@ -53,14 +50,14 @@
                 "Pagination does not work correctly for comment fields that are rendered using #lazy_builder": "https://www.drupal.org/files/issues/2020-12-22/pagination-does-not-work-with-lazy-builder-3189538-2.patch",
                 "Providing default route value for entity forms is not possible": "https://www.drupal.org/files/issues/2020-12-29/2921093-18.patch",
                 "Selecting the same day in a date between filter returns no results": "https://www.drupal.org/files/issues/2020-07-06/2842409-15.patch",
-                "Broken title in modal dialog when title is a render array": "https://www.drupal.org/files/issues/2019-10-21/2663316-76.drupal.Broken-title-in-modal-dialog-when-title-is-a-render-array.patch",
                 "Flood MemoryBackend::events[] key of micro time cannot guarantee uniqueness": "https://www.drupal.org/files/issues/2023-04-07/2910000-mr-1451-d95--floodmemorybackend-time-local_0.diff",
                 "Issue #2998390: Cache is not invalidated when comment deleted": "https://www.drupal.org/files/issues/2022-02-07/2998390-8.patch",
-                "Issue #2107455: Image field default value not shown when upload destination set to private file storage": "https://www.drupal.org/files/issues/2024-01-14/2107455-94.10.2.patch",
+                "Issue #2107455: Image field default value not shown when upload destination set to private file storage": "https://git.drupalcode.org/project/drupal/-/merge_requests/9231.diff",
                 "2924783 - Fatal error on entity autocomplete widget if entity label contains parentheses": "https://www.drupal.org/files/issues/2021-04-18/2924783-18.patch",
                 "Issue #3397494: Revert the runtime exception for permissions until we have fixed them all correctly": "https://www.drupal.org/files/issues/2023-10-29/3397494-revert-runtimeexception-untill-permissions-fixed.patch",
                 "Issue #3395358 - Redirecting a request during delete an entity when the redirect are disabled": "https://www.drupal.org/files/issues/2023-10-19/drupal-redirect-disable-validation-on-delete-entity-3395358-2.patch",
-                "Issue #3416251: Drupal 10.1.x revert of modal windows for entity delete operation": "https://www.drupal.org/files/issues/2024-01-22/3416251-3-revert-core-entity-delete-modal-changes.patch"
+                "Issue #3416251: Drupal 10.1.x revert of modal windows for entity delete operation": "https://www.drupal.org/files/issues/2024-08-14/3416251-4-revert-core-entity-delete-modal-changes.patch",
+                "Issue #3468860: JS #states behavior does not have a detach method": "https://www.drupal.org/files/issues/2024-08-19/3468860-2-form-field-states.patch"
             },
             "drupal/dynamic_entity_reference": {
                 "Return the same content list after content type is changed": "https://www.drupal.org/files/issues/2024-02-16/dynamic_entity_reference-the_same_content_list-3230158-7.patch"
@@ -79,9 +76,6 @@
                 "Ability to use group tokens in node context": "https://www.drupal.org/files/issues/2023-02-17/group-2774827-93.patch",
                 "Issue #15543144 Ability to use gnode access checks": "https://www.drupal.org/files/issues/2024-04-09/3439568-gnode_grant_access-2.patch",
                 "Issue #3454117 base field override not updated": "https://www.drupal.org/files/issues/2024-06-12/106.diff"
-            },
-            "drupal/paragraphs": {
-                "Integrity constraint violation: 1048 Column 'langcode' cannot be null": "https://www.drupal.org/files/issues/2019-07-10/paragraphs-set_langcode_widgets-2901390-29.patch"
             },
             "drupal/private_message": {
                 "Issue #3397794: Re-surfaced: \"Enter\" key does not work after one message is sent." : "https://www.drupal.org/files/issues/2023-10-30/private_message-enter-key-does-not-work-3397794-3.patch"
@@ -113,11 +107,8 @@
                 "Issue #3404443: Views Exposed Form Fieldset doesn't respect simple fieldset element": "https://git.drupalcode.org/project/views_ef_fieldset/-/merge_requests/12/diffs.patch",
                 "Issue #3404562: Reset button has fixed position with enabled BEF": "https://git.drupalcode.org/project/views_ef_fieldset/-/merge_requests/13/diffs.patch"
             },
-            "drupal/votingapi": {
-                "Issue #3341513: Voting Storages does not check access on entity query\n": "https://www.drupal.org/files/issues/2023-07-06/3341513_votingapi_use-access-checks-14.diff"
-            },
-            "drupal/socialbase": {
-                "Issue #3458790: Improve table responsive styles": "https://www.drupal.org/files/issues/2024-07-05/3458790-table_responsive_improvements-2.patch"
+            "drupal/metatag": {
+                "Issue #3476944: Batch can't be processed after entity deletion since version 2.0": "https://www.drupal.org/files/issues/2024-09-26/metatag-fix-batc-execution-3476944-1.patch"
             }
         }
     },
@@ -126,27 +117,27 @@
         "composer/installers": "~1.0 || ~2.0",
         "cweagans/composer-patches": "^1.6.0",
         "drupal/address": "^1.12.0 || ^2.0.1",
-        "drupal/admin_toolbar": "3.4.2",
-        "drupal/advancedqueue": "1.0.0",
+        "drupal/admin_toolbar": "3.5.0",
+        "drupal/advancedqueue": "1.2.0",
         "drupal/ajax_comments": "1.0.0-beta5",
         "drupal/better_exposed_filters": "6.0.6",
-        "drupal/block_field": "1.0.0-rc4",
+        "drupal/block_field": "1.0.0-rc5",
         "drupal/ckeditor": "1.0.2",
         "drupal/config_modify": "^1",
         "drupal/config_update": "2.0.0-alpha3",
-        "drupal/core": "~10.2.5",
-        "drupal/core-composer-scaffold": "~10.2.5",
+        "drupal/core": "~10.3.2",
+        "drupal/core-composer-scaffold": "~10.3.2",
         "drupal/color": "1.0.3",
         "drupal/crop": "2.4.0",
         "drupal/csv_serialization": "2.1.0 || ~3.0 || ~4.0",
-        "drupal/data_policy": "2.0.1",
+        "drupal/data_policy": "2.0.2",
         "drupal/dynamic_entity_reference": "^3.2.0",
-        "drupal/editor_advanced_link": "2.2.4",
-        "drupal/entity": "1.4.0",
-        "drupal/entity_reference_revisions": "1.11.0",
+        "drupal/editor_advanced_link": "2.2.6",
+        "drupal/entity": "1.5.0",
+        "drupal/entity_reference_revisions": "1.12.0",
         "drupal/exif_orientation": "1.4.0",
-        "drupal/field_group": "3.4.0",
-        "drupal/flag": "4.0.0-beta4",
+        "drupal/field_group": "3.6.0",
+        "drupal/flag": "4.0.0-beta5",
         "drupal/flexible_permissions": "^1.1.0",
         "drupal/gin": "3.0.0-rc13",
         "drupal/ginvite": "3.0.0-beta4",
@@ -158,34 +149,36 @@
         "drupal/jquery_ui": "1.7.0",
         "drupal/jquery_ui_autocomplete": "2.1.0",
         "drupal/jquery_ui_accordion": "2.1.0",
+        "drupal/jquery_ui_draggable": "2.1.0",
+        "drupal/jquery_ui_resizable": "2.1.0",
         "drupal/lazy": "4.0.2",
         "drupal/like_and_dislike": "2.0.0",
         "drupal/message": "1.5.0",
-        "drupal/metatag": "2.0.0",
+        "drupal/metatag": "2.0.2",
         "drupal/override_node_options": "2.8.0",
-        "drupal/paragraphs": "1.17.0",
-        "drupal/pathauto": "1.12.0",
-        "drupal/private_message": "3.0.0",
+        "drupal/paragraphs": "1.18.0",
+        "drupal/pathauto": "1.13.0",
+        "drupal/private_message": "3.0.1",
         "drupal/profile": "1.11.0",
         "drupal/r4032login": "2.2.2",
-        "drupal/redirect": "1.9.0",
+        "drupal/redirect": "1.10.0",
         "drupal/responsive_table_filter": "^2.0",
         "drupal/role_delegation": "1.2.0",
         "drupal/search_api": "1.35.0",
         "drupal/search_api_solr": "4.3.4",
         "drupal/select2": "1.15.0",
         "drupal/shariff": "2.0.0",
-        "drupal/socialblue": "~2.6.1",
+        "drupal/socialblue": "2.6.5",
         "drupal/symfony_mailer": "^1.2",
-        "drupal/token": "1.14.0",
-        "drupal/ultimate_cron": "2.0.0-alpha7",
+        "drupal/token": "1.15.0",
+        "drupal/ultimate_cron": "2.0.0-alpha8",
         "drupal/update_helper": "^3 || ^4",
         "drupal/url_embed": "2.0.0-alpha3",
         "drupal/variationcache": "^1.4",
         "drupal/views_bulk_operations": "4.2.7",
         "drupal/views_ef_fieldset": "^1.7",
-        "drupal/views_infinite_scroll": "2.0.2",
-        "drupal/votingapi": "3.0.0-beta4",
+        "drupal/views_infinite_scroll": "2.0.3",
+        "drupal/votingapi": "3.0.0-beta5",
         "eluceo/ical": "^2.7",
         "goalgorilla/open_social_upgrade_patches": "^1 || ^2",
         "league/csv": "^9.3",

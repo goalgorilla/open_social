@@ -5,7 +5,7 @@ namespace Drupal\social_follow_landing_page;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
-use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Provides content translation for the Social Follow Landing Page module.
@@ -19,15 +19,15 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs the service with DI.
    *
-   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    */
-  public function __construct(ModuleHandler $module_handler) {
+  public function __construct(ModuleHandlerInterface $module_handler) {
     $this->moduleHandler = $module_handler;
   }
 
@@ -87,7 +87,6 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
     // The interface says we should return an object here, but we don't care and
     // this does not seem to break anything?
-    // @phpstan-ignore-next-line
     return NULL;
   }
 

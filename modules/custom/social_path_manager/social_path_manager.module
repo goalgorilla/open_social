@@ -41,6 +41,78 @@ function social_path_manager_form_alter(&$form, FormStateInterface $form_state, 
   if (!empty($form['path']) && in_array($form_id, $user_forms, TRUE)) {
     unset($form['path']);
   }
+
+  // Add custom validation function.
+  $form['#validate'][] = "_social_path_manager_path_alias_validate";
+}
+
+/**
+ * Custom form validation handler for validating path alias.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state.
+ */
+function _social_path_manager_path_alias_validate(array $form, FormStateInterface $form_state): void {
+  $path_alias = $form_state->getValue('path');
+  if (!$path_alias) {
+    return;
+  }
+
+  $path_alias = end($path_alias);
+  $alias_url = $path_alias['alias'] ?: NULL;
+  if (!$alias_url) {
+    return;
+  }
+
+  // Check if we are pointing to a file, which is not secure.
+  $file_path = DRUPAL_ROOT . $alias_url;
+  if (file_exists($file_path)) {
+    $form_state->setErrorByName(
+      'path',
+      t("A path alias cannot point to an existing file."),
+    );
+    return;
+  }
+
+  // Normalize the path to remove leading or trailing slashes.
+  $normalized_path = trim($alias_url, '/');
+
+  // List of reserved path prefixes.
+  $reserved_paths = [
+    'admin',
+    'user',
+    'node',
+    'taxonomy',
+    'system',
+    'comment',
+    'modules',
+    'themes',
+    'libraries',
+    'sites',
+    'core',
+    'profiles',
+    'index.php',
+    'robots.txt',
+    'favicon.ico',
+  ];
+
+  // Check if the path starts with any of the reserved prefixes.
+  foreach ($reserved_paths as $reserved) {
+    if (strpos($normalized_path, $reserved) === 0) {
+      $form_state->setErrorByName(
+        'path',
+        t(
+          "The path @url is reserved and cannot be used as an alias.",
+          [
+            '@url' => $alias_url,
+          ]
+        ),
+      );
+      return;
+    }
+  }
 }
 
 /**

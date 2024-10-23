@@ -2,10 +2,10 @@
 
 namespace Drupal\social\Installer;
 
+use Drupal\Component\Serialization\Yaml;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\Extension\ModuleExtensionList;
-use Drupal\Core\Serialization\Yaml;
 use Drupal\social\Exception\SocialFeatureDataException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;

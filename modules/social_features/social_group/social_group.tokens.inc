@@ -191,12 +191,12 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
                   if (isset($context['tokens']['cta_button'])) {
                     $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Explore the group', [], $translation_options));
                     $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                      ->renderPlain($cta_button);
+                      ->renderInIsolation($cta_button);
                   }
                   // Replace the preview token.
                   if (isset($context['tokens']['preview'])) {
                     $preview_info = $email_token_services->getGroupPreview($group);
-                    $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+                    $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderInIsolation($preview_info);
                   }
                   break;
 
@@ -205,7 +205,7 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
                     $link = Url::fromRoute('view.group_members.page_group_members', ['group' => $group_content->getGroup()->id()]);
                     $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all members', [], $translation_options));
                     $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                      ->renderPlain($cta_button);
+                      ->renderInIsolation($cta_button);
                   }
                   // Replace the preview token.
                   if (isset($context['tokens']['preview'])) {
@@ -213,7 +213,7 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
                     $user = $group_content->getEntity();
                     if ($user instanceof UserInterface) {
                       $preview_info = $email_token_services->getUserPreview($user);
-                      $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+                      $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderInIsolation($preview_info);
                     }
                   }
                   break;

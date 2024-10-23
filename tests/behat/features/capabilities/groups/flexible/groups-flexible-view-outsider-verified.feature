@@ -1,4 +1,4 @@
-@api @javascript @flexible-groups
+@api @javascript
 Feature: Flexible groups view access for verified users
   Background:
     Given I enable the module "social_group_flexible_group"

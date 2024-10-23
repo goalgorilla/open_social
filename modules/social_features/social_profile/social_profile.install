@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\file\Entity\File;
@@ -13,6 +14,7 @@ use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\RoleInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -102,7 +104,7 @@ function _social_profile_add_default_profile_image() {
     // The image must be in `default_images/` since this folder is
     // special-cased to still allow viewing when in the private filesystem.
     "{$directory}default-profile-picture.png",
-    FileSystemInterface::EXISTS_REPLACE
+    FileExists::Replace
   );
 
   // Create a file with the UUID that was used in the configuration so the field
@@ -201,4 +203,29 @@ function social_profile_update_121001(): void {
  */
 function social_profile_update_130001(): void {
   user_role_grant_permissions('sitemanager', ['create terms in profile_tag']);
+}
+
+/**
+ * Update views /all-members to hide blocked members.
+ */
+function social_profile_update_130002(): void {
+  $moduleHandler = \Drupal::moduleHandler();
+  if ($moduleHandler->moduleExists('views') === FALSE ||
+    $moduleHandler->moduleExists('user') === FALSE ||
+    $moduleHandler->moduleExists('profile') === FALSE
+  ) {
+    return;
+  }
+
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_profile') . '/config/install/views.view.newest_users.yml';
+  if (file_exists($config_file) === FALSE) {
+    \Drupal::logger('social_profile')->info('Configuration file for view "newest_users" not found.');
+    return;
+  }
+
+  $view_config = Yaml::parseFile($config_file);
+  \Drupal::configFactory()->getEditable('views.view.newest_users')
+    ->setData($view_config)
+    ->save();
+  \Drupal::logger('social_profile')->info('The view "newest_users" has been updated with new configuration.');
 }

@@ -1,8 +1,14 @@
-## Problem
+## Problem (for internal)
 <!-- *[Required] Describe the problem you're trying to solve, this should motivate why the changes you're proposing are needed.* -->
 
-## Solution
+## Solution (for internal)
 <!-- *[Required] Describe the solution you've created, elaborate on any technical choices you've made. Why is this the right solution and is a different solution not the right one? What is the reasoning behind the chosen solution?* -->
+
+<!-- [Optional] If this Pull Request makes visual changes then please include some screenshots that show what has changed here. A before and after screenshot helps the reviewer determine what changes were made. -->
+
+## Release notes (to customers)
+<!-- [Required if new feature, and if applicable] A summary of the changes that were made that can be included in release notes to customers.
+Please provide enough context and detail, so the editorial review is done efficiently. -->
 
 ## Issue tracker
 <!-- *[Required] Paste a link to the drupal.org issue queue item. If any other issue trackers were used, include links to those too.* -->
@@ -20,11 +26,6 @@
 - [ ] The expected result F is attained when repeating the steps with this fix applied.
 -->
 
-## Screenshots
-<!-- *[Required if new feature, and if applicable] If this Pull Request makes visual changes then please include some screenshots that show what has changed here. A before and after screenshot helps the reviewer determine what changes were made.* -->
-
-## Release notes
-<!-- *[Required if new feature, and if applicable] A short summary of the changes that were made that can be included in release notes.* -->
 
 ## Change Record
 <!-- *[Required if applicable] If this Pull Request changes the way that developers should do things or introduces a new API for developers then a change record to document this is needed. Please provide a draft for a change record or a link to an unpublished change record below. Existing change records can be consulted as example. Please provide a draft for a change record or a link to an unpublished change record below. [Existing change records](https://www.drupal.org/list-changes/social) can be consulted as example.* -->

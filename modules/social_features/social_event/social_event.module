@@ -23,6 +23,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\menu_link_content\MenuLinkContentInterface;
@@ -506,6 +507,26 @@ function social_event_views_data_alter(array &$data) {
 function social_event_node_insert(NodeInterface $node): void {
   if ($node->bundle() == 'event') {
     \Drupal::service('social_event.eda_handler')->eventCreate($node);
+  }
+}
+
+/**
+ * Implements hook_social_core_ENTITY_TYPE_published().
+ */
+function social_event_social_core_node_published(EntityInterface $entity): void {
+  // When a node of type `event` is published, dispatch the proper EDA event.
+  if ($entity instanceof NodeInterface && $entity->bundle() == 'event') {
+    \Drupal::service('social_event.eda_handler')->eventPublish($entity);
+  }
+}
+
+/**
+ * Implements hook_social_core_ENTITY_TYPE_unpublished().
+ */
+function social_event_social_core_node_unpublished(EntityInterface $entity): void {
+  // When a node of type `event` is unpublished, dispatch the proper EDA event.
+  if ($entity instanceof NodeInterface && $entity->bundle() == 'event') {
+    \Drupal::service('social_event.eda_handler')->eventUnpublish($entity);
   }
 }
 
@@ -1510,4 +1531,64 @@ function _social_event_menu_local_tasks_routes(): array {
   \Drupal::moduleHandler()->invokeAll('social_event_menu_local_tasks_routes_alter', [&$routes]);
 
   return $routes;
+}
+
+/**
+ * Add a submit function to update default country for event location field.
+ *
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_event_form_system_regional_settings_alter(array &$form): void {
+  $form['#submit'][] = '_social_event_system_regional_settings_submit';
+}
+
+/**
+ * Submit function to save default country to event location field.
+ *
+ * @param array $form
+ *   Nested array of form elements that comprise the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function _social_event_system_regional_settings_submit(array &$form, FormStateInterface $form_state): void {
+  // Load field configuration and return early if it isn't exist.
+  $event_address_field = FieldConfig::loadByName('node', 'event', 'field_event_address');
+  if (empty($event_address_field)) {
+    return;
+  }
+
+  // Init and fill default values variable.
+  $default_values = [];
+  if (!empty($form_state->getValue('site_default_country'))) {
+    $default_values = $event_address_field->getDefaultValueLiteral();
+    // When the default values isn't initiated, so init it.
+    if (empty($default_values)) {
+      $default_values[] = [
+        'langcode' => NULL,
+        'administrative_area' => "",
+        'locality' => "",
+        'dependent_locality' => NULL,
+        'postal_code' => "",
+        'sorting_code' => NULL,
+        'address_line1' => "",
+        'address_line2' => NULL,
+        'address_line3' => NULL,
+        'organization' => NULL,
+        'given_name' => NULL,
+        'additional_name' => NULL,
+        'family_name' => NULL,
+      ];
+    }
+
+    // Add country code from site default country.
+    $default_values[0]['country_code'] = $form_state->getValue('site_default_country');
+  }
+
+  // Save field with new default value.
+  if (method_exists($event_address_field, 'setDefaultValue')) {
+    $event_address_field->setDefaultValue($default_values)
+      ->save();
+  }
 }

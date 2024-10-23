@@ -275,7 +275,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
             '#render_value' => $output['value'],
             '#render_plain' => $output['render_plain'] ?? FALSE,
           ];
-          $mentions = $this->renderer->renderPlain($build);
+          $mentions = $this->renderer->renderInIsolation($build);
           $text = str_replace($match['source']['string'], $mentions, $text);
         }
       }

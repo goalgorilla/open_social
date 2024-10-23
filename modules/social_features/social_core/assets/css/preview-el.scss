@@ -1,3 +1,13 @@
+@mixin hoverEl {
+  position: absolute;
+  height: calc(100% + 6px);
+  width: calc(100% + 6px);
+  border: 1px solid transparent;
+  top: -3px;
+  left: -3px;
+  border-radius: 50%;
+}
+
 .preview-popup-link {
   position: relative;
   display: flex;
@@ -7,15 +17,40 @@
   height: 100%;
   cursor: pointer;
 
+  &,
+  img {
+    border-radius: 50% !important;
+  }
+
+  .teaser--small__media & {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+.preview-popup-link--image {
+  position: relative;
+  display: block;
+}
+
+img.preview-popup-link--image,
+.preview-popup-link--text img {
+  border: 2px solid transparent;
+
+  &:before {
+    display: none;
+  }
+
+  &:hover {
+    box-shadow: 0 0 0 1px var(--primary-color);
+  }
+}
+
+.preview-popup-link,
+.preview-popup-link--image {
   &:before {
     content: '';
-    position: absolute;
-    height: calc(100% + 6px);
-    width: calc(100% + 6px);
-    border: 1px solid transparent;
-    top: -3px;
-    left: -3px;
-    border-radius: 50%;
+    @include hoverEl;
   }
 
   &:hover {
@@ -25,51 +60,8 @@
   }
 }
 
-.card--stream,
-.img-grid {
-  img.preview-popup-link {
-    width: 44px;
-    height: 44px;
-  }
-}
-
-.teaser--small,
-.card--stream .media-body,
-.comment .comment__content,
-.teaser,
-.hero__banner .metainfo__content,
-.message,
-.view--group-managers .list-item__text,
-.view-group-pending-members,
-.views-field.views-field-name,
-.list-item__text,
-.social-post-album--popup .media-heading,
-.field--name-requests {
-  span.preview-popup-link,
-  a.preview-popup-link {
-    display: inline;
-    width: auto;
-    height: auto;
-
-    &:before {
-      display: none;
-    }
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
-.views-field.views-field-name {
-  a.preview-popup-link {
-    margin-left: 10px;
-  }
-}
-
-.img-grid {
-  a.preview-popup-link {
-    width: auto;
-    height: auto;
+.preview-popup-link--text {
+  &:hover {
+    text-decoration: underline;
   }
 }

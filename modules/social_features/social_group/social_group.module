@@ -27,6 +27,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupRelationshipType;
@@ -227,7 +228,7 @@ function social_group_preprocess_group(array &$variables) {
 
   // Render the group settings help, gear icon with popover.
   $group_settings_help = _social_group_render_group_settings_hero($group);
-  $variables['group_settings_help'] = $renderer->renderPlain($group_settings_help);
+  $variables['group_settings_help'] = $renderer->renderInIsolation($group_settings_help);
 
   $account = \Drupal::currentUser();
 
@@ -342,7 +343,7 @@ function social_group_preprocess_group__hero(array &$variables) {
   // Render the group settings help, gear icon with popover.
   $group_settings_help = _social_group_render_group_settings_hero($group);
   $variables['group_settings_help'] = \Drupal::service('renderer')
-    ->renderPlain($group_settings_help);
+    ->renderInIsolation($group_settings_help);
 }
 
 /**
@@ -2860,4 +2861,64 @@ function social_group_views_pre_view(ViewExecutable $view, string $display_id, a
  */
 function social_group_group_types(): array {
   return array_fill_keys(['node', 'user'], TRUE);
+}
+
+/**
+ * Add a submit function to update default country for group location field.
+ *
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_group_form_system_regional_settings_alter(array &$form): void {
+  $form['#submit'][] = '_social_group_system_regional_settings_submit';
+}
+
+/**
+ * Submit function to save default country to group location field.
+ *
+ * @param array $form
+ *   Nested array of form elements that comprise the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function _social_group_system_regional_settings_submit(array &$form, FormStateInterface $form_state): void {
+  // Load field configuration and return early if it isn't exist.
+  $group_address_field = FieldConfig::loadByName('group', 'flexible_group', 'field_group_address');
+  if (empty($group_address_field)) {
+    return;
+  }
+
+  // Init and fill default values variable.
+  $default_values = [];
+  if (!empty($form_state->getValue('site_default_country'))) {
+    $default_values = $group_address_field->getDefaultValueLiteral();
+    // When the default values isn't initiated, so init it.
+    if (empty($default_values)) {
+      $default_values[] = [
+        'langcode' => NULL,
+        'administrative_area' => "",
+        'locality' => "",
+        'dependent_locality' => NULL,
+        'postal_code' => "",
+        'sorting_code' => NULL,
+        'address_line1' => "",
+        'address_line2' => NULL,
+        'address_line3' => NULL,
+        'organization' => NULL,
+        'given_name' => NULL,
+        'additional_name' => NULL,
+        'family_name' => NULL,
+      ];
+    }
+
+    // Add country code from site default country.
+    $default_values[0]['country_code'] = $form_state->getValue('site_default_country');
+  }
+
+  // Save field with new default value.
+  if (method_exists($group_address_field, 'setDefaultValue')) {
+    $group_address_field->setDefaultValue($default_values)
+      ->save();
+  }
 }

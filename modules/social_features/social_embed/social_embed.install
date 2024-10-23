@@ -165,3 +165,17 @@ function social_embed_update_124001(): void {
       ->save();
   }
 }
+
+/**
+ * Add new config `max_embeds_per_content`.
+ */
+function social_embed_update_124002(): void {
+  // Load the existing configuration object.
+  $config = \Drupal::configFactory()->getEditable('social_embed.settings');
+
+  // Add the new configuration value if it doesn't already exist.
+  if (!$config->get('max_embeds_per_content')) {
+    $config->set('max_embeds_per_content', '5');
+    $config->save();
+  }
+}

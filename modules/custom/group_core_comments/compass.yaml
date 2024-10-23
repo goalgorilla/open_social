@@ -1,0 +1,23 @@
+configVersion: 1
+name: Group Core Comments
+id: null
+description: |-
+  This module appears (but it's unclear) to render a specific block for comments
+  in case a user is not a member of a group, making it easy to quickly join.
+  Additionally, this module seems to perform some access handling around
+  comments in groups and adds global permissions for comments.
+
+  Marked as deprecated and for rework since this is unlikely to be something a
+  whole module should do. It's expected that the group module itself can provide
+  us with the access handling around comments and the UI element may be a
+  reusable part of our group integration that can be re-used where needed.
+typeId: CAPABILITY
+ownerId: null
+fields:
+  tier: null
+  lifecycle: Deprecated
+links: []
+relationships: {}
+customFields: []
+labels:
+  - 'architect:rework'

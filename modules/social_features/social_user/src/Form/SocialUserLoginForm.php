@@ -66,16 +66,23 @@ class SocialUserLoginForm extends UserLoginForm {
 
     $reset_pass_link = Link::createFromRoute($this->t('Forgot password?'), 'user.pass');
     $generated_reset_pass_link = $reset_pass_link->toString();
-    $pass_description = $generated_reset_pass_link->getGeneratedLink();
 
     $form['username_login']['pass'] = [
       '#type' => 'password',
       '#title' => $this->t('Password'),
       '#size' => 60,
-      '#description' => $pass_description,
       '#required' => TRUE,
       '#attributes' => [
         'autocomplete' => 'current-password',
+      ],
+    ];
+
+    $form['username_login']['reset_pass'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#value' => $generated_reset_pass_link,
+      '#attributes' => [
+        'class' => 'help-block',
       ],
     ];
 
@@ -203,8 +210,13 @@ class SocialUserLoginForm extends UserLoginForm {
       }
       // We are not limited by flood control, so try to authenticate.
       // Store $uid in form state as a flag for self::validateFinal().
-      $uid = $this->userAuth->authenticate($name, $password);
-      $form_state->set('uid', $uid);
+      if (method_exists($this->userAuth, 'authenticate')) {
+        $uid = $this->userAuth->authenticate($name, $password);
+        $form_state->set('uid', $uid);
+      }
+      else {
+        $this->setGeneralErrorMessage($form, $form_state);
+      }
     }
   }
 

@@ -7,6 +7,7 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Utility\Error;
 use Drupal\filter\FilterProcessResult;
@@ -84,6 +85,8 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
    *   Current user object.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
    *   The logger channel factory service.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
+   *   The route match service.
    */
   public function __construct(
     array $configuration,
@@ -94,7 +97,8 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
     ConfigFactory $config_factory,
     SocialEmbedHelper $embed_helper,
     AccountProxyInterface $current_user,
-    LoggerChannelFactoryInterface $loggerFactory
+    LoggerChannelFactoryInterface $loggerFactory,
+    protected RouteMatchInterface $routeMatch,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $url_embed);
     $this->uuid = $uuid;
@@ -118,6 +122,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
       $container->get('social_embed.helper_service'),
       $container->get('current_user'),
       $container->get('logger.factory'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -126,22 +131,44 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
    */
   public function process($text, $langcode) {
     $result = new FilterProcessResult($text);
+
+    // Add settings in case we need to use _filter_url().
+    $this->setConfiguration([
+      'settings' => [
+        'filter_url_length' => 72,
+      ],
+    ]);
+
     if (strpos($text, 'data-embed-url') !== FALSE) {
+      // Load settings.
+      $embed_settings = $this->configFactory->get('social_embed.settings');
+
       $dom = Html::load($text);
       /** @var \DOMXPath $xpath */
       $xpath = new \DOMXPath($dom);
       /** @var \DOMNode[] $matching_nodes */
       $matching_nodes = $xpath->query('//drupal-url[@data-embed-url]');
+
+      $count = 1;
       foreach ($matching_nodes as $node) {
         /** @var \DOMElement $node */
         $url = $node->getAttribute('data-embed-url');
+
+        // Abort if the URL is not whitelisted,
+        // or if achieved max_embed_per_content.
+        if (!$this->embedHelper->isWhitelisted($url) || $count > $embed_settings->get('max_embeds_per_content')) {
+          $this->replaceNodeContent($node, _filter_url($url, $this));
+          continue;
+        }
+
         $url_output = '';
         try {
           $info = $this->urlEmbed->getUrlInfo($url);
           /** @var \Drupal\user\Entity\User $user */
           $user = $this->currentUser->isAnonymous() ? NULL : User::load($this->currentUser->id());
-          $embed_settings = $this->configFactory->get('social_embed.settings');
           if (!empty($info['code'])
+            // Do not add consent button on embed preview during adding url.
+            && $this->routeMatch->getRouteName() != 'embed.preview'
             && (($user instanceof User
                 && $embed_settings->get('embed_consent_settings_lu')
                 && $user->hasField('field_user_embed_content_consent')
@@ -170,6 +197,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
         }
 
         $this->replaceNodeContent($node, $url_output);
+        $count++;
       }
 
       $result->setProcessedText(Html::serialize($dom));

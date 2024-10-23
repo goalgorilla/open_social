@@ -1,0 +1,6 @@
+services:
+  activity_creator.cleanup_activities.commands:
+    class: Drupal\activity_creator\Commands\CleanUpActivitiesDrushCommands
+    tags:
+      - { name: drush.command }
+    arguments: ['@database', '@entity_type.manager', '@logger.factory']
