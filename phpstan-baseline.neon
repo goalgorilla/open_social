@@ -13160,3 +13160,23 @@ parameters:
 			message: "#^Class Drupal\\\\social_eda_dispatcher\\\\Dispatcher not found\\.$#"
 			count: 1
 			path: modules/social_features/social_event/tests/src/Unit/EdaHandlerTest.php
+
+		-
+			message: "#^Parameter \\$dispatcher of method Drupal\\\\social_event\\\\EdaEventEnrollmentHandler::__construct\\(\\) has invalid type Drupal\\\\social_eda_dispatcher\\\\Dispatcher\\.$#"
+			count: 1
+			path: modules/social_features/social_event/src/EdaEventEnrollmentHandler.php
+
+		-
+			message: "#^Property Drupal\\\\social_event\\\\EdaEventEnrollmentHandler::\\$dispatcher has unknown class Drupal\\\\social_eda_dispatcher\\\\Dispatcher as its type\\.$#"
+			count: 1
+			path: modules/social_features/social_event/src/EdaEventEnrollmentHandler.php
+
+		-
+			message: "#^Call to method dispatch\\(\\) on an unknown class Drupal\\\\social_eda_dispatcher\\\\Dispatcher\\.$#"
+			count: 1
+			path: modules/social_features/social_event/src/EdaEventEnrollmentHandler.php
+
+		-
+			message: "#^Parameter \\$item of static method Drupal\\\\social_eda\\\\Types\\\\Address::fromFieldItem\\(\\) expects Drupal\\\\address\\\\Plugin\\\\Field\\\\FieldType\\\\AddressItem\\|null, Drupal\\\\Core\\\\Field\\\\FieldItemInterface\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/src/EdaEventEnrollmentHandler.php
