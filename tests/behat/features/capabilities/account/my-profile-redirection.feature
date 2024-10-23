@@ -9,4 +9,4 @@ Feature: Redirect user to their stream page from /my-profile path
 
     When I go to "/my-profile"
 
-    Then the URL should match "^\/user\/[^\/]+\/stream"
+    Then the url should match "^\/user\/[^\/]+\/stream"
