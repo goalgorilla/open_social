@@ -5,6 +5,9 @@
  * Install/Uninstall/Update hooks for social_group_request module.
  */
 
+use Drupal\group\Entity\GroupType;
+use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
+
 /**
  * Implements hook_install().
  */
@@ -104,4 +107,134 @@ function social_group_request_update_13002(): void {
     ->getStorage('group_role')
     ->load('flexible_group-group_manager');
   $group_manager->grantPermission('administer membership requests')->save();
+}
+
+/**
+ * Enable state_machine module.
+ */
+function social_group_request_update_13003(): void {
+  // The state_machine is a new dependency of the grequest module and replaces
+  // the numeric indices that were previously used.
+  \Drupal::service("module_installer")->install(["state_machine"]);
+}
+
+/**
+ * Update grequest hook versioning after migration.
+ */
+function social_group_request_update_13004(): void {
+  /** @var \Drupal\Core\Update\UpdateHookRegistry $update_registry */
+  $update_registry = \Drupal::service('update.update_hook_registry');
+  $current = $update_registry->getInstalledVersion("grequest");
+
+  // The grequest version that was inside Open Social was quite a bit ahead so
+  // if we were at least in Open Social version 11 we can comfortably set the
+  // version to the last removed version of grequest. That should ensure that
+  // any update hooks that are added after the migration get properly executed.
+  // If something else already updated the installed version we do nothing,
+  // other mechanisms prevent large Open Social version jumps.
+  if ($current >= 11000) {
+    $update_registry->setInstalledVersion("grequest", 8009);
+  }
+}
+
+/**
+ * Update group request status field type.
+ */
+function social_group_request_update_13005() {
+  // This function uses raw SQL magic to create a new column for the updated
+  // values so that simple update statements can be used to convert the current
+  // value to the new `grequest` module value.
+  // We then remove the old column and rename the new column to have the correct
+  // name (which is the same as the old column).
+  // Once all that is done we update Drupal's perception of what the field is so
+  // that it doesn't know we performed data magic but the stored entity schema
+  // matches what we'd have on a new installation.
+  $logger = \Drupal::logger("social_group_request");
+  $storage = \Drupal::entityTypeManager()->getStorage("group_content");
+  if (!$storage instanceof \Drupal\Core\Entity\Sql\SqlEntityStorageInterface) {
+    $logger->error("Can not update table mapping for non-SQL storage backends.");
+    return;
+  }
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+  $field_manager = \Drupal::service('entity_field.manager');
+  $field_storage = $field_manager->getFieldStorageDefinitions('group_content')['grequest_status'] ?? NULL;
+  $mapping = $storage->getTableMapping();
+  $tables = $mapping->getAllFieldTableNames("grequest_status");
+
+  if ($field_storage === NULL || $tables === []) {
+    new \RuntimeException("Could not find field storage definition for group_content.grequest_status");
+  }
+
+  $column_name = $mapping->getFieldColumnName($field_storage, "value");
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  assert($schema !== NULL, "SQLStorage should have a database schema manager.");
+  $new_spec = [
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+  ];
+  // We've seen some challenges with these kind of migrations before so we're
+  // including step by step debug logging to give us exact insight into where
+  // things fail if they do.
+  foreach ($tables as $table) {
+    $logger->debug("Updating table mapping for group_content.grequest_status table {$table}.");
+    // Allow nullable initially since our existing content won't have data yet.
+    $schema->addField($table, $column_name . "_new", [...$new_spec, 'not null' => FALSE]);
+    $logger->debug("Added new field.");
+    $database->query("Update $table SET {$column_name}_new = 'pending' WHERE $column_name = 0");
+    $logger->debug("Updated pending states.");
+    $database->query("Update $table SET {$column_name}_new = 'approved' WHERE $column_name = 1");
+    $logger->debug("Updated approved states.");
+    $database->query("Update $table SET {$column_name}_new = 'rejected' WHERE $column_name = 2");
+    $logger->debug("Updated rejected states.");
+    $schema->dropField($table, $column_name);
+    $logger->debug("Removed old field.");
+    $schema->changeField($table, "{$column_name}_new", $column_name, $new_spec);
+    $logger->debug("Renamed new field to be in place of old field.");
+  }
+
+  // We change the field through config since we're unable to do so through the
+  // Entity API. We're not usually allowed to make these kinds of changes.
+  $logger->debug("Updating storage data for field.");
+  $field_storage_config = \Drupal::configFactory()->getEditable("field.storage.group_content.grequest_status");
+  $field_storage_config
+    ->set('locked', FALSE)
+    ->set('module', "state_machine")
+    ->set('type', "state")
+    ->set('settings', [])
+    ->save(TRUE);
+
+  $group_relationship_type_storage = \Drupal::entityTypeManager()->getStorage('group_content_type');
+  assert($group_relationship_type_storage instanceof GroupRelationshipTypeStorageInterface);
+
+  $logger->warning("Updating field instances.");
+  foreach (GroupType::loadMultiple() as $groupType) {
+    if ($groupType->hasPlugin("group_membership_request")) {
+      $relationship_id = $group_relationship_type_storage->getRelationshipTypeId($groupType->id(), "group_membership_request");
+      $logger->warning("Updating field instance for {$groupType->id()} ({$relationship_id}).");
+      $field_config = \Drupal::configFactory()->getEditable("field.field.group_content.$relationship_id.grequest_status");
+      $field_config
+        ->set('settings', [
+          'workflow' => 'request',
+          'workflow_callback' => '',
+        ])
+        ->set('field_type', 'state')
+        ->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Update group request view to new grequest module.
+ */
+function social_group_request_update_13006(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_group_request', 'social_group_request_update_13006');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
 }
