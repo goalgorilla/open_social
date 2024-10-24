@@ -4,11 +4,11 @@ namespace Drupal\social_group_flexible_group\EventSubscriber;
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Url;
-use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\SocialGroupInterface;
+use Drupal\social_group_default_route\SocialGroupDefaultRouteRedirectService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -19,33 +19,20 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class RedirectSubscriber implements EventSubscriberInterface {
 
   /**
-   * The current active user.
-   *
-   * @var \Drupal\Core\Session\AccountProxyInterface
-   */
-  protected $currentUser;
-
-  /**
-   * The currently active route match object.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
-   */
-  protected $routeMatch;
-
-  /**
    * RedirectSubscriber constructor.
    *
-   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current active user.
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The currently active route match object.
+   * @param \Drupal\social_group_default_route\SocialGroupDefaultRouteRedirectService $redirectService
+   *   The redirect service.
    */
   public function __construct(
-    AccountProxyInterface $current_user,
-    RouteMatchInterface $route_match
+    protected AccountProxyInterface $currentUser,
+    protected RouteMatchInterface $routeMatch,
+    protected SocialGroupDefaultRouteRedirectService $redirectService,
   ) {
-    $this->currentUser = $current_user;
-    $this->routeMatch = $route_match;
   }
 
   /**
@@ -55,77 +42,44 @@ class RedirectSubscriber implements EventSubscriberInterface {
    *   Returns request events.
    */
   public static function getSubscribedEvents() {
-    $events[KernelEvents::REQUEST][] = ['checkForRedirection'];
+    $events[KernelEvents::EXCEPTION][] = ['onKernelException', 100];
     return $events;
   }
 
   /**
-   * This method is called when the KernelEvents::REQUEST event is dispatched.
+   * Redirect on exceptions.
    *
-   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
-   *   The event.
+   * @param \Symfony\Component\HttpKernel\Event\ExceptionEvent $event
+   *   The exception event.
    */
-  public function checkForRedirection(RequestEvent $event) {
+  public function onKernelException(ExceptionEvent $event): void {
     // Check if there is a group object on the current route.
-    if (!($group = _social_group_get_current_group())) {
-      return;
-    }
+    $group = $this->redirectService->getGroup();
 
-    // If a group type is flexible group.
-    if ($group->bundle() !== 'flexible_group') {
-      return;
-    }
-
-    // If the user can manage groups or the user is a member.
-    if (
-      $this->currentUser->hasPermission('manage all groups') ||
-      $group->hasMember($this->currentUser)
-    ) {
-      return;
-    }
-
-    // Get the current route name for the checks being performed below.
-    $route_name = $this->routeMatch->getRouteName();
-
-    // The array of forbidden routes.
-    $routes = [
-      'entity.group.canonical',
-      'view.group_events.page_group_events',
-      'view.group_topics.page_group_topics',
-      'view.group_books.page_group_books',
-      'social_group.stream',
-    ];
-
-    // If "Allowed join method" is not set to "Join directly" in this group.
-    if (
-      $route_name === 'entity.group.join' &&
-      !social_group_flexible_group_can_join_directly($group)
-    ) {
-      $this->doRedirect($event, $group);
-    }
-    elseif (
-      in_array($route_name, $routes) &&
-      !social_group_flexible_group_community_enabled($group) &&
-      !social_group_flexible_group_public_enabled($group)
-    ) {
-      $this->doRedirect($event, $group);
+    if ($group && $group->bundle() === 'flexible_group') {
+      $this->redirectOnAccessDeniedException($group, $event);
     }
   }
 
   /**
-   * Makes redirect to the "About" group tab.
+   * Redirect on access denied exception.
    *
-   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
-   *   The event.
-   * @param \Drupal\group\Entity\GroupInterface $group
-   *   The group.
+   * @param \Drupal\social_group\SocialGroupInterface $group
+   *   The group object.
+   * @param \Symfony\Component\HttpKernel\Event\ExceptionEvent $event
+   *   The exception event.
    */
-  protected function doRedirect(RequestEvent $event, GroupInterface $group) {
-    $url = Url::fromRoute('view.group_information.page_group_about', [
-      'group' => $group->id(),
-    ]);
+  protected function redirectOnAccessDeniedException(SocialGroupInterface $group, ExceptionEvent $event): void {
+    $exception = $event->getThrowable();
 
-    $event->setResponse(new RedirectResponse($url->toString()));
+    // Do not redirect form access denied if user doesn't have access to
+    // view the group (secret group, etc.).
+    if (!$group->access('view', $this->currentUser) ||
+      !$exception instanceof AccessDeniedHttpException) {
+      return;
+    }
+
+    $this->redirectService->doRedirect($event, $group);
   }
 
 }
