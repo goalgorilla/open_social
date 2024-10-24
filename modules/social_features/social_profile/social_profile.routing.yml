@@ -5,3 +5,10 @@ social_profile.settings:
   _title: 'Social profile'
  requirements:
   _permission: 'administer profile settings'
+
+social_profile.edit_profile:
+  path: '/edit-profile'
+  defaults:
+    _controller: '\Drupal\social_profile\Controller\SocialProfileEditProfileRedirectController::editProfileRedirect'
+  requirements:
+    _user_is_logged_in: 'TRUE'
