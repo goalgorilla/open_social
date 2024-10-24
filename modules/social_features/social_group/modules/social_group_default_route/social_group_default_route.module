@@ -9,12 +9,12 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupType;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * Implements hook_form_alter().
  */
 function social_group_default_route_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-
   $forms = [];
   foreach (_social_group_default_route_group_types() as $type) {
     $forms[] = 'group_' . $type . '_edit_form';
@@ -23,12 +23,14 @@ function social_group_default_route_form_alter(&$form, FormStateInterface $form_
 
   // Check if this group type is supported.
   if (in_array($form_id, $forms, TRUE)) {
-
-    // Fetch the tabs.
-    $group_tabs = _social_group_default_route_group_tabs();
+    /** @var \Drupal\social_group_default_route\SocialGroupDefaultRouteRedirectService $redirect_service */
+    $redirect_service = \Drupal::service('social_group_default_route.redirect_service');
 
     // Get the form entity.
     $group = $form_state->getFormObject()->getEntity();
+    // Fetch the rotes for member and non-member.
+    $member_routes = $redirect_service->getMemberRoutes($group);
+    $non_member_routes = $redirect_service->getNonMemberRoutes($group);
 
     // Add a (hidden) card for the tabs.
     $form['tab_settings'] = [
@@ -38,27 +40,20 @@ function social_group_default_route_form_alter(&$form, FormStateInterface $form_
       '#weight' => '3',
     ];
 
-    // Define options for default route.
-    $options = [
-      '' => t('- Default -'),
-    ];
-
-    // Load the other tabs.
-    foreach ($group_tabs as $group_tab) {
-      $route = $group_tab->getRouteName();
-      /** @var \Drupal\Core\Menu\LocalTaskDefault $group_tab */
-      $options[$route] = $group_tab->getTitle();
-    }
-
-    $default_route = $group ? $group->getFieldValue('default_route', 'value') : '';
-    $default_route_an = $group ? $group->getFieldValue('default_route_an', 'value') : '';
-
+    // Define options for member.
+    $member_options = _social_group_default_route_groups_get_options($member_routes);
+    // Define options for non-member.
+    $non_member_options = _social_group_default_route_groups_get_options($non_member_routes);
+    // Define a default route for members.
+    $default_route = $group ? $redirect_service->getDefaultMemberRoute($group) : '';
+    // Define a default route for non-members.
+    $default_route_an = $group ? $redirect_service->getDefaultNonMemberRoute($group) : '';
     // The default route field.
     $form['tab_settings']['default_route'] = [
       '#type' => 'select',
       '#title' => t('Group members landing tab'),
       '#default_value' => $default_route,
-      '#options' => $options,
+      '#options' => $member_options,
     ];
 
     // The default route field.
@@ -66,7 +61,7 @@ function social_group_default_route_form_alter(&$form, FormStateInterface $form_
       '#type' => 'select',
       '#title' => t('Non members landing tab'),
       '#default_value' => $default_route_an,
-      '#options' => $options,
+      '#options' => $non_member_options,
     ];
   }
 }
@@ -130,30 +125,30 @@ function _social_group_default_route_group_types() {
 }
 
 /**
- * Fetch all available group tabs.
+ * Get tab options.
+ *
+ * @param array $routes
+ *   The routes.
  *
  * @return array
- *   The group tabs.
+ *   The options.
  */
-function _social_group_default_route_group_tabs() {
-  $tabs = &drupal_static(__FUNCTION__);
-
-  if (!isset($tabs)) {
-    /** @var \Drupal\Core\Menu\LocalTaskManager $taskManager */
-    $taskManager = Drupal::service('plugin.manager.menu.local_task');
-    $tabs = [];
-
-    $group_tabs = $taskManager->getLocalTasksForRoute('entity.group.canonical');
-    $group_tabs = $group_tabs[0];
-
-    // Loop over the available tabs on a group.
-    foreach ($group_tabs as $route => $localtask) {
-      // Add to the array.
-      $tabs[$route] = $localtask;
+function _social_group_default_route_groups_get_options(array $routes): array {
+  /** @var \Drupal\Core\Routing\RouteProviderInterface $route_provider */
+  $route_provider = \Drupal::service('router.route_provider');
+  // Define options for member.
+  $options = [];
+  // Load the members tabs.
+  foreach ($routes as $route => $title) {
+    try {
+      $route_object = $route_provider->getRouteByName($route);
+      $options[$route] = $title;
     }
-    // Allow other modules to change the group types.
-    Drupal::moduleHandler()->alter('social_group_default_route_tabs', $tabs);
+    catch (RouteNotFoundException $e) {
+      // Skip if route isn't exist.
+      continue;
+    }
   }
 
-  return $tabs;
+  return $options;
 }
