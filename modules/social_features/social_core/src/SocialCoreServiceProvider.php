@@ -2,9 +2,9 @@
 
 namespace Drupal\social_core;
 
-use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\social_eda_dispatcher\Dispatcher as SocialEdaDispatcher;
+use Drupal\Core\DependencyInjection\ServiceProviderBase;
+use Drupal\social_eda_dispatcher\Dispatcher;
 
 /**
  * Class SocialCoreServiceProvider.
@@ -35,7 +35,7 @@ class SocialCoreServiceProvider extends ServiceProviderBase {
     // In this case we expect the class not to be found because it exists
     // outside the Open Social distribution.
     // @phpstan-ignore class.notFound
-    if (!$container->hasDefinition(SocialEdaDispatcher::class)) {
+    if (!$container->hasDefinition(Dispatcher::class)) {
       foreach ($container->findTaggedServiceIds('social.eda.handler') as $id => $attributes) {
         $definition = $container->getDefinition($id);
         $definition->setClass(EdaDummyHandler::class);

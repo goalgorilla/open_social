@@ -2,27 +2,29 @@
 
 namespace Drupal\Tests\social_event\Unit;
 
-use CloudEvents\V1\CloudEvent;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\DependencyInjection\ContainerBuilder;
+use CloudEvents\V1\CloudEventInterface;
 use Drupal\address\Plugin\Field\FieldType\AddressFieldItemList;
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\social_eda_dispatcher\Dispatcher as SocialEdaDispatcher;
+use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\Types\DateTime;
 use Drupal\social_event\EdaHandler;
 use Drupal\taxonomy\TermInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -39,7 +41,7 @@ class EdaHandlerTest extends UnitTestCase {
   /**
    * Mocked dispatcher service for sending CloudEvents.
    */
-  protected SocialEdaDispatcher $dispatcher;
+  protected MockObject $dispatcher;
 
   /**
    * Handles UUID generation.
@@ -119,6 +121,11 @@ class EdaHandlerTest extends UnitTestCase {
   protected AccountProxyInterface $account;
 
   /**
+   * Represents the CloudEvent.
+   */
+  protected CloudEventInterface $cloudEvent;
+
+  /**
    * {@inheritDoc}
    */
   protected function setUp(): void {
@@ -136,38 +143,39 @@ class EdaHandlerTest extends UnitTestCase {
     $container->set('language_manager', $languageManagerMock->reveal());
     \Drupal::setContainer($container);
 
-    // Mock dependencies.
-    $this->moduleHandler = $this->prophesize(ModuleHandlerInterface::class)
-      ->reveal();
+    // Prophesize the module handler and ensure `social_eda` is enabled.
+    $moduleHandlerProphecy = $this->prophesize(ModuleHandlerInterface::class);
+    $moduleHandlerProphecy->moduleExists('social_eda')->willReturn(TRUE);
+    $this->moduleHandler = $moduleHandlerProphecy->reveal();
 
-    // Mock the SocialEdaDispatcher service.
-    $this->dispatcher = $this->getMockBuilder(SocialEdaDispatcher::class)
+    // Prophesize the Dispatcher service.
+    $this->dispatcher = $this->getMockBuilder(DispatcherInterface::class)
       ->disableOriginalConstructor()
       ->getMock();
 
-    // Mock the EntityTypeManagerInterface and the corresponding storage.
+    // Prophesize the EntityTypeManagerInterface and the corresponding storage.
     $entityStorageMock = $this->prophesize(EntityStorageInterface::class);
     $entityTypeManagerMock = $this->prophesize(EntityTypeManagerInterface::class);
     $entityTypeManagerMock->getStorage('user')
       ->willReturn($entityStorageMock->reveal());
     $this->entityTypeManager = $entityTypeManagerMock->reveal();
 
-    // Mock the AccountProxyInterface.
+    // Prophesize the AccountProxyInterface.
     $accountMock = $this->prophesize(AccountProxyInterface::class);
     $accountMock->id()->willReturn(1);
     $this->account = $accountMock->reveal();
 
-    // Mock the RouteMatchInterface.
+    // Prophesize the RouteMatchInterface.
     $routeMatchMock = $this->prophesize(RouteMatchInterface::class);
     $routeMatchMock->getRouteName()->willReturn('entity.node.edit_form');
     $this->routeMatch = $routeMatchMock->reveal();
 
-    // Resolve UUID.
+    // Prophesize the UUID.
     $uuidMock = $this->prophesize(UuidInterface::class);
     $uuidMock->generate()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $this->uuid = $uuidMock->reveal();
 
-    // Resolve Request.
+    // Prophesize the Request.
     $requestMock = $this->prophesize(Request::class);
     $requestMock->getUri()->willReturn('http://example.com/node/add/event');
     $requestMock->getPathInfo()->willReturn('/node/add/event');
@@ -177,12 +185,12 @@ class EdaHandlerTest extends UnitTestCase {
     $requestStackMock->getCurrentRequest()->willReturn($this->request);
     $this->requestStack = $requestStackMock->reveal();
 
-    // Mock the URL object.
+    // Prophesize the URL object.
     $urlMock = $this->prophesize(Url::class);
     $urlMock->toString()->willReturn('http://example.com');
     $this->url = $urlMock->reveal();
 
-    // Mock the EntityInterface.
+    // Prophesize the EntityInterface.
     $entityMock = $this->prophesize(EntityInterface::class);
     $entityMock->toUrl('canonical', ['absolute' => TRUE])
       ->willReturn($this->url);
@@ -190,7 +198,7 @@ class EdaHandlerTest extends UnitTestCase {
     $entityMock->label()->willReturn('Test Entity');
     $this->entityInterface = $entityMock->reveal();
 
-    // Mock the UserInterface.
+    // Prophesize the UserInterface.
     $userMock = $this->prophesize(UserInterface::class);
     $userMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $userMock->getDisplayName()->willReturn('User name');
@@ -205,7 +213,7 @@ class EdaHandlerTest extends UnitTestCase {
     $addressItemListMock->first()->willReturn($this->addressItem);
     $this->addressItemList = $addressItemListMock->reveal();
 
-    // Mock the field_event_type.
+    // Prophesize the field_event_type.
     $eventTypeTermMock = $this->prophesize(TermInterface::class);
     $eventTypeTermMock->label()->willReturn('Term Label');
     $this->eventTypeTerm = $eventTypeTermMock->reveal();
@@ -215,13 +223,13 @@ class EdaHandlerTest extends UnitTestCase {
     $eventTypeFieldMock->getEntity()->willReturn($this->eventTypeTerm);
     $this->eventTypeField = $eventTypeFieldMock->reveal();
 
-    // Mock the FieldItemListInterface.
+    // Prophesize the FieldItemListInterface.
     $fieldItemListMock = $this->prophesize(FieldItemListInterface::class);
     $fieldItemListMock->isEmpty()->willReturn(FALSE);
     $fieldItemListMock->getEntity()->willReturn($this->entityInterface);
     $this->fieldItemList = $fieldItemListMock->reveal();
 
-    // Mock the Node.
+    // Prophesize the Node.
     $nodeMock = $this->prophesize(NodeInterface::class);
     $nodeMock->label()->willReturn('Event Title');
     $nodeMock->getCreatedTime()->willReturn(1692614400);
@@ -251,14 +259,149 @@ class EdaHandlerTest extends UnitTestCase {
     $nodeMock->hasField('field_event_type')->willReturn(TRUE);
     $nodeMock->get('field_event_type')->willReturn($this->eventTypeField);
     $this->node = $nodeMock->reveal();
+
+    // Prophesize the CloudEvent class.
+    $cloudEventMock = $this->prophesize(CloudEventInterface::class);
+    $this->cloudEvent = $cloudEventMock->reveal();
   }
 
   /**
    * Test method fromEntity().
+   *
+   * @covers ::fromEntity
    */
   public function testFromEntity(): void {
     // Create the handler instance.
-    $handler = new EdaHandler(
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.create');
+
+    // Check that the event has expected attributes.
+    $this->assertEquals('1.0', $event->getSpecVersion());
+    $this->assertEquals('com.getopensocial.cms.event.create', $event->getType());
+    $this->assertEquals('/node/add/event', $event->getSource());
+    $this->assertEquals('a5715874-5859-4d8a-93ba-9f8433ea44af', $event->getId());
+    $this->assertEquals(DateTime::fromTimestamp($this->node->getCreatedTime())->toImmutableDateTime(), $event->getTime());
+  }
+
+  /**
+   * Test the eventCreate() method.
+   *
+   * @covers ::eventCreate
+   */
+  public function testEventCreate(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.create');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event.create'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventCreate method.
+    $handler->eventCreate($this->node);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.event.create', $event->getType());
+  }
+
+  /**
+   * Test the $this->eventUnpublish() method.
+   *
+   * @covers ::eventUnpublish
+   */
+  public function testEventUnpublish(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.unpublish');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event.unpublish'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventCreate method.
+    $handler->eventUnpublish($this->node);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.event.unpublish', $event->getType());
+  }
+
+  /**
+   * Test the $this->eventPublish() method.
+   *
+   * @covers ::eventPublish
+   */
+  public function testEventPublish(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.publish');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event.publish'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventCreate method.
+    $handler->eventPublish($this->node);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.event.publish', $event->getType());
+  }
+
+  /**
+   * Test the eventUpdate() method.
+   *
+   * @covers ::eventUpdate
+   */
+  public function testEventUpdate(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.update');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event.update'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventCreate method.
+    $handler->eventUpdate($this->node);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.event.update', $event->getType());
+  }
+
+  /**
+   * Returns a mocked handler with dependencies injected.
+   *
+   * @return \Drupal\social_event\EdaHandler
+   *   The mocked handler instance.
+   */
+  protected function getMockedHandler(): EdaHandler {
+    return new EdaHandler(
+      // @phpstan-ignore-next-line
       $this->dispatcher,
       $this->uuid,
       $this->requestStack,
@@ -267,12 +410,6 @@ class EdaHandlerTest extends UnitTestCase {
       $this->account,
       $this->routeMatch
     );
-
-    // Create the event object.
-    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.create');
-
-    // Assert the result is an instance of CloudEvent.
-    $this->assertInstanceOf(CloudEvent::class, $event);
   }
 
 }
