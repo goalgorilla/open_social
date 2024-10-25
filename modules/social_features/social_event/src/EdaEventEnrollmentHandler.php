@@ -86,6 +86,15 @@ final class EdaEventEnrollmentHandler {
   }
 
   /**
+   * Cancels an event enrollment.
+   */
+  public function eventEnrollmentCancel(EventEnrollmentInterface $event_enrollment): void {
+    $event_type = 'com.getopensocial.event_enrollment.cancel';
+    $topic_name = 'com.getopensocial.event_enrollment.cancel';
+    $this->dispatch($topic_name, $event_type, $event_enrollment);
+  }
+
+  /**
    * Transforms a EventEnrollment into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -110,8 +119,15 @@ final class EdaEventEnrollmentHandler {
       ->get('field_request_or_invite_status')
       ->value;
 
-    if (!$enrollment_status_value) {
-      $enrollment_status_value = 1;
+    if (!$enrollment_status_value && $event_type == 'com.getopensocial.event_enrollment.create') {
+      $enrollment_status_value = 'approved';
+    }
+    elseif ($enrollment_status_value && $event_type == 'com.getopensocial.event_enrollment.create') {
+      $enrollment_status_value = $enrollment_status[$enrollment_status_value];
+    }
+
+    if ($event_type == 'com.getopensocial.event_enrollment.cancel') {
+      $enrollment_status_value = 'cancel';
     }
 
     // Get event.
@@ -150,7 +166,7 @@ final class EdaEventEnrollmentHandler {
           'id' => $event_enrollment->get('uuid')->value,
           'created' => DateTime::fromTimestamp($event_enrollment->getCreatedTime())->toString(),
           'updated' => DateTime::fromTimestamp($event_enrollment->getChangedTime())->toString(),
-          'status' => $enrollment_status[$enrollment_status_value],
+          'status' => $enrollment_status_value,
           'event' => new EventEntityData(
             id: $event->get('uuid')->value,
             created: DateTime::fromTimestamp($event->getCreatedTime())->toString(),
