@@ -9,14 +9,14 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
+use Drupal\social_eda\DispatcherInterface;
 use Drupal\social_eda\Types\Address;
-use Drupal\social_eda\Types\ContentVisibility;
 use Drupal\social_eda\Types\Application;
+use Drupal\social_eda\Types\ContentVisibility;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Entity;
 use Drupal\social_eda\Types\Href;
 use Drupal\social_eda\Types\User;
-use Drupal\social_eda_dispatcher\Dispatcher as SocialEdaDispatcher;
 use Drupal\social_event\Event\EventEntityData;
 use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -51,7 +51,7 @@ final class EdaHandler {
    * {@inheritDoc}
    */
   public function __construct(
-    private readonly ?SocialEdaDispatcher $dispatcher,
+    private readonly DispatcherInterface $dispatcher,
     private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
@@ -100,6 +100,15 @@ final class EdaHandler {
   public function eventUnpublish(NodeInterface $node): void {
     $event_type = 'com.getopensocial.cms.event.unpublish';
     $topic_name = 'com.getopensocial.cms.event.unpublish';
+    $this->dispatch($topic_name, $event_type, $node);
+  }
+
+  /**
+   * Update event handler.
+   */
+  public function eventUpdate(NodeInterface $node): void {
+    $event_type = 'com.getopensocial.cms.event.update';
+    $topic_name = 'com.getopensocial.cms.event.update';
     $this->dispatch($topic_name, $event_type, $node);
   }
 
@@ -199,7 +208,7 @@ final class EdaHandler {
    */
   private function dispatch(string $topic_name, string $event_type, NodeInterface $node): void {
     // Skip if required modules are not enabled.
-    if (!$this->moduleHandler->moduleExists('social_eda') || !$this->dispatcher) {
+    if (!$this->moduleHandler->moduleExists('social_eda')) {
       return;
     }
 
