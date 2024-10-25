@@ -86,6 +86,15 @@ final class EdaHandler {
   }
 
   /**
+   * Delete event handler.
+   */
+  public function eventDelete(NodeInterface $node): void {
+    $event_type = 'com.getopensocial.cms.event.delete';
+    $topic_name = 'com.getopensocial.cms.event.delete';
+    $this->dispatch($topic_name, $event_type, $node, 'delete');
+  }
+
+  /**
    * Publish event handler.
    */
   public function eventPublish(NodeInterface $node): void {
@@ -118,12 +127,20 @@ final class EdaHandler {
    * @throws \Drupal\Core\Entity\EntityMalformedException
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function fromEntity(NodeInterface $node, string $event_type): CloudEvent {
+  public function fromEntity(NodeInterface $node, string $event_type, string $op = ''): CloudEvent {
     // Determine actors.
     [$actor_application, $actor_user] = $this->determineActors();
 
     // List enrollment methods.
     $enrollment_methods = ['open', 'request', 'invite'];
+
+    // Determine status.
+    if ($op == 'delete') {
+      $status = 'removed';
+    }
+    else {
+      $status = $node->get('status')->value ? 'published' : 'unpublished';
+    }
 
     return new CloudEvent(
       id: $this->uuid->generate(),
@@ -134,7 +151,7 @@ final class EdaHandler {
           id: $node->get('uuid')->value,
           created: DateTime::fromTimestamp($node->getCreatedTime())->toString(),
           updated: DateTime::fromTimestamp($node->getChangedTime())->toString(),
-          status: $node->get('status')->value ? 'published' : 'unpublished',
+          status: $status,
           label: (string) $node->label(),
           visibility: ContentVisibility::fromEntity($node),
           group: !$node->get('groups')->isEmpty() ? Entity::fromEntity($node->get('groups')->getEntity()) : NULL,
@@ -178,6 +195,8 @@ final class EdaHandler {
 
     switch ($this->routeName) {
       case 'entity.node.edit_form':
+      case 'entity.node.delete_form':
+      case 'entity.node.delete_multiple_form':
       case 'system.admin_content':
         $user = $this->currentUser;
         break;
@@ -202,18 +221,20 @@ final class EdaHandler {
    *   The event type.
    * @param \Drupal\node\NodeInterface $node
    *   The node object.
+   * @param string $op
+   *   The operation.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  private function dispatch(string $topic_name, string $event_type, NodeInterface $node): void {
+  private function dispatch(string $topic_name, string $event_type, NodeInterface $node, string $op = ''): void {
     // Skip if required modules are not enabled.
     if (!$this->moduleHandler->moduleExists('social_eda')) {
       return;
     }
 
     // Build the event.
-    $event = $this->fromEntity($node, $event_type);
+    $event = $this->fromEntity($node, $event_type, $op);
 
     // Dispatch to message broker.
     $this->dispatcher->dispatch($topic_name, $event);

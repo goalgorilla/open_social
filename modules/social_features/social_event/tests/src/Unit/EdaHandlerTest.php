@@ -313,6 +313,30 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the eventDelete() method.
+   *
+   * @covers ::eventDelete
+   */
+  public function testEventDelete(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.delete', 'delete');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event.delete'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventDelete method.
+    $handler->eventDelete($this->node);
+  }
+
+  /**
    * Test the $this->eventUnpublish() method.
    *
    * @covers ::eventUnpublish
