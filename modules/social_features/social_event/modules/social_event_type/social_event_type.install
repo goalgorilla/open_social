@@ -64,3 +64,32 @@ function social_event_type_update_last_removed() : int {
 function social_event_type_update_130001(): void {
   user_role_grant_permissions('sitemanager', ['create terms in event_types']);
 }
+
+/**
+ * Hidden path from Event Type taxonomy.
+ */
+function social_event_type_update_130002(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
+  $form_display = $storage->load('taxonomy_term.event_types.default');
+
+  // If the entity-form-display isn't found, return early.
+  if (empty($form_display)) {
+    \Drupal::logger('social_event_type')->info('The entity-form-display from Event Type taxonomy is empty.');
+    return;
+  }
+
+  // Get fields from entity-form-display and check if path already be hidden.
+  $hidden = $form_display->get('hidden');
+  $content = $form_display->get('content');
+  if (in_array('path', array_keys($hidden))) {
+    \Drupal::logger('social_event_type')->info('The path field already is hidden on Profile Tag taxonomy.');
+    return;
+  }
+
+  // Manipulate path field to be hidden and save.
+  $hidden['path'] = TRUE;
+  unset($content['path']);
+  $form_display->set('hidden', $hidden)
+    ->set('content', $content)
+    ->save();
+}

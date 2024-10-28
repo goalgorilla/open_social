@@ -5,6 +5,8 @@
  * Install and update functions for the social_profile_organization_tag module.
  */
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * Implements hook_install().
  */
@@ -156,4 +158,45 @@ function social_profile_organization_tag_update_121002(): void {
 function social_profile_organization_tag_update_130001(): void {
   user_role_grant_permissions('contentmanager', ['create terms in profile_organization_tag']);
   user_role_grant_permissions('sitemanager', ['create terms in profile_organization_tag']);
+}
+
+/**
+ * Create entity-form-display or hide path field from Organization Tag taxonomy.
+ */
+function social_profile_organization_tag_update_130002(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
+  $form_display = $storage->load('taxonomy_term.profile_organization_tag.default');
+
+  // When entity-form-display isn't be created,
+  // it'll create from install folder.
+  if (empty($form_display)) {
+    // Get file from install folder and check if it exists.
+    $config_file = \Drupal::service('extension.list.module')->getPath('social_profile_organization_tag') . '/config/install/core.entity_form_display.taxonomy_term.profile_organization_tag.default.yml';
+    if (file_exists($config_file) === FALSE) {
+      \Drupal::logger('social_profile')->error('Configuration file for entity-form-display "profile_organization_tag" not found.');
+      return;
+    }
+
+    // Apply the configuration to create entity-form-display.
+    $view_config = Yaml::parseFile($config_file);
+    \Drupal::configFactory()->getEditable('core.entity_form_display.taxonomy_term.profile_organization_tag.default')
+      ->setData($view_config)
+      ->save();
+  }
+  else {
+    // Get fields from entity-form-display and check if path already be hidden.
+    $hidden = $form_display->get('hidden');
+    $content = $form_display->get('content');
+    if (in_array('path', array_keys($hidden))) {
+      \Drupal::logger('social_profile_organization_tag')->info('The path field already is hidden on Profile Organization Tag taxonomy.');
+      return;
+    }
+
+    // Manipulate path field to be hidden and save.
+    $hidden['path'] = TRUE;
+    unset($content['path']);
+    $form_display->set('hidden', $hidden)
+      ->set('content', $content)
+      ->save();
+  }
 }

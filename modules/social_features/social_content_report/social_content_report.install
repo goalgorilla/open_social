@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\taxonomy\Entity\Term;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -102,4 +103,45 @@ function social_content_report_update_130001(): void {
     'edit terms in report_reasons',
   ];
   user_role_grant_permissions('sitemanager', $permissions);
+}
+
+/**
+ * Create entity-form-display or hidden path field from Report Reasons taxonomy.
+ */
+function social_content_report_update_130002(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
+  $form_display = $storage->load('taxonomy_term.report_reasons.default');
+
+  // When entity-form-display isn't be created,
+  // it'll create from install folder.
+  if (empty($form_display)) {
+    // Get file from install folder and check if it exists.
+    $config_file = \Drupal::service('extension.list.module')->getPath('social_content_report') . '/config/install/core.entity_form_display.taxonomy_term.report_reasons.default.yml';
+    if (file_exists($config_file) === FALSE) {
+      \Drupal::logger('social_content_report')->error('Configuration file for entity-form-display "report_reasons" not found.');
+      return;
+    }
+
+    // Apply the configuration to create entity-form-display.
+    $view_config = Yaml::parseFile($config_file);
+    \Drupal::configFactory()->getEditable('core.entity_form_display.taxonomy_term.report_reasons.default')
+      ->setData($view_config)
+      ->save();
+  }
+  else {
+    // Get fields from entity-form-display and check if path already be hidden.
+    $hidden = $form_display->get('hidden');
+    $content = $form_display->get('content');
+    if (in_array('path', array_keys($hidden))) {
+      \Drupal::logger('social_content_report')->info('The path field already is hidden on Report Reasons taxonomy.');
+      return;
+    }
+
+    // Manipulate path field to be hidden and save.
+    $hidden['path'] = TRUE;
+    unset($content['path']);
+    $form_display->set('hidden', $hidden)
+      ->set('content', $content)
+      ->save();
+  }
 }

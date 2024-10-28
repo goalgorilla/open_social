@@ -252,3 +252,32 @@ function social_topic_update_130002(): string {
   // Output logged messages to a related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Hidden path from Topic Type taxonomy.
+ */
+function social_topic_update_130003(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
+  $form_display = $storage->load('taxonomy_term.topic_types.default');
+
+  // If the entity-form-display isn't found, return early.
+  if (empty($form_display)) {
+    \Drupal::logger('social_topic')->info('The entity-form-display from Topic Types taxonomy is empty.');
+    return;
+  }
+
+  // Get fields from entity-form-display and check if path already be hidden.
+  $hidden = $form_display->get('hidden');
+  $content = $form_display->get('content');
+  if (in_array('path', array_keys($hidden))) {
+    \Drupal::logger('social_topic')->info('The path field already is hidden on Topic Types taxonomy.');
+    return;
+  }
+
+  // Manipulate path field to be hidden and save.
+  $hidden['path'] = TRUE;
+  unset($content['path']);
+  $form_display->set('hidden', $hidden)
+    ->set('content', $content)
+    ->save();
+}
