@@ -2,14 +2,12 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.taxonomy_term.event_types.field_event_type_icon
-    - taxonomy.vocabulary.event_types
+    - taxonomy.vocabulary.expertise
   module:
-    - path
     - text
-id: taxonomy_term.event_types.default
+id: taxonomy_term.expertise.default
 targetEntityType: taxonomy_term
-bundle: event_types
+bundle: expertise
 mode: default
 content:
   description:
@@ -17,14 +15,15 @@ content:
     weight: 1
     region: content
     settings:
-      placeholder: ''
       rows: 5
+      placeholder: ''
     third_party_settings: {  }
-  field_event_type_icon:
-    type: options_select
-    weight: 3
+  langcode:
+    type: language_select
+    weight: 2
     region: content
-    settings: {  }
+    settings:
+      include_locked: true
     third_party_settings: {  }
   name:
     type: string_textfield
@@ -33,6 +32,13 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 3
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
 hidden:
   path: true
