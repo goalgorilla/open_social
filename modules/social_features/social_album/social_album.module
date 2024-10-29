@@ -66,8 +66,10 @@ function social_album_entity_view(array &$build, EntityInterface $entity, Entity
  */
 function social_album_social_user_account_header_create_links($context) {
   // We require a user for this link with the permission to create albums.
+  $status = \Drupal::config('social_album.settings')->get('status');
+
   if (empty($context['user']) || !($context['user'] instanceof AccountInterface)
-    || !$context['user']->hasPermission('create album content')) {
+    || !$context['user']->hasPermission('create album content') || !$status) {
     return [];
   }
   // Lets add the new create album button to the + dropdown.
