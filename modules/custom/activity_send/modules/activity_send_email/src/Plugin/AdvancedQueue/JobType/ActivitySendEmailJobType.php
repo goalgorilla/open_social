@@ -13,6 +13,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -92,6 +93,13 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
   protected ConfigLanguageManager $configLanguageManager;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -105,7 +113,8 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
     EntityTypeManagerInterface $entity_type_manager,
     QueueFactory $queue_factory,
     LanguageManager $language_manager,
-    ConfigLanguageManager $config_language_manager
+    ConfigLanguageManager $config_language_manager,
+    ModuleHandlerInterface $module_handler,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->frequencyManager = $frequency_manager;
@@ -116,6 +125,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
     $this->queueFactory = $queue_factory;
     $this->languageManager = $language_manager;
     $this->configLanguageManager = $config_language_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -133,7 +143,8 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
       $container->get('entity_type.manager'),
       $container->get('queue'),
       $container->get('language_manager'),
-      $container->get('social_core.config_language_manager')
+      $container->get('social_core.config_language_manager'),
+      $container->get('module_handler'),
     );
   }
 
@@ -306,8 +317,16 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
           if ($this->socialMailerSettings->get('do_not_send_emails_new_users') && (int) $target_account->getLastAccessedTime() === 0) {
             continue;
           }
-          // Only for users that have access to related content.
-          if ($parameters['activity']->getRelatedEntity()->access('view', $target_account)) {
+
+          // An array with specific message bundles
+          // for which the related entity access check will be skipped.
+          $message_template_bundles = [];
+
+          $this->moduleHandler->alter('activity_send_email_template_access', $message_template_bundles);
+
+          // Only for users that have access to related content,
+          // if it's not a specific message template.
+          if (in_array($parameters['message']->bundle(), $message_template_bundles) || $parameters['activity']->getRelatedEntity()->access('view', $target_account)) {
             // If the website is multilingual, get the body text in
             // users preferred language. This will happen when the queue item
             // is not processed in a batch and thus we can't be sure if all
