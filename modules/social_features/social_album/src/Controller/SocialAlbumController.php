@@ -326,8 +326,11 @@ class SocialAlbumController extends ControllerBase {
    *   The access result.
    */
   public function checkUserAlbumsAccess() {
-    $status = $this->config('social_album.settings')->get('status');
-    return AccessResult::allowedIf(!empty($status));
+    $config = $this->config('social_album.settings');
+    if ($config->get('status')) {
+      return AccessResult::allowed()->addCacheableDependency($config);
+    }
+    return AccessResult::forbidden()->addCacheableDependency($config);
   }
 
   /**
@@ -371,6 +374,11 @@ class SocialAlbumController extends ControllerBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function checkGroupAlbumAccess(GroupInterface $group): AccessResultInterface {
+    // Check first if album is enabled.
+    if (!$this->config('social_album.settings')->get('status')) {
+      return AccessResult::forbidden();
+    }
+
     $access = $this->checkGroupAccess($group);
 
     if ($access->isAllowed()) {
