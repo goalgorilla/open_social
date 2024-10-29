@@ -4,3 +4,8 @@ services:
     arguments: ['@config.factory']
     tags:
       - { name: config.factory.override, priority: 5 }
+  social_album.event_subscriber:
+    class: Drupal\social_album\EventSubscriber\AlbumAccessSubscriber
+    arguments: ['@request_stack', '@current_route_match', '@config.factory']
+    tags:
+      - { name: event_subscriber }
