@@ -86,6 +86,15 @@ final class EdaEventEnrollmentHandler {
   }
 
   /**
+   * Cancels an event enrollment.
+   */
+  public function eventEnrollmentCancel(EventEnrollmentInterface $event_enrollment): void {
+    $event_type = 'com.getopensocial.event_enrollment.cancel';
+    $topic_name = 'com.getopensocial.event_enrollment.cancel';
+    $this->dispatch($topic_name, $event_type, $event_enrollment);
+  }
+
+  /**
    * Transforms a EventEnrollment into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException

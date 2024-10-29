@@ -303,6 +303,16 @@ function social_event_entity_insert(EntityInterface $entity): void {
 }
 
 /**
+ * Implements hook_entity_delete().
+ */
+function social_event_entity_delete(EntityInterface $entity): void {
+  if ($entity instanceof EventEnrollment) {
+    \Drupal::service('social_event.eda_event_enrollment_handler')
+      ->eventEnrollmentCancel($entity);
+  }
+}
+
+/**
  * Implements hook_block_view_alter().
  *
  * Add a title to the exposed filter block on the events overview.
