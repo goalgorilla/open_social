@@ -20,3 +20,8 @@ services:
     - '@current_user'
     tags:
       - { name: hooks }
+
+    Drupal\social_post\Hooks\SocialPostFormHooks:
+      class: Drupal\social_post\Hooks\SocialPostFormHooks
+      autowire: true
+      social_post.form.hooks: '@Drupal\social_post\Hooks\SocialPostFormHooks'

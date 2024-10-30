@@ -50,8 +50,7 @@ services:
     tags:
       - { name: cache.context }
 
-  social_group.current_group:
+  Drupal\social_group\CurrentGroupService:
     class: Drupal\social_group\CurrentGroupService
-    arguments:
-      - '@entity_type.manager'
-      - '@group.group_route_context'
+    autowire: true
+    social_group.current_group: '@Drupal\social_group\CurrentGroupService'

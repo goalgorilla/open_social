@@ -25,8 +25,8 @@ class PostPhotoProfileBlock extends PostProfileBlock {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     EntityTypeManagerInterface $entity_type_manager,
     AccountProxyInterface $current_user,
     FormBuilderInterface $form_builder,

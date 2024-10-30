@@ -5,7 +5,6 @@ namespace Drupal\social_post\Hooks;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\hux\Attribute\Alter;
 use Drupal\social_post\Service\SocialPostHelperInterface;
 
@@ -59,16 +58,12 @@ final class SocialPostFormHooks {
    */
   #[Alter('form_post_form')]
   public function formPostFormAlter(array &$form, FormStateInterface $form_state): void {
-    $content = $this->socialPostHelper->buildCurrentUserImage();
     $form_object = $form_state->getFormObject();
+    assert($form_object instanceof ContentEntityForm, 'Expected $form_object to be an instance of ContentEntityForm.');
 
-    if ($form_object instanceof ContentEntityForm === FALSE) {
-      return;
-    }
-
-    if ($form_object->getEntity()->isNew()
-      && $content !== NULL) {
-      $form['current_user_image'] = $content;
+    if ($this->socialPostHelper->buildCurrentUserImage() !== NULL
+      && $form_object->getEntity()->isNew()) {
+      $form['current_user_image'] = $this->socialPostHelper->buildCurrentUserImage();
     }
 
     // Reset title display.
@@ -77,42 +72,24 @@ final class SocialPostFormHooks {
     // Set submit button caption to Post instead of Save.
     $form['actions']['submit']['#value'] = t('Post', [], ['context' => 'Post button']);
 
-    if (empty($form['field_post']) || empty($form['field_post']['widget'][0])) {
-      return;
-    }
-
     // Default value.
-    $form = $this->setFormTitleAndPlaceholder($form, t('Say something to the Community'));
+    $titleAndPlaceholderValue = t('Say something to the Community');
 
     if ($form_state->get('currentGroup') !== NULL) {
-      $form = $this->setFormTitleAndPlaceholder($form, t('Say something to the group'));
+      $titleAndPlaceholderValue = t('Say something to the group');
     }
 
-    // $user_profile = $this->routeMatch->getParameter('user');
     $user_profile = $form_state->get('recipientUser');
     if ($user_profile !== NULL
       && $user_profile->id() !== $this->currentUser->id()) {
-      $form = $this->setFormTitleAndPlaceholder($form, t('Leave a message to @name', [
+      $titleAndPlaceholderValue = t('Leave a message to @name', [
         '@name' => $user_profile->getDisplayName(),
-      ]));
+      ]);
     }
-  }
 
-  /**
-   * Set form title and placeholder value.
-   *
-   * @param array $form
-   *   The drupal form.
-   * @param \Drupal\Core\StringTranslation\TranslatableMarkup $displayedValue
-   *   The translatable markup value to display.
-   *
-   * @return array
-   *   The updated form title and placeholder.
-   */
-  private function setFormTitleAndPlaceholder(array $form, TranslatableMarkup $displayedValue): array {
-    $form['field_post']['widget'][0]['#title'] = $displayedValue;
-    $form['field_post']['widget'][0]['#placeholder'] = $displayedValue;
-    return $form;
+    // Set the title and placeholder value.
+    $form['field_post']['widget'][0]['#title'] = $titleAndPlaceholderValue;
+    $form['field_post']['widget'][0]['#placeholder'] = $titleAndPlaceholderValue;
   }
 
 }

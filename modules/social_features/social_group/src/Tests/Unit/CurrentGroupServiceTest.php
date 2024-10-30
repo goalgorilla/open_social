@@ -2,10 +2,8 @@
 
 namespace Drupal\Tests\social_group\Unit;
 
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Context\ContextInterface;
-use Drupal\Core\Plugin\Context\ContextProviderInterface;
+use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\CurrentGroupService;
@@ -20,142 +18,74 @@ use PHPUnit\Framework\MockObject\MockObject;
 class CurrentGroupServiceTest extends UnitTestCase {
 
   /**
-   * The mocked EntityTypeManagerInterface.
+   * The mocked context repository interface.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
    */
-  private EntityTypeManagerInterface|MockObject $entityTypeManager;
-
-  /**
-   * The mocked ContextProviderInterface.
-   *
-   * @var \Drupal\Core\Plugin\Context\ContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-   */
-  private ContextProviderInterface|MockObject $groupRouteContext;
+  protected ContextRepositoryInterface|MockObject $contextRepository;
 
   /**
    * The service under test.
    *
    * @var \Drupal\social_group\CurrentGroupService
    */
-  private CurrentGroupService $currentGroupService;
+  protected CurrentGroupService $currentGroupService;
 
   /**
-   * Set up the test case.
+   * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->contextRepository = $this->createMock(ContextRepositoryInterface::class);
 
-    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-    $this->groupRouteContext = $this->createMock(ContextProviderInterface::class);
-
-    $this->currentGroupService = new CurrentGroupService(
-      $this->entityTypeManager,
-      $this->groupRouteContext
-    );
+    $this->currentGroupService = new CurrentGroupService($this->contextRepository);
   }
 
   /**
-   * Helper function to create a mock context.
-   *
-   * @param mixed $value
-   *   The value returned by typeDataInterface.
-   *
-   * @return \Drupal\Core\Plugin\Context\ContextInterface
-   *   The updated mock context.
+   * Test that fromRunTimeContexts() returns a Group when a group is present.
    */
-  private function createContextWithValue(mixed $value): ContextInterface {
-    $typeDataInterface = $this->createMock(TypedDataInterface::class);
-    $typeDataInterface->expects($this->once())
+  public function testFromRunTimeContextsWithGroup(): void {
+    $group = $this->createMock(GroupInterface::class);
+    $this->mockContext($group);
+
+    // Call the method and assert the group is returned.
+    $result = $this->currentGroupService->fromRunTimeContexts();
+    $this->assertSame($group, $result, 'Group context should return a GroupInterface instance.');
+  }
+
+  /**
+   * Test that fromRunTimeContexts() returns NULL when group is not present.
+   */
+  public function testFromRunTimeContextsWithoutGroup(): void {
+    $this->mockContext(NULL);
+
+    // Call the method and assert NULL is returned.
+    $result = $this->currentGroupService->fromRunTimeContexts();
+    $this->assertNull($result, 'Group context should return NULL.');
+  }
+
+  /**
+   * Mock the context.
+   *
+   * @param \PHPUnit\Framework\MockObject\MockObject|\Drupal\group\Entity\GroupInterface|null $group
+   *   The mocked group or NULL.
+   */
+  private function mockContext(MockObject|GroupInterface|NULL $group): void {
+    $typedData = $this->createMock(TypedDataInterface::class);
+    $typedData->expects($this->once())
       ->method('getValue')
-      ->willReturn($value);
+      ->willReturn($group);
 
     $context = $this->createMock(ContextInterface::class);
     $context->expects($this->once())
       ->method('getContextData')
-      ->willReturn($typeDataInterface);
+      ->willReturn($typedData);
 
-    return $context;
-  }
-
-  /**
-   * Test that fromRunTimeContexts() returns NULL when no group context is set.
-   */
-  public function testFromRunTimeContextsNoGroupContext(): void {
-    $this->groupRouteContext
+    $this->contextRepository
       ->expects($this->once())
       ->method('getRuntimeContexts')
-      ->willReturn([]);
-
-    $group = $this->currentGroupService->fromRunTimeContexts();
-
-    $this->assertNull($group, 'No group context should return NULL.');
-  }
-
-  /**
-   * Test that fromRunTimeContexts() returns a GroupInterface when available.
-   */
-  public function testFromRunTimeContextsWithGroup(): void {
-    $group = $this->createMock(GroupInterface::class);
-    $context = $this->createContextWithValue($group);
-
-    $this->groupRouteContext
-      ->expects($this->once())
-      ->method('getRuntimeContexts')
-      ->willReturn(['group' => $context]);
-
-    $result = $this->currentGroupService->fromRunTimeContexts();
-
-    $this->assertSame($group, $result, 'Group should be returned when found in context.');
-  }
-
-  /**
-   * Test that fromRunTimeContexts() loads a group by ID.
-   */
-  public function testFromRunTimeContextsWithGroupId(): void {
-    $groupId = 1;
-    $group = $this->createMock(GroupInterface::class);
-
-    $context = $this->createContextWithValue($groupId);
-
-    $this->groupRouteContext
-      ->expects($this->once())
-      ->method('getRuntimeContexts')
-      ->willReturn(['group' => $context]);
-
-    $storage = $this->createMock(EntityStorageInterface::class);
-    $this->entityTypeManager
-      ->expects($this->once())
-      ->method('getStorage')
-      ->with('group')
-      ->willReturn($storage);
-
-    $storage
-      ->expects($this->once())
-      ->method('load')
-      ->with($groupId)
-      ->willReturn($group);
-
-    $result = $this->currentGroupService->fromRunTimeContexts();
-
-    $this->assertSame($group, $result, 'Group should be loaded by ID and returned.');
-  }
-
-  /**
-   * Test that fromRunTimeContexts() returns NULL when no valid group found.
-   */
-  public function testFromRunTimeContextsInvalidGroup(): void {
-    $invalidValue = 'invalid';
-    $context = $this->createContextWithValue($invalidValue);
-
-    $this->groupRouteContext
-      ->expects($this->once())
-      ->method('getRuntimeContexts')
-      ->willReturn(['group' => $context]);
-
-    $result = $this->currentGroupService->fromRunTimeContexts();
-
-    $this->assertNull($result, 'Invalid group value should return NULL.');
+      ->with(['@group.group_route_context:group'])
+      ->willReturn(['@group.group_route_context:group' => $context]);
   }
 
 }
