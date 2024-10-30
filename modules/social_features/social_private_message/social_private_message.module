@@ -706,3 +706,17 @@ function social_private_message_private_message_notify_exclude(PrivateMessageInt
     }
   }
 }
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ *
+ * @see hook_entity_view()
+ */
+function social_private_message_user_view(array &$build): void {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if ($route_name !== 'social_user.stream' && empty($build['block_user'])) {
+    return;
+  }
+
+  unset($build['block_user']);
+}
