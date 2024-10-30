@@ -214,7 +214,7 @@ class FilterBlock extends ModeBlock {
   /**
    * Handles switching the available terms based on the selected vocabulary.
    */
-  public static function updateTagsOptions($form, FormStateInterface $form_state) {
+  public static function updateTagsOptions(array $form, FormStateInterface $form_state) {
 
     // Check if there is triggered parent of element.
     if ($triggered = $form_state->getTriggeringElement()) {

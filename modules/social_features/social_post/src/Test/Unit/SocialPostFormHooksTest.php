@@ -50,7 +50,6 @@ class SocialPostFormHooksTest extends UnitTestCase {
    */
   protected SocialPostFormHooks $socialPostFormHooks;
 
-
   /**
    * The drupal form.
    *
@@ -59,7 +58,7 @@ class SocialPostFormHooksTest extends UnitTestCase {
   protected array $form = [];
 
   /**
-   * Setup the test case.
+   * Set up the test case.
    */
   protected function setUp(): void {
     parent::setUp();
@@ -73,7 +72,6 @@ class SocialPostFormHooksTest extends UnitTestCase {
       $this->currentUser
     );
 
-    // Create a mock TranslationInterface.
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translate')
       ->willReturnCallback(function ($string, array $args = [], array $options = []) {
@@ -81,7 +79,6 @@ class SocialPostFormHooksTest extends UnitTestCase {
         return new TranslatableMarkup($string, $args, $options);
       });
 
-    // Set up the container with the string_translation service.
     $container = new ContainerBuilder();
     $container->set('string_translation', $translation);
     \Drupal::setContainer($container);
@@ -101,16 +98,11 @@ class SocialPostFormHooksTest extends UnitTestCase {
 
     $this->socialPostFormHooks->formPostFormAlter($this->form, $this->formState);
 
-    // Check if the user image is added to the form.
     $this->assertEquals($currentUserImage, $this->form['current_user_image']);
-
-    // Check if submit button caption is set to "Post".
     $this->assertEquals(
       new TranslatableMarkup('Post', [], ['context' => 'Post button']),
       $this->form['actions']['submit']['#value']
     );
-
-    // Check if the title is set correctly.
     $this->assertEquals(
       new TranslatableMarkup('Say something to the Community'),
       $this->form['field_post']['widget'][0]['#title']
@@ -133,16 +125,11 @@ class SocialPostFormHooksTest extends UnitTestCase {
 
     $this->socialPostFormHooks->formPostFormAlter($this->form, $this->formState);
 
-    // Assert that the current user image is set.
     $this->assertEquals($currentUserImage, $this->form['current_user_image']);
-
-    // Assert that the submit button value is set to "Post".
     $this->assertEquals(
       new TranslatableMarkup('Post', [], ['context' => 'Post button']),
       $this->form['actions']['submit']['#value']
     );
-
-    // Assert the title placeholder value.
     $this->assertEquals(
       new TranslatableMarkup('Say something to the group'),
       $this->form['field_post']['widget'][0]['#title']
@@ -180,19 +167,13 @@ class SocialPostFormHooksTest extends UnitTestCase {
       ->method('id')
       ->willReturn(1);
 
-    // Call the form alter hook.
     $this->socialPostFormHooks->formPostFormAlter($this->form, $this->formState);
 
-    // Assert that the current user image is set.
     $this->assertEquals($currentUserImage, $this->form['current_user_image']);
-
-    // Assert that the submit button value is set to "Post".
     $this->assertEquals(
       new TranslatableMarkup('Post', [], ['context' => 'Post button']),
       $this->form['actions']['submit']['#value']
     );
-
-    // Assert title and placeholder value.
     $this->assertEquals(
       new TranslatableMarkup('Leave a message to @name', ['@name' => 'John Doe']),
       $this->form['field_post']['widget'][0]['#title']
@@ -210,9 +191,8 @@ class SocialPostFormHooksTest extends UnitTestCase {
    *   The mocked user image.
    */
   private function mockUserImage(): array {
-    // Mock the SocialPostHelper to return user image.
     $currentUserImage = ['#markup' => 'User Image'];
-    $this->socialPostHelper->expects($this->once())
+    $this->socialPostHelper
       ->method('buildCurrentUserImage')
       ->willReturn($currentUserImage);
     return $currentUserImage;
@@ -221,7 +201,7 @@ class SocialPostFormHooksTest extends UnitTestCase {
   /**
    * Mock content entity form.
    */
-  public function mockContentEntityForm(): void {
+  private function mockContentEntityForm(): void {
     $contentEntityForm = $this->createMock(ContentEntityForm::class);
     $entity = $this->createMock(ContentEntityInterface::class);
     $entity->expects($this->once())

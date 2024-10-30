@@ -2,8 +2,7 @@
 
 namespace Drupal\social_group;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Plugin\Context\ContextProviderInterface;
+use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
 use Drupal\group\Entity\GroupInterface;
 
 /**
@@ -14,33 +13,22 @@ use Drupal\group\Entity\GroupInterface;
 class CurrentGroupService {
 
   /**
-   * The entity type manager.
+   * The context repository interface.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface
    */
-  private EntityTypeManagerInterface $entityTypeManager;
-
-  /**
-   * The group route context.
-   *
-   * @var \Drupal\Core\Plugin\Context\ContextProviderInterface
-   */
-  private ContextProviderInterface $groupRouteContext;
+  private ContextRepositoryInterface $contextRepository;
 
   /**
    * Constructor.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Plugin\Context\ContextProviderInterface $group_route_context
-   *   The group route context.
+   * @param \Drupal\Core\Plugin\Context\ContextRepositoryInterface $context_repository
+   *   The context repository.
    */
   public function __construct(
-        EntityTypeManagerInterface $entity_type_manager,
-        ContextProviderInterface $group_route_context,
+      ContextRepositoryInterface $context_repository,
     ) {
-    $this->entityTypeManager = $entity_type_manager;
-    $this->groupRouteContext = $group_route_context;
+    $this->contextRepository = $context_repository;
   }
 
   /**
@@ -48,29 +36,17 @@ class CurrentGroupService {
    *
    * @return \Drupal\group\Entity\GroupInterface|null
    *   The current group or NULL.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function fromRunTimeContexts(): ?GroupInterface {
-    $runtime_context = $this->groupRouteContext->getRuntimeContexts([]);
-    if (isset($runtime_context['group']) === FALSE) {
+    $group_runtime_context = $this->contextRepository->getRuntimeContexts(['@group.group_route_context:group']);
+
+    $group = $group_runtime_context['@group.group_route_context:group']->getContextData()->getValue();
+    if ($group === NULL) {
       return NULL;
     }
 
-    $group = $runtime_context['group']->getContextData()->getValue();
-    if ($group instanceof GroupInterface) {
-      return $group;
-    }
-
-    if (is_int($group) === TRUE) {
-      /** @var \Drupal\group\Entity\GroupInterface $loadedGroup */
-      $loadedGroup = $this->entityTypeManager
-        ->getStorage('group')->load($group);
-      return $loadedGroup;
-    }
-
-    return NULL;
+    assert($group instanceof GroupInterface, "The group context resolver returned a context value that is not a GroupInterface instance which violates the services contract.");
+    return $group;
   }
 
 }
