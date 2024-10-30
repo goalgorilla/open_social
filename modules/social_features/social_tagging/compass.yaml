@@ -1,4 +1,3 @@
-configVersion: 1
 name: Social Tagging
 id: null
 description: |-
@@ -8,13 +7,20 @@ description: |-
   Tagged for rework because this currently uses alter hooks rather than field
   config. This also means that it reaches into other features rather than
   providing a system for other features to adopt and build upon.
+configVersion: 1
 typeId: CAPABILITY
 ownerId: null
 fields:
-  tier: null
   lifecycle: Active
-links: []
+  tier: 4
+links:
+  - name: null
+    type: REPOSITORY
+    url: 'https://github.com/goalgorilla/open_social'
+  - name: null
+    type: PROJECT
+    url: 'https://getopensocial.atlassian.net/browse/PROD'
 relationships: {}
-customFields: []
 labels:
   - 'architect:rework'
+customFields: null
