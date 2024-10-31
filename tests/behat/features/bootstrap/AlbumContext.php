@@ -44,7 +44,7 @@ class AlbumContext extends RawMinkContext {
    *
    * @Then /^(?:|I )should see the album I just created$/
    */
-  public function thenIShouldSeeTheAlbumIJustCreated() : void {
+  public function thenIShouldSeeTheAlbumIJustCreated(): void {
     $fields = end($this->created);
 
     $this->minkContext->assertPageContainsText("Album {$fields['title']} is successfully created. Now you can add images to this album.");
@@ -111,4 +111,46 @@ class AlbumContext extends RawMinkContext {
 
     $this->created[] = $album;
   }
+
+  /**
+   * Get the album from a title.
+   *
+   * @param string $album_title
+   *   The title of the album.
+   *
+   * @return int|null
+   *   The integer ID of the album or NULL if no album could be found.
+   */
+  private function getAlbumIdFromTitle(string $album_title): ?int {
+    return $this->getNodeIdFromTitle("album", $album_title);
+  }
+
+  /**
+   * View a specific album.
+   *
+   * @When I am viewing the album :album
+   * @When am viewing the album :album
+   */
+  public function viewingAlbum(string $album): void {
+    $album_id = $this->getAlbumIdFromTitle($album);
+    if ($album_id === NULL) {
+      throw new \Exception("Album '${album}' does not exist.");
+    }
+    $this->visitPath("/node/${album_id}");
+  }
+
+  /**
+   * Edit a specific album.
+   *
+   * @When I am editing the album :album
+   * @When am editing the album :album
+   */
+  public function editingAlbum(string $album): void {
+    $album_id = $this->getAlbumIdFromTitle($album);
+    if ($album_id === NULL) {
+      throw new \Exception("Album '${album}' does not exist.");
+    }
+    $this->visitPath("/node/${album_id}/edit");
+  }
+
 }
