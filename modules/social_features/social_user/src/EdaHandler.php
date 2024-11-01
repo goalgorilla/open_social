@@ -15,6 +15,7 @@ use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Href;
 use Drupal\social_eda\Types\User;
 use Drupal\social_user\Event\UserEventData;
+use Drupal\social_user\Event\UserEventDataLite;
 use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -92,6 +93,15 @@ final class EdaHandler {
   }
 
   /**
+   * User login handler.
+   */
+  public function userLogin(UserInterface $user): void {
+    $event_type = 'com.getopensocial.cms.user.login';
+    $topic_name = 'com.getopensocial.cms.user.login';
+    $this->dispatch($topic_name, $event_type, $user);
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    */
   public function fromEntity(UserInterface $user, string $event_type): CloudEvent {
@@ -119,12 +129,23 @@ final class EdaHandler {
       $organization = $profile->get('field_profile_organization')->value;
     }
 
-    return new CloudEvent(
-      id: $this->uuid->generate(),
-      source: $this->source,
-      type: $event_type,
-      data: [
-        'user' => new UserEventData(
+    switch ($event_type) {
+      case 'com.getopensocial.cms.user.login':
+        $user_data = new UserEventDataLite(
+          id: $user->get('uuid')->value,
+          created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
+          updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
+          status: $user->isActive() ? 'active' : 'blocked',
+          displayName: $user->getDisplayName(),
+          roles: array_values($user->getRoles()),
+          timezone: $user->getTimeZone(),
+          language: $user->getPreferredLangcode(),
+          href: Href::fromEntity($user),
+        );
+        break;
+
+      default:
+        $user_data = new UserEventData(
           id: $user->get('uuid')->value,
           created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
           updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
@@ -143,7 +164,15 @@ final class EdaHandler {
           function: $function ?? '',
           organization: $organization ?? '',
           href: Href::fromEntity($user),
-        ),
+        );
+    }
+
+    return new CloudEvent(
+      id: $this->uuid->generate(),
+      source: $this->source,
+      type: $event_type,
+      data: [
+        'user' => $user_data,
         'actor' => [
           'application' => $actor_application ? Application::fromId($actor_application) : NULL,
           'user' => $actor_user ? User::fromEntity($actor_user) : NULL,

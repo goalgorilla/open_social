@@ -793,6 +793,15 @@ function social_user_profile_update(EntityInterface $entity): void {
 }
 
 /**
+ * Implements hook_user_login().
+ *
+ * When a user logs in we should trigger the corresponding EDA event.
+ */
+function social_user_user_login(UserInterface $user): void {
+  \Drupal::service('social_user.eda_handler')->userLogin($user);
+}
+
+/**
  * Implements hook_views_data_alter().
  */
 function social_user_views_data_alter(array &$data): void {
