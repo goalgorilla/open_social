@@ -275,6 +275,33 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the profileUpdate() method.
+   *
+   * @covers ::profileUpdate
+   */
+  public function testProfileUpdate(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.profile.update');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.profile.update'),
+        $this->equalTo($event)
+      );
+
+    // Call the profileUpdate method.
+    $handler->profileUpdate($this->user);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.profile.update', $event->getType());
+  }
+
+  /**
    * Returns a mocked handler with dependencies injected.
    *
    * @return \Drupal\social_user\EdaHandler
