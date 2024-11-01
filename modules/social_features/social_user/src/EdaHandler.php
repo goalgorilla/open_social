@@ -83,6 +83,15 @@ final class EdaHandler {
   }
 
   /**
+   * Profile update handler.
+   */
+  public function profileUpdate(UserInterface $user): void {
+    $event_type = 'com.getopensocial.cms.profile.update';
+    $topic_name = 'com.getopensocial.cms.profile.update';
+    $this->dispatch($topic_name, $event_type, $user);
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    */
   public function fromEntity(UserInterface $user, string $event_type): CloudEvent {

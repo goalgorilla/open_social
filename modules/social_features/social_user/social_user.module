@@ -766,6 +766,33 @@ function social_user_user_update(EntityInterface $entity): void {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_update().
+ *
+ * When a profile is updated we should trigger the corresponding EDA event.
+ */
+function social_user_profile_update(EntityInterface $entity): void {
+  if ($entity instanceof ProfileInterface && $entity->get('uid')->entity instanceof UserInterface) {
+
+    $has_changes = FALSE;
+    foreach ($entity->getFields() as $field_name => $field) {
+      if ($field_name == 'profile_name' || str_starts_with('field_', $field_name)) {
+        $new_value = $entity->get($field_name)->value;
+        $original_value = $entity->original->get($field_name)->value;
+
+        if ($new_value != $original_value) {
+          $has_changes = TRUE;
+        }
+      }
+    }
+
+    // Trigger the EDA event only if profile data is changed.
+    if ($has_changes) {
+      \Drupal::service('social_user.eda_handler')->profileUpdate($entity->get('uid')->entity);
+    }
+  }
+}
+
+/**
  * Implements hook_views_data_alter().
  */
 function social_user_views_data_alter(array &$data): void {
