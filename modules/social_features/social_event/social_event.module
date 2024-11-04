@@ -307,6 +307,21 @@ function social_event_entity_insert(EntityInterface $entity): void {
  */
 function social_event_entity_delete(EntityInterface $entity): void {
   if ($entity instanceof EventEnrollment) {
+    // Invite or user requests statuses.
+    $invite_or_request_statuses = [
+      EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
+      EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
+    ];
+
+    if (!$entity->get('field_request_or_invite_status')->isEmpty() &&
+      in_array(
+        (int) $entity->get('field_request_or_invite_status')->getString(),
+        $invite_or_request_statuses
+      )
+    ) {
+      return;
+    }
+
     \Drupal::service('social_event.eda_event_enrollment_handler')
       ->eventEnrollmentCancel($entity);
   }
