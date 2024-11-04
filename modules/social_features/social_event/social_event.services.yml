@@ -24,3 +24,8 @@ services:
     class: Drupal\social_event\EdaHandler
     tags:
       - { name: social.eda.handler }
+  social_event.eda_event_enrollment_handler:
+    autowire: true
+    class: Drupal\social_event\EdaEventEnrollmentHandler
+    tags:
+      - { name: social.eda.handler }
