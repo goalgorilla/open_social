@@ -102,6 +102,15 @@ final class EdaHandler {
   }
 
   /**
+   * User logout handler.
+   */
+  public function userLogout(UserInterface $user): void {
+    $event_type = 'com.getopensocial.cms.user.logout';
+    $topic_name = 'com.getopensocial.cms.user.logout';
+    $this->dispatch($topic_name, $event_type, $user);
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    */
   public function fromEntity(UserInterface $user, string $event_type): CloudEvent {

@@ -802,6 +802,17 @@ function social_user_user_login(UserInterface $user): void {
 }
 
 /**
+ * Implements hook_user_logout().
+ *
+ * When a user logs out we should trigger the corresponding EDA event.
+ */
+function social_user_user_logout(AccountInterface $account): void {
+  if ($user = User::load($account->id())) {
+    \Drupal::service('social_user.eda_handler')->userLogout($user);
+  }
+}
+
+/**
  * Implements hook_views_data_alter().
  */
 function social_user_views_data_alter(array &$data): void {
