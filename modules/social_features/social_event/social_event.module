@@ -30,6 +30,7 @@ use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Controller\SocialEventController;
+use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\SocialEventDateAllDay;
@@ -267,6 +268,37 @@ function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $q
         'operator' => '=',
       ];
     }
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function social_event_entity_insert(EntityInterface $entity): void {
+  if ($entity instanceof EventEnrollment) {
+
+    // Invite or user requests statuses.
+    $invite_or_request_statuses = [
+      EventEnrollmentInterface::REQUEST_PENDING,
+      EventEnrollmentInterface::REQUEST_APPROVED,
+      EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
+      EventEnrollmentInterface::INVITE_INVITED,
+      EventEnrollmentInterface::INVITE_PENDING_REPLY,
+      EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED,
+      EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
+    ];
+
+    if (!$entity->get('field_request_or_invite_status')->isEmpty() &&
+      in_array(
+        (int) $entity->get('field_request_or_invite_status')->getString(),
+        $invite_or_request_statuses
+      )
+    ) {
+      return;
+    }
+
+    \Drupal::service('social_event.eda_event_enrollment_handler')
+      ->eventEnrollmentCreate($entity);
   }
 }
 
