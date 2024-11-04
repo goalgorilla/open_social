@@ -404,6 +404,141 @@ channels:
                                   type: string
                                   format: uri
                                   description: Canonical URL of the actor user.
+  userLogout:
+    address: com.getopensocial.cms.user.logout
+    messages:
+      userLogout:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: The UUID of the user.
+                    created:
+                      type: string
+                      format: date-time
+                      description: The creation time of the user.
+                    updated:
+                      type: string
+                      format: date-time
+                      description: The last updated time of the user.
+                    status:
+                      type: string
+                      description: The status of the user.
+                      enum:
+                        - active
+                        - blocked
+                    displayName:
+                      type: string
+                      description: The display name of the user.
+                    firstName:
+                      type: string
+                      nullable: true
+                      description: The first name of the user.
+                    lastName:
+                      type: string
+                      nullable: true
+                      description: The last name of the user.
+                    email:
+                      type: string
+                      format: email
+                      description: The email address of the user.
+                    roles:
+                      type: array
+                      items:
+                        type: string
+                      description: Roles assigned to the user.
+                    timezone:
+                      type: string
+                      description: The timezone of the user.
+                    language:
+                      type: string
+                      description: The preferred language of the user.
+                    address:
+                      type: object
+                      nullable: true
+                      properties:
+                        label:
+                          type: string
+                          description: The label of the user address.
+                        countryCode:
+                          type: string
+                          description: The country code of the user address.
+                        administrativeArea:
+                          type: string
+                          description: The administrative area of the user address.
+                        locality:
+                          type: string
+                          description: The locality of the user address.
+                        dependentLocality:
+                          type: string
+                          description: The dependent locality of the user address.
+                        postalCode:
+                          type: string
+                          description: The postal code of the user address.
+                        sortingCode:
+                          type: string
+                          description: The sorting code of the user address.
+                        addressLine1:
+                          type: string
+                          description: The first address line of the user address.
+                        addressLine2:
+                          type: string
+                          description: The second address line of the user address.
+                    phone:
+                      type: string
+                      nullable: true
+                      description: The phone number of the user.
+                    function:
+                      type: string
+                      nullable: true
+                      description: The job function of the user.
+                    organization:
+                      type: string
+                      nullable: true
+                      description: The organization of the user.
+                    href:
+                      type: object
+                      properties:
+                        canonical:
+                          type: string
+                          format: uri
+                          description: Canonical URL of the user.
+                    actor:
+                      type: object
+                      properties:
+                        application:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the application.
+                            name:
+                              type: string
+                              description: The name of the application.
+                        user:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the actor user.
+                            displayName:
+                              type: string
+                              description: The display name of the actor user.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the actor user.
 
 operations:
   onUserCreate:
@@ -418,3 +553,7 @@ operations:
     action: 'receive'
     channel:
       $ref: '#/channels/userLogin'
+  onUserLogout:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/userLogout'

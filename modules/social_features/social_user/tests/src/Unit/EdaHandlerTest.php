@@ -329,6 +329,33 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the userLogout() method.
+   *
+   * @covers ::userLogout
+   */
+  public function testUserLogout(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.logout');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.user.logout'),
+        $this->equalTo($event)
+      );
+
+    // Call the userLogout method.
+    $handler->userLogout($this->user);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.user.logout', $event->getType());
+  }
+
+  /**
    * Returns a mocked handler with dependencies injected.
    *
    * @return \Drupal\social_user\EdaHandler
