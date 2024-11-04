@@ -42,3 +42,12 @@ services:
   social_core.members_page_helper:
     class: Drupal\social_core\Service\MembersPageHelperService
     arguments: [ '@user.data', '@current_user' ]
+
+  logger.channel.social_core:
+    parent: logger.channel_base
+    arguments: ['social_core']
+
+  plugin.manager.social_entity_query_alter:
+    class: Drupal\social_core\SocialEntityQueryAlterPluginManager
+    parent: default_plugin_manager
+    arguments: ['@logger.factory']
