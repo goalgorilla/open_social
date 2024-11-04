@@ -35,7 +35,7 @@ function social_group_views_data_alter(array &$data) {
   ];
 
   // Field with the count of group members.
-  $data['group_relationship']['group_membership_count'] = [
+  $data['group_content']['group_membership_count'] = [
     'title' => t('Membership count'),
     'field' => [
       'title' => t('Membership count'),

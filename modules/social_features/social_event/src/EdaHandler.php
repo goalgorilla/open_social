@@ -51,7 +51,7 @@ final class EdaHandler {
    * {@inheritDoc}
    */
   public function __construct(
-    private readonly ?DispatcherInterface $dispatcher,
+    private readonly DispatcherInterface $dispatcher,
     private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
@@ -193,12 +193,17 @@ final class EdaHandler {
     $application = NULL;
     $user = NULL;
 
-    if ($this->currentUser instanceof UserInterface) {
-      $user = $this->currentUser;
-    }
+    switch ($this->routeName) {
+      case 'entity.node.edit_form':
+      case 'entity.node.delete_form':
+      case 'entity.node.delete_multiple_form':
+      case 'system.admin_content':
+        $user = $this->currentUser;
+        break;
 
-    if ($this->routeName == 'entity.ultimate_cron_job.run') {
-      $application = 'cron';
+      case 'entity.ultimate_cron_job.run':
+        $application = 'cron';
+        break;
     }
 
     return [
@@ -224,7 +229,7 @@ final class EdaHandler {
    */
   private function dispatch(string $topic_name, string $event_type, NodeInterface $node, string $op = ''): void {
     // Skip if required modules are not enabled.
-    if (!$this->moduleHandler->moduleExists('social_eda') || !$this->dispatcher) {
+    if (!$this->moduleHandler->moduleExists('social_eda')) {
       return;
     }
 
