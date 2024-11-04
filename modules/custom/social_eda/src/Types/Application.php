@@ -40,7 +40,7 @@ class Application {
         'name' => 'Cron',
       ],
       'graphql' => [
-        'uuid' => '123e4567-e89b-12d3-a456-426614174001',
+        'uuid' => 'fd4b26f6-ec5e-47c2-8bf1-d8db7fc9d094',
         'name' => 'GraphQL',
       ],
     ];

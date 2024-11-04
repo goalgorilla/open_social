@@ -1,4 +1,3 @@
-configVersion: 1
 name: Social Book
 id: null
 description: |-
@@ -12,13 +11,20 @@ description: |-
   issues when trying to install all modules at install time. Future versions
   of that module move it to a recipe which requires us to ship our own book
   type or include the capability in our generic page content type.
+configVersion: 1
 typeId: CAPABILITY
 ownerId: null
 fields:
-  tier: null
   lifecycle: Active
-links: []
+  tier: 4
+links:
+  - name: null
+    type: REPOSITORY
+    url: 'https://github.com/goalgorilla/open_social'
+  - name: null
+    type: PROJECT
+    url: 'https://getopensocial.atlassian.net/browse/PROD'
 relationships: {}
-customFields: []
 labels:
   - 'architect:rework'
+customFields: null

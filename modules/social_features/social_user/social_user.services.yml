@@ -17,3 +17,8 @@ services:
     arguments: ['@current_route_match', '@current_user', '@config.factory']
     tags:
       - { name: event_subscriber }
+  social_user.eda_handler:
+    autowire: true
+    class: Drupal\social_user\EdaHandler
+    tags:
+      - { name: social.eda.handler }
