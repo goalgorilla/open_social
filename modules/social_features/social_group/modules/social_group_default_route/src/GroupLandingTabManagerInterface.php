@@ -37,10 +37,23 @@ interface GroupLandingTabManagerInterface {
    *    - GroupLandingTabManagerInterface:MEMBER;
    *    - GroupLandingTabManagerInterface:NON_MEMBER;
    *    - GroupLandingTabManagerInterface:ALL.
+   * @param array $field_values
+   *   The array of group field valued.
    *
    * @return array
    *   The array of tabs.
    */
-  public function getAvailableLendingTabs(GroupInterface $group, string $type): array;
+  public function getAvailableLendingTabs(GroupInterface $group, string $type, array $field_values = []): array;
+
+  /**
+   * Get group tab management conditions.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   *
+   * @return array
+   *   The array of conditions.
+   */
+  public function getGroupManagementTabConditions(GroupInterface $group): array;
 
 }

@@ -99,11 +99,13 @@ class GroupLandingTabManager extends DefaultPluginManager implements GroupLandin
    *
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group object.
+   * @param array $field_values
+   *   The array of ajax data.
    *
    * @return array
    *   The array of all group landing tabs.
    */
-  protected function getAllGroupManagementTabs(GroupInterface $group): array {
+  protected function getAllGroupManagementTabs(GroupInterface $group, array $field_values = []): array {
     $all_tabs = [];
     foreach ($this->getYamlDiscovery()->findAll() as $tabs) {
       foreach ($tabs as $name => $data) {
@@ -124,7 +126,13 @@ class GroupLandingTabManager extends DefaultPluginManager implements GroupLandin
         if (is_array($tab_data['conditions'])) {
           $skip_by_conditions = TRUE;
           foreach ($tab_data['conditions'] as $group_field => $value) {
-            if ($group->hasField($group_field) && $group->get($group_field)->getString() === $value) {
+            if (isset($field_values[$group_field]) && $field_values[$group_field] == $value) {
+              $skip_by_conditions = FALSE;
+            }
+            elseif ($group->hasField($group_field) && $group->get($group_field)->getString() === $value && isset($field_values[$group_field]) && $field_values[$group_field] == $group->get($group_field)->getString()) {
+              $skip_by_conditions = FALSE;
+            }
+            elseif ($group->hasField($group_field) && $group->get($group_field)->getString() === $value && !isset($field_values[$group_field])) {
               $skip_by_conditions = FALSE;
             }
           }
@@ -159,8 +167,8 @@ class GroupLandingTabManager extends DefaultPluginManager implements GroupLandin
   /**
    * {@inheritdoc}
    */
-  public function getAvailableLendingTabs(GroupInterface $group, string $type): array {
-    $all_tabs = $this->getAllGroupManagementTabs($group);
+  public function getAvailableLendingTabs(GroupInterface $group, string $type, array $field_values = []): array {
+    $all_tabs = $this->getAllGroupManagementTabs($group, $field_values);
     $members_tabs = $all_tabs[$type];
     // Sort by weight.
     uasort($members_tabs, function ($a, $b) {
@@ -173,6 +181,22 @@ class GroupLandingTabManager extends DefaultPluginManager implements GroupLandin
     }
 
     return $result;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getGroupManagementTabConditions(GroupInterface $group): array {
+    $conditions = [];
+    foreach ($this->getYamlDiscovery()->findAll() as $tabs) {
+      foreach ($tabs as $name => $data) {
+        if (isset($data['conditions'])) {
+          $conditions = array_merge($conditions, $data['conditions']);
+        }
+      }
+    }
+
+    return $conditions;
   }
 
 }

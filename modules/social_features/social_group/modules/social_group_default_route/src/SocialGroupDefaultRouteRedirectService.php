@@ -125,14 +125,22 @@ class SocialGroupDefaultRouteRedirectService {
    *
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group object.
+   * @param array $available_routes
+   *   The available route.
    *
    * @return string
    *   The default route.
    */
-  public function getDefaultNonMemberRoute(GroupInterface $group): string {
-    return $group->get('default_route_an')->isEmpty() ?
-      self::GROUP_ABOUT_ROUTE :
-      $group->get('default_route_an')->getString();
+  public function getDefaultNonMemberRoute(GroupInterface $group, array $available_routes = []): string {
+    if ($group->get('default_route_an')->isEmpty()) {
+      return self::GROUP_ABOUT_ROUTE;
+    }
+    elseif (!empty($available_routes) && !isset($available_routes[$group->get('default_route_an')->getString()])) {
+      return self::GROUP_ABOUT_ROUTE;
+    }
+    else {
+      return $group->get('default_route_an')->getString();
+    }
   }
 
   /**
@@ -140,34 +148,52 @@ class SocialGroupDefaultRouteRedirectService {
    *
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group object.
+   * @param array $available_routes
+   *   The available route.
    *
    * @return string
    *   The default route.
    */
-  public function getDefaultMemberRoute(GroupInterface $group): string {
-    return $group->get('default_route')->isEmpty() ?
-      self::GROUP_STREAM_ROUTE :
-      $group->get('default_route')->getString();
+  public function getDefaultMemberRoute(GroupInterface $group, array $available_routes = []): string {
+    if ($group->get('default_route')->isEmpty()) {
+      return self::GROUP_STREAM_ROUTE;
+    }
+    elseif (!empty($available_routes) && !isset($available_routes[$group->get('default_route')->getString()])) {
+      return self::GROUP_STREAM_ROUTE;
+    }
+    else {
+      return $group->get('default_route')->getString();
+    }
   }
 
   /**
    * Get allowed routes for non-member.
    *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   * @param array $field_values
+   *   The field values.
+   *
    * @return array
    *   The array of routes.
    */
-  public function getNonMemberRoutes(GroupInterface $group): array {
-    return $this->landingTabManager->getAvailableLendingTabs($group, GroupLandingTabManagerInterface::NON_MEMBER);
+  public function getNonMemberRoutes(GroupInterface $group, array $field_values = []): array {
+    return $this->landingTabManager->getAvailableLendingTabs($group, GroupLandingTabManagerInterface::NON_MEMBER, $field_values);
   }
 
   /**
    * Get allowed routes for group member.
    *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   * @param array $field_values
+   *   The field values.
+   *
    * @return array
    *   The array of routes.
    */
-  public function getMemberRoutes(GroupInterface $group): array {
-    return $this->landingTabManager->getAvailableLendingTabs($group, GroupLandingTabManagerInterface::MEMBER);
+  public function getMemberRoutes(GroupInterface $group, array $field_values = []): array {
+    return $this->landingTabManager->getAvailableLendingTabs($group, GroupLandingTabManagerInterface::MEMBER, $field_values);
   }
 
 }
