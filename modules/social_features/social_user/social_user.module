@@ -762,6 +762,10 @@ function social_user_user_update(EntityInterface $entity): void {
         \Drupal::service('social_user.eda_handler')->userCreate($entity);
       }
     }
+    // Status changed to blocked.
+    elseif ($entity->isBlocked() && $original instanceof UserInterface && $original->isActive()) {
+      \Drupal::service('social_user.eda_handler')->userBlock($entity);
+    }
   }
 }
 
