@@ -306,6 +306,27 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Tests the eventEnrollmentCreate method.
+   *
+   * @covers ::eventEnrollmentCreate
+   */
+  public function testEventEnrollmentCancel(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Expect dispatch to be called with specific parameters.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.event_enrollment.cancel'),
+        $this->isInstanceOf(CloudEvent::class)
+      );
+
+    // Call the eventEnrollmentCancel method.
+    $handler->eventEnrollmentCancel($this->eventEnrollment);
+  }
+
+  /**
    * Tests the fromEntity method.
    *
    * @covers ::fromEntity

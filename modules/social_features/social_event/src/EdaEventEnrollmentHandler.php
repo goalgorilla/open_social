@@ -86,6 +86,15 @@ final class EdaEventEnrollmentHandler {
   }
 
   /**
+   * Cancels an event enrollment.
+   */
+  public function eventEnrollmentCancel(EventEnrollmentInterface $event_enrollment): void {
+    $event_type = 'com.getopensocial.event_enrollment.cancel';
+    $topic_name = 'com.getopensocial.event_enrollment.cancel';
+    $this->dispatch($topic_name, $event_type, $event_enrollment);
+  }
+
+  /**
    * Transforms a EventEnrollment into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -117,6 +126,29 @@ final class EdaEventEnrollmentHandler {
     // Get event.
     $event = $event_enrollment->getEvent();
     assert($event instanceof NodeInterface);
+
+    // Get enrollee data.
+    $enrollee = $event_enrollment->getAccountEntity();
+    $enrollee_data = [];
+    if ($enrollee && $enrollee->id() != 0) {
+      $enrollee_data = [
+        'id' => (string) $enrollee->uuid(),
+        'displayName' => (string) $enrollee->getDisplayName(),
+        'email' => "",
+        'href' => Href::fromEntity($enrollee),
+      ];
+    }
+    else {
+      $first_name = $event_enrollment->get('field_first_name')->value;
+      $last_name = $event_enrollment->get('field_last_name')->value;
+      $email = $event_enrollment->get('field_email')->value;
+      $enrollee_data = [
+        'id' => NULL,
+        'displayName' => $first_name . " " . $last_name,
+        'email' => $email,
+        'href' => NULL,
+      ];
+    }
 
     // Get enrollee data.
     $enrollee = $event_enrollment->getAccountEntity();
@@ -179,7 +211,7 @@ final class EdaEventEnrollmentHandler {
         ],
         'actor' => [
           'application' => $actor_application ? Application::fromId($actor_application) : NULL,
-          'user' => $actor_user ? User::fromEntity($actor_user) : NULL,
+          'user' => $enrollee_data,
         ],
       ],
       dataContentType: 'application/json',

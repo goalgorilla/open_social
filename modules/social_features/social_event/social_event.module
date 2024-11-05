@@ -303,6 +303,32 @@ function social_event_entity_insert(EntityInterface $entity): void {
 }
 
 /**
+ * Implements hook_entity_delete().
+ */
+function social_event_entity_delete(EntityInterface $entity): void {
+  if ($entity instanceof EventEnrollment) {
+    // Invite or user requests statuses.
+    $invite_or_request_statuses = [
+      EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
+      EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
+      EventEnrollmentInterface::INVITE_PENDING_REPLY,
+    ];
+
+    if (!$entity->get('field_request_or_invite_status')->isEmpty() &&
+      in_array(
+        (int) $entity->get('field_request_or_invite_status')->getString(),
+        $invite_or_request_statuses
+      )
+    ) {
+      return;
+    }
+
+    \Drupal::service('social_event.eda_event_enrollment_handler')
+      ->eventEnrollmentCancel($entity);
+  }
+}
+
+/**
  * Implements hook_block_view_alter().
  *
  * Add a title to the exposed filter block on the events overview.
