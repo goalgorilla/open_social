@@ -356,6 +356,33 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the userBlock() method.
+   *
+   * @covers ::userBlock
+   */
+  public function testUserBlock(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.block');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.user.block'),
+        $this->equalTo($event)
+      );
+
+    // Call the userBlock method.
+    $handler->userBlock($this->user);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.user.block', $event->getType());
+  }
+
+  /**
    * Returns a mocked handler with dependencies injected.
    *
    * @return \Drupal\social_user\EdaHandler
