@@ -26,6 +26,10 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
    * {@inheritdoc}
    */
   public function getPermission($operation, $target, $scope = 'any') {
+    if (!isset($this->parent)) {
+      throw new \LogicException('Using PermissionProviderTrait without assigning a parent or overwriting the methods.');
+    }
+
     // The following permissions are handled by the admin permission or have a
     // different permission name.
     if ($target === 'relationship') {
@@ -44,6 +48,9 @@ class GroupMembershipRequestPermissionProvider implements PermissionProviderInte
    * {@inheritdoc}
    */
   public function buildPermissions() {
+    if (!isset($this->parent)) {
+      throw new \LogicException('Using PermissionProviderTrait without assigning a parent or overwriting the methods.');
+    }
     $permissions = $this->parent->buildPermissions();
 
     // Update the title to make user friendly.

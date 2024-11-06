@@ -30,6 +30,10 @@ class SocialGroupInviteAccessControl implements AccessControlInterface {
    * {@inheritdoc}
    */
   public function relationshipAccess(GroupRelationshipInterface $group_relationship, $operation, AccountInterface $account, $return_as_object = FALSE): bool|AccessResultInterface {
+    if (!isset($this->parent)) {
+      throw new \LogicException('Using AccessControlTrait without assigning a parent or overwriting the methods.');
+    }
+
     // User who receives the invite should be able to view it.
     if ($group_relationship->getEntityId() === $account->id()) {
       return AccessResult::allowed();

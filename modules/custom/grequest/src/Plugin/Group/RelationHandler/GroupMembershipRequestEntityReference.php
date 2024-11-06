@@ -27,6 +27,9 @@ class GroupMembershipRequestEntityReference implements EntityReferenceInterface 
    * {@inheritdoc}
    */
   public function configureField(BaseFieldDefinition $entity_reference): void {
+    if (!isset($this->parent)) {
+      throw new \LogicException('Using EntityReferenceTrait without assigning a parent or overwriting the methods.');
+    }
     $this->parent->configureField($entity_reference);
 
     $handler_settings = $entity_reference->getSetting('handler_settings');
