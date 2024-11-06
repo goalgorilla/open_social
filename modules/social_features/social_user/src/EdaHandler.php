@@ -120,6 +120,15 @@ final class EdaHandler {
   }
 
   /**
+   * User unblock handler.
+   */
+  public function userUnblock(UserInterface $user): void {
+    $event_type = 'com.getopensocial.cms.user.unblock';
+    $topic_name = 'com.getopensocial.cms.user.unblock';
+    $this->dispatch($topic_name, $event_type, $user);
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    */
   public function fromEntity(UserInterface $user, string $event_type): CloudEvent {
@@ -151,6 +160,7 @@ final class EdaHandler {
       case 'com.getopensocial.cms.user.login':
       case 'com.getopensocial.cms.user.logout':
       case 'com.getopensocial.cms.user.block':
+      case 'com.getopensocial.cms.user.unblock':
         $user_data = new UserEventDataLite(
           id: $user->get('uuid')->value,
           created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
