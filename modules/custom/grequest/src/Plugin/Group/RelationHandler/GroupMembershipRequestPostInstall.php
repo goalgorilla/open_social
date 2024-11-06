@@ -38,8 +38,13 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
    * {@inheritdoc}
    */
   public function getInstallTasks() {
+    if (!isset($this->parent)) {
+      throw new \LogicException('Using PostInstallTrait without assigning a parent or overwriting the methods.');
+    }
+
     $tasks = $this->parent->getInstallTasks();
     $tasks['install-group-membership-request-fields'] = [$this, 'installGroupMembershipRequestFields'];
+
     return $tasks;
   }
 

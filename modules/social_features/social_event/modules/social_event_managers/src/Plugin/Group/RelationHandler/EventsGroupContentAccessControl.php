@@ -33,6 +33,10 @@ class EventsGroupContentAccessControl implements AccessControlInterface {
    * {@inheritdoc}
    */
   public function entityAccess(EntityInterface $entity, $operation, AccountInterface $account, $return_as_object = FALSE) {
+    if (!isset($this->parent)) {
+      throw new \LogicException('Using AccessControlTrait without assigning a parent or overwriting the methods.');
+    }
+
     // We only care about Update (/edit) of the Event content.
     if ($operation !== 'update') {
       return $this->parent->entityAccess($entity, $operation, $account, $return_as_object);

@@ -40,6 +40,9 @@ class GroupMembershipRequestOperationProvider implements OperationProviderInterf
    * {@inheritdoc}
    */
   public function getGroupOperations(GroupInterface $group) {
+    if (!isset($this->parent)) {
+      throw new \LogicException('Using OperationProviderTrait without assigning a parent or overwriting the methods.');
+    }
     $operations = $this->parent->getGroupOperations($group);
 
     if (!$group->getMember($this->currentUser) && $group->hasPermission('request group membership', $this->currentUser)) {
