@@ -752,18 +752,22 @@ function social_user_profile_insert(ProfileInterface $profile): void {
  */
 function social_user_user_update(EntityInterface $entity): void {
   // Make sure the updated entity is a user entity.
-  if ($entity instanceof UserInterface) {
+  if ($entity instanceof UserInterface && $entity->original instanceof UserInterface) {
     $original = $entity->original;
 
     // Status changed to active.
-    if ($entity->isActive() && $original instanceof UserInterface && $original->isBlocked()) {
+    if ($entity->isActive() && $original->isBlocked()) {
       // The user never logged in & the created time is equals to changed time.
       if ($entity->getLastLoginTime() == 0 && $original->getCreatedTime() == $original->getChangedTime()) {
         \Drupal::service('social_user.eda_handler')->userCreate($entity);
       }
+      // This was previously an active user who is being unblocked.
+      else {
+        \Drupal::service('social_user.eda_handler')->userUnblock($entity);
+      }
     }
     // Status changed to blocked.
-    elseif ($entity->isBlocked() && $original instanceof UserInterface && $original->isActive()) {
+    elseif ($entity->isBlocked() && $original->isActive()) {
       \Drupal::service('social_user.eda_handler')->userBlock($entity);
     }
   }
