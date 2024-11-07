@@ -49,3 +49,13 @@ function social_featured_content_update_13000(): ?string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Remove redundant "node_access" views filter.
+ */
+function social_featured_content_update_13001(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_featured_content', __FUNCTION__);
+  return $updater->logger()->output();
+}

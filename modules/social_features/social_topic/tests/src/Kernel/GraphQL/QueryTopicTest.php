@@ -196,7 +196,7 @@ class QueryTopicTest extends SocialGraphQLTestBase {
         ->addCacheableDependency($topic)
         ->addCacheableDependency($topic->getOwner())
         ->addCacheTags(['taxonomy_term:1', 'config:filter.format.plain_text', 'config:filter.settings', 'comment:1'])
-        ->addCacheContexts(['languages:language_interface', 'user.node_grants:view', 'url.site'])
+        ->addCacheContexts(['languages:language_interface', 'url.site'])
     );
   }
 
