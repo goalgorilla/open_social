@@ -2,6 +2,7 @@
 
 namespace Drupal\social_album\Form;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -48,6 +49,9 @@ class SocialAlbumSettingsForm extends ConfigFormBase {
     $this->config('social_album.settings')
       ->set('status', $form_state->getValue('status'))
       ->save();
+
+    // We need to rebuild the cache of items list on the "/add/node" page.
+    Cache::invalidateTags(['node_add_list']);
   }
 
 }
