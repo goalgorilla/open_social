@@ -231,116 +231,60 @@ function social_profile_update_130002(): void {
 }
 
 /**
- * Create entity-form-display or hidden path field from Profile Tag taxonomy.
+ * Hide path field from Profile Tag, Interests and Expertise taxonomies.
  */
 function social_profile_update_130003(): void {
-  $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
-  $form_display = $storage->load('taxonomy_term.profile_tag.default');
+  $taxonomies = [
+    'profile_tag' => 'Profile Tag',
+    'interests' => 'Interests',
+    'expertise' => 'Expertise',
+  ];
 
-  // When entity-form-display isn't be created,
-  // it'll create from install folder.
-  if (empty($form_display)) {
-    // Get file from install folder and check if it exists.
-    $config_file = \Drupal::service('extension.list.module')->getPath('social_profile') . '/config/install/core.entity_form_display.taxonomy_term.profile_tag.default.yml';
-    if (file_exists($config_file) === FALSE) {
-      \Drupal::logger('social_profile')->error('Configuration file for entity-form-display "profile_tag" not found.');
-      return;
-    }
-
-    // Apply the configuration to create entity-form-display.
-    $view_config = Yaml::parseFile($config_file);
-    \Drupal::configFactory()->getEditable('core.entity_form_display.taxonomy_term.profile_tag.default')
-      ->setData($view_config)
-      ->save();
-  }
-  else {
-    // Get fields from entity-form-display and check if path already be hidden.
-    $hidden = $form_display->get('hidden');
-    $content = $form_display->get('content');
-    if (in_array('path', array_keys($hidden))) {
-      \Drupal::logger('social_profile')->info('The path field already is hidden on Profile Tag taxonomy.');
-      return;
-    }
-
-    // Manipulate path field to be hidden and save.
-    $hidden['path'] = TRUE;
-    unset($content['path']);
-    $form_display->set('hidden', $hidden)
-      ->set('content', $content)
-      ->save();
+  foreach ($taxonomies as $taxonomy_id => $taxonomy_name) {
+    _social_profile_hide_path_field_from_entity_form_display($taxonomy_id, $taxonomy_name);
   }
 }
 
 /**
- * Create entity-form-display or hidden path field from Interests taxonomy.
+ * Create entity-form-display or hidden path field from a taxonomy.
+ *
+ * @param string $taxonomy_id
+ *   Taxonomy ID.
+ * @param string $taxonomy_name
+ *   Taxonomy Label (Name).
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_profile_update_130004(): void {
+function _social_profile_hide_path_field_from_entity_form_display(string $taxonomy_id, string $taxonomy_name): void {
   $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
-  $form_display = $storage->load('taxonomy_term.interests.default');
+  $form_display = $storage->load(sprintf('taxonomy_term.%s.default', $taxonomy_id));
 
   // When entity-form-display isn't be created,
-  // it'll create from install folder.
+  // It will be created from the install folder.
   if (empty($form_display)) {
     // Get file from install folder and check if it exists.
-    $config_file = \Drupal::service('extension.list.module')->getPath('social_profile') . '/config/install/core.entity_form_display.taxonomy_term.interests.default.yml';
+    $config_file = \Drupal::service('extension.list.module')->getPath('social_profile') . sprintf('/config/install/core.entity_form_display.taxonomy_term.%s.default.yml', $taxonomy_id);
     if (file_exists($config_file) === FALSE) {
-      \Drupal::logger('social_profile')->error('Configuration file for entity-form-display "interests" not found.');
+      $message = sprintf('Configuration file for entity-form-display "%s" not found.', $taxonomy_id);
+      \Drupal::logger('social_profile')->error($message);
       return;
     }
 
     // Apply the configuration to create entity-form-display.
     $view_config = Yaml::parseFile($config_file);
-    \Drupal::configFactory()->getEditable('core.entity_form_display.taxonomy_term.interests.default')
+    \Drupal::configFactory()
+      ->getEditable(sprintf('core.entity_form_display.taxonomy_term.%s.default', $taxonomy_id))
       ->setData($view_config)
       ->save();
   }
   else {
-    // Get fields from entity-form-display and check if path already be hidden.
+    // Get fields and check if path is already be hidden.
     $hidden = $form_display->get('hidden');
     $content = $form_display->get('content');
     if (in_array('path', array_keys($hidden))) {
-      \Drupal::logger('social_profile')->info('The path field already is hidden on Interests taxonomy.');
-      return;
-    }
-
-    // Manipulate path field to be hidden and save.
-    $hidden['path'] = TRUE;
-    unset($content['path']);
-    $form_display->set('hidden', $hidden)
-      ->set('content', $content)
-      ->save();
-  }
-}
-
-/**
- * Create entity-form-display or hidden path field from Expertise taxonomy.
- */
-function social_profile_update_130005(): void {
-  $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
-  $form_display = $storage->load('taxonomy_term.expertise.default');
-
-  // When entity-form-display isn't be created,
-  // it'll create from install folder.
-  if (empty($form_display)) {
-    // Get file from install folder and check if it exists.
-    $config_file = \Drupal::service('extension.list.module')->getPath('social_profile') . '/config/install/core.entity_form_display.taxonomy_term.expertise.default.yml';
-    if (file_exists($config_file) === FALSE) {
-      \Drupal::logger('social_profile')->error('Configuration file for entity-form-display "expertise" not found.');
-      return;
-    }
-
-    // Apply the configuration to create entity-form-display.
-    $view_config = Yaml::parseFile($config_file);
-    \Drupal::configFactory()->getEditable('core.entity_form_display.taxonomy_term.expertise.default')
-      ->setData($view_config)
-      ->save();
-  }
-  else {
-    // Get fields from entity-form-display and check if path already be hidden.
-    $hidden = $form_display->get('hidden');
-    $content = $form_display->get('content');
-    if (in_array('path', array_keys($hidden))) {
-      \Drupal::logger('social_profile')->info('The path field already is hidden on Expertise taxonomy.');
+      $message = sprintf('The path field already is hidden on %s taxonomy.', $taxonomy_name);
+      \Drupal::logger('social_profile')->info($message);
       return;
     }
 

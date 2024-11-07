@@ -266,7 +266,7 @@ function social_topic_update_130003(): void {
     return;
   }
 
-  // Get fields from entity-form-display and check if path already be hidden.
+  // Get fields and check if path is already be hidden.
   $hidden = $form_display->get('hidden');
   $content = $form_display->get('content');
   if (in_array('path', array_keys($hidden))) {
