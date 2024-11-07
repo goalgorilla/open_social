@@ -49,3 +49,10 @@ services:
     arguments: []
     tags:
       - { name: cache.context }
+
+  Drupal\social_group\EventSubscriber\NodeQueryAccessAlterSubscriber:
+    arguments:
+      - '@entity_type.manager'
+      - '@group_relation_type.manager'
+    tags:
+      - { name: event_subscriber }
