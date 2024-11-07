@@ -67,12 +67,9 @@ function social_album_entity_view(array &$build, EntityInterface $entity, Entity
 function social_album_social_user_account_header_create_links($context) {
   // We require a user for this link with the permission to create albums.
   $status = \Drupal::config('social_album.settings')->get('status');
-  if (
-    empty($context['user']) ||
-    !($context['user'] instanceof AccountInterface) ||
-    !$context['user']->hasPermission('create album content') ||
-    !$context['user']->hasPermission('administer social_album settings') && !$status
-  ) {
+
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)
+    || !$context['user']->hasPermission('create album content') || !$status) {
     return [];
   }
   // Lets add the new create album button to the + dropdown.
@@ -590,5 +587,20 @@ function social_album_node_links_alter(array &$links, NodeInterface $node, array
         'url' => $node->toUrl('edit-form'),
       ];
     }
+  }
+}
+
+/**
+ * Hide "Create Album" link when the feature is disabled.
+ */
+function social_album_preprocess_node_add_list(array &$variables): void {
+  if (!empty($variables['content'])) {
+    $status = \Drupal::config('social_album.settings')->get('status');
+    foreach ($variables['content'] as $type) {
+      if ($type->id() === 'album' && !$status) {
+        unset($variables['types'][$type->id()]);
+      }
+    }
+    $variables['#cache']['tags'][] = 'node_add_list';
   }
 }
