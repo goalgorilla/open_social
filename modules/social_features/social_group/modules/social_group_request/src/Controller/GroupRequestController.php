@@ -12,13 +12,14 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\Entity\Group;
+use Drupal\social_group\GroupMembershipRequestableInterface;
 use Drupal\social_group_request\Form\GroupRequestMembershipRequestAnonymousForm;
-use Drupal\social_group_request\Form\GroupRequestMembershipRequestForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -85,6 +86,33 @@ class GroupRequestController extends ControllerBase {
   }
 
   /**
+   * Get the title for the membership request page/dialog.
+   *
+   * This requests the membership request title from the group's bundle class if
+   * the group type supports it. Otherwise, it'll provide a default title.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group to get the title for.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The page title.
+   */
+  public function requestMembershipTitle(GroupInterface $group) : TranslatableMarkup {
+    if ($group instanceof GroupMembershipRequestableInterface) {
+      $title = $group->requestMembershipTitle($group);
+      if ($title !== NULL) {
+        return $title;
+      }
+    }
+
+    return $this->t(
+      "Request to join: %group_label",
+      ['%group_label' => $group->label()],
+      ['context' => 'page title'],
+    );
+  }
+
+  /**
    * Return the title for approve request confirmation page.
    */
   public function getTitleApproveRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
@@ -118,37 +146,6 @@ class GroupRequestController extends ControllerBase {
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
 
     return $this->entityFormBuilder()->getForm($group_content, 'add');
-  }
-
-  /**
-   * Callback to request membership.
-   */
-  public function requestMembership(GroupInterface $group) {
-    $response = new AjaxResponse();
-
-    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
-    $storage = $this->entityTypeManager()->getStorage('group_content_type');
-    $group_type_id = (string) $group->getGroupType()->id();
-    $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
-
-    $request = $this->entityTypeManager()->getStorage('group_content')->getQuery()
-      ->condition('type', $relation_type_id)
-      ->condition('gid', $group->id())
-      ->condition('entity_id', $this->currentUser()->id())
-      ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
-      ->accessCheck()
-      ->count()
-      ->execute();
-
-    if ($request == 0) {
-      $request_form = $this->formBuilder()->getForm(GroupRequestMembershipRequestForm::class, $group);
-      $response->addCommand(new OpenModalDialogCommand($this->t('Request to join'), $request_form, [
-        'width' => '582px',
-        'dialogClass' => 'social_group-popup',
-      ]));
-    }
-
-    return $response;
   }
 
   /**

@@ -5,6 +5,7 @@
  * The Social Group Flexible Group module.
  */
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
@@ -857,6 +858,66 @@ function _social_group_flexible_group_type_change_topic_icon_ajax(array $form, F
   $response->addCommand(new ReplaceCommand('.icon-svg-wrapper', $replaced));
 
   return $response;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Alters the membership request form for flexible groups to hide the cancel
+ * button (since the form is displayed in a modal dialog) and to add an
+ * explanatory text about the message field if it's configured to show.
+ *
+ * This is done in a form alter hook because Drupal does not allow plain-text to
+ * be included in form display configuration, nor can the cancel button be
+ * removed from grequest's built-in content form. All other configuration should
+ * be done using the form_display.
+ *
+ * This form is purposefully specific to flexible groups because we assume that
+ * membership requests for different types of groups all work slightly
+ * differently.
+ */
+function social_group_flexible_group_form_group_content_group_content_type_7fcb76fdf61a9_group_request_membership_form_alter(&$form, FormStateInterface $form_state, $form_id) : void {
+  // Slightly tweak the text shown depending on whether a message can be added to the form.
+  $form_description = isset($form['field_grequest_message']) && ($form['field_grequest_message']['#access'] ?? TRUE)
+    ? t("You can leave a message in your request. Only when your request is approved, you will receive a notification via email and notification center.")
+    : t("Only when your request is approved, you will receive a notification via email and notification center.");
+
+  // Add a description to the top of the form.
+  // Choose a negative weight to be at the top regardless of form configuration
+  // but offset to the message field if possible, assuming it'll be near the
+  // top.
+  $form['description'] = [
+    '#type' => 'inline_template',
+    '#template' => '<p>{{ description }}</p>',
+    '#context' => [
+      'description' => $form_description,
+    ],
+    '#weight' => ($form['field_grequest_message']['#weight'] ?? 0) - 10,
+  ];
+
+  // Remove the cancel link since there's a cross to close the dialog.
+  unset($form['actions']['cancel']);
+
+  // Override the request form's submit action which we expect to always exist.
+  assert(isset($form['actions']['submit']), "The grequest module has removed the 'submit' action from its form, this form alter needs updating.");
+  $form['actions']['submit']['#value'] = t('Send request');
+}
+
+/**
+ * The title for the group membership request page for flexible groups.
+ *
+ * The page is usually rendered as a title after clicking "Request to join".
+ *
+ * @param \Drupal\group\Entity\GroupInterface $group
+ *   The group that membership is requested to.
+ *
+ * @return \Drupal\Component\Render\MarkupInterface
+ *   The page/dialog title.
+ *
+ * @see
+ */
+function _social_group_flexible_group_request_membership_title(GroupInterface $group) : MarkupInterface {
+
 }
 
 /**
