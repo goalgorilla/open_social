@@ -21,10 +21,8 @@ class AlbumAccessSubscriber implements EventSubscriberInterface {
 
   /**
    * The request stack.
-   *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The current route.
@@ -93,7 +91,12 @@ class AlbumAccessSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    if ($this->currentUser->hasPermission('administer social_album settings')) {
+    // User with permission still should have access to the Album feature
+    // but can't create a new node.
+    if (
+      $this->currentUser->hasPermission('administer social_album settings') &&
+      $this->currentRoute->getRouteName() !== 'node.add'
+    ) {
       return;
     }
 
