@@ -4,6 +4,7 @@ namespace Drupal\social_album\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -27,17 +28,18 @@ class AlbumAccessSubscriber implements EventSubscriberInterface {
 
   /**
    * The current route.
-   *
-   * @var \Drupal\Core\Routing\CurrentRouteMatch
    */
-  protected $currentRoute;
+  protected CurrentRouteMatch $currentRoute;
 
   /**
    * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * Current user.
+   */
+  protected AccountProxyInterface $currentUser;
 
   /**
    * Constructs AlbumAccess Subscriber.
@@ -48,15 +50,19 @@ class AlbumAccessSubscriber implements EventSubscriberInterface {
    *   The current route.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   Current user.
    */
   public function __construct(
     RequestStack $request_stack,
     CurrentRouteMatch $route_match,
     ConfigFactoryInterface $configFactory,
+    AccountProxyInterface $current_user,
   ) {
     $this->requestStack = $request_stack;
     $this->currentRoute = $route_match;
     $this->configFactory = $configFactory;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -84,6 +90,10 @@ class AlbumAccessSubscriber implements EventSubscriberInterface {
 
     // Check if path is album listed.
     if (!$this->isAlbumPath($request)) {
+      return;
+    }
+
+    if ($this->currentUser->hasPermission('administer social_album settings')) {
       return;
     }
 
