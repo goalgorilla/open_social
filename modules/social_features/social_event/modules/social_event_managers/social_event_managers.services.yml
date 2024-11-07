@@ -14,3 +14,13 @@ services:
     class: 'Drupal\social_event_managers\Access\AddEnrolleeAccessCheck'
     tags:
       - { name: 'access_check', applies_to: '_enrollee_permission', priority: 249 }
+
+  Drupal\social_event_managers\EventSubscriber\SearchApiNodeQueryAccessSubscriber:
+    arguments:
+      - '@logger.channel.social_event_managers'
+    tags:
+      - { name: event_subscriber }
+
+  logger.channel.social_event_managers:
+    parent: logger.channel_base
+    arguments: ['social_event_managers']
