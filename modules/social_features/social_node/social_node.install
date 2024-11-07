@@ -69,3 +69,34 @@ function social_node_requirements(string $phase): array {
 function social_node_update_last_removed() : int {
   return 11901;
 }
+
+/**
+ * Add new processors to search api indexes with node types.
+ */
+function social_node_update_11902(): void {
+  try {
+    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
+      /** @var \Drupal\search_api\IndexInterface[] $indexes */
+      $indexes = \Drupal::entityTypeManager()
+        ->getStorage('search_api_index')
+        ->loadMultiple();
+
+      foreach ($indexes as $index) {
+        if (in_array('node', $index->getEntityTypes())) {
+          // Remove deprecated processors.
+          $index->removeProcessor('content_access');
+          $index->removeProcessor('entity_access_by_field');
+
+          $needs_reindex[] = $index->id();
+        }
+      }
+
+      if (!empty($needs_reindex)) {
+        social_search_resave_search_indexes($needs_reindex);
+      }
+    }
+  }
+  catch (InvalidPluginDefinitionException|PluginNotFoundException|EntityStorageException $e) {
+    \Drupal::logger('social_node')->info($e->getMessage());
+  }
+}
