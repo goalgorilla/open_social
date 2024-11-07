@@ -168,7 +168,7 @@ function social_profile_organization_tag_update_130002(): void {
   $form_display = $storage->load('taxonomy_term.profile_organization_tag.default');
 
   // When entity-form-display isn't be created,
-  // it'll create from install folder.
+  // It will be created from the install folder.
   if (empty($form_display)) {
     // Get file from install folder and check if it exists.
     $config_file = \Drupal::service('extension.list.module')->getPath('social_profile_organization_tag') . '/config/install/core.entity_form_display.taxonomy_term.profile_organization_tag.default.yml';
@@ -184,7 +184,7 @@ function social_profile_organization_tag_update_130002(): void {
       ->save();
   }
   else {
-    // Get fields from entity-form-display and check if path already be hidden.
+    // Get fields and check if path is already be hidden.
     $hidden = $form_display->get('hidden');
     $content = $form_display->get('content');
     if (in_array('path', array_keys($hidden))) {
