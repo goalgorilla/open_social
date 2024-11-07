@@ -123,13 +123,6 @@ field_settings:
       module:
         - profile
         - user
-  node_grants:
-    label: 'Node access information'
-    property_path: search_api_node_grants
-    type: string
-    indexed_locked: true
-    type_locked: true
-    hidden: true
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
@@ -237,9 +230,6 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  entity_access_by_field:
-    weights:
-      preprocess_query: -30
   ignorecase:
     all_fields: true
     fields:
@@ -257,9 +247,6 @@ processor_settings:
     weights:
       preprocess_index: -20
       preprocess_query: -20
-  content_access:
-    weights:
-      preprocess_query: -30
   language_with_fallback: {  }
   stopwords:
     all_fields: false
