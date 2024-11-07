@@ -5,8 +5,11 @@
  * The social node module alterations.
  */
 
+use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_node\Entity\Node;
+use Drupal\social_node\QueryAccess\NodeEntityQueryAlter;
 use Drupal\social_node\SocialNodeForm;
 use Drupal\social_node\NodeViewBuilder;
 
@@ -64,4 +67,32 @@ function social_node_node_access_records_alter(array &$grants, NodeInterface $no
       }
     }
   }
+}
+
+/**
+ * Implements hook_query_TAG_alter() for "node_access".
+ */
+function social_node_query_node_access_alter(AlterableInterface $query): void {
+  if (!$query instanceof SelectInterface) {
+    return;
+  }
+
+  \Drupal::service('class_resolver')
+    ->getInstanceFromDefinition(NodeEntityQueryAlter::class)
+    ->alterQuery($query);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_node_query_views_entity_query_alter(AlterableInterface $query): void {
+  if (!$query instanceof SelectInterface) {
+    return;
+  }
+
+  if ($query->getMetaData('entity_type') !== 'node') {
+    return;
+  }
+
+  social_node_query_node_access_alter($query);
 }
