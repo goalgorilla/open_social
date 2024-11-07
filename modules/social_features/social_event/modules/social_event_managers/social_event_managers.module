@@ -18,7 +18,6 @@ use Drupal\social_core\Service\MembersPageHelperService;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
-use Drupal\user\Entity\User;
 use Drupal\views\ViewExecutable;
 use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
 
@@ -288,57 +287,6 @@ function social_event_managers_views_pre_view(ViewExecutable $view, $display_id,
         );
     }
   }
-}
-
-/**
- * Implements hook_node_access_records().
- */
-function social_event_managers_node_access_records(NodeInterface $node) {
-  $grants = [];
-  // Only for events.
-  if (($node->getType() === 'event') && $event_managers_ids = array_column($node->get('field_event_managers')
-    ->getValue(), 'target_id')) {
-    // Event organizers should be granted access.
-    // Load the event managers accounts.
-    $users = User::loadMultiple($event_managers_ids);
-    foreach ($users as $event_manager) {
-      // Event organizers must have access
-      // to view the record in the first place.
-      if ($node->access('view', $event_manager)) {
-        // Add grant.
-        $grants[] = [
-          'realm' => 'social_event_managers:' . $node->id(),
-          'gid' => $event_manager->id(),
-          'grant_view' => 1,
-          'grant_update' => 1,
-          'grant_delete' => 0,
-        ];
-      }
-    }
-  }
-
-  return $grants;
-}
-
-/**
- * Implements hook_node_grants().
- */
-function social_event_managers_node_grants(AccountInterface $account, $op) {
-
-  $grants = [];
-
-  // @todo Fetch all nodes this user has access to
-  // and add a grant for each of those.
-  $query = \Drupal::database()->select('node__field_event_managers', 'em');
-  $query->fields('em', ['entity_id']);
-  $query->condition('em.field_event_managers_target_id', $account->id());
-  // Add grants.
-  foreach ($query->execute()->fetchAllAssoc('entity_id') as $nid) {
-    $grants['social_event_managers:' . $nid->entity_id][] = $account->id();
-  }
-
-  // Tell Drupal about users grants.
-  return $grants;
 }
 
 /**
