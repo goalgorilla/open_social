@@ -129,6 +129,15 @@ final class EdaHandler {
   }
 
   /**
+   * User delete handler.
+   */
+  public function userDelete(UserInterface $user): void {
+    $event_type = 'com.getopensocial.cms.user.delete';
+    $topic_name = 'com.getopensocial.cms.user.delete';
+    $this->dispatch($topic_name, $event_type, $user);
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    */
   public function fromEntity(UserInterface $user, string $event_type): CloudEvent {

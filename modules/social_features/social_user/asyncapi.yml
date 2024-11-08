@@ -589,6 +589,86 @@ channels:
                                   type: string
                                   format: uri
                                   description: Canonical URL of the actor user.
+  userDelete:
+    address: com.getopensocial.cms.user.delete
+    messages:
+      userDelete:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: The UUID of the user.
+                    created:
+                      type: string
+                      format: date-time
+                      description: The creation time of the user.
+                    updated:
+                      type: string
+                      format: date-time
+                      description: The last updated time of the user.
+                    status:
+                      type: string
+                      description: The status of the user.
+                      enum:
+                        - active
+                        - blocked
+                    displayName:
+                      type: string
+                      description: The display name of the user.
+                    roles:
+                      type: array
+                      items:
+                        type: string
+                      description: Roles assigned to the user.
+                    timezone:
+                      type: string
+                      description: The timezone of the user.
+                    language:
+                      type: string
+                      description: The preferred language of the user.
+                    href:
+                      type: object
+                      properties:
+                        canonical:
+                          type: string
+                          format: uri
+                          description: Canonical URL of the user.
+                    actor:
+                      type: object
+                      properties:
+                        application:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the application.
+                            name:
+                              type: string
+                              description: The name of the application.
+                        user:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the actor user.
+                            displayName:
+                              type: string
+                              description: The display name of the actor user.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the actor user.
 
 operations:
   onUserCreate:
@@ -611,3 +691,7 @@ operations:
     action: 'receive'
     channel:
       $ref: '#/channels/userBlock'
+  onUserDelete:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/userDelete'

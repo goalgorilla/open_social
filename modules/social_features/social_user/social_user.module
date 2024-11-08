@@ -774,6 +774,17 @@ function social_user_user_update(EntityInterface $entity): void {
 }
 
 /**
+ * Implements hook_entity_predelete().
+ *
+ * When a user is about to be deleted, trigger the corresponding EDA event.
+ */
+function social_user_entity_predelete(EntityInterface $entity): void {
+  if ($entity instanceof UserInterface) {
+    \Drupal::service('social_user.eda_handler')->userDelete($entity);
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_update().
  *
  * When a profile is updated we should trigger the corresponding EDA event.
