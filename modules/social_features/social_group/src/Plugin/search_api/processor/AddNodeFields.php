@@ -11,8 +11,8 @@ use Drupal\social_node\SearchApiAddNodeFieldsProcessorBase;
  *
  * @SearchApiProcessor(
  *   id = "social_group_node_fields",
- *   label = @Translation("Social group: Add requried node fields to index"),
- *   description = @Translation("Add requried node fields to index."),
+ *   label = @Translation("Social group: Add required node fields to index"),
+ *   description = @Translation("Add required node fields to index."),
  *   stages = {
  *     "pre_index_save" = 0,
  *   },
