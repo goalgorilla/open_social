@@ -9,8 +9,8 @@ use Drupal\social_node\SearchApiAddNodeFieldsProcessorBase;
  *
  * @SearchApiProcessor(
  *   id = "social_node_node_fields",
- *   label = @Translation("Social Node: Add requried node fields to index"),
- *   description = @Translation("Add requried node fields to index."),
+ *   label = @Translation("Social Node: Add required node fields to index"),
+ *   description = @Translation("Add required node fields to index."),
  *   stages = {
  *     "pre_index_save" = 0,
  *   },

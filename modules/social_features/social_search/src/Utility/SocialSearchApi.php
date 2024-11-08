@@ -45,12 +45,12 @@ class SocialSearchApi {
           return $condition;
         }
 
-        $neasted_condition_groups = array_filter($condition->getConditions(), fn($group) => $group instanceof ConditionGroupInterface);
-        if (!$neasted_condition_groups) {
+        $nested_condition_groups = array_filter($condition->getConditions(), fn($group) => $group instanceof ConditionGroupInterface);
+        if (!$nested_condition_groups) {
           continue;
         }
 
-        $conditions = [...$conditions, ...$neasted_condition_groups];
+        $conditions = [...$conditions, ...$nested_condition_groups];
       }
     }
     while ($conditions);
