@@ -170,6 +170,7 @@ final class EdaHandler {
       case 'com.getopensocial.cms.user.logout':
       case 'com.getopensocial.cms.user.block':
       case 'com.getopensocial.cms.user.unblock':
+      case 'com.getopensocial.cms.user.delete':
         $user_data = new UserEventDataLite(
           id: $user->get('uuid')->value,
           created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
