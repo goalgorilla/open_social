@@ -16,6 +16,7 @@ use Drupal\social_eda\Types\Href;
 use Drupal\social_eda\Types\User;
 use Drupal\social_user\Event\UserEventData;
 use Drupal\social_user\Event\UserEventDataLite;
+use Drupal\social_user\Event\UserEventEmailData;
 use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -129,6 +130,15 @@ final class EdaHandler {
   }
 
   /**
+   * User unblock handler.
+   */
+  public function userEmailUpdate(UserInterface $user): void {
+    $event_type = 'com.getopensocial.cms.user.settings.email';
+    $topic_name = 'com.getopensocial.cms.user.settings.email';
+    $this->dispatch($topic_name, $event_type, $user);
+  }
+
+  /**
    * User delete handler.
    */
   public function userDelete(UserInterface $user): void {
@@ -177,6 +187,20 @@ final class EdaHandler {
           updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
           status: $user->isActive() ? 'active' : 'blocked',
           displayName: $user->getDisplayName(),
+          roles: array_values($user->getRoles()),
+          timezone: $user->getTimeZone(),
+          language: $user->getPreferredLangcode(),
+          href: Href::fromEntity($user),
+        );
+        break;
+
+      case 'com.getopensocial.cms.user.settings.email':
+        $user_data = new UserEventEmailData(
+          created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
+          updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
+          status: $user->isActive() ? 'active' : 'blocked',
+          displayName: $user->getDisplayName(),
+          email: (string) $user->getEmail(),
           roles: array_values($user->getRoles()),
           timezone: $user->getTimeZone(),
           language: $user->getPreferredLangcode(),
