@@ -3,7 +3,9 @@
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\social_group\SocialGroupHelperService;
+use Drupal\social_node\QueryAccess\NodeEntityQueryAlter;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -35,8 +37,10 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    *   The plugin implementation definition.
    * @param \Drupal\social_group\SocialGroupHelperService $group_helper
    *   The group helper.
+   * @param \Drupal\Core\DependencyInjection\ClassResolverInterface $classResolver
+   *   The class resolver.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialGroupHelperService $group_helper) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialGroupHelperService $group_helper, protected ClassResolverInterface $classResolver) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->groupHelper = $group_helper;
@@ -48,7 +52,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration, $plugin_id, $plugin_definition,
-      $container->get('social_group.helper_service')
+      $container->get('social_group.helper_service'),
+      $container->get('class_resolver')
     );
   }
 
@@ -140,57 +145,26 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       ->createInstance('standard', $configuration);
     $this->query->addRelationship('group_content', $join, 'group_content');
 
-    // Join node table(s).
-    $configuration = [
-      'left_table' => 'activity__field_activity_entity',
-      'left_field' => 'field_activity_entity_target_id',
-      'table' => 'node_access',
-      'field' => 'nid',
-      'operator' => '=',
-      'extra' => [
-        0 => [
-          'left_field' => 'field_activity_entity_target_type',
-          'value' => 'node',
-        ],
-      ],
-    ];
-    $join = Views::pluginManager('join')
-      ->createInstance('standard', $configuration);
-    $this->query->addRelationship('node_access', $join, 'node_access_relationship');
-
-    if ($account->isAnonymous()) {
-      $configuration['table'] = 'node_field_data';
-      $join = Views::pluginManager('join')
-        ->createInstance('standard', $configuration);
-      $this->query->addRelationship('node_field_data', $join, 'node_field_data');
-    }
-
     // Add queries.
     $and_wrapper = new Condition('AND');
     $or = new Condition('OR');
 
-    // Nodes: retrieve all the nodes 'created' activity by node access grants.
-    $node_access = new Condition('AND');
-    $node_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node');
-    $node_access_grants = node_access_grants('view', $account);
-    $grants = new Condition('OR');
-
-    foreach ($node_access_grants as $realm => $gids) {
-      if (!empty($gids)) {
-        $and = new Condition('AND');
-
-        if ($account->isAnonymous() && strpos($realm, 'field_content_visibility_community') !== FALSE) {
-          $and->condition('node_field_data.uid', 0, '!=');
-        }
-
-        $grants->condition($and
-          ->condition('node_access.gid', $gids, 'IN')
-          ->condition('node_access.realm', $realm)
-        );
-      }
+    $node_access = $this->query->getConnection()->select('node_field_data', 'node_field_data');
+    $node_access->addField('afae', 'entity_id');
+    $node_access->join('activity__field_activity_entity', 'afae', 'node_field_data.nid = afae.field_activity_entity_target_id');
+    $node_access->condition('afae.field_activity_entity_target_type', 'node');
+    if (!$account->hasPermission('bypass node access')) {
+      $node_access->condition('node_field_data.status', '1');
     }
-    $node_access->condition($grants);
-    $or->condition($node_access);
+
+    // Alter a query with node access rules.
+    if (class_exists(NodeEntityQueryAlter::class)) {
+      $this->classResolver
+        ->getInstanceFromDefinition(NodeEntityQueryAlter::class)
+        ->alterQuery($node_access);
+    }
+
+    $or->condition('activity_field_data.id', $node_access, 'IN');
 
     // Posts: retrieve all the posts in groups the user is a member of.
     if ($account->isAuthenticated() && count($groups_unique) > 0) {
