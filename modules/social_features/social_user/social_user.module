@@ -723,23 +723,26 @@ function social_user_user_insert(UserInterface $user): void {
  */
 function social_user_profile_insert(ProfileInterface $profile): void {
   $user = $profile->get('uid')->entity;
-  $current_request = \Drupal::requestStack()->getCurrentRequest();
-  $user_settings = \Drupal::config('user.settings');
-  $trigger = FALSE;
 
-  // If user is created from the route `user.register`.
-  if ($current_request && $current_request->get('_route') == 'user.register') {
-    // Admin approval is required.
-    if ($user_settings->get('register') != 'visitors_admin_approval') {
+  if ($user instanceof UserInterface) {
+    $current_request = \Drupal::requestStack()->getCurrentRequest();
+    $user_settings = \Drupal::config('user.settings');
+    $trigger = FALSE;
+
+    // If user is created from the route `user.register`.
+    if ($current_request && $current_request->get('_route') == 'user.register') {
+      // Admin approval is required.
+      if ($user_settings->get('register') != 'visitors_admin_approval') {
+        $trigger = TRUE;
+      }
+    }
+    else {
       $trigger = TRUE;
     }
-  }
-  else {
-    $trigger = TRUE;
-  }
 
-  if ($trigger && $user instanceof UserInterface) {
-    \Drupal::service('social_user.eda_handler')->userCreate($user);
+    if ($trigger && !str_starts_with($user->getAccountName(), '__DELETED_USER')) {
+      \Drupal::service('social_user.eda_handler')->userCreate($user);
+    }
   }
 }
 
