@@ -1,16 +1,13 @@
 name: Social Book
-id: null
-description: |-
-  Allows sitemanagers and content managers to create book pages that can be
-  organized in a hierarchy. An example use is the documentation on Open Social's
-  own community: Community Talks.
+id: 'ari:cloud:compass:ea9fb884-8cc6-4a6f-9da7-3d7489fbe2f5:component/6b91cdc6-a69b-45a5-826d-2792c1c6f1e5/cca6f846-d456-4f08-9eb1-c7c3ec572581'
+description: >-
+  Allows sitemanagers and content managers to create book pages that can be organized in a hierarchy. An example use is the documentation on Open
+  Social's own community: Community Talks.
 
-  Marked for rework because the book module is moving from core to contrib in
-  Drupal 11, this requires work to be done on this module. Additionally the
-  book module that this leans on provides its own content type which creates
-  issues when trying to install all modules at install time. Future versions
-  of that module move it to a recipe which requires us to ship our own book
-  type or include the capability in our generic page content type.
+
+  Marked for rework because the book module is moving from core to contrib in Drupal 11, this requires work to be done on this module. Additionally
+  the book module that this leans on provides its own content type which creates issues when trying to install all modules at install time. Future
+  versions of that module move it to a recipe which requires us to ship our own book type or include the capability in our generic page content type.
 configVersion: 1
 typeId: CAPABILITY
 ownerId: null
@@ -24,7 +21,9 @@ links:
   - name: ''
     type: PROJECT
     url: 'https://getopensocial.atlassian.net/browse/PROD'
-relationships: {}
+relationships:
+  DEPENDS_ON:
+    - 'ari:cloud:compass:ea9fb884-8cc6-4a6f-9da7-3d7489fbe2f5:component/6b91cdc6-a69b-45a5-826d-2792c1c6f1e5/af0a9e57-de70-48bf-ba97-74dcbfdcc8b1'
 labels:
   - 'architect:rework'
 customFields: null
