@@ -1,14 +1,16 @@
-name: Social Lazy Loading
-id: null
-description: |-
-  Module that previously used blazy to implement lazy loading.
+name: Alternative Frontpage
+id: 'ari:cloud:compass:ea9fb884-8cc6-4a6f-9da7-3d7489fbe2f5:component/6b91cdc6-a69b-45a5-826d-2792c1c6f1e5/8f7b61e5-083f-486d-83e4-67daa9d1f01c'
+description: >-
+  Allows sitemanagers to configure different front pages that should be shown for different roles.
 
-  Deprecated because it's been replaced by native lazy loading.
+
+  Tagged for rework because we may not want to tie this to roles in the future. We also don't currently have proper control over the order of
+  selection, nor is the front page actually rendered as front page (at `/`) but instead this is done through redirects to less friendly paths.
 configVersion: 1
 typeId: CAPABILITY
 ownerId: null
 fields:
-  lifecycle: Deprecated
+  lifecycle: Active
   tier: 4
 links:
   - name: null
@@ -18,6 +20,6 @@ links:
     type: PROJECT
     url: 'https://getopensocial.atlassian.net/browse/PROD'
 relationships: {}
-labels: null
+labels:
+  - 'architect:rework'
 customFields: null
-
