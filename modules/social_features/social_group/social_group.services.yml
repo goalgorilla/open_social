@@ -45,7 +45,7 @@ services:
     - {name: config.factory.override, priority: 10}
   social_group.group_statistics:
     class: Drupal\social_group\GroupStatistics
-    arguments: ['@database']
+    arguments: ['@database', '@entity_type.manager']
   social_group.group_mute_notify:
     class: Drupal\social_group\GroupMuteNotify
     arguments: ['@flag', '@entity_type.manager']

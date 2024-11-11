@@ -3,6 +3,7 @@
 namespace Drupal\social_group;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\GroupInterface;
 
 /**
@@ -20,13 +21,23 @@ class GroupStatistics {
   protected $database;
 
   /**
+   * The entity type manager interface.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * Constructor for SocialGroupMembersCount.
    *
    * @param \Drupal\Core\Database\Connection $connection
    *   The database connection.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager interface.
    */
-  public function __construct(Connection $connection) {
+  public function __construct(Connection $connection, EntityTypeManagerInterface $entity_type_manager) {
     $this->database = $connection;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -54,7 +65,7 @@ class GroupStatistics {
    *   The number of nodes.
    */
   public function getGroupNodeCount(GroupInterface $group, $type) {
-    return $this->count($group, 'group_node-' . $type);
+    return $this->count($group, 'group_node:' . $type);
   }
 
   /**
@@ -70,12 +81,12 @@ class GroupStatistics {
    */
   protected function count(GroupInterface $group, $type) {
     // Additional caching not required since views does this for us.
-    $query = $this->database->select('group_content_field_data', 'gcfd');
-    $query->addField('gcfd', 'gid');
-    $query->condition('gcfd.gid', $group->id());
-    $query->condition('gcfd.type', $group->getGroupType()->id() . '-' . $type, 'LIKE');
-
-    return $query->countQuery()->execute()->fetchField();
+    return $this->entityTypeManager->getStorage('group_content')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('gid', $group->id())
+      ->condition('plugin_id', $type)
+      ->count()
+      ->execute();
   }
 
 }
