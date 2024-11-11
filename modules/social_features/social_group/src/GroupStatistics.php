@@ -73,9 +73,9 @@ class GroupStatistics {
     $query = $this->database->select('group_relationship_field_data', 'gcfd');
     $query->addField('gcfd', 'gid');
     $query->condition('gcfd.gid', $group->id());
-    $query->condition('gcfd.type', $group->getGroupType()->id() . '-' . $type, 'LIKE');
+    $query->condition('gcfd.plugin_id', $type);
 
-    return $query->countQuery()->execute()->fetchField();
+    return (int) $query->countQuery()->execute()->fetchField();
   }
 
 }
