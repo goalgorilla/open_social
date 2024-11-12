@@ -18,10 +18,3 @@ services:
   logger.channel.social_search:
     parent: logger.channel_base
     arguments: ['social_search']
-
-  Drupal\social_search\EventSubscriber\SearchApiTaggingQuerySubscriber:
-    arguments:
-      - '@current_user'
-      - '@logger.channel.social_search'
-    tags:
-      - { name: event_subscriber }

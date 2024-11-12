@@ -49,14 +49,3 @@ services:
     arguments: []
     tags:
       - { name: cache.context }
-
-  Drupal\social_group\EventSubscriber\SearchApiQueryNodeInGroupsSubscriber:
-    arguments:
-      - '@logger.channel.social_group'
-      - '@social_group.helper_service'
-    tags:
-      - { name: event_subscriber }
-
-  logger.channel.social_group:
-    parent: logger.channel_base
-    arguments: ['social_group']

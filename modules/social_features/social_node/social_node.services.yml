@@ -6,12 +6,6 @@ services:
       - '@page_cache_kill_switch'
       - '@module_handler'
 
-  Drupal\social_node\EventSubscriber\SearchApiNodeQueryAccessSubscriber:
-    arguments:
-      - '@logger.channel.social_node'
+  Drupal\social_node\EventSubscriber\SocialNodeSearchApiSubscriber:
     tags:
       - { name: event_subscriber }
-
-  logger.channel.social_node:
-    parent: logger.channel_base
-    arguments: ['social_node']
