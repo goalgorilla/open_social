@@ -3,9 +3,11 @@
 namespace Drupal\Tests\social_event\Unit;
 
 use CloudEvents\V1\CloudEventInterface;
+use Consolidation\Config\ConfigInterface;
 use Drupal\address\Plugin\Field\FieldType\AddressFieldItemList;
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -126,6 +128,11 @@ class EdaHandlerTest extends UnitTestCase {
   protected CloudEventInterface $cloudEvent;
 
   /**
+   * Represents the ConfigFactoryInterface.
+   */
+  protected ConfigFactoryInterface $configFactory;
+
+  /**
    * {@inheritDoc}
    */
   protected function setUp(): void {
@@ -137,6 +144,17 @@ class EdaHandlerTest extends UnitTestCase {
     $languageMock->getId()->willReturn('en');
     $languageManagerMock->getCurrentLanguage()
       ->willReturn($languageMock->reveal());
+
+    // Mock the configuration for `social_eda.settings.namespaces`.
+    $configMock = $this->prophesize(ConfigInterface::class);
+    $configMock->get('namespace')->willReturn('com.getopensocial');
+
+    $configFactoryMock = $this->prophesize(ConfigFactoryInterface::class);
+    $configFactoryMock->get('social_eda.settings')->willReturn($configMock->reveal());
+    $this->configFactory = $configFactoryMock->reveal();
+
+    $container = new ContainerBuilder();
+    $container->set('config.factory', $configFactoryMock->reveal());
 
     // Mock Drupal's container.
     $container = new ContainerBuilder();
@@ -301,7 +319,7 @@ class EdaHandlerTest extends UnitTestCase {
     $this->dispatcher->expects($this->once())
       ->method('dispatch')
       ->with(
-        $this->equalTo('com.getopensocial.cms.event.create'),
+        $this->equalTo('com.getopensocial.cms.event.v1'),
         $this->equalTo($event)
       );
 
@@ -328,7 +346,7 @@ class EdaHandlerTest extends UnitTestCase {
     $this->dispatcher->expects($this->once())
       ->method('dispatch')
       ->with(
-        $this->equalTo('com.getopensocial.cms.event.delete'),
+        $this->equalTo('com.getopensocial.cms.event.v1'),
         $this->equalTo($event)
       );
 
@@ -352,7 +370,7 @@ class EdaHandlerTest extends UnitTestCase {
     $this->dispatcher->expects($this->once())
       ->method('dispatch')
       ->with(
-        $this->equalTo('com.getopensocial.cms.event.unpublish'),
+        $this->equalTo('com.getopensocial.cms.event.v1'),
         $this->equalTo($event)
       );
 
@@ -379,7 +397,7 @@ class EdaHandlerTest extends UnitTestCase {
     $this->dispatcher->expects($this->once())
       ->method('dispatch')
       ->with(
-        $this->equalTo('com.getopensocial.cms.event.publish'),
+        $this->equalTo('com.getopensocial.cms.event.v1'),
         $this->equalTo($event)
       );
 
@@ -406,7 +424,7 @@ class EdaHandlerTest extends UnitTestCase {
     $this->dispatcher->expects($this->once())
       ->method('dispatch')
       ->with(
-        $this->equalTo('com.getopensocial.cms.event.update'),
+        $this->equalTo('com.getopensocial.cms.event.v1'),
         $this->equalTo($event)
       );
 
@@ -432,7 +450,8 @@ class EdaHandlerTest extends UnitTestCase {
       $this->moduleHandler,
       $this->entityTypeManager,
       $this->account,
-      $this->routeMatch
+      $this->routeMatch,
+      $this->configFactory,
     );
   }
 
