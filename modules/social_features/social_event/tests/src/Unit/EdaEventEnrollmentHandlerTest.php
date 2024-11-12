@@ -2,11 +2,12 @@
 
 namespace Drupal\Tests\social_event\Unit;
 
-use CloudEvents\V1\CloudEvent;
 use CloudEvents\V1\CloudEventInterface;
+use Consolidation\Config\ConfigInterface;
 use Drupal\address\Plugin\Field\FieldType\AddressFieldItemList;
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -20,14 +21,15 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\Types\DateTime;
 use Drupal\social_event\EdaEventEnrollmentHandler;
+use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\taxonomy\TermInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal\social_event\EventEnrollmentInterface;
 
 /**
  * @coversDefaultClass \Drupal\social_event\EdaEventEnrollmentHandler
@@ -127,6 +129,11 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
   protected CloudEventInterface $cloudEvent;
 
   /**
+   * Represents the ConfigFactoryInterface.
+   */
+  protected ConfigFactoryInterface $configFactory;
+
+  /**
    * {@inheritDoc}
    */
   protected function setUp(): void {
@@ -138,6 +145,14 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $languageMock->getId()->willReturn('en');
     $languageManagerMock->getCurrentLanguage()
       ->willReturn($languageMock->reveal());
+
+    // Mock the configuration for `social_eda.settings.namespaces`.
+    $configMock = $this->prophesize(ConfigInterface::class);
+    $configMock->get('namespace')->willReturn('com.getopensocial');
+
+    $configFactoryMock = $this->prophesize(ConfigFactoryInterface::class);
+    $configFactoryMock->get('social_eda.settings')->willReturn($configMock->reveal());
+    $this->configFactory = $configFactoryMock->reveal();
 
     // Mock Drupal's container.
     $container = new ContainerBuilder();
@@ -293,12 +308,15 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     // Create the handler instance.
     $handler = $this->getMockedHandler();
 
+    // Create the event object.
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.create');
+
     // Expect dispatch to be called with specific parameters.
     $this->dispatcher->expects($this->once())
       ->method('dispatch')
       ->with(
-        $this->equalTo('com.getopensocial.event_enrollment.create'),
-        $this->isInstanceOf(CloudEvent::class)
+        $this->equalTo('com.getopensocial.cms.event_enrollment.v1'),
+        $this->equalTo($event)
       );
 
     // Call the eventEnrollmentCreate method.
@@ -314,12 +332,15 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     // Create the handler instance.
     $handler = $this->getMockedHandler();
 
+    // Create the event object.
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.cancel');
+
     // Expect dispatch to be called with specific parameters.
     $this->dispatcher->expects($this->once())
       ->method('dispatch')
       ->with(
-        $this->equalTo('com.getopensocial.event_enrollment.cancel'),
-        $this->isInstanceOf(CloudEvent::class)
+        $this->equalTo('com.getopensocial.cms.event_enrollment.v1'),
+        $this->equalTo($event)
       );
 
     // Call the eventEnrollmentCancel method.
@@ -338,15 +359,15 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     // Create the event object.
     $event = $handler->fromEntity(
       $this->eventEnrollment,
-      'com.getopensocial.event_enrollment.create'
+      'com.getopensocial.cms.event_enrollment.create'
     );
 
     // Assertions to verify the event has expected attributes.
-    $this->assertInstanceOf(CloudEvent::class, $event);
-    $this->assertEquals('com.getopensocial.event_enrollment.create', $event->getType());
+    $this->assertEquals('1.0', $event->getSpecVersion());
+    $this->assertEquals('com.getopensocial.cms.event_enrollment.create', $event->getType());
     $this->assertEquals('/node/add/event', $event->getSource());
     $this->assertEquals('a5715874-5859-4d8a-93ba-9f8433ea44af', $event->getId());
-    $this->assertEquals('application/json', $event->getDataContentType());
+    $this->assertEquals(DateTime::fromTimestamp($this->eventEnrollment->getCreatedTime())->toImmutableDateTime(), $event->getTime());
   }
 
   /**
@@ -357,14 +378,15 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
    */
   protected function getMockedHandler(): EdaEventEnrollmentHandler {
     return new EdaEventEnrollmentHandler(
-      // @phpstan-ignore-next-line
+    // @phpstan-ignore-next-line
       $this->dispatcher,
       $this->uuid,
       $this->requestStack,
       $this->moduleHandler,
       $this->entityTypeManager,
       $this->account,
-      $this->routeMatch
+      $this->routeMatch,
+      $this->configFactory,
     );
   }
 
