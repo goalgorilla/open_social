@@ -4,6 +4,7 @@ namespace Drupal\social_event;
 
 use CloudEvents\V1\CloudEvent;
 use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -48,6 +49,20 @@ final class EdaEventEnrollmentHandler {
   protected string $routeName;
 
   /**
+   * The community namespace.
+   *
+   * @var string
+   */
+  protected string $namespace;
+
+  /**
+   * The topic name.
+   *
+   * @var string
+   */
+  protected string $topicName;
+
+  /**
    * {@inheritDoc}
    */
   public function __construct(
@@ -58,6 +73,7 @@ final class EdaEventEnrollmentHandler {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $account,
     private readonly RouteMatchInterface $routeMatch,
+    private readonly ConfigFactoryInterface $configFactory,
   ) {
     // Load the full user entity if the account is authenticated.
     $account_id = $this->account->id();
@@ -74,24 +90,34 @@ final class EdaEventEnrollmentHandler {
 
     // Set route name.
     $this->routeName = $this->routeMatch->getRouteName() ?: '';
+
+    // Set the community namespace.
+    $this->namespace = $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
+
+    // Set the community namespace.
+    $this->topicName = "{$this->namespace}.cms.event_enrollment.v1";
   }
 
   /**
    * Create event enrollment.
    */
   public function eventEnrollmentCreate(EventEnrollmentInterface $event_enrollment): void {
-    $event_type = 'com.getopensocial.event_enrollment.create';
-    $topic_name = 'com.getopensocial.event_enrollment.create';
-    $this->dispatch($topic_name, $event_type, $event_enrollment);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event_enrollment.create",
+      event_enrollment: $event_enrollment,
+    );
   }
 
   /**
    * Cancels an event enrollment.
    */
   public function eventEnrollmentCancel(EventEnrollmentInterface $event_enrollment): void {
-    $event_type = 'com.getopensocial.event_enrollment.cancel';
-    $topic_name = 'com.getopensocial.event_enrollment.cancel';
-    $this->dispatch($topic_name, $event_type, $event_enrollment);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event_enrollment.cancel",
+      event_enrollment: $event_enrollment,
+    );
   }
 
   /**
