@@ -4,6 +4,7 @@ namespace Drupal\social_user;
 
 use CloudEvents\V1\CloudEvent;
 use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -47,6 +48,20 @@ final class EdaHandler {
   protected string $routeName;
 
   /**
+   * The community namespace.
+   *
+   * @var string
+   */
+  protected string $namespace;
+
+  /**
+   * The topic name.
+   *
+   * @var string
+   */
+  protected string $topicName;
+
+  /**
    * {@inheritDoc}
    */
   public function __construct(
@@ -57,6 +72,7 @@ final class EdaHandler {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $account,
     private readonly RouteMatchInterface $routeMatch,
+    private readonly ConfigFactoryInterface $configFactory,
   ) {
     // Load the full user entity if the account is authenticated.
     $account_id = $this->account->id();
@@ -73,60 +89,78 @@ final class EdaHandler {
 
     // Set route name.
     $this->routeName = $this->routeMatch->getRouteName() ?: '';
+
+    // Set the community namespace.
+    $this->namespace = $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
+
+    // Set the community namespace.
+    $this->topicName = "{$this->namespace}.cms.user.v1";
   }
 
   /**
    * Create user handler.
    */
   public function userCreate(UserInterface $user): void {
-    $event_type = 'com.getopensocial.cms.user.create';
-    $topic_name = 'com.getopensocial.cms.user.create';
-    $this->dispatch($topic_name, $event_type, $user);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.user.create",
+      user: $user,
+    );
   }
 
   /**
    * Profile update handler.
    */
   public function profileUpdate(UserInterface $user): void {
-    $event_type = 'com.getopensocial.cms.profile.update';
-    $topic_name = 'com.getopensocial.cms.profile.update';
-    $this->dispatch($topic_name, $event_type, $user);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.profile.update",
+      user: $user,
+    );
   }
 
   /**
    * User login handler.
    */
   public function userLogin(UserInterface $user): void {
-    $event_type = 'com.getopensocial.cms.user.login';
-    $topic_name = 'com.getopensocial.cms.user.login';
-    $this->dispatch($topic_name, $event_type, $user);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.user.login",
+      user: $user,
+    );
   }
 
   /**
    * User logout handler.
    */
   public function userLogout(UserInterface $user): void {
-    $event_type = 'com.getopensocial.cms.user.logout';
-    $topic_name = 'com.getopensocial.cms.user.logout';
-    $this->dispatch($topic_name, $event_type, $user);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.user.logout",
+      user: $user,
+    );
   }
 
   /**
    * User block handler.
    */
   public function userBlock(UserInterface $user): void {
-    $event_type = 'com.getopensocial.cms.user.block';
-    $topic_name = 'com.getopensocial.cms.user.block';
-    $this->dispatch($topic_name, $event_type, $user);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.user.block",
+      user: $user,
+    );
   }
 
   /**
    * User unblock handler.
    */
   public function userUnblock(UserInterface $user): void {
-    $event_type = 'com.getopensocial.cms.user.unblock';
-    $topic_name = 'com.getopensocial.cms.user.unblock';
-    $this->dispatch($topic_name, $event_type, $user);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.user.unblock",
+      user: $user,
+    );
   }
 
   /**
