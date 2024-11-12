@@ -14,3 +14,7 @@ services:
     arguments: [ ]
     tags:
       - { name: event_subscriber }
+
+  logger.channel.social_search:
+    parent: logger.channel_base
+    arguments: ['social_search']
