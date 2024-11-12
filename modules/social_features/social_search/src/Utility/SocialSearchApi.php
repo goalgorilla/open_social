@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\social_search\Utility;
 
-use Drupal\search_api\IndexInterface;
-use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\Query\ConditionGroupInterface;
 
 /**
@@ -54,33 +52,6 @@ class SocialSearchApi {
       }
     }
     while ($conditions);
-
-    return NULL;
-  }
-
-  /**
-   * Finds a certain field in the index.
-   *
-   * @param string|null $datasource_id
-   *   The ID of the field's datasource, or NULL for a datasource-independent
-   *   field.
-   * @param string $property_path
-   *   The field's property path on the datasource.
-   * @param string|null $type
-   *   (optional) If set, only return a field if it has this type.
-   *
-   * @return \Drupal\search_api\Item\FieldInterface|null
-   *   A field on the index with the desired properties, or NULL if none could
-   *   be found.
-   */
-  public static function searchApiFindField(IndexInterface $search_api_index, ?string $datasource_id, string $property_path, ?string $type = NULL): ?FieldInterface {
-    foreach ($search_api_index->getFieldsByDatasource($datasource_id) as $field) {
-      if ($field->getPropertyPath() === $property_path) {
-        if ($type === NULL || $field->getType() === $type) {
-          return $field;
-        }
-      }
-    }
 
     return NULL;
   }

@@ -1,33 +1,68 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Drupal\social_search\EventSubscriber;
+namespace Drupal\social_search\Plugin\search_api\processor;
 
 use Drupal\Core\Session\AccountInterface;
-use Drupal\search_api\Event\QueryPreExecuteEvent;
-use Drupal\search_api\Event\SearchApiEvents;
+use Drupal\search_api\LoggerTrait;
+use Drupal\search_api\Processor\ProcessorPluginBase;
+use Drupal\search_api\Query\QueryInterface;
 use Drupal\user\Entity\User;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Tagging the search api queries for each entity type data source.
+ * Create a tagged conditions groups to make possible detect and alter them.
+ *
+ * @SearchApiProcessor(
+ *   id = "social_search_tagging_query",
+ *   label = @Translation("Tagging queries"),
+ *   description = @Translation("Tagging queries by entity type and entity type access."),
+ *   stages = {
+ *     "preprocess_query" = -30,
+ *   },
+ *   locked = true,
+ *   hidden = true,
+ * )
  */
-class SearchApiTaggingQuerySubscriber implements EventSubscriberInterface {
+class TaggingQuery extends ProcessorPluginBase {
+
+  use LoggerTrait;
 
   /**
-   * Constructs a new SearchApiTaggingQuerySubscriber object.
+   * Constructs an "TaggingQuery" object.
    *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    * @param \Drupal\Core\Session\AccountInterface $currentUser
-   *   The current user.
-   * @param \Psr\Log\LoggerInterface $logger
-   *   The logger.
+   *   The current user account.
+   * @param \Psr\Log\LoggerInterface|null $logger
+   *   The logging channel.
    */
   public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
     protected AccountInterface $currentUser,
-    protected LoggerInterface $logger,
-  ) {}
+    protected $logger,
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('current_user'),
+      $container->get('logger.channel.social_search'),
+    );
+  }
 
   /**
    * Create and tag search api query conditions for each entity type.
@@ -74,11 +109,10 @@ class SearchApiTaggingQuerySubscriber implements EventSubscriberInterface {
    *      )
    *    )
    *
-   * @param \Drupal\search_api\Event\QueryPreExecuteEvent $event
-   *   The Search API event.
+   * @param \Drupal\search_api\Query\QueryInterface $query
+   *   The object representing the query to be executed.
    */
-  public function addTaggedQueryConditions(QueryPreExecuteEvent $event): void {
-    $query = $event->getQuery();
+  public function preprocessSearchQuery(QueryInterface $query): void {
     // Skip any filtering when bypass access applied.
     if ($query->getOption('search_api_bypass_access')) {
       return;
@@ -110,6 +144,7 @@ class SearchApiTaggingQuerySubscriber implements EventSubscriberInterface {
       $entity_type_id = $datasource->getEntityTypeId();
       $by_datasource = $query->createConditionGroup('AND', [$entity_type_tag = "social_entity_type_$entity_type_id"]);
       $by_datasource->addCondition('search_api_datasource', $datasource_id);
+
       // Add tag to allow altering the query.
       $query->addTag($entity_type_tag);
 
@@ -117,27 +152,12 @@ class SearchApiTaggingQuerySubscriber implements EventSubscriberInterface {
       // This condition group will be applied to each entity type access.
       $access = $query->createConditionGroup('OR', [$entity_access_tag]);
       $by_datasource->addConditionGroup($access);
+
       // Add tag to allow altering the query.
       $query->addTag($entity_access_tag);
 
       $main_condition_group->addConditionGroup($by_datasource);
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getSubscribedEvents(): array {
-    // Workaround to avoid a fatal error during site install in some cases.
-    // @see https://www.drupal.org/project/facets/issues/3199156
-    if (!class_exists(SearchApiEvents::class)) {
-      return [];
-    }
-
-    return [
-      SearchApiEvents::QUERY_PRE_EXECUTE => 'addTaggedQueryConditions',
-    ];
-
   }
 
 }
