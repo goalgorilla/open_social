@@ -4,6 +4,7 @@ namespace Drupal\social_event;
 
 use CloudEvents\V1\CloudEvent;
 use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -48,6 +49,20 @@ final class EdaHandler {
   protected string $routeName;
 
   /**
+   * The community namespace.
+   *
+   * @var string
+   */
+  protected string $namespace;
+
+  /**
+   * The topic name.
+   *
+   * @var string
+   */
+  protected string $topicName;
+
+  /**
    * {@inheritDoc}
    */
   public function __construct(
@@ -58,6 +73,7 @@ final class EdaHandler {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $account,
     private readonly RouteMatchInterface $routeMatch,
+    private readonly ConfigFactoryInterface $configFactory,
   ) {
     // Load the full user entity if the account is authenticated.
     $account_id = $this->account->id();
@@ -74,51 +90,67 @@ final class EdaHandler {
 
     // Set route name.
     $this->routeName = $this->routeMatch->getRouteName() ?: '';
+
+    // Set the community namespace.
+    $this->namespace = $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
+
+    // Set the community namespace.
+    $this->topicName = "{$this->namespace}.cms.event.v1";
   }
 
   /**
    * Create event handler.
    */
   public function eventCreate(NodeInterface $node): void {
-    $event_type = 'com.getopensocial.cms.event.create';
-    $topic_name = 'com.getopensocial.cms.event.create';
-    $this->dispatch($topic_name, $event_type, $node);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event.create",
+      node: $node
+    );
   }
 
   /**
    * Delete event handler.
    */
   public function eventDelete(NodeInterface $node): void {
-    $event_type = 'com.getopensocial.cms.event.delete';
-    $topic_name = 'com.getopensocial.cms.event.delete';
-    $this->dispatch($topic_name, $event_type, $node, 'delete');
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event.delete",
+      node: $node,
+      op: 'delete');
   }
 
   /**
    * Publish event handler.
    */
   public function eventPublish(NodeInterface $node): void {
-    $event_type = 'com.getopensocial.cms.event.publish';
-    $topic_name = 'com.getopensocial.cms.event.publish';
-    $this->dispatch($topic_name, $event_type, $node);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event.publish",
+      node: $node
+    );
   }
 
   /**
    * Unpublish event handler.
    */
   public function eventUnpublish(NodeInterface $node): void {
-    $event_type = 'com.getopensocial.cms.event.unpublish';
-    $topic_name = 'com.getopensocial.cms.event.unpublish';
-    $this->dispatch($topic_name, $event_type, $node);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event.unpublish",
+      node: $node
+    );
   }
 
   /**
    * Update event handler.
    */
   public function eventUpdate(NodeInterface $node): void {
-    $event_type = 'com.getopensocial.cms.event.update';
-    $topic_name = 'com.getopensocial.cms.event.update';
-    $this->dispatch($topic_name, $event_type, $node);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event.update",
+      node: $node
+    );
   }
 
   /**
@@ -232,7 +264,7 @@ final class EdaHandler {
     $event = $this->fromEntity($node, $event_type, $op);
 
     // Dispatch to message broker.
-    $this->dispatcher->dispatch($topic_name, $event);
+    $this->dispatcher->dispatch($this->topicName, $event);
   }
 
 }
