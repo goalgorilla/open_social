@@ -114,7 +114,7 @@ final class EdaHandler {
   public function profileUpdate(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.profile.update",
+      event_type: "{$this->namespace}.cms.user.profile.update",
       user: $user,
     );
   }

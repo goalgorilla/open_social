@@ -299,7 +299,7 @@ class EdaHandlerTest extends UnitTestCase {
     $handler = $this->getMockedHandler();
 
     // Create the event object.
-    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.profile.update');
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.profile.update');
 
     // Expect the dispatch method in the dispatcher to be called.
     $this->dispatcher->expects($this->once())
@@ -313,7 +313,7 @@ class EdaHandlerTest extends UnitTestCase {
     $handler->profileUpdate($this->user);
 
     // Assert that the correct event is dispatched.
-    $this->assertEquals('com.getopensocial.cms.profile.update', $event->getType());
+    $this->assertEquals('com.getopensocial.cms.user.profile.update', $event->getType());
   }
 
   /**
