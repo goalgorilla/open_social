@@ -167,9 +167,11 @@ final class EdaHandler {
    * User unblock handler.
    */
   public function userEmailUpdate(UserInterface $user): void {
-    $event_type = 'com.getopensocial.cms.user.settings.email';
-    $topic_name = 'com.getopensocial.cms.user.settings.email';
-    $this->dispatch($topic_name, $event_type, $user);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.user.settings.email",
+      user: $user,
+    );
   }
 
   /**
@@ -211,60 +213,54 @@ final class EdaHandler {
       $organization = $profile->get('field_profile_organization')->value;
     }
 
-    switch ($event_type) {
-      case 'com.getopensocial.cms.user.login':
-      case 'com.getopensocial.cms.user.logout':
-      case 'com.getopensocial.cms.user.block':
-      case 'com.getopensocial.cms.user.unblock':
-      case 'com.getopensocial.cms.user.delete':
-        $user_data = new UserEventDataLite(
-          id: $user->get('uuid')->value,
-          created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
-          updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
-          status: $user->isActive() ? 'active' : 'blocked',
-          displayName: $user->getDisplayName(),
-          roles: array_values($user->getRoles()),
-          timezone: $user->getTimeZone(),
-          language: $user->getPreferredLangcode(),
-          href: Href::fromEntity($user),
-        );
-        break;
-
-      case 'com.getopensocial.cms.user.settings.email':
-        $user_data = new UserEventEmailData(
-          created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
-          updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
-          status: $user->isActive() ? 'active' : 'blocked',
-          displayName: $user->getDisplayName(),
-          email: (string) $user->getEmail(),
-          roles: array_values($user->getRoles()),
-          timezone: $user->getTimeZone(),
-          language: $user->getPreferredLangcode(),
-          href: Href::fromEntity($user),
-        );
-        break;
-
-      default:
-        $user_data = new UserEventData(
-          id: $user->get('uuid')->value,
-          created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
-          updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
-          status: $user->isActive() ? 'active' : 'blocked',
-          displayName: $user->getDisplayName(),
-          firstName: $first_name ?? '',
-          lastName: $last_name ?? '',
-          email: (string) $user->getEmail(),
-          roles: array_values($user->getRoles()),
-          timezone: $user->getTimeZone(),
-          language: $user->getPreferredLangcode(),
-          address: Address::fromFieldItem(
-            item: $address ?? NULL,
-          ),
-          phone: $phone_number ?? '',
-          function: $function ?? '',
-          organization: $organization ?? '',
-          href: Href::fromEntity($user),
-        );
+    // Apply variant of the payload to some event types.
+    if (preg_match('/\.cms\.user\.(login|logout|block|unblock|delete)$/', $event_type)) {
+      $user_data = new UserEventDataLite(
+        id: $user->get('uuid')->value,
+        created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
+        updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
+        status: $user->isActive() ? 'active' : 'blocked',
+        displayName: $user->getDisplayName(),
+        roles: array_values($user->getRoles()),
+        timezone: $user->getTimeZone(),
+        language: $user->getPreferredLangcode(),
+        href: Href::fromEntity($user),
+      );
+    }
+    elseif (preg_match('/\.cms\.user\.settings\.email$/', $event_type)) {
+      $user_data = new UserEventEmailData(
+        created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
+        updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
+        status: $user->isActive() ? 'active' : 'blocked',
+        displayName: $user->getDisplayName(),
+        email: (string) $user->getEmail(),
+        roles: array_values($user->getRoles()),
+        timezone: $user->getTimeZone(),
+        language: $user->getPreferredLangcode(),
+        href: Href::fromEntity($user),
+      );
+    }
+    else {
+      $user_data = new UserEventData(
+        id: $user->get('uuid')->value,
+        created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
+        updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
+        status: $user->isActive() ? 'active' : 'blocked',
+        displayName: $user->getDisplayName(),
+        firstName: $first_name ?? '',
+        lastName: $last_name ?? '',
+        email: (string) $user->getEmail(),
+        roles: array_values($user->getRoles()),
+        timezone: $user->getTimeZone(),
+        language: $user->getPreferredLangcode(),
+        address: Address::fromFieldItem(
+          item: $address ?? NULL,
+        ),
+        phone: $phone_number ?? '',
+        function: $function ?? '',
+        organization: $organization ?? '',
+        href: Href::fromEntity($user),
+      );
     }
 
     return new CloudEvent(
