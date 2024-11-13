@@ -440,7 +440,7 @@ class EdaHandlerTest extends UnitTestCase {
     $this->dispatcher->expects($this->once())
       ->method('dispatch')
       ->with(
-        $this->equalTo('com.getopensocial.cms.user.delete'),
+        $this->equalTo('com.getopensocial.cms.user.v1'),
         $this->equalTo($event)
       );
 
