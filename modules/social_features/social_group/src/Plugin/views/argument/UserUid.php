@@ -60,7 +60,7 @@ class UserUid extends ArgumentPluginBase {
       $subselect2 = $this->database->select('group_content_field_data', 'gc');
       $subselect2->addField('gc', 'gid');
       $subselect2->condition('gc.entity_id', $this->argument);
-      $subselect2->condition('gc.type', '%' . $this->database->escapeLike('membership') . '%', 'LIKE');
+      $subselect2->condition('gc.plugin_id', '%' . $this->database->escapeLike('membership') . '%', 'LIKE');
 
       if ($this->usesOptions && isset($this->options['group'])) {
         $this->query->addWhere($this->options['group'], $this->tableAlias . '.id', $subselect2, 'IN');
