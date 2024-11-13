@@ -8,7 +8,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Configure Social EDA (Experimental) settings for this site.
+ * Configure Social EDA settings for this site.
  */
 final class SettingsForm extends ConfigFormBase {
 
