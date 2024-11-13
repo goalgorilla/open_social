@@ -176,9 +176,11 @@ final class EdaHandler {
    * User delete handler.
    */
   public function userDelete(UserInterface $user): void {
-    $event_type = 'com.getopensocial.cms.user.delete';
-    $topic_name = 'com.getopensocial.cms.user.delete';
-    $this->dispatch($topic_name, $event_type, $user);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.user.delete",
+      user: $user,
+    );
   }
 
   /**
