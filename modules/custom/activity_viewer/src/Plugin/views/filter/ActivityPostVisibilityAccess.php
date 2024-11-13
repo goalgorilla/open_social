@@ -3,6 +3,8 @@
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
@@ -25,6 +27,13 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
   protected $groupHelper;
 
   /**
+   * The route match interface.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
    * Constructs a Handler object.
    *
    * @param array $configuration
@@ -35,11 +44,20 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    *   The plugin implementation definition.
    * @param \Drupal\social_group\SocialGroupHelperService $group_helper
    *   The group helper.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The currently active route match object.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialGroupHelperService $group_helper) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    SocialGroupHelperService $group_helper,
+    RouteMatchInterface $route_match
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->groupHelper = $group_helper;
+    $this->routeMatch = $route_match;
   }
 
   /**
@@ -48,7 +66,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration, $plugin_id, $plugin_definition,
-      $container->get('social_group.helper_service')
+      $container->get('social_group.helper_service'),
+      $container->get('current_route_match')
     );
   }
 
@@ -205,7 +224,11 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $post_access = new Condition('AND');
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post');
 
-    if (!$account->hasPermission('bypass group access')) {
+    // Get group from url-parameter.
+    $group = $this->routeMatch->getParameter('group');
+    // If the group parameter isn't group entity, visibility rules.
+    // And check group permission when group parameter is group entity.
+    if (!$group instanceof GroupInterface || !$group->hasPermission('access content overview', $account)) {
       $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
 
       if (!$account->hasPermission('view public posts')) {
