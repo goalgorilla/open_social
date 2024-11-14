@@ -250,3 +250,48 @@ function social_group_flexible_group_update_130005() : void {
     \Drupal::service('module_installer')->install(['social_email_broadcast']);
   }
 }
+
+/**
+ * Add 'Verified' group role for Flexible group type.
+ */
+function social_group_flexible_group_update_130006(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group') &&
+    empty(\Drupal::config('group.role.flexible_group-verified')->getRawData())
+  ) {
+    // Execute configuration update definitions with logging of success.
+    $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
+  }
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+
+}
+
+/**
+ * Revoke group permissions for Outsider and Anonymous roles.
+ */
+function social_group_flexible_group_update_130007(): void {
+  $roles_permissions = [
+    'flexible_group-outsider' => [
+      'view group_membership relationship',
+      'view group stream page',
+    ],
+    'flexible_group-anonymous' => [
+      'view group_membership relationship',
+      'view group stream page',
+    ],
+  ];
+
+  foreach ($roles_permissions as $role_id => $permissions) {
+    /** @var \Drupal\group\Entity\GroupRoleInterface $role */
+    $role = \Drupal::entityTypeManager()->getStorage('group_role')->load($role_id);
+
+    foreach ($permissions as $permission) {
+      $role->revokePermission($permission);
+    }
+
+    $role->save();
+  }
+}
