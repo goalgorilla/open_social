@@ -7,7 +7,9 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\social_group_default_route\SocialGroupDefaultRouteRedirectService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -38,6 +40,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
+    $events[KernelEvents::EXCEPTION][] = ['onKernelException', 101];
     $events[KernelEvents::REQUEST][] = ['groupLandingPage'];
     return $events;
   }
@@ -66,8 +69,38 @@ class RedirectSubscriber implements EventSubscriberInterface {
     if (!$group instanceof SocialGroupInterface) {
       return;
     }
+    // If redirection isn't applicable for current group bundle.
+    $group_routes = $this->redirectService->getGroupDefaultRoutes($group);
+    if (empty($group_routes)) {
+      return;
+    }
 
     $this->redirectService->doRedirect($event, $group);
+  }
+
+  /**
+   * Redirect on kernel exception.
+   *
+   * @param \Symfony\Component\HttpKernel\Event\ExceptionEvent $event
+   *   The event object.
+   */
+  public function onKernelException(ExceptionEvent $event): void {
+    $exception = $event->getThrowable();
+
+    $group = $this->redirectService->getGroup();
+    // Not group, then we leave.
+    if (!$group instanceof SocialGroupInterface) {
+      return;
+    }
+    // If redirection isn't applicable for current group bundle.
+    $group_routes = $this->redirectService->getGroupDefaultRoutes($group);
+    if (empty($group_routes)) {
+      return;
+    }
+
+    if ($exception instanceof AccessDeniedHttpException) {
+      $this->redirectService->doRedirect($event, $group);
+    }
   }
 
 }

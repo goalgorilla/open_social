@@ -20,8 +20,13 @@ class SocialGroupDefaultRouteController extends ControllerBase {
    *
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
+   * @param \Drupal\social_group_default_route\SocialGroupDefaultRouteRedirectService $redirectService
+   *   The redirect service.
    */
-  public function __construct(AccountInterface $current_user) {
+  public function __construct(
+    AccountInterface $current_user,
+    protected SocialGroupDefaultRouteRedirectService $redirectService,
+  ) {
     $this->currentUser = $current_user;
   }
 
@@ -31,6 +36,7 @@ class SocialGroupDefaultRouteController extends ControllerBase {
   public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('current_user'),
+      $container->get('social_group_default_route.redirect_service'),
     );
   }
 
@@ -44,10 +50,10 @@ class SocialGroupDefaultRouteController extends ControllerBase {
    *   The redirect response.
    */
   public function groupDefaultRoute(SocialGroupInterface $group): RedirectResponse {
-    // The members and non-members should be redirected to the different pages.
+    // The members and non-members should be redirected to their default routes.
     $default_route = $group->hasMember($this->currentUser) ?
-      SocialGroupDefaultRouteRedirectService::DEFAULT_ROUTE :
-      SocialGroupDefaultRouteRedirectService::DEFAULT_CLOSED_ROUTE;
+      $this->redirectService->getDefaultMemberRoute($group) :
+      $this->redirectService->getDefaultNonMemberRoute($group);
 
     $url = Url::fromRoute($default_route, ['group' => $group->id()]);
 

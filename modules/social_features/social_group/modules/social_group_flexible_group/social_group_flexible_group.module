@@ -880,3 +880,15 @@ function social_group_flexible_group_social_user_account_header_create_links($co
     ] + $link->toRenderable(),
   ];
 }
+
+/**
+ * Implements hook_social_group_default_route_types().
+ */
+function social_group_flexible_group_social_group_default_route_types(): array {
+  return [
+    'flexible_group' => [
+      'member' => 'social_group.stream',
+      'non-member' => 'view.group_information.page_group_about',
+    ],
+  ];
+}
