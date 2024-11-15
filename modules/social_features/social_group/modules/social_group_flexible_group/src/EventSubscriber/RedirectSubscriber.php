@@ -70,14 +70,11 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function checkForRedirection(RequestEvent $event) {
+  public function checkForRedirection(RequestEvent $event): void {
     // Check if there is a group object on the current route.
-    if (!($group = _social_group_get_current_group())) {
-      return;
-    }
-
+    $group = $this->routeMatch->getParameter('group');
     // If a group type is flexible group.
-    if ($group->bundle() !== 'flexible_group') {
+    if (!$group instanceof SocialGroupInterface || $group->bundle() !== 'flexible_group') {
       return;
     }
 

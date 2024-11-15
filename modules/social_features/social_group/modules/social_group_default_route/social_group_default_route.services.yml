@@ -1,10 +1,13 @@
 services:
   social_group_default_route.redirect_subscriber:
     class: Drupal\social_group_default_route\EventSubscriber\RedirectSubscriber
-    arguments: ['@current_route_match', '@current_user']
+    arguments: ['@current_route_match', '@current_user', '@social_group_default_route.redirect_service']
     tags:
       - { name: event_subscriber }
   social_group_default_route.route_subscriber:
     class: Drupal\social_group_default_route\RouteSubscriber\RouteSubscriber
     tags:
       - { name: event_subscriber, priority: 3 }
+  social_group_default_route.redirect_service:
+    class: Drupal\social_group_default_route\SocialGroupDefaultRouteRedirectService
+    arguments: [ '@current_route_match', '@current_user' ]
