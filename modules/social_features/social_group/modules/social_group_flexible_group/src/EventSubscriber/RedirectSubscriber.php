@@ -6,10 +6,14 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\Route;
 
 /**
  * Class RedirectSubscriber.
@@ -56,6 +60,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     $events[KernelEvents::REQUEST][] = ['checkForRedirection'];
+    $events[KernelEvents::EXCEPTION][] = ['onKernelException', 100];
     return $events;
   }
 
@@ -65,14 +70,11 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function checkForRedirection(RequestEvent $event) {
+  public function checkForRedirection(RequestEvent $event): void {
     // Check if there is a group object on the current route.
-    if (!($group = _social_group_get_current_group())) {
-      return;
-    }
-
+    $group = $this->routeMatch->getParameter('group');
     // If a group type is flexible group.
-    if ($group->bundle() !== 'flexible_group') {
+    if (!$group instanceof SocialGroupInterface || $group->bundle() !== 'flexible_group') {
       return;
     }
 
@@ -110,17 +112,52 @@ class RedirectSubscriber implements EventSubscriberInterface {
     ) {
       $this->doRedirect($event, $group);
     }
+    elseif ($route_name === 'entity.group.canonical' &&
+      $this->routeMatch->getRouteObject() instanceof Route &&
+      ($this->routeMatch->getRouteObject()->getPath() === '/group/{group}/stream' ||
+        $this->routeMatch->getRouteObject()->getPath() === '/group/{group}/home') &&
+      !$group->hasPermission('view group stream page', $this->currentUser)
+    ) {
+      $this->doRedirect($event, $group);
+    }
+  }
+
+  /**
+   * Redirect on exceptions.
+   *
+   * @param \Symfony\Component\HttpKernel\Event\ExceptionEvent $event
+   *   The exception event.
+   */
+  public function onKernelException(ExceptionEvent $event): void {
+    // Check if there is a group object on the current route.
+    $group = $this->routeMatch->getParameter('group');
+    if (!$group instanceof SocialGroupInterface) {
+      return;
+    }
+
+    $exception = $event->getThrowable();
+
+    // Do not redirect form access denied if user doesn't have access to
+    // view the group (secret group, etc.).
+    if (!$group->access('view', $this->currentUser) ||
+      !$exception instanceof AccessDeniedHttpException ||
+      $group->bundle() != 'flexible_group'
+    ) {
+      return;
+    }
+
+    $this->doRedirect($event, $group);
   }
 
   /**
    * Makes redirect to the "About" group tab.
    *
-   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent|\Symfony\Component\HttpKernel\Event\ExceptionEvent $event
    *   The event.
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group.
    */
-  protected function doRedirect(RequestEvent $event, GroupInterface $group) {
+  protected function doRedirect(RequestEvent|ExceptionEvent $event, GroupInterface $group): void {
     $url = Url::fromRoute('view.group_information.page_group_about', [
       'group' => $group->id(),
     ]);
