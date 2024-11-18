@@ -154,7 +154,7 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $container->get('form_builder'),
       $container->get('module_handler'),
       $container->get('current_route_match'),
-      $container->get('social_group.current_group'),
+      $container->get(CurrentGroupService::class),
     );
   }
 
