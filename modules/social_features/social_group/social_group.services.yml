@@ -51,6 +51,5 @@ services:
       - { name: cache.context }
 
   Drupal\social_group\CurrentGroupService:
-    class: Drupal\social_group\CurrentGroupService
+    social_group.current_group_service: '@Drupal\social_group\CurrentGroupService'
     autowire: true
-    social_group.current_group: '@Drupal\social_group\CurrentGroupService'
