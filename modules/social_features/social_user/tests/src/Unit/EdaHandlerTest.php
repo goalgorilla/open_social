@@ -479,6 +479,33 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the userLocaleInformationUpdate() method.
+   *
+   * @covers ::userLocaleInformationUpdate
+   */
+  public function testUserLocaleInformationUpdate(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.settings.locale');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.user.settings.locale'),
+        $this->equalTo($event)
+      );
+
+    // Call the userLocaleInformationUpdate method.
+    $handler->userLocaleInformationUpdate($this->user);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.user.settings.locale', $event->getType());
+  }
+
+  /**
    * Returns a mocked handler with dependencies injected.
    *
    * @return \Drupal\social_user\EdaHandler

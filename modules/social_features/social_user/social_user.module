@@ -778,6 +778,21 @@ function social_user_user_update(EntityInterface $entity): void {
     if ($original->getEmail() != $entity->getEmail()) {
       \Drupal::service('social_user.eda_handler')->userEmailUpdate($entity);
     }
+
+    // Timezone change.
+    if ($original->getTimeZone() != $entity->getTimeZone()) {
+      \Drupal::service('social_user.eda_handler')->userLocaleInformationUpdate(
+        $entity
+      );
+    }
+
+    // Langcode change.
+    if ($original->getPreferredLangcode() != $entity->getPreferredLangcode()) {
+      \Drupal::service('social_user.eda_handler')->userLocaleInformationUpdate(
+        $entity
+      );
+    }
+
   }
 
 }

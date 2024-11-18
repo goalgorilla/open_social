@@ -186,6 +186,15 @@ final class EdaHandler {
   }
 
   /**
+   * User locale information update handler.
+   */
+  public function userLocaleInformationUpdate(UserInterface $user): void {
+    $event_type = 'com.getopensocial.cms.user.settings.locale';
+    $topic_name = 'com.getopensocial.cms.user.settings.locale';
+    $this->dispatch($topic_name, $event_type, $user);
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    */
   public function fromEntity(UserInterface $user, string $event_type): CloudEvent {
@@ -227,7 +236,7 @@ final class EdaHandler {
         href: Href::fromEntity($user),
       );
     }
-    elseif (preg_match('/\.cms\.user\.settings\.email$/', $event_type)) {
+    elseif (preg_match('/\.cms\.user\.settings\.(email|locale)$/', $event_type)) {
       $user_data = new UserEventEmailData(
         created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
         updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
