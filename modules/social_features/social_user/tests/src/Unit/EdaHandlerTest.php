@@ -138,11 +138,16 @@ class EdaHandlerTest extends UnitTestCase {
     $languageManagerMock->getCurrentLanguage()->willReturn($languageMock->reveal());
 
     // Mock the configuration for `social_eda.settings.namespaces`.
-    $configMock = $this->prophesize(ConfigInterface::class);
-    $configMock->get('namespace')->willReturn('com.getopensocial');
+    $configSocialEdaMock = $this->prophesize(ConfigInterface::class);
+    $configSocialEdaMock->get('namespace')->willReturn('com.getopensocial');
+
+    // Mock the configuration for `user.settings.register`.
+    $configUserSettingsMock = $this->prophesize(ConfigInterface::class);
+    $configUserSettingsMock->get('register')->willReturn('visitors_admin_approval');
 
     $configFactoryMock = $this->prophesize(ConfigFactoryInterface::class);
-    $configFactoryMock->get('social_eda.settings')->willReturn($configMock->reveal());
+    $configFactoryMock->get('social_eda.settings')->willReturn($configSocialEdaMock->reveal());
+    $configFactoryMock->get('user.settings')->willReturn($configUserSettingsMock->reveal());
     $this->configFactory = $configFactoryMock->reveal();
 
     // Set up Drupal's container.
@@ -287,6 +292,33 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Assert that the correct event is dispatched.
     $this->assertEquals('com.getopensocial.cms.user.create', $event->getType());
+  }
+
+  /**
+   * Test the userPending() method.
+   *
+   * @covers ::userPending
+   */
+  public function testUserPending(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.pending');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.user.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the userPending method.
+    $handler->userPending($this->user);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.user.pending', $event->getType());
   }
 
   /**

@@ -109,6 +109,17 @@ final class EdaHandler {
   }
 
   /**
+   * Pending user handler.
+   */
+  public function userPending(UserInterface $user): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.user.pending",
+      user: $user,
+    );
+  }
+
+  /**
    * Profile update handler.
    */
   public function profileUpdate(UserInterface $user): void {
@@ -213,13 +224,29 @@ final class EdaHandler {
       $organization = $profile->get('field_profile_organization')->value;
     }
 
+    // Determine status value.
+    if ($user->isActive()) {
+      $status = 'active';
+    }
+    else {
+      $user_settings = $this->configFactory->get('user.settings');
+
+      // If admin approval is required.
+      if ($user_settings->get('register') == 'visitors_admin_approval') {
+        $status = 'pending';
+      }
+      else {
+        $status = 'blocked';
+      }
+    }
+
     // Apply variant of the payload to some event types.
     if (preg_match('/\.cms\.user\.(login|logout|block|unblock|delete)$/', $event_type)) {
       $user_data = new UserEventDataLite(
         id: $user->get('uuid')->value,
         created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
         updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
-        status: $user->isActive() ? 'active' : 'blocked',
+        status: $status,
         displayName: $user->getDisplayName(),
         roles: array_values($user->getRoles()),
         timezone: $user->getTimeZone(),
@@ -231,7 +258,7 @@ final class EdaHandler {
       $user_data = new UserEventEmailData(
         created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
         updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
-        status: $user->isActive() ? 'active' : 'blocked',
+        status: $status,
         displayName: $user->getDisplayName(),
         email: (string) $user->getEmail(),
         roles: array_values($user->getRoles()),
@@ -245,7 +272,7 @@ final class EdaHandler {
         id: $user->get('uuid')->value,
         created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
         updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
-        status: $user->isActive() ? 'active' : 'blocked',
+        status: $status,
         displayName: $user->getDisplayName(),
         firstName: $first_name ?? '',
         lastName: $last_name ?? '',
