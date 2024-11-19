@@ -291,8 +291,12 @@ function social_group_flexible_group_flexible_group_add_after_build(array $form,
 /**
  * Implements hook_ENTITY_TYPE_access().
  */
-function social_group_flexible_group_group_access(EntityInterface $entity, $operation, AccountInterface $account) {
-  $result = AccessResult::neutral();
+function social_group_flexible_group_group_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult {
+  // Default result with cache context.
+  $result = AccessResult::neutral()
+    ->cachePerPermissions()
+    ->addCacheableDependency($entity)
+    ->addCacheableDependency($account);
   // Write custom access checks based on the new group visibility field.
   // If group visibility doesn't exist we can skip this.
   /** @var \Drupal\social_group\SocialGroupInterface $entity */
@@ -318,7 +322,8 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
     // if user is logged.
     case 'community':
       return AccessResult::forbiddenIf($account->isAnonymous())
-        ->cachePerUser()
+        ->cachePerPermissions()
+        ->addCacheableDependency($entity)
         ->addCacheableDependency($entity);
 
     // If group visibility exists and members only is selected, we need to check
@@ -328,7 +333,6 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
 
       return AccessResult::forbiddenIf($not_a_member)
         ->cachePerPermissions()
-        ->cachePerUser()
         ->addCacheableDependency($entity)
         ->addCacheableDependency($account);
   }
