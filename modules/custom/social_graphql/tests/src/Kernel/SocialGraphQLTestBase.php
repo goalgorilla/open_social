@@ -20,6 +20,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    */
   protected static $modules = [
     "entity",
+    "file",
     "social_graphql",
   ];
 
