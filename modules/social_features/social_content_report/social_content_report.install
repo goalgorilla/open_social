@@ -39,7 +39,8 @@ function social_content_report_install() {
       }
     }
     catch (EntityStorageException $exception) {
-      \Drupal::logger('social_content_report')->error(t('The term "@term" could not be created.', ['@term' => $name]));
+      \Drupal::logger('social_content_report')
+        ->error(t('The term "@term" could not be created.', ['@term' => $name]));
     }
   }
 
@@ -89,7 +90,7 @@ function social_content_report_install() {
 /**
  * Implements hook_update_last_removed().
  */
-function social_content_report_update_last_removed() : int {
+function social_content_report_update_last_removed(): int {
   return 11401;
 }
 
@@ -144,4 +145,208 @@ function social_content_report_update_130002(): void {
       ->set('content', $content)
       ->save();
   }
+}
+
+/**
+ * Update Reports page views, adding filters and "remove" button.
+ */
+function social_content_report_update_130003(): string {
+  // This is skipping the update helper because we need to add fields to the
+  // exact place of the fields list. Unfortunately, this is only controlled by
+  // the order in which the fields are added, not by the weight attribute. When
+  // adding it via the update helper, the new field is appended to the bottom of
+  // the fields list.
+  $config = \Drupal::configFactory()->getEditable('views.view.report_overview');
+
+  $fields = $config->get('display.default.display_options.fields');
+
+  // Set new field in the beginning, so it can be used in the "dropdown" field.
+  $new_field = [
+    'delete_comment' => [
+      'id' => 'delete_comment',
+      'table' => 'comment',
+      'field' => 'delete_comment',
+      'relationship' => 'flag_report_comment',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'entity_type' => 'comment',
+      'plugin_id' => 'entity_link_delete',
+      'label' => 'Delete Comment',
+      'exclude' => TRUE,
+      'alter' => [
+        'alter_text' => FALSE,
+        'text' => '',
+        'make_link' => FALSE,
+        'path' => '',
+        'absolute' => FALSE,
+        'external' => FALSE,
+        'replace_spaces' => FALSE,
+        'path_case' => 'none',
+        'trim_whitespace' => FALSE,
+        'alt' => '',
+        'rel' => '',
+        'link_class' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'nl2br' => FALSE,
+        'max_length' => 0,
+        'word_boundary' => TRUE,
+        'ellipsis' => TRUE,
+        'more_link' => FALSE,
+        'more_link_text' => '',
+        'more_link_path' => '',
+        'strip_tags' => FALSE,
+        'trim' => FALSE,
+        'preserve_tags' => '',
+        'html' => FALSE,
+      ],
+      'element_type' => '',
+      'element_class' => '',
+      'element_label_type' => '',
+      'element_label_class' => '',
+      'element_label_colon' => FALSE,
+      'element_wrapper_type' => '',
+      'element_wrapper_class' => '',
+      'element_default_classes' => TRUE,
+      'empty' => '',
+      'hide_empty' => FALSE,
+      'empty_zero' => FALSE,
+      'hide_alter_empty' => TRUE,
+      'text' => 'Delete Comment',
+      'output_url_as_text' => FALSE,
+      'absolute' => FALSE,
+    ],
+    'delete_post' => [
+      'id' => 'delete_post',
+      'table' => 'post',
+      'field' => 'delete_post',
+      'relationship' => 'flag_report_post',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'entity_type' => 'post',
+      'plugin_id' => 'entity_link_delete',
+      'label' => '',
+      'exclude' => TRUE,
+      'alter' => [
+        'alter_text' => FALSE,
+        'text' => '',
+        'make_link' => FALSE,
+        'path' => '',
+        'absolute' => FALSE,
+        'external' => FALSE,
+        'replace_spaces' => FALSE,
+        'path_case' => 'none',
+        'trim_whitespace' => FALSE,
+        'alt' => '',
+        'rel' => '',
+        'link_class' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'nl2br' => FALSE,
+        'max_length' => 0,
+        'word_boundary' => TRUE,
+        'ellipsis' => TRUE,
+        'more_link' => FALSE,
+        'more_link_text' => '',
+        'more_link_path' => '',
+        'strip_tags' => FALSE,
+        'trim' => FALSE,
+        'preserve_tags' => '',
+        'html' => FALSE,
+      ],
+      'element_type' => '',
+      'element_class' => '',
+      'element_label_type' => '',
+      'element_label_class' => '',
+      'element_label_colon' => FALSE,
+      'element_wrapper_type' => '',
+      'element_wrapper_class' => '',
+      'element_default_classes' => TRUE,
+      'empty' => '',
+      'hide_empty' => FALSE,
+      'empty_zero' => FALSE,
+      'hide_alter_empty' => TRUE,
+      'text' => 'Delete Post',
+      'output_url_as_text' => FALSE,
+      'absolute' => FALSE,
+    ],
+    'delete_node' => [
+      'id' => 'delete_node',
+      'table' => 'node',
+      'field' => 'delete_node',
+      'relationship' => 'flag_report_node',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'entity_type' => 'node',
+      'plugin_id' => 'entity_link_delete',
+      'label' => '',
+      'exclude' => TRUE,
+      'alter' => [
+        'alter_text' => FALSE,
+        'text' => '',
+        'make_link' => FALSE,
+        'path' => '',
+        'absolute' => FALSE,
+        'external' => FALSE,
+        'replace_spaces' => FALSE,
+        'path_case' => 'none',
+        'trim_whitespace' => FALSE,
+        'alt' => '',
+        'rel' => '',
+        'link_class' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'nl2br' => FALSE,
+        'max_length' => 0,
+        'word_boundary' => TRUE,
+        'ellipsis' => TRUE,
+        'more_link' => FALSE,
+        'more_link_text' => '',
+        'more_link_path' => '',
+        'strip_tags' => FALSE,
+        'trim' => FALSE,
+        'preserve_tags' => '',
+        'html' => FALSE,
+      ],
+      'element_type' => '',
+      'element_class' => '',
+      'element_label_type' => '',
+      'element_label_class' => '',
+      'element_label_colon' => FALSE,
+      'element_wrapper_type' => '',
+      'element_wrapper_class' => '',
+      'element_default_classes' => TRUE,
+      'empty' => '',
+      'hide_empty' => FALSE,
+      'empty_zero' => FALSE,
+      'hide_alter_empty' => TRUE,
+      'text' => 'Delete Content',
+      'output_url_as_text' => FALSE,
+      'absolute' => FALSE,
+    ],
+  ];
+  $fields = array_merge($new_field, $fields);
+
+  // Update dropdown field.
+  $fields['dropbutton']['destination'] = FALSE;
+  $fields['dropbutton']['fields']['delete_comment'] = 'delete_comment';
+  $fields['dropbutton']['fields']['delete_post'] = 'delete_post';
+  $fields['dropbutton']['fields']['delete_node'] = 'delete_node';
+
+  // Safe fields values.
+  $config->set('display.default.display_options.fields', $fields);
+  $config->save();
+
+  // Run the rest of configuration as usually.
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_content_report', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
 }

@@ -1,0 +1,150 @@
+views.view.report_overview:
+  expected_config: { }
+  update_actions:
+    add:
+      dependencies:
+        module:
+          - better_exposed_filters
+      display:
+        default:
+          display_options:
+            filters:
+              field_status_value:
+                id: field_status_value
+                table: flagging__field_status
+                field: field_status_value
+                relationship: none
+                group_type: group
+                admin_label: ''
+                plugin_id: boolean
+                operator: '='
+                value: '1'
+                group: 1
+                exposed: true
+                expose:
+                  operator_id: ''
+                  label: 'Report Status'
+                  description: ''
+                  use_operator: false
+                  operator: field_status_value_op
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: field_status_value
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                    anonymous: '0'
+                    administrator: '0'
+                    verified: '0'
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+              flag_id:
+                id: flag_id
+                table: flagging
+                field: flag_id
+                relationship: none
+                group_type: group
+                admin_label: ''
+                entity_type: flagging
+                entity_field: flag_id
+                plugin_id: bundle
+                operator: in
+                value:
+                  report_comment: report_comment
+                  report_node: report_node
+                  report_post: report_post
+                group: 1
+                exposed: true
+                expose:
+                  operator_id: flag_id_op
+                  label: 'Content Type'
+                  description: ''
+                  use_operator: false
+                  operator: flag_id_op
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: flag_id
+                  required: false
+                  remember: false
+                  multiple: true
+                  remember_roles:
+                    authenticated: authenticated
+                  reduce: true
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+            exposed_form:
+              type: bef
+              options:
+                submit_button: Filter
+                reset_button: true
+                reset_button_label: Reset
+                exposed_sorts_label: 'Sort by'
+                expose_sort_order: true
+                sort_asc_label: Asc
+                sort_desc_label: Desc
+                text_input_required: 'Select any filter and click on Apply to see results'
+                text_input_required_format: basic_html
+                bef:
+                  general:
+                    autosubmit: false
+                    autosubmit_exclude_textfield: false
+                    autosubmit_textfield_delay: 500
+                    autosubmit_hide: false
+                    input_required: false
+                    allow_secondary: false
+                    secondary_label: 'Advanced options'
+                    secondary_open: false
+                    reset_button_always_show: false
+                  filter:
+                    flag_id:
+                      plugin_id: bef
+                      advanced:
+                        sort_options: false
+                        rewrite:
+                          filter_rewrite_values: "Report inappropriate comment|Comment\r\nReport inappropriate nodes|Nodes\r\nReport inappropriate post|Post"
+                          filter_rewrite_values_key: false
+                        collapsible: false
+                        collapsible_disable_automatic_open: false
+                        is_secondary: false
+                      select_all_none: false
+                      select_all_none_nested: false
+                      display_inline: true
+                    field_status_value:
+                      plugin_id: default
+                      advanced:
+                        sort_options: false
+                        rewrite:
+                          filter_rewrite_values: "True|Open\r\nFalse|Closed"
+                          filter_rewrite_values_key: false
+                        collapsible: false
+                        collapsible_disable_automatic_open: false
+                        is_secondary: false
+          cache_metadata:
+            contexts:
+              - url
+        overview:
+          cache_metadata:
+            contexts:
+              - url
