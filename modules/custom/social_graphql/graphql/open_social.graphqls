@@ -37,7 +37,12 @@ API from which all subscriptions must start.
 
 A real-time process must be implemented and deployed to support subscriptions.
 """
-type Subscription
+type Subscription {
+  """
+  Type Subscription can not be empty, so we add an empty field.
+  """
+  _empty: String
+}
 
 ################################################################################
 #                                Basic Types                                   #
@@ -311,7 +316,12 @@ interface Connection {
 """
 The base mutation type.
 """
-type Mutation
+type Mutation {
+  """
+  Type Mutation can not be empty, so we add an empty field.
+  """
+  _empty: String
+}
 
 """
 A violation indicates an error in the GraphQL query or other incorrect
