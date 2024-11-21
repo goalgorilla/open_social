@@ -49,3 +49,8 @@ services:
     arguments: []
     tags:
       - { name: cache.context }
+  social_group.eda_group_membership_handler:
+    autowire: true
+    class: Drupal\social_group\EdaGroupMembershipHandler
+    tags:
+      - { name: social.eda.handler }

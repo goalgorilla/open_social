@@ -1,0 +1,114 @@
+channels:
+  groupMembershipCreate:
+    address: com.getopensocial.cms.group_membership.create
+    messages:
+      groupMembershipCreate:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: The UUID of the user.
+                    created:
+                      type: string
+                      format: date-time
+                      description: The creation time of the group.
+                    updated:
+                      type: string
+                      format: date-time
+                      description: The last updated time of the group.
+                    status:
+                      type: string
+                      description: The status of the group.
+                      enum:
+                        - active
+                        - blocked
+                    roles:
+                      type: array
+                      items:
+                        type: string
+                      description: Group roles assigned to the user.
+                    group:
+                      type: object
+                      nullable: false
+                      description: The group in which the user is joining
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the group.
+                        label:
+                          type: string
+                          description: The label of the group.
+                        href:
+                          type: object
+                          properties:
+                            canonical:
+                              type: string
+                              format: uri
+                              description: Canonical URL of the group.
+                    user:
+                      type: object
+                      nullable: true
+                      description: The user who is joining the group
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the actor user.
+                        displayName:
+                          type: string
+                          description: The display name of the actor user.
+                        href:
+                          type: object
+                          properties:
+                            canonical:
+                              type: string
+                              format: uri
+                              description: Canonical URL of the actor user.
+                    href:
+                      type: object
+                      properties:
+                        canonical:
+                          type: string
+                          format: uri
+                          description: Canonical URL of the group_membership.
+                actor:
+                  type: object
+                  properties:
+                    application:
+                      type: object
+                      nullable: true
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the application.
+                        name:
+                          type: string
+                          description: The name of the application.
+                    user:
+                      type: object
+                      nullable: true
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the actor user.
+                        displayName:
+                          type: string
+                          description: The display name of the actor user.
+                        href:
+                          type: object
+                          properties:
+                            canonical:
+                              type: string
+                              format: uri
+                              description: Canonical URL of the actor user.
+
+operations:
+  onGroupMembershipCreate:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/groupMembershipCreate'

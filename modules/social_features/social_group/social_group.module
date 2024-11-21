@@ -28,6 +28,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupRelationshipType;
@@ -2920,5 +2921,22 @@ function _social_group_system_regional_settings_submit(array &$form, FormStateIn
   if (method_exists($group_address_field, 'setDefaultValue')) {
     $group_address_field->setDefaultValue($default_values)
       ->save();
+  }
+}
+
+/**
+ * When a user joins a group, we should trigger the corresponding EDA event.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ */
+function social_group_entity_insert(EntityInterface $entity): void {
+  if ($entity instanceof GroupMembership && $entity->gid->entity instanceof GroupInterface) {
+    // Only for flexible groups.
+    if ($entity->group_type->target_id == 'flexible_group') {
+      // Only direct joins.
+      if ($entity->uid->entity->id() == $entity->entity_id->entity->id()) {
+        \Drupal::service('social_group.eda_group_membership_handler')->groupMembershipCreate($entity);
+      }
+    }
   }
 }
