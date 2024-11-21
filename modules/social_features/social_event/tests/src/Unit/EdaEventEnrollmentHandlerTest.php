@@ -362,6 +362,8 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
       'com.getopensocial.cms.event_enrollment.create'
     );
 
+    assert($event instanceof CloudEventInterface);
+
     // Assertions to verify the event has expected attributes.
     $this->assertEquals('1.0', $event->getSpecVersion());
     $this->assertEquals('com.getopensocial.cms.event_enrollment.create', $event->getType());

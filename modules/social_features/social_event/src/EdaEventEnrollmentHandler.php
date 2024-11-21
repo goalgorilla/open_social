@@ -151,35 +151,18 @@ final class EdaEventEnrollmentHandler {
 
     // Get event.
     $event = $event_enrollment->getEvent();
+
+    // An event enrolment should never exist without an event because there
+    // would be nothing to enrol to. This indicates a data integrity constraint
+    // violation.
     assert($event instanceof NodeInterface);
 
     // Get enrollee data.
+    /** @var \Drupal\user\UserInterface $enrollee */
     $enrollee = $event_enrollment->getAccountEntity();
-    $enrollee_data = [];
-    if ($enrollee && $enrollee->id() != 0) {
-      $enrollee_data = [
-        'id' => (string) $enrollee->uuid(),
-        'displayName' => (string) $enrollee->getDisplayName(),
-        'email' => "",
-        'href' => Href::fromEntity($enrollee),
-      ];
-    }
-    else {
-      $first_name = $event_enrollment->get('field_first_name')->value;
-      $last_name = $event_enrollment->get('field_last_name')->value;
-      $email = $event_enrollment->get('field_email')->value;
-      $enrollee_data = [
-        'id' => NULL,
-        'displayName' => $first_name . " " . $last_name,
-        'email' => $email,
-        'href' => NULL,
-      ];
-    }
 
-    // Get enrollee data.
-    $enrollee = $event_enrollment->getAccountEntity();
     $enrollee_data = [];
-    if ($enrollee && $enrollee->id() != 0) {
+    if ($enrollee->id() != 0) {
       $enrollee_data = [
         'id' => (string) $enrollee->uuid(),
         'displayName' => (string) $enrollee->getDisplayName(),
@@ -188,15 +171,18 @@ final class EdaEventEnrollmentHandler {
       ];
     }
     else {
-      $first_name = $event_enrollment->get('field_first_name')->value;
-      $last_name = $event_enrollment->get('field_last_name')->value;
-      $email = $event_enrollment->get('field_email')->value;
-      $enrollee_data = [
-        'id' => NULL,
-        'displayName' => $first_name . " " . $last_name,
-        'email' => $email,
-        'href' => NULL,
-      ];
+      $first_name = $event_enrollment->get('field_first_name')->value ?? NULL;
+      $last_name = $event_enrollment->get('field_last_name')->value ?? NULL;
+      $email = $event_enrollment->get('field_email')->value ?? NULL;
+
+      if ($first_name && $last_name && $email) {
+        $enrollee_data = [
+          'id' => NULL,
+          'displayName' => $first_name . " " . $last_name,
+          'email' => $email,
+          'href' => NULL,
+        ];
+      }
     }
 
     return new CloudEvent(
@@ -290,6 +276,12 @@ final class EdaEventEnrollmentHandler {
   private function dispatch(string $topic_name, string $event_type, EventEnrollmentInterface $event_enrollment): void {
     // Skip if required modules are not enabled.
     if (!$this->moduleHandler->moduleExists('social_eda')) {
+      return;
+    }
+
+    // An event enrolment should always have an event and a user associated
+    // with it.
+    if (!$event_enrollment->getEvent() || !$event_enrollment->getAccountEntity()) {
       return;
     }
 
