@@ -337,6 +337,15 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_group_flexible_group_group_insert(GroupInterface $group): void {
+  if ($group->bundle() == "flexible_group") {
+    \Drupal::service('social_group_flexible_group.eda_handler')->groupCreate($group);
+  }
+}
+
+/**
  * Implements template_preprocess_form_element().
  */
 function social_group_flexible_group_preprocess_form_element(&$variables) {

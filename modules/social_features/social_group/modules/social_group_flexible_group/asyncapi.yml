@@ -1,0 +1,147 @@
+channels:
+  groupCreate:
+    address: com.getopensocial.cms.group.create
+    messages:
+      groupCreate:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                id:
+                  type: string
+                  description: Unique group ID (UUIDv4)
+                created:
+                  type: string
+                  format: date-time
+                  description: Creation time of the group
+                updated:
+                  type: string
+                  format: date-time
+                  description: Last update time of the group
+                status:
+                  type: string
+                  description: Status of the group (e.g., published or unpublished)
+                  enum:
+                   - published
+                   - unpublished
+                label:
+                  type: string
+                  description: Label of the group
+                visibility:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      description: The visibility type.
+                    roles:
+                      type: array
+                      description: The list of roles ids.
+                contentVisibility:
+                  type: object
+                  properties:
+                    method:
+                      type: string
+                      description: Visibility of content
+                      enum:
+                       - public
+                       - community
+                       - group
+                membership:
+                  type: object
+                  properties:
+                    method:
+                      type: string
+                      description: Method of membership
+                      enum:
+                       - open
+                       - invite
+                       - request
+                type:
+                  type: string
+                  nullable: true
+                  description: Type of the group (optional)
+                address:
+                  type: object
+                  properties:
+                    label:
+                      type: string
+                      nullable: true
+                      description: Label for the address (optional)
+                    countryCode:
+                      type: string
+                      nullable: true
+                      description: Country code (optional)
+                    administrativeArea:
+                      type: string
+                      nullable: true
+                      description: Administrative area (optional)
+                    locality:
+                      type: string
+                      nullable: true
+                      description: Locality (optional)
+                    dependentLocality:
+                      type: string
+                      nullable: true
+                      description: Dependent locality (optional)
+                    postalCode:
+                      type: string
+                      nullable: true
+                      description: Postal code (optional)
+                    sortingCode:
+                      type: string
+                      nullable: true
+                      description: Sorting code (optional)
+                    addressLine1:
+                      type: string
+                      nullable: true
+                      description: Address line 1 (optional)
+                    addressLine2:
+                      type: string
+                      nullable: true
+                      description: Address line 2 (optional)
+                href:
+                  type: object
+                  properties:
+                    canonical:
+                      type: string
+                      format: uri
+                      description: Canonical URL for the group
+            actor:
+              type: object
+              properties:
+                application:
+                  type: object
+                  nullable: true
+                  properties:
+                    id:
+                      type: string
+                      description: Application ID (UUIDv4)
+                    name:
+                      type: string
+                      description: Name of the application
+                user:
+                  type: object
+                  nullable: true
+                  properties:
+                    id:
+                      type: string
+                      description: Actor user ID (UUIDv4)
+                    displayName:
+                      type: string
+                      description: Display name of the actor user
+                    href:
+                      type: object
+                      properties:
+                        canonical:
+                          type: string
+                          format: uri
+                          description: Canonical URL for the actor profile
+operations:
+  onGroupCreate:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/groupCreate'
