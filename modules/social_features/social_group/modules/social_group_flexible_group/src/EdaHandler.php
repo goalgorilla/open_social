@@ -110,6 +110,17 @@ final class EdaHandler {
   }
 
   /**
+   * Unpublish event handler.
+   */
+  public function groupUnpublish(GroupInterface $group): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.group.unpublish",
+      group: $group
+    );
+  }
+
+  /**
    * Transforms a GroupInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
