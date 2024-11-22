@@ -346,6 +346,16 @@ function social_group_flexible_group_group_insert(GroupInterface $group): void {
 }
 
 /**
+ * Implements hook_social_core_ENTITY_TYPE_unpublished().
+ */
+function social_group_flexible_group_social_core_group_unpublished(EntityInterface $entity): void {
+  // When a group is unpublished, dispatch the proper EDA event.
+  if ($entity instanceof GroupInterface && $entity->bundle() == "flexible_group") {
+    \Drupal::service('social_group_flexible_group.eda_handler')->groupUnpublish($entity);
+  }
+}
+
+/**
  * Implements template_preprocess_form_element().
  */
 function social_group_flexible_group_preprocess_form_element(&$variables) {
