@@ -13,6 +13,7 @@ use Drupal\group\Entity\GroupRelationship;
 use Drupal\message\Entity\Message;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
 
 /**
  * Implements hook_token_info().
@@ -190,6 +191,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                   // Get the related message.
                   $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
                   $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+                  /** @var \Drupal\private_message\Entity\PrivateMessageInterface $entity */
                   $entity = \Drupal::entityTypeManager()
                     ->getStorage($target_type)
                     ->load($target_id);
