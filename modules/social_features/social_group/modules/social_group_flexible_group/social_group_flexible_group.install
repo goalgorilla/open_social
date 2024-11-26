@@ -257,9 +257,17 @@ function social_group_flexible_group_update_130005() : void {
 function social_group_flexible_group_update_130006(): string {
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
-
+  // Load existing "Verified" group role.
+  $verified_roles = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->loadByProperties([
+      'scope' => 'outsider',
+      'global_role' => 'verified',
+      'group_type' => 'flexible_group',
+    ]);
+  // Create "Verified" group role if it isn't exist.
   if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group') &&
-    empty(\Drupal::config('group.role.flexible_group-verified')->getRawData())
+    empty($verified_roles)
   ) {
     // Execute configuration update definitions with logging of success.
     $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
