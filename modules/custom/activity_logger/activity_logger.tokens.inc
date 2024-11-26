@@ -13,7 +13,6 @@ use Drupal\group\Entity\GroupRelationship;
 use Drupal\message\Entity\Message;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
 
 /**
  * Implements hook_token_info().
