@@ -110,6 +110,17 @@ final class EdaHandler {
   }
 
   /**
+   * Publish event handler.
+   */
+  public function groupPublish(GroupInterface $group): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.group.publish",
+      group: $group
+    );
+  }
+
+  /**
    * Unpublish event handler.
    */
   public function groupUnpublish(GroupInterface $group): void {
@@ -150,7 +161,9 @@ final class EdaHandler {
           status: $status,
           label: (string) $group->label(),
           visibility: GroupVisibility::fromEntity($group),
-          contentVisibility: $group->get('field_group_allowed_visibility')->value,
+          contentVisibility: [
+            'type' => $group->get('field_group_allowed_visibility')->value,
+          ],
           membership: GroupMembershipMethod::fromEntity($group),
           type: $group->getGroupType()->get('uuid'),
           author: User::fromEntity($group->get('uid')->entity),

@@ -339,6 +339,33 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the groupPublish() method.
+   *
+   * @covers ::groupPublish
+   */
+  public function testGroupPublish(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the group object.
+    $group = $handler->fromEntity($this->group, 'com.getopensocial.cms.group.publish');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group.v1'),
+        $this->equalTo($group)
+      );
+
+    // Call the groupPublish method.
+    $handler->groupPublish($this->group);
+
+    // Assert that the correct group is dispatched.
+    $this->assertEquals('com.getopensocial.cms.group.publish', $group->getType());
+  }
+
+  /**
    * Returns a mocked handler with dependencies injected.
    *
    * @return \Drupal\social_group_flexible_group\EdaHandler

@@ -23,7 +23,7 @@ class GroupEntityData {
     public readonly string $status,
     public readonly string $label,
     public readonly GroupVisibility|null $visibility,
-    public readonly string $contentVisibility,
+    public readonly array $contentVisibility,
     public readonly GroupMembershipMethod|null $membership,
     public readonly ?string $type,
     public readonly User $author,
