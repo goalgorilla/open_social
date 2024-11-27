@@ -451,3 +451,11 @@ function social_profile_fields_preprocess_field(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function social_profile_fields_form_taxonomy_term_nationality_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  // As per PROD-30250 we hide the path field.
+  $form['path']['#access'] = FALSE;
+}
