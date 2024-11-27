@@ -3,7 +3,6 @@
 namespace Drupal\social_content_report\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Url;
 use Drupal\flag\FlaggingInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -33,7 +32,7 @@ class ReportController extends ControllerBase {
       $flagging->save();
     }
 
-    return new RedirectResponse(Url::fromRoute('view.report_overview.overview')->toString());
+    return new RedirectResponse('view.report_overview.overview');
   }
 
 }

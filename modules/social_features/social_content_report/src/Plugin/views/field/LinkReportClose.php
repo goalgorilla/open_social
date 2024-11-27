@@ -22,13 +22,6 @@ class LinkReportClose extends LinkBase {
     /** @var \Drupal\flag\FlaggingInterface $flagging */
     $flagging = $this->getEntity($row);
 
-    // If items is already closed (disabled), return nothing to hide the link.
-    if ($flagging->hasField('field_status') &&
-      empty($flagging->get('field_status')->value)
-    ) {
-      return NULL;
-    }
-
     return Url::fromRoute('social_content_report.close_report', [
       'flagging' => $flagging->id(),
     ]);
