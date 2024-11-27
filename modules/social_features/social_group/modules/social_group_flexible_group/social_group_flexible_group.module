@@ -346,6 +346,15 @@ function social_group_flexible_group_group_insert(GroupInterface $group): void {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function social_group_flexible_group_group_update(EntityInterface $entity): void {
+  if ($entity instanceof GroupInterface && $entity->bundle() === 'flexible_group') {
+    \Drupal::service('social_group_flexible_group.eda_handler')->groupUpdate($entity);
+  }
+}
+
+/**
  * Implements hook_social_core_ENTITY_TYPE_unpublished().
  */
 function social_group_flexible_group_social_core_group_unpublished(EntityInterface $entity): void {
