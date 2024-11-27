@@ -2,10 +2,13 @@
 
 namespace Drupal\social_group_default_route;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -16,10 +19,17 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
  */
 class SocialGroupDefaultRouteRedirectService {
 
+  use StringTranslationTrait;
+
   /**
-   * The route name of the default page of any group type except closed groups.
+   * Default route for group non-members.
    */
-  const DEFAULT_ROUTE = 'social_group.stream';
+  const GROUP_ABOUT_ROUTE = 'view.group_information.page_group_about';
+
+  /**
+   * Default route for group members.
+   */
+  const GROUP_STREAM_ROUTE = 'social_group.stream';
 
   /**
    * The route name of the group default page is provided by the current module.
@@ -32,21 +42,22 @@ class SocialGroupDefaultRouteRedirectService {
   const DEFAULT_GROUP_ROUTE = 'entity.group.canonical';
 
   /**
-   * The route name of the default page of closed groups.
-   */
-  const DEFAULT_CLOSED_ROUTE = 'view.group_information.page_group_about';
-
-  /**
    * SocialGroupDefaultRedirectService constructor.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The current route.
    * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler.
+   * @param \Drupal\social_group_default_route\GroupLandingTabManager $landingTabManager
+   *   The landing tab manager.
    */
   public function __construct(
     protected RouteMatchInterface $routeMatch,
     protected AccountProxyInterface $currentUser,
+    protected ModuleHandlerInterface $moduleHandler,
+    protected GroupLandingTabManager $landingTabManager,
   ) {
   }
 
@@ -61,31 +72,27 @@ class SocialGroupDefaultRouteRedirectService {
   public function doRedirect(ExceptionEvent|RequestEvent $event, SocialGroupInterface $group): void {
     $route_name = $this->routeMatch->getRouteName();
     // Check if current user is a member.
-    if (!$group->hasMember($this->currentUser)) {
-      /** @var string|null $route */
-      $route = $group->default_route_an->value;
-
-      if ($route === NULL) {
-        $route = self::DEFAULT_CLOSED_ROUTE;
-      }
-    }
-    else {
-      /** @var string|null $route */
-      $route = $group->default_route->value;
-
-      // Still no route here? Then we use the normal default.
-      if ($route === NULL) {
-        $route = self::DEFAULT_ROUTE;
-      }
-    }
+    $route = $group->hasMember($this->currentUser) ?
+      $this->getDefaultMemberRoute($group) :
+      $this->getDefaultNonMemberRoute($group);
 
     // Determine the URL we want to redirect to.
     $url = Url::fromRoute($route, ['group' => $group->id()]);
 
     // If it's not set, set to canonical, or the current user has no access.
-    if ($route === $route_name || $url->access($this->currentUser) === FALSE) {
+    if ($route === $route_name) {
       // This basically means that the normal flow remains intact.
       return;
+    }
+
+    // If  current user has no access.
+    if ($url->access($this->currentUser) === FALSE) {
+      $route = $group->hasMember($this->currentUser) ?
+        self::GROUP_STREAM_ROUTE :
+        self::GROUP_ABOUT_ROUTE;
+
+      $url = Url::fromRoute($route, ['group' => $group->id()]);
+      $event->setResponse(new RedirectResponse($url->toString()));
     }
 
     // Redirect.
@@ -111,6 +118,111 @@ class SocialGroupDefaultRouteRedirectService {
     }
 
     return $group;
+  }
+
+  /**
+   * Get default route for non-members.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   * @param array $available_routes
+   *   The available route.
+   *
+   * @return string
+   *   The default route.
+   */
+  public function getDefaultNonMemberRoute(GroupInterface $group, array $available_routes = []): string {
+    $group_routes = $this->getGroupDefaultRoutes($group);
+
+    if ($group->get('default_route_an')->isEmpty() ||
+      (!empty($available_routes) && !isset($available_routes[$group->get('default_route_an')->getString()]))
+    ) {
+      return $group_routes['non-member'] ?? self::GROUP_ABOUT_ROUTE;
+    }
+    else {
+      return $group->get('default_route_an')->getString();
+    }
+  }
+
+  /**
+   * Get default route for members.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   * @param array $available_routes
+   *   The available route.
+   *
+   * @return string
+   *   The default route.
+   */
+  public function getDefaultMemberRoute(GroupInterface $group, array $available_routes = []): string {
+    $group_routes = $this->getGroupDefaultRoutes($group);
+
+    if ($group->get('default_route')->isEmpty() ||
+      (!empty($available_routes) && !isset($available_routes[$group->get('default_route')->getString()]))
+    ) {
+      return $group_routes['member'] ?? self::GROUP_STREAM_ROUTE;
+    }
+    else {
+      return $group->get('default_route')->getString();
+    }
+  }
+
+  /**
+   * Get allowed routes for non-member.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   * @param array $field_values
+   *   The field values.
+   *
+   * @return array
+   *   The array of routes.
+   */
+  public function getNonMemberRoutes(GroupInterface $group, array $field_values = []): array {
+    return $this->landingTabManager->getAvailableLendingTabs($group, GroupLandingTabManagerInterface::NON_MEMBER, $field_values);
+  }
+
+  /**
+   * Get allowed routes for group member.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   * @param array $field_values
+   *   The field values.
+   *
+   * @return array
+   *   The array of routes.
+   */
+  public function getMemberRoutes(GroupInterface $group, array $field_values = []): array {
+    return $this->landingTabManager->getAvailableLendingTabs($group, GroupLandingTabManagerInterface::MEMBER, $field_values);
+  }
+
+  /**
+   * Get group default routes.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   *
+   * @return array
+   *   The array of routes.
+   */
+  public function getGroupDefaultRoutes(GroupInterface $group): array {
+    $group_bundles = $this->moduleHandler->invokeAll('social_group_default_route_group_types');
+    $this->moduleHandler->alter('social_group_default_route_group_types', $group_bundles);
+    return $group_bundles[$group->bundle()] ?? [];
+  }
+
+  /**
+   * Get supported group type.
+   *
+   * @return array
+   *   The list of group bundle.
+   */
+  public function getSupportedGroupTypes(): array {
+    $group_types = $this->moduleHandler->invokeAll('social_group_default_route_group_types');
+    $this->moduleHandler->alter('social_group_default_route_group_types', $group_bundles);
+    return array_keys($group_types);
   }
 
 }
