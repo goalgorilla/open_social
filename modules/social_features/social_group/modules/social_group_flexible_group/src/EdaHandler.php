@@ -143,6 +143,17 @@ final class EdaHandler {
   }
 
   /**
+   * Delete event handler.
+   */
+  public function groupDelete(GroupInterface $group): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.group.delete",
+      group: $group
+    );
+  }
+
+  /**
    * Transforms a GroupInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
