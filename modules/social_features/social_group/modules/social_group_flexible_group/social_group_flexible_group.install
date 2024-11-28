@@ -7,6 +7,7 @@
 
 use Drupal\Core\Config\FileStorage;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\GroupMembership;
 use Drupal\social_group\Entity\Group;
 use Drupal\user\Entity\User;
@@ -331,4 +332,38 @@ function social_group_flexible_group_update_130008(): void {
   $form_display->set('hidden', $hidden)
     ->set('content', $content)
     ->save();
+}
+
+/**
+ * Revoke permissions for Authenticated (outsider) group role.
+ */
+function social_group_flexible_group_update_130009(): void {
+  $group_authenticated_role = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->load('flexible_group-outsider');
+
+  if ($group_authenticated_role instanceof GroupRoleInterface) {
+    $group_authenticated_role->revokePermissions([
+      'join group',
+      'request group membership',
+    ])->save();
+  }
+
+}
+
+/**
+ * Grant permissions for Verified (outsider) group role.
+ */
+function social_group_flexible_group_update_130010(): void {
+  $group_verified_role = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->load('flexible_group-verified');
+
+  if ($group_verified_role instanceof GroupRoleInterface) {
+    $group_verified_role->grantPermissions([
+      'join group',
+      'request group membership',
+    ])->save();
+  }
+
 }
