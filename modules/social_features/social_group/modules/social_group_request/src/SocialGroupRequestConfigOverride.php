@@ -87,19 +87,6 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
     $outsider_role_configs = [];
     foreach ($social_group_types as $social_group_type) {
       $default_form_display_configs[] = "core.entity_form_display.group.{$social_group_type}.default";
-      $outsider_role_configs[] = "group.role.{$social_group_type}-outsider";
-    }
-
-    foreach ($outsider_role_configs as $config_name) {
-      if (in_array($config_name, $names)) {
-        $config = $this->configFactory->getEditable($config_name);
-        $permissions = $config->get('permissions');
-        $permissions[] = 'request group membership';
-
-        $overrides[$config_name] = [
-          'permissions' => $permissions,
-        ];
-      }
     }
 
     foreach ($default_form_display_configs as $config_name) {

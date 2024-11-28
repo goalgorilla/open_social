@@ -61,9 +61,10 @@ class SocialGroupInvitationOperations extends InvitationOperations {
    */
   public function checkAccess(GroupRelationshipInterface $group_content) {
     $invited = $group_content->getEntityId();
+    $group = $group_content->getGroup();
 
     // Only allow user accept/decline own invitations.
-    if ($invited == $this->currentUser()->id()) {
+    if ($invited == $this->currentUser()->id() && $group->hasPermission('join group', $this->currentUser())) {
       return AccessResult::allowed();
     }
     return AccessResult::forbidden();

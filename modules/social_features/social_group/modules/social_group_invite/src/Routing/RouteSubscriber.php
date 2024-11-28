@@ -3,6 +3,7 @@
 namespace Drupal\social_group_invite\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\social_group_invite\Controller\SocialGroupInvitationController;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -25,6 +26,14 @@ class RouteSubscriber extends RouteSubscriberBase {
       unset($requirements['_group_permission']);
       $route->setDefaults($defaults);
       $route->setRequirements($requirements);
+    }
+
+    // Do not allow to accept invitation without "join group" permission.
+    if ($route = $collection->get('ginvite.invitation.accept')) {
+      $route->setRequirement(
+        '_custom_access',
+        SocialGroupInvitationController::class . '::checkAccess',
+      );
     }
   }
 

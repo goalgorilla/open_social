@@ -40,11 +40,11 @@ function social_group_request_update_dependencies(): array {
  */
 function _social_group_request_set_permissions(): void {
   if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
-    /** @var \Drupal\group\Entity\GroupRoleInterface $outsider */
-    $outsider = \Drupal::entityTypeManager()
+    /** @var \Drupal\group\Entity\GroupRoleInterface $verified */
+    $verified = \Drupal::entityTypeManager()
       ->getStorage('group_role')
-      ->load('flexible_group-outsider');
-    $outsider->grantPermission('request group membership')->save();
+      ->load('flexible_group-verified');
+    $verified->grantPermission('request group membership')->save();
 
     /** @var \Drupal\group\Entity\GroupRoleInterface $group_manager */
     $group_manager = \Drupal::entityTypeManager()
