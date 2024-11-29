@@ -115,6 +115,8 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       }
       // Add the Group ID to the data.
       $tempstoreData['group_id'] = $group->id();
+      // Add the group bundle to the data.
+      $tempstoreData['group_type'] = $group->bundle();
       $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
     }
 

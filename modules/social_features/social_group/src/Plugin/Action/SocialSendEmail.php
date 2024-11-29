@@ -10,16 +10,13 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Utility\Token;
-use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupMembershipInterface;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_email_broadcast\SocialEmailBroadcast;
 use Drupal\social_user\Plugin\Action\SocialSendEmail as SocialSendEmailBase;
 use Drupal\user\UserInterface;
-use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
 use Egulias\EmailValidator\EmailValidator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -36,23 +33,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SocialSendEmail extends SocialSendEmailBase {
 
-
-  use ViewsBulkOperationsFormTrait;
-
   /**
    * The Drupal module handler service.
    */
   protected ModuleHandlerInterface $moduleHandler;
-
-  /**
-   * The tempstore service.
-   */
-  protected PrivateTempStoreFactory $tempStoreFactory;
-
-  /**
-   * The current user object.
-   */
-  protected AccountInterface $currentUser;
 
   /**
    * The email broadcast service.
@@ -64,8 +48,8 @@ class SocialSendEmail extends SocialSendEmailBase {
    */
   public function __construct(
     array $configuration,
-    $plugin_id,
-    $plugin_definition,
+          $plugin_id,
+          $plugin_definition,
     Token $token,
     EntityTypeManagerInterface $entity_type_manager,
     LoggerInterface $logger,
@@ -74,8 +58,6 @@ class SocialSendEmail extends SocialSendEmailBase {
     QueueFactory $queue_factory,
     $allow_text_format,
     ModuleHandlerInterface $module_handler,
-    PrivateTempStoreFactory $temp_store_factory,
-    AccountInterface $current_user,
     SocialEmailBroadcast $email_broadcast_service
   ) {
     parent::__construct(
@@ -92,8 +74,6 @@ class SocialSendEmail extends SocialSendEmailBase {
     );
 
     $this->moduleHandler = $module_handler;
-    $this->tempStoreFactory = $temp_store_factory;
-    $this->currentUser = $current_user;
     $this->emailBroadcast = $email_broadcast_service;
   }
 
@@ -110,51 +90,46 @@ class SocialSendEmail extends SocialSendEmailBase {
       $container->get('queue'),
       $container->get('current_user')->hasPermission('use text format mail_html'),
       $container->get('module_handler'),
-      $container->get('tempstore.private'),
-      $container->get('current_user'),
       $container->get(SocialEmailBroadcast::class),
     );
   }
 
   /**
-   * Gets the current user.
+   * Helps to check if a user is subscribed or not for bulk mailing.
    *
-   * @return \Drupal\Core\Session\AccountInterface
-   *   The current user.
-   */
-  protected function currentUser(): AccountInterface {
-    return $this->currentUser;
-  }
-
-  /**
-   * Helps to check if a user is unsubscribed or not from bulk mailing.
-   *
-   * @param \Drupal\user\UserInterface $user
-   *   The user entity.
+   * @param \Drupal\group\Entity\GroupRelationshipInterface|string|int $membership
+   *   The group content id (membership).
    *
    * @return bool
-   *   If unsubscribed TRUE, otherwise FALSE.
+   *   If subscribed TRUE, otherwise FALSE.
    *
    * @throws \Exception
    */
-  private function isUnsubscribedFromEmails(UserInterface $user): bool {
-    if (empty($this->context['group_type'])) {
-      $this->logger->error($this->t('Using action @action out of the group context!', ['@action' => __CLASS__]));
-      // Hardly restrict sending emails if a group type isn't detected.
+  public function isSubscribedForBulkEmails(string|int|GroupRelationshipInterface $membership): bool {
+    if (!$membership instanceof GroupRelationshipInterface) {
+      $membership = GroupRelationship::load($membership);
+
+      if (!$membership instanceof GroupMembershipInterface) {
+        return TRUE;
+      }
+    }
+
+    $user = $membership->getEntity();
+    if (!$user instanceof UserInterface) {
       return TRUE;
     }
 
     if (!$user->isAuthenticated()) {
-      return FALSE;
+      return TRUE;
     }
 
     $setting_name = $this->getUnsubscribeSettingName();
     if (empty($setting_name)) {
-      return FALSE;
+      return TRUE;
     }
 
     $frequency = $this->emailBroadcast->getBulkEmailUserSetting(account: $user, name: $setting_name);
-    return !empty($frequency) && $frequency === SocialEmailBroadcast::FREQUENCY_NONE;
+    return empty($frequency) || $frequency !== SocialEmailBroadcast::FREQUENCY_NONE;
   }
 
   /**
@@ -200,138 +175,21 @@ class SocialSendEmail extends SocialSendEmailBase {
    * {@inheritdoc}
    */
   public function setContext(array &$context): void {
+    $context['validate_email_subscriptions_callback'] = 'isSubscribedForBulkEmails';
+
+    // We should set these values only if empty.
+    // On batch, they may be overridden.
+    if (!isset($context['results']['removed_selections']['count'])) {
+      $context['results']['removed_selections'] = [
+        'count' => 0,
+        'message' => [
+          'singular' => "1 member won't receive this email due to their communication preferences.",
+          'plural' => "@count members won't receive this email due to their communication preferences.",
+        ],
+      ];
+    }
+
     parent::setContext($context);
-
-    // @todo Rely on something more solid then dynamic data for batch.
-    // We don't want to run this code if batch was started.
-    // "prepopulated" key is adding exactly on batch start.
-    if (isset($context['prepopulated'])) {
-      return;
-    }
-
-    if (!isset($context['group_type'])) {
-      if (!$group_id = $context['group_id'] ?? NULL) {
-        // We need to know in what group context current action is executed.
-        return;
-      }
-
-      $group = Group::load($group_id);
-      if (!$group instanceof GroupInterface) {
-        return;
-      }
-
-      $context['group_type'] = $group->bundle();
-      // Update a context property values as it needed farther.
-      parent::setContext($context);
-    }
-
-    if (!isset($context['list'], $context['bulk_form_keys'])) {
-      // Probably, the method is executed on batch processing.
-      return;
-    }
-
-    // Filter members that have disabled bulk mailing based on their profile
-    // settings.
-    // We need to remove the selected users from temporary data and update
-    // form data passed through the further forms.
-    if ($select_all = empty($context['list'])) {
-      $selected_options = $context['bulk_form_keys'];
-    }
-    else {
-      $selected_options = array_keys($context['list']);
-    }
-
-    if (!$selected_options) {
-      return;
-    }
-
-    $origin = [...$selected_options];
-
-    // Go through each membership and check if a user doesn't have
-    // a disabled bulk mailing.
-    foreach ($selected_options as $key => $name) {
-      $item = (array) $this->getListItem($name);
-      if (!in_array('group_content', $item)) {
-        continue;
-      }
-
-      // First element is the enrollment ID.
-      $gcid = $item[0] ?? 0;
-      $group_membership = GroupRelationship::load($gcid);
-      if (!$group_membership) {
-        continue;
-      }
-
-      /** @var \Drupal\user\UserInterface $account */
-      $account = $group_membership->getEntity();
-
-      // Check user frequency settings for group type bulk mailing.
-      // If a user has disabled mailing, we remove enrollment from
-      // the selected list.
-      // Only authenticated users have frequency settings.
-      if ($this->isUnsubscribedFromEmails($account)) {
-        unset($selected_options[$key]);
-      }
-    }
-
-    // All selected users can receive the email.
-    if (!$removed = array_diff($origin, $selected_options)) {
-      $context['selected_removed'] = 0;
-      return;
-    }
-
-    // If some of the selected members unsubscribed from emails, we should
-    // prevent executing action for all memberships.
-    if ($select_all) {
-      $context['exclude_mode'] = FALSE;
-    }
-
-    $context['selected_removed'] = count($removed);
-    $context['selected_count'] = count($selected_options);
-    $context['bulk_form_keys'] = $selected_options;
-
-    // If event managers pressed "Select all" button, and we found the
-    // memberships that have disabled bulk mailing, we should change below
-    // options to prevent sending emails for all users.
-    if ($select_all) {
-      foreach ($selected_options as $name) {
-        $context['list'][$name] = $this->getListItem($name);
-      }
-    }
-    else {
-      foreach ($removed as $name) {
-        unset($context['list'][$name]);
-      }
-    }
-
-    // Prevent sending emails for all users.
-    if (empty($context['list'])) {
-      $context['bulk_form_keys'] = [];
-    }
-
-    // As context was changed, we need to update the appropriate tempstore.
-    $this->setTempstoreData($context, view_id: $context['view_id'], display_id: $context['display_id']);
-    parent::setContext($context);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function executeMultiple(array $objects): array {
-    /** @var \Drupal\group\Entity\GroupRelationshipInterface $membership */
-    foreach ($objects as $key => $membership) {
-      /** @var \Drupal\user\Entity\User $user */
-      $user = $membership->getEntity();
-      if (!$user instanceof UserInterface) {
-        continue;
-      }
-
-      if ($this->isUnsubscribedFromEmails($user)) {
-        unset($objects[$key]);
-      }
-    }
-
-    return parent::executeMultiple($objects);
   }
 
   /**
@@ -346,23 +204,8 @@ class SocialSendEmail extends SocialSendEmailBase {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
-    if (!empty($this->context['selected_removed'])) {
-      $this->messenger()
-        ->addWarning($this->t('Your email will be sent to members who have opted to receive community updates and announcements'));
-      $this->messenger()
-        ->addWarning($this->formatPlural($this->context['selected_removed'],
-          "1 member won't receive this email due to their communication preferences.",
-          "@count members won't receive this email due to their communication preferences."
-        ));
-    }
-
-    // If all selected users have unsubscribed from emails, we should return
-    // empty form.
-    if (!empty($this->context['selected_removed']) && empty($this->context['list'])) {
-      return [
-        '#markup' => $this->t('No items selected. Go back and try again.'),
-      ];
-    }
+    $this->messenger()
+      ->addWarning($this->t('Your email will be sent to members who have opted to receive community updates and announcements.'));
 
     // Add title to the form as well.
     if ($form['#title'] !== NULL) {

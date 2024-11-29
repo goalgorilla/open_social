@@ -2348,7 +2348,11 @@ function _social_group_action_batch_finish($success, array $results, array $oper
   }
 
   // Count changed entities.
-  if (is_array($results['operations'][0]) && $results['operations'][0]['count']) {
+  if (
+    isset($results['operations'][0]) &&
+    is_array($results['operations'][0]) &&
+    $results['operations'][0]['count']
+  ) {
     $results_count = $results['operations'][0]['count'];
   }
   else {
@@ -2378,6 +2382,18 @@ function _social_group_action_batch_finish($success, array $results, array $oper
       }
     }
   });
+
+  // Build the message when there are some items user selected but these items
+  // where removed during precessing.
+  if (!empty($results['removed_selections']['count'])) {
+    $removed_selections = $results['removed_selections'];
+    $message = \Drupal::translation()->formatPlural(
+      $removed_selections['count'],
+      $removed_selections['message']['singular'] ?? '',
+      $removed_selections['message']['plural'] ?? ''
+    );
+    \Drupal::messenger()->addWarning($message);
+  }
 }
 
 /**
