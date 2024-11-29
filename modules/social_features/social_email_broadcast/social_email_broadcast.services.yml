@@ -1,3 +1,9 @@
 services:
   Drupal\social_email_broadcast\SocialEmailBroadcast:
     arguments: ['@database']
+
+  Drupal\social_email_broadcast\ViewsBulkOperationsActionProcessorDecorator:
+    decorates: views_bulk_operations.processor
+    parent: views_bulk_operations.processor
+    decoration_on_invalid: ignore
+    public: false
