@@ -3,12 +3,9 @@
 namespace Drupal\social_event_an_enroll\Plugin\Action;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
-use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Utility\Token;
 use Drupal\social_email_broadcast\SocialEmailBroadcast;
 use Drupal\social_event\EventEnrollmentInterface;
@@ -57,9 +54,6 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
     EmailValidator $email_validator,
     QueueFactory $queue_factory,
     $allow_text_format,
-    ModuleHandlerInterface $module_handler,
-    PrivateTempStoreFactory $temp_store_factory,
-    AccountInterface $current_user,
     SocialEmailBroadcast $email_broadcast_service,
     EventAnEnrollManager $event_an_enroll_manager
   ) {
@@ -74,9 +68,6 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
       $email_validator,
       $queue_factory,
       $allow_text_format,
-      $module_handler,
-      $temp_store_factory,
-      $current_user,
       $email_broadcast_service
     );
 
@@ -95,9 +86,6 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
       $container->get('email.validator'),
       $container->get('queue'),
       $container->get('current_user')->hasPermission('use text format mail_html'),
-      $container->get('module_handler'),
-      $container->get('tempstore.private'),
-      $container->get('current_user'),
       $container->get(SocialEmailBroadcast::class),
       $container->get('social_event_an_enroll.manager'),
     );
