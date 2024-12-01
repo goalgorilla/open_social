@@ -2,8 +2,8 @@
 
 namespace Drupal\social_user\EventSubscriber;
 
-use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Url;
 use Drupal\user\Entity\User;
@@ -13,57 +13,43 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Class RedirectSubscriber.
+ * Adds redirect to default user landing page from canonical user and profile.
  *
  * @package Drupal\social_user\EventSubscriber
  */
 class RedirectSubscriber implements EventSubscriberInterface {
 
-
   /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   * Redirect subscriber construct.
    */
-  protected $configFactory;
-
-  /**
-   * The current route.
-   *
-   * @var \Drupal\Core\Routing\CurrentRouteMatch
-   */
-  protected $currentRoute;
-
-  /**
-   * The current user.
-   *
-   * @var \Drupal\Core\Session\AccountProxy
-   */
-  protected $currentUser;
-
-  /**
-   * Redirectsubscriber construct.
-   *
-   * @param \Drupal\Core\Routing\CurrentRouteMatch $route_match
-   *   The current route.
-   * @param \Drupal\Core\Session\AccountProxy $current_user
-   *   The current user.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config object.
-   */
-  public function __construct(CurrentRouteMatch $route_match, AccountProxy $current_user, ConfigFactoryInterface $config_factory) {
-    $this->currentRoute = $route_match;
-    $this->currentUser = $current_user;
-    $this->configFactory = $config_factory;
+  public function __construct(
+    /**
+     * The current route.
+     *
+     * @var \Drupal\Core\Routing\CurrentRouteMatch
+     */
+    protected CurrentRouteMatch $currentRoute,
+    /**
+     * The current user.
+     *
+     * @var \Drupal\Core\Session\AccountProxy
+     */
+    protected AccountProxy $currentUser,
+    /**
+     * The config factory.
+     *
+     * @var \Drupal\Core\Config\ConfigFactoryInterface
+     */
+    protected ConfigFactoryInterface $configFactory) {
   }
 
   /**
    * Get the request events.
    *
-   * @return mixed
+   * @return array
    *   Returns request events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::REQUEST][] = ['profileLandingPage'];
     return $events;
   }
@@ -74,19 +60,32 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function profileLandingPage(RequestEvent $event) {
-    // First check if the current route is the group canonical.
+  public function profileLandingPage(RequestEvent $event): void {
+    // First check if the current route is the user or profile canonical.
     $routeMatch = $this->currentRoute->getRouteName();
-    // Not group canonical, then we leave.
-    if ($routeMatch !== 'entity.user.canonical') {
-      return;
+    // If neither of them, then we leave.
+    // Open Social display user's page at /user/uid/information which is
+    // default stream page for a user.
+    // Therefore, we are redirecting these canonical URLs:
+    // 1. /user/{uid}
+    // 2. /profile/{profile_id}
+    // to user information page or to the page set by admin/SM at
+    // /admin/config/opensocial/user.
+    if (($routeMatch !== 'entity.user.canonical')
+    ) {
+      if ($routeMatch !== 'entity.profile.canonical') {
+        return;
+      }
     }
 
     // Fetch the user parameter and check if's an actual user.
     $user = $this->currentRoute->getParameter('user');
     // Not user, then we leave.
     if (!$user instanceof User) {
-      return;
+      // It may be a profile route.
+      $profile = $this->currentRoute->getParameter('profile');
+      // Fetch the user entity of this profile.
+      $user = $profile->getOwner();
     }
 
     // Set the already default redirect route.
