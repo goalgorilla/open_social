@@ -6,7 +6,6 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Testwork\Hook\Scope\HookScope;
-use Drupal\Core\Cache\Cache;
 use Drupal\Driver\DrushDriver;
 
 /**
@@ -51,7 +50,7 @@ class DatabaseContext implements Context {
    * @BeforeScenario
    */
   public function getDrushDriver(BeforeScenarioScope $scope) : void {
-    $this->environment= $scope->getEnvironment();
+    $this->environment = $scope->getEnvironment();
     $drupal_context = $this->environment->getContext(SocialDrupalContext::class);
     if (!$drupal_context instanceof SocialDrupalContext) {
       throw new \RuntimeException("Expected " . SocialDrupalContext::class . " to be configured for Behat.");
@@ -86,7 +85,7 @@ class DatabaseContext implements Context {
       if (!is_file($fallback)) {
         fwrite(STDERR, "No database file specified, creating a fallback at '$fallback'. Specify a database file using '" . self::DATABASE_ENV . "'." . PHP_EOL);
         try {
-          $this->drushDriver->drush("sql-dump",  ["--result-file='$fallback'"]);
+          $this->drushDriver->drush("sql-dump", ["--result-file='$fallback'"]);
         }
         catch (\RuntimeException $e) {
           throw new \RuntimeException("Could not create fallback database dump.", 0, $e);
@@ -127,7 +126,7 @@ class DatabaseContext implements Context {
   /**
    * Load a specified database file as fixture.
    *
-   * Example: Given the fixture open-social-2.sql
+   * Example: Given the fixture open-social-2.sql.
    *
    * @param string $database_file
    *   The name of the sql file containing the database. May be relative to the
@@ -146,13 +145,13 @@ class DatabaseContext implements Context {
     }
 
     try {
-      $this->drushDriver->drush("sql:drop",  ["-y"]);
+      $this->drushDriver->drush("sql:drop", ["-y"]);
     }
     catch (\RuntimeException $e) {
       throw new \RuntimeException("Could not drop existing database.", 0, $e);
     }
     try {
-      $this->drushDriver->drush("sql:query",  ["--file", $database_file]);
+      $this->drushDriver->drush("sql:query", ["--file", $database_file]);
     }
     catch (\RuntimeException $e) {
       throw new \RuntimeException("Could not drop existing database.", 0, $e);
@@ -165,7 +164,7 @@ class DatabaseContext implements Context {
     // doesn't load the system module (which every module under the sun assumes
     // is loaded).
     //
-    // 1.Remove the global that keeps the container in install mode
+    // 1.Remove the global that keeps the container in install mode.
     unset($GLOBALS['conf']['container_service_providers']['InstallerServiceProvider']);
     // 2. Rebuild the container to ensure the Module Handler gets a new module
     //    list
@@ -182,23 +181,24 @@ class DatabaseContext implements Context {
     //    but it references a non-existent user now.
     \Drupal::currentUser()->setInitialAccountId(0);
 
-
     $this->triggerOnDatabaseLoaded();
   }
 
   /**
-   * Run updates using Drush
+   * Run updates using Drush.
    *
    * @Given run pending updates
    * @When I run pending updates
    */
   public function executeUpdates() : void {
     $output = $this->drushDriver->drush("updatedb", ['-y']);
-    // @todo Drush requires -y to continue running updates when the list of updates are presented but -y also bypasses
-    // the question about requirements check errors so we must manually check for the output until a better solutions is
-    // found in https://github.com/drush-ops/drush/issues/5806.
+    // @todo Drush requires -y to continue running updates when the list of
+    // updates are presented but -y also bypasses the question about
+    // requirements check errors so we must manually check for the output until
+    // a better solutions is found in
+    // https://github.com/drush-ops/drush/issues/5806.
     if (str_contains($output, "Requirements check reports errors. Do you wish to continue?")) {
-      throw new \Exception("The update showed requirement errors, manually run the updates using drush against the fixture used for the test to find the errors.");
+      throw new \RuntimeException("The update showed requirement errors, manually run the updates using drush against the fixture used for the test to find the errors.");
     }
   }
 
@@ -206,8 +206,6 @@ class DatabaseContext implements Context {
    * Calls `onDatabaseLoaded` in all contexts that have it.
    *
    * This allows contexts to do database related set-ups (e.g. log detection).
-   *
-   * @return void
    */
   private function triggerOnDatabaseLoaded() : void {
     foreach ($this->environment->getContexts() as $context) {

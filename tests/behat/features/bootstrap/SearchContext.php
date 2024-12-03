@@ -25,8 +25,8 @@ class SearchContext extends RawMinkContext {
    * @BeforeScenario
    */
   public function getDrushDriver(BeforeScenarioScope $scope) : void {
-    $this->environment= $scope->getEnvironment();
-    $drupal_context = $this->environment->getContext(SocialDrupalContext::class);
+    $environment = $scope->getEnvironment();
+    $drupal_context = $environment->getContext(SocialDrupalContext::class);
     if (!$drupal_context instanceof SocialDrupalContext) {
       throw new \RuntimeException("Expected " . SocialDrupalContext::class . " to be configured for Behat.");
     }
@@ -49,8 +49,13 @@ class SearchContext extends RawMinkContext {
    * try to load it.
    *
    * See https://www.drupal.org/project/search_api_solr/issues/3218868.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\search_api_solr\SearchApiSolrException
+   * @throws \Drupal\search_api\SearchApiException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function onDatabaseLoaded() {
+  public function onDatabaseLoaded(): void {
     /** @var \Drupal\search_api\IndexInterface[] $indexes */
     $indexes = \Drupal::service("entity_type.manager")
       ->getStorage('search_api_index')
@@ -71,9 +76,11 @@ class SearchContext extends RawMinkContext {
   }
 
   /**
+   * Update the search indexes.
+   *
    * @Given Search indexes are up to date
    */
-  public function updateSearchIndexes() {
+  public function updateSearchIndexes(): void {
     // We use Drush here because it ensures that any settings that are in our
     // test memory that might be outdated, don't affect what we're indexing.
     $this->drushDriver->drush("search-api:index");
@@ -86,11 +93,11 @@ class SearchContext extends RawMinkContext {
   }
 
   /**
-   * I search :index for :term
+   * I search :index for :term.
    *
    * @When /^(?:|I )search (all|users|groups|content) for "([^"]*)"/
    */
-  public function iSearchIndexForTerm($index, $term) {
+  public function iSearchIndexForTerm($index, $term): void {
     $this->getSession()->visit($this->locatePath('/search/' . $index . '/' . urlencode($term)));
   }
 
@@ -102,6 +109,8 @@ class SearchContext extends RawMinkContext {
    *
    * @Then I should see :text in the search results
    * @Then should see :text in the search results
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    */
   public function assertSearchResultsContainsText($text) : void {
     $this->assertSession()->elementTextContains("css", "#block-socialblue-content", $text);
@@ -115,8 +124,10 @@ class SearchContext extends RawMinkContext {
    *
    * @Then I should not see :text in the search results
    * @Then should not see :text in the search results
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    */
-  public function assertSearchResultsNotContainsText($text) {
+  public function assertSearchResultsNotContainsText($text): void {
     $this->assertSession()->elementTextNotContains("css", "#block-socialblue-content", $text);
   }
 

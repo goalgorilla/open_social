@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreFile
 
 namespace Drupal\social\Behat;
 
@@ -14,17 +13,19 @@ class SocialMessageContext extends MessageContext {
   use AvoidCleanupTrait;
 
   /**
-   * Checks if the current page contains the given success message
+   * Checks if the current page contains the given success message.
    *
-   * @param $message
-   *   string The text to be checked
-   * @param $region
-   *   string The region
+   * @param string $message
+   *   The text to be checked.
+   * @param string $region
+   *   The region.
    *
    * @Then I should see the success message( containing) :message in the :region( region)
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    */
-  public function assertRegionSuccessMessage($message, $region) {
-    $this->_assertRegion(
+  public function assertRegionSuccessMessage(string $message, string $region): void {
+    $this->assertRegion(
       $message,
       'success_message_selector',
       "The page '%s' does not contain any success messages",
@@ -36,23 +37,23 @@ class SocialMessageContext extends MessageContext {
   /**
    * Internal callback to check for a specific message in a given context.
    *
-   * @param $message
-   *   string The message to be checked
-   * @param $selectorId
-   *   string CSS selector name
-   * @param $exceptionMsgNone
-   *   string The message being thrown when no message is contained, string
-   *   should contain one '%s' as a placeholder for the current URL
-   * @param $exceptionMsgMissing
-   *   string The message being thrown when the message is not contained, string
-   *   should contain two '%s' as placeholders for the current URL and the message.
-   * @param $region
-   *   string The region
+   * @param string $message
+   *   The message to be checked.
+   * @param string $selectorId
+   *   CSS selector name.
+   * @param string $exceptionMsgNone
+   *   The message being thrown when no message is contained, string
+   *   should contain one '%s' as a placeholder for the current URL.
+   * @param string $exceptionMsgMissing
+   *   The message being thrown when the message is not contained, string should
+   *   contain two '%s' as placeholders for the current URL and the message.
+   * @param string $region
+   *   The region.
    *
    * @throws \Behat\Mink\Exception\ExpectationException
-   *   Thrown when the expected message is not present in the page.
+   * @throws \Exception
    */
-  private function _assertRegion($message, $selectorId, $exceptionMsgNone, $exceptionMsgMissing, $region) {
+  private function assertRegion(string $message, string $selectorId, string $exceptionMsgNone, string $exceptionMsgMissing, string $region): void {
     $session = $this->getSession();
     $regionObj = $session->getPage()->find('region', $region);
 
@@ -64,7 +65,7 @@ class SocialMessageContext extends MessageContext {
     }
 
     foreach ($selectorObjects as $selectorObject) {
-      if (strpos(trim($selectorObject->getText()), $message) !== FALSE) {
+      if (str_contains(trim($selectorObject->getText()), $message)) {
         return;
       }
     }
