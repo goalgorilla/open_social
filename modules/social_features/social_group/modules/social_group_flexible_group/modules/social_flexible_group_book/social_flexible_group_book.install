@@ -128,3 +128,19 @@ function social_flexible_group_book_update_13002(): void {
   $config->set('text', $texts)
     ->save();
 }
+
+/**
+ * Adds no translation property to user profile link HTML in message templates.
+ */
+function social_flexible_group_book_update_13003(): void {
+  $config = \Drupal::configFactory()
+    ->getEditable('message.template.create_book_group');
+
+  $texts = array_map(function ($text) {
+    $text['value'] = str_replace('<a href="[message:revision_author:url:absolute]" translate="no">[message:revision_author:display-name]</a>', '<a href="[message:revision_author:url:absolute]" translate="no">[message:revision_author:display-name]</a>', $text['value']);
+    return $text;
+  }, $config->get('text'));
+
+  $config->set('text', $texts)
+    ->save();
+}

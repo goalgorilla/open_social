@@ -100,3 +100,32 @@ function social_activity_update_13001(): void {
       ->save();
   }
 }
+
+/**
+ * Adds no translation property to user profile link HTML in message templates.
+ */
+function social_activity_update_13002(): void {
+  $message_templates = [
+    'message.template.create_topic_community',
+    'message.template.create_topic_gc',
+    'message.template.create_topic_group',
+    'message.template.create_event_group',
+    'message.template.create_event_gc',
+    'message.template.create_event_community',
+    'message.template.create_content_in_joined_group',
+  ];
+
+  $config_factory = \Drupal::configFactory();
+  foreach ($message_templates as $message_template) {
+    $config = $config_factory->getEditable($message_template);
+
+    $texts = array_map(function ($text) {
+      $text['value'] = str_replace('<a href="[message:revision_author:url:absolute]" translate="no">[message:revision_author:display-name]</a>', '<a href="[message:revision_author:url:absolute]" translate="no">[message:revision_author:display-name]</a>', $text['value']);
+
+      return $text;
+    }, $config->get('text'));
+
+    $config->set('text', $texts)
+      ->save();
+  }
+}
