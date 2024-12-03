@@ -221,7 +221,7 @@ class SocialGroupDefaultRouteRedirectService {
    */
   public function getSupportedGroupTypes(): array {
     $group_types = $this->moduleHandler->invokeAll('social_group_default_route_group_types');
-    $this->moduleHandler->alter('social_group_default_route_group_types', $group_bundles);
+    $this->moduleHandler->alter('social_group_default_route_group_types', $group_types);
     return array_keys($group_types);
   }
 
