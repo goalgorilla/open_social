@@ -332,3 +332,22 @@ function social_group_flexible_group_update_130008(): void {
     ->set('content', $content)
     ->save();
 }
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_group_flexible_group_update_dependencies(): array {
+  // Just for test.
+  $dependencies['social_group_flexible_group'][130009] = [
+    'social_group_request' => 13002,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Revoke permissions for Authenticated (outsider) group role.
+ */
+function social_group_flexible_group_update_130009(): void {
+  // Just for test. Do nothing.
+}
