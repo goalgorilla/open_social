@@ -17,8 +17,8 @@ class ChromeExtension extends ChromeExtensionBase {
    */
   public function initialize(ExtensionManager $extensionManager) {
     // Must be kept in sync with parent::iniitalize but use our own factory.
-    if (null !== $minkExtension = $extensionManager->getExtension('mink')) {
-      /** @var $minkExtension \Behat\MinkExtension\ServiceContainer\MinkExtension */
+    if (NULL !== $minkExtension = $extensionManager->getExtension('mink')) {
+      /** @var \Behat\MinkExtension\ServiceContainer\MinkExtension $minkExtension */
       $minkExtension->registerDriverFactory(new ChromeFactory());
     }
   }

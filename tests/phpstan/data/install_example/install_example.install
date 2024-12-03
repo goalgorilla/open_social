@@ -1,9 +1,19 @@
 <?php
 
+/**
+ * @file install_example.install
+ */
+
+/**
+ * Implements hook_install().
+ */
 function install_example_install(): void {
   illegal_call();
 }
 
+/**
+ * Implements hook_update_N().
+ */
 function illegal_call(): string {
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -14,6 +24,9 @@ function illegal_call(): string {
   return $updateHelper->logger()->output();
 }
 
+/**
+ * Implements hook_update_N().
+ */
 function install_example_update_12000(): string {
   $updateHelper = \Drupal::service('update_helper.updater');
 

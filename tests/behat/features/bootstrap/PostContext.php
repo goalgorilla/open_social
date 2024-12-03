@@ -6,7 +6,6 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\social_post\Entity\Post;
 
@@ -22,7 +21,7 @@ class PostContext extends RawMinkContext {
    */
   private array $posts = [];
 
-  // TODO: Keep track of created posts and clean them up after the fact.
+  // @todo Keep track of created posts and clean them up after the fact.
   /**
    * The Drupal context which gives us access to user management.
    */
@@ -76,8 +75,7 @@ class PostContext extends RawMinkContext {
   }
 
   /**
-   * Create multiple posts at the start of a test with defined users as
-   * authors.
+   * Create multiple posts at the start of a test with defined authors.
    *
    * Creates post of a given type provided in the form:
    * | field_post     |  author | type | field_visibility | status | langcode

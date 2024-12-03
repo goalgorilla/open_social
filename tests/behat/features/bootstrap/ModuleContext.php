@@ -45,7 +45,7 @@ class ModuleContext extends RawMinkContext {
    */
   public function enableOptionalModule(string $module) : void {
     if (!isset($this->getOptionalModules()[$module])) {
-      throw new \Exception("$module is not an optional module, does it have a module.installer_options.yml file?");
+      throw new \RuntimeException("$module is not an optional module, does it have a module.installer_options.yml file?");
     }
 
     $this->iEnableTheModule($module);
@@ -83,9 +83,10 @@ class ModuleContext extends RawMinkContext {
    * Get the optional modules in our code base.
    *
    * The `optionalModules` array can't be constructed before a test has been
-   * set-up since it requires parameters from the database.
+   * set up since it requires parameters from the database.
    *
    * @return array<string, array>
+   *   An array of optional modules.
    */
   protected function getOptionalModules() : array {
     if ($this->optionalModules === NULL) {

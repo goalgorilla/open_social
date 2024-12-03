@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile Generic.Files.LineLength.TooLong
 
 namespace Drupal\social\Behat;
 
@@ -93,9 +94,9 @@ class EventContext extends RawMinkContext {
   public function viewingEvent(string $event) : void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${event}' does not exist.");
+      throw new \RuntimeException("Event '$event' does not exist.");
     }
-    $this->visitPath("/node/${event_id}");
+    $this->visitPath("/node/$event_id");
   }
 
   /**
@@ -105,14 +106,16 @@ class EventContext extends RawMinkContext {
    *
    * @Then I should be viewing the event :event
    * @Then should be viewing the event :event
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    */
   public function shouldBeViewingEvent(string $event) : void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${event}' does not exist.");
+      throw new \RuntimeException("Event '$event' does not exist.");
     }
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->addressEquals("/node/${event_id}");
+    $this->assertSession()->addressEquals("/node/$event_id");
   }
 
   /**
@@ -124,9 +127,9 @@ class EventContext extends RawMinkContext {
   public function editingEvent(string $event) : void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${event}' does not exist.");
+      throw new \RuntimeException("Event '$event' does not exist.");
     }
-    $this->visitPath("/node/${event_id}/edit");
+    $this->visitPath("/node/$event_id/edit");
   }
 
   /**
@@ -138,9 +141,9 @@ class EventContext extends RawMinkContext {
   public function viewEventManagerPage(string $event) : void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${event}' does not exist.");
+      throw new \RuntimeException("Event '$event' does not exist.");
     }
-    $this->visitPath("/node/${event_id}/all-enrollments");
+    $this->visitPath("/node/$event_id/all-enrollments");
   }
 
   /**
@@ -152,6 +155,8 @@ class EventContext extends RawMinkContext {
    * | ...      | ...             | ...      | ...                      | ...              | ...       |
    *
    * @Given events:
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function createEvents(TableNode $eventsTable) : void {
     foreach ($eventsTable->getHash() as $eventHash) {
@@ -169,6 +174,8 @@ class EventContext extends RawMinkContext {
    * | ...      | ...             | ...                      | ...              | ...       |
    *
    * @Given events with non-anonymous author:
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function createEventsWithAuthor(TableNode $eventsTable) : void {
     // Create a new random user to own the content, this ensures the author
@@ -178,13 +185,13 @@ class EventContext extends RawMinkContext {
       'pass' => $this->drupalContext->getRandom()->name(16),
       'role' => "authenticated",
     ];
-    $user->mail = "{$user->name}@example.com";
+    $user->mail = "$user->name@example.com";
 
     $this->drupalContext->userCreate($user);
 
     foreach ($eventsTable->getHash() as $eventHash) {
       if (isset($groupHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'events with non-anonymous owner:' step, use 'events:' instead.");
+        throw new \RuntimeException("Can not specify an author when using the 'events with non-anonymous owner:' step, use 'events:' instead.");
       }
 
       $eventHash['author'] = $user->name;
@@ -203,12 +210,14 @@ class EventContext extends RawMinkContext {
    * | ...      | ...             | ...                      | ...              | ...       |
    *
    * @Given events authored by current user:
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function createEventsAuthoredByCurrentUser(TableNode $eventsTable) : void {
     $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
     foreach ($eventsTable->getHash() as $eventHash) {
       if (isset($eventHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'events authored by current user:' step, use 'events:' instead.");
+        throw new \RuntimeException("Can not specify an author when using the 'events authored by current user:' step, use 'events:' instead.");
       }
 
       $eventHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
@@ -221,16 +230,18 @@ class EventContext extends RawMinkContext {
   /**
    * Fill out the event creation form and submit.
    *
-   * Example: When I create a event using its creation page:
+   * Example: When I create an event using its creation page:
    *              | Title       | Llama |
    *              | Description | Llama's are really misunderstood animals. |
-   * Example: And create a event using its creation page:
+   * Example: And create an event using its creation page:
    *              | Title       | Cheese |
    *              | Description | There are all kinds of cheese <3 |
    *
-   * @When /^(?:|I )create a event using its creation page:$/
+   * @When /^(?:|I )create an event using its creation page:$/
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
    */
-  public function whenICreateAEventUsingTheForm(TableNode $fields) : void {
+  public function iCreateAnEventUsingTheForm(TableNode $fields) : void {
     $this->visitPath(self::CREATE_PAGE);
     $this->updatedEventData = $this->fillOutEventForm($fields);
     $this->getSession()->getPage()->pressButton("Create event");
@@ -241,8 +252,10 @@ class EventContext extends RawMinkContext {
    * View the event creation page.
    *
    * @When /^(?:|I )view the event creation page$/
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    */
-  public function whenIViewTheEventCreationPage() : void {
+  public function iViewTheEventCreationPage() : void {
     $this->visitPath(self::CREATE_PAGE);
     $this->assertSession()->statusCodeEquals(200);
   }
@@ -254,13 +267,15 @@ class EventContext extends RawMinkContext {
    *              | Title       | New Title |
    *
    * @When /^(?:|I )edit event "(?P<title>(?:[^"]|\\")*)" using its edit page:$/
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
    */
-  public function whenIEditEventUsingTheForm(string $title, TableNode $fields) : void {
+  public function iEditEventUsingTheForm(string $title, TableNode $fields) : void {
     $event_id = $this->getEventIdFromTitle($title);
     if ($event_id === NULL) {
-      throw new \Exception("Event with title '${title}' does not exist. Did you create it in the test?");
+      throw new \RuntimeException("Event with title '$title' does not exist. Did you create it in the test?");
     }
-    $this->visitPath("/node/${event_id}/edit");
+    $this->visitPath("/node/$event_id/edit");
 
     $this->minkContext->saveScreenshot("edit-event.png", "/var/www/html/profiles/contrib/social/tests/behat/logs");
 
@@ -283,6 +298,8 @@ class EventContext extends RawMinkContext {
    * @return array
    *   The array of normalised data, the keys are lowercase field names,
    *   the values are as they would be stored in the database.
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
    */
   protected function fillOutEventForm(TableNode $fields) : array {
     $normalized_data = [];
@@ -321,15 +338,15 @@ class EventContext extends RawMinkContext {
           do {
             $element = $element->getParent();
             if ($element->getTagName() === "body") {
-              throw new \Exception("${field} was not visible but could not find a parent 'details' element to expand.");
+              throw new \RuntimeException("$field was not visible but could not find a parent 'details' element to expand.");
             }
           } while ($element->getTagName() !== "details");
           if ($element->hasAttribute("open")) {
-            throw new \Exception("${field} was in an open details element but was still not visible.");
+            throw new \RuntimeException("$field was in an open details element but was still not visible.");
           }
           $summary = $element->find('named', 'summary');
           if ($summary === NULL) {
-            throw new \Exception("${field} was in a closed details element but the details element did not contain a summary to expand it.");
+            throw new \RuntimeException("$field was in a closed details element but the details element did not contain a summary to expand it.");
           }
           // This should expand the details so that we can check the field.
           $summary->click();
@@ -355,11 +372,13 @@ class EventContext extends RawMinkContext {
   }
 
   /**
-   * Check that a event that was just created is properly shown.
+   * Check that an event that was just created is properly shown.
    *
    * @Then /^(?:|I )should see the event I just (?P<action>(created|updated))$/
+   *
+   * @throws \Exception
    */
-  public function thenIShouldSeeTheEventIJustUpdated(string $action) : void {
+  public function iShouldSeeTheUpdatedEvent(string $action) : void {
     $regions = [
       'title' => "Hero block",
       'description' => 'Main content',
@@ -394,7 +413,7 @@ class EventContext extends RawMinkContext {
   public function shouldBeOnEventCreationForm() : void {
     $status_code = $this->getSession()->getStatusCode();
     if ($status_code !== 200) {
-      throw new \Exception("The page status code {$status_code} dis not match 200 Ok.");
+      throw new \RuntimeException("The page status code $status_code dis not match 200 Ok.");
     }
 
     $this->minkContext->assertPageContainsText("Create an event");
@@ -405,6 +424,8 @@ class EventContext extends RawMinkContext {
    *
    * @Given I am an event manager for the :title event
    * @Given am an event manager for the :title event
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function iAmAnEventManagerForTheEvent(string $title) : void {
     $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
@@ -415,7 +436,7 @@ class EventContext extends RawMinkContext {
 
     $event_id = $this->getEventIdFromTitle($title);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${title}' does not exist.");
+      throw new \RuntimeException("Event '$title' does not exist.");
     }
 
     $event = Node::load($event_id);
@@ -435,17 +456,19 @@ class EventContext extends RawMinkContext {
    *
    * @Given there are :count event enrollments for the :title event
    * @Given there is :count event enrollment for the :title event
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function thereAreEventEnrollmentsForEvent(int $count, string $title) : void {
     assert(abs($count) === $count, "The :count may not be negative (got $count).");
 
     $event_id = $this->getEventIdFromTitle($title);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${title}' does not exist.");
+      throw new \RuntimeException("Event '$title' does not exist.");
     }
 
-    for ($i = 0; $i<$count; $i++) {
-      // Create a new random user to add as enrollee.
+    for ($i = 0; $i < $count; $i++) {
+      // Create a new random user to add as enroll.
       $user = (object) [
         'name' => $this->drupalContext->getRandom()->name(8),
         'pass' => $this->drupalContext->getRandom()->name(16),
@@ -467,30 +490,32 @@ class EventContext extends RawMinkContext {
   }
 
   /**
-   * Add enrollees to event.
+   * Add enrolls to event.
    *
-   * Adds enrollees to a specific event
+   * Adds enrolls to a specific event
    * | event    | user      |
    * | My event | Jane Doe  |
    * | ...      | ...       |
    *
-   * @Given event enrollees:
+   * @Given event enrolls:
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function createEventEnrollees(TableNode $eventEnrolleesTable) {
+  public function createEventEnrolls(TableNode $eventEnrollsTable): void {
 
-    foreach ($eventEnrolleesTable->getHash() as $eventEnrolleesHash) {
-      $event_title = $eventEnrolleesHash['event'];
+    foreach ($eventEnrollsTable->getHash() as $eventEnrollsHash) {
+      $event_title = $eventEnrollsHash['event'];
       $event_id = $this->getEventIdFromTitle($event_title);
       if ($event_id === NULL) {
-        throw new \Exception("Event '${event_title}' does not exist.");
+        throw new \RuntimeException("Event '$event_title' does not exist.");
       }
 
       $event = Event::load($event_id);
       assert($event instanceof Node);
 
-      $user = User::load($this->drupalContext->getUserManager()->getUser($eventEnrolleesHash['user'])->uid);
+      $user = User::load($this->drupalContext->getUserManager()->getUser($eventEnrollsHash['user'])->uid);
       assert($user instanceof UserInterface);
-      assert($user->id() !== null, "Enrollment of anonymous users is not allowed for '@Given event enrollees'. Please use '@Given anonymous event enrollees:' instead.");
+      assert($user->id() !== NULL, "Enrollment of anonymous users is not allowed for '@Given event enrolls'. Please use '@Given anonymous event enrollees:' instead.");
 
       EventEnrollment::create([
         'user_id' => $user->id(),
@@ -502,39 +527,41 @@ class EventContext extends RawMinkContext {
   }
 
   /**
-   * Add anonymous enrollees to event.
+   * Add anonymous enrolls to event.
    *
-   * Adds anonymous enrollees to a specific event
+   * Adds anonymous enrolls to a specific event
    * | event    | name | lastname | email               |
    * | My event | Jane | Doe      | example@example.com |
    * | ...      | ...  | ...      | ...                 |
    *
-   * @Given anonymous event enrollees:
+   * @Given anonymous event enrolls:
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function createAnonymousEventEnrollees(TableNode $eventAnonymousEnrolleesTable) {
-    foreach ($eventAnonymousEnrolleesTable->getHash() as $eventEnrolleesHash) {
-      $event_title = $eventEnrolleesHash['event'];
+  public function createAnonymousEventEnrolls(TableNode $eventAnonymousEnrollsTable): void {
+    foreach ($eventAnonymousEnrollsTable->getHash() as $eventEnrollsHash) {
+      $event_title = $eventEnrollsHash['event'];
       $event_id = $this->getEventIdFromTitle($event_title);
       if ($event_id === NULL) {
-        throw new \Exception("Event '${event_title}' does not exist.");
+        throw new \RuntimeException("Event '$event_title' does not exist.");
       }
 
       $event = Event::load($event_id);
       assert($event instanceof Node);
 
       if ($event->field_event_an_enroll->value !== '1') {
-        throw new \Exception("Event '${event_title}' is not suitable to enroll anonymous users.");
+        throw new \RuntimeException("Event '$event_title' is not suitable to enroll anonymous users.");
       }
 
       $token = Crypt::randomBytesBase64();
 
       $values['user_id'] = '0';
       $values['field_account'] = '0';
-      $values['field_email'] = $eventEnrolleesHash['email'];
+      $values['field_email'] = $eventEnrollsHash['email'];
       $values['field_enrollment_status'] = '1';
       $values['field_event'] = $event_id;
-      $values['field_first_name'] = $eventEnrolleesHash['name'];
-      $values['field_last_name'] = $eventEnrolleesHash['lastname'];
+      $values['field_first_name'] = $eventEnrollsHash['name'];
+      $values['field_last_name'] = $eventEnrollsHash['lastname'];
       $values['field_token'] = $token;
 
       EventEnrollment::create($values)->save();
@@ -546,9 +573,9 @@ class EventContext extends RawMinkContext {
    *
    * @Given add to calendar is enabled for :calendar
    */
-  public function enableCalendarOption(string $calendar) {
+  public function enableCalendarOption(string $calendar): void {
     if (!\Drupal::service('module_handler')->moduleExists('social_event_addtocal')) {
-      throw new \Exception("Could not enable calendar button because the Social Event Add To Calendar module is disabled.");
+      throw new \RuntimeException("Could not enable calendar button because the Social Event Add To Calendar module is disabled.");
     }
 
     $calendar = strtolower($calendar);
@@ -571,15 +598,18 @@ class EventContext extends RawMinkContext {
    *
    * @return \Drupal\node\Entity\Node
    *   The event values.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Exception
    */
   private function eventCreate($event) : Node {
     if (!isset($event['author'])) {
-      throw new \Exception("You must specify an `author` when creating an event. Specify the `author` field if using `@Given events:` or use one of `@Given events with non-anonymous author:` or `@Given events authored by current user:` instead.");
+      throw new \RuntimeException("You must specify an `author` when creating an event. Specify the `author` field if using `@Given events:` or use one of `@Given events with non-anonymous author:` or `@Given events authored by current user:` instead.");
     }
 
     $account = user_load_by_name($event['author']);
     if ($account === FALSE) {
-      throw new \Exception(sprintf("User with username '%s' does not exist.", $event['author']));
+      throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $event['author']));
     }
     $event['uid'] = $account->id();
     unset($event['author']);
@@ -587,7 +617,7 @@ class EventContext extends RawMinkContext {
     if (isset($event['group'])) {
       $group_id = $this->getNewestGroupIdFromTitle($event['group']);
       if ($group_id === NULL) {
-        throw new \Exception("Group '{$event['group']}' does not exist.");
+        throw new \RuntimeException("Group '{$event['group']}' does not exist.");
       }
       unset($event['group']);
     }
@@ -597,7 +627,7 @@ class EventContext extends RawMinkContext {
     if (isset($event['field_event_type'])) {
       $type_id = $this->getEventTypeIdFromLabel($event['field_event_type']);
       if ($type_id === NULL) {
-        throw new \Exception("Event Type with label '{$event['field_event_type']}' does not exist.");
+        throw new \RuntimeException("Event Type with label '{$event['field_event_type']}' does not exist.");
       }
       $event['field_event_type'] = $type_id;
     }
@@ -606,7 +636,7 @@ class EventContext extends RawMinkContext {
     $event_object = Node::create($event);
     $violations = $event_object->validate();
     if ($violations->count() !== 0) {
-      throw new \Exception("The event you tried to create is invalid: $violations");
+      throw new \RuntimeException("The event you tried to create is invalid: $violations");
     }
     $event_object->save();
 
@@ -617,7 +647,7 @@ class EventContext extends RawMinkContext {
         Group::load($group_id)?->addRelationship($event_object, "group_node:event");
       }
       catch (PluginNotFoundException $_) {
-        throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
+        throw new \RuntimeException("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
       }
     }
 
@@ -645,6 +675,8 @@ class EventContext extends RawMinkContext {
    *
    * @return int|null
    *   The event type ID or NULL if it can't be found.
+   *
+   * @throws \Exception
    */
   private function getEventTypeIdFromLabel(string $label) : ?int {
     $query = \Drupal::entityQuery('taxonomy_term')

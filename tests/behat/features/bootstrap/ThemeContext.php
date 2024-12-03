@@ -2,7 +2,6 @@
 
 namespace Drupal\social\Behat;
 
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
 
 /**

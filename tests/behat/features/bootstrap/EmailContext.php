@@ -30,6 +30,8 @@ class EmailContext implements Context {
    * We need to enable the spool directory.
    *
    * @BeforeScenario @email-spool
+   *
+   * @throws \Exception
    */
   public function enableEmailSpool() : void {
     // Set transport to null to stop sending out emails.
@@ -105,10 +107,12 @@ class EmailContext implements Context {
    * I run the digest cron.
    *
    * @Then I run the :arg1 digest cron
+   *
+   * @throws \Exception
    */
   public function iRunTheDigestCron(string $frequency) : void {
     // Update the timings in the digest table.
-    $query =  \Drupal::database()->update('user_activity_digest');
+    $query = \Drupal::database()->update('user_activity_digest');
     $query->fields(['timestamp' => 1]);
     $query->condition('frequency', $frequency);
     $query->execute();
@@ -121,8 +125,8 @@ class EmailContext implements Context {
     if (\Drupal::moduleHandler()->moduleExists('ultimate_cron')) {
       $jobs = CronJob::loadMultiple();
 
-      /** @var CronJob $job */
-      foreach($jobs as $job) {
+      /** @var \Drupal\ultimate_cron\Entity\CronJob $job */
+      foreach ($jobs as $job) {
         $job->run(t('Launched by drush'));
       }
     }
@@ -132,6 +136,8 @@ class EmailContext implements Context {
    * I read an email.
    *
    * @Then /^(?:|I )should have an email with subject "([^"]*)" and "([^"]*)" in the body$/
+   *
+   * @throws \Exception
    */
   public function iShouldHaveAnEmailWithTitleAndBody(string $subject, string $body) : void {
     $this->assertEmailWithSubjectAndBody($subject, [$body]);
@@ -141,6 +147,8 @@ class EmailContext implements Context {
    * I read an email with multiple content.
    *
    * @Then I should have an email with subject :arg1 and in the content:
+   *
+   * @throws \Exception
    */
   public function iShouldHaveAnEmailWithTitleAndBodyMulti(string $subject, TableNode $table) : void {
     $body = [];
@@ -156,13 +164,15 @@ class EmailContext implements Context {
    * No emails have been sent.
    *
    * @Then no emails have been sent
+   *
+   * @throws \Exception
    */
   public function noEmailsHaveBeenSent() : void {
     $finder = $this->getSpooledEmails();
 
     $count = $finder->count();
     if ($count !== 0) {
-      throw new \Exception("No email messages should have been sent, but found $count.");
+      throw new \RuntimeException("No email messages should have been sent, but found $count.");
     }
   }
 
@@ -174,12 +184,14 @@ class EmailContext implements Context {
    *
    * @Then should not have an email with subject :subject
    * @Then I should not have an email with subject :subject
+   *
+   * @throws \Exception
    */
   public function iShouldNotHaveAnEmailWithSubject(string $subject) : void {
     $emails = $this->findEmailsWithSubject($subject);
     $email_count = count($emails);
     if ($email_count !== 0) {
-      throw new \Exception("Expected no emails with subject '$subject' but found $email_count");
+      throw new \RuntimeException("Expected no emails with subject '$subject' but found $email_count");
     }
   }
 
@@ -196,6 +208,8 @@ class EmailContext implements Context {
    * I do not have an email with multiple content.
    *
    * @Then I should not have an email with subject :arg1 and in the content:
+   *
+   * @throws \Exception
    */
   public function iShouldNotHaveAnEmailWithTitleAndBodyMulti(string $subject, TableNode $table) : void {
     $body = [];
@@ -212,7 +226,6 @@ class EmailContext implements Context {
    *
    * @param string $subject
    *   The exact subject the email should have.
-   *
    * @param list<string> $expected_lines
    *   A list of lines that should all be present in the body of the e-mail.
    *
@@ -227,7 +240,7 @@ class EmailContext implements Context {
     // developer knows that may be the cause of their failure.
     $subject_match_count = count($emails);
     if ($subject_match_count === 0) {
-      throw new \Exception("No emails with subject '$subject' were found.");
+      throw new \RuntimeException("No emails with subject '$subject' were found.");
     }
 
     $partial_matches = [];
@@ -247,19 +260,19 @@ class EmailContext implements Context {
     }
 
     $partial_match_count = count($partial_matches);
-    // If we had no partial matches then we can provide a simplified error message.
+    // If no partial matches exist, provide a simplified error message.
     if ($partial_match_count === 0) {
       $message = $subject_match_count === 1
         ? "One email with the subject '$subject' was found but none of the expected lines were found in the body of the email."
         : "$subject_match_count emails with the subject '$subject' were found but none of the expected lines were found in the body of the email.";
-      throw new \Exception($message);
+      throw new \RuntimeException($message);
     }
     // If we had a single partial match then we tell the developer and there's
     // probably a simple typo in the email or test.
     if ($partial_match_count === 1) {
       $missing_lines = array_diff($expected_lines, $partial_matches[0]);
       $message = "One email was found which matched the subject and some lines but the following lines were missing from the e-mail: \n  " . implode("\n  ", $missing_lines);
-      throw new \Exception($message);
+      throw new \RuntimeException($message);
     }
     // With multiple partial matches we want to provide the developer as much
     // information as possible.
@@ -268,7 +281,7 @@ class EmailContext implements Context {
       $missing_lines = array_diff($expected_lines, $partial_match);
       $message .= "------- Partial match $i --------\n  " . implode("\n  ", $missing_lines);
     }
-    throw new \Exception($message);
+    throw new \RuntimeException($message);
   }
 
   /**
@@ -293,13 +306,15 @@ class EmailContext implements Context {
 
       $count_matched = count($matched_lines);
       if ($count_matched === $count_expected) {
-        throw new \Exception("An email exists with the specified subject and body.");
+        throw new \RuntimeException("An email exists with the specified subject and body.");
       }
     }
   }
 
   /**
    * Purge the messages in the spool.
+   *
+   * @throws \Exception
    */
   protected function purgeSpool() : void {
     $filesystem = new Filesystem();
@@ -319,6 +334,7 @@ class EmailContext implements Context {
    *
    * @return array
    *   An array of matching emails.
+   *
    * @throws \Exception
    *   An exception in case no emails were sent or email collection is
    *   incorrectly configured.
@@ -327,7 +343,7 @@ class EmailContext implements Context {
     $finder = $this->getSpooledEmails();
 
     if ($finder->count() === 0) {
-      throw new \Exception('No email messages have been sent in the test.');
+      throw new \RuntimeException('No email messages have been sent in the test.');
     }
 
     $emails = [];
@@ -345,8 +361,9 @@ class EmailContext implements Context {
   /**
    * Get a list of spooled emails.
    *
-   * @return Finder
+   * @return \Symfony\Component\Finder\Finder
    *   Returns a Finder if the directory exists.
+   *
    * @throws \Exception
    *   An exception is thrown in case the configured directory does not exist.
    */
@@ -361,7 +378,7 @@ class EmailContext implements Context {
       return $finder->files()->in($spoolDir);
     }
     catch (\InvalidArgumentException $exception) {
-      throw new \Exception("The e-mail spool directory does not exist or is incorrectly configured, expected '{$spoolDir}' to exist.");
+      throw new \RuntimeException("The e-mail spool directory does not exist or is incorrectly configured, expected '{$spoolDir}' to exist.");
     }
   }
 
@@ -388,13 +405,15 @@ class EmailContext implements Context {
    */
   protected function getEmailContent(SplFileInfo $file) : DrupalSymfonyEmail {
     assert($file->getExtension() === "message", "File passed to " . __FUNCTION__ . " must be a serialized .message file.");
-    return unserialize(file_get_contents($file), ["allowed_classes" => [
-      DrupalSymfonyEmail::class,
-      Headers::class,
-      UnstructuredHeader::class,
-      Address::class,
-      MimeEmail::class
-    ]]);
+    return unserialize(file_get_contents($file), [
+      "allowed_classes" => [
+        DrupalSymfonyEmail::class,
+        Headers::class,
+        UnstructuredHeader::class,
+        Address::class,
+        MimeEmail::class,
+      ],
+    ]);
   }
 
   /**
@@ -402,14 +421,14 @@ class EmailContext implements Context {
    *
    * @param list<string> $expected_lines
    *   The list of lines of text that is expected to be in the email.
-   * @param $email
+   * @param mixed $email
    *   The email to check.
    *
    * @return list<string>
    *   A list of lines from $expected_lines that was found in the body of
    *   $email.
    */
-  protected function getMatchingLinesForEmail(array $expected_lines, $email) : array {
+  protected function getMatchingLinesForEmail(array $expected_lines, mixed $email) : array {
     $body = $email->getHtmlBody();
 
     // Make it a traversable HTML doc.
@@ -430,6 +449,5 @@ class EmailContext implements Context {
 
     return $matched_lines;
   }
-
 
 }

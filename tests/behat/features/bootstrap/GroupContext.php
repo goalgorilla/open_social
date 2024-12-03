@@ -1,5 +1,5 @@
 <?php
-
+// phpcs:ignoreFile Generic.Files.LineLength.TooLong
 namespace Drupal\social\Behat;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -8,7 +8,6 @@ use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
-use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupRelationshipType;
@@ -72,8 +71,10 @@ class GroupContext extends RawMinkContext {
    * View the group creation page.
    *
    * @When /^(?:|I )view the group creation page$/
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    */
-  public function whenIViewTheGroupCreationPage() : void {
+  public function iViewTheGroupCreationPage() : void {
     $this->visitPath(self::CREATE_PAGE);
     $this->assertSession()->statusCodeEquals(200);
   }
@@ -88,8 +89,10 @@ class GroupContext extends RawMinkContext {
    * | ...    | ...        | ...             | ...      | ...         | ...      | ...                            |
    *
    * @Given groups:
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function createGroups(TableNode $groupsTable) {
+  public function createGroups(TableNode $groupsTable): void {
     foreach ($groupsTable->getHash() as $groupHash) {
       $group = $this->groupCreate($groupHash);
       $this->groups[$group->id()] = $group;
@@ -105,8 +108,10 @@ class GroupContext extends RawMinkContext {
    * | ...      | ...             | ...      | ...         | ...
    *
    * @Given groups with non-anonymous owner:
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function createGroupsWithOwner(TableNode $groupsTable) {
+  public function createGroupsWithOwner(TableNode $groupsTable): void {
     // Create a new random user to own our groups, this ensures the author
     // isn't anonymous.
     $user = (object) [
@@ -120,11 +125,11 @@ class GroupContext extends RawMinkContext {
 
     foreach ($groupsTable->getHash() as $groupHash) {
       if (isset($groupHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'groups with non-anonymous owner:' step, use 'groups:' instead.");
+        throw new \RuntimeException("Can not specify an author when using the 'groups with non-anonymous owner:' step, use 'groups:' instead.");
       }
 
       // We specify the owner for each group to be the current user.
-      // `groupCreate` will load the user by name so we fall back to 'anyonmous'
+      // `groupCreate` will load the user by name so we fall back to 'anonymous'
       // if the current user isn't logged in.
       $groupHash['author'] = $user->name;
 
@@ -142,16 +147,18 @@ class GroupContext extends RawMinkContext {
    * | ...      | ...             | ...      | ...         | ...
    *
    * @Given groups owned by current user:
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function createGroupsOwnedByCurrentUser(TableNode $groupsTable) {
+  public function createGroupsOwnedByCurrentUser(TableNode $groupsTable): void {
     $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
     foreach ($groupsTable->getHash() as $groupHash) {
       if (isset($groupHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'groups owned by current user:' step, use 'groups:' instead.");
+        throw new \RuntimeException("Can not specify an author when using the 'groups owned by current user:' step, use 'groups:' instead.");
       }
 
       // We specify the owner for each group to be the current user.
-      // `groupCreate` will load the user by name so we fall back to 'anyonmous'
+      // `groupCreate` will load the user by name so we fall back to 'anonymous'
       // if the current user isn't logged in.
       $groupHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
 
@@ -179,7 +186,7 @@ class GroupContext extends RawMinkContext {
    *
    * @Given group membership requests:
    */
-  public function createGroupMembershipRequests(TableNode $groupMembershipRequestsTable) {
+  public function createGroupMembershipRequests(TableNode $groupMembershipRequestsTable): void {
     $plugin_id = 'group_membership_request';
     $relationship_type_storage = \Drupal::entityTypeManager()->getStorage('group_content_type');
 
@@ -225,7 +232,7 @@ class GroupContext extends RawMinkContext {
    *
    * @Given group members:
    */
-  public function createGroupMembers(TableNode $groupMembersTable) {
+  public function createGroupMembers(TableNode $groupMembersTable): void {
     foreach ($groupMembersTable->getHash() as $groupMemberHash) {
       $group_id = $this->getNewestGroupIdFromTitle($groupMemberHash['group']);
       if ($group_id === NULL) {
@@ -246,7 +253,7 @@ class GroupContext extends RawMinkContext {
    *
    * The order of the fields may matter since some fields depend on other
    * fields, e.g. content visibility or join methods depend on group visibility
-   * and address sub fields depend on country.
+   * and address sub-fields depend on country.
    *
    * Example: When I create a flexible group using its creation page:
    *              | Title       | My Book Page  |
@@ -254,11 +261,15 @@ class GroupContext extends RawMinkContext {
    *
    * @When I create a :group_type group using its creation page:
    * @When create a :group_type group using its creation page:
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   * @throws \Behat\Mink\Exception\UnsupportedDriverActionException
+   * @throws \Behat\Mink\Exception\DriverException
    */
-  public function whenICreateAGroupUsingTheForm(string $group_type, TableNode $fields): void {
+  public function iCreateOneGroupUsingTheForm(string $group_type, TableNode $fields): void {
     $this->visitPath("/group/add/flexible_group");
     if ($this->getSession()->getStatusCode() !== 200) {
-      throw new \Exception("Could not go to `/group/add/flexible_group` page.");
+      throw new \RuntimeException("Could not go to `/group/add/flexible_group` page.");
     }
 
     $page = $this->getSession()->getPage();
@@ -304,7 +315,7 @@ class GroupContext extends RawMinkContext {
       if ($key === "country") {
         $ajax_timeout = $this->getMinkParameter('ajax_timeout');
         if (!$this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('[name=\"field_group_address[0][address][locality]\"').length > 0")) {
-          throw new \Exception("Address field did not update within $ajax_timeout seconds after country selection.");
+          throw new \RuntimeException("Address field did not update within $ajax_timeout seconds after country selection.");
         }
       }
     }
@@ -316,7 +327,7 @@ class GroupContext extends RawMinkContext {
     // the test but also so that we can validate what things are in there.
     $group_id = $this->getNewestGroupIdFromTitle($group['title']);
     if ($group_id === NULL) {
-      throw new \Exception("Could not find created group by title, perhaps creation failed or there are multiple groups with the same title.");
+      throw new \RuntimeException("Could not find created group by title, perhaps creation failed or there are multiple groups with the same title.");
     }
 
     $this->lastCreatedValues = $group;
@@ -331,8 +342,10 @@ class GroupContext extends RawMinkContext {
    *
    * @Then I should see the group I just created
    * @Then should see the group I just created
+   *
+   * @throws \Exception
    */
-  public function thenIShouldSeeTheGroupIJustCreated() : void {
+  public function iShouldSeeTheGroupJustCreated() : void {
     $regions = [
       'title' => "Hero block",
       'description' => 'Main content',
@@ -425,8 +438,10 @@ class GroupContext extends RawMinkContext {
    * Selects a group in a dropdown.
    *
    * @When I select group :group
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
    */
-  public function iSelectGroup($group) {
+  public function iSelectGroup($group): void {
     if ($group === "- None -") {
       $option = '_none';
     }
@@ -448,7 +463,7 @@ class GroupContext extends RawMinkContext {
    *
    * @When /^I click the group member dropdown/
    */
-  public function iClickGroupMemberDropdown() {
+  public function iClickGroupMemberDropdown(): void {
     $locator = '.add-users-dropbutton .dropdown-toggle';
     $session = $this->getSession();
     $element = $session->getPage()->find('css', $locator);
@@ -480,9 +495,9 @@ class GroupContext extends RawMinkContext {
   public function viewingGroup(string $group) : void {
     $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
-      throw new \Exception("Group '${group}' does not exist.");
+      throw new \RuntimeException("Group '$group' does not exist.");
     }
-    $this->visitPath("/group/${group_id}");
+    $this->visitPath("/group/$group_id");
   }
 
   /**
@@ -492,11 +507,14 @@ class GroupContext extends RawMinkContext {
    *
    * @Then I should be viewing the group :group
    * @Then should be viewing the group :group
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   * @throws \Behat\Mink\Exception\ExpectationException
    */
   public function shouldBeViewingGroup(string $group) : void {
     $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
-      throw new \Exception("Group '${group}' does not exist.");
+      throw new \RuntimeException("Group '${group}' does not exist.");
     }
     $this->assertSession()->statusCodeEquals(200);
     // We may need to change the path here since the default group page is
@@ -526,9 +544,9 @@ class GroupContext extends RawMinkContext {
   public function viewPageInGroup(string $group_page, string $group) : void {
     $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
-      throw new \Exception("Group '${group}' does not exist.");
+      throw new \RuntimeException("Group '$group' does not exist.");
     }
-    $this->visitPath("/group/${group_id}/$group_page");
+    $this->visitPath("/group/$group_id/$group_page");
   }
 
   /**
@@ -544,12 +562,12 @@ class GroupContext extends RawMinkContext {
 
     $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
-      throw new \Exception("Group '${group}' does not exist.");
+      throw new \RuntimeException("Group '${group}' does not exist.");
     }
 
     $selected = $field->getValue();
     if ($selected !== (string) $group_id) {
-      throw new \Exception("Expected group select to be set to '$group_id' but instead found '$selected'.");
+      throw new \RuntimeException("Expected group select to be set to '$group_id' but instead found '$selected'.");
     }
   }
 
@@ -567,12 +585,12 @@ class GroupContext extends RawMinkContext {
 
     $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
-      throw new \Exception("Group '${group}' does not exist.");
+      throw new \RuntimeException("Group '$group' does not exist.");
     }
 
     $option = $field->find('named', ['option', $group_id]);
     if ($option === NULL) {
-      throw new \Exception("Expected '$group' to be an option for the group selector but it was not.");
+      throw new \RuntimeException("Expected '$group' to be an option for the group selector but it was not.");
     }
   }
 
@@ -590,12 +608,12 @@ class GroupContext extends RawMinkContext {
 
     $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
-      throw new \Exception("Group '${group}' does not exist.");
+      throw new \RuntimeException("Group '$group' does not exist.");
     }
 
     $option = $field->find('named', ['option', $group_id]);
     if ($option !== NULL) {
-      throw new \Exception("Expected '$group' not to be an option for the group selector but it was.");
+      throw new \RuntimeException("Expected '$group' not to be an option for the group selector but it was.");
     }
   }
 
@@ -605,7 +623,7 @@ class GroupContext extends RawMinkContext {
    * @Given /^(?:|I )am on the stream of group "(?P<group_title>[^"]+)"$/
    * @When /^(?:|I )go to the stream of group "(?P<group_title>[^"]+)"$/
    */
-  public function openGroupStreamPage($group_title) {
+  public function openGroupStreamPage(string $group_title): void {
     $group_id = $this->getNewestGroupIdFromTitle($group_title);
     if ($group_id === NULL) {
       throw new \InvalidArgumentException("Group '$group_title' does not exist.");
@@ -618,23 +636,25 @@ class GroupContext extends RawMinkContext {
   /**
    * Opens the content from a group and check for access.
    *
-   * @Then /I open and check the access of content in group "(?P<groupname>[^"]+)" and I expect access "(?P<access>[^"]+)"$/
+   * @Then /I open and check the access of content in group "(?P<group_name>[^"]+)" and I expect access "(?P<access>[^"]+)"$/
+   *
+   * @throws \Exception
    */
-  public function openAndCheckGroupContentAccess($groupname, $access) {
+  public function openAndCheckGroupContentAccess(string $group_name, string $access): void {
     $allowed_access = [
       '0' => 'denied',
       '1' => 'allowed',
     ];
-    if (!in_array($access, $allowed_access)) {
+    if (!in_array($access, $allowed_access, FALSE)) {
       throw new \InvalidArgumentException(sprintf('This access option is not allowed: "%s"', $access));
     }
     $expected_access = 0;
-    if ($access == 'allowed') {
+    if ($access === 'allowed') {
       $expected_access = 1;
     }
 
     $query = \Drupal::entityQuery('group')
-      ->condition('label', $groupname)
+      ->condition('label', $group_name)
       ->accessCheck(FALSE);
     $gid = $query->execute();
 
@@ -649,7 +669,7 @@ class GroupContext extends RawMinkContext {
         // Get all the node's related to the current group.
         $query = \Drupal::database()->select('group_relationship_field_data', 'gcfd');
         $query->addField('gcfd', 'entity_id');
-        $query->condition('gcfd.gid', $group->id());
+        $query->condition('gcfd.gid', $group?->id());
         $query->condition('gcfd.type', $group_content_types, 'IN');
         $query->execute()->fetchAll();
 
@@ -661,7 +681,7 @@ class GroupContext extends RawMinkContext {
         // Get all the posts from this group.
         $query = \Drupal::database()->select('post__field_recipient_group', 'pfrg');
         $query->addField('pfrg', 'entity_id');
-        $query->condition('pfrg.field_recipient_group_target_id', $group->id());
+        $query->condition('pfrg.field_recipient_group_target_id', $group?->id());
         $query->execute()->fetchAll();
 
         $post_ids = $query->execute()->fetchAllAssoc('entity_id');
@@ -673,10 +693,10 @@ class GroupContext extends RawMinkContext {
     }
     else {
       if (empty($gid)) {
-        throw new \Exception(sprintf("Group '%s' does not exist.", $groupname));
+        throw new \RuntimeException(sprintf("Group '%s' does not exist.", $group_name));
       }
       if (count($gid) > 1) {
-        throw new \Exception(sprintf("Multiple groups with label '%s' found.", $groupname));
+        throw new \RuntimeException(sprintf("Multiple groups with label '%s' found.", $group_name));
       }
     }
   }
@@ -702,15 +722,18 @@ class GroupContext extends RawMinkContext {
    *
    * @return \Drupal\group\Entity\Group
    *   The created group.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Exception
    */
-  private function groupCreate(array $group) {
+  private function groupCreate(array $group): Group {
     if (!isset($group['author'])) {
-      throw new \Exception("You must specify an `author` when creating a group. Specify the `author` field if using `@Given groups:` or use one of `@Given groups with non-anonymous owner:` or `@Given groups owned by current user:` instead.");
+      throw new \RuntimeException("You must specify an `author` when creating a group. Specify the `author` field if using `@Given groups:` or use one of `@Given groups with non-anonymous owner:` or `@Given groups owned by current user:` instead.");
     }
 
     $account = user_load_by_name($group['author']);
     if ($account === FALSE) {
-      throw new \Exception(sprintf("User with username '%s' does not exist.", $group['author']));
+      throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $group['author']));
     }
     $group['uid'] = $account->id();
     unset($group['author']);
@@ -725,7 +748,7 @@ class GroupContext extends RawMinkContext {
     $group_object = Group::create($group);
     $violations = $group_object->validate();
     if ($violations->count() !== 0) {
-      throw new \Exception("The group you tried to create is invalid: $violations");
+      throw new \RuntimeException("The group you tried to create is invalid: $violations");
     }
     $group_object->save();
 
@@ -743,16 +766,19 @@ class GroupContext extends RawMinkContext {
    *   The expected access:
    *     0 = NO access
    *     1 = YES access.
+   *
+   * @throws \Behat\Mink\Exception\ResponseTextException
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException|\Drupal\Core\Entity\EntityMalformedException
    */
-  private function openEntityAndExpectAccess($entity_type, $entity_id, $expected_access) {
+  private function openEntityAndExpectAccess(string $entity_type, int $entity_id, int $expected_access): void {
     $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
-    /** @var \Drupal\Core\Url $url */
-    $url = $entity->toUrl();
+    $url = $entity?->toUrl();
     $page = $url->toString();
 
     $this->visitPath($page);
 
-    if ($expected_access == 0) {
+    if ($expected_access === 0) {
       $this->assertSession()->pageTextContains('Access denied');
     }
     else {

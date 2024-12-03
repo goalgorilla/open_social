@@ -4,7 +4,6 @@ namespace Drupal\social\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterStepScope;
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Database\Query\PagerSelectExtender;
 use Drupal\Core\Database\Query\TableSortExtender;
@@ -88,7 +87,7 @@ class LogContext implements Context {
   }
 
   /**
-   * I should see log message
+   * I should see log message.
    *
    * @Then I should see log message :value
    */
@@ -117,11 +116,10 @@ class LogContext implements Context {
    *   Whether to ignore this message.
    */
   protected function isIgnoredLogMessage($row) : bool {
-    return
-      // Ignore notices from the user module since we don't really care about
-      // users logging in or being deleted, those conditions are part of test
-      // assertions.
-      ($row->type === 'user' && (int) $row->severity === RfcLogLevel::NOTICE)
+    // Ignore notices from the user module since we don't really care about.
+    // Users logging in or being deleted, those conditions are part of test.
+    // assertions.
+    return ($row->type === 'user' && (int) $row->severity === RfcLogLevel::NOTICE)
       // Ignore notices for the content type since we don't care about content
       // creation (and those should really be INFO anywhere, but that's a Drupal
       // core problem for another day).
@@ -156,8 +154,7 @@ class LogContext implements Context {
       // @todo https://www.drupal.org/project/social/issues/3320117
       || ($row->type === 'php' && (int) $row->severity === RfcLogLevel::WARNING && (str_contains($row->variables, 'Undefined array key "#comment_display_mode"') || str_contains($row->variables, 'Undefined array key "#comment_type"')))
       // Ignore update notices.
-      || ($row->type === 'update' && (int) $row->severity === RfcLogLevel::NOTICE)
-      ;
+      || ($row->type === 'update' && (int) $row->severity === RfcLogLevel::NOTICE);
   }
 
   /**

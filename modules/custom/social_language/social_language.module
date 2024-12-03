@@ -18,7 +18,7 @@ function social_language_language_switch_links_alter(array &$links, $type, Url $
 
   foreach ($links as $langcode => &$link) {
     $link['attributes']['title'] = $link['title'];
-    $link['title'] .= " (${langcode})";
+    $link['title'] .= " ({$langcode})";
     $link['attributes']['class'][] = $langcode === $currentLangcode ? 'active' : NULL;
   }
 }

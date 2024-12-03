@@ -24,30 +24,30 @@ final class ChromeFactory implements DriverFactory {
   /**
    * {@inheritdoc}
    */
-  public function getDriverName() {
+  public function getDriverName(): string {
     return 'chrome';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function configure(ArrayNodeDefinition $builder) {
+  public function configure(ArrayNodeDefinition $builder): void {
     $builder->children()
       ->scalarNode('api_url')->end()
-      ->booleanNode('validate_certificate')->defaultTrue()->end()
-      ->enumNode('download_behavior')
-      ->values(['allow', 'default', 'deny'])->defaultValue('default')->end()
-      ->scalarNode('download_path')->defaultValue('/tmp')->end()
-      ->integerNode('socket_timeout')->defaultValue(10)->end()
-      ->integerNode('dom_wait_timeout')->defaultValue(3000)->end()
-      ->end();
+      ?->booleanNode('validate_certificate')->defaultTrue()->end()
+      ?->enumNode('download_behavior')
+      ?->values(['allow', 'default', 'deny'])->defaultValue('default')->end()
+      ?->scalarNode('download_path')->defaultValue('/tmp')->end()
+      ?->integerNode('socket_timeout')->defaultValue(10)->end()
+      ?->integerNode('dom_wait_timeout')->defaultValue(3000)->end()
+      ?->end();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildDriver(array $config) {
-    $validateCert = isset($config['validate_certificate']) ? $config['validate_certificate'] : TRUE;
+  public function buildDriver(array $config): Definition {
+    $validateCert = $config['validate_certificate'] ?? TRUE;
     $socketTimeout = $config['socket_timeout'];
     $domWaitTimeout = $config['dom_wait_timeout'];
     $downloadBehavior = $config['download_behavior'];
@@ -62,18 +62,30 @@ final class ChromeFactory implements DriverFactory {
         'domWaitTimeout' => $domWaitTimeout,
         'downloadBehavior' => $downloadBehavior,
         'downloadPath' => $downloadPath,
-      ]
+      ],
     ]);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function supportsJavascript() {
+  public function supportsJavascript(): bool {
     return TRUE;
   }
 
-  private function resolveApiUrl($url) {
+  /**
+   * Resolves the API URL by replacing the host with its IP address if needed.
+   *
+   * This function parses the provided URL, checks if the host is an IP address,
+   * and replaces it with its resolved IP address if it's not already an IP.
+   *
+   * @param string $url
+   *   The URL to resolve.
+   *
+   * @return string
+   *   The resolved URL with the host replaced by its IP address, if applicable.
+   */
+  private function resolveApiUrl(string $url): string {
     $host = parse_url($url, PHP_URL_HOST);
 
     if (filter_var($host, FILTER_VALIDATE_IP)) {
@@ -82,4 +94,5 @@ final class ChromeFactory implements DriverFactory {
 
     return str_replace($host, gethostbyname($host), $url);
   }
+
 }
