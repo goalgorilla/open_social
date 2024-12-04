@@ -153,7 +153,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $is_multilingual = $this->languageManager->isMultilingual();
 
       if (empty($data['recipients'])) {
-        $recipients = array_column($activity->field_activity_recipient_user->getValue(), 'target_id');
+        $recipients = array_column($activity->get('field_activity_recipient_user')->getValue(), 'target_id');
 
         if (count($recipients) > 50) {
           if ($is_multilingual) {
@@ -188,7 +188,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
         // Get Message Template id.
         $message_storage = $this->entityTypeManager->getStorage('message');
         /** @var \Drupal\message\Entity\Message $message */
-        $message = $message_storage->load($activity->field_activity_message->target_id);
+        $message = $message_storage->load($activity->get('field_activity_message')->target_id);
         $message_template_id = $message->getTemplate()->id();
 
         // Prepare an array of all details required to process the item.

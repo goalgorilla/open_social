@@ -66,7 +66,7 @@ class EventManagersQueryHelper extends ConnectionQueryHelperBase {
     // The filter is added since entity reference fields may be configured to
     // reference other values than users, but this is something we don't (yet)
     // support.
-    $users = $this->event->field_event_managers->referencedEntities();
+    $users = $this->event->get('field_event_managers')->referencedEntities();
     $uids = array_map(
       fn (UserInterface $user) => $user->id(),
       array_filter(

@@ -1518,7 +1518,7 @@ function _social_group_get_member_profile(GroupRelationship $group_content) {
  * @param mixed $entity
  *   (optional) The entity object. Defaults to NULL.
  */
-function _social_group_get_current_group($entity = NULL): ?SocialGroupInterface {
+function _social_group_get_current_group(mixed $entity = NULL): ?SocialGroupInterface {
   $cache = &drupal_static(__FUNCTION__, []);
 
   // For the same $node input, within the same request the return is always

@@ -5,6 +5,7 @@
  * The Social event module.
  */
 
+use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\block\Entity\Block;
 use Drupal\bootstrap\Bootstrap;
 use Drupal\Component\Utility\Html;
@@ -24,8 +25,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\group\GroupMembership;
 use Drupal\group\Entity\GroupRelationship;
-use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
@@ -33,6 +34,7 @@ use Drupal\social_event\Controller\SocialEventController;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event\Form\EnrollActionForm;
 use Drupal\social_event\SocialEventDateAllDay;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
@@ -105,7 +107,7 @@ function social_event_preprocess_event_enrollment_confirmation(array &$variables
 /**
  * Alter the visibility of blocks coming from the event module.
  */
-function social_event_social_core_block_visibility_path() {
+function social_event_social_core_block_visibility_path(): array {
   $blocks = [
     'social_page_title_block' => [
       '*/all-enrollment-requests/confirm-decline/*',
@@ -134,7 +136,7 @@ function social_event_social_core_block_visibility_path() {
  *
  * Enhance the exposed filter form of the event overview.
  */
-function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_event_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   if ($form['#id'] === 'views-exposed-form-events-events-overview') {
 
     $form['status']['#options'][0] = t('Unpublished');
@@ -157,8 +159,9 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
   if ($form['#id'] === 'views-exposed-form-group-events-page-group-events') {
     $group_from_route = _social_group_get_current_group();
 
+    $group_id = 0;
     // Get group from route.
-    if (!empty($group_from_route)) {
+    if ($group_from_route !== NULL) {
       $group_id = $group_from_route->id();
     }
 
@@ -195,7 +198,7 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
  * @return bool
  *   If the user is actually a manager or organizer.
  */
-function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_trusted_roles = FALSE) {
+function social_event_manager_or_organizer(NodeInterface $node = NULL, bool $skip_trusted_roles = FALSE): bool {
   $social_event_manager_or_organizer = &drupal_static(__FUNCTION__);
 
   if (!isset($social_event_manager_or_organizer)) {
@@ -220,7 +223,7 @@ function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_tru
           ->getParameter('event_enrollment');
 
         if ($event_enrollment instanceof EventEnrollmentInterface) {
-          $node = $event_enrollment->field_event->entity;
+          $node = $event_enrollment->get('field_event')->entity;
         }
       }
     }
@@ -233,8 +236,8 @@ function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_tru
       }
 
       // Check if the user is an event manager/organizer.
-      if (!isset($result) && $node->hasField('field_event_managers') && !$node->field_event_managers->isEmpty()) {
-        foreach ($node->field_event_managers->getValue() as $value) {
+      if (!isset($result) && $node->hasField('field_event_managers') && !$node->get('field_event_managers')->isEmpty()) {
+        foreach ($node->get('field_event_managers')->getValue() as $value) {
           if ($value && $value['target_id'] === $account->id()) {
             $result = TRUE;
             break;
@@ -257,11 +260,11 @@ function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_tru
 /**
  * Implements hook_views_query_alter().
  */
-function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  if ($view->id() == 'events' && $view->getDisplay()->display['id'] == 'events_overview') {
+function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $query): void {
+  if ($view->id() === 'events' && $view->getDisplay()->display['id'] === 'events_overview') {
     $account_uid = \Drupal::routeMatch()->getParameter('user');
     $current_uid = \Drupal::currentUser()->id();
-    if ($view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
+    if ($view->exposed_raw_input['status'] === NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
       $query->where[1]['conditions'][] = [
         'field' => 'node_field_data.status',
         'value' => NodeInterface::PUBLISHED,
@@ -333,7 +336,7 @@ function social_event_entity_delete(EntityInterface $entity): void {
  *
  * Add a title to the exposed filter block on the events overview.
  */
-function social_event_block_view_alter(array &$build, BlockPluginInterface $block) {
+function social_event_block_view_alter(array &$build, BlockPluginInterface $block): void {
   // @todo check out why this happens, is this is a views bug?
   if (isset($build['#plugin_id']) && $build['#plugin_id'] === 'views_exposed_filter_block:events-events_overview') {
     $build['#configuration']['label'] = $build['#configuration']['views_label'];
@@ -343,7 +346,7 @@ function social_event_block_view_alter(array &$build, BlockPluginInterface $bloc
 /**
  * Implements hook_menu_local_tasks_alter().
  */
-function social_event_menu_local_tasks_alter(&$data, $route_name) {
+function social_event_menu_local_tasks_alter(array &$data, string $route_name): void {
   $can_show_enrollments_link = FALSE;
   $routes_to_check = _social_event_menu_local_tasks_routes();
 
@@ -367,7 +370,7 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
 /**
  * Implements hook_ENTITY_TYPE_view_alter().
  */
-function social_event_node_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+function social_event_node_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
   $current_user = \Drupal::currentUser();
 
   if (
@@ -483,7 +486,7 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
  *   - node: The node object.
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
-function social_event_preprocess_node(array &$variables) {
+function social_event_preprocess_node(array &$variables): void {
   $view_mode = $variables['view_mode'];
   $node = $variables['node'];
 
@@ -510,7 +513,7 @@ function social_event_preprocess_node(array &$variables) {
       // Add Enroll button.
       if (empty($variables['event_enrollment'])) {
         $form = \Drupal::formBuilder()
-          ->getForm('Drupal\social_event\Form\EnrollActionForm');
+          ->getForm(EnrollActionForm::class);
         $render_array = [
           'enroll_action_form' => $form,
         ];
@@ -531,7 +534,7 @@ function social_event_preprocess_email(array &$variables): void {
 /**
  * Implements hook_views_data_alter().
  */
-function social_event_views_data_alter(array &$data) {
+function social_event_views_data_alter(array &$data): void {
   $data['node']['event_enrolled_or_created_filter'] = [
     'title' => t('Event enrolled or created'),
     'filter' => [
@@ -563,7 +566,7 @@ function social_event_views_data_alter(array &$data) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_event_node_insert(NodeInterface $node): void {
-  if ($node->bundle() == 'event') {
+  if ($node->bundle() === 'event') {
     \Drupal::service('social_event.eda_handler')->eventCreate($node);
   }
 }
@@ -591,7 +594,9 @@ function social_event_social_core_node_unpublished(EntityInterface $entity): voi
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_event_flagging_insert(EntityInterface $entity) {
+function social_event_flagging_insert(EntityInterface $entity): void {
+  /** @var \Drupal\flag\FlaggingInterface $entity */
+
   $group_type_ids = \Drupal::config('social_event.settings')->get('enroll');
 
   if (empty($group_type_ids)) {
@@ -599,27 +604,29 @@ function social_event_flagging_insert(EntityInterface $entity) {
   }
 
   $current_user = \Drupal::currentUser();
-  $owner = $entity->getOwnerId() == $current_user->id();
-  $is_node = $entity->entity_type->value == 'node';
-  $following = $entity->getFlagId() == 'follow_content';
+  $owner = $entity->getOwnerId() === $current_user->id();
+  $following = $entity->getFlagId() === 'follow_content';
+
+  /** @var Drupal\node\NodeInterface $entity */
+  $is_node = $entity->get('entity_type')->value === 'node';
 
   if (!($owner && $is_node && $following)) {
     return;
   }
 
-  $nid = $entity->entity_id->value;
+  $nid = $entity->get('entity_id')->value;
   /** @var \Drupal\Core\Entity\EntityInterface $node */
   $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
 
   /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_relationship */
   foreach (GroupRelationship::loadByEntity($node) as $group_relationship) {
-    /** @var \Drupal\group\Entity\GroupInterface $group */
     $group = $group_relationship->getGroup();
 
-    $allowed_type = in_array($group->bundle(), $group_type_ids);
-    $is_member = $group->getMember($current_user) instanceof GroupMembershipLoaderInterface;
+    $allowed_type = in_array($group->bundle(), $group_type_ids, FALSE);
+    $is_member = $group->getMember($current_user) instanceof GroupMembership;
 
     if ($allowed_type && !$is_member) {
+      /** @var \Drupal\user\UserInterface $account */
       $account = \Drupal::entityTypeManager()
         ->getStorage('user')
         ->load($current_user->id());
@@ -632,7 +639,7 @@ function social_event_flagging_insert(EntityInterface $entity) {
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function social_event_user_delete(EntityInterface $entity) {
+function social_event_user_delete(EntityInterface $entity): void {
   $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
   $entities = $storage->loadByProperties(['user_id' => $entity->id()]);
   $storage->delete($entities);
@@ -737,7 +744,7 @@ function _social_event_format_date(NodeInterface $event, string $view_mode = NUL
  * @return string
  *   User timezone.
  */
-function _social_event_user_timezone($timezone) {
+function _social_event_user_timezone(string $timezone): string {
   if ($timezone !== DateTimeItemInterface::STORAGE_TIMEZONE) {
     $zones = array_column(TimeZoneFormHelper::getOptionsListByRegion(), $timezone);
     $user_timezone = reset($zones);
@@ -754,7 +761,7 @@ function _social_event_user_timezone($timezone) {
  *
  * Adds the "Create Event" link to the content creation menu.
  */
-function social_event_social_user_account_header_create_links($context) {
+function social_event_social_user_account_header_create_links(array $context): array {
   $link = Link::createFromRoute((new TranslatableMarkup('New Event')), 'node.add', [
     'node_type' => 'event',
   ]);
@@ -776,7 +783,7 @@ function social_event_social_user_account_header_create_links($context) {
  *
  * Adds the "View my events" link to the user menu.
  */
-function social_event_social_user_account_header_account_links(array $context) {
+function social_event_social_user_account_header_account_links(array $context): array {
   // We require a user for this link.
   if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
     return [];
@@ -825,7 +832,7 @@ function social_event_event_enrollment_access(EntityInterface $enrollment, strin
  *
  * Implements hook_block_access().
  */
-function social_event_block_access(Block $block, $operation, AccountInterface $account) {
+function social_event_block_access(Block $block, string $operation, AccountInterface $account): AccessResultForbidden|AccessResultNeutral|AccessResult {
   if ($operation === 'view' && ($block->getPluginId() === 'views_exposed_filter_block:events-events_overview' || $block->getPluginId() === 'views_block:events-block_events_on_profile')) {
     // Here we're going to assume by default access is not granted.
     $eventController = SocialEventController::create(\Drupal::getContainer());
@@ -867,7 +874,7 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
 /**
  * Implements hook_form_alter().
  */
-function social_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_event_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Form alters for the event add and edit forms.
   if ($form_id === 'node_event_edit_form' || $form_id === 'node_event_form') {
     // Alter visibility of enrollment methods.
@@ -962,8 +969,11 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
   // Specific alter for the event edit form.
   if ($form_id === 'node_event_edit_form') {
     // Set allow event enrollment checked by default for existing events.
-    $entity = $form_state->getFormObject()->getEntity();
-    if ($entity->hasField('field_event_enroll') && $entity->field_event_enroll->isEmpty()) {
+    /** @var \Drupal\Core\Entity\ContentEntityForm $formObject */
+    $formObject = $form_state->getFormObject();
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    $entity = $formObject->getEntity();
+    if ($entity->hasField('field_event_enroll') && $entity->get('field_event_enroll')->isEmpty()) {
       $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
     }
   }
@@ -991,7 +1001,7 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
 /**
  * Add custom validation to event date fields.
  */
-function social_event_date_after_build($form, &$form_state) {
+function social_event_date_after_build(array $form, FormStateInterface $form_state): array {
   array_unshift($form['field_event_date']['widget'][0]['value']['#element_validate'], 'social_event_date_validate');
   array_unshift($form['field_event_date_end']['widget'][0]['value']['#element_validate'], 'social_event_date_validate');
   return $form;
@@ -1000,7 +1010,7 @@ function social_event_date_after_build($form, &$form_state) {
 /**
  * Set default time to the date field if time was not set.
  */
-function social_event_date_validate(&$element, FormStateInterface $form_state, &$complete_form) {
+function social_event_date_validate(array &$element, FormStateInterface $form_state, array &$complete_form): void {
   $form_values = $form_state->getValues();
   $input = NestedArray::getValue($form_values, $element['#parents']);
 
@@ -1040,9 +1050,12 @@ function social_event_date_validate(&$element, FormStateInterface $form_state, &
 /**
  * Implements hook_field_widget_single_element_form_alter().
  */
-function social_event_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_event_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   $field_definition = $context['items']->getFieldDefinition();
-  if ($field_definition->getName() == 'field_event_date' || $field_definition->getName() == 'field_event_date_end') {
+  if (
+    $field_definition->getName() === 'field_event_date'
+    || $field_definition->getName() === 'field_event_date_end'
+  ) {
     $element['value']['#date_time_callbacks'][] = [
       SocialEventDateAllDay::class,
       'allDayCheckboxCallback',
@@ -1054,7 +1067,7 @@ function social_event_field_widget_single_element_form_alter(&$element, FormStat
 /**
  * Implements hook_activity_send_email_notifications_alter().
  */
-function social_event_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+function social_event_activity_send_email_notifications_alter(array &$items, array $email_message_templates): void {
   // If a activity_on_events_im_organizing template is enabled then we add it in
   // the "Message to Me" section.
   if (isset($email_message_templates['activity_on_events_im_organizing'])) {
@@ -1069,7 +1082,7 @@ function social_event_activity_send_email_notifications_alter(array &$items, arr
 /**
  * Implements hook_social_follow_content_types_alter().
  */
-function social_event_social_follow_content_types_alter(array &$types) {
+function social_event_social_follow_content_types_alter(array &$types): void {
   $types[] = 'event';
 }
 
@@ -1079,7 +1092,7 @@ function social_event_social_follow_content_types_alter(array &$types) {
  * @return \Drupal\Core\Entity\EntityInterface|null
  *   The event or NULL if nothing found.
  */
-function social_event_get_current_event() {
+function social_event_get_current_event(): ?EntityInterface {
   $event = &drupal_static(__FUNCTION__);
 
   if (!isset($event)) {
@@ -1114,7 +1127,7 @@ function social_event_get_current_event() {
  * @param string $state
  *   Which state do you want for the form field. Defaults to visibility.
  */
-function social_event_field_visibility(array &$form, $field_name, array $fields, $state = 'visible') {
+function social_event_field_visibility(array &$form, string $field_name, array $fields, string $state = 'visible'): void {
   // @todo Refactor outside of an alter when going to React.
   // Hide fields if event enrollment is disabled for event.
   $trigger = [
@@ -1131,7 +1144,7 @@ function social_event_field_visibility(array &$form, $field_name, array $fields,
 /**
  * Implements hook_entity_operation_alter().
  */
-function social_event_entity_operation_alter(array &$operations, EntityInterface $entity) {
+function social_event_entity_operation_alter(array &$operations, EntityInterface $entity): void {
   // Check access first.
   if (!social_event_manager_or_organizer()) {
     return;
@@ -1139,7 +1152,7 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
   // Get the node, so we can pass it as a parameter.
   $node = \Drupal::routeMatch()->getParameter('node');
   // Check if the entity type is one of event_enrollment and that we're on the
-  // correct view. Otherwise it would update all actions across the platform.
+  // correct view. Otherwise, it would update all actions across the platform.
   if ($entity->getEntityTypeId() === 'event_enrollment' && \Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {
     // Empty the current operations.
     $operations = [];
@@ -1173,7 +1186,7 @@ function social_event_node_update(EntityInterface $entity): void {
       /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
       $enrollments = \Drupal::service('social_event.status_helper');
       /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
-      foreach ($enrollments->getAllEventEnrollments($entity->id(), TRUE) as $enrollment) {
+      foreach ($enrollments->getAllEventEnrollments((int) $entity->id(), TRUE) as $enrollment) {
         // Check if the field is not empty before getting the value,
         // Since (int) will otherwise return 0 and give false positives.
         if (!$enrollment->get('field_request_or_invite_status')->isEmpty() && (int) $enrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::REQUEST_PENDING) {
@@ -1200,7 +1213,7 @@ function social_event_node_delete(EntityInterface $entity): void {
 /**
  * Implements template_preprocess_views_view().
  */
-function social_event_preprocess_views_view(&$variables) {
+function social_event_preprocess_views_view(array &$variables): void {
   if ($variables['view']->id() === 'event_manage_enrollment_requests') {
     $node_id = \Drupal::routeMatch()->getParameter('node');
     // Implement custom button to go back to the enroll request overview.
@@ -1228,7 +1241,7 @@ function social_event_preprocess_views_view(&$variables) {
 /**
  * Implements hook_preprocess_page().
  */
-function social_event_preprocess_page(array &$variables) {
+function social_event_preprocess_page(array &$variables): void {
   /** @var \Drupal\Core\Routing\AdminContext $admin_context */
   $admin_context = \Drupal::service('router.admin_context');
   // Don't add the modal for admin pages.
@@ -1296,7 +1309,7 @@ function social_event_preprocess_page(array &$variables) {
 /**
  * Implements hook_preprocess_field().
  */
-function social_event_preprocess_field(&$variables) {
+function social_event_preprocess_field(array &$variables): void {
   $formatter = $variables['element']['#formatter'];
   if (in_array($formatter, ['address_plain', 'address_default'])) {
     $entity = $variables['element']['#object'];
@@ -1343,7 +1356,7 @@ function social_event_preprocess_field(&$variables) {
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _social_event_get_enrollment_status(NodeInterface $event) {
+function _social_event_get_enrollment_status(NodeInterface $event): bool {
   $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')->loadByProperties([
     'field_account' => \Drupal::currentUser()->id(),
     'field_event' => $event->id(),
@@ -1351,7 +1364,7 @@ function _social_event_get_enrollment_status(NodeInterface $event) {
 
   $status = TRUE;
   if ($enrollment = array_pop($enrollments)) {
-    $enrollment_status = $enrollment->field_enrollment_status->value;
+    $enrollment_status = $enrollment->get('field_enrollment_status')->value;
     if ($enrollment_status === '0') {
       $status = FALSE;
     }
@@ -1371,7 +1384,7 @@ function _social_event_get_enrollment_status(NodeInterface $event) {
  * @param string $display
  *   The views display id.
  */
-function _social_event_views_update($view_config, $display) {
+function _social_event_views_update(string $view_config, string $display): void {
   // Get views config.
   $config = \Drupal::configFactory()
     ->getEditable($view_config);
@@ -1397,7 +1410,7 @@ function _social_event_views_update($view_config, $display) {
  * @return string
  *   The render array containing the description.
  */
-function social_event_enroll_method_description($key) {
+function social_event_enroll_method_description(int $key): string {
   $description = '';
 
   // We need it to be specified otherwise we can't build the markup.
@@ -1446,7 +1459,7 @@ function social_event_enroll_method_description($key) {
  * @return array
  *   The render array containing the tooltip.
  */
-function social_event_render_tooltip($field_name, $data_title, $description) {
+function social_event_render_tooltip(string $field_name, string $data_title, string $description): array {
   $build = [];
   $id = Html::getUniqueId('tooltip-' . $field_name);
   $build['toggle'] = [
@@ -1498,7 +1511,7 @@ function social_event_render_tooltip($field_name, $data_title, $description) {
 /**
  * Implements template_preprocess_form_element().
  */
-function social_event_preprocess_fieldset(&$variables) {
+function social_event_preprocess_fieldset(array &$variables): void {
   // Make sure our event enroll method field renders a tooltip, since
   // this field is rendered as fieldset with legend and radios as children
   // we need to do it in this preprocess.
@@ -1520,7 +1533,7 @@ function social_event_preprocess_fieldset(&$variables) {
 /**
  * Implements hook_field_group_form_process_build_alter().
  */
-function social_event_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, &$complete_form) {
+function social_event_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, array &$complete_form): void {
   if ($field_group = &$element['group_enrollment_methods']) {
     $field_group['#states']['visible'] = [
       ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
@@ -1540,7 +1553,7 @@ function social_event_field_group_form_process_build_alter(array &$element, Form
 /**
  * Implements hook_social_core_default_main_menu_links_alter().
  */
-function social_event_social_core_default_main_menu_links_alter(array &$links) {
+function social_event_social_core_default_main_menu_links_alter(array &$links): void {
   $link = \Drupal::entityTypeManager()->getStorage('menu_link_content')
     ->loadByProperties([
       'title' => 'All events',

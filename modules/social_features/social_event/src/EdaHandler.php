@@ -167,7 +167,7 @@ final class EdaHandler {
     $enrollment_methods = ['open', 'request', 'invite'];
 
     // Determine status.
-    if ($op == 'delete') {
+    if ($op === 'delete') {
       $status = 'removed';
     }
     else {

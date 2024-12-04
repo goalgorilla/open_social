@@ -23,7 +23,7 @@ class EventAnEnrollManager {
    * @return string
    *   Full name or E-mail address.
    */
-  public function getGuestName(EventEnrollmentInterface $entity, $email = TRUE) {
+  public function getGuestName(EventEnrollmentInterface $entity, bool $email = TRUE): string {
     $parts = [];
 
     // If user doesn't have access to see the first/last/email value.
@@ -32,16 +32,16 @@ class EventAnEnrollManager {
       return $this->t('Guest');
     }
 
-    if (!$entity->field_first_name->isEmpty()) {
-      $parts[] = $entity->field_first_name->value;
+    if (!$entity->get('field_first_name')->isEmpty()) {
+      $parts[] = $entity->get('field_first_name')->value;
     }
 
-    if (!$entity->field_last_name->isEmpty()) {
-      $parts[] = $entity->field_last_name->value;
+    if (!$entity->get('field_last_name')->isEmpty()) {
+      $parts[] = $entity->get('field_last_name')->value;
     }
 
     if (!$parts && $email) {
-      $parts[] = $entity->field_email->value;
+      $parts[] = $entity->get('field_email')->value;
     }
 
     return implode(' ', $parts);
@@ -57,7 +57,7 @@ class EventAnEnrollManager {
    *   TRUE if it is guest.
    */
   public function isGuest(EventEnrollmentInterface $entity) {
-    return !$entity->field_account->target_id;
+    return !$entity->get('field_account')->target_id;
   }
 
 }

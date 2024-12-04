@@ -4,10 +4,12 @@ namespace Drupal\social_event_managers\Plugin\views\field;
 
 use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
@@ -33,21 +35,28 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The action plugin manager.
    *
    * @var \Drupal\Core\Action\ActionManager
    */
-  protected $pluginActionManager;
+  protected ActionManager $pluginActionManager;
+
+  /**
+   * The route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  private RouteMatchInterface $routeMatch;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs a new SocialEventManagersViewsBulkOperationsBulkForm object.
@@ -74,8 +83,6 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    *   The entity type manager.
    * @param \Drupal\Core\Action\ActionManager $pluginActionManager
    *   The action manager.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory.
    */
   public function __construct(
     array $configuration,
@@ -89,19 +96,19 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     RequestStack $requestStack,
     EntityTypeManagerInterface $entity_type_manager,
     ActionManager $pluginActionManager,
-    ConfigFactoryInterface $config_factory
+    RouteMatchInterface $routeMatch,
+    ConfigFactoryInterface $config_factory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack);
 
     $this->entityTypeManager = $entity_type_manager;
     $this->pluginActionManager = $pluginActionManager;
-    $this->configFactory = $config_factory;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -114,7 +121,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       $container->get('request_stack'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.action'),
-      $container->get('config.factory')
+      $container->get('current_route_match'),
+      $container->get('config.factory'),
     );
   }
 
@@ -168,7 +176,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    * {@inheritdoc}
    */
   public function viewsForm(array &$form, FormStateInterface $form_state): void {
-    $this->view->setExposedInput(['status' => TRUE]);
+    $this->view->setExposedInput(['status' => '1']);
 
     parent::viewsForm($form, $form_state);
 
@@ -182,7 +190,11 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       $list = &$form[$this->options['id']];
 
       foreach ($this->view->result as $row_index => $row) {
+        /** @var \Drupal\Core\Entity\ContentEntityInterface|NULL $entity */
         $entity = $this->getEntity($row);
+        if ($entity === NULL) {
+          continue;
+        }
         $list[$row_index]['#title'] = $this->getEntityLabel($entity);
       }
     }
@@ -334,7 +346,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  public function viewsFormValidate(&$form, FormStateInterface $form_state) {
+  public function viewsFormValidate(&$form, FormStateInterface $form_state): void {
     if ($this->view->id() === 'event_manage_enrollments') {
       $user_input = $form_state->getUserInput();
       $available_options = $this->getBulkOptions();
@@ -389,7 +401,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
         $parameters = $url->getRouteParameters();
 
         if (empty($parameters['node'])) {
-          $node = \Drupal::routeMatch()->getParameter('node');
+          $node = $this->routeMatch->getParameter('node');
           if ($node instanceof NodeInterface) {
             // You can get nid and anything else you need from the node object.
             $parameters['node'] = $node->id();
@@ -411,16 +423,16 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * Returns modified entity label.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity.
    *
    * @return string
    *   The label text.
    */
-  public function getEntityLabel(EntityInterface $entity) {
+  public function getEntityLabel(ContentEntityInterface $entity): string {
     $profiles = $this->entityTypeManager->getStorage('profile')
       ->loadByProperties([
-        'uid' => $entity->field_account->target_id,
+        'uid' => $entity->get('field_account')->target_id
       ]);
 
     $profile = reset($profiles);
@@ -477,7 +489,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    * @return array
    *   Returns array of bulk options.
    */
-  protected function bulkOptionAccess(array $bulkOptions) {
+  protected function bulkOptionAccess(array $bulkOptions): array {
     /** @var \Drupal\node\NodeInterface $event */
     $event = social_event_get_current_event();
     $isEventOrganizer = social_event_manager_or_organizer($event);

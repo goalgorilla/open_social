@@ -122,14 +122,14 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       $this->joinManager->hasMethod($bundle, 'request') &&
       $this->group->hasField('field_group_allowed_join_method')
     ) {
-      $join_methods = $this->group->field_group_allowed_join_method->getValue();
+      $join_methods = $this->group->get('field_group_allowed_join_method')->getValue();
 
-      if (!in_array('request', array_column($join_methods, 'value'))) {
+      if (!in_array('request', array_column($join_methods, 'value'), FALSE)) {
         return [];
       }
     }
     else {
-      $allow_request = $this->group->allow_request;
+      $allow_request = $this->group->get('allow_request');
 
       if ($allow_request->isEmpty() || $allow_request->value == 0) {
         return [];

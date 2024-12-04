@@ -365,7 +365,7 @@ abstract class DemoSystem extends DemoContent {
         'title' => $data['cta2']['text'],
       ],
     ];
-    $itemList = new FieldItemList($block->field_call_to_action_link->getFieldDefinition());
+    $itemList = new FieldItemList($block->get('field_call_to_action_link')->getFieldDefinition());
     $itemList->setValue($action_links);
     $block->field_call_to_action_link = $itemList;
     $block->save();

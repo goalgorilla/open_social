@@ -115,7 +115,10 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
     }
 
     // Continue if we have text to send and the user is currently offline.
-    if (isset($activity->field_activity_output_text) && EmailActivityDestination::isUserOffline($target)) {
+    if (
+      $activity->get('field_activity_output_text') !== NULL
+      && EmailActivityDestination::isUserOffline($target)
+    ) {
       // Get the users preferred language.
       $langcode = $target->getPreferredLangcode();
 

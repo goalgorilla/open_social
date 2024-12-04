@@ -132,10 +132,10 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
           }
 
           // Continue if we have text to send.
-          if (isset($activity->field_activity_output_text)) {
+          if ($activity->get('field_activity_output_text') !== NULL) {
             // Load the message.
             /** @var \Drupal\message\Entity\Message $message */
-            $message = $message_storage->load($activity->field_activity_message->target_id);
+            $message = $message_storage->load($activity->get('field_activity_message')->target_id);
             $body_text = EmailActivityDestination::getSendEmailOutputText($message, $langcode);
 
             if ($langcode && !empty($body_text)) {

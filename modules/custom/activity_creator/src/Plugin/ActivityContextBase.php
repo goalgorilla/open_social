@@ -122,10 +122,10 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
     $post = $this->entityTypeManager->getStorage('post')
       ->load($referenced_entity['target_id']);
 
-    if ($post !== NULL && !$post->field_recipient_user->isEmpty()) {
+    if ($post !== NULL && !$post->get('field_recipient_user')->isEmpty()) {
       $recipients[] = [
         'target_type' => 'user',
-        'target_id' => $post->field_recipient_user->target_id,
+        'target_id' => $post->get('field_recipient_user')->target_id,
       ];
     }
 

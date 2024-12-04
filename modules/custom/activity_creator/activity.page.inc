@@ -64,7 +64,7 @@ function template_preprocess_activity(array &$variables) {
   }
   $variables['#cache']['max-age'] = $created_time_ago->getCacheMaxAge();
 
-  $entities = $activity->field_activity_entity->referencedEntities();
+  $entities = $activity->get('field_activity_entity')->referencedEntities();
   if (!empty($entities)) {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = reset($entities);

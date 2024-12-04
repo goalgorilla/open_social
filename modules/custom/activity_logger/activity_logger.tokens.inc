@@ -17,7 +17,7 @@ use Drupal\Core\Language\LanguageInterface;
 /**
  * Implements hook_token_info().
  */
-function activity_logger_token_info() {
+function activity_logger_token_info(): array {
   $type = [
     'name' => t('Activity tokens'),
     'description' => t('Tokens from the activity logger module.'),
@@ -64,7 +64,7 @@ function activity_logger_token_info() {
 /**
  * Implements hook_tokens().
  */
-function activity_logger_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function activity_logger_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
 
   if ($type === 'message' && !empty($data['message'])) {
@@ -87,12 +87,14 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
             if ($message->hasField('field_message_related_object') && !$message->get('field_message_related_object')->isEmpty()) {
               $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
               $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+              /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
               $entity = \Drupal::entityTypeManager()
                 ->getStorage($target_type)
                 ->load($target_id);
 
               if (is_object($entity)) {
                 // If comment get the entity to which the comment is attached.
+                /** @var \Drupal\comment\CommentInterface $entity */
                 if ($entity->getEntityTypeId() === 'comment') {
                   $entity = $entity->getCommentedEntity();
 
@@ -117,16 +119,20 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                 // Or special handling for post entities.
                 if ($entity->getEntityTypeId() === 'post') {
                   if (!empty($entity->get('field_recipient_group')->getValue())) {
-                    $group = Group::load($entity->field_recipient_group->target_id);
+                    $group = Group::load($entity->get('field_recipient_group')->target_id);
                   }
-                  if (isset($entity->field_recipient_user) && !empty($entity->field_recipient_user->target_id)) {
-                    $target_id = $entity->field_recipient_user->target_id;
+                  if (
+                    $entity->get('field_recipient_user') !== NULL
+                    && !empty($entity->get('field_recipient_user')->target_id)
+                  ) {
+                    $target_id = $entity->get('field_recipient_user')->target_id;
                     $recipient_user = \Drupal::entityTypeManager()
                       ->getStorage('user')
                       ->load($target_id);
                   }
                 }
                 // Handling for group content entities.
+                /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
                 if ($entity->getEntityTypeId() === 'group_content') {
                   $group = $entity->getGroup();
                   $group_content_entity = $entity->getEntity();

@@ -23,7 +23,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getSendMessageTemplates(string $destination) {
+  public static function getSendMessageTemplates(string $destination): array {
     $email_message_templates = [];
     /** @var \Drupal\message\MessageTemplateInterface[] $message_templates */
     $message_templates = \Drupal::entityTypeManager()
@@ -46,15 +46,23 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @param \Drupal\social_user\Entity\User $account
    *   The user account object.
    *
-   * @return mixed
+   * @return array
    *   The array of user settings.
+   *
+   * @throws \Exception
    */
-  public static function getSendUserSettings(string $destination, User $account) {
+  public static function getSendUserSettings(string $destination, User $account): array {
     $query = \Drupal::database()->select('user_activity_send', 'uas');
     $query->fields('uas', ['message_template', 'frequency']);
     $query->condition('uas.uid', $account->id());
     $query->condition('uas.destination', $destination);
-    return $query->execute()->fetchAllKeyed();
+    $result = $query->execute();
+
+    if ($result instanceof \Drupal\Core\Database\StatementInterface) {
+      return $result->fetchAllKeyed();
+    }
+
+    return [];
   }
 
   /**
@@ -67,16 +75,24 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @param string $message_template_id
    *   The machine name of message template.
    *
-   * @return mixed
+   * @return array
    *   Array of the uids and frequencies, keyed by uid.
+   *
+   * @throws \Exception
    */
-  public static function getSendAllUsersSetting(string $destination, array $account_ids, string $message_template_id) {
+  public static function getSendAllUsersSetting(string $destination, array $account_ids, string $message_template_id): array {
     $query = \Drupal::database()->select('user_activity_send', 'uas');
     $query->fields('uas', ['uid', 'frequency']);
     $query->condition('uas.uid', $account_ids, 'IN');
     $query->condition('uas.destination', $destination);
     $query->condition('uas.message_template', $message_template_id);
-    return $query->execute()->fetchAllKeyed();
+    $result = $query->execute();
+
+    if ($result instanceof \Drupal\Core\Database\StatementInterface) {
+      return $result->fetchAllKeyed();
+    }
+
+    return [];
   }
 
   /**
@@ -91,10 +107,12 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @param string $message_template_id
    *   The machine name of message template.
    *
-   * @return mixed
+   * @return array
    *   The array of user ids.
+   *
+   * @throws \Exception
    */
-  public static function getSendUserIdsByFrequency(string $destination, array $account_ids, string $frequency, string $message_template_id) {
+  public static function getSendUserIdsByFrequency(string $destination, array $account_ids, string $frequency, string $message_template_id): array {
     $query = \Drupal::database()->select('user_activity_send', 'uas');
     $query->fields('uas', ['uid']);
     $query->condition('uas.uid', $account_ids, 'IN');
@@ -102,7 +120,13 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $query->condition('uas.destination', $destination);
     $query->condition('uas.message_template', $message_template_id);
     $query->distinct();
-    return $query->execute()->fetchAllKeyed(0, 0);
+    $result = $query->execute();
+
+    if ($result instanceof \Drupal\Core\Database\StatementInterface) {
+      return $result->fetchAllKeyed(0, 0);
+    }
+
+    return [];
   }
 
   /**
@@ -117,7 +141,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    *
    * @throws \Exception
    */
-  public static function setSendUserSettings(string $destination, User $account, array $values) {
+  public static function setSendUserSettings(string $destination, User $account, array $values): void {
     if (is_object($account) && !empty($values)) {
       foreach ($values as $message_template => $frequency) {
         $query = \Drupal::database()->merge('user_activity_send');
@@ -149,10 +173,13 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getSendTargetUser(Activity $activity) {
+  public static function getSendTargetUser(Activity $activity): ?User {
     // Get target account.
-    if (isset($activity->field_activity_recipient_user) && !empty($activity->field_activity_recipient_user->target_id)) {
-      $target_id = $activity->field_activity_recipient_user->target_id;
+    if (
+      $activity->get('field_activity_recipient_user') !== NULL
+      && !empty($activity->get('field_activity_recipient_user')->target_id)
+    ) {
+      $target_id = $activity->get('field_activity_recipient_user')->target_id;
       /** @var \Drupal\user\Entity\User $target_account */
       $target_account = \Drupal::entityTypeManager()
         ->getStorage('user')
@@ -174,12 +201,15 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getSendTargetUsers(Activity $activity) {
+  public static function getSendTargetUsers(Activity $activity): array {
     $targets = [];
-    if (isset($activity->field_activity_recipient_user) && !empty($activity->field_activity_recipient_user)) {
+    if (
+      $activity->get('field_activity_recipient_user') !== NULL
+      && !empty($activity->get('field_activity_recipient_user')->getValue())
+    ) {
       $targets = \Drupal::entityTypeManager()
         ->getStorage('user')
-        ->loadMultiple(array_column($activity->field_activity_recipient_user->getValue(), 'target_id'));
+        ->loadMultiple(array_column($activity->get('field_activity_recipient_user')->getValue(), 'target_id'));
     }
     return $targets;
   }
@@ -205,7 +235,9 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $query = \Drupal::database()->select('sessions', 's');
     $query->addField('s', 'timestamp');
     $query->condition('s.uid', $account->id());
-    $last_activity_time = $query->execute()->fetchField();
+
+    $result = $query->execute();
+    $last_activity_time = $result instanceof \Drupal\Core\Database\StatementInterface ? $result->fetchField() : NULL;
 
     $offline_window = \Drupal::config('activity_send.settings')->get('activity_send_offline_window');
     $current_time = \Drupal::time()->getRequestTime() - $offline_window;

@@ -190,7 +190,7 @@ function social_mentions_tokens_alter(array &$replacements, array $context, Bubb
     // Alter the [message:cta_button] or [message:preview] token,
     // and replace it with the rendered content with new text and link.
     if (isset($context['tokens']['cta_button']) || isset($context['tokens']['preview'])) {
-      if (isset($message->field_message_related_object)) {
+      if ($message->get('field_message_related_object') !== NULL) {
         $message_template_id = $message->getTemplate()->id();
         switch ($message_template_id) {
           case 'create_mention_comment':

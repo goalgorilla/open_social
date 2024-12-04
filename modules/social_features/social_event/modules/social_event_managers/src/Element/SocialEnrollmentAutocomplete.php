@@ -91,7 +91,7 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
           ];
           /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
           foreach ($enrollments as $id => $enrollment) {
-            if (in_array((int) $enrollment->field_request_or_invite_status->value, $status_checks)) {
+            if (in_array((int) $enrollment->get('field_request_or_invite_status')->value, $status_checks, FALSE)) {
               $invited_or_joined = FALSE;
               unset($enrollments[$id]);
             }

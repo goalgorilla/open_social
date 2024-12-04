@@ -168,7 +168,7 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
 
     if ($message instanceof Message) {
       foreach ($tokens as $name => $original) {
-        if ($name === 'post_url' && isset($message->field_message_related_object)) {
+        if ($name === 'post_url' && $message->get('field_message_related_object') !== NULL) {
           $replacements[$original] = '';
 
           $target_type = $message->getFieldValue('field_message_related_object', 'target_type');

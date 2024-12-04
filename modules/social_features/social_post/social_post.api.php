@@ -83,7 +83,7 @@ function hook_post_links_alter(array &$links, PostInterface $entity, array &$con
 function hook_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state) {
   $post = $form_state->getFormObject()->getEntity();
 
-  if (mb_strlen($post->field_post->value) > 1000) {
+  if (mb_strlen($post->get('field_post')->value) > 1000) {
     $message = t('Your long post has been posted.');
   }
 }

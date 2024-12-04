@@ -29,7 +29,7 @@ class PostCommentController extends SocialCommentController {
     if ($entity->getEntityTypeId() === 'post') {
       // Check if the post has been posted in a group.
       /** @var \Drupal\social_post\Entity\Post $entity */
-      $group_id = $entity->field_recipient_group->target_id;
+      $group_id = $entity->get('field_recipient_group')->target_id;
       if ($group_id) {
 
         $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);

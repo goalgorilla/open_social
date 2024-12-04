@@ -419,9 +419,12 @@ function social_profile_preprocess_profile(array &$variables) {
   }
 
   // Add the hero styled image if we have access to it.
-  if (!empty($profile->field_profile_banner_image->entity) && $profile->field_profile_banner_image->access('view')) {
+  if (
+    !empty($profile->get('field_profile_banner_image')->entity)
+    && $profile->get('field_profile_banner_image')->access('view')
+  ) {
     $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
-      ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
+      ?->buildUrl($profile->get('field_profile_banner_image')->entity->getFileUri());
   }
 
   // Profile information URL.
@@ -474,7 +477,7 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
       // Prepare some variables for checking on the email field.
       $global_show_email = \Drupal::config('social_profile.settings')
         ->get('social_profile_show_email');
-      $profile_show_email = isset($profile->field_profile_show_email) ? $profile->field_profile_show_email->value : FALSE;
+      $profile_show_email = $profile->get('field_profile_show_email') !== NULL && $profile->get('field_profile_show_email')->value;
 
       // If the current user doesn't have the above permission, perform
       // additional checks to see if the current user is still able to view
@@ -585,7 +588,7 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
       'social_profile_show_email' => $social_profile_settings_config->get('social_profile_show_email'),
     ];
     // Account values.
-    $show_email = $profile->field_profile_show_email->value;
+    $show_email = $profile->get('field_profile_show_email')->value;
     $form['profile_privacy'] = [
       '#type' => 'fieldset',
       '#title' => t('Privacy settings'),
@@ -635,17 +638,17 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
  * Form submit for user_form.
  *
  * @param array $form
- *   Commnent on a post form.
+ *   Comment on a post form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_profile_form_user_form_submit(array $form, FormStateInterface $form_state) {
+function _social_profile_form_user_form_submit(array $form, FormStateInterface $form_state): void {
   $profile = _social_profile_get_profile_from_route();
   $profile_privacy = $form_state->getValue('profile_privacy');
 
   if ($profile instanceof Profile) {
-    if (isset($profile->field_profile_show_email)) {
-      $profile->field_profile_show_email->value = $profile_privacy['social_profile_show_email'];
+    if ($profile->get('field_profile_show_email') !== NULL) {
+      $profile->get('field_profile_show_email')->value = $profile_privacy['social_profile_show_email'];
       $profile->save();
     }
 

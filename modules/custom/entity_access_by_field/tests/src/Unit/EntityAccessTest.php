@@ -1,5 +1,5 @@
 <?php
-
+// phpstan:ignoreFile
 namespace Drupal\entity_access_by_field\Tests;
 
 use Drupal\Core\Session\AccountInterface;
@@ -14,7 +14,7 @@ use Prophecy\Prophet;
 class EntityAccessTest extends UnitTestCase {
 
   /**
-   * The field type random machinename.
+   * The field type random machine name.
    *
    * @var string
    */

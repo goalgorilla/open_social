@@ -130,7 +130,7 @@ function social_group_invite_block_access(Block $block, $operation, AccountInter
   ];
 
   // Only when on the confirm page of removing or adding invites
-  // we remove the block for tasks and heros,the cancel button
+  // we remove the block for tasks and hero,the cancel button
   // will allow users to go back.
   if (in_array($route_name, $routes_to_check)) {
     $block_id = $block->getPluginId();
@@ -540,8 +540,8 @@ function social_group_invite_preprocess_join(array &$variables): void {
   // share link functionality.
   if (
     $entity->hasField('field_flexible_group_visibility') &&
-    !$entity->field_flexible_group_visibility->isEmpty() &&
-    $entity->field_flexible_group_visibility->value === 'members'
+    !$entity->get('field_flexible_group_visibility')->isEmpty() &&
+    $entity->get('field_flexible_group_visibility')->value === 'members'
   ) {
     $group_url = NULL;
   }

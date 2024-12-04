@@ -48,13 +48,13 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       // Unless you are the node owner or organizer.
       $enrollment = array_pop($enrollments);
       if ($enrollment === NULL) {
-        if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
+        if ((int) $node->get('field_enroll_method')->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
           && social_event_manager_or_organizer() === FALSE) {
           return [];
         }
       }
       else {
-        $enroll_request_status = $enrollment->field_request_or_invite_status->value;
+        $enroll_request_status = $enrollment->get('field_request_or_invite_status')->value;
 
         // If user got invited perform actions.
         if ($enroll_request_status == '4') {
@@ -177,15 +177,15 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
         // Delete any messages since it would show a 'successful enrollment'.
         $this->messenger()->deleteAll();
         // Accept the invite.
-        $enrollment->field_enrollment_status->value = '1';
-        $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
+        $enrollment->get('field_enrollment_status')->value = '1';
+        $enrollment->get('field_request_or_invite_status')->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
 
         // If decline is chosen, set invite to declined.
         if ($operation === 'decline') {
           // Delete any messages since it would show a 'successful enrollment'.
           $this->messenger()->deleteAll();
-          $enrollment->field_enrollment_status->value = '0';
-          $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+          $enrollment->get('field_enrollment_status')->value = '0';
+          $enrollment->get('field_request_or_invite_status')->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
         }
         $enrollment->save();
       }

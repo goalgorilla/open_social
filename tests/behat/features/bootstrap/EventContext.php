@@ -549,7 +549,7 @@ class EventContext extends RawMinkContext {
       $event = Event::load($event_id);
       assert($event instanceof Node);
 
-      if ($event->field_event_an_enroll->value !== '1') {
+      if ($event->get('field_event_an_enroll')->value !== '1') {
         throw new \RuntimeException("Event '$event_title' is not suitable to enroll anonymous users.");
       }
 

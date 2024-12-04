@@ -40,6 +40,7 @@ class ProfileActivityContext extends ActivityContextBase {
    */
   public function isValidEntity(EntityInterface $entity): bool {
     // Special cases for comments.
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     if ($entity instanceof CommentInterface) {
       $comment_owner_id = $entity->getOwnerId();
 
@@ -57,12 +58,13 @@ class ProfileActivityContext extends ActivityContextBase {
     }
 
     if ($entity->getEntityTypeId() === 'post') {
-      if (!$entity->field_recipient_group->isEmpty()) {
+      if (!$entity->get('field_recipient_group')->isEmpty()) {
         return FALSE;
       }
-      elseif (!$entity->field_recipient_user->isEmpty()) {
+
+      if (!$entity->get('field_recipient_user')->isEmpty()) {
         if (isset($comment_owner_id)) {
-          return $comment_owner_id !== $entity->field_recipient_user->target_id;
+          return $comment_owner_id !== $entity->get('field_recipient_user')->target_id;
         }
 
         return TRUE;

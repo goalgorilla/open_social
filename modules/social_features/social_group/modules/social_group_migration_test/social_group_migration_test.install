@@ -236,7 +236,7 @@ function social_group_migration_test_update_13002(array &$sandbox) : string {
       assert($group->getGroupType()->id() === "flexible_group", "Group $type $group_n was not converted to Flexible Group: {$group->getGroupType()->id()}");
       assert($group->label() === "$type $group_n", "Incorrect label for $type $group_n");
       $expected_description = "Description for $type $group_n";
-      assert($group->get('field_group_description')->value === $expected_description, "Incorrect group expected '$expected_description' got '{$group->field_group_description->value}'");
+      assert($group->get('field_group_description')->value === $expected_description, "Incorrect group expected '$expected_description' got '{$group->get('field_group_description')->value}'");
 
       // The creator of the group becomes a member too so we have 1 more member
       // per group than we manually added.
@@ -261,9 +261,9 @@ function social_group_migration_test_update_13002(array &$sandbox) : string {
 
         // The body has the settings configured in it.
         assert($topic->getType() === "topic", "Expected type topic but got '{$topic->getType()}'");
-        $expected = "Body for group $group_n topic $topic_n with visibility {$topic->field_content_visibility->value} and owner {$topic->getOwnerId()}";
-        assert($topic->body->value === $expected, "Expected node body of '$expected' but got '{$topic->body->value}'.");
-        assert((int) $topic->field_topic_type->target_id === (int) $news_tid, "Topic was not of type news {$topic->field_topic_type->target_id} - $news_tid.");
+        $expected = "Body for group $group_n topic $topic_n with visibility {$topic->get('field_content_visibility')->value} and owner {$topic->getOwnerId()}";
+        assert($topic->get('body')->value === $expected, "Expected node body of '$expected' but got '{$topic->get('body')->value}'.");
+        assert((int) $topic->get('field_topic_type')->target_id === (int) $news_tid, "Topic was not of type news {$topic->get('field_topic_type')->target_id} - $news_tid.");
       }
 
       $sandbox['processed']++;

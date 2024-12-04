@@ -18,7 +18,7 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
 /**
  * Implements hook_token_info().
  */
-function social_comment_token_info() {
+function social_comment_token_info(): array {
 
   $type = [
     'name' => t('Social Comment'),
@@ -86,7 +86,7 @@ function social_comment_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_comment_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_comment_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
 
   if ($type === 'social_comment' && !empty($data['message'])) {
@@ -120,6 +120,9 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
 
                   if ($comment->hasParentComment()) {
                     $parent_comment = $comment->getParentComment();
+                    if ($parent_comment === NULL) {
+                      break;
+                    }
 
                     if ($name === 'parent_comment_author') {
                       $replacements[$original] = $parent_comment->getOwner()->getDisplayName();
@@ -130,8 +133,8 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                     }
 
                     if ($name === 'parent_comment_text') {
-                      if ($parent_comment->hasField('field_comment_body') && !$parent_comment->field_comment_body->isEmpty()) {
-                        $replacements[$original] = _social_comment_get_summary($parent_comment->field_comment_body->value);
+                      if ($parent_comment->hasField('field_comment_body') && !$parent_comment->get('field_comment_body')->isEmpty()) {
+                        $replacements[$original] = _social_comment_get_summary($parent_comment->get('field_comment_body')->value);
                       }
                       else {
                         $replacements[$original] = '';
@@ -139,7 +142,9 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                     }
                   }
 
-                  if (!empty($comment->getCommentedEntity())) {
+                  $commented_entity = NULL;
+                  if ($comment->getCommentedEntity() !== NULL) {
+                    /** @var \Drupal\comment\CommentInterface $commented_entity */
                     $commented_entity = $comment->getCommentedEntity();
                     if ($name === 'parent_entity_author') {
                       $replacements[$original] = $commented_entity->getOwner()->getDisplayName();
@@ -155,8 +160,8 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   }
 
                   if ($name === 'comment_text') {
-                    if ($comment->hasField('field_comment_body') && !$comment->field_comment_body->isEmpty()) {
-                      $replacements[$original] = _social_comment_get_summary($comment->field_comment_body->value);
+                    if ($comment->hasField('field_comment_body') && !$comment->get('field_comment_body')->isEmpty()) {
+                      $replacements[$original] = _social_comment_get_summary($comment->get('field_comment_body')->value);
                     }
                     else {
                       $replacements[$original] = '';
@@ -164,8 +169,12 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   }
 
                   if ($name === 'comment_reply_link_html') {
-                    /** @var \Drupal\Core\Entity\Entity $entity */
+                    /** @var \Drupal\Core\Entity\EntityInterface|NULL $entity */
                     $entity = $comment->getCommentedEntity();
+                    if ($entity === NULL) {
+                      break;
+                    }
+                    /** @var \Drupal\Core\Entity\EntityInterface $commented_entity */
                     $commented_entity_type = $commented_entity->getEntityTypeId();
 
                     // A reply link for a post should go to the post view.
@@ -212,13 +221,11 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   elseif (is_callable([$entity, 'getDisplayName'])) {
                     $commented_content_type = $entity->getDisplayName();
                   }
+                  elseif ($entity instanceof NodeInterface) {
+                    $commented_content_type = strtolower((string) $entity->get('type')->entity->label());
+                  }
                   else {
-                    if ($entity instanceof NodeInterface) {
-                      $commented_content_type = strtolower((string) $entity->type->entity->label());
-                    }
-                    else {
-                      $commented_content_type = $entity->bundle();
-                    }
+                    $commented_content_type = $entity->bundle();
                   }
 
                   if (isset($commented_content_type) && str_ends_with($name, ':capitalized')) {
@@ -264,8 +271,8 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
 /**
  * Implements hook_tokens_alter().
  */
-function social_comment_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
-  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+function social_comment_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
+  if ($context['type'] === 'message' && !empty($context['data']['message'])) {
     // Translate hook_tokens options to the options for TranslatableMarkup.
     $translation_options = [
       'langcode' => $context['options']['langcode'] ?? NULL,
@@ -277,7 +284,7 @@ function social_comment_tokens_alter(array &$replacements, array $context, Bubbl
     // Alter the [message:cta_button] token, and replace it with the rendered
     // content with new text and link.
     if (isset($context['tokens']['cta_button']) || isset($context['tokens']['preview'])) {
-      if (isset($message->field_message_related_object)) {
+      if ($message->get('field_message_related_object') !== NULL) {
 
         /** @var \Drupal\social_activity\EmailTokenServices $email_token_services */
         $email_token_services = \Drupal::service('social_activity.email_token_services');
@@ -323,7 +330,7 @@ function social_comment_tokens_alter(array &$replacements, array $context, Bubbl
  * @return string
  *   The processed text.
  */
-function _social_comment_get_summary($text) {
+function _social_comment_get_summary(string $text): string {
   $summary = html_entity_decode(strip_tags($text));
   $summary = preg_replace('/\n|\r|\t/m', ' ', $summary);
   assert($summary !== NULL, 'Invalid regular expression in preg_replace call');

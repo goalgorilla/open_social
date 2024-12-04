@@ -268,7 +268,7 @@ function social_landing_page_preprocess_node(&$variables) {
 function social_landing_page_preprocess_field(&$variables) {
   if ($variables['field_name'] === 'field_button_link_an' || $variables['field_name'] === 'field_button_link_lu') {
     $entity = $variables['element']['#object'];
-    $button_style = $entity->field_button_style->value;
+    $button_style = $entity->get('field_button_style')->value;
     foreach ($variables['items'] as $key => $value) {
       if (isset($variables['items'][$key]['content'])) {
         $variables['items'][$key]['content']['#options']['attributes'] = [

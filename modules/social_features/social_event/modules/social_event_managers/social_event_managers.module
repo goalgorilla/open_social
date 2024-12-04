@@ -33,7 +33,7 @@ function social_event_managers_preprocess_block(&$variables) {
   switch ($variables['elements']['#derivative_plugin_id']) {
     case 'managers-event_managers':
       // Show "All" button only when there are more than 10 organisers.
-      if ($node->field_event_managers->count() > 10) {
+      if ($node->get('field_event_manager')->count() > 10) {
         $variables['view_all_path'] = Url::fromUserInput('/node/' . $node->id() . '/organisers');
         $variables['button_text'] = t('All @label', ['@label' => $variables['label']['#markup']]);
       }

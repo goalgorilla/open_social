@@ -67,8 +67,8 @@ class ImagePopupController extends ControllerBase {
     $storage = $this->entityTypeManager()->getStorage('file');
 
     // Show images in the correct order.
-    foreach ($post->field_post_image->getValue() as $file) {
-      if (!$found && $file['target_id'] == $first_fid) {
+    foreach ($post->get('field_post_image')->getValue() as $file) {
+      if (!$found && $file['target_id'] === $first_fid) {
         $found = TRUE;
       }
 

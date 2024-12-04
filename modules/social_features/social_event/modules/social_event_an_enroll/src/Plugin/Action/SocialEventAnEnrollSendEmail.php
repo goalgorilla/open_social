@@ -99,7 +99,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
     foreach ($objects as $key => $entity) {
       if ($this->socialEventAnEnrollManager->isGuest($entity)) {
         $guests[$key] = [
-          'email_address' => $entity->field_email->value,
+          'email_address' => $entity->get('field_email')->value,
           'display_name' => $this->getDisplayName($entity),
         ];
       }

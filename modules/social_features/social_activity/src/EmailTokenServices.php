@@ -3,8 +3,11 @@
 namespace Drupal\social_activity;
 
 use Drupal\comment\Entity\Comment;
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -112,13 +115,16 @@ class EmailTokenServices {
   /**
    * Loads the related object from a given message entity.
    *
-   * @param \Drupal\message\Entity\Message $message
+   * @param Message $message
    *   The message entity.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|null
+   * @return EntityInterface|null
    *   An entity object. NULL if no matching entity is found.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getRelatedObject(Message $message) {
+  public function getRelatedObject(Message $message): ?\Drupal\Core\Entity\EntityInterface {
     if ($message->get('field_message_related_object')->isEmpty()) {
       return NULL;
     }

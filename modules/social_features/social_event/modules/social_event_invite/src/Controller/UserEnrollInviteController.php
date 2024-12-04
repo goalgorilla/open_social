@@ -3,6 +3,7 @@
 namespace Drupal\social_event_invite\Controller;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
@@ -20,15 +21,15 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
   /**
    * {@inheritdoc}
    */
-  public function updateEnrollmentInvite(EventEnrollmentInterface $event_enrollment, string $accept_decline) {
+  public function updateEnrollmentInvite(EventEnrollmentInterface $event_enrollment, string $accept_decline): RedirectResponse {
     // When the user accepted the invite,
-    // we set the field_request_or_invite_status to approved.
+    // we set the field_request_or_invite_status to be approved.
     if ($accept_decline === '1') {
-      $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
-      $event_enrollment->field_enrollment_status->value = '1';
+      $event_enrollment->get('field_request_or_invite_status')->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
+      $event_enrollment->get('field_enrollment_status')->value = '1';
       $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
-      if (!empty($statusMessage)) {
-        // Lets delete all messages to keep the messages clean.
+      if ($statusMessage !== NULL) {
+        // Let's delete all messages to keep the messages clean.
         $this->messenger()->deleteAll();
         $this->messenger()->addStatus($statusMessage);
       }
@@ -36,10 +37,10 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
     // When the user declined,
     // we set the field_request_or_invite_status to decline.
     elseif ($accept_decline === '0') {
-      $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+      $event_enrollment->get('field_request_or_invite_status')->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
       $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
-      if (!empty($statusMessage)) {
-        // Lets delete all messages to keep the messages clean.
+      if ($statusMessage !== null) {
+        // Let's delete all messages to keep the messages clean.
         $this->messenger()->deleteAll();
         $this->messenger()->addStatus($statusMessage);
       }
@@ -51,7 +52,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
 
     // Invalidate cache.
     $tags = [];
-    $tags[] = 'enrollment:' . $event_enrollment->field_event->value . '-' . $this->currentUser->id();
+    $tags[] = 'enrollment:' . $event_enrollment->get('field_event')->value . '-' . $this->currentUser->id();
     $tags[] = 'event_content_list:entity:' . $this->currentUser->id();
     Cache::invalidateTags($tags);
 
@@ -67,12 +68,12 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
    * @param \Drupal\social_event\EventEnrollmentInterface $event_enrollment
    *   The event enrollment.
    * @param string $accept_decline
-   *   The approve (1) or decline (0) number.
+   *   The approval (1) or decline (0) number.
    *
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup|null
    *   The message.
    */
-  public function getMessage(EventEnrollmentInterface $event_enrollment, $accept_decline) {
+  public function getMessage(EventEnrollmentInterface $event_enrollment, string $accept_decline): ?\Drupal\Core\StringTranslation\TranslatableMarkup {
     $statusMessage = NULL;
     // Get the target event id.
     $target_event_id = $event_enrollment->get('field_event')->getValue();
@@ -100,9 +101,9 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account) {
+  public function access(AccountInterface $account): AccessResultInterface {
     // Get the parameter from the request that has been done.
-    $user_parameter = $this->requestStack->getCurrentRequest()->attributes->get('user');
+    $user_parameter = $this->requestStack->getCurrentRequest()?->attributes->get('user');
     // Check if it's the same that is in the current session's account.
     if ($account->id() === $user_parameter) {
       return AccessResult::allowed();

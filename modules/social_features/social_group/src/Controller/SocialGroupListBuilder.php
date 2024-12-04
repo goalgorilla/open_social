@@ -122,7 +122,7 @@ class SocialGroupListBuilder extends EntityListBuilder {
     // need to add the render array using the 'data' key.
     $row['name']['data'] = $entity->toLink()->toRenderable();
     $row['type'] = $entity->getGroupType()->label();
-    $row['uid'] = $entity->uid->entity->toLink();
+    $row['uid'] = $entity->get('uid')->entity->toLink();
     $row['members'] = $this->groupStatistics->getGroupMemberCount($entity);
     $row['created'] = $this->dateTime->format($entity->getCreatedTime(), 'short');
 

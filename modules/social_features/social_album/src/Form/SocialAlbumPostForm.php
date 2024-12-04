@@ -99,7 +99,7 @@ class SocialAlbumPostForm extends PostForm {
 
     if ($this->node) {
       $field = &$form['field_visibility']['widget'][0];
-      $value = self::VISIBILITY_MAPPING[$this->node->field_content_visibility->value];
+      $value = self::VISIBILITY_MAPPING[$this->node->get('field_content_visibility')->value];
 
       if (isset($field['#options'][$value])) {
         $field['#default_value'] = $value;

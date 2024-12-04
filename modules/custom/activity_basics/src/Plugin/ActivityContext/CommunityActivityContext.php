@@ -31,6 +31,7 @@ class CommunityActivityContext extends ActivityContextBase {
    */
   public function isValidEntity(EntityInterface $entity): bool {
     // Special cases for comments.
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     if ($entity instanceof CommentInterface) {
       // Returns the entity to which the comment is attached.
       $entity = $entity->getCommentedEntity();
@@ -46,10 +47,11 @@ class CommunityActivityContext extends ActivityContextBase {
     }
 
     if ($entity->getEntityTypeId() === 'post') {
-      if (!$entity->field_recipient_group->isEmpty()) {
+      if (!$entity->get('field_recipient_group')->isEmpty()) {
         return FALSE;
       }
-      elseif (!$entity->field_recipient_user->isEmpty()) {
+
+      if (!$entity->get('field_recipient_user')->isEmpty()) {
         return FALSE;
       }
     }

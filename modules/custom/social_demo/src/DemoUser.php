@@ -207,17 +207,17 @@ abstract class DemoUser extends DemoContent {
    * @param array $item
    *   The profile field item.
    */
-  protected function fillProfile(ProfileInterface $profile, array $item) {
-    $profile->field_profile_image = $item['image'];
-    $profile->field_profile_first_name = $item['first_name'];
-    $profile->field_profile_last_name = $item['last_name'];
-    $profile->field_profile_organization = $item['organization'];
-    $profile->field_profile_function = $item['function'];
-    $profile->field_profile_phone_number = $item['phone_number'];
-    $profile->field_profile_self_introduction = $item['self_introduction'];
-    $profile->field_profile_address = $item['address'];
-    $profile->field_profile_expertise = $item['expertise'];
-    $profile->field_profile_interests = $item['interests'];
+  protected function fillProfile(ProfileInterface $profile, array $item): void {
+    $profile->set('field_profile_image', $item['image']);
+    $profile->set('field_profile_first_name', $item['first_name']);
+    $profile->set('field_profile_last_name', $item['last_name']);
+    $profile->set('field_profile_organization', $item['organization']);
+    $profile->set('field_profile_function', $item['function']);
+    $profile->set('field_profile_phone_number', $item['phone_number']);
+    $profile->set('field_profile_self_introduction', $item['self_introduction']);
+    $profile->set('field_profile_address', $item['address']);
+    $profile->set('field_profile_expertise', $item['expertise']);
+    $profile->set('field_profile_interests', $item['interests']);
   }
 
   /**
@@ -228,7 +228,7 @@ abstract class DemoUser extends DemoContent {
    * @param int|null $max
    *   How many items to generate.
    */
-  public function scrambleData(array $data, $max = NULL) {
+  public function scrambleData(array $data, $max = NULL): array {
     $new_data = [];
     for ($i = 0; $i < $max; $i++) {
       // Get a random item from the array.
