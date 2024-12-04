@@ -30,14 +30,14 @@ class SocialAlbumController extends ControllerBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The Group Content Enabler manager.
    *
    * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
-  protected $groupRelationTypeManager;
+  protected GroupRelationTypeManagerInterface $groupRelationTypeManager;
 
   /**
    * File URL Generator services.
@@ -111,24 +111,28 @@ class SocialAlbumController extends ControllerBase {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   The title to page of the post.
    */
-  public function title(NodeInterface $node) {
+  public function title(NodeInterface $node): \Drupal\Core\StringTranslation\TranslatableMarkup {
     return $this->t('Add images to album @name', ['@name' => $node->label()]);
   }
 
   /**
    * Provides a page with images slider.
    *
-   * @param \Drupal\node\NodeInterface $node
+   * @param NodeInterface $node
    *   The node object.
-   * @param \Drupal\social_post\Entity\PostInterface $post
+   * @param PostInterface $post
    *   The post entity object.
    * @param int $fid
    *   The file entity ID.
    *
    * @return array
    *   The renderable array.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException;
+   * @throws \Exception
    */
-  public function viewImage(NodeInterface $node, PostInterface $post, $fid) {
+  public function viewImage(NodeInterface $node, PostInterface $post, int $fid): array {
     $query = $this->database->select('post__field_post_image', 'i')
       ->fields('i', ['field_post_image_target_id']);
 
@@ -148,7 +152,7 @@ class SocialAlbumController extends ControllerBase {
     $storage = $this->entityTypeManager()->getStorage('file');
 
     foreach ($query->execute()->fetchAllKeyed() as $file_id => $post_id) {
-      if (!$found && $file_id == $fid) {
+      if (!$found && $file_id === $fid) {
         $found = TRUE;
       }
 
@@ -186,7 +190,7 @@ class SocialAlbumController extends ControllerBase {
    * @return array
    *   The renderable array.
    */
-  public function deleteImage(NodeInterface $node, PostInterface $post, $fid) {
+  public function deleteImage(NodeInterface $node, PostInterface $post, int $fid): array {
     return [
       'form' => $this->entityFormBuilder()->getForm($post, 'delete_image', ['fid' => $fid]),
       'view' => $this->entityTypeManager()->getViewBuilder('post')->view($post, 'featured'),
@@ -201,8 +205,11 @@ class SocialAlbumController extends ControllerBase {
    *
    * @return array
    *   The renderable array.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException;
    */
-  public function add(GroupInterface $group) {
+  public function add(GroupInterface $group): array {
     $node = $this->entityTypeManager()->getStorage('node')->create([
       'type' => 'album',
       'groups' => $group,
@@ -220,32 +227,37 @@ class SocialAlbumController extends ControllerBase {
    * @return bool
    *   TRUE if it's an album node.
    */
-  protected function checkAlbumAccess(NodeInterface $node) {
+  protected function checkAlbumAccess(NodeInterface $node): bool {
     return $node->bundle() === 'album';
   }
 
   /**
    * Checks access to the page for adding an image to an album.
    *
-   * @param \Drupal\node\NodeInterface $node
+   * @param NodeInterface $node
    *   The node entity object.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
+   * @return AccessResultInterface
    *   The access result.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException;
    */
-  public function checkAddImageAccess(NodeInterface $node) {
+  public function checkAddImageAccess(NodeInterface $node): AccessResultInterface {
     if ($this->checkAlbumAccess($node)) {
       $account = $this->currentUser();
 
       // Access allowed for the owner or for the user who can edit any posts.
       // The 'edit any post entities' is used because there is no separate
       // permission for managers to add to any albums.
-      if ($node->getOwnerId() === $account->id() || $account->hasPermission('edit any post entities')) {
+      if ($account->hasPermission('edit any post entities')
+      || $node->getOwnerId() === $account->id()) {
         return AccessResult::allowed();
       }
-      elseif (
-        !$node->field_album_creators->isEmpty() &&
-        $node->field_album_creators->value
+
+      if (
+        $node->get('field_album_creators')->value
+        && !$node->get('field_album_creators')->isEmpty()
       ) {
         /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface $storage */
         $storage = $this->entityTypeManager()->getStorage('group_content');
@@ -277,16 +289,16 @@ class SocialAlbumController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkViewImageAccess(NodeInterface $node, PostInterface $post, $fid, $operation = 'view') {
+  public function checkViewImageAccess(NodeInterface $node, PostInterface $post, int $fid, string $operation = 'view'): AccessResultInterface {
     if (
       $this->checkAlbumAccess($node) &&
       $post->access($operation) &&
       $post->bundle() === 'photo' &&
-      !$post->field_album->isEmpty() &&
-      $post->field_album->target_id === $node->id() &&
-      !$post->field_post_image->isEmpty()
+      !$post->get('field_album')->isEmpty() &&
+      $post->get('field_album')->target_id === $node->id() &&
+      !$post->get('field_post_image')->isEmpty()
     ) {
-      foreach ($post->field_post_image->getValue() as $item) {
+      foreach ($post->get('field_post_image')->getValue() as $item) {
         if ($item['target_id'] === $fid) {
           return AccessResult::allowed();
         }
@@ -309,7 +321,7 @@ class SocialAlbumController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkDeleteImageAccess(NodeInterface $node, PostInterface $post, $fid) {
+  public function checkDeleteImageAccess(NodeInterface $node, PostInterface $post, $fid): AccessResultInterface {
     $access = $this->checkViewImageAccess($node, $post, $fid, 'delete');
 
     if ($access->isAllowed()) {
@@ -325,7 +337,7 @@ class SocialAlbumController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkUserAlbumsAccess() {
+  public function checkUserAlbumsAccess(): AccessResultInterface {
     $config = $this->config('social_album.settings');
     // Allow access only if Album feature is enabled.
     if ($config->get('status')) {
@@ -343,7 +355,7 @@ class SocialAlbumController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  protected function checkGroupAccess(GroupInterface $group) {
+  protected function checkGroupAccess(GroupInterface $group): AccessResultInterface {
     $is_allow = $group->getGroupType()->hasPlugin('group_node:album');
     return AccessResult::allowedIf($is_allow);
   }
@@ -357,7 +369,7 @@ class SocialAlbumController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkGroupAlbumsAccess(GroupInterface $group) {
+  public function checkGroupAlbumsAccess(GroupInterface $group): AccessResultInterface {
     $access = $this->checkUserAlbumsAccess();
     return $access->isForbidden() ? $access : $this->checkGroupAccess($group);
   }
@@ -383,7 +395,6 @@ class SocialAlbumController extends ControllerBase {
     $access = $this->checkGroupAccess($group);
 
     if ($access->isAllowed()) {
-      /** @var \Drupal\group\Plugin\Group\RelationHandler\AccessControlInterface $handler */
       $handler = $this->groupRelationTypeManager->getAccessControlHandler('group_node:album');
       // Reset the access, we are aware there is a plugin.
       $access = $handler->relationshipCreateAccess($group, $this->currentUser(), TRUE);

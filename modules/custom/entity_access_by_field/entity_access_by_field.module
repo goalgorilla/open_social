@@ -44,7 +44,7 @@ function entity_access_by_field_node_access(
 /**
  * Implements hook_node_grants().
  */
-function entity_access_by_field_node_grants(AccountInterface $account, $op): array {
+function entity_access_by_field_node_grants(AccountInterface $account, string $op): array {
   if ($op === 'view') {
     $grants = &drupal_static(__FUNCTION__);
 
@@ -179,7 +179,7 @@ function entity_access_by_field_node_access_records(NodeInterface $node): array 
 /**
  * Implements hook_node_access_explain().
  */
-function entity_access_by_field_node_access_explain($row) {
+function entity_access_by_field_node_access_explain(StdClass $row): string {
 
   $entityAccessPermissions = \Drupal::getContainer()
     ->get('entity_access_by_field.permissions');
@@ -190,12 +190,13 @@ function entity_access_by_field_node_access_explain($row) {
       return 'Users with permission "' . $permission . '" may view this node.';
     }
   }
+  return '';
 }
 
 /**
  * Implements hook_field_widget_info_alter().
  */
-function entity_access_by_field_field_widget_info_alter(&$info) {
+function entity_access_by_field_field_widget_info_alter(array &$info): void {
   if (isset($info['options_buttons'])) {
     $info['options_buttons']['field_types'][] = 'entity_access_field';
   }
@@ -204,7 +205,7 @@ function entity_access_by_field_field_widget_info_alter(&$info) {
 /**
  * Implements hook_field_formatter_info_alter().
  */
-function entity_access_by_field_field_formatter_info_alter(array &$info) {
+function entity_access_by_field_field_formatter_info_alter(array &$info): void {
   if (isset($info['list_default'])) {
     $info['list_default']['field_types'][] = 'entity_access_field';
   }
@@ -213,8 +214,11 @@ function entity_access_by_field_field_formatter_info_alter(array &$info) {
 /**
  * Implements hook_ENTITY_TYPE_presave().
  */
-function entity_access_by_field_node_presave(NodeInterface $node) {
-  $original = $node->original;
+function entity_access_by_field_node_presave(NodeInterface $node): void {
+  // $original = $node->original;
+  $original = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->loadUnchanged($node->id());
 
   // Get the field definitions of the node.
   $field_definitions = $node->getFieldDefinitions();
@@ -238,11 +242,11 @@ function entity_access_by_field_node_presave(NodeInterface $node) {
 /**
  * Implements hook_ENTITY_TYPE_presave().
  */
-function entity_access_by_field_post_presave(PostInterface $post) {
+function entity_access_by_field_post_presave(PostInterface $post): void {
   $field_definitions = $post->getFieldDefinitions();
 
   foreach ($field_definitions as $field_name => $field_definition) {
-    if ($field_definition->getType() == 'entity_access_field' && $post->get($field_name)->isEmpty()) {
+    if ($field_definition->getType() === 'entity_access_field' && $post->get($field_name)->isEmpty()) {
       $default_visibility = _entity_access_by_field_get_default_visibility($post);
       $post->get($field_name)->setValue($default_visibility);
     }
@@ -252,7 +256,7 @@ function entity_access_by_field_post_presave(PostInterface $post) {
 /**
  * Implements hook_field_widget_single_element_form_alter().
  */
-function entity_access_by_field_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
+function entity_access_by_field_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   $field_definition = $context['items']->getFieldDefinition();
 
   if ($field_definition->getType() !== 'entity_access_field' && $field_definition->getName() !== 'field_visibility') {
@@ -277,13 +281,18 @@ function entity_access_by_field_field_widget_single_element_form_alter(&$element
   $entity = $form_object->getEntity();
   $field_name = $field_definition->getName();
 
+  /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
   if (($entity instanceof FieldConfig) || !$entity->hasField($field_name)) {
     return;
   }
 
   // Do not check if visibility already set and user has access to override
   // this option because SM can change the visibility.
-  if (!$entity->get($field_name) || (!$entity->get($field_name)->isEmpty() && $account->hasPermission('override disabled public visibility'))) {
+  if (
+    !$entity->get($field_name)
+    || (!$entity->get($field_name)->isEmpty()
+    && $account->hasPermission('override disabled public visibility'))
+  ) {
     return;
   }
 
@@ -317,7 +326,7 @@ function entity_access_by_field_field_widget_single_element_form_alter(&$element
  * @return string
  *   Default value of the field.
  */
-function _entity_access_by_field_get_default_visibility(EntityInterface $entity) {
+function _entity_access_by_field_get_default_visibility(EntityInterface $entity): string {
   $default_visibility = &drupal_static(__FUNCTION__ . '_' . $entity->getEntityTypeId());
 
   if ($default_visibility) {
@@ -328,11 +337,13 @@ function _entity_access_by_field_get_default_visibility(EntityInterface $entity)
 
   switch ($entity->getEntityTypeId()) {
     case 'node':
+      /** @var \Drupal\node\NodeInterface $entity */
       $account = $entity->get('uid')->entity;
       $default_visibility = $config->get('default_visibility');
       break;
 
     case 'post':
+      /** @var \Drupal\social_post\Entity\PostInterface $entity */
       $account = $entity->get('user_id')->entity;
       $post_visibility = [
         'public' => '1',
@@ -345,7 +356,11 @@ function _entity_access_by_field_get_default_visibility(EntityInterface $entity)
       return $default_visibility;
   }
 
-  if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
+  /** @var \Drupal\Core\Session\AccountInterface $account */
+  if (
+    $config->get('disable_public_visibility') === 1
+    && !$account->hasPermission('override disabled public visibility')
+  ) {
     switch ($entity->getEntityTypeId()) {
       case 'node':
         if ($default_visibility === 'public') {

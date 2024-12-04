@@ -57,7 +57,7 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
 
     // Handling the visibility of a group.
     if ($group->hasField('field_flexible_group_visibility')) {
-      switch ($group->field_flexible_group_visibility->value) {
+      switch ($group->get('field_flexible_group_visibility')->value) {
         case 'members':
           if (!$is_member) {
             return AccessResult::forbidden();

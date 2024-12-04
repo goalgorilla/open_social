@@ -4,6 +4,7 @@ namespace Drupal\social_comment\Form;
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
@@ -88,7 +89,7 @@ class SocialCommentAdminOverview extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): SocialCommentAdminOverview|static {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('date.formatter'),
@@ -117,8 +118,10 @@ class SocialCommentAdminOverview extends FormBase {
    *
    * @return array
    *   The form structure.
+   *
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $type = 'new') {
+  public function buildForm(array $form, FormStateInterface $form_state, string $type = 'new'): array {
 
     // Build an 'Update options' form.
     $form['options'] = [
@@ -128,7 +131,7 @@ class SocialCommentAdminOverview extends FormBase {
       '#attributes' => ['class' => ['container-inline']],
     ];
 
-    if ($type == 'approval') {
+    if ($type === 'approval') {
       $options['publish'] = $this->t('Publish the selected comments');
     }
     else {
@@ -149,7 +152,7 @@ class SocialCommentAdminOverview extends FormBase {
     ];
 
     // Load the comments that need to be displayed.
-    $status = ($type == 'approval') ? CommentInterface::NOT_PUBLISHED : CommentInterface::PUBLISHED;
+    $status = ($type === 'approval') ? CommentInterface::NOT_PUBLISHED : CommentInterface::PUBLISHED;
     $header = [
       'author' => [
         'data' => $this->t('Author'),
@@ -186,10 +189,11 @@ class SocialCommentAdminOverview extends FormBase {
     foreach ($comments as $comment) {
       // Get a render array for the comment body field. We'll render it in the
       // table.
-      $comment_body = $comment->field_comment_body->view('full');
+      $comment_body = $comment->get('field_comment_body')->view('full');
 
-      $options[$comment->id()] = [
-        'title' => ['data' => ['#title' => $comment->getSubject() ?: $comment->id()]],
+      $commentId = $comment->id();
+      $options[$commentId] = [
+        'title' => ['data' => ['#title' => $comment->getSubject() ?: $commentId]],
         'author' => [
           'data' => [
             '#theme' => 'username',
@@ -251,10 +255,10 @@ class SocialCommentAdminOverview extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setValue('comments', array_diff($form_state->getValue('comments'), [0]));
     // We can't execute any 'Update options' if no comments were selected.
-    if (count($form_state->getValue('comments')) == 0) {
+    if (count($form_state->getValue('comments')) === 0) {
       $form_state->setErrorByName('', $this->t('Select one or more comments to perform the update on.'));
     }
   }
@@ -262,17 +266,17 @@ class SocialCommentAdminOverview extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $operation = $form_state->getValue('operation');
     $cids = $form_state->getValue('comments');
     /** @var \Drupal\comment\CommentInterface[] $comments */
     $comments = $this->commentStorage->loadMultiple($cids);
-    if ($operation != 'delete') {
+    if ($operation !== 'delete') {
       foreach ($comments as $comment) {
-        if ($operation == 'unpublish') {
+        if ($operation === 'unpublish') {
           $comment->setUnpublished();
         }
-        elseif ($operation == 'publish') {
+        elseif ($operation === 'publish') {
           $comment->setPublished();
         }
         $comment->save();
@@ -289,7 +293,7 @@ class SocialCommentAdminOverview extends FormBase {
       }
       $this->tempStoreFactory
         ->get('comment_multiple_delete_confirm')
-        ->set($this->currentUser()->id(), $info);
+        ->set((string) $this->currentUser()->id(), $info);
       $form_state->setRedirect('comment.multiple_delete_confirm');
     }
   }

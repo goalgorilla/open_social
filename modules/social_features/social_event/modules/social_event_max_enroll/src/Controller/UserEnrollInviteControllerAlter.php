@@ -56,7 +56,7 @@ class UserEnrollInviteControllerAlter extends UserEnrollInviteController {
     // We should move forward only when the user is accepting the invite.
     if ($accept_decline === '1') {
       // Retrieve event ID.
-      $event_id = $event_enrollment->field_event->target_id;
+      $event_id = $event_enrollment->get('field_event')->target_id;
 
       /** @var \Drupal\node\NodeInterface $node */
       $node = $this->entityTypeManager()->getStorage('node')->load($event_id);

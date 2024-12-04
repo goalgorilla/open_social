@@ -2,9 +2,9 @@
 
 namespace Drupal\social\PHPStan\Rules;
 
-use Node\Identifier;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -13,7 +13,7 @@ use PHPStan\Rules\RuleErrorBuilder;
  * Prevents using UpdateHelper's `executeUpdate` function incorrectly.
  *
  * The function should only be used within hook_update_N functions since install
- * conditions may change which requires changing what happens in an install
+ * conditions may change which requires changing what happens in an installation
  * hook but the upgrade path should remain static.
  *
  * @phpstan-implements Rule<MethodCall>

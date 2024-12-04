@@ -20,7 +20,7 @@ use Drupal\taxonomy\TermInterface;
 /**
  * Implements hook_theme().
  */
-function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
+function social_follow_taxonomy_theme(array $existing, string $type, string $theme, string $path): array {
   return [
     'flag__follow_term' => [
       'base hook' => 'flag',
@@ -39,7 +39,7 @@ function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
  *
  * Adds the "Following tags" link to the user menu.
  */
-function social_follow_taxonomy_social_user_account_header_account_links(array $context) {
+function social_follow_taxonomy_social_user_account_header_account_links(array $context): array {
   $link = Link::createFromRoute((new TranslatableMarkup('Following tags')), 'view.following_tags.following_tags');
 
   return [
@@ -57,7 +57,7 @@ function social_follow_taxonomy_social_user_account_header_account_links(array $
 /**
  * Implements hook_page_attachments().
  */
-function social_follow_taxonomy_page_attachments(array &$page) {
+function social_follow_taxonomy_page_attachments(array &$page): void {
   $page['#attached']['library'][] = 'social_follow_taxonomy/social_follow_taxonomy';
 }
 
@@ -71,6 +71,7 @@ function social_follow_taxonomy_theme_suggestions_activity_alter(
   array &$suggestions,
   array $variables
 ): void {
+  /** @var ContentEntityInterface $activity */
   $activity = $variables['elements']['#activity'];
 
   if (
@@ -84,7 +85,7 @@ function social_follow_taxonomy_theme_suggestions_activity_alter(
     return;
   }
 
-  $entity_type = $activity->field_activity_entity->first()->target_type;
+  $entity_type = $activity->get('field_activity_entity')->first()->target_type;
 
   if ($entity_type !== 'node' && $entity_type !== 'post') {
     return;
@@ -92,7 +93,7 @@ function social_follow_taxonomy_theme_suggestions_activity_alter(
 
   // Get a message entity from the activity.
   $message = \Drupal::entityTypeManager()->getStorage('message')
-    ->load($activity->field_activity_message->target_id);
+    ->load($activity->get('field_activity_message')->target_id);
 
   if (!$message instanceof MessageInterface) {
     return;
@@ -112,7 +113,7 @@ function social_follow_taxonomy_theme_suggestions_activity_alter(
   ];
 
   // Get the name of the template from the data of the message entity.
-  if (in_array($message->getTemplate()->id(), $message_template)) {
+  if (in_array($message->getTemplate()->id(), $message_template, FALSE)) {
     $suggestions[] = 'activity__followed';
     $suggestions[] = 'activity__' . $entity_type . '__followed';
   }
@@ -124,7 +125,7 @@ function social_follow_taxonomy_theme_suggestions_activity_alter(
  * Implements hook_preprocess_activity().
  * {@inheritdoc}
  */
-function social_follow_taxonomy_preprocess_activity(&$variables) {
+function social_follow_taxonomy_preprocess_activity(array &$variables): void {
   $activity = $variables['elements']['#activity'];
   $message_template = [
     'create_discussion',
@@ -139,14 +140,14 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
     'update_post_following_tag',
   ];
 
-  $message = Message::load($activity->field_activity_message->target_id);
+  $message = Message::load($activity->get('field_activity_message')->target_id);
   // Return early if message is empty.
-  if (empty($message)) {
+  if ($message === NULL) {
     return;
   }
   $message_template_id = $message->getTemplate()->id();
 
-  if (in_array($message_template_id, $message_template)) {
+  if (in_array($message_template_id, $message_template, FALSE)) {
     $entity = $activity->getRelatedEntity();
     // Checking if entity exist to avoid errors.
     if (empty($entity)) {
@@ -173,7 +174,7 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
             $term = \Drupal::entityTypeManager()
               ->getStorage('taxonomy_term')
               ->load($term_id);
-            $variables['content_type'] = $entity->type->entity->label();
+            $variables['content_type'] = $entity->get('type')->entity->label();
             $variables['followed_tags'][$term_id] = [
               'name' => $term->getName(),
               'flag' => social_follow_taxonomy_flag_link($term),
@@ -223,7 +224,7 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
  * @return bool
  *   Follow result.
  */
-function social_follow_taxonomy_term_followed(TermInterface $term) {
+function social_follow_taxonomy_term_followed(TermInterface $term): bool {
   $follow = FALSE;
 
   if (!\Drupal::currentUser()->isAnonymous()) {
@@ -249,7 +250,7 @@ function social_follow_taxonomy_term_followed(TermInterface $term) {
  * @return int
  *   Count of followers.
  */
-function social_follow_taxonomy_term_followers_count(TermInterface $term) {
+function social_follow_taxonomy_term_followers_count(TermInterface $term): int {
   $count = 0;
   /** @var \Drupal\flag\FlagCountManagerInterface $flag_count_manager */
   $flag_count_manager = \Drupal::service('flag.count');
@@ -271,12 +272,14 @@ function social_follow_taxonomy_term_followers_count(TermInterface $term) {
  * @return string
  *   Link button to flag/unflag current term.
  */
-function social_follow_taxonomy_flag_link(TermInterface $term) {
+function social_follow_taxonomy_flag_link(TermInterface $term): string {
   $flag_link = '';
 
   if (!\Drupal::currentUser()->isAnonymous()) {
     $flag_link_service = \Drupal::service('flag.link_builder');
-    $flag_link = $flag_link_service->build($term->getEntityTypeId(), $term->id(), 'follow_term');
+    if ($term->id() !== NULL) {
+      $flag_link = $flag_link_service->build($term->getEntityTypeId(), $term->id(), 'follow_term');
+    }
   }
 
   return $flag_link;
@@ -295,7 +298,7 @@ function social_follow_taxonomy_flag_link(TermInterface $term) {
  * @return int
  *   Count of related nodes.
  */
-function social_follow_taxonomy_related_entity_count(TermInterface $term, $field_id, $entity_type = 'node') {
+function social_follow_taxonomy_related_entity_count(TermInterface $term, string $field_id, string $entity_type = 'node'): int {
   switch ($entity_type) {
     case 'node':
       $items = \Drupal::entityTypeManager()
@@ -349,7 +352,7 @@ function social_follow_taxonomy_terms_list(EntityInterface $entity) {
 /**
  * Implements hook_activity_send_email_notifications_alter().
  */
-function social_follow_tag_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+function social_follow_tag_activity_send_email_notifications_alter(array &$items, array $email_message_templates): void {
   if (isset($email_message_templates['create_node_following_tag'])) {
     $items['what_follow']['templates'][] = 'create_node_following_tag';
   }
@@ -361,14 +364,14 @@ function social_follow_tag_activity_send_email_notifications_alter(array &$items
 /**
  * Implements hook_entity_presave().
  */
-function social_follow_taxonomy_entity_presave(EntityInterface $entity) {
+function social_follow_taxonomy_entity_presave(EntityInterface $entity): void {
   _social_follow_taxonomy_invalidate_follow_tag_cache($entity);
 }
 
 /**
  * Implements hook_entity_delete().
  */
-function social_follow_taxonomy_entity_delete(EntityInterface $entity) {
+function social_follow_taxonomy_entity_delete(EntityInterface $entity): void {
   _social_follow_taxonomy_invalidate_follow_tag_cache($entity);
 }
 
@@ -378,7 +381,7 @@ function social_follow_taxonomy_entity_delete(EntityInterface $entity) {
  * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The entity.
  */
-function _social_follow_taxonomy_invalidate_follow_tag_cache(EntityInterface $entity) {
+function _social_follow_taxonomy_invalidate_follow_tag_cache(EntityInterface $entity): void {
   if (
     !$entity instanceof ContentEntityInterface ||
     !$entity->hasField('social_tagging')

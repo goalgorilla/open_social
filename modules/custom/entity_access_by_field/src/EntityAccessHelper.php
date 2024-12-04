@@ -217,7 +217,7 @@ class EntityAccessHelper {
           ->load(reset($ids));
 
         if ($enrollment !== NULL && (isset($entity->status) && $entity->status->value)) {
-          $status = (int) $enrollment->field_request_or_invite_status->value;
+          $status = (int) $enrollment->get('field_request_or_invite_status')->value;
 
           if (
             $status !== EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED &&
