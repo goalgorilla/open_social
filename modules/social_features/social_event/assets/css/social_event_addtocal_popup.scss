@@ -2,6 +2,11 @@
   font-family: 'montserrat', sans-serif;
   margin: 0;
 
+  &:hover,
+  &:focus {
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  }
+
   @media(max-width: 599px) {
     width: 100% !important;
     max-width: 479px !important;
@@ -16,6 +21,9 @@
     margin: 0;
     font-size: 1.125rem;
     line-height: 27px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .ui-dialog-content {
