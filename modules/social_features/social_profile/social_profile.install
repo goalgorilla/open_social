@@ -296,3 +296,13 @@ function _social_profile_hide_path_field_from_entity_form_display(string $taxono
       ->save();
   }
 }
+
+/**
+ * Change access from user information view.
+ */
+function social_profile_update_130004(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+  return $updater->logger()->output();
+}
