@@ -19,3 +19,7 @@ services:
     arguments: ['@module_handler']
     tags:
       - { name: config.factory.override, priority: 5 }
+  social_profile.profile_pages_access:
+    class: Drupal\social_profile\Service\SocialProfileAccessService
+    arguments:
+      - '@current_route_match'
