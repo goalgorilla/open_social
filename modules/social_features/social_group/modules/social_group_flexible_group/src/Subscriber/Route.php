@@ -57,6 +57,7 @@ class Route extends RouteSubscriberBase {
         $route->addRequirements($requirements);
       }
     }
+
   }
 
 }
