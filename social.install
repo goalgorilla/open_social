@@ -74,3 +74,18 @@ function _social_core_disable_secondary_gin_toolbar() {
 function social_update_11501() {
   _social_core_disable_secondary_gin_toolbar();
 }
+
+/**
+ * Enable author info on book pages.
+ */
+function social_update_11502() {
+  if (\Drupal::moduleHandler()->moduleExists('social_book')) {
+    $config = \Drupal::configFactory()->getEditable('node.type.book');
+    if (!empty($config->getRawData())) {
+      \Drupal::configFactory()
+        ->getEditable('node.type.book')
+        ->set('display_submitted', TRUE)
+        ->save(TRUE);
+    }
+  }
+}
