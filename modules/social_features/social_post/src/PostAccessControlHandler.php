@@ -59,7 +59,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
       case 'view':
         // Public = ALL.
         if ($entity->isPublished()) {
-          $visibility = $entity->field_visibility->value;
+          $visibility = $entity->get('field_visibility')->value;
 
           switch ($visibility) {
             // Recipient.
@@ -67,15 +67,14 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
 
               if (AccessResult::allowedIfHasPermission($account, 'view community posts')->isAllowed()) {
                 // Check if the post has been posted in a group.
-                $group_id = $entity->field_recipient_group->target_id;
+                $group_id = $entity->get('field_recipient_group')->target_id;
                 if ($group_id) {
                   $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
                   if ($group !== NULL && $group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
                     return AccessResult::allowed();
                   }
-                  else {
-                    return AccessResult::forbidden();
-                  }
+
+                  return AccessResult::forbidden();
                 }
                 // Fallback for invalid groups or if there is no group
                 // recipient.
@@ -100,7 +99,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
             // Group.
             case "3":
               // Check if the post has been posted in a group.
-              $group_id = $entity->field_recipient_group->target_id;
+              $group_id = $entity->get('field_recipient_group')->target_id;
 
               $group = NULL;
               if ($group_id !== NULL) {

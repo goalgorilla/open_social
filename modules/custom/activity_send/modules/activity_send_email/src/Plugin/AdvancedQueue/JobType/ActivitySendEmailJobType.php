@@ -162,7 +162,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
         $is_multilingual = $this->languageManager->isMultilingual();
 
         if (empty($data['recipients'])) {
-          $recipients = array_column($activity->field_activity_recipient_user->getValue(), 'target_id');
+          $recipients = array_column($activity->get('field_activity_recipient_user')->getValue(), 'target_id');
 
           if (count($recipients) > 50) {
             if ($is_multilingual) {

@@ -1,5 +1,5 @@
 <?php
-
+// phpcs:ignoreFile Generic.Files.LineLength.TooLong
 declare(strict_types=1);
 
 namespace Drupal\social\Behat;
@@ -37,7 +37,6 @@ class CommentContext extends RawMinkContext {
   /**
    * Create multiple comments at the start of a test.
    *
-   * ```
    * Given comments:
    *   | target_type | target_label               | author    | status | subject                  | field_comment_body           |
    *   | node:topic  | Some Topic                 | username  | 1      | The comment subject      | This is a really cool topic! |
@@ -45,6 +44,8 @@ class CommentContext extends RawMinkContext {
    * ```
    *
    * @Given comments:
+   *
+   * @throws \Exception
    */
   public function createComments(TableNode $commentsTable) : void {
     foreach ($commentsTable->getHash() as $commentHash) {
@@ -56,7 +57,6 @@ class CommentContext extends RawMinkContext {
   /**
    * Create multiple comments at the start of a test.
    *
-   * ```
    * Given comments:
    *   | target_type | target_label               | status | subject                  | field_comment_body           |
    *   | node:topic  | Some Topic                 | 1      | The comment subject      | This is a really cool topic! |
@@ -79,7 +79,7 @@ class CommentContext extends RawMinkContext {
 
     foreach ($commentsTable->getHash() as $commentHash) {
       if (isset($commentHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'comments with non-anonymous owner:' step, use 'comments:' instead.");
+        throw new \RuntimeException("Can not specify an author when using the 'comments with non-anonymous owner:' step, use 'comments:' instead.");
       }
 
       $commentHash['author'] = $user->name;
@@ -92,20 +92,20 @@ class CommentContext extends RawMinkContext {
   /**
    * Create multiple comments at the start of a test.
    *
-   * ```
    * Given comments:
    *   | target_type | target_label               | status | subject                  | field_comment_body           |
    *   | node:topic  | Some Topic                 | 1      | The comment subject      | This is a really cool topic! |
    *   | node        | A node with unknown bundle | 1      | Not shown in Open Social | Can you elaborate?           |
-   * ```
    *
    * @Given comments authored by current user:
+   *
+   * @throws \Exception
    */
   public function createCommentsAuthoredByCurrentUser(TableNode $commentsTable) : void {
     $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
     foreach ($commentsTable->getHash() as $commentHash) {
       if (isset($commentHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'comments authored by current user:' step, use 'comments:' instead.");
+        throw new \RuntimeException("Can not specify an author when using the 'comments authored by current user:' step, use 'comments:' instead.");
       }
 
       $commentHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
@@ -120,21 +120,23 @@ class CommentContext extends RawMinkContext {
    *
    * @return \Drupal\comment\CommentInterface
    *   The created comment
+   *
+   * @throws \Exception
    */
   private function commentCreate($comment) : CommentInterface {
     if (!isset($comment['target_type'])) {
-      throw new \Exception("You must specify a `target_type` when creating a comment. Provide either an entity_type_id such as `node` or an entity_type_id:bundle such as `node:topic`.");
+      throw new \RuntimeException("You must specify a `target_type` when creating a comment. Provide either an entity_type_id such as `node` or an entity_type_id:bundle such as `node:topic`.");
     }
     if (!isset($comment['target_label'])) {
-      throw new \Exception("You must specify a `target_label` when creating a comment, containing the title of the entity you're commenting on.");
+      throw new \RuntimeException("You must specify a `target_label` when creating a comment, containing the title of the entity you're commenting on.");
     }
     if (!isset($comment['author'])) {
-      throw new \Exception("You must specify an `author` when creating a comment. Specify the `author` field if using `@Given comments:` or use one of `@Given comments with non-anonymous author:` or `@Given comments authored by current user:` instead.");
+      throw new \RuntimeException("You must specify an `author` when creating a comment. Specify the `author` field if using `@Given comments:` or use one of `@Given comments with non-anonymous author:` or `@Given comments authored by current user:` instead.");
     }
 
     $account = user_load_by_name($comment['author']);
     if ($account === FALSE) {
-      throw new \Exception(sprintf("User with username '%s' does not exist.", $comment['author']));
+      throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $comment['author']));
     }
     $comment['uid'] = $account->id();
     unset($comment['author']);
@@ -150,7 +152,7 @@ class CommentContext extends RawMinkContext {
     if (isset($comment['parent_subject']) && $comment['parent_subject'] !== '') {
       $parent_id = $this->getEntityIdFromLabel('comment', NULL, $comment['parent_subject']);
       if ($parent_id === NULL) {
-        throw new \Exception("Could not find comment with subject '{$comment['parent_subject']}'.");
+        throw new \RuntimeException("Could not find comment with subject '{$comment['parent_subject']}'.");
       }
 
       $comment['pid'][] = ['target_id' => $parent_id];
@@ -159,11 +161,11 @@ class CommentContext extends RawMinkContext {
 
     if (!isset($comment['field_name']) || $comment['field_name'] === '') {
       if ($target_entity_bundle === NULL) {
-        throw new \Exception("Must either specify the bundle as part of `target_type` or specify `field_name` separately, neither provided.");
+        throw new \RuntimeException("Must either specify the bundle as part of `target_type` or specify `field_name` separately, neither provided.");
       }
       $field_name = $this->getCommentFieldForEntity($target_entity_type, $target_entity_bundle);
       if ($field_name === NULL) {
-        throw new \Exception("Could not find comment field on $target_entity_type for bundle $target_entity_bundle. If the field exists specify it manually using `field_name`.");
+        throw new \RuntimeException("Could not find comment field on $target_entity_type for bundle $target_entity_bundle. If the field exists specify it manually using `field_name`.");
       }
       $comment['field_name'] = $field_name;
     }
@@ -172,7 +174,7 @@ class CommentContext extends RawMinkContext {
     $comment_object = Comment::create($comment);
     $violations = $comment_object->validate();
     if ($violations->count() !== 0) {
-      throw new \Exception("The comment you tried to create is invalid: $violations");
+      throw new \RuntimeException("The comment you tried to create is invalid: $violations");
     }
     $comment_object->save();
 

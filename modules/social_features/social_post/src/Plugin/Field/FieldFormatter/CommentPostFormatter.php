@@ -32,7 +32,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
+  public static function defaultSettings(): array {
     return [
       'num_comments' => 2,
       'order' => 'ASC',
@@ -42,7 +42,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $elements = [];
     $output = [];
 
@@ -53,7 +53,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
 
     $comments_per_page = $this->getSetting('num_comments');
 
-    if ($status != CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
+    if ($status !== CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
       // Comments are added to the search results and search index by
       // comment_node_update_index() instead of by this formatter, so don't
       // return anything if the view mode is search_index or search_result.
@@ -108,12 +108,16 @@ class CommentPostFormatter extends CommentDefaultFormatter {
 
       // Append comment form if the comments are open and the form is set to
       // display below the entity. Do not show the form for the print view mode.
-      if ($status == CommentItemInterface::OPEN && $comment_settings['form_location'] == CommentItemInterface::FORM_BELOW && $this->viewMode != 'print') {
+      if (
+        $status === CommentItemInterface::OPEN
+        && $comment_settings['form_location'] === CommentItemInterface::FORM_BELOW
+        && $this->viewMode !== 'print'
+      ) {
         // Only show the add comment form if the user has permission.
         $elements['#cache']['contexts'][] = 'user';
         $add_comment_form = FALSE;
         // Check if the post has been posted in a group.
-        $group_id = $entity->field_recipient_group->target_id;
+        $group_id = $entity->get('field_recipient_group')->target_id;
         if ($group_id) {
           /** @var \Drupal\group\Entity\Group $group */
           $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
@@ -170,7 +174,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
     $element = [];
     $element['num_comments'] = [
       '#type' => 'number',
@@ -196,7 +200,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary() {
+  public function settingsSummary(): array {
     return [];
   }
 
@@ -205,7 +209,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
    *
    * @see Drupal\comment\CommentStorage::loadThead()
    */
-  public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
+  public function loadThread(EntityInterface $entity, string $field_name, int $mode, int $comments_per_page = 0, int|bool $pager_id = 0): array {
     // @todo Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
     $query = \Drupal::database()->select('comment_field_data', 'c');
     $query->addField('c', 'cid');
@@ -225,12 +229,12 @@ class CommentPostFormatter extends CommentDefaultFormatter {
     if (!$this->currentUser->hasPermission('administer comments')) {
       $query->condition('c.status', CommentInterface::PUBLISHED);
     }
-    if ($mode == CommentManagerInterface::COMMENT_MODE_FLAT) {
+    if ($mode === CommentManagerInterface::COMMENT_MODE_FLAT) {
       $query->orderBy('c.cid', $comments_order);
     }
     else {
       // See comment above. Analysis reveals that this doesn't cost too
-      // much. It scales much much better than having the whole comment
+      // much. It scales much, much better than having the whole comment
       // structure.
       $query->addExpression('SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1))', 'torder');
       $query->orderBy('torder', $comments_order);
@@ -241,7 +245,8 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       $query->range(0, $comments_per_page);
     }
 
-    $cids = $query->execute()->fetchCol();
+    $result = $query->execute();
+    $cids = $result?->fetchCol();
 
     $comments = [];
     if ($cids) {

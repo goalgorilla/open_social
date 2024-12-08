@@ -305,11 +305,11 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   }
 
   // If group visibility value doesn't exist we can skip.
-  if ($entity->field_flexible_group_visibility->isEmpty()) {
+  if ($entity->get('field_flexible_group_visibility')->isEmpty()) {
     return $result;
   }
 
-  switch ($entity->field_flexible_group_visibility->value) {
+  switch ($entity->get('field_flexible_group_visibility')->value) {
     // If group visibility exists and public is selected, we can skip.
     case 'public':
       return $result;

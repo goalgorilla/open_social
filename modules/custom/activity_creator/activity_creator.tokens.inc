@@ -12,7 +12,7 @@ use Drupal\user\UserInterface;
 /**
  * Implements hook_token_info().
  */
-function activity_creator_token_info() {
+function activity_creator_token_info(): array {
   $type = [
     'name' => t('Activity Entity tokens'),
     'description' => t('Tokens from the activity creator module.'),
@@ -35,10 +35,10 @@ function activity_creator_token_info() {
 /**
  * Implements hook_tokens().
  */
-function activity_creator_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function activity_creator_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
 
-  if ($type == 'activity' && !empty($data['message'])) {
+  if ($type === 'activity' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
@@ -51,14 +51,20 @@ function activity_creator_tokens($type, $tokens, array $data, array $options, Bu
               if (!$message->get('field_message_related_object')->isEmpty()) {
                 $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
                 $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+                /** @var \Drupal\Core\Entity\ContentEntityInterface|NULL $entity */
                 $entity = \Drupal::entityTypeManager()
                   ->getStorage($target_type)
                   ->load($target_id);
+                if ($entity === NULL) {
+                  break;
+                }
 
                 // Or special handling for post entities.
                 if ($entity->getEntityTypeId() === 'post') {
-                  if (isset($entity->field_recipient_user) && !empty($entity->field_recipient_user->target_id)) {
-                    $target_id = $entity->field_recipient_user->target_id;
+                  if (
+                    $entity->get('field_recipient_user') !== NULL
+                    && !empty($entity->get('field_recipient_user')->target_id)) {
+                    $target_id = $entity->get('field_recipient_user')->target_id;
                     $recipient_user = \Drupal::entityTypeManager()
                       ->getStorage('user')
                       ->load($target_id);

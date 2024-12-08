@@ -21,7 +21,7 @@ class EnrolmentUserEmail extends UserEmail {
    */
   public function getValue(UserInterface $entity) {
     if ($entity->isAnonymous() && isset($this->configuration['entity'])) {
-      return $this->configuration['entity']->field_email->value;
+      return $this->configuration['entity']->get('field_email')->value;
     }
 
     return parent::getValue($entity);

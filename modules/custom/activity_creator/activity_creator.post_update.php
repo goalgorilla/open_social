@@ -85,10 +85,10 @@ function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox)
     // will be cached by the Batch API so we do not have to look up
     // this data again during each iteration of the batch.
     // Get all the activity ids from our notification table.
-    $activity_notification_ids = $database->select('activity_notification_status', 'ans')->fields('ans', ['aid'])->execute()->fetchCol();
+    $activity_notification_ids = $database->select('activity_notification_status', 'ans')->fields('ans', ['aid'])->execute()?->fetchCol();
 
     // Get activity ids from entity table.
-    $activity_ids = $database->select('activity', 'aid')->fields('aid', ['id'])->execute()->fetchCol();
+    $activity_ids = $database->select('activity', 'aid')->fields('aid', ['id'])->execute()?->fetchCol();
 
     // Now we initialize the sandbox variables.
     // These variables will persist across the Batch API’s subsequent calls
@@ -154,14 +154,14 @@ function activity_creator_post_update_8803_remove_activities_with_no_related_ent
 
   if (!isset($sandbox['activities_id'])) {
     // Get activity ids from entity table.
-    $activity_ids = $database->select('activity', 'aid')->fields('aid', ['id'])->execute()->fetchCol();
+    $activity_ids = $database->select('activity', 'aid')->fields('aid', ['id'])->execute()?->fetchCol();
 
     // Get activity ids from activity__field_activity_entity table.
     // This table contains data of field_activity_entity which tells us about
     // any related entity to an activity.
     $afce_ids = $database->select('activity__field_activity_entity', 'afce')
       ->fields('afce', ['entity_id'])
-      ->execute()->fetchCol();
+      ->execute()?->fetchCol();
 
     // 'count' is the number of total records we’ll be processing.
     $sandbox['count'] = 0;

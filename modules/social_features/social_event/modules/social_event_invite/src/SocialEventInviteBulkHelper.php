@@ -62,7 +62,7 @@ class SocialEventInviteBulkHelper {
           EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
           EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
         ];
-        if (in_array($enrollment->field_request_or_invite_status->value, $status_checks)) {
+        if (in_array($enrollment->get('field_request_or_invite_status')->value, $status_checks, FALSE)) {
           $enrollment->delete();
           unset($existing_enrollment[$enrollment->id()]);
         }
@@ -225,7 +225,7 @@ class SocialEventInviteBulkHelper {
             EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
             EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
           ];
-          if (in_array($enrollment->field_request_or_invite_status->value, $status_checks)) {
+          if (in_array($enrollment->get('field_request_or_invite_status')->value, $status_checks, FALSE)) {
             $enrollment->delete();
             unset($existing_enrollment[$enrollment->id()]);
           }

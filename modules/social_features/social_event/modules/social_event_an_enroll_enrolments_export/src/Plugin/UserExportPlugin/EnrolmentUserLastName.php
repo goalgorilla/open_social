@@ -23,8 +23,8 @@ class EnrolmentUserLastName extends UserLastName {
     if ($entity->isAnonymous() && isset($this->configuration['entity'])) {
       $entity = &$this->configuration['entity'];
 
-      if (!$entity->field_last_name->isEmpty()) {
-        return $entity->field_last_name->value;
+      if (!$entity->get('field_last_name')->isEmpty()) {
+        return $entity->get('field_last_name')->value;
       }
 
       return '';

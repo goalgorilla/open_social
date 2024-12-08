@@ -159,7 +159,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       ->condition('entity_type', 'taxonomy_term')
       ->condition('entity_id', $tids, 'IN')
       ->groupBy('uid')
-      ->execute()->fetchCol();
+      ->execute()?->fetchCol();
 
     /** @var \Drupal\user\UserInterface[] $users */
     $users = $this->entityTypeManager->getStorage('user')->loadMultiple($uids);

@@ -122,8 +122,8 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   public function getEventDates(NodeInterface $node) {
     // Set default values.
     $all_day = !$node->get('field_event_all_day')->isEmpty() && $node->get('field_event_all_day')->getString() === '1';
-    $start_date = new \DateTime($node->field_event_date->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
-    $end_date = new \DateTime($node->field_event_date_end->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
+    $start_date = new \DateTime($node->get('field_event_date')->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
+    $end_date = new \DateTime($node->get('field_event_date_end')->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
     $date_time = [];
 
     // Set formats for event dates.
@@ -182,7 +182,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
     if ($node->get('field_event_address')->isEmpty()) {
       return '';
     }
-    $address_value = $node->field_event_address->getValue();
+    $address_value = $node->get('field_event_address')->getValue();
     $address = $address_value[0];
     $location = '';
 

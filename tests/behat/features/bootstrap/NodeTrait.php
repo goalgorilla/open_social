@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\social\Behat;
 
+/**
+ * Trait to get a node from a bundle and title.
+ */
 trait NodeTrait {
 
   /**
@@ -16,6 +19,9 @@ trait NodeTrait {
    *
    * @return int|null
    *   The integer ID of the node or NULL if no node could be found.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function getNodeIdFromTitle(string $bundle, string $title) : ?int {
     $query = \Drupal::entityQuery('node')

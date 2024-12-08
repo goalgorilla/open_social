@@ -236,7 +236,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       $query->range(0, $comments_per_page);
     }
 
-    $cids = $query->execute()->fetchCol();
+    $cids = $query->execute()?->fetchCol();
 
     $comments = [];
     if ($cids) {

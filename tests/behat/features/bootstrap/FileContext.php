@@ -21,6 +21,20 @@ class FileContext extends RawMinkContext {
   private DrupalContext $drupalContext;
 
   /**
+   * I try to download file status code.
+   *
+   * @var mixed
+   */
+  private mixed $iTryToDownloadFileStatusCode;
+
+  /**
+   * I try to download file response.
+   *
+   * @var \Psr\Http\Message\ResponseInterface|null
+   */
+  private ?ResponseInterface $iTryToDownloadFileResponse;
+
+  /**
    * Make some contexts available here so we can delegate steps.
    *
    * @BeforeScenario
@@ -38,6 +52,8 @@ class FileContext extends RawMinkContext {
    *   The link url.
    *
    * @When I try to download :url
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function iTryToDownloadFile(string $url): void {
     $this->iTryToDownloadFileStatusCode = NULL;
@@ -45,9 +61,8 @@ class FileContext extends RawMinkContext {
 
     $cookies = $this->getSession()->getDriver()->getCookies();
 
-    //$hostname = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
     $hostname = $this->getMinkParameter('base_url');
-    if (strpos($url, $hostname) === FALSE) {
+    if (!str_contains($url, $hostname)) {
       $url = $hostname . $url;
     }
 
@@ -55,44 +70,49 @@ class FileContext extends RawMinkContext {
       $response = $this->getUrlWithGuzzle($cookies, $url);
       $this->iTryToDownloadFileResponse = $response;
       $this->iTryToDownloadFileStatusCode = $response->getStatusCode();
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->iTryToDownloadFileStatusCode = $e->getCode();
     }
   }
 
   /**
+   * Validate the status code after you try to download file from url.
+   *
    * Validate the status code after you try to download file from url
    * with "iTryToDownloadFile" method.
    *
    * Note: this step must be always after step "@When I try to download :url".
    *
-   * @param $status_code
-   *   Status code
+   * @param int $status_code
+   *   Status code.
    *
    * @Then I should see response status code :statusCode
    */
-  public function iShouldSeeResponseStatusCode($status_code) {
+  public function iShouldSeeResponseStatusCode(int $status_code): void {
     $responseStatusCode = $this->iTryToDownloadFileStatusCode;
 
-    if (!$responseStatusCode == intval($status_code)) {
+    if (!$responseStatusCode == $status_code) {
       throw new \RuntimeException('Did not see response status code "' . $status_code . '", but "' . $responseStatusCode . '"%s.');
     }
   }
 
   /**
+   * Validate the response header value after you try to download file from url.
+   *
    * Validate the response header value after you try to download file from url
    * with "iTryToDownloadFile" method.
    *
    * Note: this step must be always after step "@When I try to download :url".
    *
-   * @param $header
-   *   Response header key
-   * @param $value
-   *   Response header value
+   * @param string $header
+   *   Response header key.
+   * @param string $value
+   *   Response header value.
    *
    * @Then I should see in the response header :header with :value
    */
-  public function iShouldSeeInTheHeader($header, $value) {
+  public function iShouldSeeInTheHeader(string $header, string $value): void {
     if ($this->iTryToDownloadFileResponse) {
       if (!empty($this->iTryToDownloadFileResponse->getHeader($header)) && $this->iTryToDownloadFileResponse->getHeader($header)[0] !== $value) {
         throw new \RuntimeException('There is no response header ' . $header . ' with value "' . $value . '"');
@@ -104,12 +124,16 @@ class FileContext extends RawMinkContext {
   }
 
   /**
+   * Asserts that the file downloaded exactly matches the expected content.
+   *
    * @param string $link_text
    *   The link url.
    * @param string $contents
    *   The expected text.
    *
    * @Then the file downloaded from :link_text should have contents:
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function fileDownloadedMatches(string $link_text, string $contents) : void {
     $actual = trim($this->getDownloadedFileContent($link_text));
@@ -120,18 +144,22 @@ class FileContext extends RawMinkContext {
   }
 
   /**
+   * Asserts that the file downloaded contains the expected contents.
+   *
    * @param string $link_text
    *   The link url.
    * @param string $contents
    *   The expected text.
    *
    * @Then the file downloaded from :link_text should contain individual lines:
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function fileDownloadedContains(string $link_text, string $contents) : void {
     $actual = trim($this->getDownloadedFileContent($link_text));
     $expected = explode(PHP_EOL, trim($contents));
     foreach ($expected as $word) {
-      if (strpos($actual, $word) === FALSE) {
+      if (!str_contains($actual, $word)) {
         throw new \RuntimeException("File does not contain the expected contents: {$word}");
       }
     }
@@ -140,8 +168,8 @@ class FileContext extends RawMinkContext {
   /**
    * Fetches a URL with Guzzle.
    *
-   * Can be used to downlaod files in case the browser would move those to the
-   * downloads folder.
+   * Can be used to download files in case the browser would move those to the
+   * "downloads" folder.
    *
    * @param array $cookies
    *   The array of cookies (from Session::getDriver()->getCookies()) to use.
@@ -150,6 +178,8 @@ class FileContext extends RawMinkContext {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   The Guzzle response.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   private function getUrlWithGuzzle(array $cookies, string $url) : ResponseInterface {
     $jar = new CookieJar();
@@ -172,6 +202,8 @@ class FileContext extends RawMinkContext {
    *
    * @return string
    *   The content of the downloaded file.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   protected function getDownloadedFileContent(string $link_text): string {
     $session = $this->getSession();
@@ -179,7 +211,7 @@ class FileContext extends RawMinkContext {
     $url = $link->getAttribute('href');
 
     $hostname = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
-    if (strpos($url, $hostname) === FALSE) {
+    if (!str_contains($url, $hostname)) {
       $url = $hostname . $url;
     }
 
@@ -190,9 +222,11 @@ class FileContext extends RawMinkContext {
   }
 
   /**
-   * Check if the correct amount of files were uploaded.
+   * Check if the correct amount of files is uploaded.
    *
    * @Then I should have uploaded :count :scheme files
+   *
+   * @throws \Exception
    */
   public function assertUploadedCount(int $count, string $scheme) : void {
     $uid = $this->drupalContext->getUserManager()->getCurrentUser()?->uid ?? 0;

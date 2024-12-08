@@ -297,7 +297,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    */
   public function getDestinations() {
     $values = [];
-    $field_activity_destinations = $this->field_activity_destinations;
+    $field_activity_destinations = $this->get('field_activity_destinations');
     $destinations = $field_activity_destinations->getValue();
     foreach ($destinations as $destination) {
       $values[] = $destination['value'];
@@ -313,14 +313,14 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    * @todo Split it to two separate functions.
    */
   public function getRecipient() {
-    $field_activity_recipient_user = $this->field_activity_recipient_user;
+    $field_activity_recipient_user = $this->get('field_activity_recipient_user');
     $recipient_user = $field_activity_recipient_user->getValue();
     if (!empty($recipient_user)) {
       $recipient_user['0']['target_type'] = 'user';
       return $recipient_user;
     }
 
-    $field_activity_recipient_group = $this->field_activity_recipient_group;
+    $field_activity_recipient_group = $this->get('field_activity_recipient_group');
     $recipient_group = $field_activity_recipient_group->getValue();
     if (!empty($recipient_group)) {
       $recipient_group['0']['target_type'] = 'group';

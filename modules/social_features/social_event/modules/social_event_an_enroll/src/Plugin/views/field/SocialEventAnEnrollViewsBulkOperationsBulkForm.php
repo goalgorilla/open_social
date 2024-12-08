@@ -6,6 +6,7 @@ use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_managers\Plugin\views\field\SocialEventManagersViewsBulkOperationsBulkForm;
@@ -68,9 +69,23 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
     RequestStack $requestStack,
     EntityTypeManagerInterface $entity_type_manager,
     ActionManager $pluginActionManager,
-    EventAnEnrollManager $social_event_an_enroll_manager
+    RouteMatchInterface $routeMatch,
+    EventAnEnrollManager $social_event_an_enroll_manager,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack, $entity_type_manager, $pluginActionManager);
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $viewData,
+      $actionManager,
+      $actionProcessor,
+      $tempStoreFactory,
+      $currentUser,
+      $requestStack,
+      $entity_type_manager,
+      $pluginActionManager,
+      $routeMatch,
+    );
 
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
   }
@@ -91,14 +106,15 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
       $container->get('request_stack'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.action'),
-      $container->get('social_event_an_enroll.manager')
+      $container->get('current_route_match'),
+      $container->get('social_event_an_enroll.manager'),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getEntityLabel(EntityInterface $entity) {
+  public function getEntityLabel(EntityInterface $entity): string {
     /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
     if ($this->socialEventAnEnrollManager->isGuest($entity)) {
       return $this->socialEventAnEnrollManager->getGuestName($entity);
