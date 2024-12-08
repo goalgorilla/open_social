@@ -89,7 +89,7 @@ class SocialAlbumController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('string_translation'),
       $container->get('database'),

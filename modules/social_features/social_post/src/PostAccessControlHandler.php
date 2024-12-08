@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -10,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\Storage\GroupRoleStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,12 +26,12 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * {@inheritdoc}
    */
-  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type): self {
     return new static(
       $entity_type,
       $container->get('entity_type.manager')
@@ -52,7 +54,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
+  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResultInterface {
     /** @var \Drupal\social_post\Entity\PostInterface $entity */
 
     switch ($operation) {
@@ -70,7 +72,11 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
                 $group_id = $entity->get('field_recipient_group')->target_id;
                 if ($group_id) {
                   $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
-                  if ($group !== NULL && $group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
+                  if (
+                    $group !== NULL
+                    && $group->hasPermission('access posts in group', $account)
+                    && $this->checkDefaultAccess($entity, $operation, $account) !== AccessResult::forbidden()
+                  ) {
                     return AccessResult::allowed();
                   }
 
@@ -108,7 +114,9 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
 
               if ($group !== NULL) {
                 $permission = 'access posts in group';
-                if ($group->hasPermission($permission, $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
+                if ($group->hasPermission($permission, $account)
+                  && $this->checkDefaultAccess($entity, $operation, $account) !== AccessResult::forbidden()
+                ) {
                   if ($group->getGroupType()->id() === 'flexible_group') {
                     // User has access if outsider with manager role or member.
                     $account_roles = $account->getRoles();
@@ -118,9 +126,9 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
                       }
                     }
 
+                    /** @var GroupRoleStorageInterface $group_role_storage */
                     $group_role_storage = $this->entityTypeManager->getStorage('group_role');
                     $group_roles = $group_role_storage->loadByUserAndGroup($account, $group);
-                    /** @var \Drupal\group\Entity\GroupRoleInterface $group_role */
                     foreach ($group_roles as $group_role) {
                       if ($group_role->isOutsider()) {
                         return AccessResult::forbidden()->cachePerUser()->addCacheableDependency($entity);
@@ -142,27 +150,27 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
           // Fetch information from the entity object if possible.
           $uid = $entity->getOwnerId();
           // Check if authors can view their own unpublished posts.
-          if ($operation === 'view' && $account->hasPermission('view own unpublished post entities') && $account->isAuthenticated() && $account->id() == $uid) {
+          if ($operation === 'view' && $account->hasPermission('view own unpublished post entities') && $account->isAuthenticated() && $account->id() === $uid) {
             return AccessResult::allowed()->cachePerPermissions()->cachePerUser()->addCacheableDependency($entity);
           }
         }
 
       case 'update':
         // Check if the user has permission to edit any or own post entities.
-        if ($account->hasPermission('edit any post entities', $account)) {
+        if ($account->hasPermission('edit any post entities')) {
           return AccessResult::allowed();
         }
-        elseif ($account->hasPermission('edit own post entities', $account) && ($account->id() == $entity->getOwnerId())) {
+        elseif ($account->hasPermission('edit own post entities') && ($account->id() === $entity->getOwnerId())) {
           return AccessResult::allowed();
         }
         return AccessResult::neutral();
 
       case 'delete':
         // Check if the user has permission to delete any or own post entities.
-        if ($account->hasPermission('delete any post entities', $account)) {
+        if ($account->hasPermission('delete any post entities')) {
           return AccessResult::allowed();
         }
-        elseif ($account->hasPermission('delete own post entities', $account) && ($account->id() == $entity->getOwnerId())) {
+        elseif ($account->hasPermission('delete own post entities') && ($account->id() === $entity->getOwnerId())) {
           return AccessResult::allowed();
         }
         return AccessResult::forbidden();
@@ -175,11 +183,12 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
   /**
    * {@inheritdoc}
    */
-  protected function checkDefaultAccess(EntityInterface $entity, $operation, AccountInterface $account) {
+  protected function checkDefaultAccess(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
     switch ($operation) {
       case 'view':
+        /** @var \Drupal\social_post\Entity\PostInterface $entity */
         if (!$entity->isPublished()) {
-          if ($account->hasPermission('view own unpublished post entities', $account) && ($account->id() == $entity->getOwnerId())) {
+          if ($account->hasPermission('view own unpublished post entities') && ($account->id() === $entity->getOwnerId())) {
             return AccessResult::allowed();
           }
           return AccessResult::allowedIfHasPermission($account, 'view unpublished post entities');

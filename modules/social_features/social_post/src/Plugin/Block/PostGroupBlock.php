@@ -80,7 +80,7 @@ class PostGroupBlock extends PostBlock {
           if (
             $group->hasField('field_group_posts_enabled') &&
             !$group->get('field_group_posts_enabled')->isEmpty() &&
-            !(bool) $group->get('field_group_posts_enabled')->getString() &&
+            !$group->get('field_group_posts_enabled')->getString() &&
             !$group->hasPermission('edit group', $account)
           ) {
             return AccessResult::forbidden()->addCacheContexts($cache_contexts)->addCacheTags(['group:' . $group->id()]);

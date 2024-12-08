@@ -53,7 +53,7 @@ class EnrollRequestDialogController extends ControllerBase {
    *
    * @return static
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('form_builder'),
       $container->get('current_user')

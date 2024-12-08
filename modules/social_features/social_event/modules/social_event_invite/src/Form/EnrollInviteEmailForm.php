@@ -65,7 +65,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     $instance = parent::create($container);
     $instance->entityStorage = $instance->entityTypeManager->getStorage('event_enrollment');
     $instance->tempStoreFactory = $container->get('tempstore.private');

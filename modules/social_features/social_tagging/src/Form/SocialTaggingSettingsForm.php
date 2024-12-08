@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\social_tagging\Form
  */
-class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class SocialTaggingSettingsForm extends ConfigFormBase {
 
   /**
    * The module handler.
@@ -283,6 +283,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#collapsed' => TRUE,
     ];
 
+    /** @var \ArrayAccess $wrapper */
     $wrapper =& $form['categories_order_wrapper'];
 
     $wrapper['categories_order'] = [

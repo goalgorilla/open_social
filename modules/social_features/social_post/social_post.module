@@ -20,7 +20,7 @@ use Drupal\user\UserInterface;
  *
  * Alter the comment_post_comment_form form.
  */
-function social_post_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_post_form_comment_post_comment_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Reset title display.
   $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
 
@@ -52,7 +52,7 @@ function social_post_form_comment_post_comment_form_alter(&$form, FormStateInter
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_post_comment_post_comment_form_submit(array $form, FormStateInterface $form_state) {
+function _social_post_comment_post_comment_form_submit(array $form, FormStateInterface $form_state): void {
   // Fetch from the form.
   $uri = $form_state->getValue('redirect_after_save');
   // Let's not trust this.
@@ -78,7 +78,7 @@ function _social_post_comment_post_comment_form_submit(array $form, FormStateInt
  * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
  *   Post visibility detail.
  */
-function social_post_get_visibility_details($visibility, $return_value = 'icon') {
+function social_post_get_visibility_details(string $visibility, string $return_value = 'icon'): string|\Drupal\Core\StringTranslation\TranslatableMarkup {
 
   $return = &drupal_static(__FUNCTION__ . $visibility);
 
@@ -120,7 +120,7 @@ function social_post_get_visibility_details($visibility, $return_value = 'icon')
 /**
  * Implements hook_views_data_alter().
  */
-function social_post_views_data_alter(array &$data) {
+function social_post_views_data_alter(array &$data): void {
   $data['post']['post_visibility_access_filter'] = [
     'title' => t('Post visibility access'),
     'filter' => [
@@ -153,7 +153,7 @@ function social_post_views_data_alter(array &$data) {
 /**
  * Implements hook_theme().
  */
-function social_post_theme() {
+function social_post_theme(): array {
   $items = [
     'post' => [
       'render element' => 'elements',
@@ -171,7 +171,7 @@ function social_post_theme() {
 /**
  * Implements hook_preprocess_activity().
  */
-function social_post_preprocess_activity(&$variables) {
+function social_post_preprocess_activity(array &$variables): void {
   // Add visibility icon and label to activity posts.
   if (!empty($variables['elements']['field_activity_entity'][0]['#post'])) {
     $post = $variables['elements']['field_activity_entity'][0]['#post'];
@@ -192,7 +192,7 @@ function social_post_preprocess_activity(&$variables) {
 /**
  * Implements hook_preprocess_post__activity().
  */
-function social_post_preprocess_post__activity(&$variables) {
+function social_post_preprocess_post__activity(array &$variables): void {
   $account = \Drupal::currentUser();
 
   if (!$variables["published"] && !$account->hasPermission('edit any post entities')) {
@@ -203,7 +203,7 @@ function social_post_preprocess_post__activity(&$variables) {
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
-function social_post_theme_suggestions_post(array $variables) {
+function social_post_theme_suggestions_post(array $variables): array {
   $suggestions = [];
   $entity = $variables['elements']['#post'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
@@ -229,7 +229,7 @@ function social_post_theme_suggestions_post(array $variables) {
  * @todo Rename to template_preprocess_field__comment() once
  *   https://www.drupal.org/node/939462 is resolved.
  */
-function social_post_preprocess_field(array &$variables) {
+function social_post_preprocess_field(array &$variables): void {
   $element = $variables['element'];
   if ($element['#formatter'] === 'comment_post' || $element['#formatter'] === 'comment_post_activity') {
     // Create separate variables for the more_link.
@@ -240,7 +240,7 @@ function social_post_preprocess_field(array &$variables) {
 /**
  * Implements hook_ENTITY_TYPE_create_access().
  */
-function social_post_comment_create_access(AccountInterface $account, array $context, $entity_bundle) {
+function social_post_comment_create_access(AccountInterface $account, array $context, string $entity_bundle): \Drupal\Core\Access\AccessResultInterface {
   if ($entity_bundle === 'post_comment') {
     $group = \Drupal::routeMatch()->getParameter('group');
     if (is_numeric($group)) {
@@ -261,7 +261,7 @@ function social_post_comment_create_access(AccountInterface $account, array $con
 /**
  * Implements hook_user_cancel().
  */
-function social_post_user_cancel($edit, AccountInterface $account, $method) {
+function social_post_user_cancel(array $edit, AccountInterface $account, string $method): void {
   $update = NULL;
 
   switch ($method) {
@@ -289,7 +289,7 @@ function social_post_user_cancel($edit, AccountInterface $account, $method) {
 /**
  * Implements hook_ENTITY_TYPE_predelete().
  */
-function social_post_user_predelete($account) {
+function social_post_user_predelete(\Drupal\Core\Session\AccountProxyInterface $account): void {
   // Delete posts.
   if ($account instanceof UserInterface) {
     $pids = \Drupal::entityQuery('post')

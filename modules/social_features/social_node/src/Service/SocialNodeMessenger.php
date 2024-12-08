@@ -65,7 +65,7 @@ class SocialNodeMessenger extends Messenger implements SocialNodeMessengerInterf
   /**
    * {@inheritdoc}
    */
-  public function setNode(NodeInterface $node) {
+  public function setNode(NodeInterface $node): void {
     $this->node = $node;
   }
 

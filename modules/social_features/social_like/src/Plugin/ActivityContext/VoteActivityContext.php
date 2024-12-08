@@ -3,6 +3,7 @@
 namespace Drupal\social_like\Plugin\ActivityContext;
 
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -28,7 +29,7 @@ class VoteActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\social_group\GroupMuteNotify
    */
-  protected $groupMuteNotify;
+  protected GroupMuteNotify $groupMuteNotify;
 
   /**
    * Constructs a MentionActivityContext object.
@@ -65,7 +66,7 @@ class VoteActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -112,6 +113,7 @@ class VoteActivityContext extends ActivityContextBase {
             }
           }
 
+          /** @var Activity $entity */
           $uid = $entity->getOwnerId();
 
           // Don't send notifications to myself.

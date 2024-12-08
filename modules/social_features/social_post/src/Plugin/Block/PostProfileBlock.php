@@ -51,9 +51,10 @@ class PostProfileBlock extends PostBlock {
 
     // Check if current user is the same as the profile.
     // In this case use the default form display.
+    /** @var \Drupal\user\UserInterface|int $account */
     $account = $this->routeMatch->getParameter('user');
     $uid = $this->currentUser->id();
-    if (isset($account) && ($account === $uid || (is_object($account) && $uid === $account->id()))) {
+    if ($account !== NULL && ($account === $uid || (is_object($account) && $uid === $account->id()))) {
       $this->formDisplay = 'default';
     }
   }

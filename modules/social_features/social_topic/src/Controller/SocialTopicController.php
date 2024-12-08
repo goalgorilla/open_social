@@ -70,15 +70,16 @@ class SocialTopicController extends ControllerBase {
    * @return string
    *   The page title.
    */
-  public function latestTopicsPageTitle() {
+  public function latestTopicsPageTitle(): string {
     $title = $this->t('All topics');
 
     // @todo This might change depending on the view exposed filter settings.
-    $topic_type_id = $this->requestStack->getCurrentRequest()->get('field_topic_type_target_id');
+    $topic_type_id = $this->requestStack->getCurrentRequest()?->get('field_topic_type_target_id');
     $term = NULL;
     if ($topic_type_id !== NULL) {
       // Topic type can be "All" will crash overview on /newest-topics.
       if (is_numeric($topic_type_id)) {
+        /** @var \Drupal\taxonomy\TermInterface $term */
         $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($topic_type_id);
 
         if ($term->access('view') && $term->bundle() === 'topic_types') {
@@ -94,7 +95,7 @@ class SocialTopicController extends ControllerBase {
   }
 
   /**
-   * Function that checks access on the my topic pages.
+   * Function that checks access on my topic pages.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account we need to check access for.
@@ -102,13 +103,13 @@ class SocialTopicController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResult
    *   If access is allowed.
    */
-  public function myTopicAccess(AccountInterface $account) {
+  public function myTopicAccess(AccountInterface $account): AccessResult {
     // Fetch user from url.
-    $user = $this->requestStack->getCurrentRequest()->get('user');
+    $user = $this->requestStack->getCurrentRequest()?->get('user');
 
     // If we don't have a user in the request, assume it's my own profile.
     if (is_null($user)) {
-      // Usecase is the user menu, which is generated on all LU pages.
+      // Use case is the user menu, which is generated on all LU pages.
       $user = User::load($account->id());
     }
 

@@ -59,32 +59,28 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function isActive() {
+  public function isActive(): mixed {
     return $this->profileConfig->get('enable_profile_tagging');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function hasContent() {
-    if (count($this->getCategories()) == 0) {
-      return FALSE;
-    }
-
-    return TRUE;
+  public function hasContent(): bool {
+    return count($this->getCategories()) !== 0;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function allowSplit() {
+  public function allowSplit(): bool {
     return $this->isActive() && $this->profileConfig->get('allow_category_split');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCategories() {
+  public function getCategories(): array {
     // Define as array.
     $options = [];
 
@@ -115,7 +111,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getChildrens($category) {
+  public function getChildrens($category): array {
     // Define as array.
     $options = [];
 
@@ -140,21 +136,21 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function useCategoryParent() {
+  public function useCategoryParent(): mixed {
     return $this->profileConfig->get('use_category_parent');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function tagLabelToMachineName($label) {
+  public function tagLabelToMachineName($label): string {
     return strtolower(str_replace(' ', '', $label));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildHierarchy(array $term_ids) {
+  public function buildHierarchy(array $term_ids): array {
     $tree = [];
     $terms = $this->taxonomyStorage->loadMultiple(array_column($term_ids, 'target_id'));
     if (empty($terms)) {
@@ -166,7 +162,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
         continue;
       }
 
-      $parents = $this->taxonomyStorage->loadParents($term->id());
+      $parents = $this->taxonomyStorage->loadParents((int) $term->id());
       if ($parents) {
         $parent = reset($parents);
       }
@@ -197,7 +193,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getTermOptionNames(array $term_ids) {
+  public function getTermOptionNames(array $term_ids): array {
     $options = [];
     if (empty($term_ids)) {
       return $options;
@@ -222,7 +218,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
    * @return array
    *   Returns a list of terms options.
    */
-  private function prepareTermOptions(array $terms) {
+  private function prepareTermOptions(array $terms): array {
     $options = [];
     foreach ($terms as $category) {
       // Only return published taxonomy terms.

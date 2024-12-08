@@ -102,7 +102,7 @@ class EnrollRequestDeclineForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('redirect.destination'),
       $container->get('current_user'),

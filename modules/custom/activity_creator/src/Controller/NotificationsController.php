@@ -34,7 +34,7 @@ class NotificationsController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('activity_creator.activity_notifications')
     );

@@ -85,7 +85,10 @@ function social_follow_taxonomy_theme_suggestions_activity_alter(
     return;
   }
 
-  $entity_type = $activity->get('field_activity_entity')->first()->target_type;
+  /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $field */
+  $field = $activity->get('field_activity_entity');
+  $entity_type = $field->getFieldDefinition()->getSetting('target_type');
+
 
   if ($entity_type !== 'node' && $entity_type !== 'post') {
     return;
@@ -269,13 +272,14 @@ function social_follow_taxonomy_term_followers_count(TermInterface $term): int {
  * @param \Drupal\taxonomy\TermInterface $term
  *   Term entity.
  *
- * @return string
- *   Link button to flag/unflag current term.
+ * @return array|string
+ *   Link button to flag/un-flag current term.
  */
-function social_follow_taxonomy_flag_link(TermInterface $term): string {
+function social_follow_taxonomy_flag_link(TermInterface $term): array|string {
   $flag_link = '';
 
   if (!\Drupal::currentUser()->isAnonymous()) {
+    /** @var \Drupal\flag\FlagLinkBuilder $flag_link_service */
     $flag_link_service = \Drupal::service('flag.link_builder');
     if ($term->id() !== NULL) {
       $flag_link = $flag_link_service->build($term->getEntityTypeId(), $term->id(), 'follow_term');

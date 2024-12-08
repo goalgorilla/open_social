@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\dynamic_entity_reference\Plugin\DataType\DynamicEntityReference;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -17,6 +18,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @ingroup social_post
  */
 class PostForm extends ContentEntityForm {
+
+  /**
+   * The entity being used by this form.
+   *
+   * @var \Drupal\Core\Entity\ContentEntityInterface
+   */
+  protected $entity;
 
   /**
    * The view mode.
@@ -38,12 +46,12 @@ class PostForm extends ContentEntityForm {
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * Constructs a Form object.
    */
-  public function __construct(AccountInterface $current_user, EntityRepositoryInterface $entity_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+  public function __construct(AccountInterface $current_user, EntityRepositoryInterface $entity_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info, TimeInterface $time) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
     $this->currentUser = $current_user;
   }
@@ -51,7 +59,7 @@ class PostForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('current_user'),
       $container->get('entity.repository'),
@@ -63,14 +71,14 @@ class PostForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_post_entity_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     // Init form mode comparison strings.
     $this->setFormMode();
 
@@ -116,7 +124,7 @@ class PostForm extends ContentEntityForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state used to render this form.
    */
-  protected function configureViewMode(FormStateInterface $form_state) {
+  protected function configureViewMode(FormStateInterface $form_state): void {
     $view_mode = $this->postViewDefault;
     if ($this->entity->hasField('field_recipient_user') && !$this->entity->get('field_recipient_user')->isEmpty()) {
       $view_mode = $this->postViewProfile;
@@ -126,7 +134,9 @@ class PostForm extends ContentEntityForm {
     }
 
     $display = EntityFormDisplay::load($view_mode);
-    $this->setFormDisplay($display, $form_state);
+    if ($display !== NULL) {
+      $this->setFormDisplay($display, $form_state);
+    }
   }
 
   /**
@@ -146,7 +156,7 @@ class PostForm extends ContentEntityForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    */
-  protected function configureVisibilityField(array &$form, FormStateInterface $form_state) {
+  protected function configureVisibilityField(array &$form, FormStateInterface $form_state): void {
     $form['#attached']['library'][] = 'social_post/visibility-settings';
 
     // Default is create/add mode.
@@ -172,7 +182,7 @@ class PostForm extends ContentEntityForm {
       }
       $current_group = _social_group_get_current_group();
       // We unset the group visibility if we don't have a group.
-      if (empty($current_group)) {
+      if ($current_group === NULL) {
         unset($form['field_visibility']['widget'][0]['#options'][3]);
       }
     }
@@ -180,16 +190,17 @@ class PostForm extends ContentEntityForm {
     // group type (if it's a group post) or it's simply limited to the community
     // for user posts.
     else {
-      $current_group = NULL;
       if ($this->operation === 'edit' && $this->entity->hasField('field_recipient_group') && !$this->entity->get('field_recipient_group')->isEmpty()) {
-        $current_group = $this->entity->get('field_recipient_group')->first()->get('entity')->getTarget()->getValue();
+        /** @var DynamicEntityReference $field_recipient_group */
+        $field_recipient_group = $this->entity->get('field_recipient_group')->first()?->get('entity');
+        $current_group = $field_recipient_group->getTarget()?->getValue();
       }
       else {
         $current_group = _social_group_get_current_group();
       }
 
       // We unset the group visibility if we don't have a group.
-      if (empty($current_group)) {
+      if ($current_group === NULL) {
         unset($form['field_visibility']['widget'][0]['#options'][3]);
       }
       else {
@@ -245,7 +256,7 @@ class PostForm extends ContentEntityForm {
       // Unset the other options, because we do not want to be able to change
       // it but we do want to use the button for informing the user.
       foreach ($form['field_visibility']['widget'][0]['#options'] as $key => $option) {
-        if ($option['value'] != $form['field_visibility']['widget'][0]['#default_value']) {
+        if ($option['value'] !== $form['field_visibility']['widget'][0]['#default_value']) {
           unset($form['field_visibility']['widget'][0]['#options'][$key]);
         }
       }
@@ -258,7 +269,7 @@ class PostForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): int {
     // Init form modes.
     $this->setFormMode();
 
@@ -294,6 +305,8 @@ class PostForm extends ContentEntityForm {
           '%label' => $this->entity->label(),
         ]));
     }
+
+    return $status;
   }
 
   /**
@@ -301,7 +314,7 @@ class PostForm extends ContentEntityForm {
    *
    * Retrieve the form display before it is overwritten in the parent.
    */
-  protected function setFormMode() {
+  protected function setFormMode(): void {
     if ($this->getBundleEntity() !== NULL) {
       $bundle = $this->getBundleEntity()->id();
 

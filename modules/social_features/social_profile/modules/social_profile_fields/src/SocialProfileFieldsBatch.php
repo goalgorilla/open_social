@@ -24,14 +24,19 @@ class SocialProfileFieldsBatch {
    *   An array of fields to empty.
    * @param array $context
    *   The context of the flush.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException|\Drupal\Core\TypedData\Exception\ReadOnlyException
    */
-  public static function performFlush(array $pids, array $fields, array &$context) {
+  public static function performFlush(array $pids, array $fields, array &$context): void {
     $message = 'Flushing profile data...';
 
     $results = [];
 
     foreach ($pids as $pid) {
       $profile = Profile::load($pid);
+      if ($profile === NULL) {
+        continue;
+      }
 
       foreach ($fields as $field_name) {
         // Check if the field exists.
@@ -40,18 +45,18 @@ class SocialProfileFieldsBatch {
           $profile->set($field_name, '');
         }
         elseif ($field_name === 'locality') {
-          $profile->get('field_profile_address')->locality = '';
+          $profile->get('field_profile_address')->setValue(['locality', '']);
         }
         elseif ($field_name === 'addressLine1') {
-          $profile->get('field_profile_address')->address_line1 = '';
+          $profile->get('field_profile_address')->setValue(['address_line1', '']);
         }
         elseif ($field_name === 'postalCode') {
-          $profile->get('field_profile_address')->postal_code = '';
+          $profile->get('field_profile_address')->setValue(['postal_code', '']);
         }
       }
       // Save the profile.
       $results[] = $profile->save();
-      // Oh and also clear the profile cache while we're at it.
+      // Oh! and also clear the profile cache while we're at it.
       Cache::invalidateTags(['profile:' . $profile->id()]);
     }
     $context['message'] = $message;
@@ -67,8 +72,10 @@ class SocialProfileFieldsBatch {
    *   The amount of items done.
    * @param string $operations
    *   The operation performed.
+   *
+   * @throws \Drupal\search_api\SearchApiException;
    */
-  public static function performFlushFinishedCallback($success, array $results, $operations) {
+  public static function performFlushFinishedCallback(bool $success, array $results, string $operations): void {
     // The 'success' parameter means no fatal PHP errors were detected. All
     // other error management should be handled using 'results'.
     if ($success) {

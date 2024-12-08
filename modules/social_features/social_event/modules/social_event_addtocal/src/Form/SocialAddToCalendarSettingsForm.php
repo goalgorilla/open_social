@@ -37,7 +37,7 @@ class SocialAddToCalendarSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('plugin.manager.social_add_to_calendar')

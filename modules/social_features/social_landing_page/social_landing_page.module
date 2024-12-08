@@ -18,7 +18,7 @@ use Drupal\social_landing_page\Plugin\Validation\Constraint\SocialAnLinkAccess;
 /**
  * Implements hook_form_alter().
  */
-function social_landing_page_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+function social_landing_page_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   if (in_array($form_id, [
     'node_landing_page_edit_form',
     'node_landing_page_form',
@@ -32,7 +32,7 @@ function social_landing_page_form_alter(array &$form, FormStateInterface $form_s
  *
  * Remove Landing Page option from Search Content filter.
  */
-function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_landing_page_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   if ($form['#id'] === 'views-exposed-form-search-content-page') {
     if (isset($form['type']['#options']['landing_page'])) {
       unset($form['type']['#options']['landing_page']);
@@ -49,11 +49,11 @@ function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInte
  * html markup provided by paragraph. We only do this for
  * 'Override title' field.
  */
-function social_landing_page_field_widget_single_element_block_field_default_form_alter(&$element, &$form_state, $context) {
+function social_landing_page_field_widget_single_element_block_field_default_form_alter(array &$element, FormStateInterface &$form_state, array $context): void {
   // Make sure we are inside a paragraph.
   $form = $context['form'];
   $entity_type = $form['#entity_type'];
-  if ($entity_type != 'paragraph') {
+  if ($entity_type !== 'paragraph') {
     return;
   }
 
@@ -109,7 +109,7 @@ function social_landing_page_field_widget_single_element_block_field_default_for
 /**
  * Implements hook_theme().
  */
-function social_landing_page_theme() {
+function social_landing_page_theme(): array {
   // Page.
   $theme_templates['page__node__landing_page'] = [
     'base hook' => 'page',
@@ -177,7 +177,7 @@ function social_landing_page_theme() {
 /**
  * Implements hook_preprocess_page().
  */
-function social_landing_page_preprocess_page(&$variables) {
+function social_landing_page_preprocess_page(array &$variables): void {
   // Here we remove class for landing page.
   if (
     isset($variables['node']) &&
@@ -200,7 +200,7 @@ function social_landing_page_preprocess_page(&$variables) {
 /**
  * Prepares variables for the paragraph.
  */
-function social_landing_page_preprocess_paragraph(&$variables) {
+function social_landing_page_preprocess_paragraph(array &$variables): void {
   /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
   $entity = $variables['elements']['#paragraph'];
   $bundle = $entity->bundle();
@@ -211,8 +211,9 @@ function social_landing_page_preprocess_paragraph(&$variables) {
       $image_style = 'social_landing_hero';
       $image_field = "field_{$bundle}_image";
       if ($entity->hasField($image_field) && !empty($entity->{$image_field}->entity)) {
-        $variables['hero_styled_image_url'] = ImageStyle::load($image_style)
-          ->buildUrl($entity->{$image_field}->entity->getFileUri());
+        /** @var \Drupal\image\Entity\ImageStyle $image_style */
+        $image_style = ImageStyle::load($image_style);
+        $variables['hero_styled_image_url'] = $image_style->buildUrl($entity->{$image_field}->entity->getFileUri());
       }
       break;
 
@@ -221,8 +222,9 @@ function social_landing_page_preprocess_paragraph(&$variables) {
       $image_style = 'social_landing_hero_small';
       $image_field = "field_{$bundle}_image";
       if ($entity->hasField($image_field) && !empty($entity->{$image_field}->entity)) {
-        $variables['hero_small_styled_image_url'] = ImageStyle::load($image_style)
-          ->buildUrl($entity->{$image_field}->entity->getFileUri());
+        /** @var \Drupal\image\Entity\ImageStyle $image_style */
+        $image_style = ImageStyle::load($image_style);
+        $variables['hero_small_styled_image_url'] = $image_style->buildUrl($entity->{$image_field}->entity->getFileUri());
       }
       break;
   }
@@ -231,7 +233,7 @@ function social_landing_page_preprocess_paragraph(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_landing_page_preprocess_node(&$variables) {
+function social_landing_page_preprocess_node(array &$variables): void {
   /** @var \Drupal\node\Entity\Node $node */
   $node = $variables['node'];
   if ($node->getType() === 'landing_page') {
@@ -265,7 +267,7 @@ function social_landing_page_preprocess_node(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_landing_page_preprocess_field(&$variables) {
+function social_landing_page_preprocess_field(array &$variables): void {
   if ($variables['field_name'] === 'field_button_link_an' || $variables['field_name'] === 'field_button_link_lu') {
     $entity = $variables['element']['#object'];
     $button_style = $entity->get('field_button_style')->value;
@@ -290,7 +292,7 @@ function social_landing_page_preprocess_field(&$variables) {
  *
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function _social_landing_page_get_hero_image(NodeInterface $node) {
+function _social_landing_page_get_hero_image(NodeInterface $node): \Drupal\Component\Render\MarkupInterface|array {
   // Must be a valid node.
   if (
     $node->getType() !== 'landing_page' ||
@@ -355,7 +357,7 @@ function social_landing_page_social_tagging_type_alter(array &$items): void {
  *
  * Adds the "Create Landing Page" link to the content creation menu.
  */
-function social_landing_page_social_user_account_header_create_links($context) {
+function social_landing_page_social_user_account_header_create_links(array $context): array {
   $link = Link::createFromRoute((new TranslatableMarkup('New Landing Page')), 'node.add', [
     'node_type' => 'landing_page',
   ]);
@@ -384,7 +386,7 @@ function social_landing_page_theme_suggestions_page_alter(array &$suggestions, a
     ($exception = \Drupal::request()->attributes->get('exception')) &&
     is_object($exception) &&
     method_exists($exception, 'getStatusCode') &&
-    $exception->getStatusCode() == 404
+    $exception->getStatusCode() === 404
   ) {
     // Get current node.
     $node = \Drupal::routeMatch()->getParameter('node');
@@ -400,7 +402,7 @@ function social_landing_page_theme_suggestions_page_alter(array &$suggestions, a
 /**
  * Implements hook_social_core_compatible_content_forms_alter().
  */
-function social_landing_page_social_core_compatible_content_forms_alter(&$compatible_content_type_forms) {
+function social_landing_page_social_core_compatible_content_forms_alter(array &$compatible_content_type_forms): void {
   $compatible_content_type_forms[] = 'node_landing_page_form';
   $compatible_content_type_forms[] = 'node_landing_page_edit_form';
 }
@@ -409,7 +411,7 @@ function social_landing_page_social_core_compatible_content_forms_alter(&$compat
  * Implements hook_validation_constraint_alter().
  */
 function social_landing_page_validation_constraint_alter(array &$definitions): void {
-  // Alter linkaccess check.
+  // Alter link access check.
   if (isset($definitions['LinkAccess'])) {
     $definitions['LinkAccess']['class'] = SocialAnLinkAccess::class;
   }

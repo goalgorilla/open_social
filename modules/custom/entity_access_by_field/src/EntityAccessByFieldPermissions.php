@@ -46,7 +46,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('entity_field.manager')

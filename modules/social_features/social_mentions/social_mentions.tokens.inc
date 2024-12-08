@@ -18,7 +18,7 @@ use Drupal\social_post\Entity\Post;
 /**
  * Implements hook_token_info().
  */
-function social_mentions_token_info() {
+function social_mentions_token_info(): array {
   $type = [
     'name' => t('Social Mentions'),
     'description' => t('Tokens from the social mentions module.'),
@@ -51,10 +51,10 @@ function social_mentions_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_mentions_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_mentions_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
 
-  if ($type == 'social_mentions' && !empty($data['profile'])) {
+  if ($type === 'social_mentions' && !empty($data['profile'])) {
     /** @var \Drupal\profile\Entity\Profile $profile */
     $profile = $data['profile'];
 
@@ -79,7 +79,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
     }
   }
 
-  if ($type == 'social_mentions' && !empty($data['message'])) {
+  if ($type === 'social_mentions' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
@@ -93,15 +93,17 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
               if (!$message->get('field_message_related_object')->isEmpty()) {
                 $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
                 $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+                /** @var \Drupal\mentions\Entity\Mentions $mention */
                 $mention = \Drupal::entityTypeManager()
                   ->getStorage($target_type)
                   ->load($target_id);
 
                 if ($mention->getEntityTypeId() === 'mentions') {
-                  $loadUserId = User::load($mention->getMentionedUserID());
-                  $user = $loadUserId->getDisplayName();
-
-                  $replacements[$original] = $user;
+                  $load_user_id = User::load($mention->getMentionedUserID());
+                  if ($load_user_id instanceof User) {
+                    $user = $load_user_id->getDisplayName();
+                    $replacements[$original] = $user;
+                  }
                 }
               }
             }
@@ -129,12 +131,14 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
               }
             }
 
+            $content_type_label = '';
             if (isset($entity)) {
               switch ($entity->getEntityTypeId()) {
                 case 'node':
                   // Then get the bundle name.
-                  $content_type_label = '';
-                  $label = \Drupal::entityTypeManager()->getStorage('node_type')->load($entity->bundle())->label();
+                  /** @var \Drupal\Core\Entity\EntityInterface $node_type */
+                  $node_type = \Drupal::entityTypeManager()->getStorage('node_type')->load($entity->bundle());
+                  $label = $node_type->label();
                   if (is_string($label) || $label instanceof TranslatableMarkup) {
                     $content_type_label = mb_strtolower($label);
                   }
@@ -147,7 +151,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
                   break;
               }
 
-              if (isset($content_type_label) && str_ends_with($name, ':capitalized')) {
+              if ($content_type_label !== NULL && str_ends_with($name, ':capitalized')) {
                 $content_type_label = ucfirst($content_type_label);
               }
 
@@ -177,8 +181,8 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
 /**
  * Implements hook_tokens_alter().
  */
-function social_mentions_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
-  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+function social_mentions_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
+  if ($context['type'] === 'message' && !empty($context['data']['message'])) {
     // Translate hook_tokens options to the options for TranslatableMarkup.
     $translation_options = [
       'langcode' => $context['options']['langcode'] ?? NULL,

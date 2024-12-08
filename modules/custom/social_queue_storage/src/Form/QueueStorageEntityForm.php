@@ -23,7 +23,7 @@ class QueueStorageEntityForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     // Instantiates this form class.
     $instance = parent::create($container);
     $instance->account = $container->get('current_user');

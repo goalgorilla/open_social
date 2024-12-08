@@ -5,6 +5,7 @@
  * The Social Sharing module.
  */
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\node\Entity\Node;
 use Drupal\block\Entity\Block;
@@ -14,9 +15,9 @@ use Drupal\Core\Access\AccessResult;
 /**
  * Implements hook_block_access().
  */
-function social_sharing_block_access(Block $block, $operation, AccountInterface $account) {
+function social_sharing_block_access(Block $block, string$operation, AccountInterface $account): AccessResultInterface {
 
-  if ($operation == 'view' && $block->getPluginId() == 'shariff_block') {
+  if ($operation === 'view' && $block->getPluginId() === 'shariff_block') {
     // Exclude Social Sharing block form Add and Edit node pages.
     $route_name = \Drupal::routeMatch()->getRouteName();
     $excluded_routes = [
@@ -81,7 +82,7 @@ function social_sharing_block_access(Block $block, $operation, AccountInterface 
 /**
  * Implements hook_preprocess().
  */
-function social_sharing_preprocess_block_shariff(&$variables, $hook) {
+function social_sharing_preprocess_block_shariff(array &$variables, string $hook): void {
   /** @var \Drupal\Core\Template\Attribute $data_attributes */
   $data_attributes = $variables['data_attributes'];
   // Make an array representation so we can add data attributes.

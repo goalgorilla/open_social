@@ -70,8 +70,8 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
-    parent::preCreate($storage_controller, $values);
+  public static function preCreate(EntityStorageInterface $storage, array &$values): void {
+    parent::preCreate($storage, $values);
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
     ];
@@ -80,14 +80,14 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCreatedTime() {
+  public function getCreatedTime(): int {
     return $this->get('created')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setCreatedTime($timestamp) {
+  public function setCreatedTime($timestamp): PostInterface|static {
     $this->set('created', $timestamp);
     return $this;
   }
@@ -95,21 +95,23 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getOwner() {
-    return $this->get('user_id')->entity;
+  public function getOwner(): UserInterface {
+    /** @var \Drupal\user\UserInterface $owner */
+    $owner = $this->get('user_id')->entity;
+    return $owner;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getOwnerId() {
-    return $this->get('user_id')->target_id;
+  public function getOwnerId(): ?int {
+    return (int) $this->get('user_id')->target_id;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public function setOwnerId($uid): \Drupal\user\EntityOwnerInterface|Post|static {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -117,7 +119,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(UserInterface $account): \Drupal\user\EntityOwnerInterface|Post|static {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -125,14 +127,14 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
+  public function isPublished(): bool {
     return (bool) $this->getEntityKey('status');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setPublished($published) {
+  public function setPublished($published): PostInterface|static {
     $this->set('status', $published ? NodeInterface::PUBLISHED : NodeInterface::NOT_PUBLISHED);
     return $this;
   }
@@ -140,14 +142,14 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getType() {
+  public function getType(): mixed {
     return $this->bundle();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setType($type) {
+  public function setType($type): PostInterface|Post|static {
     $this->set('type', $type);
     return $this;
   }
@@ -155,7 +157,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getDisplayName() {
+  public function getDisplayName(): \Drupal\Core\StringTranslation\TranslatableMarkup {
     if ($this->hasField('field_post_image') && !$this->get('field_post_image')
       ->isEmpty()) {
       return $this->t('photo');
@@ -167,7 +169,8 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getVisibility() {
+  public function getVisibility(): mixed {
+    $visibility = NULL;
     $allowed_values = $this->getPostVisibilityAllowedValues();
 
     if ($this->hasField('field_visibility')) {
@@ -211,7 +214,7 @@ class Post extends ContentEntityBase implements PostInterface {
    * @return string
    *   Visibility label.
    */
-  public function getDefaultVisibilityByLabel($label, $reverse = FALSE) {
+  public function getDefaultVisibilityByLabel(string $label, bool $reverse = FALSE): string {
     $default_visibilities = [
       [
         'id' => 'community',
@@ -229,7 +232,7 @@ class Post extends ContentEntityBase implements PostInterface {
 
     if ($reverse) {
       foreach ($default_visibilities as $visibility) {
-        if ($visibility['id'] == $label) {
+        if ($visibility['id'] === $label) {
           return $visibility['label'];
         }
       }
@@ -241,6 +244,8 @@ class Post extends ContentEntityBase implements PostInterface {
         }
       }
     }
+
+    return '';
   }
 
   /**
@@ -249,18 +254,16 @@ class Post extends ContentEntityBase implements PostInterface {
    * @return array
    *   Field allowed values.
    */
-  private function getPostVisibilityAllowedValues() {
+  private function getPostVisibilityAllowedValues(): array {
     // Post visibility field storage.
     $post_storage = 'field.storage.post.field_visibility';
-    $config = \Drupal::configFactory()->getEditable($post_storage);
-
-    return $config->getOriginal('settings.allowed_values');
+    return \Drupal::configFactory()->getEditable($post_storage)->getOriginal('settings.allowed_values');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setVisibility($visibility) {
+  public function setVisibility(string $visibility): static {
     $allowed_values = $this->getPostVisibilityAllowedValues();
     $visibility_label = $this->getDefaultVisibilityByLabel($visibility, TRUE);
 
@@ -279,7 +282,7 @@ class Post extends ContentEntityBase implements PostInterface {
     }
     else {
       foreach ($allowed_values as $key => $allowed_value) {
-        if ($visibility_label == $allowed_value['label']) {
+        if ($visibility_label === $allowed_value['label']) {
           $this->set('field_visibility', (int) $allowed_value['value']);
         }
       }
@@ -291,7 +294,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $defaults = parent::getCacheContexts();
 
     // @todo Change this to custom cache context, may edit/delete post.
@@ -305,7 +308,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     $fields['id'] = BaseFieldDefinition::create('integer')
