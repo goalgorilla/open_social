@@ -7,6 +7,7 @@
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -22,7 +23,7 @@ use Drupal\social_comment\SocialCommentViewBuilder;
 /**
  * Implements hook_entity_type_alter().
  */
-function social_comment_entity_type_alter(array &$entity_types) {
+function social_comment_entity_type_alter(array &$entity_types): void {
   if (isset($entity_types['comment'])) {
     $entity_types['comment']->setClass(Comment::class);
     $entity_types['comment']->setViewBuilderClass(SocialCommentViewBuilder::class);
@@ -37,7 +38,10 @@ function social_comment_form_alter(array &$form, FormStateInterface $form_state,
   // This code will move the comments' field to the "Settings" field group
   // only if $form['advanced'] does not exist.
   if (method_exists($form_state->getFormObject(), 'getEntity')) {
-    $entity = $form_state->getFormObject()->getEntity();
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
+    $entity = $form_object->getEntity();
+
     if ($entity instanceof ContentEntityInterface) {
       // Move comments field to "group_settings" field group.
       $comments_field = "field_{$entity->bundle()}_comments";
@@ -56,7 +60,7 @@ function social_comment_form_alter(array &$form, FormStateInterface $form_state,
  *
  * Enhance the comment form.
  */
-function social_comment_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_comment_form_comment_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Change value of 'Save' button.
   $form['actions']['submit']['#value'] = t('Comment', [], ['context' => 'Comment Button']);
   // Hide title of 'Comment' field.
@@ -108,16 +112,20 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
  *
  * @param array $form
  *   The form array.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param FormStateInterface $form_state
  *   The form state interface of the form.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_comment_edit_form_submit(array $form, FormStateInterface $form_state) {
+function social_comment_edit_form_submit(array $form, FormStateInterface $form_state): void {
   if (isset($form['author']['status']['#default_value']) && $form['author']['status']['#default_value'] === '1') {
     if ($form_state->getValue('status') === 0) {
       // Load the comment and verify if it has any children.
       /** @var \Drupal\comment\CommentStorage $entity_storage */
       $entity_storage = \Drupal::entityTypeManager()->getStorage('comment');
       $cid = $form_state->getValue('cid');
+      /** @var \Drupal\comment\CommentInterface $comment */
       $comment = $entity_storage->load($cid);
       $children = $entity_storage->getChildCids([$cid => $comment]);
       if (!empty($children)) {
@@ -136,7 +144,7 @@ function social_comment_edit_form_submit(array $form, FormStateInterface $form_s
  * @param bool $add_status
  *   Add the status field, by default TRUE.
  */
-function social_comment_remove_author_field(array &$form, $add_status = TRUE) {
+function social_comment_remove_author_field(array &$form, bool $add_status = TRUE): void {
   // Check if we need to hide the author fields for comments.
   $remove_author_fields = \Drupal::config('social_comment.comment_settings')->get('remove_author_field');
   if ($remove_author_fields) {
@@ -162,7 +170,7 @@ function social_comment_remove_author_field(array &$form, $add_status = TRUE) {
  *
  * Validate replies to comments deeper than 1.
  */
-function social_comment_form_reply_validate($form, FormStateInterface $form_state) {
+function social_comment_form_reply_validate(array $form, FormStateInterface $form_state): void {
   // Get parent comment ID.
   if (!($pid = \Drupal::routeMatch()->getParameter('pid'))) {
     return;
@@ -174,7 +182,7 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
   if ($comment->bundle() === 'post_comment') {
     $form_state->setErrorByName('', t('Replies for comments on posts are not allowed'));
   }
-  elseif (!empty($comment->getParentComment())) {
+  elseif ($comment->getParentComment() !== NULL) {
     $form_state->setErrorByName('', t('Replies to comments deeper than 1 is not allowed'));
   }
 }
@@ -184,7 +192,7 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
  *
  * Alter the links of a comment.
  */
-function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
+function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context): void {
   if (!$entity->isPublished()) {
     if (\Drupal::moduleHandler()->moduleExists('social_ajax_comments')) {
       unset($links['comment']['#links']['comment-reply']['attributes']['class']);
@@ -241,7 +249,7 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
 /**
  * Implements hook_preprocess_comment().
  */
-function social_comment_preprocess_comment(&$variables) {
+function social_comment_preprocess_comment(array &$variables): void {
   /** @var \Drupal\comment\CommentInterface $comment */
   $comment = $variables['elements']['#comment'];
 
@@ -259,6 +267,7 @@ function social_comment_preprocess_comment(&$variables) {
   $variables['#cache']['max-age'] = $created_time_ago->getCacheMaxAge();
 
   $account = $comment->getOwner();
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
   $user_profile = $storage->loadByUser($account, 'profile');
   if ($user_profile) {
@@ -269,7 +278,10 @@ function social_comment_preprocess_comment(&$variables) {
   }
 
   // Add node ID attribute for comment "new" indicator.
-  if (\Drupal::moduleHandler()->moduleExists('history') && $comment->getCommentedEntityTypeId() == 'node') {
+  if (
+    $comment->getCommentedEntityTypeId() === 'node'
+    && \Drupal::moduleHandler()->moduleExists('history')
+  ) {
     $variables['attributes']['data-history-node-id'] = $comment->getCommentedEntityId();
   }
 
@@ -280,19 +292,18 @@ function social_comment_preprocess_comment(&$variables) {
  *
  * Allow users to delete their own comments.
  */
-function social_comment_comment_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function social_comment_comment_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
   if ($operation === 'delete') {
     if ($account->hasPermission('administer comments')) {
       return AccessResult::allowed()->cachePerPermissions();
     }
-    else {
-      /** @var \Drupal\comment\CommentInterface $entity */
-      return AccessResult::allowedIfHasPermission($account, 'delete own comments')
-        ->andIf(AccessResult::allowedIf($account->id() == $entity->getOwnerId()))
-        ->cachePerPermissions()
-        ->cachePerUser()
-        ->addCacheableDependency($entity);
-    }
+
+    /** @var \Drupal\comment\CommentInterface $entity */
+    return AccessResult::allowedIfHasPermission($account, 'delete own comments')
+      ->andIf(AccessResult::allowedIf($account->id() === $entity->getOwnerId()))
+      ->cachePerPermissions()
+      ->cachePerUser()
+      ->addCacheableDependency($entity);
   }
 
   return AccessResult::neutral();
@@ -301,12 +312,12 @@ function social_comment_comment_access(EntityInterface $entity, $operation, Acco
 /**
  * Implements hook_ENTITY_TYPE_view().
  */
-function social_comment_comment_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+function social_comment_comment_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
   if ($view_mode === 'activity') {
     /** @var \Drupal\comment\CommentInterface $entity */
     $commented_entity = $entity->getCommentedEntity();
 
-    if (is_object($commented_entity)) {
+    if ($commented_entity instanceof ContentEntityInterface) {
       $commented_entity_type = $commented_entity->getEntityTypeId();
 
       // Teaser of commented entity.
@@ -380,7 +391,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
  *
  * Change the default list_class for fields of type 'comment'.
  */
-function social_comment_field_info_alter(&$info) {
+function social_comment_field_info_alter(array &$info): void {
   if (isset($info['comment'])) {
     $info['comment']['list_class'] = SocialCommentFieldItemList::class;
   }
@@ -389,7 +400,7 @@ function social_comment_field_info_alter(&$info) {
 /**
  * Implements hook_preprocess_pager().
  */
-function social_comment_preprocess_pager(&$variables) {
+function social_comment_preprocess_pager(array &$variables): void {
   $items = &$variables['items'];
   $pattern = '/%2C.$/';
 

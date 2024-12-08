@@ -289,9 +289,8 @@ function entity_access_by_field_field_widget_single_element_form_alter(array &$e
   // Do not check if visibility already set and user has access to override
   // this option because SM can change the visibility.
   if (
-    !$entity->get($field_name)
-    || (!$entity->get($field_name)->isEmpty()
-    && $account->hasPermission('override disabled public visibility'))
+    !$entity->get($field_name)->isEmpty()
+    && $account->hasPermission('override disabled public visibility')
   ) {
     return;
   }
@@ -376,5 +375,5 @@ function _entity_access_by_field_get_default_visibility(EntityInterface $entity)
     }
   }
 
-  return $default_visibility;
+  return (string) $default_visibility;
 }

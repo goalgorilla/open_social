@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -41,7 +42,7 @@ const SOCIAL_PROFILE_SUGGESTIONS_ALL = 'all';
 /**
  * Implements hook_field_widget_single_element_form_alter().
  */
-function social_profile_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_profile_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
   switch ($field_definition->getName()) {
@@ -92,7 +93,7 @@ function social_profile_field_widget_single_element_form_alter(&$element, FormSt
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_profile_form_profile_profile_add_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+function social_profile_form_profile_profile_add_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $user = \Drupal::currentUser();
   $profile_settings = \Drupal::config('social_profile.settings');
 
@@ -127,12 +128,14 @@ function social_profile_form_profile_profile_add_form_alter(array &$form, FormSt
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_profile_form_profile_profile_edit_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+function social_profile_form_profile_profile_edit_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $viewing_user = \Drupal::currentUser();
   $profile_settings = \Drupal::config('social_profile.settings');
 
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
   /** @var \Drupal\profile\Entity\Profile $profile */
-  $profile = $form_state->getFormObject()->getEntity();
+  $profile = $form_object->getEntity();
 
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
@@ -233,9 +236,11 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state interface.
  */
-function _social_profile_profile_edit_form_submit(array $form, FormStateInterface $form_state) {
+function _social_profile_profile_edit_form_submit(array $form, FormStateInterface $form_state): void {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
   /** @var \Drupal\profile\Entity\Profile $profile */
-  $profile = $form_state->getFormObject()->getEntity();
+  $profile = $form_object->getEntity();
 
   // Let's be on the safe side.
   if ($profile instanceof Profile) {
@@ -255,7 +260,7 @@ function _social_profile_profile_edit_form_submit(array $form, FormStateInterfac
 /**
  * Implements hook_local_tasks_alter().
  */
-function social_profile_local_tasks_alter(&$local_tasks) {
+function social_profile_local_tasks_alter(array &$local_tasks): void {
   // Remove the profile main "Profile information" from the local tabs.
   if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.main'])) {
     unset($local_tasks['entity.profile.user_profile_form:profile.type.main']);
@@ -268,7 +273,7 @@ function social_profile_local_tasks_alter(&$local_tasks) {
 /**
  * Implements hook_menu_local_tasks_alter().
  */
-function social_profile_menu_local_tasks_alter(&$data, $route_name) {
+function social_profile_menu_local_tasks_alter(array &$data, string $route_name): void {
   if (isset($data['tabs'][0]['profile.user_page:profile'])) {
     unset($data['tabs'][0]['profile.user_page:profile']);
   }
@@ -277,7 +282,7 @@ function social_profile_menu_local_tasks_alter(&$data, $route_name) {
 /**
  * Implements hook_preprocess_fieldset().
  */
-function social_profile_preprocess_fieldset(&$variables) {
+function social_profile_preprocess_fieldset(array &$variables): void {
   // Style our checkboxes as nested checkboxes.
   if (isset($variables['element']['#name']) && $variables['element']['#name'] === 'profile_tag') {
     $variables['attributes']['class'][] = 'checkboxes--nested';
@@ -287,13 +292,13 @@ function social_profile_preprocess_fieldset(&$variables) {
 /**
  * Implements hook_preprocess_input().
  */
-function social_profile_preprocess_input(&$variables) {
+function social_profile_preprocess_input(array &$variables): void {
   // Edit the profile tag displays to show the hierarchy to users.
   // Only do this if it starts with a - to indicate it's a child.
   if (
     !empty($variables['element']['#parents'])
     && $variables['element']['#parents'][0] === 'profile_tag'
-    && substr($variables['element']['#title'], 0, 1) === '-'
+    && str_starts_with($variables['element']['#title'], '-')
   ) {
     $variables['element']['#attributes']['class'][] = 'checkboxes--nested__child';
   }
@@ -302,13 +307,13 @@ function social_profile_preprocess_input(&$variables) {
 /**
  * Implements hook_preprocess_form_element_label().
  */
-function social_profile_preprocess_form_element_label(&$variables) {
+function social_profile_preprocess_form_element_label(array &$variables): void {
   // Edit the profile tag displays to show the hierarchy to users.
   // Only do this if it starts with a - to indicate it's a child.
   if (
     isset($variables['element']['#id'])
-    && substr($variables['element']['#id'], 0, 17) === 'edit-profile-tag-'
-    && substr($variables['element']['#title'], 0, 1) === '-'
+    && str_starts_with($variables['element']['#id'], 'edit-profile-tag-')
+    && str_starts_with($variables['element']['#title'], '-')
   ) {
     $variables['title']['#markup'] = substr($variables['title']['#markup'], 1);
   }
@@ -364,7 +369,7 @@ function social_profile_preprocess_field__field_profile_image(array &$variables)
  *   - profile: The profile object.
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
-function social_profile_preprocess_profile(array &$variables) {
+function social_profile_preprocess_profile(array &$variables): void {
   /** @var \Drupal\profile\Entity\Profile $profile */
   $profile = $variables['profile'];
   $user = User::load($profile->getOwnerId());
@@ -372,6 +377,10 @@ function social_profile_preprocess_profile(array &$variables) {
 
   // See social_user_user_format_name_alter(), DisplayName is either first name
   // + last name, or username if both first and last name aren't filled out.
+  if ($user === NULL) {
+    throw new \InvalidArgumentException('User not found.');
+  }
+
   $variables['profile_name'] = $user->getDisplayName();
   $variables['profile_contact_url'] = _social_profile_get_contact_url($user);
   $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
@@ -383,11 +392,10 @@ function social_profile_preprocess_profile(array &$variables) {
   $variables['profile_contact_label'] = 'profile_info';
   if (
     \Drupal::moduleHandler()->moduleExists('social_private_message') &&
-    $current_user->id() != $profile->getOwnerId() &&
+    $current_user->id() !== $profile->getOwnerId() &&
     $current_user->hasPermission('use private messaging system') &&
     $current_user->hasPermission('create private messages thread') &&
-    User::load($profile->getOwnerId())
-      ->hasPermission('use private messaging system')
+    $user->hasPermission('use private messaging system')
   ) {
     $variables['profile_contact_label'] = 'private_message';
     $variables['#cache']['contexts'][] = 'user';
@@ -423,8 +431,12 @@ function social_profile_preprocess_profile(array &$variables) {
     !empty($profile->get('field_profile_banner_image')->entity)
     && $profile->get('field_profile_banner_image')->access('view')
   ) {
-    $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
-      ?->buildUrl($profile->get('field_profile_banner_image')->entity->getFileUri());
+    // $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
+    //   ?->buildUrl($profile->get('field_profile_banner_image')->entity->getFileUri());
+
+    /** @var \Drupal\file\Entity\File $file */
+    $file = $profile->get('field_profile_banner_image')->entity;
+    $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')?->buildUrl((string) $file->getFileUri());
   }
 
   // Profile information URL.
@@ -434,10 +446,10 @@ function social_profile_preprocess_profile(array &$variables) {
   if ($variables['elements']['#view_mode'] === 'statistic') {
     /** @var \Drupal\social_profile\UserStatistics $user_statistics */
     $user_statistics = \Drupal::service('social_profile.user_statistics');
-    $variables['profile_topics'] = $user_statistics->nodeCount($user->id(), 'topic');
-    $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
+    $variables['profile_topics'] = $user_statistics->nodeCount((int) $user->id(), 'topic');
+    $variables['profile_events'] = $user_statistics->nodeCount((int) $user->id(), 'event');
     $variables['profile_groups'] = \Drupal::service('social_group.helper_service')
-      ->countGroupMembershipsForUser($user->id());
+      ->countGroupMembershipsForUser((string) $user->id());
   }
 
   /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
@@ -464,7 +476,7 @@ function social_profile_preprocess_profile(array &$variables) {
  * @return bool
  *   Return TRUE if current user is allowed to see the property else FALSE.
  */
-function _social_profile_check_property_access(Profile $profile, AccountProxyInterface $current_user, string $property) {
+function _social_profile_check_property_access(Profile $profile, AccountProxyInterface $current_user, string $property): bool {
   // Flag to set.
   $flag = FALSE;
   switch ($property) {
@@ -497,7 +509,7 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
       $global_show_lang = \Drupal::config('social_profile.settings')
         ->get('social_profile_show_language');
       $profile_show_lang = \Drupal::service('user.data')
-        ->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info') ?? FALSE;
+        ->get('social_profile_privacy', (int) $profile->get('uid')->target_id, 'lang_info') ?? FALSE;
 
       // If the current user doesn't have the above permission, perform
       // additional checks to see if the current user is still able to view
@@ -519,7 +531,7 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
  * @return \Drupal\Core\Url
  *   The URL to contact the user.
  */
-function _social_profile_get_contact_url(User $account) {
+function _social_profile_get_contact_url(User $account): Url {
   if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
     $current_user = \Drupal::currentUser();
     if ($current_user->hasPermission('use private messaging system') && $account->hasPermission('use private messaging system') && $current_user->id() != $account->id()) {
@@ -543,7 +555,7 @@ function _social_profile_get_contact_url(User $account) {
  *
  * In order to save a new default profile on user creation.
  */
-function social_profile_user_insert(UserInterface $account) {
+function social_profile_user_insert(UserInterface $account): void {
   // If the new account has a UID, we can create a default profile.
   // Default image is added through the field settings.
   if (!empty($account->id())) {
@@ -560,7 +572,7 @@ function social_profile_user_insert(UserInterface $account) {
       // Get all field instances for the profile entity and check if the address
       // field exists.
       $instances = \Drupal::service('entity_field.manager')
-        ->getFieldDefinitions('profile', $profile_type->id());
+        ->getFieldDefinitions('profile', (string) $profile_type->id());
       if (array_key_exists('field_profile_address', $instances)) {
         // Set the users default country to the site default country.
         $default_values['field_profile_address'][0]['country_code'] = \Drupal::config('system.date')
@@ -577,7 +589,7 @@ function social_profile_user_insert(UserInterface $account) {
 /**
  * Implements hook_form_FORM_ID_alter() for user_form().
  */
-function social_profile_form_user_form_alter(&$form, FormStateInterface $form_state) {
+function social_profile_form_user_form_alter(array &$form, FormStateInterface $form_state): void {
   $profile = _social_profile_get_profile_from_route();
 
   if ($profile instanceof Profile) {
@@ -605,7 +617,7 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
     $is_multilingual = \Drupal::languageManager()->isMultilingual();
     if ($is_multilingual) {
       $user_data = \Drupal::service('user.data');
-      $lang_info = $user_data->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info');
+      $lang_info = $user_data->get('social_profile_privacy', (int) $profile->get('uid')->target_id, 'lang_info');
       $global_values['social_profile_show_language'] = $social_profile_settings_config->get('social_profile_show_language');
       $form['profile_privacy']['social_profile_show_language'] = [
         '#type' => 'checkbox',
@@ -652,7 +664,7 @@ function _social_profile_form_user_form_submit(array $form, FormStateInterface $
       $profile->save();
     }
 
-    $uid = $profile->getOwnerId();
+    $uid = (int) $profile->getOwnerId();
 
     if (isset($profile_privacy['social_profile_show_language'])) {
       // Save language info in the user data.
@@ -675,8 +687,11 @@ function _social_profile_form_user_form_submit(array $form, FormStateInterface $
  *
  * @return mixed
  *   The profile or NULL if nothing could be found.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _social_profile_get_profile_from_route() {
+function _social_profile_get_profile_from_route(): mixed {
   $profile = NULL;
   $entity_type_manager = \Drupal::entityTypeManager();
 
@@ -687,7 +702,9 @@ function _social_profile_get_profile_from_route() {
       ->load($account);
   }
 
-  if (!empty($account)) {
+  /** @var \Drupal\Core\Session\AccountInterface|NULL $account */
+  if ($account !== NULL) {
+    /** @var \Drupal\profile\ProfileStorageInterface $storage */
     $storage = $entity_type_manager->getStorage('profile');
     $profile = $storage->loadByUser($account, 'profile');
   }
@@ -698,7 +715,7 @@ function _social_profile_get_profile_from_route() {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_profile_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_profile_form_user_register_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Set User Register form Email field as required.
   $form['account']['mail']['#required'] = TRUE;
 }
@@ -706,7 +723,7 @@ function social_profile_form_user_register_form_alter(&$form, FormStateInterface
 /**
  * Implements hook_ENTITY_TYPE_view_alter().
  */
-function social_profile_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+function social_profile_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
   $image_item = $build['field_profile_image'][0]['#item'] ?? NULL;
 
   // Image doesn't exists.
@@ -724,6 +741,7 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
   ) {
 
     // Try to load the profile picture.
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $image = $entity->get('field_profile_image')->entity;
 
     // Must have a value and not be NULL.
@@ -748,7 +766,7 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
 /**
  * Function to fetch the default profile image.
  */
-function social_profile_get_default_image() {
+function social_profile_get_default_image(): array {
   // Load default image.
   $config_factory = \Drupal::configFactory();
   $field_image_config = $config_factory->getEditable('field.field.profile.profile.field_profile_image');
@@ -761,11 +779,11 @@ function social_profile_get_default_image() {
   $file = array_pop($files);
   // Set in an array.
   $data = [
-    "id" => $file->id(),
+    "id" => $file?->id(),
     "width" => $default_image['width'],
     "height" => $default_image['height'],
   ];
-  // Retun the array.
+
   return $data;
 }
 
@@ -812,7 +830,7 @@ function social_profile_social_user_name_display_suggestions(AccountInterface $a
 /**
  * Hide timezone fields group label.
  */
-function _social_profile_form_pre_render($element) {
+function _social_profile_form_pre_render(array $element): array {
   $element['group_locale_settings']['timezone']['#title'] = NULL;
   return $element;
 }
@@ -820,7 +838,7 @@ function _social_profile_form_pre_render($element) {
 /**
  * Implements hook_entity_operation_alter().
  */
-function social_profile_entity_operation_alter(array &$operations, EntityInterface $entity) {
+function social_profile_entity_operation_alter(array &$operations, EntityInterface $entity): void {
   if ($entity->getEntityTypeId() === 'user') {
     if (isset($operations['edit'])) {
       $operations['edit']['title'] = t('Edit account');
@@ -838,7 +856,7 @@ function social_profile_entity_operation_alter(array &$operations, EntityInterfa
  *
  * Adds the "View my profile" and "Edit profile" link to the user menu.
  */
-function social_profile_social_user_account_header_account_links(array $context) {
+function social_profile_social_user_account_header_account_links(array $context): array {
   // We require a user for these links.
   if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
     return [];
@@ -875,7 +893,7 @@ function social_profile_social_user_account_header_account_links(array $context)
  *
  * Replaces the default user icon with the user's profile image if available.
  */
-function social_profile_social_user_account_header_items_alter(array &$menu_items, array $context) {
+function social_profile_social_user_account_header_items_alter(array &$menu_items, array $context): void {
   // If we don't have an account_box there's nothing to do.
   if (empty($menu_items['account_box'])) {
     return;
@@ -886,6 +904,7 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
     return;
   }
 
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
   $profile = $storage->loadByUser($context['user'], 'profile');
 
@@ -904,7 +923,7 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
 /**
  * Implements hook_ENTITY_TYPE_access().
  */
-function social_profile_profile_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function social_profile_profile_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
 
   $display_profile_teaser = FALSE;
   $route_match = \Drupal::service('current_route_match');
@@ -934,6 +953,8 @@ function social_profile_profile_access(EntityInterface $entity, $operation, Acco
   ) {
     return AccessResult::allowed();
   }
+
+  return AccessResult::neutral();
 }
 
 /**
@@ -941,7 +962,7 @@ function social_profile_profile_access(EntityInterface $entity, $operation, Acco
  *
  * Implements hook_block_access().
  */
-function social_profile_block_access(Block $block, $operation, AccountInterface $account) {
+function social_profile_block_access(Block $block, string $operation, AccountInterface $account): AccessResultInterface {
   if ($operation === 'view' && ($block->getPluginId() === 'views_exposed_filter_block:newest_users-page_newest_users')) {
     $access = AccessResult::forbidden();
     if (\Drupal::moduleHandler()->moduleExists('social_tagging')) {
@@ -961,7 +982,7 @@ function social_profile_block_access(Block $block, $operation, AccountInterface 
 /**
  * Implements hook_entity_form_display_alter().
  */
-function social_profile_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+function social_profile_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
   if ($form_display->id() === 'profile.profile.default') {
     $content = $form_display->get('content');
     if (isset($content['field_profile_profile_tag'])) {
@@ -974,7 +995,7 @@ function social_profile_entity_form_display_alter(EntityFormDisplayInterface $fo
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_profile_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_profile_form_taxonomy_overview_terms_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   if (\Drupal::service('social_profile.tag_service')->allowSplit()) {
     $storage = $form_state->getStorage();
     /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
@@ -989,11 +1010,12 @@ function social_profile_form_taxonomy_overview_terms_alter(&$form, FormStateInte
       // Hide Save button.
       $form['actions']['submit']['#access'] = FALSE;
 
-      // Remove tableDrag.
-      unset($form['terms']['#tabledrag']);
+      // Remove tableDrag and Weight column.
+      unset(
+        $form['terms']['#tabledrag'],
+        $form['terms']['#header'][1],
+      );
 
-      // Remove Weight column.
-      unset($form['terms']['#header'][1]);
     }
   }
 }
@@ -1001,14 +1023,14 @@ function social_profile_form_taxonomy_overview_terms_alter(&$form, FormStateInte
 /**
  * Implements hook_views_plugins_filter_alter().
  */
-function social_profile_views_plugins_filter_alter(array &$plugins) {
+function social_profile_views_plugins_filter_alter(array &$plugins): void {
   $plugins['search_api_term']['class'] = SocialSearchApiSplitProfileTerms::class;
 }
 
 /**
  * Implements hook_entity_base_field_info().
  */
-function social_profile_entity_base_field_info(EntityTypeInterface $entity_type) {
+function social_profile_entity_base_field_info(EntityTypeInterface $entity_type): array {
   $fields = [];
 
   // Check if we're dealing with the profile entity.
@@ -1027,7 +1049,7 @@ function social_profile_entity_base_field_info(EntityTypeInterface $entity_type)
  *
  * Set the correct profile name.
  */
-function social_profile_profile_presave(EntityInterface $profile) {
+function social_profile_profile_presave(EntityInterface $profile): void {
   if ($profile instanceof ProfileInterface) {
     /** @var \Drupal\social_profile\SocialProfileNameService $profile_name_service */
     $profile_name_service = \Drupal::service('social_profile.name_service');
@@ -1047,7 +1069,7 @@ function social_profile_profile_presave(EntityInterface $profile) {
 /**
  * Implements hook_social_core_default_main_menu_links_alter().
  */
-function social_profile_social_core_default_main_menu_links_alter(array &$links) {
+function social_profile_social_core_default_main_menu_links_alter(array &$links): void {
   $link = \Drupal::entityTypeManager()->getStorage('menu_link_content')
     ->loadByProperties([
       'title' => 'All members',
