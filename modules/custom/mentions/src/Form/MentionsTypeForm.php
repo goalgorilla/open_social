@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeRepositoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\ConfigFormBaseTrait;
@@ -18,7 +19,7 @@ use Drupal\Core\Entity\ContentEntityType;
  *
  * @package Drupal\mentiona\Form
  */
-class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface {
+class MentionsTypeForm extends EntityForm {
 
   use ConfigFormBaseTrait;
 
@@ -27,7 +28,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
    *
    * @var \Drupal\mentions\MentionsPluginManager
    */
-  protected $mentionsManager;
+  protected MentionsPluginManager $mentionsManager;
 
   /**
    * The entity type manager service.
@@ -41,7 +42,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
    *
    * @var \Drupal\Core\Entity\EntityTypeRepositoryInterface
    */
-  protected $entityTypeRepository;
+  protected EntityTypeRepositoryInterface $entityTypeRepository;
 
   /**
    * The module handler service.
@@ -63,7 +64,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('plugin.manager.mentions'),
       $container->get('entity_type.manager'),
@@ -75,7 +76,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'mentions.mentions_type',
     ];
@@ -84,34 +85,42 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'mentions_type_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $plugin_names = $this->mentionsManager->getPluginNames();
     $entity = $this->entity;
-    $inputsettings = $entity->get('input');
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $entity */
+    $input_settings = $entity->get('input');
     $entity_id = $entity->id();
-    $all_entitytypes = array_keys($this->entityTypeRepository->getEntityTypeLabels());
-    $candidate_entitytypes = [];
-    foreach ($all_entitytypes as $entity_type) {
-      $entitytype_info = $this->entityTypeManager->getDefinition($entity_type);
-      $configentityclassname = ContentEntityType::class;
-      $entitytype_type = get_class($entitytype_info);
-      if ($entitytype_type == $configentityclassname) {
-        $candidate_entitytypes[$entity_type] = $entitytype_info->getLabel()
-          ->getUntranslatedString();
-        $candidate_entitytypefields[$entity_type][$entitytype_info->getKey('id')] = $entitytype_info->getKey('id');
+    $all_entity_types = array_keys($this->entityTypeRepository->getEntityTypeLabels());
+    $candidate_entity_types = [];
+    foreach ($all_entity_types as $entity_type) {
+      $entity_type_info = $this->entityTypeManager->getDefinition($entity_type);
+      if ($entity_type_info === NULL) {
+        continue;
+      }
+
+      $config_entity_class_name = ContentEntityType::class;
+      $entity_type_type = get_class($entity_type_info);
+      if ($entity_type_type === $config_entity_class_name) {
+        $candidate_entity_label = $entity_type_info->getLabel();
+        if (!$candidate_entity_label instanceof TranslatableMarkup) {
+          continue;
+        }
+        $candidate_entity_types[$entity_type] = $candidate_entity_label->getUntranslatedString();
+        $candidate_entity_type_fields[$entity_type][$entity_type_info->getKey('id')] = $entity_type_info->getKey('id');
 
         if ($entity_type === 'user') {
-          $candidate_entitytypefields[$entity_type]['name'] = 'name';
+          $candidate_entity_type_fields[$entity_type]['name'] = 'name';
         }
         else {
-          $candidate_entitytypefields[$entity_type][$entitytype_info->getKey('label')] = $entitytype_info->getKey('label');
+          $candidate_entity_type_fields[$entity_type][$entity_type_info->getKey('label')] = $entity_type_info->getKey('label');
         }
       }
     }
@@ -165,7 +174,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
     $form['input']['entity_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Entity Type'),
-      '#options' => $candidate_entitytypes,
+      '#options' => $candidate_entity_types,
       '#default_value' => $entitytype_selection,
       '#ajax' => [
         'callback' => [$this, 'changeEntityTypeInForm'],
@@ -178,17 +187,17 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
       ],
     ];
 
-    if (!isset($candidate_entitytypefields)) {
+    if (!isset($candidate_entity_type_fields)) {
       $inputvalue_options = [];
     }
     elseif (isset($entitytype_selection)) {
-      $inputvalue_options = $candidate_entitytypefields[$entitytype_selection];
+      $inputvalue_options = $candidate_entity_type_fields[$entitytype_selection];
     }
     else {
-      $inputvalue_options = array_values($candidate_entitytypefields)[0];
+      $inputvalue_options = array_values($candidate_entity_type_fields)[0];
     }
 
-    $inputvalue_default_value = count($inputsettings) == 0 ? 0 : $inputsettings['inputvalue'];
+    $inputvalue_default_value = count($input_settings) == 0 ? 0 : $input_settings['inputvalue'];
 
     $form['input']['inputvalue'] = [
       '#type' => 'select',
@@ -246,7 +255,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
   /**
    * {@inheritdoc}
    */
-  protected function actions(array $form, FormStateInterface $form_state) {
+  protected function actions(array $form, FormStateInterface $form_state): array {
     $actions = parent::actions($form, $form_state);
     $actions['submit']['#value'] = $this->t('Save Mentions Type');
     return $actions;
@@ -255,7 +264,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
     $form_state->setRedirect('entity.mentions_type.list');
   }
@@ -263,12 +272,16 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
   /**
    * {@inheritdoc}
    */
-  public function changeEntityTypeInForm(array &$form, FormStateInterface $form_state) {
-    $entitytype_state = $form_state->getValue(['input', 'entity_type']);
-    $entitytype_info = $this->entityTypeManager->getDefinition($entitytype_state);
-    $id = $entitytype_info->getKey('id');
-    $label = $entitytype_info->getKey('label');
-    if ($entitytype_state == 'user') {
+  public function changeEntityTypeInForm(array &$form, FormStateInterface $form_state): mixed {
+    $entity_type_state = $form_state->getValue(['input', 'entity_type']);
+    $entity_type_info = $this->entityTypeManager->getDefinition($entity_type_state);
+    if ($entity_type_info === NULL) {
+      return $form['input']['inputvalue'];
+    }
+
+    $id = $entity_type_info->getKey('id');
+    $label = $entity_type_info->getKey('label');
+    if ($entity_type_state === 'user') {
       $label = 'name';
     }
     unset($form['input']['inputvalue']['#options']);

@@ -265,11 +265,13 @@ function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     $account_uid = \Drupal::routeMatch()->getParameter('user');
     $current_uid = \Drupal::currentUser()->id();
     if ($view->exposed_raw_input['status'] === NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
-      $query->where[1]['conditions'][] = [
-        'field' => 'node_field_data.status',
-        'value' => NodeInterface::PUBLISHED,
-        'operator' => '=',
-      ];
+      /** @var \Drupal\views\Plugin\views\query\Sql $query */
+      $query->addWhere(
+        1,
+        'node_field_data.status',
+        NodeInterface::PUBLISHED,
+        '='
+      );
     }
   }
 }
@@ -576,7 +578,7 @@ function social_event_node_insert(NodeInterface $node): void {
  */
 function social_event_social_core_node_published(EntityInterface $entity): void {
   // When a node of type `event` is published, dispatch the proper EDA event.
-  if ($entity instanceof NodeInterface && $entity->bundle() == 'event') {
+  if ($entity instanceof NodeInterface && $entity->bundle() === 'event') {
     \Drupal::service('social_event.eda_handler')->eventPublish($entity);
   }
 }
@@ -586,7 +588,7 @@ function social_event_social_core_node_published(EntityInterface $entity): void 
  */
 function social_event_social_core_node_unpublished(EntityInterface $entity): void {
   // When a node of type `event` is unpublished, dispatch the proper EDA event.
-  if ($entity instanceof NodeInterface && $entity->bundle() == 'event') {
+  if ($entity instanceof NodeInterface && $entity->bundle() === 'event') {
     \Drupal::service('social_event.eda_handler')->eventUnpublish($entity);
   }
 }

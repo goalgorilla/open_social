@@ -70,7 +70,7 @@ class RestrictedNameProcessor extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function preIndexSave() {
+  public function preIndexSave(): void {
     $datasources = $this->getIndex()->getDatasources();
 
     // Ensure that we have our "Restricted Name" field for all our supported
@@ -85,7 +85,7 @@ class RestrictedNameProcessor extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function addFieldValues(ItemInterface $item) {
+  public function addFieldValues(ItemInterface $item): void {
     $restricted_name = NULL;
 
     $nickname = $this->getFirstItemField($item, 'field_profile_nick_name');
@@ -126,7 +126,7 @@ class RestrictedNameProcessor extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function preprocessSearchQuery(QueryInterface $query) {
+  public function preprocessSearchQuery(QueryInterface $query): void {
     $config = \Drupal::config('social_profile_privacy.settings');
     $account = \Drupal::currentUser();
 

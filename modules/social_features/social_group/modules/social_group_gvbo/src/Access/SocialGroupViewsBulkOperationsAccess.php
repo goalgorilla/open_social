@@ -6,6 +6,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\views_bulk_operations\Access\ViewsBulkOperationsAccess;
+use Symfony\Component\Routing\Route;
 
 /**
  * Defines VBO module access rules.
@@ -22,6 +23,10 @@ class SocialGroupViewsBulkOperationsAccess extends ViewsBulkOperationsAccess {
     ];
 
     $route = $routeMatch->getRouteObject();
+    if (!$route instanceof Route) {
+      // Deny access if the route object is not available.
+      return AccessResult::forbidden();
+    }
 
     foreach ($parameters as $key => $value) {
       $route->setDefault($key, $value);
@@ -29,7 +34,7 @@ class SocialGroupViewsBulkOperationsAccess extends ViewsBulkOperationsAccess {
 
     $parameters = $parameters + $routeMatch->getParameters()->all();
 
-    $routeMatch = new RouteMatch($routeMatch->getRouteName(), $route, $parameters, $parameters);
+    $routeMatch = new RouteMatch((string) $routeMatch->getRouteName(), $route, $parameters, $parameters);
 
     return parent::access($account, $routeMatch);
   }

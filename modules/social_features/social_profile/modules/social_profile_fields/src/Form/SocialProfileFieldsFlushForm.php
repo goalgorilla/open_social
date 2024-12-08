@@ -5,6 +5,7 @@ namespace Drupal\social_profile_fields\Form;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\field\FieldConfigStorage;
 use Drupal\profile\ProfileStorage;
@@ -19,14 +20,14 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
 
 
   /**
-   * Profilestorage.
+   * Profile storage.
    *
    * @var \Drupal\profile\ProfileStorage
    */
-  protected $profileStorage;
+  protected ProfileStorage $profileStorage;
 
   /**
-   * Configstorage.
+   * Config storage.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
@@ -34,24 +35,24 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
 
 
   /**
-   * Fiekdconfigstorage.
+   * Field config storage.
    *
    * @var \Drupal\field\FieldConfigStorage
    */
-  protected $fieldStorage;
+  protected FieldConfigStorage $fieldStorage;
 
   /**
    * Constructs a new ExportUserConfirm.
    *
-   * @param \Drupal\profile\ProfileStorage $profiel_storage
+   * @param \Drupal\profile\ProfileStorage $profile_storage
    *   The profile storage.
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The config.
    * @param \Drupal\field\FieldConfigStorage $field_storage
    *   The field storage.
    */
-  public function __construct(ProfileStorage $profiel_storage, ConfigFactory $config_factory, FieldConfigStorage $field_storage) {
-    $this->profileStorage = $profiel_storage;
+  public function __construct(ProfileStorage $profile_storage, ConfigFactory $config_factory, FieldConfigStorage $field_storage) {
+    $this->profileStorage = $profile_storage;
     $this->configFactory = $config_factory;
     $this->fieldStorage = $field_storage;
   }
@@ -59,7 +60,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('entity_type.manager')->getStorage('profile'),
       $container->get('config.factory'),
@@ -70,35 +71,35 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_profile_fields_flush_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getQuestion() {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t('Flush profile.');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCancelUrl() {
+  public function getCancelUrl(): Url {
     return new Url('social_profile_fields.settings');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText() {
+  public function getConfirmText(): TranslatableMarkup {
     return $this->t('Yes, continue');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $pids = \Drupal::entityQuery('profile')
       ->condition('type', 'profile')
       ->execute();
@@ -123,7 +124,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getDescription() {
+  public function getDescription(): TranslatableMarkup {
 
     $fields = $this->getUnselectedFields();
     $field_string = implode(', ', $fields);
@@ -137,7 +138,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    * @return array
    *   An array of field names.
    */
-  protected function getUnselectedFields() {
+  protected function getUnselectedFields(): array {
     $profile_fields = $this->fieldStorage->loadByProperties(['entity_type' => 'profile', 'bundle' => 'profile']);
     $settings = $this->configFactory->get('social_profile_fields.settings');
     $empty = [];
@@ -147,32 +148,32 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
       $setting_id = str_replace('.', '_', $key);
       $sval = $settings->get($setting_id);
 
-      if (isset($sval) && $sval == FALSE) {
+      if (isset($sval) && $sval === FALSE) {
         $empty[] = $value->getName();
       }
 
       if ($setting_id === 'profile_profile_field_profile_address') {
-        if (isset($sval) && $sval == FALSE) {
+        if (isset($sval) && $sval === FALSE) {
           $empty[] = 'country';
         }
 
         $city_val = $settings->get('profile_address_field_city');
-        if (isset($city_val) && $city_val == FALSE) {
+        if (isset($city_val) && $city_val === FALSE) {
           $empty[] = 'locality';
         }
 
         $address_val = $settings->get('profile_address_field_address');
-        if (isset($address_val) && $address_val == FALSE) {
+        if (isset($address_val) && $address_val === FALSE) {
           $empty[] = 'addressLine1';
         }
 
-        $postalcode_val = $settings->get('profile_address_field_postalcode');
-        if (isset($postalcode_val) && $postalcode_val == FALSE) {
+        $postal_code_val = $settings->get('profile_address_field_postalcode');
+        if (isset($postal_code_val) && $postal_code_val === FALSE) {
           $empty[] = 'postalCode';
         }
 
-        $administrativearea_val = $settings->get('profile_address_field_administrative_area');
-        if (isset($administrativearea_val) && $administrativearea_val == FALSE) {
+        $administrative_area_val = $settings->get('profile_address_field_administrative_area');
+        if (isset($administrative_area_val) && $administrative_area_val === FALSE) {
           $empty[] = 'administrativeArea';
         }
       }

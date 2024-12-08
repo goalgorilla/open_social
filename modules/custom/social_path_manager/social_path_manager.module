@@ -17,7 +17,7 @@ use Drupal\group\Entity\GroupType;
 /**
  * Implements hook_form_alter().
  */
-function social_path_manager_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_path_manager_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $social_group_types = _social_path_manager_group_types();
 
   $group_forms = [
@@ -47,9 +47,13 @@ function social_path_manager_form_alter(&$form, FormStateInterface $form_state, 
   // Add custom validation function.
   // This is only applicable on all content entities which has field
   // 'path' in the form.
-  if ($form_state->getFormObject() instanceof EntityFormInterface
-    && $form_state->getFormObject()->getEntity() instanceof ContentEntityInterface
-  ) {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  if (!$form_object instanceof EntityFormInterface) {
+    return;
+  }
+  $entity = $form_object->getEntity();
+  if( $entity instanceof ContentEntityInterface) {
     $form['#validate'][] = "_social_path_manager_path_alias_validate";
   }
 }
@@ -108,7 +112,7 @@ function _social_path_manager_path_alias_validate(array $form, FormStateInterfac
 
   // Check if the path starts with any of the reserved prefixes.
   foreach ($reserved_paths as $reserved) {
-    if (strpos($normalized_path, $reserved) === 0) {
+    if (str_starts_with($normalized_path, $reserved)) {
       $form_state->setErrorByName(
         'path',
         t(
@@ -126,7 +130,7 @@ function _social_path_manager_path_alias_validate(array $form, FormStateInterfac
 /**
  * Implements hook_module_implements_alter().
  */
-function social_path_manager_module_implements_alter(&$implementations, $hook) {
+function social_path_manager_module_implements_alter(array &$implementations, string $hook): void {
   if ($hook === 'form_alter') {
     $group = $implementations['social_path_manager'];
     unset($implementations['social_path_manager']);
@@ -137,28 +141,28 @@ function social_path_manager_module_implements_alter(&$implementations, $hook) {
 /**
  * Implements hook_entity_insert().
  */
-function social_path_manager_entity_insert(EntityInterface $entity) {
+function social_path_manager_entity_insert(EntityInterface $entity): void {
   _social_path_manager_update_alias($entity, 'create');
 }
 
 /**
  * Implements hook_entity_update().
  */
-function social_path_manager_entity_update(EntityInterface $entity) {
+function social_path_manager_entity_update(EntityInterface $entity): void {
   _social_path_manager_update_alias($entity, 'update');
 }
 
 /**
  * Implements hook_entity_delete().
  */
-function social_path_manager_entity_delete(EntityInterface $entity) {
+function social_path_manager_entity_delete(EntityInterface $entity): void {
   _social_path_manager_update_alias($entity, 'delete');
 }
 
 /**
  * Implements hook_batch_alter().
  */
-function social_path_manager_batch_alter(&$batch) {
+function social_path_manager_batch_alter(array &$batch): void {
   if (!isset($batch['source_url'])) {
     return;
   }
@@ -188,7 +192,7 @@ function social_path_manager_batch_alter(&$batch) {
  *
  * @throws \Exception
  */
-function _social_path_manager_update_group_tab_aliases($id, $action) {
+function _social_path_manager_update_group_tab_aliases(int|string $id, string $action): void {
   $group_ids = array_keys(\Drupal::entityQuery('group')->accessCheck()->execute());
   $created = 0;
 
@@ -208,7 +212,7 @@ function _social_path_manager_update_group_tab_aliases($id, $action) {
  * @return array
  *   List of group types.
  */
-function _social_path_manager_group_types() {
+function _social_path_manager_group_types(): array {
   $types = &drupal_static(__FUNCTION__);
   if (!isset($types)) {
     $types = [];
@@ -230,7 +234,7 @@ function _social_path_manager_group_types() {
  * @return array
  *   Array of group tabs.
  */
-function _social_path_manager_group_tabs() {
+function _social_path_manager_group_tabs(): array {
   $tabs = &drupal_static(__FUNCTION__);
   if (!isset($tabs)) {
     /** @var \Drupal\Core\Menu\LocalTaskManager $taskManager */
@@ -254,10 +258,10 @@ function _social_path_manager_group_tabs() {
 /**
  * Implements hook_social_path_manager_group_tabs_alter().
  */
-function social_path_manager_social_path_manager_group_tabs_alter(array &$tabs) {
+function social_path_manager_social_path_manager_group_tabs_alter(array &$tabs): void {
   foreach ($tabs as $key => $route) {
     // Only allow tabs that are part of the group.
-    if (strpos($key, 'layout_builder') !== FALSE) {
+    if (str_contains($key, 'layout_builder')) {
       unset($tabs[$key]);
     }
   }
@@ -274,7 +278,7 @@ function social_path_manager_social_path_manager_group_tabs_alter(array &$tabs) 
  * @return string
  *   The url suffix of the tab.
  */
-function _social_path_manager_get_path_suffix(GroupInterface $group, $route) {
+function _social_path_manager_get_path_suffix(GroupInterface $group, string $route): string {
   $url = Url::fromRoute($route, ['group' => $group->id()]);
 
   // Get the last part of the url.
@@ -295,24 +299,26 @@ function _social_path_manager_get_path_suffix(GroupInterface $group, $route) {
  *
  * @throws \Exception
  */
-function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk = FALSE) {
+function _social_path_manager_update_alias(EntityInterface $entity, string $op, bool $bulk = FALSE): void {
   if ($entity->getEntityTypeId() === 'group') {
+    /** @var \Drupal\group\Entity\GroupInterface $entity */
     switch ($op) {
       case 'all':
       case 'update':
       case 'create':
-        /** @var \Drupal\Core\Path\AliasManager $pam */
+        /** @var \Drupal\path_alias\AliasManager $pam */
         $pam = \Drupal::service('path_alias.manager');
 
         // If disabled generate automatic link.
-        if (
-          !$entity->get('path')->pathauto &&
-          $entity->get('path')->alias
-        ) {
+        /** @var \Drupal\path\Plugin\Field\FieldType\PathItem|null $path_item */
+        $path_item = $entity->get('path')->first();
+        $alias = $path_item?->get('alias')->getValue();
+        $pathauto = $path_item?->get('pathauto')->getValue();
+
+        if (!$pathauto && $alias) {
           $path = $entity->get('path')->getValue()[0];
         }
         else {
-          // If it's a bulk generate then get the alias by path.
           if ($bulk === TRUE) {
             $url = Url::fromRoute('entity.group.canonical', ['group' => $entity->id()]);
             $url = $url->getInternalPath();
@@ -330,6 +336,7 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
         // If yes, then change all the other views.
         if (!empty($path)) {
           foreach (_social_path_manager_group_tabs() as $route) {
+
             $suffix = _social_path_manager_get_path_suffix($entity, $route);
             $entity_language = $entity->language()->getId();
 
@@ -393,7 +400,7 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_path_manager_preprocess_block(&$variables) {
+function social_path_manager_preprocess_block(array &$variables): void {
   /** @var \Drupal\node\Entity\Node $node */
   $node = \Drupal::routeMatch()->getParameter('node');
 

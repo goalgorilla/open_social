@@ -4,7 +4,7 @@ namespace Drupal\activity_send\Plugin;
 
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_creator\Plugin\ActivityDestinationBase;
-use Drupal\user\Entity\User;
+use Drupal\social_user\Entity\User;
 
 /**
  * Base class for Activity send destination plugins.
@@ -167,7 +167,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @param \Drupal\activity_creator\Entity\Activity $activity
    *   The activity entity.
    *
-   * @return \Drupal\user\Entity\User|null
+   * @return \Drupal\social_user\Entity\User|null
    *   The target user account object.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
@@ -180,7 +180,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
       && !empty($activity->get('field_activity_recipient_user')->target_id)
     ) {
       $target_id = $activity->get('field_activity_recipient_user')->target_id;
-      /** @var \Drupal\user\Entity\User $target_account */
+      /** @var User $target_account */
       $target_account = \Drupal::entityTypeManager()
         ->getStorage('user')
         ->load($target_id);
@@ -217,7 +217,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
   /**
    * Check if user last activity was more than few minutes ago.
    *
-   * @param \Drupal\user\Entity\User $account
+   * @param \Drupal\social_user\Entity\User $account
    *   The account to check.
    *
    * @return bool

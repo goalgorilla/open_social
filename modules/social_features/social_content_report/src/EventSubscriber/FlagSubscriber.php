@@ -4,6 +4,9 @@ namespace Drupal\social_content_report\EventSubscriber;
 
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EditorialContentEntityBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -25,21 +28,21 @@ class FlagSubscriber implements EventSubscriberInterface {
    *
    * @var bool
    */
-  protected $unpublishImmediately;
+  protected bool $unpublishImmediately;
 
   /**
    * The Messenger service.
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  protected $messenger;
+  protected MessengerInterface $messenger;
 
   /**
    * The Cache tags invalidator service.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheInvalidator;
 
   /**
    * The content report service.
@@ -75,7 +78,7 @@ class FlagSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events = [];
     $events[FlagEvents::ENTITY_FLAGGED][] = ['onFlag'];
     return $events;
@@ -90,7 +93,7 @@ class FlagSubscriber implements EventSubscriberInterface {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function onFlag(FlaggingEvent $event) {
+  public function onFlag(FlaggingEvent $event): void {
     $flagging = $event->getFlagging();
 
     if (!in_array($flagging->getFlagId(), $this->socialContentReport->getReportFlagTypes())) {
@@ -107,7 +110,8 @@ class FlagSubscriber implements EventSubscriberInterface {
     // Do nothing unless we need to unpublish the entity immediately.
     if ($this->unpublishImmediately) {
       try {
-        $entity->setPublished(FALSE);
+        /** @var ContentEntityInterface $entity */
+        $entity->set('status', 0);
         $entity->save();
         $invalidated = TRUE;
       }

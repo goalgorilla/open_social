@@ -14,7 +14,7 @@ use Drupal\user\RoleInterface;
  *
  * Perform actions related to the installation of social_topic.
  */
-function social_topic_install() {
+function social_topic_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,

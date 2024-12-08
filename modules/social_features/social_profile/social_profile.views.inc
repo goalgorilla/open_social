@@ -8,7 +8,7 @@
 /**
  * Implements hook_views_data_alter().
  */
-function social_profile_views_data_alter(array &$data) {
+function social_profile_views_data_alter(array &$data): void {
   $data['profile']['profile_entity_sortable'] = [
     'title' => t('Sort by profile entity'),
     'field' => [

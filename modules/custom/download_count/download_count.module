@@ -16,18 +16,19 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Implements hook_help().
  */
-function download_count_help($route_name, RouteMatchInterface $route_match) {
+function download_count_help(string $route_name, RouteMatchInterface $route_match): string {
   switch ($route_name) {
     case 'help.page.download_count':
       return '<p>' . t('Counts file downloads for private core file fields and
       logs a message to the watchdog table.') . '</p>';
   }
+  return '';
 }
 
 /**
  * Implements hook_ENTITY_TYPE_access().
  */
-function download_count_file_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function download_count_file_access(EntityInterface $entity, string $operation, AccountInterface $account): void {
   if ($operation === 'download') {
     $flood = \Drupal::flood();
     $config = \Drupal::config('download_count.settings');
@@ -48,7 +49,8 @@ function download_count_file_access(EntityInterface $entity, $operation, Account
 
     // Validate file has extension that should be counted, if not return.
     $extensions = explode(' ', mb_strtolower(trim($config->get('download_count_excluded_file_extensions') ?? "")));
-    $extension = mb_strtolower(pathinfo($entity->getFilename(), PATHINFO_EXTENSION));
+    /** @var \Drupal\file\FileInterface $entity */
+    $extension = mb_strtolower(pathinfo((string) $entity->getFilename(), PATHINFO_EXTENSION));
     if (in_array($extension, $extensions, TRUE)) {
       return;
     }
@@ -61,11 +63,12 @@ function download_count_file_access(EntityInterface $entity, $operation, Account
     $ip = Drupal::request()->getClientIp();
     $referrer = $_SERVER['HTTP_REFERER'] ?? t('Direct download');
     // Get the entity type and entity id of file parent.
-    $file_usage_data = \Drupal::database()->select('file_usage', 'fu')
+    /** @var \Drupal\Core\Database\StatementInterface $result */
+    $result = Drupal::database()->select('file_usage', 'fu')
       ->fields('fu', ['id', 'type'])
       ->condition('fid', $entity->id())
-      ->execute()
-      ->fetchAssoc();
+      ->execute();
+    $file_usage_data = $result->fetchAssoc();
 
     if (!empty($file_usage_data) && is_array($file_usage_data)) {
       $connection = Database::getConnection();
@@ -89,8 +92,8 @@ function download_count_file_access(EntityInterface $entity, $operation, Account
 /**
  * Implements hook_theme().
  */
-function download_count_theme() {
-  $theme = [
+function download_count_theme(): array {
+  return [
     'download_count_file_field_formatter' => [
       'variables' => [
         'file' => NULL,
@@ -105,5 +108,4 @@ function download_count_theme() {
       ],
     ],
   ];
-  return $theme;
 }

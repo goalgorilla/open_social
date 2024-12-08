@@ -47,7 +47,7 @@ class PushManager extends DefaultPluginManager {
   /**
    * {@inheritdoc}
    */
-  public function getDefinitions() {
+  public function getDefinitions(): ?array {
     $definitions = parent::getDefinitions();
 
     uasort($definitions, function ($a, $b) {
@@ -65,7 +65,7 @@ class PushManager extends DefaultPluginManager {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public static function submitForm(array $form, FormStateInterface $form_state) {
+  public static function submitForm(array $form, FormStateInterface $form_state): void {
     /** @var \Drupal\Component\Plugin\PluginManagerInterface $service */
     $service = \Drupal::service('plugin.manager.push');
 

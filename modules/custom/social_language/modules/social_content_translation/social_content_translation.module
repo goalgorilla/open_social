@@ -12,22 +12,32 @@ use Drupal\Core\Render\Element;
 /**
  * Implements hook_form_alter().
  */
-function social_content_translation_form_alter(&$form, FormStateInterface $form_state) {
+function social_content_translation_form_alter(array &$form, FormStateInterface $form_state): void {
   // We need to set correct default value for "langcode" as users can
-  // create content in different then default language.
+  // create content in different from default language.
   if (method_exists($form_state->getFormObject(), 'getEntity')) {
-    $entity = $form_state->getFormObject()->getEntity();
-    if ($entity instanceof ContentEntityInterface) {
-      // We need to set "langcode" only to new values
-      // and if user doesn't set it manually with UI.
-      if ($entity->isNew()) {
-        if (!empty($form['langcode']) && !Element::isVisibleElement($form['langcode'])) {
-          if (isset($form['langcode']['widget'][0]['value']['#default_value'])) {
-            $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
-            $form['langcode']['widget'][0]['value']['#default_value'] = $language;
-          }
-        }
-      }
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
+    $entity = $form_object->getEntity();
+
+    if (!$entity instanceof ContentEntityInterface) {
+      return;
     }
+
+    if (!$entity->isNew()) {
+      return;
+    }
+
+    if (empty($form['langcode']) || Element::isVisibleElement($form['langcode'])) {
+      return;
+    }
+
+    if (!isset($form['langcode']['widget'][0]['value']['#default_value'])) {
+      return;
+    }
+
+    $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    $form['langcode']['widget'][0]['value']['#default_value'] = $language;
+
   }
 }

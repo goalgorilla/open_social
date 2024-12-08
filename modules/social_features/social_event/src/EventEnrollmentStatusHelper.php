@@ -2,7 +2,10 @@
 
 namespace Drupal\social_event;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -21,28 +24,28 @@ class EventEnrollmentStatusHelper {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * Configuration factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * EventInvitesAccess constructor.
@@ -68,15 +71,15 @@ class EventEnrollmentStatusHelper {
    *
    * @param string $user
    *   The email or userid you want to check on.
-   * @param int $event
+   * @param int|NULL $event
    *   The event id you want to check on, use 0 for all.
-   * @param int $invite_status
+   * @param int|NULL $invite_status
    *   The event status to filter on.
    *
    * @return array
    *   Returns the conditions for which to search event enrollments on.
    */
-  public function userEnrollments($user, $event, $invite_status = NULL) {
+  public function userEnrollments(string $user, int|NULL $event = NULL, int|NULL $invite_status = NULL): array {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
     $nid = $this->routeMatch->getRawParameter('node');
@@ -118,13 +121,13 @@ class EventEnrollmentStatusHelper {
    *
    * @param int $event
    *   The event id you want to check on.
-   * @param int $invite_status
+   * @param int|NULL $invite_status
    *   The event status to filter on.
    *
    * @return array
    *   Returns the conditions for which to search event enrollments on.
    */
-  public function eventEnrollments($event, $invite_status = NULL) {
+  public function eventEnrollments(int $event, int|NULL $invite_status = NULL): array {
     $nid = $this->routeMatch->getRawParameter('node');
 
     if ($event) {
@@ -132,30 +135,31 @@ class EventEnrollmentStatusHelper {
     }
 
     // If there is no trigger get the enrollment for the current user.
-    $conditions = [
+    return [
       'field_event' => $nid,
       'field_request_or_invite_status' => EventEnrollmentInterface::INVITE_PENDING_REPLY,
     ];
-
-    return $conditions;
   }
 
   /**
-   * Custom check to see if a user has enrollments.
+   * Get all enrollments for a user.
    *
    * @param string $user
-   *   The email or userid you want to check on.
-   *
-   * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
-   *   Returns all the enrollments for a user.
+   *  The email or userid you want to check on.
+   * @return EntityInterface[]
+   *  Returns all enrollments for a user.
    */
-  public function getAllUserEventEnrollments($user) {
+  public function getAllUserEventEnrollments(string $user): array {
     $conditions = $this->userEnrollments($user, NULL);
 
     unset($conditions['field_event']);
 
-    return $this->entityTypeManager->getStorage('event_enrollment')
-      ->loadByProperties($conditions);
+    try {
+      return $this->entityTypeManager->getStorage('event_enrollment')
+        ->loadByProperties($conditions);
+    } catch (InvalidPluginDefinitionException|PluginNotFoundException $e) {
+     return [];
+    }
   }
 
   /**
@@ -171,7 +175,7 @@ class EventEnrollmentStatusHelper {
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   Returns a specific event enrollment for a user.
    */
-  public function getEventEnrollments($user, $event, $ignore_all_status = FALSE) {
+  public function getEventEnrollments(string $user, int $event, bool $ignore_all_status = FALSE): array {
     $conditions = $this->userEnrollments($user, $event);
 
     // If the $ignore_all_status parameter is TRUE, and we have the field

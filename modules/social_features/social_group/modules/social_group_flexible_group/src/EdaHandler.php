@@ -171,6 +171,9 @@ final class EdaHandler {
       $status = $group->get('status')->value ? 'published' : 'unpublished';
     }
 
+    /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem|NULL $field_group_address */
+    $field_group_address = $group->get('field_group_address')->first();
+
     return new CloudEvent(
       id: $this->uuid->generate(),
       source: $this->source,
@@ -190,7 +193,7 @@ final class EdaHandler {
           type: $group->getGroupType()->get('uuid'),
           author: User::fromEntity($group->get('uid')->entity),
           address: Address::fromFieldItem(
-            item: $group->get('field_group_address')->first(),
+            item: $field_group_address,
             label: $group->get('field_group_location')->value
           ),
           href: Href::fromEntity($group),

@@ -24,7 +24,7 @@ class UpdateEnrollRequestController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The current user.
@@ -49,7 +49,7 @@ class UpdateEnrollRequestController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('request_stack'),
       $container->get('current_user')
@@ -99,7 +99,7 @@ class UpdateEnrollRequestController extends ControllerBase {
     $event_enrollment->save();
 
     // Get the redirect destination we're given in the request for the response.
-    $destination = $this->requestStack->getCurrentRequest()->query->get('destination');
+    $destination = $this->requestStack->getCurrentRequest()?->query->get('destination');
     assert(is_string($destination), new \InvalidArgumentException());
     return new RedirectResponse($destination);
   }

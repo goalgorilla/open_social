@@ -45,7 +45,7 @@ class CommentAttachmentsQueryHelper extends ConnectionQueryHelperBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Create a new connection query helper.
@@ -75,7 +75,7 @@ class CommentAttachmentsQueryHelper extends ConnectionQueryHelperBase {
     $query->addField('fu', 'fid');
     $query->condition('id', $this->entity->id());
     $query->condition('type', $this->entity->getEntityTypeId());
-    $fids = $query->execute()->fetchCol();
+    $fids = $query->execute()?->fetchCol();
 
     return $this->entityTypeManager->getStorage('file')
       ->getQuery()
@@ -142,7 +142,7 @@ class CommentAttachmentsQueryHelper extends ConnectionQueryHelperBase {
         return array_map(
           fn (File $entity) => new Edge(
             $entity,
-            new Cursor('file', $entity->id(), $this->sortKey, $this->getSortValue($entity))
+            new Cursor('file', (int) $entity->id(), $this->sortKey, $this->getSortValue($entity))
           ),
           $callback()
         );

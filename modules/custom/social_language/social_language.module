@@ -13,7 +13,7 @@ use Drupal\Core\Url;
 /**
  * Implements hook_language_switch_links_alter().
  */
-function social_language_language_switch_links_alter(array &$links, $type, Url $url) {
+function social_language_language_switch_links_alter(array &$links, string $type, Url $url): void {
   $currentLangcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
 
   foreach ($links as $langcode => &$link) {
@@ -26,7 +26,7 @@ function social_language_language_switch_links_alter(array &$links, $type, Url $
 /**
  * Implements hook_form_alter().
  */
-function social_language_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_language_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Move the fields to group_settings.
   if (isset($form['#fieldgroups']['group_settings'])) {
     // As translation form fields are added directly to forms bypassing
@@ -50,8 +50,7 @@ function social_language_form_alter(&$form, FormStateInterface $form_state, $for
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_language_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  /** @var \Drupal\Core\Config\ImmutableConfig $language_types */
+function social_language_form_user_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $language_negotiations = \Drupal::configFactory()->get('language.types')->get('negotiation');
 
   // Show the preferred language field only when the user language negotiation
@@ -89,7 +88,7 @@ function social_language_entity_operation_alter(array &$operations, EntityInterf
 /**
  * Implements hook_field_group_form_process_alter().
  */
-function social_language_field_group_form_process_alter(array &$element, &$group, &$complete_form) {
+function social_language_field_group_form_process_alter(array &$element, mixed &$group, array  &$complete_form): void {
   // Prevent \Drupal\content_translation\ContentTranslationHandler::addTranslatabilityClue()
   // from adding an incorrect suffix to the field group title.
   $element['#multilingual'] = TRUE;
@@ -98,7 +97,7 @@ function social_language_field_group_form_process_alter(array &$element, &$group
 /**
  * Implements hook_modules_installed().
  */
-function social_language_modules_installed($modules) {
+function social_language_modules_installed(array $modules): void {
   // When "Content Translation" module enabled, it provides few additional
   // fields for translated entities. After fields are added, Drupal requires
   // these fields definitions to be updated. Technically this is proceeded

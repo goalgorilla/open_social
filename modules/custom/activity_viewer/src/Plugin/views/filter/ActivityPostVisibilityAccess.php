@@ -24,7 +24,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $groupHelper;
+  protected SocialGroupHelperService $groupHelper;
 
   /**
    * The route match interface.
@@ -63,7 +63,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration, $plugin_id, $plugin_definition,
       $container->get('social_group.helper_service'),
@@ -95,6 +95,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    * See https://www.drupal.org/node/777578
    */
   public function query():void {
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    $query = $this->query;
     $account = $this->view->getUser();
 
     if ($this->moduleHandler->moduleExists('social_group')) {
@@ -110,8 +112,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $groups_unique = array_unique($groups);
 
     // Add tables and joins.
-    $this->query->addTable('activity__field_activity_recipient_group');
-    $this->query->addTable('activity__field_activity_entity');
+    $query->addTable('activity__field_activity_recipient_group');
+    $query->addTable('activity__field_activity_entity');
 
     $configuration = [
       'left_table' => 'activity__field_activity_entity',
@@ -126,9 +128,10 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
         ],
       ],
     ];
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')
       ->createInstance('standard', $configuration);
-    $this->query->addRelationship('post', $join, 'activity__field_activity_entity');
+    $query->addRelationship('post', $join, 'activity__field_activity_entity');
 
     $configuration = [
       'left_table' => 'post',
@@ -137,9 +140,10 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       'field' => 'entity_id',
       'operator' => '=',
     ];
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')
       ->createInstance('standard', $configuration);
-    $this->query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
+    $query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
 
     // Join group content table.
     $configuration = [
@@ -155,9 +159,10 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
         ],
       ],
     ];
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')
       ->createInstance('standard', $configuration);
-    $this->query->addRelationship('group_content', $join, 'group_content');
+    $query->addRelationship('group_content', $join, 'group_content');
 
     // Join node table(s).
     $configuration = [
@@ -173,15 +178,17 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
         ],
       ],
     ];
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')
       ->createInstance('standard', $configuration);
-    $this->query->addRelationship('node_access', $join, 'node_access_relationship');
+    $query->addRelationship('node_access', $join, 'node_access_relationship');
 
     if ($account->isAnonymous()) {
       $configuration['table'] = 'node_field_data';
+      /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
       $join = Views::pluginManager('join')
         ->createInstance('standard', $configuration);
-      $this->query->addRelationship('node_field_data', $join, 'node_field_data');
+      $query->addRelationship('node_field_data', $join, 'node_field_data');
     }
 
     // Add queries.
@@ -275,9 +282,11 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $membership_access->condition('group_content.gid', $groups_unique ?: [0], 'IN');
     $or->condition($membership_access);
 
-    // Lets add all the or conditions to the Views query.
+    // Let's add all the or conditions to the Views query.
     $and_wrapper->condition($or);
-    $this->query->addWhere('visibility', $and_wrapper);
+    $query->addWhere('visibility', $and_wrapper);
+
+    $this->query = $query;
   }
 
 }

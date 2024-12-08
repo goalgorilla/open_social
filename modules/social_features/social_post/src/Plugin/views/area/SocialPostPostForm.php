@@ -23,12 +23,12 @@ class SocialPostPostForm extends AreaPluginBase {
    *
    * @var \Drupal\Core\Block\BlockManagerInterface
    */
-  protected $blockManager;
+  protected BlockManagerInterface $blockManager;
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static($configuration, $plugin_id, $plugin_definition, $container->get('plugin.manager.block'));
   }
 
@@ -43,7 +43,7 @@ class SocialPostPostForm extends AreaPluginBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineOptions() {
+  protected function defineOptions(): array {
     $options = parent::defineOptions();
 
     $options['block_id'] = ['default' => 'post_photo_block'];
@@ -54,11 +54,10 @@ class SocialPostPostForm extends AreaPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state): void {
     parent::buildOptionsForm($form, $form_state);
 
     $options = [];
-    /** @var \Drupal\block_field\BlockFieldManagerInterface $block_field_manager */
     $definitions = $this->getBlockDefinitions();
     foreach ($definitions as $id => $definition) {
       // If allowed plugin ids are set then check that this block should be
@@ -82,7 +81,7 @@ class SocialPostPostForm extends AreaPluginBase {
    * @return array
    *   An associative array of supported block definitions.
    */
-  protected function getBlockDefinitions() {
+  protected function getBlockDefinitions(): array {
     $definitions = $this->blockManager->getSortedDefinitions();
     $block_definitions = [];
     foreach ($definitions as $plugin_id => $definition) {
@@ -101,9 +100,7 @@ class SocialPostPostForm extends AreaPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function render($empty = FALSE) {
-
-    /** @var \Drupal\block_field\BlockFieldItemInterface $item */
+  public function render($empty = FALSE): ?array {
     $block_instance = $this->getBlock();
     // Make sure the block exists and is accessible.
     if (!$block_instance || !$block_instance->access(\Drupal::currentUser())) {
@@ -131,7 +128,7 @@ class SocialPostPostForm extends AreaPluginBase {
   /**
    * {@inheritdoc}
    */
-  protected function getBlock() {
+  protected function getBlock(): ?\Drupal\Core\Block\BlockPluginInterface {
     if (empty($this->options['block_id'])) {
       return NULL;
     }
@@ -147,13 +144,13 @@ class SocialPostPostForm extends AreaPluginBase {
     $plugin_definition_id = $plugin_definition['id'] ?? '';
 
     // Don't return broken block plugin instances.
-    if ($plugin_definition_id == 'broken') {
+    if ($plugin_definition_id === 'broken') {
       return NULL;
     }
 
     // Don't return broken block content instances.
-    if ($plugin_definition_id == 'block_content') {
-      $uuid = $block_instance->getDerivativeId();
+    if ($plugin_definition_id === 'block_content') {
+      $uuid = (string) $block_instance->getDerivativeId();
       if (!\Drupal::service('entity.repository')->loadEntityByUuid('block_content', $uuid)) {
         return NULL;
       }

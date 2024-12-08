@@ -38,7 +38,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
     foreach (self::CALLBACKS as $route_name => $callback) {
       if ($route = $collection->get($route_name)) {
         $route->setDefault('_controller', $callback);

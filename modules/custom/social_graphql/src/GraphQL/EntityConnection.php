@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\social_graphql\GraphQL;
 
+use Drupal\Core\Entity\Query\QueryAggregateInterface;
 use Drupal\social_graphql\Wrappers\EdgeInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
@@ -87,7 +88,11 @@ class EntityConnection implements ConnectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function pageInfo() : SyncPromise {
+  public function pageInfo(): SyncPromise {
+    if ($this->getResult() === NULL) {
+      return new SyncPromise();
+    }
+
     return $this->getResult()->then(function ($edges) {
       /** @var \Drupal\social_graphql\Wrappers\Edge[] $edges */
       // If we don't have any results then we won't have any other pages either.
@@ -110,11 +115,11 @@ class EntityConnection implements ConnectionInterface {
       return [
         // We have a next page if the before cursor was provided (we assume
         // calling code has validated the cursor) or if N first results were
-        // requested and we have more.
+        // requested, and we have more.
         'hasNextPage' => $this->before !== NULL || ($this->first !== NULL && $this->first < $count),
         // We have a previous page if the after cursor was provided (we assume
         // calling code has validated the cursor) or if N last results were
-        // requested and we have more.
+        // requested, and we have more.
         'hasPreviousPage' => $this->after !== NULL || ($this->last !== NULL && $this->last < $count),
         // The start cursor is always the first cursor in the result-set..
         'startCursor' => $this->shouldReverseResultEdges() ? $edges[$last_index]->getCursor() : $edges[0]->getCursor(),
@@ -156,6 +161,10 @@ class EntityConnection implements ConnectionInterface {
    * requested order.
    */
   protected function getOrderedResult() : SyncPromise {
+    if ($this->getResult() === NULL) {
+      return new SyncPromise();
+    }
+
     return $this->getResult()->then(function ($edges) {
       // To allow for pagination we over-fetch results by one above the limits
       // so we must fix that now.
@@ -174,11 +183,11 @@ class EntityConnection implements ConnectionInterface {
    *
    * To compensate for the ordering needed for the range selector we must
    * sometimes flip the result. The first 3 results of a non-reverse query
-   * are the same as the last 3 results of a reversed query but they are in
+   * are the same as the last 3 results of a reversed query, but they are in
    * reverse order.
    * The results must be flipped if
    * - we want the last results in a reversed query
-   * - we want the last results in a non reversed query.
+   * - we want the last results in a non-reversed query.
    *
    * @return bool
    *   Whether the edges returned from `getResult()` as in reverse order.
@@ -202,10 +211,10 @@ class EntityConnection implements ConnectionInterface {
    *
    * Multiple calls to this function return the same promise.
    *
-   * @return \GraphQL\Executor\Promise\Adapter\SyncPromise
+   * @return \GraphQL\Executor\Promise\Adapter\SyncPromise|NULL
    *   The result for this connection's query.
    */
-  protected function getResult() : SyncPromise {
+  protected function getResult() : ?SyncPromise {
     if (!$this->hasResult()) {
       $this->result = $this->execute();
     }
@@ -272,6 +281,7 @@ class EntityConnection implements ConnectionInterface {
     $query->range(0, $limit + 1);
 
     if ($function = $this->queryHelper->getAggregateSortFunction()) {
+      /** @var QueryAggregateInterface $query */
       $query->sortAggregate(
         $sort_field,
         $function,
@@ -298,7 +308,7 @@ class EntityConnection implements ConnectionInterface {
     }
 
     // Fetch the result for the query.
-    $result = $query->execute();
+    $result = (array) $query->execute();
 
     return $this->queryHelper->getLoaderPromise($result);
   }

@@ -4,6 +4,7 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\group\Entity\GroupInterface;
@@ -63,7 +64,7 @@ class OwnerActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -82,7 +83,7 @@ class OwnerActivityContext extends ActivityContextBase {
     $recipients = [];
 
     // We only know the context if there is a related object.
-    if (isset($data['related_object']) && !empty($data['related_object'])) {
+    if (!empty($data['related_object'])) {
       $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
       $allowed_entity_types = ['node', 'post', 'comment'];
       if (in_array($related_entity['target_type'], $allowed_entity_types)) {
@@ -115,16 +116,17 @@ class OwnerActivityContext extends ActivityContextBase {
    *   - target_type: The entity type ID.
    *   - target_id: The entity ID.
    */
-  public function getRecipientOwnerFromEntity(array $related_entity, array $data) {
+  public function getRecipientOwnerFromEntity(array $related_entity, array $data): array {
     $recipients = [];
 
     $entity_storage = $this->entityTypeManager->getStorage($related_entity['target_type']);
+    /** @var EntityOwnerInterface|NULL $entity */
     $entity = $entity_storage->load($related_entity['target_id']);
 
     // It could happen that a notification has been queued but the content
     // has since been deleted. In that case we can find no additional
     // recipients.
-    if (!$entity) {
+    if ($entity === NULL) {
       return $recipients;
     }
 
@@ -132,15 +134,17 @@ class OwnerActivityContext extends ActivityContextBase {
     $original_related_object = $data['related_object'][0];
     if (isset($original_related_object['target_type']) && $original_related_object['target_type'] === 'comment') {
       $storage = $this->entityTypeManager->getStorage($original_related_object['target_type']);
+      /** @var EntityOwnerInterface $original_related_entity */
       $original_related_entity = $storage->load($original_related_object['target_id']);
 
-      if (!empty($original_related_entity) && $original_related_entity->getOwnerId() === $entity->getOwnerId()) {
+      if ($original_related_entity !== NULL && $original_related_entity->getOwnerId() === $entity->getOwnerId()) {
         return $recipients;
       }
     }
 
     if ($entity instanceof EntityOwnerInterface) {
       $account = $entity->getOwner();
+      /** @var EntityInterface $entity */
       $group = $this->groupMuteNotify->getGroupByContent($entity);
       // Check if we have $group set which means that this content was
       // posted in a group.

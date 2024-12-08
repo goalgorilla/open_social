@@ -4,6 +4,7 @@ namespace Drupal\social_event_an_enroll_enrolments_export\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\File\FileSystem;
 use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -40,7 +41,7 @@ class ExportAllEnrolments extends ExportEnrolments {
    *
    * @var \Drupal\social_event_an_enroll\EventAnEnrollManager
    */
-  protected $socialEventAnEnrollManager;
+  protected EventAnEnrollManager $socialEventAnEnrollManager;
 
   /**
    * Constructs a ExportAllEnrolments object.
@@ -76,7 +77,8 @@ class ExportAllEnrolments extends ExportEnrolments {
     ConfigFactoryInterface $configFactory,
     FileRepository $file_repository,
     FileUrlGenerator $file_url_generator,
-    EventAnEnrollManager $social_event_an_enroll_manager
+    EventAnEnrollManager $social_event_an_enroll_manager,
+    FileSystem $file_system,
   ) {
     parent::__construct(
       $configuration,
@@ -87,7 +89,8 @@ class ExportAllEnrolments extends ExportEnrolments {
       $currentUser,
       $configFactory,
       $file_url_generator,
-      $file_repository
+      $file_repository,
+      $file_system,
     );
 
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
@@ -112,7 +115,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): \Drupal\social_user_export\Plugin\Action\ExportUser|\Drupal\Core\Plugin\ContainerFactoryPluginInterface|static {
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('plugin.manager.user_export_plugin'),
       $container->get('logger.factory')->get('action'),
@@ -120,14 +123,15 @@ class ExportAllEnrolments extends ExportEnrolments {
       $container->get('config.factory'),
       $container->get('file.repository'),
       $container->get('file_url_generator'),
-      $container->get('social_event_an_enroll.manager')
+      $container->get('social_event_an_enroll.manager'),
+      $container->get('file_system'),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities) {
+  public function executeMultiple(array $entities): array {
     $this->entities = $entities;
 
     return parent::executeMultiple($entities);
@@ -136,7 +140,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|\Drupal\Core\Access\AccessResultInterface {
     if ($object instanceof EventEnrollmentInterface) {
       if ($this->socialEventAnEnrollManager->isGuest($object)) {
         $access = AccessResult::allowed();
@@ -155,7 +159,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   /**
    * {@inheritdoc}
    */
-  public function getPluginConfiguration($plugin_id, $entity_id) {
+  public function getPluginConfiguration($plugin_id, $entity_id): array {
     $configuration = parent::getPluginConfiguration($plugin_id, $entity_id);
     $plugin_definition = &$this->pluginDefinitions[$plugin_id];
 

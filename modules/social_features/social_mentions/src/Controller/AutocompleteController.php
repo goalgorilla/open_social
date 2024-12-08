@@ -36,7 +36,7 @@ class AutocompleteController extends ControllerBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The entity type manager.
@@ -78,7 +78,7 @@ class AutocompleteController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('database'),
@@ -96,7 +96,7 @@ class AutocompleteController extends ControllerBase {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   Returns a JsonResponse.
    */
-  public function suggestions(Request $request) {
+  public function suggestions(Request $request): JsonResponse {
     $name = $request->get('term');
     $config = $this->configFactory->get('mentions.settings');
     $suggestion_format = $config->get('suggestions_format');
@@ -104,6 +104,7 @@ class AutocompleteController extends ControllerBase {
     $result = $this->getUserIdsFromName($name, $suggestion_amount, $suggestion_format);
     $response = [];
     $accounts = User::loadMultiple($result);
+    /** @var \Drupal\profile\ProfileStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('profile');
     $view_builder = $this->entityTypeManager->getViewBuilder('profile');
 
@@ -117,8 +118,8 @@ class AutocompleteController extends ControllerBase {
         'profile_id' => '',
       ];
 
-      $profile = $storage->loadByUser($account, 'profile', TRUE);
-      if ($profile !== NULL && $suggestion_format != SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
+      $profile = $storage->loadByUser($account, 'profile');
+      if ($profile !== NULL && $suggestion_format !== SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
         $build = $view_builder->view($profile, 'autocomplete_item');
         $item['html_item'] = $this->renderer->render($build);
         $item['profile_id'] = $profile->id();

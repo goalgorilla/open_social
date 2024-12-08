@@ -27,7 +27,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Constructs a ContentBlockPluginIdWidget object.
@@ -71,7 +71,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $plugin_id,
       $plugin_definition,
@@ -86,7 +86,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+  public function formElement(FieldItemListInterface $items, mixed $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
     $value = &$element['value'];
     $value['#type'] = 'select';
@@ -100,13 +100,12 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
       $entity_type = $this->entityTypeManager->getDefinition($plugin_definition['entityTypeId']);
 
       if (isset($plugin_definition['bundle'])) {
-        $value['#options'][$plugin_id] = $this->entityTypeManager
-          ->getStorage($entity_type->getBundleEntityType())
-          ->load($plugin_definition['bundle'])
-          ->label();
+        $storage = $this->entityTypeManager->getStorage((string) $entity_type?->getBundleEntityType());
+        $value['#options'][$plugin_id] = $storage->load($plugin_definition['bundle'])
+          ?->label();
       }
       else {
-        $value['#options'][$plugin_id] = $entity_type->getLabel();
+        $value['#options'][$plugin_id] = $entity_type?->getLabel();
       }
     }
 

@@ -14,14 +14,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\social_comment_upload\Form
  */
-class SocialCommentUploadSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class SocialCommentUploadSettingsForm extends ConfigFormBase {
 
   /**
    * The Module Handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected null|ModuleHandlerInterface|\Drupal\Core\Config\TypedConfigManagerInterface $moduleHandler;
 
   /**
    * {@inheritdoc}
@@ -34,7 +34,7 @@ class SocialCommentUploadSettingsForm extends ConfigFormBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('module_handler')
@@ -44,21 +44,21 @@ class SocialCommentUploadSettingsForm extends ConfigFormBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_comment_upload_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_comment_upload.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     // Get the configuration file.
     $config = $this->config('social_comment_upload.settings');
@@ -77,7 +77,7 @@ class SocialCommentUploadSettingsForm extends ConfigFormBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     // Get the configuration file.
     $config = $this->config('social_comment_upload.settings');

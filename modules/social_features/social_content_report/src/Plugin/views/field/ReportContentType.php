@@ -17,12 +17,12 @@ class ReportContentType extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function query() {}
+  public function query(): void {}
 
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $row) {
+  public function render(ResultRow $row): \Drupal\Component\Render\MarkupInterface|string {
     /** @var \Drupal\flag\FlaggingInterface $flagging */
     $flagging = $this
       ->getEntity($row);
@@ -30,11 +30,10 @@ class ReportContentType extends FieldPluginBase {
     $reported_entity = $flagging->getFlaggable();
     if ($reported_entity->getEntityTypeId() === 'node') {
       /** @var \Drupal\node\NodeInterface $reported_entity */
-      return node_get_type_label($reported_entity);
+      return (string) node_get_type_label($reported_entity);
     }
-    else {
-      return $reported_entity->getEntityType()->getLabel();
-    }
+
+    return $reported_entity->getEntityType()->getLabel();
   }
 
 }

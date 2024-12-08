@@ -15,7 +15,7 @@ use Drupal\social_post\Entity\PostInterface;
 /**
  * Implements hook_token_info().
  */
-function social_content_report_token_info() {
+function social_content_report_token_info(): array {
   $tokens['content_url'] = [
     'name' => t('URL of the reported content.'),
     'description' => t('URL of the content that was reported.'),
@@ -37,7 +37,7 @@ function social_content_report_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_content_report_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_content_report_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
 
   if ($type === 'social_content_report' && !empty($data['message'])) {
@@ -76,7 +76,7 @@ function social_content_report_tokens($type, $tokens, array $data, array $option
 /**
  * Implements hook_tokens_alter().
  */
-function social_content_report_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+function social_content_report_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
   if ($context['type'] == 'message' && !empty($context['data']['message'])) {
     // Translate hook_tokens options to the options for TranslatableMarkup.
     $translation_options = [

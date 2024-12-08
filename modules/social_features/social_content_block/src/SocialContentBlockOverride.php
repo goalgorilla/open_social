@@ -22,14 +22,14 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The content block plugin definitions.
    *
    * @var array
    */
-  protected $definitions = NULL;
+  protected array $definitions = [];
 
   /**
    * Constructs the configuration override.
@@ -48,7 +48,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
   /**
    * Load overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     $config_name = 'field.field.paragraph.block.field_block_reference_secondary';
 
@@ -196,7 +196,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected static function getBlockContent() {
+  protected static function getBlockContent(): \Drupal\Core\Entity\EntityStorageInterface {
     return \Drupal::entityTypeManager()
       ->getStorage('block_content');
   }
@@ -204,21 +204,21 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialContentBlockOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?\Drupal\Core\Config\StorableConfigBase {
     return NULL;
   }
 

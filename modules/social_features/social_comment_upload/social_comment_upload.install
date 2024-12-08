@@ -8,8 +8,8 @@
 /**
  * Install the module.
  */
-function social_comment_upload_install() {
-  // Sitemanagers should be able to change the settings.
+function social_comment_upload_install(): void {
+  // Site managers should be able to change the settings.
   user_role_grant_permissions(
     'sitemanager',
     ['administer social_comment_upload settings']

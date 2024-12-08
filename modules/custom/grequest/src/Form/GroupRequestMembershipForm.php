@@ -21,14 +21,14 @@ class GroupRequestMembershipForm extends ConfirmFormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Related group.
    *
-   * @var \Drupal\group\Entity\GroupInterface
+   * @var \Drupal\group\Entity\GroupInterface|null
    */
-  protected $group;
+  protected ?GroupInterface $group;
 
   /**
    * Constructs a new ConfigSingleImportForm.
@@ -52,28 +52,28 @@ class GroupRequestMembershipForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'group_request_membership_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getQuestion() {
-    return $this->t("Are you sure you want to request membership the group @group", ['@group' => $this->group->label()]);
+  public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+    return $this->t("Are you sure you want to request membership the group @group", ['@group' => $this->group?->label()]);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCancelUrl() {
+  public function getCancelUrl(): Url {
     return Url::fromUserInput(\Drupal::destination()->get());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL): array {
     $this->group = $group;
 
     return parent::buildForm($form, $form_state);
@@ -82,15 +82,15 @@ class GroupRequestMembershipForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('group_content_type');
-    $group_type_id = (string) $this->group->getGroupType()->id();
+    $group_type_id = (string) $this->group?->getGroupType()->id();
     $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
 
     $group_content = GroupRelationship::create([
       'type' => $relation_type_id,
-      'gid' => $this->group->id(),
+      'gid' => $this->group?->id(),
       'entity_id' => $this->currentUser()->id(),
       'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
     ]);

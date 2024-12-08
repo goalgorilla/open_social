@@ -8,7 +8,7 @@
 /**
  * Implements hook_views_data().
  */
-function activity_viewer_views_data() {
+function activity_viewer_views_data(): array {
   $data['activity']['activity_filter_personalised_homepage_filter'] = [
     'title' => t('Filter on activities for the personalised homepage.'),
     'filter' => [
@@ -22,7 +22,7 @@ function activity_viewer_views_data() {
     'title' => t('Filter on activities for the Explore page.'),
     'filter' => [
       'title' => t('Filter activities for Explore page'),
-      'help' => t('The explore page shows content not directly related to you, 
+      'help' => t('The explore page shows content not directly related to you,
       so placed in a groups you are not a member of.'),
       'field' => 'field_visibility',
       'id' => 'activity_explore_visibility_access',

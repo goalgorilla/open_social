@@ -10,7 +10,7 @@ use Drupal\user\RoleInterface;
 /**
  * Implements hook_schema().
  */
-function download_count_schema() {
+function download_count_schema(): array {
   $schema['download_count'] = [
     'fields' => [
       'dcid' => [
@@ -82,7 +82,7 @@ function download_count_schema() {
 /**
  * Implements hook_uninstall().
  */
-function download_count_uninstall() {
+function download_count_uninstall(): void {
   \Drupal::service('config.factory')
     ->getEditable('download_count.settings')
     ->delete();
@@ -94,7 +94,7 @@ function download_count_uninstall() {
  *
  * Perform actions related to the installation of download_count.
  */
-function download_count_install() {
+function download_count_install(): void {
   // Grant the default permissions for this module.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,

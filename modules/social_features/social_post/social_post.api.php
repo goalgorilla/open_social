@@ -27,7 +27,7 @@ use Drupal\social_post\Entity\PostInterface;
  *
  * @ingroup social_post_api
  */
-function hook_social_post_visibility_info_alter($visibility, &$icon, &$title) {
+function hook_social_post_visibility_info_alter(string $visibility, string &$icon, string &$title): void {
   switch ($visibility) {
     case '5':
       $icon = 'community';
@@ -80,8 +80,10 @@ function hook_post_links_alter(array &$links, PostInterface $entity, array &$con
  *
  * @see \Drupal\social_post\Form\PostForm::save()
  */
-function hook_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state) {
-  $post = $form_state->getFormObject()->getEntity();
+function hook_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state): void {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  $post = $form_object->getEntity();
 
   if (mb_strlen($post->get('field_post')->value) > 1000) {
     $message = t('Your long post has been posted.');

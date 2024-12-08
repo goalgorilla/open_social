@@ -18,7 +18,7 @@ use Drupal\views\Entity\View;
 /**
  * Implements hook_requirements().
  */
-function social_core_requirements($phase) {
+function social_core_requirements(string $phase): array {
   $requirements = [];
 
   switch ($phase) {
@@ -45,7 +45,7 @@ function social_core_requirements($phase) {
  *
  * Perform actions related to the installation of social_core.
  */
-function social_core_install() {
+function social_core_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -123,7 +123,7 @@ function social_core_install() {
   $config->set('jpeg_quality', 90)->save();
 
   // If social blue is enabled, and default image is still Open Social.
-  // Lets add the default e-mail logo for open social as well.
+  // Let's add the default e-mail logo for open social as well.
   _social_core_set_default_email_logo_for_socialblue();
   // Add favicon to GIN.
   _social_core_set_favicon();
@@ -132,7 +132,7 @@ function social_core_install() {
 /**
  * Custom function to create the homepage block for AN users.
  */
-function _social_core_create_an_homepage_block() {
+function _social_core_create_an_homepage_block(): void {
   // @todo use a better image from the theme.
   // Block image.
   $path = \Drupal::service('extension.list.module')->getPath('social_core');
@@ -174,16 +174,16 @@ function _social_core_create_an_homepage_block() {
     'info' => 'AN homepage hero block',
     'uuid' => '8bb9d4bb-f182-4afc-b138-8a4b802824e4',
   ]);
-  $block->field_text_block = [
+  $block->set('field_text_block',  [
     'value' => '<h3>Become a member or log in to your community</h3><p>This community is powered by Open Social, the plug-and-play community solution for NGOs and semi-governmental organizations.</p>',
     'format' => 'full_html',
-  ];
+  ]);
 
   $block_image = [
     'target_id' => $fid,
     'alt' => "Anonymous front page image homepage'",
   ];
-  $block->field_hero_image = $block_image;
+  $block->set('field_hero_image', $block_image);
 
   // Set the links.
   $action_links = [
@@ -205,7 +205,7 @@ function _social_core_create_an_homepage_block() {
 /**
  * Function to create some menu items.
  */
-function _social_core_create_menu_links() {
+function _social_core_create_menu_links(): void {
   // Home.
   MenuLinkContent::create([
     'title' => t('Home'),

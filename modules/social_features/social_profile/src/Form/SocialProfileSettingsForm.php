@@ -4,7 +4,6 @@ namespace Drupal\social_profile\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Cache\Cache;
@@ -15,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Configure social profile settings.
  */
-class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class SocialProfileSettingsForm extends ConfigFormBase {
 
   /**
    * The database.
@@ -50,7 +49,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): SocialProfileSettingsForm|ConfigFormBase|static {
     return new static(
       $container->get('config.factory'),
       $container->get('database'),
@@ -61,21 +60,21 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_profile_admin_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_profile.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_profile.settings');
 
     $form['privacy'] = [
@@ -159,7 +158,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Save config.
     $config = $this->config('social_profile.settings');
     $config->set('social_profile_show_email', $form_state->getValue('social_profile_show_email'));
@@ -180,7 +179,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     $query->addField('p', 'profile_id');
     $query->condition('p.type', 'profile');
     $query->condition('p.status', '1');
-    $ids = $query->execute()->fetchCol();
+    $ids = $query->execute()?->fetchCol();
 
     if (!empty($ids)) {
       $cache_tags = [];

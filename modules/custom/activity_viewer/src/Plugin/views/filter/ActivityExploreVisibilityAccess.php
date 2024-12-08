@@ -22,7 +22,7 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $groupHelper;
+  protected SocialGroupHelperService $groupHelper;
 
   /**
    * Constructs a Handler object.
@@ -45,7 +45,7 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration, $plugin_id, $plugin_definition,
       $container->get('social_group.helper_service')
@@ -55,7 +55,7 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): false {
     return FALSE;
   }
 
@@ -71,7 +71,10 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
    * 3. OR the content is not a Node, we don't care about that here.
    * This translates to code as follows:
    */
-  public function query() {
+  public function query(): void {
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    $query = $this->query;
+
     // Create defaults.
     $account = $this->view->getUser();
     $explore_wrapper = new Condition('AND');
@@ -91,8 +94,9 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
         ],
       ],
     ];
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('node_field_data', $join, 'node_field_data');
+    $query->addRelationship('node_field_data', $join, 'node_field_data');
     // And from node to it's content_visibility field.
     $configuration = [
       'left_table' => 'node_field_data',
@@ -101,8 +105,9 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
       'field' => 'entity_id',
       'operator' => '=',
     ];
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('node__field_content_visibility', $join, 'node__field_content_visibility');
+    $query->addRelationship('node__field_content_visibility', $join, 'node__field_content_visibility');
 
     // Let's build our condition.
     // Either it's not a node so we don't care, the other filters will
@@ -156,7 +161,9 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
     // and those I have access to based on visibility.
     $explore_wrapper->condition($explore_or);
     // Add a new Where clause.
-    $this->query->addWhere('explore', $explore_wrapper);
+    $query->addWhere('explore', $explore_wrapper);
+
+    $this->query = $query;
   }
 
 }

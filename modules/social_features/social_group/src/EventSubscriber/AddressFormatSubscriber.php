@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\EventSubscriber;
 
+use Drupal\address\Event\AddressFormatEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\address\Event\AddressEvents;
 
@@ -15,10 +16,10 @@ class AddressFormatSubscriber implements EventSubscriberInterface {
   /**
    * Get the subscribed events.
    *
-   * @return mixed
+   * @return array
    *   Returns the subscribed events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[AddressEvents::ADDRESS_FORMAT][] = ['onGetDefinition', 0];
     return $events;
   }
@@ -26,7 +27,7 @@ class AddressFormatSubscriber implements EventSubscriberInterface {
   /**
    * The onGetDefinition function.
    */
-  public function onGetDefinition($event) {
+  public function onGetDefinition(AddressFormatEvent $event): void {
     $definition = $event->getDefinition();
     // This makes all address fields optional for all entity types on site.
     // We can't set empty array because of check in AddressFormat.php, line 128.

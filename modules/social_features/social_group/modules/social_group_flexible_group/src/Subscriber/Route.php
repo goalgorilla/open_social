@@ -15,7 +15,7 @@ class Route extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
     // We define our routes and how they are impacted.
     // is it on content visibility or join method.
     $join_routes = [

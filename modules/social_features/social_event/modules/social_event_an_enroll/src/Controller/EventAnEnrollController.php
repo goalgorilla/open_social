@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_an_enroll\Controller;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;
@@ -25,7 +26,7 @@ class EventAnEnrollController extends ControllerBase {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The entity type manager.
@@ -73,13 +74,13 @@ class EventAnEnrollController extends ControllerBase {
   /**
    * Determines if user has access to enroll form.
    *
-   * @param \Drupal\node\NodeInterface $node
+   * @param NodeInterface $node
    *   The node.
    *
-   * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultForbidden
+   * @return AccessResultInterface Allowed or not allowed.
    *   Allowed or not allowed.
    */
-  public function enrollAccess(NodeInterface $node) {
+  public function enrollAccess(NodeInterface $node): AccessResultInterface {
     $config = $this->config('social_event_an_enroll.settings');
     $is_global_enabled = $config->get('event_an_enroll');
     $is_event = $node->getType() === 'event';
@@ -95,7 +96,7 @@ class EventAnEnrollController extends ControllerBase {
   /**
    * Enroll dialog callback.
    */
-  public function enrollDialog(NodeInterface $node) {
+  public function enrollDialog(NodeInterface $node): array {
 
     // Fetch the user settings.
     $userSettings = $this->configFactory->get('user.settings');
@@ -141,7 +142,7 @@ class EventAnEnrollController extends ControllerBase {
    * @return string
    *   The page title.
    */
-  public function enrollTitle(NodeInterface $node) {
+  public function enrollTitle(NodeInterface $node): string {
     return $this->t('Enroll in @label Event', ['@label' => $node->label()]);
   }
 
@@ -154,7 +155,7 @@ class EventAnEnrollController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   Check standard and custom permissions.
    */
-  public function enrollManageAccess(AccountInterface $account) {
+  public function enrollManageAccess(AccountInterface $account): AccessResultInterface {
     if (AccessResult::allowedIfHasPermission($account, 'manage all enrollments')->isAllowed()) {
       return AccessResult::allowed();
     }

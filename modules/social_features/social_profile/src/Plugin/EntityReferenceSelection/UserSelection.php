@@ -2,6 +2,7 @@
 
 namespace Drupal\social_profile\Plugin\EntityReferenceSelection;
 
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\social_profile\SocialProfileTrait;
 use Drupal\user\Plugin\EntityReferenceSelection\UserSelection as UserSelectionBase;
 
@@ -23,7 +24,7 @@ class UserSelection extends UserSelectionBase {
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     $configuration = parent::defaultConfiguration();
     $configuration['include_anonymous'] = FALSE;
     return $configuration;
@@ -32,10 +33,11 @@ class UserSelection extends UserSelectionBase {
   /**
    * {@inheritdoc}
    */
-  public function validateReferenceableEntities(array $ids) {
+  public function validateReferenceableEntities(array $ids): int|array {
     $result = [];
     if ($ids) {
       $target_type = $this->configuration['target_type'];
+      /** @var EntityTypeInterface $entity_type */
       $entity_type = $this->entityTypeManager->getDefinition($target_type);
       $query = $this->buildEntityQuery(NULL, 'CONTAINS', $ids);
       $id = $entity_type->getKey('id');
@@ -64,14 +66,14 @@ class UserSelection extends UserSelectionBase {
    *   The EntityQuery object with the basic conditions and sorting applied to
    *   it.
    */
-  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS', array $ids = []) {
+  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS', array $ids = []): \Drupal\Core\Entity\Query\QueryInterface {
     // If an earlier request already had the ids don't query them again.
     if (empty($ids)) {
       $config_factory = \Drupal::service('config.factory');
       $config = $config_factory->get('mentions.settings');
       $suggestion_format = $config->get('suggestions_format');
       $suggestion_amount = $config->get('suggestions_amount');
-      $ids = $this->getUserIdsFromName($match, $suggestion_amount, $suggestion_format);
+      $ids = $this->getUserIdsFromName((string) $match, $suggestion_amount, $suggestion_format);
     }
 
     // Add the ability to search users also by mail.

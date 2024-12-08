@@ -3,6 +3,7 @@
 namespace Drupal\social_profile\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -28,7 +29,7 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * ProfileStatisticBlock constructor.
@@ -50,7 +51,7 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -62,10 +63,11 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $build = [];
     $account = $this->getContextValue('user');
 
+    /** @var \Drupal\profile\ProfileStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('profile');
     $profile = $storage->loadByUser($account, 'profile');
 
@@ -81,8 +83,9 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $account = $this->getContextValue('user');
+    /** @var \Drupal\profile\ProfileStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('profile');
     $profile = $storage->loadByUser($account, 'profile');
     $tags = [
@@ -99,14 +102,14 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     return Cache::mergeContexts(parent::getCacheContexts(), ['user.permissions']);
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account): AccessResultInterface {
     // Show statistic block only when new style is enabled.
     if (theme_get_setting('style') === 'sky') {
       return AccessResult::allowed();

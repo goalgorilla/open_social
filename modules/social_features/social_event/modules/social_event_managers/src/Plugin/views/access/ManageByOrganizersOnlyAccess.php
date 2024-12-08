@@ -22,14 +22,14 @@ class ManageByOrganizersOnlyAccess extends AccessPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account) {
+  public function access(AccountInterface $account): bool {
     return $account->isAuthenticated();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function alterRouteDefinition(Route $route) {
+  public function alterRouteDefinition(Route $route): void {
     $route->setRequirement('_custom_access', '\Drupal\social_event_managers\Controller\EventManagersController::access');
   }
 

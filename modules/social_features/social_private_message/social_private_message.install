@@ -8,7 +8,7 @@
 /**
  * Implements hook_uninstall().
  */
-function social_private_message_install() {
+function social_private_message_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'verified',
@@ -39,7 +39,6 @@ function social_private_message_install() {
   );
 
   // Disable the email notification provided by private_message.
-  /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
   \Drupal::getContainer()
     ->get('config.factory')
     ->getEditable('private_message.settings')
@@ -82,7 +81,7 @@ function social_private_message_uninstall(bool $is_syncing) : void {
 /**
  * Sets the widget for selecting Private Message thread members.
  */
-function _social_private_message_set_private_message_default_form_settings() {
+function _social_private_message_set_private_message_default_form_settings(): void {
   /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $pm_form_display */
   $pm_form_display = \Drupal::service('entity_type.manager')
     ->getStorage('entity_form_display')
@@ -100,7 +99,7 @@ function _social_private_message_set_private_message_default_form_settings() {
 /**
  * Set the Open Social specific settings for the private message default view.
  */
-function _social_private_message_set_private_message_default_view_settings() {
+function _social_private_message_set_private_message_default_view_settings(): void {
   /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $pm_view_display */
   $pm_view_display = \Drupal::service('entity_type.manager')
     ->getStorage('entity_view_display')
@@ -127,7 +126,7 @@ function _social_private_message_set_private_message_default_view_settings() {
 /**
  * Set the Open Social specific settings for the private message inbox view.
  */
-function _social_private_message_set_private_message_inbox_view_settings() {
+function _social_private_message_set_private_message_inbox_view_settings(): void {
   /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $pm_view_display */
   $pm_view_display = \Drupal::service('entity_type.manager')
     ->getStorage('entity_view_display')
@@ -155,7 +154,7 @@ function _social_private_message_set_private_message_inbox_view_settings() {
 /**
  * Set the OS specific settings for the private message thread default view.
  */
-function _social_private_message_set_private_message_thread_default_view_settings() {
+function _social_private_message_set_private_message_thread_default_view_settings(): void {
   /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $pm_view_display */
   $pm_view_display = \Drupal::service('entity_type.manager')
     ->getStorage('entity_view_display')

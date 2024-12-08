@@ -13,7 +13,7 @@ use Drupal\user\Entity\User;
 /**
  * Implements hook_token_info().
  */
-function social_event_invite_token_info() {
+function social_event_invite_token_info(): array {
   $type = [
     'name' => t('Social Event Invite'),
     'description' => t('Tokens from the Social Event Invite module.'),
@@ -45,13 +45,13 @@ function social_event_invite_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_event_invite_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_event_invite_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
-  if ($type == 'social_event_invite') {
+  if ($type === 'social_event_invite') {
     foreach ($tokens as $name => $original) {
       if (
         !empty($data['node']) &&
-        $name == 'register_link' &&
+        $name === 'register_link' &&
         !empty($data['event_enrollment'])
       ) {
         $event = $data['node'];
@@ -104,7 +104,7 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
           }
         }
       }
-      if ($name == 'user_login_event_invites_overview') {
+      if ($name === 'user_login_event_invites_overview') {
         /** @var \Drupal\message\Entity\Message $message */
         $message = $data['message'] ?? NULL;
 
@@ -115,7 +115,7 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
 
           if ($event_enrollment) {
             $user = User::load($event_enrollment->get('field_account')->getString());
-            $my_invitations_link = Url::fromRoute('view.user_event_invites.page_user_event_invites', ['user' => $user->id()], ['absolute' => TRUE])->toString();
+            $my_invitations_link = Url::fromRoute('view.user_event_invites.page_user_event_invites', ['user' => $user?->id()], ['absolute' => TRUE])->toString();
             $replacements[$original] = $my_invitations_link;
           }
         }

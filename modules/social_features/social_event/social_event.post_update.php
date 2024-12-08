@@ -5,17 +5,19 @@
  * Post update functions for the Social event module.
  */
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
 /**
  * Empty post update hook.
  */
-function social_event_post_update_update_events(&$sandbox) {
+function social_event_post_update_update_events(array &$sandbox): void {
   // Moved to social_event_post_update_10301_enable_event_enrollment().
 }
 
 /**
  * Set event enrollment option to enabled by default for existing events.
  */
-function social_event_post_update_10301_enable_event_enrollment(&$sandbox) {
+function social_event_post_update_10301_enable_event_enrollment(array &$sandbox): ?TranslatableMarkup {
   /** @var \Drupal\node\NodeStorageInterface $node_storage */
   $node_storage = \Drupal::entityTypeManager()->getStorage('node');
 
@@ -52,7 +54,8 @@ function social_event_post_update_10301_enable_event_enrollment(&$sandbox) {
   }
 
   // Try to update the percentage but avoid division by zero.
-  $sandbox['#finished'] = empty($sandbox['total']) ? 1 : ($sandbox['current'] / $sandbox['total']);
+  $sandbox['#finished'] = $sandbox['total'] == 0 ? 1 : ($sandbox['current'] / $sandbox['total']);
+  return NULL;
 }
 
 /**
@@ -119,7 +122,7 @@ function social_event_post_update_10302_set_all_day_value(array &$sandbox): void
   \Drupal::messenger()
     ->addMessage($sandbox['current'] . ' nodes processed.', 'status');
 
-  if ($sandbox['total'] == 0) {
+  if ($sandbox['total'] === 0) {
     $sandbox['#finished'] = 1;
   }
   else {

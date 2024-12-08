@@ -4,6 +4,7 @@ namespace Drupal\activity_viewer\Plugin\views\argument;
 
 use Drupal\Core\Database\Query\Condition;
 use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
 
 /**
  * Default implementation of the base argument plugin.
@@ -19,27 +20,32 @@ class ActivityGroupArgument extends ArgumentPluginBase {
    *
    * The argument sent may be found at $this->argument.
    */
-  public function query($group_by = FALSE) {
+  public function query($group_by = FALSE): void {
     $this->ensureMyTable();
 
+    /** @var Sql $query */
+    $query = $this->query;
+
     // \Drupal\views\Plugin\views\query\QueryPluginBase.
-    $this->query->addTable('activity__field_activity_recipient_group');
-    $this->query->addTable('activity__field_activity_entity');
-    $this->query->addTable('activity__field_activity_destinations');
+    $query->addTable('activity__field_activity_recipient_group');
+    $query->addTable('activity__field_activity_entity');
+    $query->addTable('activity__field_activity_destinations');
 
     $or_condition = new Condition('OR');
 
     // Group is a recipient.
     $or_condition->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $this->argument, '=');
 
-    $this->query->addWhere('activity_group_argument', $or_condition);
+    $query->addWhere('activity_group_argument', $or_condition);
+
+    $this->query = $query;
 
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
 
     // Since the Stream is different per url.

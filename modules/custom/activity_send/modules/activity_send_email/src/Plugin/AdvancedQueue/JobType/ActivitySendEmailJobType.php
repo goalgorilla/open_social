@@ -11,6 +11,7 @@ use Drupal\advancedqueue\JobResult;
 use Drupal\advancedqueue\Plugin\AdvancedQueue\JobType\JobTypeBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
@@ -40,49 +41,49 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
    *
    * @var \Drupal\activity_send_email\EmailFrequencyManager
    */
-  protected $frequencyManager;
+  protected EmailFrequencyManager $frequencyManager;
 
   /**
    * Database services.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The activity notification service.
    *
    * @var \Drupal\activity_creator\ActivityNotifications
    */
-  protected $activityNotifications;
+  protected ActivityNotifications $activityNotifications;
 
   /**
    * Social mail settings.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $socialMailerSettings;
+  protected \Drupal\Core\Config\ImmutableConfig $socialMailerSettings;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The queue service.
    *
    * @var \Drupal\Core\Queue\QueueFactory
    */
-  protected $queueFactory;
+  protected QueueFactory $queueFactory;
 
   /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManager
    */
-  protected $languageManager;
+  protected LanguageManager $languageManager;
 
   /**
    * The config language manager object.
@@ -121,7 +122,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -140,7 +141,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function process(Job $job) {
+  public function process(Job $job): JobResult {
     try {
       // Get the Job data.
       $data = $job->getPayload();
@@ -171,11 +172,14 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
               foreach ($this->languageManager->getLanguages() as $language) {
                 $langcode = $language->getId();
                 // Load all user by given language.
-                $user_ids_per_language = $this->database->select('users_field_data', 'ufd')
+                /** @var StatementInterface $result */
+                $result =  $this->database->select('users_field_data', 'ufd')
                   ->fields('ufd', ['uid'])
                   ->condition('uid', $recipients, 'IN')
                   ->condition('preferred_langcode', $langcode)
-                  ->execute()->fetchAllKeyed(0, 0);
+                  ->execute();
+                $user_ids_per_language = $result->fetchAllKeyed(0, 0);
+
 
                 // Prepare the batch per language.
                 $this->prepareBatch($data, $user_ids_per_language, $langcode);
@@ -199,7 +203,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
           $message_storage = $this->entityTypeManager->getStorage('message');
           /** @var \Drupal\message\Entity\Message $message */
           $message = $message_storage->load($activity->getFieldValue('field_activity_message', 'target_id'));
-          $message_template_id = $message->getTemplate()->id();
+          $message_template_id = (string) $message->getTemplate()->id();
 
           // Prepare an array of all details required to process the item.
           $parameters = [
@@ -276,7 +280,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  private function sendToFrequencyManager(array $parameters) {
+  private function sendToFrequencyManager(array $parameters): JobResult {
     if (empty($parameters['target_recipients'])) {
       $this->getLogger('activity_send_email_worker')->error('We expected some recipients. None were provided.');
       return JobResult::failure('We expected some recipients. None were provided.');
@@ -322,6 +326,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
             }
             // Send item to EmailFrequency instance.
             if ($this->frequencyManager->hasDefinition($parameters['frequency'])) {
+              /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
               $instance = $this->frequencyManager->createInstance($parameters['frequency']);
               $instance->processItem($parameters['activity'], $parameters['message'], $target_account, $body_text);
             }
@@ -330,6 +335,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
       }
       return JobResult::success('We have successfully scheduled items to be processed by the Frequency Manager.');
     }
+    return JobResult::failure('We have failed to schedule items to be processed by the Frequency Manager.');
   }
 
   /**
@@ -342,7 +348,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
    * @param string|null $langcode
    *   Language code.
    */
-  private function prepareBatch(array $data, array $user_ids_per_language, $langcode = NULL) {
+  private function prepareBatch(array $data, array $user_ids_per_language, string $langcode = NULL): void {
     // Split up by 50.
     $batches = array_chunk($user_ids_per_language, 50);
 
@@ -358,6 +364,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
       // Instead of creating a Queue item we use Advanced Queue.
       $job = Job::create('activity_send_email_worker', $batch_data);
       if ($job instanceof Job) {
+        /** @var \Drupal\advancedqueue\Entity\Queue $queue */
         $queue = Queue::load('default');
         $queue->enqueueJob($job);
       }

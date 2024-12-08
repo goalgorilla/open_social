@@ -21,12 +21,13 @@ class UserSelection extends UserSelectionBase {
   /**
    * {@inheritdoc}
    */
-  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS', array $ids = []) {
-    /** @var \Drupal\user\RoleStorageInterface $r_storage */
+  protected function buildEntityQuery(mixed $match = NULL, $match_operator = 'CONTAINS', array $ids = []): \Drupal\Core\Entity\Query\QueryInterface {
+    /** @var \Drupal\user\RoleStorageInterface $role_storage */
     $role_storage = $this->entityTypeManager->getStorage('user_role');
 
     // Continue if authenticated users has permission to view private messages.
-    if ($role_storage->load(RoleInterface::AUTHENTICATED_ID)->hasPermission('use private messaging system')) {
+    $authenticated_role = $role_storage->load(RoleInterface::AUTHENTICATED_ID);
+    if ($authenticated_role!== NULL && $authenticated_role->hasPermission('use private messaging system')) {
       return parent::buildEntityQuery($match, $match_operator, $ids);
     }
 

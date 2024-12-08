@@ -19,7 +19,7 @@ class Dropdown extends FormElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getInfo() {
+  public function getInfo(): array {
     $class = get_class($this);
     return [
       '#label' => 'Default Label',
@@ -37,7 +37,7 @@ class Dropdown extends FormElementBase {
   /**
    * Prepare the render array for the template.
    */
-  public static function preRenderDropdown($element) {
+  public static function preRenderDropdown(array $element): array  {
     // @todo Attach $element['#attached']['library'][] = 'dropdown';
     return $element;
   }
@@ -45,7 +45,7 @@ class Dropdown extends FormElementBase {
   /**
    * Expands a radios element into individual radio elements.
    */
-  public static function processDropdown(&$element, FormStateInterface $form_state, &$complete_form) {
+  public static function processDropdown(array &$element, FormStateInterface $form_state, array &$complete_form): array {
     if (count($element['#options']) > 0) {
       $weight = 0;
       foreach ($element['#options'] as $key => $option) {
@@ -89,7 +89,7 @@ class Dropdown extends FormElementBase {
   /**
    * {@inheritdoc}
    */
-  public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
+  public static function valueCallback(&$element, mixed $input, FormStateInterface $form_state) {
     if ($input !== FALSE) {
       // When there's user input (including NULL), return it as the value.
       // However, if NULL is submitted, FormBuilder::handleInputElement() will

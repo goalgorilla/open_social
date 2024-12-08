@@ -32,7 +32,7 @@ class SocialEventManagersAccessHelper {
   /**
    * NodeAccessCheck for given operation, node and user account.
    */
-  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account): int {
+  public static function nodeAccessCheck(NodeInterface $node, string $op, AccountInterface $account): int {
     if ($op !== 'update') {
       return static::NEUTRAL;
     }
@@ -74,7 +74,7 @@ class SocialEventManagersAccessHelper {
   /**
    * Gets the Entity access for the given node.
    */
-  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account): AccessResult {
+  public static function getEntityAccessResult(NodeInterface $node, string $op, AccountInterface $account): AccessResult {
     $access = self::nodeAccessCheck($node, $op, $account);
 
     switch ($access) {

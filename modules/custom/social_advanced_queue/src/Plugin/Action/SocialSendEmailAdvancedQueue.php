@@ -19,13 +19,13 @@ class SocialSendEmailAdvancedQueue extends SocialSendEmail {
    * @param array $data
    *   The queue data.
    */
-  public function createQueueItem($name, array $data) {
+  public function createQueueItem(string $name, array $data): void {
     // Create a new Email Job and add to the "default" queue using
     // advanced queue API instead of SocialSendEmails default Core Queue.
     $job = Job::create($name, $data);
     if ($job instanceof Job) {
       $queue = Queue::load('default');
-      $queue->enqueueJob($job);
+      $queue?->enqueueJob($job);
     }
 
   }

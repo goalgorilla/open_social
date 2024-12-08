@@ -13,7 +13,7 @@ class QueueStorageEntityTypeForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, FormStateInterface $form_state) {
+  public function form(array $form, FormStateInterface $form_state): array {
     $form = parent::form($form, $form_state);
     $queue_storage_entity_type = $this->entity;
     $form['label'] = [
@@ -39,7 +39,7 @@ class QueueStorageEntityTypeForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): int {
     $queue_storage_entity_type = $this->entity;
     $status = $queue_storage_entity_type->save();
     switch ($status) {
@@ -55,6 +55,7 @@ class QueueStorageEntityTypeForm extends EntityForm {
         ]));
     }
     $form_state->setRedirectUrl($queue_storage_entity_type->toUrl('collection'));
+    return 0;
   }
 
 }

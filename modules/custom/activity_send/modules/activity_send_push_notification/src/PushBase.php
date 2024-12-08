@@ -23,14 +23,14 @@ abstract class PushBase extends PluginBase implements PushInterface {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The current active user ID.
    *
    * @var int
    */
-  protected $currentUserId;
+  protected int $currentUserId;
 
   /**
    * Constructs a PushBase object.
@@ -72,7 +72,7 @@ abstract class PushBase extends PluginBase implements PushInterface {
     array $configuration,
     $plugin_id,
     $plugin_definition
-  ) {
+  ): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -86,21 +86,21 @@ abstract class PushBase extends PluginBase implements PushInterface {
   /**
    * {@inheritdoc}
    */
-  public function access() {
+  public function access(): bool {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm() {
+  public function buildForm(): array {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(FormStateInterface $form_state) {
+  public function submitForm(FormStateInterface $form_state): void {
   }
 
   /**
@@ -119,7 +119,7 @@ abstract class PushBase extends PluginBase implements PushInterface {
    * @return mixed
    *   The value for the given key, or NULL.
    */
-  protected function getFormValue(FormStateInterface $form_state, $key, $default = NULL) {
+  protected function getFormValue(FormStateInterface $form_state, string|array $key, mixed $default = NULL): mixed {
     if (!is_array($key)) {
       $key = [$key];
     }

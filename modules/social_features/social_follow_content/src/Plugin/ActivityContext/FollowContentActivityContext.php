@@ -4,12 +4,14 @@ namespace Drupal\social_follow_content\Plugin\ActivityContext;
 
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_comment\Entity\Comment;
 use Drupal\social_group\GroupMuteNotify;
 use Drupal\social_node\Entity\Node;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -28,7 +30,7 @@ class FollowContentActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\social_group\GroupMuteNotify
    */
-  protected $groupMuteNotify;
+  protected GroupMuteNotify $groupMuteNotify;
 
   /**
    * Constructs a MentionActivityContext object.
@@ -65,7 +67,7 @@ class FollowContentActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -109,7 +111,7 @@ class FollowContentActivityContext extends ActivityContextBase {
    *   - target_type: The entity type ID.
    *   - target_id: The entity ID.
    */
-  public function getRecipientsWhoFollowContent(array $related_entity, array $data) {
+  public function getRecipientsWhoFollowContent(array $related_entity, array $data): array {
     $recipients = [];
 
     $storage = $this->entityTypeManager->getStorage('flagging');
@@ -157,7 +159,12 @@ class FollowContentActivityContext extends ActivityContextBase {
         }
       }
 
-      if ($recipient->id() !== $original_related_entity->getOwnerId() && $original_related_entity->access('view', $recipient)) {
+
+      if (
+        $original_related_entity instanceof EntityOwnerInterface &&
+        $recipient->id() !== $original_related_entity->getOwnerId() &&
+        $original_related_entity->access('view', $recipient)
+      ) {
         $recipients[] = [
           'target_type' => 'user',
           'target_id' => $recipient->id(),

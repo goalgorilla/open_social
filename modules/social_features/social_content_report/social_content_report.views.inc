@@ -8,7 +8,7 @@
 /**
  * Implements hook_views_data_alter().
  */
-function social_content_report_views_data_alter(array &$data) {
+function social_content_report_views_data_alter(array &$data): void {
   // Close report link.
   $data['flagging']['close_report'] = [
     'title' => t('Link to close report'),

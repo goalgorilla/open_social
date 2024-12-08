@@ -12,7 +12,7 @@ use Drupal\user\RoleInterface;
  *
  * Perform actions related to the installation of social_like.
  */
-function social_like_install() {
+function social_like_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -65,9 +65,8 @@ function social_like_install() {
 /**
  * Set default config.
  */
-function _social_like_set_defaults() {
+function _social_like_set_defaults(): void {
   // Add like and dislike settings.
-  /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
   $container = \Drupal::getContainer()->get('config.factory');
   $config = $container->getEditable('like_and_dislike.settings');
   $config->set('hide_vote_widget', FALSE)->save();

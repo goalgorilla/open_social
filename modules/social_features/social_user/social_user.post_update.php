@@ -10,7 +10,7 @@ use Drupal\user\UserInterface;
 /**
  * Convert navigation settings into the correct format.
  */
-function social_user_post_update_convert_navigation_settings() {
+function social_user_post_update_convert_navigation_settings(): void {
   $config = \Drupal::configFactory()->getEditable('social_user.navigation.settings');
   $config->set('display_my_groups_icon', (bool) $config->get('display_my_groups_icon'));
   $config->set('display_social_private_message_icon', (bool) $config->get('display_social_private_message_icon'));
@@ -29,6 +29,8 @@ function social_user_post_update_convert_navigation_settings() {
  * @return bool
  *   TRUE if the operation was finished, FALSE otherwise.
  *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function social_user_post_update_10101_add_verified_role_to_existing_users(array &$sandbox) : bool {
@@ -59,7 +61,10 @@ function social_user_post_update_10101_add_verified_role_to_existing_users(array
     }
   }
 
-  $sandbox['#finished'] = empty($sandbox['ids']) ? 1 : (((int) $sandbox['count']) - count($sandbox['ids'])) / ($sandbox['count']);
+  $sandbox['#finished'] = empty($sandbox['ids'])
+    ? 1
+    : (((int) $sandbox['count']) - count($sandbox['ids'])) / ((int) $sandbox['count']);
+
 
   return (bool) $sandbox['#finished'];
 }

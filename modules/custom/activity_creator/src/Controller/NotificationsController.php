@@ -19,7 +19,7 @@ class NotificationsController extends ControllerBase {
    *
    * @var \Drupal\activity_creator\ActivityNotifications
    */
-  protected $activities;
+  protected ActivityNotifications $activities;
 
   /**
    * NotificationsController constructor.
@@ -34,7 +34,7 @@ class NotificationsController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('activity_creator.activity_notifications')
     );
@@ -48,9 +48,10 @@ class NotificationsController extends ControllerBase {
    */
   public function getNotificationListCallback(): AjaxResponse {
     // The data to display, will be the view.
+    /** @var \Drupal\views\ViewExecutable $view */
     $view = Views::getView('activity_stream_notifications');
     $view->setDisplay('block_1');
-    $rendered_view = $view->render();
+    $rendered_view = (array) $view->render();
 
     // Create a response.
     $response = new AjaxResponse();
@@ -60,7 +61,11 @@ class NotificationsController extends ControllerBase {
     $response->addCommand(new HtmlCommand('.js-notification-center-wrapper', $rendered_view));
 
     // Update the notification count to mark as seen.
-    $notification_count = $this->activities->markAllNotificationsAsSeen($this->currentUser()) ? 0 : count($this->activities->getNotifications($this->currentUser()));
+    $notification_count = $this->activities->markAllNotificationsAsSeen($this->currentUser())
+      ? '0'
+      : (string) count($this->activities->getNotifications($this->currentUser()));
+
+    // $notification_count = $this->activities->markAllNotificationsAsSeen($this->currentUser()) ? 0 : count($this->activities->getNotifications($this->currentUser()));
     $response->addCommand(new HtmlCommand('.notification-bell .badge', $notification_count));
 
     return $response;

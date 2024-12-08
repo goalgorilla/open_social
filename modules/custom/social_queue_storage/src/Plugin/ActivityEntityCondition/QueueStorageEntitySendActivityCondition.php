@@ -3,6 +3,7 @@
 namespace Drupal\social_queue_storage\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
  * Provides a 'QueueStorageEntitySendActivityAction` activity action.
@@ -18,7 +19,7 @@ class QueueStorageEntitySendActivityCondition extends ActivityEntityConditionBas
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) {
+  public function isValidEntityCondition(ContentEntityInterface $entity): bool {
     /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
     if ($entity->getEntityTypeId() === 'queue_storage_entity') {
       return $entity->isFinished();

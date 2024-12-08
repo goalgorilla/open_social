@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\social_core\Entity\Element\EntityAutocomplete;
+
 /**
  * @file
  * The Social core module.
@@ -7,6 +9,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Field\FieldItemList;
@@ -35,7 +38,7 @@ use Drupal\block\BlockInterface;
 /**
  * Implements hook_page_attachments().
  */
-function social_core_page_attachments(array &$attachments) {
+function social_core_page_attachments(array &$attachments): void {
   // Unconditionally attach library to the page.
   $attachments['#attached']['library'][] = 'social_core/accessibility';
 
@@ -51,7 +54,7 @@ function social_core_page_attachments(array &$attachments) {
 /**
  * Implements hook_theme().
  */
-function social_core_theme() {
+function social_core_theme(): array {
   return [
     // @deprecated: use node--hero.html.twig instead.
     'page_hero_data' => [
@@ -90,9 +93,9 @@ function social_core_module_implements_alter(array &$implementations, string $ho
 /**
  * Implements hook_modules_installed().
  */
-function social_core_modules_installed($modules) {
+function social_core_modules_installed(array $modules): void {
   // If either social_group_flexible_group or social_landing_page gets enabled
-  // and the other is already enabled, we should import the the configuration
+  // and the other is already enabled, we should import the configuration
   // for the optional view mode by enabling social_flexible_group_featured.
   if ((in_array('social_group_flexible_group', $modules, TRUE) && \Drupal::moduleHandler()
     ->moduleExists('social_landing_page')) ||
@@ -115,7 +118,7 @@ function social_core_modules_installed($modules) {
 /**
  * Implements hook_entity_form_display_alter().
  */
-function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
   $field_groups = $form_display->getThirdPartySettings('field_group');
 
   if (!isset($field_groups['group_settings'])) {
@@ -150,7 +153,7 @@ function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_core_preprocess_node(&$variables) {
+function social_core_preprocess_node(array &$variables): void {
   /** @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
   // Add common variable for teaser images.
@@ -197,9 +200,9 @@ function social_core_preprocess_node(&$variables) {
     }
 
     // Add the hero styled image.
-    if ($node->hasField($image_field) && !empty($node->{$image_field}->entity)) {
+    if ($node->hasField((string) $image_field) && !empty($node->{$image_field}->entity)) {
       $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
-        ->buildUrl($node->{$image_field}->entity->getFileUri());
+        ?->buildUrl($node->{$image_field}->entity->getFileUri());
     }
   }
 }
@@ -209,7 +212,7 @@ function social_core_preprocess_node(&$variables) {
  *
  * Adds the "My invitations" link to the user menu.
  */
-function social_core_social_user_account_header_account_links(array $context) {
+function social_core_social_user_account_header_account_links(array $context): array {
   // We require a user for this link.
   if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
     return [];
@@ -221,12 +224,18 @@ function social_core_social_user_account_header_account_links(array $context) {
     $title = new TranslatableMarkup('Invites');
     // If we have invites show the number.
     if (!empty($core_invites->getInviteData('amount'))) {
+      if (is_array($core_invites->getInviteData('amount'))) {
+        $amount = $core_invites->getInviteData('amount')['amount'];
+      }
+      else {
+        $amount = $core_invites->getInviteData('amount');
+      }
       $title = [
         '#type' => 'inline_template',
         '#template' => '<span>{% trans %}Invites{% endtrans %}</span> <span{{ attributes }}>{{ icon }}</span>',
         '#context' => [
           'attributes' => new Attribute(['class' => 'margin-left-xs badge badge-accent badge--pill']),
-          'icon' => (string) $core_invites->getInviteData('amount'),
+          'icon' => $amount,
         ],
       ];
     }
@@ -251,6 +260,8 @@ function social_core_social_user_account_header_account_links(array $context) {
       ] + $link->toRenderable(),
     ];
   }
+
+  return [];
 }
 
 /**
@@ -258,8 +269,8 @@ function social_core_social_user_account_header_account_links(array $context) {
  *
  * Adds an indicator to the user account menu.
  */
-function social_core_social_user_account_header_items_alter(array &$menu_links, array $context) {
-  // We require a logged in user for this indicator.
+function social_core_social_user_account_header_items_alter(array &$menu_links, array $context): void {
+  // We require a logged-in user for this indicator.
   if (empty($context['user']) || !$context['user']->isAuthenticated()) {
     return;
   }
@@ -285,10 +296,10 @@ function social_core_social_user_account_header_items_alter(array &$menu_links, 
  *   A field object.
  *
  * @return \Drupal\Core\Field\FieldItemList|null
- *   Will return the FieldItemList or null if its not an image field.
+ *   Will return the FieldItemList or null if it's not an image field.
  */
-function _social_core_find_image_field(FieldItemList $field) {
-  if (strpos($field->getName(), 'image') !== FALSE) {
+function _social_core_find_image_field(FieldItemList $field): ?FieldItemList {
+  if (str_contains((string) $field->getName(), 'image')) {
     return $field;
   }
   return NULL;
@@ -299,9 +310,9 @@ function _social_core_find_image_field(FieldItemList $field) {
  *
  * For Site information Site details form.
  */
-function social_core_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_core_form_system_site_information_settings_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Hide site slogan field and make it disabled as well whenever the user
-  // is able to fill out the textfield.
+  // is able to fill out the textfied.
   if (!empty($form['site_information']['site_slogan'])) {
     $form['site_information']['site_slogan']['#type'] = 'hidden';
     $form['site_information']['site_slogan']['#disabled'] = TRUE;
@@ -311,7 +322,7 @@ function social_core_form_system_site_information_settings_alter(&$form, FormSta
 /**
  * Implements hook_node_links_alter().
  */
-function social_core_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
+function social_core_node_links_alter(array &$links, NodeInterface $entity, array &$context): void {
   // Remove the comment links.
   unset($links['comment__field_topic_comments'], $links['comment__field_event_comments']);
 
@@ -319,7 +330,7 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
     'activity',
     'activity_comment',
   ])) {
-    // Add a readmore link.
+    // Add a read more link.
     $label = $entity->label() instanceof TranslatableMarkup ? $entity->label()->render() : $entity->label();
     $label = $label ?? '';
     $node_title_stripped = strip_tags($label);
@@ -346,9 +357,9 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
  *   - element: An associative array containing render arrays for the list of
  *     comments, and the comment form. Array keys: comments, comment_form.
  */
-function social_core_preprocess_field(array &$variables) {
+function social_core_preprocess_field(array &$variables): void {
   $element = $variables['element'];
-  if ($element['#formatter'] == 'comment_node') {
+  if ($element['#formatter'] === 'comment_node') {
     // Create separate variables for the more_link.
     $variables['more_link'] = $element[0]['more_link'];
   }
@@ -357,7 +368,7 @@ function social_core_preprocess_field(array &$variables) {
 /**
  * Implements hook_preprocess_block().
  */
-function social_core_preprocess_block(&$variables) {
+function social_core_preprocess_block(array &$variables): void {
   /** @var \Drupal\user\Entity\User|int $account */
   $account = \Drupal::routeMatch()->getParameter('user');
   /** @var \Drupal\group\Entity\Group|int $group */
@@ -371,6 +382,8 @@ function social_core_preprocess_block(&$variables) {
     $group = Group::load($group);
   }
 
+  $link = '';
+  $more_link = '';
   if (!empty($variables['elements']['content']['#view'])) {
     $view = $variables['elements']['content']['#view'];
 
@@ -501,7 +514,7 @@ function social_core_preprocess_block(&$variables) {
 /**
  * Implements hook_menu_local_tasks_alter().
  */
-function social_core_menu_local_tasks_alter(&$data, $route_name) {
+function social_core_menu_local_tasks_alter(array &$data, string $route_name): void {
 
   if (\Drupal::currentUser()->isAnonymous()) {
     // Anonymous user so we unset the user tabs on login register etc.
@@ -580,7 +593,7 @@ function social_core_menu_local_tasks_alter(&$data, $route_name) {
 /**
  * Implements hook_form_taxonomy_vocabulary_form_alter().
  */
-function social_core_form_taxonomy_vocabulary_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_core_form_taxonomy_vocabulary_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Fetch current user.
   $account = \Drupal::currentUser();
 
@@ -594,7 +607,7 @@ function social_core_form_taxonomy_vocabulary_form_alter(&$form, FormStateInterf
 /**
  * Implements hook_form_taxonomy_vocabulary_confirm_delete_alter().
  */
-function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_core_form_taxonomy_vocabulary_confirm_delete_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
 
   // Fetch current user.
   $account = \Drupal::currentUser();
@@ -610,7 +623,7 @@ function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, FormS
 /**
  * Implements hook_preprocess().
  */
-function social_core_preprocess_breadcrumb(&$variables) {
+function social_core_preprocess_breadcrumb(array &$variables): void {
   // Get the user.
   $user = \Drupal::currentUser();
   // Add cache tag for the user.
@@ -620,14 +633,14 @@ function social_core_preprocess_breadcrumb(&$variables) {
 /**
  * Implements hook_element_info_alter().
  */
-function social_core_element_info_alter(array &$info) {
+function social_core_element_info_alter(array &$info): void {
   if (isset($info['text_format']['#process'])) {
     $info['text_format']['#process'][] = 'social_core_filter_process_format';
   }
 
   if (isset($info['entity_autocomplete'])) {
     $info['entity_autocomplete']['#value_callback'] = [
-      '\Drupal\social_core\Entity\Element\EntityAutocomplete',
+      EntityAutocomplete::class,
       'valueCallback',
     ];
   }
@@ -640,7 +653,7 @@ function social_core_element_info_alter(array &$info) {
  *   separate Setting to all text_format fields, allowing to select whether to
  *   show format selector or not.
  */
-function social_core_filter_process_format($element) {
+function social_core_filter_process_format(array $element): array {
 
   // Only fields listed here will have text format settings disabled.
   $full_html_field_ids = [
@@ -678,7 +691,7 @@ function social_core_filter_process_format($element) {
   if (
     $element['#type'] === 'text_format' &&
     $element['#format'] === $social_filter_format->id() &&
-    !$account->hasPermission($permission_name)
+    !$account->hasPermission((string) $permission_name)
   ) {
     $element['#format'] = 'basic_html';
     $element['value']['#format'] = 'basic_html';
@@ -695,7 +708,7 @@ function social_core_filter_process_format($element) {
   }
   elseif (
     $element['#type'] === 'text_format' &&
-    $account->hasPermission($permission_name) &&
+    $account->hasPermission((string) $permission_name) &&
     in_array($element_id, $full_html_field_ids)
   ) {
     $element['#format'] = $social_filter_format;
@@ -715,7 +728,7 @@ function social_core_filter_process_format($element) {
  *
  * Implements hook_block_access().
  */
-function social_core_block_access(Block $block, $operation, AccountInterface $account) {
+function social_core_block_access(Block $block, string $operation, AccountInterface $account): AccessResultInterface {
   $blocks = &drupal_static(__FUNCTION__, []);
 
   // We only care about view operations right now.
@@ -723,10 +736,10 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
     return AccessResult::neutral();
   }
 
-  // If we didnt have statically cached blocks,
+  // If we didn't have statically cached blocks,
   // lets see if we can grab it from the cache instead.
   if (empty($blocks)) {
-    // First check if we have it cached before we run the modulehandler alter.
+    // First check if we have it cached before we run the module handler alter.
     /** @var \Drupal\Core\Cache\CacheBackendInterface $cache */
     $cache = \Drupal::service('cache.default');
     if ($cache->get('social_core.block_visibility_cache') === FALSE) {
@@ -740,7 +753,10 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
       $cache->set('social_core.block_visibility_cache', $blocks, $date->getTimestamp(), ['social_core.block_visibility_cache']);
     }
     else {
-      $blocks = $cache->get('social_core.block_visibility_cache')->data;
+      /** @var StdClass $cache_get */
+      $cache_get = $cache->get('social_core.block_visibility_cache');
+      $blocks = $cache_get->data;
+      // $blocks = $cache->get('social_core.block_visibility_cache')->data;
     }
   }
 
@@ -787,7 +803,7 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
 /**
  * Implements hook_field_widget_single_element_form_alter().
  */
-function social_core_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_core_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   $field_definition = $context['items']->getFieldDefinition();
 
   if ($field_definition->getType() === 'path') {
@@ -840,7 +856,7 @@ function social_core_field_widget_single_element_form_alter(&$element, FormState
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state.
  */
-function social_core_path_validate(array &$element, FormStateInterface $form_state) {
+function social_core_path_validate(array &$element, FormStateInterface $form_state): void {
   $alias = trim($element['alias']['#value'], " \\/");
   $parsed_url = parse_url($alias);
 
@@ -1155,11 +1171,9 @@ function _social_core_created_date_validation(array $form, FormStateInterface $f
  *   The form array.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state.
- *
- * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _social_core_path_widget_submit(array $form, FormStateInterface $form_state) {
-  // Path uses the pathauto checkbox to decide whether or not to save
+function _social_core_path_widget_submit(array $form, FormStateInterface $form_state): void {
+  // Path uses the pathauto checkbox to decide whether to save
   // the automatically generated alias, or use a custom one.
   // since we hide the element, and the default is checked,
   // the path will never be overridden if someone updates it.
@@ -1192,56 +1206,56 @@ function _social_core_path_widget_submit(array $form, FormStateInterface $form_s
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_core_node_cancel(array &$form, FormStateInterface $form_state) {
-  // By default the front page will be used,
-  // especially for adding a node.
+function _social_core_node_cancel(array &$form, FormStateInterface $form_state): void {
+  // By default, the front page will be used, especially for adding a node.
   $form_state->setRedirect('<front>');
 
   // If we have an existing node, we rather go to the node itself.
-  if (!empty($form_state->getFormObject()->getEntity())) {
-    $entity = $form_state->getFormObject()->getEntity();
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  $entity = $form_object->getEntity();
 
-    if ($entity instanceof NodeInterface && $entity->id() !== NULL) {
-      $form_state->setRedirect(
-        'entity.node.canonical',
-        ['node' => $entity->id(), []]
-      );
-    }
+  if ($entity instanceof NodeInterface && $entity->id() !== NULL) {
+    $form_state->setRedirect(
+      'entity.node.canonical',
+      ['node' => $entity->id(), []]
+    );
   }
 }
 
 /**
  * Implements hook_theme_registry_alter().
  */
-function social_core_theme_registry_alter(&$theme_registry) {
+function social_core_theme_registry_alter(array &$theme_registry): void {
   $theme_registry['menu__toolbar']['variables']['menu_name'] = NULL;
 }
 
 /**
  * Function to set default email logo if not set already for OS.
  */
-function _social_core_set_default_email_logo_for_socialblue() {
+function _social_core_set_default_email_logo_for_socialblue(): void {
   // Only when socialblue is default we continue.
   if (\Drupal::configFactory()->get('system.theme')->get('default') === 'socialblue') {
     $logo = theme_get_setting('logo.url', 'socialblue');
-    $basetheme_url = \Drupal::service('extension.list.theme')->getPath('socialblue');
+    $base_theme_url = \Drupal::service('extension.list.theme')->getPath('socialblue');
     // Only if the theme setting for the logo, is still the socialblue
     // default logo, we can update our default logo.
     // If someone changed it to their own branding, let's not update it
     // because that would create regression.
     // that will be /profile/contrib/social/themes/socialblue/logo.svg.
-    if (!empty($basetheme_url) && $logo === DIRECTORY_SEPARATOR . $basetheme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
+    if (!empty($base_theme_url) && $logo === DIRECTORY_SEPARATOR . $base_theme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
       // Add default image.
       $config_factory = \Drupal::configFactory();
-      // Lets get the email logo settings.
+      // Let's get the email logo settings.
       $socialblue_settings = $config_factory->getEditable('socialblue.settings');
+      /** @var array $default_image */
       $default_image = $socialblue_settings->get('email_logo');
 
-      // Only if there is no default image, or if its the same as the
+      // Only if there is no default image, or if it's the same as the
       // socialblue logo we can continue.
-      if (empty($default_image) || $default_image === $basetheme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
+      if (count($default_image) === 0 || $default_image[0] === $base_theme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
         $file_system = \Drupal::service('file_system');
-        $uri = $file_system->copy($basetheme_url . DIRECTORY_SEPARATOR . 'logo_email.png', 'public://logo_email.png', FileExists::Replace);
+        $uri = $file_system->copy($base_theme_url . DIRECTORY_SEPARATOR . 'logo_email.png', 'public://logo_email.png', FileExists::Replace);
 
         $media = File::create([
           'uri' => $uri,
@@ -1258,9 +1272,9 @@ function _social_core_set_default_email_logo_for_socialblue() {
 }
 
 /**
- * Used to set the favicon of GIN to open socials logo.
+ * Used to set the favicon of GIN to open social logos.
  */
-function _social_core_set_favicon() {
+function _social_core_set_favicon(): void {
   $config = \Drupal::configFactory()->getEditable('gin.settings');
   if (!empty($config->getRawData())) {
     $gin_config = $config->getRawData();
@@ -1276,7 +1290,7 @@ function _social_core_set_favicon() {
 /**
  * Implements hook_preprocess_HOOK() for status_messages.
  */
-function social_core_preprocess_status_messages(&$variables) {
+function social_core_preprocess_status_messages(array &$variables): void {
   // We want to remove stratus messages coming form image_widget_crop module.
   // These notifications are technical in nature and add no value for the user.
   // @see: \Drupal\image_widget_crop\ImageWidgetCropManager::saveCrop().
@@ -1286,7 +1300,7 @@ function social_core_preprocess_status_messages(&$variables) {
     // Loop through them to find the relevant messages we are looking for.
     foreach ($status_messages as $delta => $message) {
       // Unset them finally.
-      if (strpos((string) $message, 'The crop') !== FALSE) {
+      if (str_contains((string)$message, 'The crop')) {
         unset($variables['message_list']['status'][$delta]);
       }
     }
@@ -1309,7 +1323,7 @@ function social_core_preprocess_flag(array &$variables): void {
 /**
  * Get all default main menu links that ships with Open Social.
  */
-function _social_core_default_main_menu_links() {
+function _social_core_default_main_menu_links(): array {
   // If user has a permission to bypass all the restrictions, then
   // we don't return any links.
   if (\Drupal::currentUser()->hasPermission('bypass social_core menu links access')) {
@@ -1372,7 +1386,7 @@ function _social_core_default_main_menu_links() {
  *
  * Forbid access to edit/delete form for default Open Social menu links.
  */
-function social_core_entity_access(EntityInterface $entity, string $operation, AccountInterface $account) {
+function social_core_entity_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
   $entity_type = $entity->getEntityTypeId();
 
   if (
@@ -1412,8 +1426,10 @@ function social_core_entity_access(EntityInterface $entity, string $operation, A
  *
  * Remove operation links for main menu form for all default Open Social links.
  */
-function social_core_form_menu_edit_form_alter(array &$form, FormStateInterface $form_state) {
-  $menu = $form_state->getFormObject()->getEntity();
+function social_core_form_menu_edit_form_alter(array &$form, FormStateInterface $form_state): void {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  $menu = $form_object->getEntity();
   if ($menu->id() !== 'main') {
     return;
   }
@@ -1425,8 +1441,10 @@ function social_core_form_menu_edit_form_alter(array &$form, FormStateInterface 
   }
 
   foreach ($os_links_ids as $menu_id) {
-    unset($form['links']['links'][$menu_id]['operations']['#links']['edit']);
-    unset($form['links']['links'][$menu_id]['operations']['#links']['delete']);
+    unset(
+      $form['links']['links'][$menu_id]['operations']['#links']['edit'],
+      $form['links']['links'][$menu_id]['operations']['#links']['delete'],
+    );
   }
 }
 
@@ -1509,7 +1527,7 @@ function _social_core_install_blocks(array $items, callable $function = NULL): v
 function social_core_entity_update(EntityInterface $entity): void {
   // Get the original status from the current entity.
   $original_status = NULL;
-  if (isset($entity->original) && isset($entity->original->status)) {
+  if (isset($entity->original->status)) {
     $original_status = (bool) $entity->original->status->value;
   }
 
@@ -1517,13 +1535,13 @@ function social_core_entity_update(EntityInterface $entity): void {
   $new_status = isset($entity->status) ? (bool) $entity->status->value : NULL;
 
   // If the status changed (published/unpublished), trigger the custom hooks.
-  if ($original_status != $new_status) {
+  if ($original_status !== $new_status) {
     // Entity has been published.
-    if ($new_status == 1) {
+    if ($new_status === TRUE) {
       \Drupal::moduleHandler()->invokeAll('social_core_' . $entity->getEntityTypeId() . '_published', [$entity]);
     }
     // Entity has been unpublished.
-    elseif ($new_status == 0) {
+    elseif ($new_status === FALSE) {
       \Drupal::moduleHandler()->invokeAll('social_core_' . $entity->getEntityTypeId() . '_unpublished', [$entity]);
     }
   }

@@ -25,7 +25,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * {@inheritdoc}
@@ -42,7 +42,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
    * @param \Drupal\Core\Entity\EntityBase $entity
    *   The thread entity.
    */
-  public function updateLastThreadCheckTime(EntityBase $entity) {
+  public function updateLastThreadCheckTime(EntityBase $entity): void {
     $this->userData->set('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id(), $this->time->getRequestTime());
   }
 
@@ -52,7 +52,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
    * @param \Drupal\Core\Entity\EntityBase $entity
    *   The thread entity.
    */
-  public function deleteUserDataThreadInfo(EntityBase $entity) {
+  public function deleteUserDataThreadInfo(EntityBase $entity): void {
     $this->userData->delete('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id());
   }
 
@@ -62,7 +62,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
    * @return int
    *   The number of unread threads.
    */
-  public function updateUnreadCount() {
+  public function updateUnreadCount(): int {
     $unread = &drupal_static(__FUNCTION__);
 
     if (!isset($unread)) {
@@ -117,8 +117,8 @@ class SocialPrivateMessageService extends PrivateMessageService {
    * @return array
    *   A list of timestamps linked to the thread IDs.
    */
-  public function getLastMessagesFromOtherUsers($uid, array $threads) {
-    return $this->database->query(
+  public function getLastMessagesFromOtherUsers($uid, array $threads): array {
+    $result = $this->database->query(
       'SELECT MAX(pm.created), pmt.entity_id ' .
       'FROM {private_message_thread__private_messages} pmt ' .
       'LEFT JOIN {private_messages} pm ON pmt.private_messages_target_id = pm.id ' .
@@ -128,7 +128,10 @@ class SocialPrivateMessageService extends PrivateMessageService {
         ':threads[]' => $threads,
         ':uid' => $uid,
       ]
-    )->fetchAllKeyed(1, 0);
+    );
+
+    /** @var \Drupal\Core\Database\StatementInterface $result */
+    return $result->fetchAllKeyed(1, 0);
   }
 
   /**
@@ -142,7 +145,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
    * @return int
    *   The timestamp or 0 if nothing was found.
    */
-  public function getLastMessageFromOtherUser($uid, $thread_id) {
+  public function getLastMessageFromOtherUser(int $uid, int $thread_id): int {
     $timestamp = $this->database->query(
       'SELECT MAX(pm.created) ' .
       'FROM {private_message_thread__private_messages} pmt ' .
@@ -152,14 +155,11 @@ class SocialPrivateMessageService extends PrivateMessageService {
         ':thread' => $thread_id,
         ':uid' => $uid,
       ]
-    )->fetchCol();
+    );
+    /** @var \Drupal\Core\Database\StatementInterface $timestamp */
+    $timestamp->fetchCol();
 
-    // Chop of the head.
-    if (is_array($timestamp)) {
-      $timestamp = ($timestamp[0] !== NULL) ? $timestamp[0] : 0;
-    }
-
-    return $timestamp;
+    return $timestamp[0] ?? 0;
   }
 
 }

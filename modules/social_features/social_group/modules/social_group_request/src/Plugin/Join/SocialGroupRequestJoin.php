@@ -41,8 +41,7 @@ class SocialGroupRequestJoin extends JoinBase {
     array $configuration,
     $plugin_id,
     $plugin_definition
-  ): self {
-    /** @var self $instance */
+  ): static {
     $instance = parent::create(
       $container,
       $configuration,
@@ -50,9 +49,11 @@ class SocialGroupRequestJoin extends JoinBase {
       $plugin_definition,
     );
 
-    if ($container->has($id = 'ginvite.invitation_loader')) {
+    $moduleHandler = $container->get('module_handler');
+
+    if ($moduleHandler->moduleExists('ginvite')) {
       /** @var \Drupal\ginvite\GroupInvitationLoaderInterface $loader */
-      $loader = $container->get($id);
+      $loader = $container->get('ginvite.invitation_loader');
 
       $instance->loader = $loader;
     }

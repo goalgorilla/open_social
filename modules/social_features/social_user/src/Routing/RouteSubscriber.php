@@ -4,6 +4,8 @@ namespace Drupal\social_user\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
+use Drupal\social_user\Form\SocialUserLoginForm;
+use Drupal\social_user\Form\SocialUserPasswordForm;
 
 /**
  * Class RouteSubscriber.
@@ -16,17 +18,17 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
     // Set route for the login to point to the SocialUserLoginForm.
     if ($route = $collection->get('user.login')) {
       $route->setDefaults([
-        '_form' => '\Drupal\social_user\Form\SocialUserLoginForm',
+        '_form' => SocialUserLoginForm::class,
         '_title' => t('Log in')->render(),
       ]);
     }
     if ($route = $collection->get('user.pass')) {
       $route->setDefaults([
-        '_form' => '\Drupal\social_user\Form\SocialUserPasswordForm',
+        '_form' => SocialUserPasswordForm::class,
         '_title' => t('Reset your password')->render(),
       ]);
     }

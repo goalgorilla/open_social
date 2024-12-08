@@ -127,7 +127,7 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    * @return bool
    *   TRUE if the Event enrollment is published.
    */
-  public function isPublished();
+  public function isPublished(): bool;
 
   /**
    * Sets the published status of a Event enrollment.
@@ -138,7 +138,7 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    * @return \Drupal\social_event\EventEnrollmentInterface
    *   The called Event enrollment entity.
    */
-  public function setPublished($published);
+  public function setPublished(bool $published): EventEnrollmentInterface;
 
   /**
    * Gets enroller id.

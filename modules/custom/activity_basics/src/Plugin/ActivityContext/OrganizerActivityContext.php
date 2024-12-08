@@ -62,7 +62,7 @@ class OrganizerActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -128,6 +128,7 @@ class OrganizerActivityContext extends ActivityContextBase {
       && $original_related_object['target_type'] === 'event_enrollment'
       && $related_entity !== NULL) {
       $storage = $this->entityTypeManager->getStorage($related_entity['target_type']);
+      /** @var EventEnrollmentInterface|NULL $event */
       $event = $storage->load($related_entity['target_id']);
 
       if ($event === NULL) {

@@ -4,6 +4,7 @@ namespace Drupal\group_core_comments;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\comment\CommentAccessControlHandler;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\Core\Entity\EntityInterface;
@@ -21,11 +22,10 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    /** @var \Drupal\comment\CommentInterface|\Drupal\user\EntityOwnerInterface $entity */
-
+  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResultInterface {
     $parent_access = parent::checkAccess($entity, $operation, $account);
 
+    /** @var \Drupal\comment\CommentInterface $entity */
     $commented_entity = $entity->getCommentedEntity();
     if (!($commented_entity instanceof ContentEntityInterface)) {
       return AccessResult::neutral();
@@ -42,8 +42,7 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
     }
 
     if ($administer_access->isAllowed()) {
-      $access = AccessResult::allowed()->cachePerPermissions();
-      return ($operation != 'view') ? $access : $access->andIf($entity->getCommentedEntity()->access($operation, $account, TRUE));
+      return AccessResult::allowed()->cachePerPermissions()->andIf($commented_entity->access($operation, $account, TRUE));
     }
 
     // @todo Only react on if $parent === allowed Is this good/safe enough?
@@ -70,7 +69,7 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
   /**
    * Checks if account was granted permission in group.
    */
-  protected function getPermissionInGroups($perm, AccountInterface $account, $group_contents) {
+  protected function getPermissionInGroups(string $perm, AccountInterface $account, array $group_contents): AccessResultInterface {
 
     // Only when you have permission to view the comments.
     foreach ($group_contents as $group_content) {

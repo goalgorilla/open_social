@@ -4,6 +4,7 @@ namespace Drupal\activity_basics\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
  * Provides a 'CommentReply' activity condition.
@@ -19,7 +20,7 @@ class CommentAllActivityEntityCondition extends ActivityEntityConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) : bool {
+  public function isValidEntityCondition(ContentEntityInterface $entity) : bool {
     return $entity instanceof CommentInterface;
   }
 

@@ -11,8 +11,11 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\Core\Url;
 use Drupal\flag\Entity\Flagging;
+use Drupal\group\Entity\Storage\GroupRelationshipStorage;
 use Drupal\user\UserInterface;
 use Drupal\node\NodeInterface;
+use Drupal\votingapi\Entity\Vote;
+use Drupal\votingapi\VoteStorage;
 
 /**
  * Defines the Activity entity.
@@ -65,8 +68,8 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
-    parent::preCreate($storage_controller, $values);
+  public static function preCreate(EntityStorageInterface $storage, array &$values): void {
+    parent::preCreate($storage, $values);
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
     ];
@@ -75,14 +78,14 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCreatedTime() {
+  public function getCreatedTime(): int {
     return $this->get('created')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setCreatedTime($timestamp) {
+  public function setCreatedTime(int $timestamp): ActivityInterface|static {
     $this->set('created', $timestamp);
     return $this;
   }
@@ -90,21 +93,23 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function getOwner() {
-    return $this->get('user_id')->entity;
+  public function getOwner(): UserInterface {
+    /** @var UserInterface $user */
+    $user = $this->get('user_id')->entity;
+    return $user;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getOwnerId() {
-    return $this->get('user_id')->target_id;
+  public function getOwnerId(): ?int {
+    return (int) $this->get('user_id')->target_id;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public function setOwnerId($uid): \Drupal\user\EntityOwnerInterface|Activity|static {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -112,7 +117,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(UserInterface $account): \Drupal\user\EntityOwnerInterface|Activity|static {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -120,14 +125,14 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
+  public function isPublished(): bool {
     return (bool) $this->getEntityKey('status');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setPublished($published) {
+  public function setPublished($published): ActivityInterface {
     $this->set('status', $published ? NodeInterface::PUBLISHED : NodeInterface::NOT_PUBLISHED);
     return $this;
   }
@@ -135,7 +140,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Activity entity.'))
@@ -202,7 +207,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    * @return \Drupal\Core\Entity\EntityInterface|null
    *   Returns NULL or Entity object.
    */
-  public function getRelatedEntity() {
+  public function getRelatedEntity(): ?\Drupal\Core\Entity\EntityInterface {
     $related_object = $this->get('field_activity_entity')->getValue();
     if (!empty($related_object)) {
       $target_type = $related_object['0']['target_type'];
@@ -244,15 +249,19 @@ class Activity extends ContentEntityBase implements ActivityInterface {
 
       // Make an exception for Votes.
       if ($target_type === 'vote') {
-        /** @var \Drupal\votingapi\Entity\Vote $vote */
-        if ($vote = \Drupal::service('entity_type.manager')->getStorage($target_type)->load($target_id)) {
+        /** @var VoteStorage $vote_storage */
+        $vote_storage = \Drupal::entityTypeManager()->getStorage($target_type);
+        if ($vote = $vote_storage->load($target_id)) {
+          /** @var Vote $vote */
           $target_type = $vote->getVotedEntityType();
           $target_id = $vote->getVotedEntityId();
         }
       }
       elseif ($target_type === 'group_content') {
-        /** @var \Drupal\group\Entity\GroupRelationship $group_content */
-        if ($group_content = \Drupal::service('entity_type.manager')->getStorage($target_type)->load($target_id)) {
+        /** @var GroupRelationshipStorage $group_content_storage */
+        $group_content_storage = \Drupal::service('entity_type.manager')->getStorage($target_type);
+        if ($group_content = $group_content_storage->load($target_id)) {
+          /** @var \Drupal\group\Entity\GroupRelationship $group_content */
           $target_type = $group_content->getEntity()->getEntityTypeId();
           $target_id = $group_content->getEntity()->id();
         }
@@ -295,7 +304,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function getDestinations() {
+  public function getDestinations(): array {
     $values = [];
     $field_activity_destinations = $this->get('field_activity_destinations');
     $destinations = $field_activity_destinations->getValue();
@@ -312,7 +321,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    *
    * @todo Split it to two separate functions.
    */
-  public function getRecipient() {
+  public function getRecipient(): mixed {
     $field_activity_recipient_user = $this->get('field_activity_recipient_user');
     $recipient_user = $field_activity_recipient_user->getValue();
     if (!empty($recipient_user)) {

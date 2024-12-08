@@ -14,7 +14,7 @@ class SocialUserSearchContentBlockAlter implements TrustedCallbackInterface {
   /**
    * Pre render for the search content in the header. This will add javascript.
    */
-  public static function preRender($build) {
+  public static function preRender(array $build): array {
     // Attach the social_search library defined in social_search.libraries.yml.
     $build['#attached'] = [
       'library' => [
@@ -28,7 +28,7 @@ class SocialUserSearchContentBlockAlter implements TrustedCallbackInterface {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['preRender'];
   }
 

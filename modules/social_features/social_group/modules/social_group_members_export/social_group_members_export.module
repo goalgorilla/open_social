@@ -10,9 +10,9 @@ use Drupal\Core\StreamWrapper\StreamWrapperManager;
 /**
  * Implements hook_file_download().
  */
-function social_group_members_export_file_download($uri) {
+function social_group_members_export_file_download(mixed $uri): array {
   $scheme = StreamWrapperManager::getScheme($uri);
-  $target = StreamWrapperManager::getTarget($uri);
+  $target = (string) StreamWrapperManager::getTarget($uri);
   $access = \Drupal::currentUser()->hasPermission('administer users');
 
   if ($scheme === 'private' && preg_match('/^csv\/export-members-([a-f0-9]{16})\.csv$/i', $target) && $access) {
@@ -20,4 +20,5 @@ function social_group_members_export_file_download($uri) {
       'Content-disposition' => 'attachment; filename="' . basename($target) . '"',
     ];
   }
+  return [];
 }

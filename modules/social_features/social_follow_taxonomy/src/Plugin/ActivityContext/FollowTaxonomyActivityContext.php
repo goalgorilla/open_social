@@ -29,21 +29,21 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $connection;
+  protected Connection $connection;
 
   /**
    * The group helper service.
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $groupHelperService;
+  protected SocialGroupHelperService $groupHelperService;
 
   /**
    * ActivityContextBase constructor.
@@ -88,7 +88,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -104,6 +104,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
 
   /**
    * {@inheritdoc}
+   * @throws \Exception
    */
   public function getRecipients(array $data, int $last_id, int $limit): array {
     // It could happen that a notification has been queued but the account has
@@ -118,7 +119,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
-      if ($related_entity['target_type'] == 'node' || $related_entity['target_type'] == 'post') {
+      if ($related_entity['target_type'] === 'node' || $related_entity['target_type'] === 'post') {
         $recipients += $this->getRecipientsWhoFollowTaxonomy($related_entity, $data);
       }
     }
@@ -129,25 +130,26 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
   /**
    * List of taxonomy terms.
    */
-  public function taxonomyTermsList($entity) {
-    $term_ids = social_follow_taxonomy_terms_list($entity);
-
-    return $term_ids;
+  public function taxonomyTermsList(ContentEntityInterface $entity): array {
+    return social_follow_taxonomy_terms_list($entity);
   }
 
   /**
    * Returns recipients from followed taxonomies.
+   *
+   * @throws \Exception
    */
-  public function getRecipientsWhoFollowTaxonomy(array $related_entity, array $data) {
+  public function getRecipientsWhoFollowTaxonomy(array $related_entity, array $data): array {
     $recipients = [];
 
+    /** @var \Drupal\node\NodeInterface|NULL $entity */
     $entity = $this->entityTypeManager->getStorage($related_entity['target_type'])
       ->load($related_entity['target_id']);
-
-    if (!empty($entity)) {
-      $tids = $this->taxonomyTermsList($entity);
+    if ($entity === NULL) {
+      return [];
     }
 
+    $tids = $this->taxonomyTermsList($entity);
     if (empty($tids)) {
       return [];
     }
@@ -159,7 +161,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       ->condition('entity_type', 'taxonomy_term')
       ->condition('entity_id', $tids, 'IN')
       ->groupBy('uid')
-      ->execute()->fetchCol();
+      ->execute()?->fetchCol();
 
     /** @var \Drupal\user\UserInterface[] $users */
     $users = $this->entityTypeManager->getStorage('user')->loadMultiple($uids);
@@ -185,7 +187,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       }
 
       // Check if user have access to view node.
-      if (!$this->haveAccessToNode($recipient, $entity->id())) {
+      if (!$this->haveAccessToNode($recipient, (string) $entity->id())) {
         continue;
       }
 
@@ -229,7 +231,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    * @return string[]
    *   List of filed names.
    */
-  public function getListOfTagsFields() {
+  public function getListOfTagsFields(): array {
     $fields_to_check = [
       'social_tagging',
     ];
@@ -247,8 +249,10 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    *
    * @return bool
    *   Returns TRUE if have access.
+   *
+   * @throws \Exception
    */
-  protected function haveAccessToNode(UserInterface $recipient, $nid) {
+  protected function haveAccessToNode(UserInterface $recipient, string|int $nid): bool {
     $query = $this->connection->select('node_field_data', 'nfd');
     $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
     $query->leftJoin('group_relationship_field_data', 'gcfd', 'gcfd.entity_id = nfd.nid');
@@ -258,7 +262,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       ->isNull('gcfd.entity_id');
     $or->condition($community_access);
     // Node visibility by group.
-    $memberships = $this->groupHelperService->getAllGroupsForUser($recipient->id());
+    $memberships = $this->groupHelperService->getAllGroupsForUser((int) $recipient->id());
     if (count($memberships) > 0) {
       $access_by_group = $or->andConditionGroup();
       $access_by_group->condition('nfcv.field_content_visibility_value', ['group', 'community', 'public'], 'IN');
@@ -271,9 +275,12 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     $query->condition('nfd.nid', $nid);
     $query->groupBy('nfd.nid');
     $query->addExpression('COUNT(*)');
-    $nids = $query->execute()->fetchField();
 
-    return !empty($nids);
+    $result = $query->execute();
+    if ($result) {
+      return !empty($result->fetchCol());
+    }
+    return FALSE;
   }
 
 }

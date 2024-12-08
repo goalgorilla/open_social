@@ -14,14 +14,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\social_user\Form
  */
-class SocialUserNavigationSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class SocialUserNavigationSettingsForm extends ConfigFormBase {
 
   /**
    * The Module Handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * {@inheritdoc}
@@ -34,7 +34,7 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('module_handler')
@@ -44,21 +44,21 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_user_navigation_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_user.navigation.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     // Get the configuration file.
     $config = $this->config('social_user.navigation.settings');
@@ -96,7 +96,7 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     // Get the configuration file.
     $config = $this->config('social_user.navigation.settings');

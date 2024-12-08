@@ -20,7 +20,7 @@ class EventEnrollmentSettingsForm extends FormBase {
    * @return string
    *   The unique string identifying the form.
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'EventEnrollment_settings';
   }
 
@@ -32,7 +32,7 @@ class EventEnrollmentSettingsForm extends FormBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Empty implementation of the abstract submit class.
   }
 
@@ -47,7 +47,7 @@ class EventEnrollmentSettingsForm extends FormBase {
    * @return array
    *   Form definition array.
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['EventEnrollment_settings']['#markup'] = 'Settings form for Event enrollment entities. Manage field settings here.';
     return $form;
   }

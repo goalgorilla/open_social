@@ -2,8 +2,11 @@
 
 namespace Drupal\social_comment\Plugin\GraphQL\DataProducer;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\node\NodeInterface;
+use Drupal\social_graphql\GraphQL\ConnectionInterface;
 use Drupal\social_graphql\GraphQL\EntityConnection;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
 use Drupal\social_comment\Plugin\GraphQL\QueryHelper\CommentQueryHelper;
@@ -61,7 +64,7 @@ class QueryComments extends EntityDataProducerPluginBase {
   /**
    * Resolves the request to the requested values.
    *
-   * @param \Drupal\node\NodeInterface|null $parent
+   * @param NodeInterface|null $parent
    *   The comment parent entity or ID.
    * @param string|null $bundle
    *   The comment bundle.
@@ -77,18 +80,22 @@ class QueryComments extends EntityDataProducerPluginBase {
    *   Reverses the order of the data.
    * @param string $sortKey
    *   Key to sort by.
-   * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
+   * @param RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
+   * @return EntityConnection|ConnectionInterface
    *   An entity connection with results and data about the paginated results.
+   *
+   * @throws InvalidPluginDefinitionException
+   * @throws PluginNotFoundException
    */
-  public function resolve(?NodeInterface $parent, ?string $bundle, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(?NodeInterface $parent, ?string $bundle, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata): EntityConnection|\Drupal\social_graphql\GraphQL\ConnectionInterface {
     if ($parent) {
       $nodes = $this->entityTypeManager->getStorage('node')->loadByProperties(['uuid' => $parent->uuid()]);
       $parent = reset($nodes);
     }
 
+    /** @var NodeInterface $parent*/
     $query_helper = new CommentQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $parent, $bundle);
     $metadata->addCacheableDependency($query_helper);
 

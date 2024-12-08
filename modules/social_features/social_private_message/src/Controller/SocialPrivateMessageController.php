@@ -12,7 +12,7 @@ class SocialPrivateMessageController extends ControllerBase {
   /**
    * Override the default inbox page.
    */
-  public function inbox() {
+  public function inbox(): array {
     return [];
   }
 

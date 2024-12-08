@@ -10,22 +10,23 @@ use Drupal\Core\StreamWrapper\StreamWrapperManager;
 /**
  * Implements hook_file_download().
  */
-function social_event_enrolments_export_file_download($uri) {
+function social_event_enrolments_export_file_download(string $uri): array {
   $scheme = StreamWrapperManager::getScheme($uri);
-  $target = StreamWrapperManager::getTarget($uri);
-  $access = \Drupal::currentUser()->hasPermission('administer users');
+  $target = (string) StreamWrapperManager::getTarget($uri);
+  $access = (string) \Drupal::currentUser()->hasPermission('administer users');
 
   if ($scheme === 'private' && preg_match('/^csv\/export-enrollments-([a-f0-9]{16})\.csv$/i', $target) && $access) {
     return [
       'Content-disposition' => 'attachment; filename="' . basename($target) . '"',
     ];
   }
+  return [];
 }
 
 /**
  * Implements hook_social_event_action_ACTION_ID_finish().
  */
-function social_event_enrolments_export_social_event_managers_action_social_event_enrolments_export_enrollments_action_finish($success) {
+function social_event_enrolments_export_social_event_managers_action_social_event_enrolments_export_enrollments_action_finish(bool $success): array {
   if ($success) {
     return [
       'singular' => '1 selected enrollee has been exported successfully',

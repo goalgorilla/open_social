@@ -20,7 +20,7 @@ use Drupal\social_post\Entity\PostInterface;
 /**
  * Implements hook_entity_display_build_alter().
  */
-function social_ajax_comments_entity_display_build_alter(&$build, $context) {
+function social_ajax_comments_entity_display_build_alter(array &$build, array $context): void {
   // Only for comments on nodes on the default display.
   // This is to override the defaults in ajax_comments who
   // don't take into account correct wrapper and html id's
@@ -66,7 +66,7 @@ function social_ajax_comments_entity_display_build_alter(&$build, $context) {
  *
  * Triggers on form for deleting a comment on a post.
  */
-function social_ajax_comments_form_comment_post_comment_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_ajax_comments_form_comment_post_comment_delete_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // We set a new class, so we can remove wrapper div.
   // Due to the form.inc and confirm-form twig setup.
   if (\Drupal::request()->isXmlHttpRequest()) {
@@ -79,7 +79,7 @@ function social_ajax_comments_form_comment_post_comment_delete_form_alter(&$form
  *
  * Triggers on form for deleting a comment on a node.
  */
-function social_ajax_comments_form_comment_comment_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_ajax_comments_form_comment_comment_delete_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // We set a new class, so we can remove wrapper div.
   // Due to the form.inc and confirm-form twig setup.
   if (\Drupal::request()->isXmlHttpRequest()) {
@@ -92,7 +92,7 @@ function social_ajax_comments_form_comment_comment_delete_form_alter(&$form, For
  *
  * Alter the links of a comment.
  */
-function social_ajax_comments_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
+function social_ajax_comments_comment_links_alter(array &$links, CommentInterface $entity, array &$context): void {
   $bundle = $entity->bundle();
   $commented_entity = $entity->getCommentedEntity();
   $account = \Drupal::currentUser();
@@ -109,7 +109,7 @@ function social_ajax_comments_comment_links_alter(array &$links, CommentInterfac
   // Ajax replace works on the right ID.
   if ($entity->isPublished() && $account->hasPermission('administer comments') && $bundle === 'post_comment') {
     $wrapper_id = Html::getId(
-      $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id()
+      $commented_entity?->getEntityTypeId() . '-' . $commented_entity?->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity?->id()
     );
 
     if (!empty($links['comment']['#links']['comment-edit'])) {
@@ -127,7 +127,7 @@ function social_ajax_comments_comment_links_alter(array &$links, CommentInterfac
 /**
  * Implements hook_ajax_comments_wrapper_id_alter().
  */
-function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, ContentEntityInterface $commented_entity, $field_name) {
+function social_ajax_comments_ajax_comments_wrapper_id_alter(string &$wrapper_html_id, ContentEntityInterface $commented_entity, string $field_name): void {
   if (
     $commented_entity instanceof NodeInterface &&
     $field_name === 'field_topic_comments'
@@ -156,7 +156,7 @@ function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, 
 /**
  * Implements hook_ajax_render_alter().
  */
-function social_ajax_comments_ajax_render_alter(array &$data) {
+function social_ajax_comments_ajax_render_alter(array &$data): void {
   if (
     (
       // In case when the current page is (re)loaded and the response contains a
@@ -215,7 +215,7 @@ function social_ajax_comments_ajax_render_alter(array &$data) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_ajax_comments_preprocess_pager(&$variables) {
+function social_ajax_comments_preprocess_pager(array &$variables): void {
   if (
     !empty($variables['pager']['#ajaxify']) &&
     ($items = &$variables['items'])
@@ -231,7 +231,7 @@ function social_ajax_comments_preprocess_pager(&$variables) {
  * @param array $items
  *   The pager sub-elements.
  */
-function _social_ajax_comments_pager(array &$items) {
+function _social_ajax_comments_pager(array &$items): void {
   foreach ($items as &$item) {
     if (isset($item['href'])) {
       $attributes = $item['attributes'] ?? new Attribute([]);
@@ -268,7 +268,7 @@ function social_ajax_comments_batch_alter(array &$batch): void {
   /** @var \Drupal\Core\Form\FormStateInterface|null $form_state */
   $form_state = $batch['form_state'] ?? NULL;
 
-  if (empty($form_state) || $form_state->getValue('form_id') != 'comment_comment_delete_form' || !empty($batch['batch_redirect'])) {
+  if (empty($form_state) || $form_state->getValue('form_id') !== 'comment_comment_delete_form' || !empty($batch['batch_redirect'])) {
     return;
   }
 

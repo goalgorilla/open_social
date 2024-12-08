@@ -17,14 +17,14 @@ class SocialPostHelper implements SocialPostHelperInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The current active user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * SocialPostHelper constructor.
@@ -45,7 +45,8 @@ class SocialPostHelper implements SocialPostHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildCurrentUserImage() {
+  public function buildCurrentUserImage(): ?array {
+    /** @var \Drupal\profile\ProfileStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('profile');
 
     // Load current user.

@@ -3,13 +3,16 @@
 namespace Drupal\social_event\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupRelationship;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\social_event\Form\EnrollActionForm;
 
 /**
  * Provides a 'EnrollActionBlock' block.
@@ -26,14 +29,14 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * EnrollActionBlock constructor.
@@ -58,7 +61,7 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -73,7 +76,7 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * Custom access logic to display the block on the hero region for an event.
    */
-  protected function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account):AccessResultInterface {
     $route_name = $this->routeMatch->getRouteName();
     $routes_to_check = [
       'view.event_enrollments.view_enrollments',
@@ -86,6 +89,7 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
         $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($node);
       }
 
+      /** @var \Drupal\node\NodeInterface $node */
       if (is_object($node) && $node->getType() === 'event') {
         // Retrieve the group and if there are groups respect group permission.
         $groups = $this->getGroups($node);
@@ -110,7 +114,7 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function build() {
-    $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollActionForm');
+    $form = $this->formBuilder->getForm(EnrollActionForm::class);
 
     $render_array = [
       'enroll_action_form' => $form,
@@ -136,7 +140,7 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    * @return array
    *   Group entities.
    */
-  public function getGroups($node) {
+  public function getGroups(ContentEntityInterface $node): array {
 
     $group_relationships = GroupRelationship::loadByEntity($node);
 

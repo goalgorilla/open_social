@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Configure social profile settings.
  */
-class SocialProfileFieldsSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class SocialProfileFieldsSettingsForm extends ConfigFormBase {
 
   /**
    * Profile fields helper.
@@ -101,7 +101,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('social_profile_fields.helper'),
@@ -116,21 +116,21 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_profile_fields_admin_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_profile_fields.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_profile_fields.settings');
 
     // Add an introduction text to explain what can be done here.
@@ -147,7 +147,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
 
     /** @var \Drupal\profile\Entity\ProfileType $profile_type */
     foreach (ProfileType::loadMultiple() as $profile_type) {
-      $type = $profile_type->id();
+      $type = (string) $profile_type->id();
 
       $form[$type] = [
         '#type' => 'details',
@@ -156,7 +156,6 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
         '#open' => TRUE,
       ];
 
-      /** @var \Drupal\field\Entity\FieldConfig $field_config */
       foreach ($this->profileFieldsHelper->getProfileFields($type) as $field) {
         // Loop through the fields.
         $id = $field['id'];
@@ -255,15 +254,14 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Save config.
     $config = $this->config('social_profile_fields.settings');
 
     /** @var \Drupal\profile\Entity\ProfileType $profile_type */
     foreach (ProfileType::loadMultiple() as $profile_type) {
-      $type = $profile_type->id();
+      $type = (string) $profile_type->id();
 
-      /** @var \Drupal\field\Entity\FieldConfig $field_config */
       foreach ($this->profileFieldsHelper->getProfileFields($type) as $field) {
         $config->set($field['id'], $form_state->getValue($field['id']));
       }
@@ -286,7 +284,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     $query->addField('p', 'profile_id');
     $query->condition('p.type', 'profile');
     $query->condition('p.status', 1);
-    $ids = $query->execute()->fetchCol();
+    $ids = $query->execute()?->fetchCol();
 
     $cache_tags = ['profile', 'profile_list', 'profile_view'];
     if (!empty($ids)) {
@@ -317,7 +315,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   /**
    * Redirects to confirmation form for the flush action.
    */
-  public function submitFlush(array &$form, FormStateInterface $form_state) {
+  public function submitFlush(array &$form, FormStateInterface $form_state): void {
     $form_state->setRedirect('social_profile_fields.flush');
   }
 

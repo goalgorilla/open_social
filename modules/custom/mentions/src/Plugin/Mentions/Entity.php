@@ -47,7 +47,7 @@ class Entity implements MentionsPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     $token = $container->get('token');
     $entity_type_manager = $container->get('entity_type.manager');
     return new static(

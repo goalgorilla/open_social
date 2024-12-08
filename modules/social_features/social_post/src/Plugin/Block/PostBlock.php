@@ -144,7 +144,7 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -173,7 +173,7 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
   public function build() {
     $values = [];
     // Specify selected bundle if the entity has bundles.
-    if ($this->entityTypeManager->getDefinition($this->entityType)->hasKey('bundle')) {
+    if ($this->entityTypeManager->getDefinition($this->entityType)?->hasKey('bundle')) {
       $bundle_key = $this->entityTypeManager->getDefinition($this->entityType)->getKey('bundle');
       $values = [$bundle_key => $this->bundle];
     }

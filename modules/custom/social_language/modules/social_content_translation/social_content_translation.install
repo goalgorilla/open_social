@@ -11,26 +11,26 @@ use Drupal\language\Entity\ContentLanguageSettings;
 /**
  * Implements hook_install().
  */
-function social_content_translation_install() {
+function social_content_translation_install(): void {
   social_content_translation_install_language_settings_for_entities();
 }
 
 /**
  * Implements hook_uninstall().
  */
-function social_content_translation_uninstall() {
+function social_content_translation_uninstall(): void {
   \Drupal::configFactory()->getEditable('social_content_translation.settings')->delete();
 }
 
 /**
  * Install translation configuration.
  *
- *  "Content Translation" module provide UI where we can enabled/disable
- *  translations for entity types we want. So here we enabling translations
- *  for modules if it have "language.content_settings*" configuration in
+ *  "Content Translation" module provide UI where we can enable/disable
+ *  translations for entity types we want. So here we're enabling translations
+ *  for modules if it has "language.content_settings*" configuration in
  *  "config/optional" folder.
  */
-function social_content_translation_install_language_settings_for_entities() {
+function social_content_translation_install_language_settings_for_entities(): void {
   $config_storage = \Drupal::service('config.storage');
 
   // Get enabled modules.
@@ -47,7 +47,7 @@ function social_content_translation_install_language_settings_for_entities() {
     foreach ($list as $config_name) {
       // Probably, configuration can be already existed if module provided
       // it was enabled after "Content Translation" module was enabled.
-      // Otherwise lets install it.
+      // Otherwise, let's install it.
       if (!$config_storage->exists($config_name)) {
         $file = $source->read($config_name);
         // Checking if exist file and go to next when it doesn't exist.

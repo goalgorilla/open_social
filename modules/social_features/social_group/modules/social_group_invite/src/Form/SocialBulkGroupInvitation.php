@@ -3,6 +3,7 @@
 namespace Drupal\social_group_invite\Form;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGenerator;
@@ -77,7 +78,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   /**
    * The Config factory.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
@@ -100,14 +101,14 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
    * The group relation type manager.
    *
    * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
-  protected $groupRelationTypeManager;
+  protected GroupRelationTypeManagerInterface $groupRelationTypeManager;
 
   /**
    * The file url generator.
@@ -168,7 +169,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('current_route_match'),
       $container->get('entity_type.manager'),
@@ -187,14 +188,14 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_bulk_group_invitation';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
     $form['#attributes']['class'][] = 'form--default';
 
@@ -317,7 +318,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    * both emails and existing users. Also we unset the people already invited,
    * or part of the group so we don't force users a step back to the buildform.
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     // Loop through all the entries.
     foreach ($form_state->getValue('users_fieldset')['user'] as $user) {
       $email = $this->extractEmailsFrom($user);
@@ -397,7 +398,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    * @return bool
    *   Returns TRUE if the user is not part of the group.
    */
-  private function validateExistingMembers(array $users, FormStateInterface $form_state) {
+  private function validateExistingMembers(array $users, FormStateInterface $form_state): bool {
     $invalid_emails = [];
 
     foreach ($users as $user) {
@@ -431,7 +432,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function displayErrorMessage(array $invalid_emails, $message_singular, $message_plural, FormStateInterface $form_state) : void {
+  public function displayErrorMessage(array $invalid_emails, string $message_singular, string $message_plural, FormStateInterface $form_state) : void {
     $count = count($invalid_emails);
 
     if ($count > 1) {
@@ -456,7 +457,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *
    * @throws \Drupal\Core\TempStore\TempStoreException
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Override the Batch created in BulkGroupInvitation
     // this so we can create a better message, use a new redirect in the
     // finished argument but also update the correct emails etc.
@@ -510,14 +511,14 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    * @return array
    *   List of emails to invite .
    */
-  private function getSubmittedEmails(FormStateInterface $form_state) {
+  private function getSubmittedEmails(FormStateInterface $form_state): array {
     return array_map('trim', array_unique(explode("\r\n", trim($form_state->getValue('email_address') ?? ""))));
   }
 
   /**
    * Batch finished callback overridden from BulkGroupInvitationConfirm.
    */
-  public static function batchFinished($success, $results, $operations) {
+  public static function batchFinished(bool $success, array $results, array $operations): void {
     if ($success) {
       try {
         $tempstore = \Drupal::service('tempstore.private')->get('ginvite_bulk_invitation');
@@ -548,7 +549,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   /**
    * Custom function to extract email addresses from a string.
    */
-  public function extractEmailsFrom($string) {
+  public function extractEmailsFrom(string $string): mixed {
     // Remove select2 ID parameter.
     $string = str_replace('$ID:', '', $string);
     preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $string, $matches);
@@ -569,7 +570,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access results.
    */
-  public function inviteAccess(GroupInterface $group) {
+  public function inviteAccess(GroupInterface $group): \Drupal\Core\Access\AccessResultInterface {
     // Allow for Group admin/managers.
     if ($group->hasPermission('administer members', $this->currentUser())) {
       return AccessResult::allowed();

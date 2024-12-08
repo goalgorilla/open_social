@@ -7,6 +7,8 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -32,37 +34,37 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
   /**
    * Event entity.
    *
-   * @var \Drupal\Core\Entity\EntityInterface|null
+   * @var \Drupal\Core\Entity\EntityInterface|NULL
    */
-  protected $event;
+  protected EntityInterface|NULL $event;
 
   /**
    * Entity type manger.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Translation manager.
    *
    * @var \Drupal\Core\StringTranslation\TranslationManager
    */
-  protected $translation;
+  protected TranslationManager $translation;
 
   /**
    * Current route match.
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The logger factory.
    *
    * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
-  protected $loggerFactory;
+  protected LoggerChannelFactoryInterface $loggerFactory;
 
   /**
    * Constructs EventRequestEnrollmentNotification.
@@ -102,7 +104,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -124,7 +126,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
     }
 
     // Don't continue if we don't have the correct enroll method for this event.
-    if ((int) $this->event->getFieldValue('field_enroll_method', 'value') !== EventEnrollmentInterface::ENROLL_METHOD_REQUEST) {
+    if ((int) $this->event->get('field_enroll_method')->value !== EventEnrollmentInterface::ENROLL_METHOD_REQUEST) {
       return [];
     }
 
@@ -159,10 +161,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
         ],
       ];
     }
-    catch (InvalidPluginDefinitionException $e) {
-      $this->loggerFactory->get('social_event')->error($e->getMessage());
-    }
-    catch (PluginNotFoundException $e) {
+    catch (InvalidPluginDefinitionException|PluginNotFoundException $e) {
       $this->loggerFactory->get('social_event')->error($e->getMessage());
     }
 
@@ -218,7 +217,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
    */
   public function getCacheTags() {
     return Cache::mergeTags(parent::getCacheTags(), [
-      'event_enrollment_list:' . $this->event->id(),
+      'event_enrollment_list:' . $this->event?->id(),
     ]);
   }
 

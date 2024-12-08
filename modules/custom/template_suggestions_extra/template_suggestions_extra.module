@@ -10,44 +10,44 @@ use Drupal\Core\Routing\RouteMatchInterface;
 /**
  * Implements hook_help().
  */
-function template_suggestions_extra_help($route_name, RouteMatchInterface $route_match) {
+function template_suggestions_extra_help(string $route_name, RouteMatchInterface $route_match): string {
   switch ($route_name) {
     // Main module help for the template_suggestions_extra module.
     case 'help.page.template_suggestions_extra':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Add extra useful template suggestsions') . '</p>';
+      $output .= '<p>' . t('Add extra useful template suggestions') . '</p>';
       return $output;
 
     default:
   }
+  return '';
 }
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
-function template_suggestions_extra_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+function template_suggestions_extra_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
   // Add node type to page suggestions.
-  if ($node = \Drupal::routeMatch()->getParameter('node')) {
-    if (!is_object($node)) {
-      $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($node);
-    }
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (is_int($node) || is_string($node)) {
+    $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($node);
   }
 
-  if (isset($node) && is_object($node)) {
+  if (isset($node) && $node instanceof \Drupal\node\NodeInterface) {
     $altered_suggestions = [];
 
     foreach ($suggestions as $suggestion) {
-      $extra_suggeston = '';
+      $extra_suggestion = '';
 
       // Add node type after the wildcard.
       if ($suggestion === 'page__node__%') {
-        $extra_suggeston = 'page__node__' . $node->getType();
+        $extra_suggestion = 'page__node__' . $node->getType();
       }
 
       $altered_suggestions[] = $suggestion;
-      if ($extra_suggeston) {
-        $altered_suggestions[] = $extra_suggeston;
+      if ($extra_suggestion) {
+        $altered_suggestions[] = $extra_suggestion;
       }
     }
     $suggestions = $altered_suggestions;
@@ -57,7 +57,7 @@ function template_suggestions_extra_theme_suggestions_page_alter(array &$suggest
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
-function template_suggestions_extra_theme_suggestions_comment_alter(array &$suggestions, array $variables) {
+function template_suggestions_extra_theme_suggestions_comment_alter(array &$suggestions, array $variables): array {
   $original = $variables['theme_hook_original'];
   $entity = $variables['elements']['#comment'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
@@ -75,7 +75,7 @@ function template_suggestions_extra_theme_suggestions_comment_alter(array &$sugg
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
-function template_suggestions_extra_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+function template_suggestions_extra_theme_suggestions_field_alter(array &$suggestions, array $variables): array {
   $element = $variables['element'];
   $suggestions[] = 'field__' . $element['#entity_type'] . '__type__' . $element['#field_type'];
 

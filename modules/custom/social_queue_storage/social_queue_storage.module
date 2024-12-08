@@ -10,12 +10,14 @@ use Drupal\Core\Entity\EntityInterface;
 /**
  * Implements hook_entity_update().
  */
-function social_queue_storage_entity_update(EntityInterface $entity) {
+function social_queue_storage_entity_update(EntityInterface $entity): void {
   /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
   if ($entity->getEntityTypeId() === 'queue_storage_entity') {
     $plugin_manager = \Drupal::service('plugin.manager.activity_action.processor');
     if ($plugin_manager->hasDefinition('update_entity_action')) {
-      $plugin_manager->createInstance('update_entity_action')->create($entity);
+      /** @var \Drupal\activity_basics\Plugin\ActivityAction\UpdateActivityAction $update_activity_action */
+      $update_activity_action = $plugin_manager->createInstance('update_entity_action');
+      $update_activity_action->create($entity);
     }
   }
 }
@@ -23,7 +25,7 @@ function social_queue_storage_entity_update(EntityInterface $entity) {
 /**
  * Implements hook_activity_send_email_notifications_alter().
  */
-function social_queue_storage_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+function social_queue_storage_activity_send_email_notifications_alter(array &$items, array $email_message_templates): void {
   // If our background_process_finished template is enabled for email then we
   // add it to the "System Notifications" section.
   if (isset($email_message_templates['background_process_finished'])) {

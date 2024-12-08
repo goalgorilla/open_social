@@ -22,7 +22,7 @@ class ManageByGroupManagersOnlyAccess extends AccessPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account) {
+  public function access(AccountInterface $account): bool {
     // Allow here for at least LU, real access check in alterRouteDefinition().
     return $account->isAuthenticated();
   }
@@ -30,7 +30,7 @@ class ManageByGroupManagersOnlyAccess extends AccessPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRouteDefinition(Route $route) {
+  public function alterRouteDefinition(Route $route): void {
     $route->setRequirement('_custom_access', '\Drupal\social_group\Controller\GroupManagersController::access');
   }
 

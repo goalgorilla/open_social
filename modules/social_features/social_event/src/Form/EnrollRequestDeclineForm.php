@@ -25,9 +25,9 @@ class EnrollRequestDeclineForm extends FormBase {
   /**
    * The event enrollment entity.
    *
-   * @var \Drupal\social_event\Entity\EventEnrollment
+   * @var \Drupal\social_event\Entity\EventEnrollment|NULL
    */
-  protected EventEnrollment $eventEnrollment;
+  protected ?EventEnrollment $eventEnrollment;
 
   /**
    * The redirect destination helper.
@@ -102,7 +102,7 @@ class EnrollRequestDeclineForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('redirect.destination'),
       $container->get('current_user'),
@@ -115,21 +115,21 @@ class EnrollRequestDeclineForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'request_enrollment_decline_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  private function getCancelUrl() {
+  private function getCancelUrl(): Url {
     return Url::fromUserInput($this->redirectDestination->get());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     // Get the event_enrollment from the request.
     $this->eventEnrollment = $this->getRequest()->get('event_enrollment');
 
@@ -188,7 +188,7 @@ class EnrollRequestDeclineForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     if (!empty($this->eventEnrollment)) {
       $this->eventEnrollment->get('field_request_or_invite_status')->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
       $this->eventEnrollment->save();

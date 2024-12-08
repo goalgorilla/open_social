@@ -2,7 +2,10 @@
 
 namespace Drupal\social_event_invite;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
@@ -30,7 +33,7 @@ class SocialEventInviteBulkHelper {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteUsers(array $users, $nid, array &$context) {
+  public static function bulkInviteUsers(array $users, string $nid, array &$context): void {
     $results = [];
 
     foreach ($users as $uid => $target_id) {
@@ -101,7 +104,7 @@ class SocialEventInviteBulkHelper {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteEmails(array $emails, $nid, array &$context) {
+  public static function bulkInviteEmails(array $emails, string $nid, array &$context): void {
     $results = [];
 
     foreach ($emails as $email) {
@@ -155,9 +158,12 @@ class SocialEventInviteBulkHelper {
    * @param array $context
    *   The context.
    *
-   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws InvalidPluginDefinitionException
+   * @throws PluginNotFoundException
+   * @throws EntityStorageException
    */
-  public static function bulkInviteUsersEmails(array $users, $nid, array &$context) {
+  public static function bulkInviteUsersEmails(array $users, string $nid, array &$context): void {
+    /** @var \ArrayAccess $results */
     $results = [];
 
     foreach ($users as $user) {
@@ -256,11 +262,11 @@ class SocialEventInviteBulkHelper {
   /**
    * Callback when the batch for inviting emails for an event has finished.
    */
-  public static function bulkInviteUserEmailsFinished($success, $results, $operations) {
+  public static function bulkInviteUserEmailsFinished(bool $success, array $results, array $operations): RedirectResponse {
     $nid = NULL;
 
     // We got the node event id in the results array so we will use that
-    // to provide the param in in redirect url.
+    // to provide the param in redirect url.
     if (!empty($results)) {
       // We don't care about resetting the array first.
       $nid = key($results);

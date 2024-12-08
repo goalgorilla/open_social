@@ -29,7 +29,7 @@ use Drupal\user\UserInterface;
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function template_preprocess_activity(array &$variables) {
+function template_preprocess_activity(array &$variables): void {
   // Fetch Activity Entity Object.
   /** @var \Drupal\activity_creator\Entity\Activity $activity */
   $activity = $variables['elements']['#activity'];
@@ -103,11 +103,12 @@ function template_preprocess_activity(array &$variables) {
 
   // Our author is Anonymous. If that happens for a notification.
   // Lets provide the author as a default profile image.
+  /** @var \Drupal\Core\Session\AccountInterface $account */
   if ($variables['elements']['#view_mode'] === 'notification' && $account !== NULL && $account->isAnonymous()) {
     $default_image = social_profile_get_default_image();
     if (!empty($default_image['id'])) {
       $file = File::load($default_image['id']);
-      $uri = $file->getFileUri();
+      $uri = $file?->getFileUri();
 
       $variables['actor'] = [
         '#theme' => 'image_style',

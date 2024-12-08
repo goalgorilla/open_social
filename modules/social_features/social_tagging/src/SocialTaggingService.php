@@ -375,7 +375,7 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
           continue;
         }
         // Get current terms parents.
-        if ($parents = $this->entityTypeManager->getStorage('taxonomy_term')->loadParents($current_term->id())) {
+        if ($parents = $this->entityTypeManager->getStorage('taxonomy_term')->loadParents((int) $current_term->id())) {
           /** @var \Drupal\taxonomy\Entity\Term $parent */
           $parent = reset($parents);
           if ($parent->hasTranslation($langcode)) {

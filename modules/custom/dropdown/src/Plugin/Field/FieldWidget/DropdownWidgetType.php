@@ -2,6 +2,7 @@
 
 namespace Drupal\dropdown\Plugin\Field\FieldWidget;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -30,21 +31,21 @@ class DropdownWidgetType extends WidgetBase {
    *
    * @var string
    */
-  protected $column;
+  protected string $column;
 
   /**
    * Widget options.
    *
    * @var array
    */
-  protected $options;
+  protected array $options;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  private $moduleHandler;
+  private ModuleHandlerInterface $moduleHandler;
 
   /**
    * {@inheritdoc}
@@ -61,7 +62,7 @@ class DropdownWidgetType extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self{
     return new static(
       $plugin_id,
       $plugin_definition,
@@ -75,7 +76,7 @@ class DropdownWidgetType extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
+  public static function defaultSettings(): array {
     return [] + parent::defaultSettings();
   }
 
@@ -83,24 +84,20 @@ class DropdownWidgetType extends WidgetBase {
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $elements = [];
-
-    return $elements;
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary() {
-    $summary = [];
-
-    return $summary;
+  public function settingsSummary(): array {
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+  public function formElement(FieldItemListInterface $items, mixed $delta, array $element, array &$form, FormStateInterface $form_state): array {
     // Add our custom validator.
     $element['#element_validate'][] = [get_class($this), 'validateElement'];
     $element['#key_column'] = $this->column;
@@ -125,7 +122,7 @@ class DropdownWidgetType extends WidgetBase {
    * @return array
    *   The array of options for the widget.
    */
-  protected function getOptions(FieldableEntityInterface $entity) {
+  protected function getOptions(FieldableEntityInterface $entity): array {
     if (empty($this->options)) {
       // Limit the settable options for the current user account.
       $options = $this->fieldDefinition
@@ -153,8 +150,8 @@ class DropdownWidgetType extends WidgetBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public static function validateElement(array $element, FormStateInterface $form_state) {
-    if ($element['#required'] && $element['#value'] == '_none') {
+  public static function validateElement(array $element, FormStateInterface $form_state): void {
+    if ($element['#required'] && $element['#value'] === '_none') {
       $form_state->setError($element, t('@name field is required.', ['@name' => $element['#title']]));
     }
 
@@ -176,7 +173,7 @@ class DropdownWidgetType extends WidgetBase {
    * @return array
    *   The array of corresponding selected options.
    */
-  protected function getSelectedOptions(FieldItemListInterface $items, $delta = 0) {
+  protected function getSelectedOptions(FieldItemListInterface $items, int $delta = 0): array {
     // We need to check against a flat list of options.
     $options = $this->getOptions($items->getEntity());
 
@@ -199,7 +196,7 @@ class DropdownWidgetType extends WidgetBase {
    * @param \Drupal\Component\Render\MarkupInterface|string $label
    *   The label to sanitize.
    */
-  protected function sanitizeLabel(&$label) {
+  protected function sanitizeLabel(MarkupInterface|string &$label): void {
     // Allow a limited set of HTML tags.
     $label = FieldFilteredMarkup::create($label);
   }

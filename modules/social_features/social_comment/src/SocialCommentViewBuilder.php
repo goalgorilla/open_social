@@ -14,7 +14,7 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
   /**
    * {@inheritdoc}
    */
-  protected function alterBuild(array &$build, EntityInterface $comment, EntityViewDisplayInterface $display, $view_mode) {
+  protected function alterBuild(array &$build, EntityInterface $comment, EntityViewDisplayInterface $display, $view_mode): void {
     parent::alterBuild($build, $comment, $display, $view_mode);
 
     /** @var \Drupal\comment\CommentInterface $comment */
@@ -45,7 +45,7 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
           // If the parent comment is unpublished, hide the thread for users
           // who may not see unpublished comments.
           if (
-            !$comment->getParentComment()->isPublished() &&
+            !$comment->getParentComment()?->isPublished() &&
             !$this->currentUser->hasPermission('administer comments')
           ) {
             $div_class .= ' hidden';
@@ -69,7 +69,7 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildMultiple(array $build_list) {
+  public function buildMultiple(array $build_list): array {
     $build_list = parent::buildMultiple($build_list);
 
     // Tell to social_ajax_comments_preprocess_pager() make pager works

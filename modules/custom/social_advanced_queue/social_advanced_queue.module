@@ -12,7 +12,7 @@ use Drupal\social_advanced_queue\Plugin\ActivitySend\EmailActivitySendAdvancedQu
 /**
  * Implements hook_action_info_alter().
  */
-function social_advanced_queue_action_info_alter(&$definitions) {
+function social_advanced_queue_action_info_alter(array &$definitions): void {
   // The Send Email Action needs a new Queue Worker.
   // So we override it and create Advanced Queue Jobs instead of Queue Items.
   foreach ($definitions as &$definition) {
@@ -25,7 +25,7 @@ function social_advanced_queue_action_info_alter(&$definitions) {
 /**
  * Implements hook_activity_send_info_alter().
  */
-function social_advanced_queue_activity_send_info_alter(&$info) {
+function social_advanced_queue_activity_send_info_alter(array &$info): void {
   // The Send Email Action needs a new Queue Job instead of Core Queue.
   // So we override it and create Advanced Queue Jobs instead of Queue Items.
   foreach ($info as &$definition) {

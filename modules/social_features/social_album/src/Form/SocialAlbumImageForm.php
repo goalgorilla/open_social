@@ -15,7 +15,7 @@ class SocialAlbumImageForm extends PostDeleteForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
 
     unset($form['#title']);
@@ -26,7 +26,8 @@ class SocialAlbumImageForm extends PostDeleteForm {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $index = 0;
     $form_state->setRedirectUrl($this->getRedirectUrl());
 
     if (!$fid = $form_state->get('fid')) {
@@ -57,7 +58,7 @@ class SocialAlbumImageForm extends PostDeleteForm {
   /**
    * {@inheritdoc}
    */
-  public function getDescription() {
+  public function getDescription(): \Drupal\Core\StringTranslation\TranslatableMarkup {
     return $this->t('Deleting this image will also delete it from the post it belongs to.');
   }
 

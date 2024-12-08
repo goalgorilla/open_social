@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Plugin\views\sort;
 
+use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\Plugin\views\sort\Date;
 use Drupal\social_event\Plugin\views\filter\EventDate as EventDateFilter;
 
@@ -15,10 +16,14 @@ class EventDate extends Date {
   /**
    * {@inheritdoc}
    */
-  public function query() {
+  public function query(): void {
     $this->ensureMyTable();
-    $order = ($this->view->exposed_data[$this->realField] == EventDateFilter::UPCOMING_EVENTS) ? 'ASC' : 'DESC';
-    $this->query->addOrderBy($this->tableAlias, $this->realField, $order);
+    $order = ($this->view->exposed_data[$this->realField] === EventDateFilter::UPCOMING_EVENTS) ? 'ASC' : 'DESC';
+
+    /** @var Sql $query */
+    $query = $this->query;
+    $query->addOrderBy($this->tableAlias, $this->realField, $order);
+    $this->query = $query;
   }
 
 }

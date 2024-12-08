@@ -14,7 +14,7 @@ class SocialProfileUserFormAlter implements TrustedCallbackInterface {
   /**
    * Hide timezone fields group label.
    */
-  public static function preRender($element) {
+  public static function preRender(array $element): array {
     $element['group_locale_settings']['timezone']['#title'] = NULL;
     return $element;
   }
@@ -22,7 +22,7 @@ class SocialProfileUserFormAlter implements TrustedCallbackInterface {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['preRender'];
   }
 

@@ -57,7 +57,7 @@ class InviteUserBaseForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('current_route_match'),
       $container->get('entity_type.manager'),

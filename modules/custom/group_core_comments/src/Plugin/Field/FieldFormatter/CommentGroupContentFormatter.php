@@ -4,6 +4,8 @@ namespace Drupal\group_core_comments\Plugin\Field\FieldFormatter;
 
 use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -15,6 +17,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupRelationship;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,19 +38,19 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * TRUE if the request is a XMLHttpRequest.
    *
    * @var bool
    */
-  private $isXmlHttpRequest;
+  private bool $isXmlHttpRequest;
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $plugin_id,
       $plugin_definition,
@@ -62,7 +65,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
       $container->get('current_route_match'),
       $container->get('entity_display.repository'),
       $container->get('renderer'),
-      $container->get('request_stack')->getCurrentRequest()->isXmlHttpRequest()
+      $container->get('request_stack')->getCurrentRequest()?->isXmlHttpRequest()
     );
   }
 
@@ -112,7 +115,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
     RouteMatchInterface $route_match,
     EntityDisplayRepositoryInterface $entity_display_repository,
     RendererInterface $renderer,
-    $is_xml_http_request
+    bool $is_xml_http_request
   ) {
     parent::__construct(
       $plugin_id,
@@ -136,23 +139,26 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $output = parent::viewElements($items, $langcode);
     $entity = $items->getEntity();
+    $group_contents = [];
 
     // Exclude entities without the set id.
     if (!empty($entity->id())) {
+      /** @var ContentEntityInterface[] $group_contents */
       $group_contents = GroupRelationship::loadByEntity($entity);
     }
 
-    if (!empty($group_contents)) {
+    if (count($group_contents) !== 0) {
       // Add cache contexts.
       $output['#cache']['contexts'][] = 'route.group';
       $output['#cache']['contexts'][] = 'user.group_permissions';
 
       $account = $this->currentUser;
-      /** @var \Drupal\group\Entity\GroupInterface $group */
-      $group = reset($group_contents)->getGroup();
+      /** @var GroupRelationshipInterface $group_content */
+      $group_content = reset($group_contents);
+      $group = $group_content->getGroup();
       $group_url = $group->toUrl('canonical', ['language' => $group->language()]);
 
       $access_post_comments = $this->getPermissionInGroups('post comments', $account, $group_contents, $output);
@@ -287,8 +293,9 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
   /**
    * Checks if account was granted permission in group.
    */
-  protected function getPermissionInGroups($perm, AccountInterface $account, $group_contents, &$output) {
+  protected function getPermissionInGroups(string $perm, AccountInterface $account, array $group_contents, array &$output): AccessResultInterface {
     foreach ($group_contents as $group_content) {
+      /** @var GroupRelationshipInterface $group_content */
       $group = $group_content->getGroup();
 
       // Add cacheable dependency.

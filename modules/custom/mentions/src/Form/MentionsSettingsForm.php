@@ -20,7 +20,7 @@ class MentionsSettingsForm extends ConfigFormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Class constructor.
@@ -33,7 +33,7 @@ class MentionsSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('entity_type.manager')
@@ -43,21 +43,21 @@ class MentionsSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'mentions_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['mentions.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('mentions.settings');
 
     $form['general'] = [
@@ -90,7 +90,7 @@ class MentionsSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Save config.
     $config = $this->config('mentions.settings');
 
@@ -109,7 +109,7 @@ class MentionsSettingsForm extends ConfigFormBase {
    * @return array
    *   Returns array of content entity types.
    */
-  protected function getContentEntityTypes() {
+  protected function getContentEntityTypes(): array {
     $options = [];
     foreach ($this->entityTypeManager->getDefinitions() as $entity_type) {
       if ($entity_type instanceof ContentEntityTypeInterface) {

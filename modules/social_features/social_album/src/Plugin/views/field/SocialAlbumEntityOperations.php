@@ -38,13 +38,19 @@ class SocialAlbumEntityOperations extends EntityOperations {
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = $this->getEntity($values);
 
+    $field_item = $entity->get('field_post_image')->get($value);
+    $target_id = NULL;
+    if ($field_item instanceof \Drupal\Core\Field\FieldItemInterface && isset($field_item->target_id)) {
+      $target_id = $field_item->target_id;
+    }
+
     return [
       '#lazy_builder' => [
         [$this, 'renderLinks'],
         [
           $values->_entity->id(),
           $entity->id(),
-          $entity->get('field_post_image')->get($value)->target_id,
+          $target_id,
         ],
       ],
     ];

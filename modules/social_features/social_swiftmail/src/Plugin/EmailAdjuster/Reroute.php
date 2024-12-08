@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\user\RoleStorageInterface;
 use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
+use Symfony\Component\Mime\Header\HeaderInterface;
 
 /**
  * Defines the Reroute Email Adjuster.
@@ -222,6 +223,7 @@ class Reroute extends EmailAdjusterBase implements ContainerFactoryPluginInterfa
     $to = [];
 
     foreach ($addresses as $address) {
+      /** @var \Symfony\Component\Mime\Address $address */
       $to[] = $address->toString();
     }
 
@@ -248,8 +250,9 @@ class Reroute extends EmailAdjusterBase implements ContainerFactoryPluginInterfa
 
       // Add Cc/Bcc values to the message only if they are set.
       $headers = $email->getHeaders();
-
-      if ($header = $headers->get('X-Rerouted-Original-cc')) {
+      /** @var HeaderInterface $header */
+      $header = $headers->get('X-Rerouted-Original-cc');
+      if ($header !== NULL) {
         $message_lines[] = $this->t('Originally cc: @cc', [
           '@cc' => $header->toString(),
         ]);

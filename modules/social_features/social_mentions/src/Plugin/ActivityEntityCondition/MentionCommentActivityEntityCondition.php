@@ -3,6 +3,7 @@
 namespace Drupal\social_mentions\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
  * Provides a 'MentionsComment' activity condition.
@@ -18,9 +19,9 @@ class MentionCommentActivityEntityCondition extends ActivityEntityConditionBase 
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) {
+  public function isValidEntityCondition(ContentEntityInterface $entity): bool {
     if ($entity->getEntityTypeId() === 'mentions') {
-      if (isset($entity->entity_type) && $entity->entity_type->value == 'comment') {
+      if (isset($entity->entity_type) && $entity->entity_type->value === 'comment') {
         return TRUE;
       }
     }

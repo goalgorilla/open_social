@@ -28,14 +28,14 @@ const FREQUENCY_WEEKLY = 'weekly';
  *
  * This cronjob handles creating digest queue items to process.
  */
-function activity_send_email_cron() {
+function activity_send_email_cron(): void {
   // Get plugins and their intervals.
-  $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
-  $plugins = $emailfrequencymanager->getDefinitions();
+  $email_frequency_manager = \Drupal::service('plugin.manager.emailfrequency');
+  $plugins = $email_frequency_manager->getDefinitions();
 
   // Fill a sortable array with the data about the email frequency.
   foreach ($plugins as $frequency) {
-    $instance = $emailfrequencymanager->createInstance($frequency['id']);
+    $instance = $email_frequency_manager->createInstance($frequency['id']);
     /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
     $interval = $instance->getInterval();
 
@@ -56,16 +56,20 @@ function activity_send_email_cron() {
           ->fields('uad', ['uid', 'activity'])
           ->condition('uad.frequency', $frequency['id'])
           ->orderBy('uad.timestamp', 'DESC');
-        $activitities = $query->execute()->fetchAll();
 
-        if (!empty($activitities)) {
+        $result = $query->execute();
+        if ($result) {
+          $activities = $result->fetchCol();
+        }
+
+        if (!empty($activities)) {
           $queue_items = [];
 
           // Fill the queue items.
-          foreach ($activitities as $activitity) {
-            $queue_items[$activitity->uid]['uid'] = $activitity->uid;
-            $queue_items[$activitity->uid]['frequency'] = $frequency['id'];
-            $queue_items[$activitity->uid]['activities'][] = $activitity->activity;
+          foreach ($activities as $activity) {
+            $queue_items[$activity->uid]['uid'] = $activity->uid;
+            $queue_items[$activity->uid]['frequency'] = $frequency['id'];
+            $queue_items[$activity->uid]['activities'][] = $activity->activity;
           }
 
           // Add queue items to the queue worker.
@@ -94,7 +98,7 @@ function activity_send_email_cron() {
 /**
  * Implements hook_theme().
  */
-function activity_send_email_theme() {
+function activity_send_email_theme(): array {
   $items = [
     'digestmail' => [
       'template' => 'digestmail',
@@ -118,9 +122,11 @@ function activity_send_email_theme() {
 /**
  * Implements hook_form_FORM_ID_alter() for user_form().
  */
-function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state) {
+function activity_send_email_form_user_form_alter(array &$form, FormStateInterface $form_state): void {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
   /** @var \Drupal\social_user\Entity\User $account */
-  $account = $form_state->getFormObject()->getEntity();
+  $account = $form_object->getEntity();
 
   // Only expose these settings to existing users so it's not shown on the
   // user create form.
@@ -163,6 +169,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
 
   $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($account);
 
+
   foreach ($items as $item_id => $item) {
     // Don't render the fieldset when there are no templates.
     if (empty($item['templates'])) {
@@ -193,6 +200,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
 
     foreach ($item['templates'] as $template) {
       $default_frequency = $template_frequencies[$template] ?? FREQUENCY_IMMEDIATELY;
+      /** @var ArrayAccess $form */
       $form['email_notifications'][$item_id][$template] = [
         '#type' => 'select',
         '#title' => $email_message_templates[$template],
@@ -213,11 +221,12 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
  * Form submit for user_form.
  *
  * @param array $form
- *   Commnent on a post form.
+ *   Comment on a post form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _activity_send_email_form_user_form_submit(array $form, FormStateInterface $form_state) {
+function _activity_send_email_form_user_form_submit(array $form, FormStateInterface $form_state): void {
+  /** @var \Drupal\social_user\Entity\User $account */
   $account = \Drupal::routeMatch()->getParameter('user');
   $values = $form_state->getValue('email_notifications');
 
@@ -240,17 +249,17 @@ function _activity_send_email_form_user_form_submit(array $form, FormStateInterf
  * @return array
  *   A sorted array of frequency options by weight.
  */
-function sort_email_frequency_options() {
-  $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
-  $plugins = $emailfrequencymanager->getDefinitions();
+function sort_email_frequency_options(): array {
+  $email_frequency_manager = \Drupal::service('plugin.manager.emailfrequency');
+  $plugins = $email_frequency_manager->getDefinitions();
 
-  $emailfrequencies = [];
+  $email_frequencies = [];
 
   // Fill a sortable array with the data about the email frequency.
   foreach ($plugins as $frequency) {
     /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
-    $instance = $emailfrequencymanager->createInstance($frequency['id']);
-    $emailfrequencies[] = [
+    $instance = $email_frequency_manager->createInstance($frequency['id']);
+    $email_frequencies[] = [
       'id' => $frequency['id'],
       'name' => $instance->getName(),
       'weight' => $instance->getWeight(),
@@ -258,18 +267,18 @@ function sort_email_frequency_options() {
   }
 
   // Sort the email frequencies by their weight.
-  uasort($emailfrequencies, [
+  uasort($email_frequencies, [
     'Drupal\Component\Utility\SortArray',
     'sortByWeightElement',
   ]);
 
-  return $emailfrequencies;
+  return $email_frequencies;
 }
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function activity_send_email_activity_insert(ActivityInterface $activity) {
+function activity_send_email_activity_insert(ActivityInterface $activity): void {
   if (!in_array('email', $activity->getDestinations())) {
     return;
   }
@@ -277,7 +286,7 @@ function activity_send_email_activity_insert(ActivityInterface $activity) {
   /** @var \Drupal\activity_send\Plugin\ActivitySendManager $activity_send_factory */
   $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
 
-  // Trigger the create action for entities.
+  // Trigger the creation action for entities.
   if ($activity_send_factory->hasDefinition('email_activity_send')) {
     /** @var \Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend $create_action */
     $create_action = $activity_send_factory->createInstance('email_activity_send');
@@ -291,7 +300,7 @@ function activity_send_email_activity_insert(ActivityInterface $activity) {
  * @return array[]
  *   Grouped default templates.
  */
-function _activity_send_email_default_template_items() {
+function _activity_send_email_default_template_items(): array {
   return [
     'message_to_me' => [
       'title' => t('Message to me'),

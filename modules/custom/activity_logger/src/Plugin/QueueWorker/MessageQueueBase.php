@@ -15,7 +15,7 @@ abstract class MessageQueueBase extends QueueWorkerBase {
    *
    * @var \Drupal\Core\Queue\QueueFactory
    */
-  protected $queue;
+  protected QueueFactory $queue;
 
   /**
    * MessageQueueBase constructor.
@@ -43,7 +43,7 @@ abstract class MessageQueueBase extends QueueWorkerBase {
    * @param object $data
    *   The $data which should be stored in the queue item.
    */
-  protected function createQueueItem($queue_name, $data) {
+  protected function createQueueItem(string $queue_name, object $data): void {
     $queue = $this->queue->get($queue_name);
     $queue->createItem($data);
   }

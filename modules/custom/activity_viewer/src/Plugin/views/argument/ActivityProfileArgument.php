@@ -4,6 +4,7 @@ namespace Drupal\activity_viewer\Plugin\views\argument;
 
 use Drupal\Core\Database\Query\Condition;
 use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
 
 /**
  * Default implementation of the base argument plugin.
@@ -19,13 +20,15 @@ class ActivityProfileArgument extends ArgumentPluginBase {
    *
    * The argument sent may be found at $this->argument.
    */
-  public function query($group_by = FALSE) {
+  public function query($group_by = FALSE): void {
     $this->ensureMyTable();
 
-    // \Drupal\views\Plugin\views\query\QueryPluginBase.
-    $this->query->addTable('activity__field_activity_recipient_user');
-    $this->query->addTable('activity__field_activity_entity');
-    $this->query->addTable('activity__field_activity_destinations');
+    /** @var Sql $query */
+    $query = $this->query;
+
+    $query->addTable('activity__field_activity_recipient_user');
+    $query->addTable('activity__field_activity_entity');
+    $query->addTable('activity__field_activity_destinations');
 
     $or_condition = new Condition('OR');
 
@@ -40,14 +43,15 @@ class ActivityProfileArgument extends ArgumentPluginBase {
     // @todo Add condition for posts in a group as well (do not show them).
     $or_condition->condition($by_user);
 
-    $this->query->addWhere('activity_profile_argument', $or_condition);
+    $query->addWhere('activity_profile_argument', $or_condition);
 
+    $this->query = $query;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
 
     // Since the Stream is different per url.

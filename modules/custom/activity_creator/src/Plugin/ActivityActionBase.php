@@ -5,6 +5,7 @@ namespace Drupal\activity_creator\Plugin;
 use Drupal\activity_logger\Entity\NotificationConfigEntityInterface;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
@@ -15,7 +16,7 @@ abstract class ActivityActionBase extends PluginBase implements ActivityActionIn
   /**
    * {@inheritdoc}
    */
-  public function create($entity) {
+  public function create(EntityInterface $entity): void {
     if ($this->isValidEntity($entity)) {
       $this->createMessage($entity);
     }
@@ -24,10 +25,11 @@ abstract class ActivityActionBase extends PluginBase implements ActivityActionIn
   /**
    * {@inheritdoc}
    */
-  public function createMessage($entity) {
+  public function createMessage(EntityInterface $entity): void {
     // Use the queue logger.
     $activity_logger_factory = \Drupal::service('activity_logger.activity_factory');
     // Create messages for all other types of content.
+    /** @var EntityBase $entity */
     $activity_logger_factory->createMessages($entity, $this->pluginId);
   }
 

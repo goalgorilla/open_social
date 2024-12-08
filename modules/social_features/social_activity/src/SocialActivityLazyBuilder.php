@@ -4,6 +4,7 @@ namespace Drupal\social_activity;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
+use Drupal\views\ViewEntityInterface;
 use Drupal\views\ViewExecutableFactory;
 
 /**
@@ -18,14 +19,14 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The views executable factory.
    *
    * @var \Drupal\views\ViewExecutableFactory
    */
-  protected $viewExecutable;
+  protected ViewExecutableFactory $viewExecutable;
 
   /**
    * SocialActivityLazyBuilder constructor.
@@ -43,7 +44,7 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['viewsLazyBuild'];
   }
 
@@ -66,8 +67,9 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
    * @return array|null
    *   Render array.
    */
-  public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page, $vocabulary = NULL, ...$tags) {
+  public function viewsLazyBuild(string $view_id, string $display_id, string $node_type, int $item_per_page, ?string $vocabulary = NULL, ...$tags): ?array {
     // Get view.
+    /** @var ViewEntityInterface $view_entity */
     $view_entity = $this->entityTypeManager->getStorage('view')->load($view_id);
     $view = $this->viewExecutable->get($view_entity);
     $view->setDisplay($display_id);
@@ -75,15 +77,18 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
 
     // Add filtration if tags and vocabulary exists.
     if ($vocabulary && $vocabulary !== '_none' && !empty($tags)) {
-      $view->filter_tags = $tags;
-      $view->filter_vocabulary = $vocabulary;
+      $tags_filter = $view->filter['tags'];
+      $tags_filter->value = $tags;
+
+      $vocabulary_filter = $view->filter['vocabulary'];
+      $vocabulary_filter->value = $vocabulary;
     }
 
     $view->preExecute();
     $view->execute($display_id);
 
     // Change entity display and add attachments if views block in dashboard.
-    if ($view->id() == "activity_stream" && $node_type === 'dashboard') {
+    if ($view->id() === "activity_stream" && $node_type === 'dashboard') {
       $view->rowPlugin->options['view_mode'] = 'featured';
       $view->element['#attached']['library'][] = 'social_featured_content/paragraph.featured';
     }

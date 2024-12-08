@@ -33,7 +33,7 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
    * @see field.storage.node.field_content_visibility.yml
    * @see field.storage.post.field_visibility.yml
    */
-  const VISIBILITY_MAPPING = [
+  public const VISIBILITY_MAPPING = [
     '0' => 'community',
     '1' => 'public',
     '2' => 'community',
@@ -43,7 +43,7 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
   /**
    * {@inheritdoc}
    */
-  protected function getOptions(FieldableEntityInterface $entity) {
+  protected function getOptions(FieldableEntityInterface $entity): array {
     $options = parent::getOptions($entity);
     $empty_options = [
       '_none' => $options['_none'],
@@ -71,7 +71,7 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
     $description = $element['#description'];
 
@@ -100,7 +100,7 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
   /**
    * {@inheritdoc}
    */
-  public static function validateElement(array $element, FormStateInterface $form_state) {
+  public static function validateElement(array $element, FormStateInterface $form_state): void {
     $field = $element['#parents'][0];
     $has_images = $form_state->hasValue(['field_post_image', 0, 'fids', 0]);
 
@@ -108,12 +108,13 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
       $element['#value'] === '_add' &&
       ($title = $form_state->getValue([$field, 'title']))
     ) {
-      if ($form_state->getTriggeringElement()['#name'] === 'op' && $has_images) {
+      $triggerred_element = $form_state->getTriggeringElement();
+      if (is_array($triggerred_element) && $triggerred_element['#name'] === 'op' && $has_images) {
         // Add default content visibility based on post visibility.
         if ($form_state->hasValue('field_visibility')) {
           $post_visibility = $form_state->getValue(['field_visibility', 0]);
 
-          // Lets try and map it if possible.
+          // Let's try and map it if possible.
           $default_visibility = self::VISIBILITY_MAPPING[$post_visibility];
         }
         else {

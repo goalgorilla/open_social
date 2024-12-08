@@ -5,6 +5,7 @@ namespace Drupal\activity_creator;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
 use Symfony\Component\Routing\Route;
+use Drupal\activity_creator\Form\ActivitySettingsForm;
 
 /**
  * Provides routes for Activity entities.
@@ -42,14 +43,14 @@ class ActivityHtmlRouteProvider extends AdminHtmlRouteProvider {
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getAddFormRoute(EntityTypeInterface $entity_type) {
+  protected function getAddFormRoute(EntityTypeInterface $entity_type): ?Route {
     if ($entity_type->hasLinkTemplate('add-form')) {
       $entity_type_id = $entity_type->id();
       $parameters = [
         $entity_type_id => ['type' => 'entity:' . $entity_type_id],
       ];
 
-      $route = new Route($entity_type->getLinkTemplate('add-form'));
+      $route = new Route((string) $entity_type->getLinkTemplate('add-form'));
       // Use the add form handler, if available, otherwise default.
       $operation = 'default';
       if ($entity_type->getFormClass('add')) {
@@ -68,6 +69,8 @@ class ActivityHtmlRouteProvider extends AdminHtmlRouteProvider {
 
       return $route;
     }
+
+    return NULL;
   }
 
   /**
@@ -79,19 +82,21 @@ class ActivityHtmlRouteProvider extends AdminHtmlRouteProvider {
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getSettingsFormRoute(EntityTypeInterface $entity_type) {
+  protected function getSettingsFormRoute(EntityTypeInterface $entity_type): ?Route {
     if (!$entity_type->getBundleEntityType()) {
       $route = new Route("/admin/structure/{$entity_type->id()}/settings");
       $route
         ->setDefaults([
-          '_form' => 'Drupal\activity_creator\Form\ActivitySettingsForm',
+          '_form' => ActivitySettingsForm::class,
           '_title' => "{$entity_type->getLabel()} settings",
         ])
-        ->setRequirement('_permission', $entity_type->getAdminPermission())
+        ->setRequirement('_permission', (string) $entity_type->getAdminPermission())
         ->setOption('_admin_route', TRUE);
 
       return $route;
     }
+
+    return NULL;
   }
 
 }

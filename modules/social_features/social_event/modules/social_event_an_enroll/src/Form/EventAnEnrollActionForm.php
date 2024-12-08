@@ -7,11 +7,15 @@ use Drupal\Core\Ajax\MessageCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\SocialEventTrait;
+use Drupal\social_event_an_enroll\EventAnEnrollService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\social_event_an_enroll\Form
  */
-class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInterface {
+class EventAnEnrollActionForm extends FormBase {
 
   use SocialEventTrait;
 
@@ -28,28 +32,28 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
    *
    * @var \Drupal\social_event_an_enroll\EventAnEnrollService
    */
-  protected $eventAnEnrollService;
+  protected EventAnEnrollService $eventAnEnrollService;
 
   /**
    * Drupal\Core\TempStore\PrivateTempStoreFactory definition.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The form builder.
@@ -74,7 +78,7 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'event_an_enroll_action_form';
   }
 
@@ -100,7 +104,7 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
       '#id' => 'enroll-wrapper',
     ];
 
-    if (!empty($token) && $this->eventAnEnrollService->tokenExists($token, $nid)) {
+    if (!empty($token) && $this->eventAnEnrollService->tokenExists($token, (int) $nid)) {
       $form['event'] = [
         '#type' => 'hidden',
         '#value' => $nid,
@@ -245,7 +249,7 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
   }
 

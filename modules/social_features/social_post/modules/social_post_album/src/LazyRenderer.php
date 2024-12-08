@@ -17,7 +17,7 @@ class LazyRenderer implements TrustedCallbackInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * LazyRenderer constructor.
@@ -42,15 +42,18 @@ class LazyRenderer implements TrustedCallbackInterface {
    * @return array
    *   The render array of post.
    */
-  public function getPost($entity_type, $post_id, $view_mode) {
+  public function getPost(string $entity_type, string|int $post_id, string $view_mode): array {
     $post = $this->entityTypeManager->getStorage($entity_type)->load($post_id);
-    return $this->entityTypeManager->getViewBuilder($entity_type)->view($post, $view_mode);
+    if ($post !== NULL) {
+      return $this->entityTypeManager->getViewBuilder($entity_type)->view($post, $view_mode);
+    }
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['getPost'];
   }
 

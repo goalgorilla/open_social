@@ -17,7 +17,7 @@ use Drupal\votingapi\VoteInterface;
 /**
  * Implements hook_token_info().
  */
-function social_like_token_info() {
+function social_like_token_info(): array {
 
   $type = [
     'name' => t('Social Like'),
@@ -50,9 +50,9 @@ function social_like_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_like_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_like_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
-  if ($type == 'social_like' && !empty($data['message'])) {
+  if ($type === 'social_like' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
@@ -69,6 +69,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
           case 'liked_entity_link_html:capitalized':
             /** @var \Drupal\votingapi\Entity\Vote $vote */
             $storage = \Drupal::entityTypeManager()->getStorage($vote->getVotedEntityType());
+            /** @var \Drupal\Core\Entity\EntityInterface $entity */
             $entity = $storage->load($vote->getVotedEntityId());
             $url_options = ['absolute' => TRUE];
             $link = $entity->toUrl('canonical', $url_options)->toString();
@@ -81,7 +82,9 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
             $content_type_label = '';
             if ($content_type === 'node') {
               // Then get the bundle name.
-              $label = \Drupal::entityTypeManager()->getStorage('node_type')->load($entity->bundle())->label();
+              /** @var \Drupal\node\NodeTypeInterface $node_type_storage */
+              $node_type_storage = \Drupal::entityTypeManager()->getStorage('node_type')->load($entity->bundle());
+              $label = $node_type_storage->label();
               $label = $label instanceof TranslatableMarkup ? $label->render() : $label;
               $content_type_label = $label !== NULL ? mb_strtolower($label) : '';
             }
@@ -105,7 +108,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
 
                 // Let's make an exception for comments.
                 if ($content_type === 'comment') {
-                  /** @var \Drupal\comment\Entity\Comment $commented_entity */
+                  /** @var \Drupal\comment\Entity\Comment $entity */
                   $commented_entity = $entity->getCommentedEntity();
 
                   $url_options = ['absolute' => TRUE];
@@ -152,8 +155,8 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
 /**
  * Implements hook_tokens_alter().
  */
-function social_like_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
-  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+function social_like_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
+  if ($context['type'] === 'message' && !empty($context['data']['message'])) {
     // Translate hook_tokens options to the options for TranslatableMarkup.
     $translation_options = [
       'langcode' => $context['options']['langcode'] ?? NULL,
@@ -177,7 +180,7 @@ function social_like_tokens_alter(array &$replacements, array $context, Bubbleab
           /** @var \Drupal\votingapi\Entity\Vote $vote */
           $storage = \Drupal::entityTypeManager()
             ->getStorage($vote->getVotedEntityType());
-          /** @var Drupal\Core\Entity\Entity $voted_entity */
+          /** @var \Drupal\comment\CommentInterface $voted_entity */
           $voted_entity = $storage->load($vote->getVotedEntityId());
           $content_type = $voted_entity->getEntityTypeId();
 
@@ -191,7 +194,7 @@ function social_like_tokens_alter(array &$replacements, array $context, Bubbleab
                 $link = $voted_entity->toUrl('canonical', $url_options);
                 // We should only use the label of entities who have a label.
                 if ($content_type === 'comment') {
-                  /** @var \Drupal\comment\Entity\Comment $voted_entity */
+                  /** @var \Drupal\comment\Entity\Comment $commented_entity*/
                   $commented_entity = $voted_entity->getCommentedEntity();
                   $link = $commented_entity->toUrl('canonical', $url_options);
                 }
@@ -204,6 +207,7 @@ function social_like_tokens_alter(array &$replacements, array $context, Bubbleab
                 $preview_info = [];
                 switch ($content_type) {
                   case 'comment':
+                    /** @var \Drupal\comment\Entity\Comment $voted_entity */
                     $preview_info = $email_token_services->getCommentPreview($voted_entity);
                     break;
 

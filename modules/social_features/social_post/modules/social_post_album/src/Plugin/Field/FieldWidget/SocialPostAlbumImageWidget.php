@@ -82,7 +82,7 @@ class SocialPostAlbumImageWidget extends ImageWidget {
     array $configuration,
     $plugin_id,
     $plugin_definition
-  ) {
+  ): self {
     return new static(
       $plugin_id,
       $plugin_definition,

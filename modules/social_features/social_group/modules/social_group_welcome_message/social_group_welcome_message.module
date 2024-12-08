@@ -11,11 +11,12 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\private_message\Entity\PrivateMessageInterface;
 
 /**
  * Implements hook_entity_base_field_info().
  */
-function social_group_welcome_message_entity_base_field_info(EntityTypeInterface $entity_type) {
+function social_group_welcome_message_entity_base_field_info(EntityTypeInterface $entity_type): array {
   $fields = [];
 
   // Add a 'Welcome message' base fields to all group types.
@@ -51,7 +52,7 @@ function social_group_welcome_message_entity_base_field_info(EntityTypeInterface
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_group_welcome_message_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+function social_group_welcome_message_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $social_group_types = [];
 
   \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
@@ -62,11 +63,12 @@ function social_group_welcome_message_form_alter(array &$form, FormStateInterfac
     $group_forms[] = "group_{$social_group_type}_edit_form";
   }
 
-  if (
-    in_array($form_id, $group_forms)
-  ) {
+  if (in_array($form_id, $group_forms)) {
     // Get group owner.
-    $group = $form_state->getFormObject()->getEntity();
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
+    /** @var \Drupal\group\Entity\GroupInterface|NULL $group */
+    $group = $form_object->getEntity();
     if ($group instanceof GroupInterface) {
       $owner = $group->getOwner();
     }
@@ -79,12 +81,12 @@ function social_group_welcome_message_form_alter(array &$form, FormStateInterfac
       !$owner->hasPermission('use private messaging system') ||
       !$owner->hasPermission('create private messages thread')
     ) {
-      unset($form['private_message_body']);
-      unset($form['private_message_send']);
+      unset(
+        $form['private_message_body'],
+        $form['private_message_send'],
+      );
     }
-    elseif (
-    isset($form['private_message_body']) &&
-    isset($form['private_message_send'])) {
+    elseif (isset($form['private_message_body'], $form['private_message_send'])) {
       $form['private_message_body']['#states'] = [
         'visible' => [
           ':input[name="private_message_send[value]"]' => ['checked' => TRUE],
@@ -100,8 +102,10 @@ function social_group_welcome_message_form_alter(array &$form, FormStateInterfac
       // Add both existing fields to this new element.
       $form['group_welcome_message'][] = $form['private_message_body'];
       $form['group_welcome_message'][] = $form['private_message_send'];
-      unset($form['private_message_body']);
-      unset($form['private_message_send']);
+      unset(
+        $form['private_message_body'],
+        $form['private_message_send'],
+      );
 
       // Add the new element to fieldgroups.
       $form['#fieldgroups']['group_settings']->children[] = 'group_welcome_message';
@@ -113,7 +117,7 @@ function social_group_welcome_message_form_alter(array &$form, FormStateInterfac
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_group_welcome_message_group_content_insert(GroupRelationshipInterface $group_content) {
+function social_group_welcome_message_group_content_insert(GroupRelationshipInterface $group_content): void {
   $type = $group_content->getPluginId();
   $group = $group_content->getGroup();
 
@@ -121,7 +125,7 @@ function social_group_welcome_message_group_content_insert(GroupRelationshipInte
   if (
     $type === 'group_membership' &&
     !$group->get('private_message_send')->isEmpty() &&
-    $group->get('private_message_send')->value == 1 &&
+    $group->get('private_message_send')->value === 1 &&
     !$group->get('private_message_body')->isEmpty()
   ) {
     $g_type_id = $group->getGroupType()->id();
@@ -189,9 +193,10 @@ function social_group_welcome_message_group_content_insert(GroupRelationshipInte
     $thread = $private_message_service->getThreadForMembers($recipients);
 
     // Get body of pm.
-    $private_message_body = $group->get('private_message_body')->first()->getValue();
+    $private_message_body = $group->get('private_message_body')->first()?->getValue();
 
     // Create a single message with the pm body.
+    /** @var PrivateMessageInterface $private_message */
     $private_message = \Drupal::entityTypeManager()->getStorage('private_message')->create([
       'owner' => $owner,
       'message' => $private_message_body,
@@ -207,14 +212,14 @@ function social_group_welcome_message_group_content_insert(GroupRelationshipInte
     // @todo Update to the correct version when issue has been solved.
     /** @var  \Drupal\user\UserDataInterface $userData */
     $userData = \Drupal::service('user.data');
-    $userData->set('private_message', $account->id(), 'private_message_thread:' . $thread->id(), 0);
+    $userData->set('private_message', (int) $account->id(), 'private_message_thread:' . $thread->id(), 0);
   }
 }
 
 /**
  * Implements hook_field_widget_single_element_form_alter().
  */
-function social_group_welcome_message_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_group_welcome_message_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   // Maps field names to an array containing a single format.
   $map = [
     'private_message_body' => ['basic_html'],
@@ -231,12 +236,14 @@ function social_group_welcome_message_field_widget_single_element_form_alter(&$e
 /**
  * Remove text format box (after_build callback).
  */
-function _social_group_welcome_message_remove_text_format_box($form_element, FormStateInterface $form_state) {
+function _social_group_welcome_message_remove_text_format_box(array $form_element, FormStateInterface $form_state): array {
   // Remove help, guidelines and wrapper.
-  unset($form_element['format']['help']);
-  unset($form_element['format']['guidelines']);
-  unset($form_element['format']['#type']);
-  unset($form_element['format']['#theme_wrappers']);
+  unset(
+    $form_element['format']['help'],
+    $form_element['format']['guidelines'],
+    $form_element['format']['#type'],
+    $form_element['format']['#theme_wrappers'],
+  );
 
   return $form_element;
 }

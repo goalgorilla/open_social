@@ -22,7 +22,7 @@ class UserUid extends ArgumentPluginBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Constructs a Drupal\Component\Plugin\PluginBase object.
@@ -45,30 +45,33 @@ class UserUid extends ArgumentPluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static($configuration, $plugin_id, $plugin_definition, $container->get('database'));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function query($group_by = FALSE) {
+  public function query($group_by = FALSE): void {
     $this->ensureMyTable();
 
     // Use the table definition to correctly add this user ID condition.
     if ($this->table !== 'group_relationship_field_data') {
-      $subselect2 = $this->database->select('group_relationship_field_data', 'gc');
-      $subselect2->addField('gc', 'gid');
-      $subselect2->condition('gc.entity_id', $this->argument);
-      $subselect2->condition('gc.plugin_id', '%' . $this->database->escapeLike('membership') . '%', 'LIKE');
+      $sub_select2 = $this->database->select('group_relationship_field_data', 'gc');
+      $sub_select2->addField('gc', 'gid');
+      $sub_select2->condition('gc.entity_id', $this->argument);
+      $sub_select2->condition('gc.plugin_id', '%' . $this->database->escapeLike('membership') . '%', 'LIKE');
 
+      /** @var \Drupal\views\Plugin\views\query\Sql $query */
+      $query = $this->query;
       if ($this->usesOptions && isset($this->options['group'])) {
-        $this->query->addWhere($this->options['group'], $this->tableAlias . '.id', $subselect2, 'IN');
+        $query->addWhere($this->options['group'], $this->tableAlias . '.id', $sub_select2, 'IN');
       }
       else {
         // Add with default options (AND).
-        $this->query->addWhere(0, $this->tableAlias . '.id', $subselect2, 'IN');
+        $query->addWhere(0, $this->tableAlias . '.id', $sub_select2, 'IN');
       }
+      $this->query = $query;
     }
   }
 

@@ -21,7 +21,7 @@ class TopicSchemaExtension extends SdlSchemaExtensionPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function registerResolvers(ResolverRegistryInterface $registry) {
+  public function registerResolvers(ResolverRegistryInterface $registry): void {
     $builder = new ResolverBuilder();
 
     $this->addQueryFields($registry, $builder);
@@ -36,7 +36,7 @@ class TopicSchemaExtension extends SdlSchemaExtensionPluginBase {
    * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
    *   The resolver builder.
    */
-  protected function addTopicFields(ResolverRegistryInterface $registry, ResolverBuilder $builder) {
+  protected function addTopicFields(ResolverRegistryInterface $registry, ResolverBuilder $builder): void {
     $registry->addFieldResolver('Topic', 'id',
       $builder->produce('entity_uuid')
         ->map('entity', $builder->fromParent())
@@ -126,7 +126,7 @@ class TopicSchemaExtension extends SdlSchemaExtensionPluginBase {
    * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
    *   The resolver builder.
    */
-  protected function addQueryFields(ResolverRegistryInterface $registry, ResolverBuilder $builder) {
+  protected function addQueryFields(ResolverRegistryInterface $registry, ResolverBuilder $builder): void {
     $registry->addFieldResolver('Query', 'topics',
       $builder->produce('query_topic')
         ->map('after', $builder->fromArgument('after'))

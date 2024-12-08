@@ -68,3 +68,52 @@ parameters:
   ignoreErrors:
       # See - https://github.com/mglaman/drupal-check/pull/187
       - '#Unsafe usage of new static\(\)#'
+      - '#\\Drupal calls should be avoided in classes#'
+      - '#Usage of deprecated trait Drupal\\social_profile\\SocialProfileTrait#'
+      - '#Plugin definitions cannot be altered\.#'
+      - '#Access to an undefined property Drupal\\file\\FileInterface::\$\_referringItem\.#'
+      - '#Access to an undefined property Drupal\\file\\FileInterface::\$download\.#'
+      ## Need to create services for that.
+      - '#Not allowed to call private function _activity_basics_entity_action from module social_follow_tag#'
+      - '#Not allowed to call private function _activity_send_email_default_template_items from module social_swiftmail#'
+      - '#Not allowed to call private function _addresses_to_string from module social_swiftmail#'
+      - '#Not allowed to call private function _editor_parse_file_uuids from module social_footer#'
+      - '#Not allowed to call private function _filter_url from module social_embed#'
+      - '#Not allowed to call private function _enrolments_export_plugin_access from module social_event_an_enroll_enrolments_export#'
+      - '#Not allowed to call private function _enrolments_export_plugin_mapping from module social_event_an_enroll_enrolments_export#'
+      - '#Not allowed to call private function _content_translation_install_field_storage_definitions from module social_language#'
+      - '#Not allowed to call private function _options_values_in_use from module dropdown#'
+      - '#Not allowed to call private function _social_core_install_blocks from module social_album#'
+      - '#Not allowed to call private function _social_comment_get_summary from module social_activity#'
+      - '#Not allowed to call private function _social_event_format_date from module social_activity#'
+      - '#Not allowed to call private function _social_event_menu_local_tasks_routes from module social_event_managers#'
+      - '#Not allowed to call private function _social_group_cache_tags from module social_group_flexible_group#'
+      - '#Not allowed to call private function _social_group_get_current_group from module social_(profile_manager_notes|post|profile_manager_notes|group_request|group_invite|group_gvbo|group_flexible_group|topic|flexible_group_book|follow_tag|social_book|social_metatag)#'
+      - '#Not allowed to call private function _social_group_get_group_invite_value from module social_group_invite#'
+      - '#Not allowed to call private function _social_profile_get_profile_from_route from module social_profile_fields#'
+      - '#Not allowed to call private function _social_profile_get_profile_from_route from module social_profile_manager_notes#'
+      - '#Not allowed to call private function _user_mail_notify from module social_user#'
+      ## To review after views_bulk_operations Update
+      - '#Method Drupal\\social_group_invite\\Plugin\\views\\field\\SocialGroupInviteViewsBulkOperationsBulkForm::viewsFormValidate\(\) has parameter \$form with no type specified\.#'
+      - '#Method Drupal\\.*\\Form\\.*::buildForm\(\) has parameter \$display_id with no type specified\.#'
+      - '#Method Drupal\\.*\\Form\\.*::buildForm\(\) has parameter \$view_id with no type specified\.#'
+      - '#Method Drupal\\.*\\Form\\.*::submitForm\(\) has no return type specified\.#'
+      - '#Method Drupal\\.*\\Plugin\\views\\field\\.*::viewsFormValidate\(\) has parameter \$form with no type specified\.#'
+      - '#Method Drupal\\social_post\\Plugin\\views\\area\\SocialPostPostForm::buildOptionsForm\(\) has parameter \$form with no type specified\.#'
+      ## To review after Drupal 11
+      - '#Method Drupal\\Core\\Form\\FormBuilderInterface::getForm\(\) invoked with 2 parameters, 1 required#'
+      - '#Method Drupal\\social_group\\Plugin\\views\\argument\\UserUid::query\(\) has parameter \$group_by with no type specified\.#'
+      - '#Method Drupal\\activity_viewer\\Plugin\\views\\argument\\ActivityProfileArgument::query\(\) has parameter \$group_by with no type specified\.#'
+      - '#Method Drupal\\activity_viewer\\Plugin\\views\\argument\\ActivityGroupArgument::query\(\) has parameter \$group_by with no type specified\.#'
+      - '#Method Drupal\\.*\\Plugin\\Action\\.*::execute\(\) has parameter \$entity with no type specified\.#'
+      - '#Method Drupal\\activity_viewer\\Plugin\\views\\row\\ActivityRow::preRender\(\) has parameter \$result with no type specified\.#'
+      - '#Method Drupal\\social_post_album\\Element\\SocialPostAlbumManagedFile::processManagedFile\(\) has (?:no return type specified\.|parameter \$complete_form with no type specified\.|parameter \$element with no type specified\.)#'
+
+      ## Extend of @internal API
+      - '#Class .* extends @internal class .*\.#'
+
+
+# Found 300 errors
+# [ERROR] Found 530 errors
+# [ERROR] Found 1075 errors
+# [ERROR] Found 1764 errors

@@ -58,22 +58,26 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'enroll_invite_email_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
+    /** @var static $instance */
     $instance = parent::create($container);
+
     $instance->entityStorage = $instance->entityTypeManager->getStorage('event_enrollment');
     $instance->tempStoreFactory = $container->get('tempstore.private');
     $instance->token = $container->get('token');
     $instance->moduleHandler = $container->get('module_handler');
+
     if ($instance->moduleHandler->moduleExists('social_event_max_enroll')) {
       $instance->eventMaxEnrollService = $container->get('social_event_max_enroll.service');
     }
+
     $instance->fileUrlGenerator = $container->get('file_url_generator');
 
     return $instance;
@@ -82,7 +86,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
 
     $form['#attributes']['class'][] = 'form--default';
@@ -184,7 +188,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function cancelForm(array &$form, FormStateInterface $form_state) {
+  public function cancelForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setRedirect('view.event_manage_enrollments.page_manage_enrollments', [
       'node' => $this->routeMatch->getRawParameter('node'),
     ]);
@@ -193,7 +197,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
     $nid = $form_state->getValue('event');
 
@@ -243,7 +247,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     $params['recipients'] = $form_state->getValue('users_fieldset')['user'];

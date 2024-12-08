@@ -17,42 +17,42 @@ class GroupRequestMembershipRejectForm extends ConfirmFormBase {
   /**
    * Group entity.
    *
-   * @var \Drupal\group\Entity\GroupInterface
+   * @var \Drupal\group\Entity\GroupInterface|null
    */
-  protected $group;
+  protected ?GroupInterface $group;
 
   /**
    * Group membership request.
    *
-   * @var \Drupal\group\Entity\GroupRelationshipInterface
+   * @var \Drupal\group\Entity\GroupRelationshipInterface|null
    */
-  protected $groupContent;
+  protected ?GroupRelationshipInterface $groupContent;
 
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'grequest_group_request_membership_reject';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getQuestion() {
+  public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
     return $this->t('Are you sure you want to Reject this request?');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCancelUrl() {
+  public function getCancelUrl(): Url {
     return Url::fromUserInput(\Drupal::destination()->get());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupRelationshipInterface $group_content = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupRelationshipInterface $group_content = NULL): array {
     $this->group = $group;
     $this->groupContent = $group_content;
 
@@ -62,13 +62,13 @@ class GroupRequestMembershipRejectForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     $this->groupContent
-      ->set('grequest_status', GroupMembershipRequest::REQUEST_REJECTED)
+      ?->set('grequest_status', GroupMembershipRequest::REQUEST_REJECTED)
       // Who created request will become an 'approver' for Membership request.
-      ->set('grequest_updated_by', $this->currentUser()->id());
-    $result = $this->groupContent->save();
+      ?->set('grequest_updated_by', $this->currentUser()->id());
+    $result = $this->groupContent?->save();
 
     if ($result) {
       $this->messenger()->addStatus($this->t('Membership Request rejected'));

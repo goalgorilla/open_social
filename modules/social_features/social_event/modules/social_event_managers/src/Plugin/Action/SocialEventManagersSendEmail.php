@@ -3,6 +3,8 @@
 namespace Drupal\social_event_managers\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -129,7 +131,8 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $objects) {
+  public function executeMultiple(array $objects): array {
+    $users = [];
     // Process the event enrollment chunks. These need to be converted to users.
     /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
     foreach ($objects as $enrollment) {
@@ -159,13 +162,16 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|AccessResultInterface {
     $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
 
     if ($object instanceof EventEnrollmentInterface) {
       // All users with the following access permission should be allowed.
-      $access = AccessResult::allowedIfHasPermission($account, 'manage everything enrollments');
+      if ($account !== NULL) {
+        $access = AccessResult::allowedIfHasPermission($account, 'manage everything enrollments');
+      }
 
+      /** @var ContentEntityBase $object */
       $event_id = $object->getFieldValue('field_event', 'target_id');
       $node = $this->entityTypeManager->getStorage('node')->load($event_id);
 

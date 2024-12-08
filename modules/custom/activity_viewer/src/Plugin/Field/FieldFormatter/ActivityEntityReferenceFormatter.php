@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_viewer\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\dynamic_entity_reference\Plugin\Field\FieldFormatter\DynamicEntityReferenceEntityFormatter;
@@ -23,7 +24,8 @@ class ActivityEntityReferenceFormatter extends DynamicEntityReferenceEntityForma
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
+    /** @var  EntityReferenceFieldItemListInterface $items */
     $view_mode = $this->getSetting('view_mode');
     $elements = [];
 

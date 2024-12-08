@@ -15,7 +15,7 @@ use Drupal\node\NodeInterface;
  *
  * Alter the weight of the actions, so the upload is last.
  */
-function social_comment_upload_form_comment_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_comment_upload_form_comment_comment_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // If we don't have a file upload field there's nothing to change.
   if (!isset($form['field_comment_files'])) {
     return;
@@ -39,7 +39,7 @@ function social_comment_upload_form_comment_comment_form_alter(&$form, FormState
 /**
  * Removes the select list with "weight" value.
  */
-function social_comment_upload_form_comment_comment_form_after_build($form, FormStateInterface $form_state) {
+function social_comment_upload_form_comment_comment_form_after_build(array $form, FormStateInterface $form_state): array {
   foreach ($form['field_comment_files']['widget'] as &$element) {
     if (is_array($element) && isset($element['_weight'])) {
       unset($element['_weight']);
@@ -52,7 +52,7 @@ function social_comment_upload_form_comment_comment_form_after_build($form, Form
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_comment_upload_preprocess_comment(&$variables) {
+function social_comment_upload_preprocess_comment(array &$variables): void {
   // Alter comments in activity when social_comment_upload is enabled.
   if (social_comment_upload_is_enabled()) {
     $count_arr = [];
@@ -99,11 +99,11 @@ function social_comment_upload_preprocess_comment(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
+function social_comment_upload_preprocess_file_widget_multiple(array &$variables): void {
   if (social_comment_upload_is_enabled()) {
     $element = $variables['element'];
 
-    if ($element['#field_name'] == 'field_comment_files') {
+    if ($element['#field_name'] === 'field_comment_files') {
       // Remove "weight" column.
       foreach ($variables['table']['#rows'] as $key => $row) {
         if (!empty($element['#display_field'])) {
@@ -124,7 +124,7 @@ function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
 /**
  * Implements hook_comment_delete().
  */
-function social_comment_upload_comment_delete(EntityInterface $entity) {
+function social_comment_upload_comment_delete(EntityInterface $entity): void {
   // If this comment has any files, delete those as well.
   _social_comment_upload_delete_comment_files($entity);
 }
@@ -140,8 +140,9 @@ function social_comment_upload_comment_delete(EntityInterface $entity) {
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _social_comment_upload_delete_comment_files(EntityInterface $entity) {
+function _social_comment_upload_delete_comment_files(EntityInterface $entity): void {
   // If this comment doesn't have any attached files we abort early.
+  /** @var \Drupal\comment\Entity\Comment $entity */
   if (!$entity->hasField('field_comment_files') || $entity->get('field_comment_files')->isEmpty()) {
     return;
   }
@@ -164,7 +165,7 @@ function _social_comment_upload_delete_comment_files(EntityInterface $entity) {
  * @return bool
  *   Whether attachment uploading for comments is enabled.
  */
-function social_comment_upload_is_enabled() {
+function social_comment_upload_is_enabled(): bool {
   return \Drupal::config('social_comment_upload.settings')
     ->get('allow_upload_comments');
 }

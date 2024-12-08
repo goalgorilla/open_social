@@ -10,7 +10,7 @@ use Drupal\user\Entity\Role;
 /**
  * Implements hook_install().
  */
-function social_profile_privacy_install() {
+function social_profile_privacy_install(): void {
   // Set some default permissions.
   _social_profile_privacy_set_permissions();
 
@@ -21,12 +21,12 @@ function social_profile_privacy_install() {
 /**
  * Function to set permissions.
  */
-function _social_profile_privacy_set_permissions() {
+function _social_profile_privacy_set_permissions(): void {
   $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
-    $permissions = _social_profile_privacy_get_permissions($role->id());
+    $permissions = _social_profile_privacy_get_permissions((string) $role->id());
     user_role_grant_permissions($role->id(), $permissions);
   }
 }
@@ -40,7 +40,7 @@ function _social_profile_privacy_set_permissions() {
  * @return array
  *   A list of permissions.
  */
-function _social_profile_privacy_get_permissions($role) {
+function _social_profile_privacy_get_permissions(string $role): array {
   // Anonymous.
   $permissions['anonymous'] = [];
 

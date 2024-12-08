@@ -4,6 +4,8 @@ namespace Drupal\mentions\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\system\Entity\Action;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -16,14 +18,14 @@ class MentionsInsert implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $configFactory;
+  protected ConfigFactory $configFactory;
 
   /**
    * MentionsInsert constructor.
@@ -41,7 +43,7 @@ class MentionsInsert implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events['mentions.insert'][] = ['onMentionsInsert', 0];
     return $events;
   }
@@ -49,7 +51,7 @@ class MentionsInsert implements EventSubscriberInterface {
   /**
    * Event Handler.
    */
-  public function onMentionsInsert($event) {
+  public function onMentionsInsert(Event $event): void {
     $config = $this->configFactory->get('mentions.settings');
     $config_mentions_events = $config->get('mentions_events');
     $action_id = $config_mentions_events['insert'];
@@ -57,6 +59,7 @@ class MentionsInsert implements EventSubscriberInterface {
       return;
     }
     $entity_storage = $this->entityTypeManager->getStorage('action');
+    /** @var Action|NULL $action */
     $action = $entity_storage->load($action_id);
 
     if ($action === NULL) {
@@ -64,7 +67,7 @@ class MentionsInsert implements EventSubscriberInterface {
     }
 
     $action_plugin = $action->getPlugin();
-    $action_plugin->execute(FALSE);
+    $action_plugin->execute();
   }
 
 }

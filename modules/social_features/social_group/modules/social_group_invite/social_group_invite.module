@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Database\Query\SelectInterface;
@@ -30,7 +31,7 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_menu_local_actions_alter().
  */
-function social_group_invite_menu_local_actions_alter(&$local_actions) {
+function social_group_invite_menu_local_actions_alter(array &$local_actions): void {
   // Remove "Invite members" button.
   if (isset($local_actions['ginvite.invitation.bulk'])) {
     unset($local_actions['ginvite.invitation.bulk']);
@@ -90,7 +91,7 @@ function social_group_invite_config_schema_info_alter(array &$definitions): void
 /**
  * Implements hook_menu_local_tasks_alter().
  */
-function social_group_invite_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface $cacheability) {
+function social_group_invite_menu_local_tasks_alter(array &$data, string $route_name, RefinableCacheableDependencyInterface $cacheability): void {
   // Add tasks on these route for invite Groups/Events.
   if ($route_name === 'view.social_group_user_invitations.page_1') {
     $tabs_to_remove = [
@@ -122,7 +123,7 @@ function social_group_invite_menu_local_tasks_alter(&$data, $route_name, Refinab
 /**
  * Implements hook_block_access().
  */
-function social_group_invite_block_access(Block $block, $operation, AccountInterface $account) {
+function social_group_invite_block_access(Block $block, string $operation, AccountInterface $account): AccessResultInterface {
   $route_name = \Drupal::routeMatch()->getRouteName();
   $routes_to_check = [
     'entity.group_content.add_form',
@@ -153,21 +154,24 @@ function social_group_invite_block_access(Block $block, $operation, AccountInter
       return AccessResult::forbidden();
     }
   }
+  return AccessResult::neutral();
 }
 
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_group_invite_preprocess_views_view(&$variables) {
+function social_group_invite_preprocess_views_view(array &$variables): void {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = &$variables['view'];
 
   if ($view->id() === 'group_manage_members') {
     $entity = \Drupal::entityTypeManager()->getStorage('block')
       ->load('socialblue_local_actions');
-    $variables['header']['actions'] = \Drupal::entityTypeManager()
-      ->getViewBuilder('block')
-      ->view($entity);
+    if ($entity !== NULL) {
+      $variables['header']['actions'] = \Drupal::entityTypeManager()
+        ->getViewBuilder('block')
+        ->view($entity);
+    }
   }
 
   // See function social_group_preprocess_views_view(&$variables).
@@ -192,9 +196,11 @@ function social_group_invite_preprocess_views_view(&$variables) {
     else {
       $entity = \Drupal::entityTypeManager()->getStorage('block')
         ->load('socialblue_local_actions');
-      $variables['header']['actions'] = \Drupal::entityTypeManager()
-        ->getViewBuilder('block')
-        ->view($entity);
+      if (NULL !== $entity) {
+        $variables['header']['actions'] = \Drupal::entityTypeManager()
+          ->getViewBuilder('block')
+          ->view($entity);
+      }
     }
   }
   // Implement button to go back to the group for our custom view.
@@ -221,7 +227,7 @@ function social_group_invite_preprocess_views_view(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_group_invite_preprocess_views_view_field(&$variables) {
+function social_group_invite_preprocess_views_view_field(array &$variables): void {
   $view = $variables['view'];
   // Alter some group invite fields for better representation in the
   // custom social overview.
@@ -234,7 +240,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
       $field_value = _social_group_get_group_invite_value($entity, 'invitation_status');
       if (NULL !== $field_value) {
         // Field values are always returned as string,
-        // so lets typecast them for now.
+        // so let's typecast them for now.
         $current_status = (integer) $field_value;
         switch ($current_status) {
           case GroupInvitation::INVITATION_PENDING:
@@ -262,7 +268,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
       $entity = $variables['row']->_entity;
       $field_value = _social_group_get_group_invite_value($entity, 'invitation_status');
       // Field values are always returned as string,
-      // so lets typecast them for now.
+      // so let's typecast them for now.
       if (NULL !== $field_value) {
         $current_status = (integer) $field_value;
         if ($current_status === GroupInvitation::INVITATION_ACCEPTED) {
@@ -284,7 +290,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
  * @return string|null
  *   The field value or NULL if there isn't any.
  */
-function _social_group_get_group_invite_value(GroupRelationship $entity, $field_name) {
+function _social_group_get_group_invite_value(GroupRelationship $entity, string $field_name): ?string {
   $field_value = NULL;
   if ($entity->hasField($field_name)) {
     try {
@@ -307,7 +313,7 @@ function _social_group_get_group_invite_value(GroupRelationship $entity, $field_
  * @return bool
  *   TRUE if it's enabled.
  */
-function _social_group_invite_current_type_enabled_invites() {
+function _social_group_invite_current_type_enabled_invites(): bool {
   $enabled = FALSE;
   $group = _social_group_get_current_group();
   // Check if group type has content plugin enabled.
@@ -324,7 +330,7 @@ function _social_group_invite_current_type_enabled_invites() {
 /**
  * Implements hook_theme_registry_alter().
  */
-function social_group_invite_theme_registry_alter(&$theme_registry) {
+function social_group_invite_theme_registry_alter(array &$theme_registry): void {
   // Unfortunately the preprocess functions aren't ordered by module weight.
   // Changing module weight doesn't work, also with dependency set to
   // social_group this should be dealt with but isnt.
@@ -340,7 +346,7 @@ function social_group_invite_theme_registry_alter(&$theme_registry) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_group_invite_preprocess_page_title(&$variables) {
+function social_group_invite_preprocess_page_title(array &$variables): void {
   // Add count of pending invites to the page title for a group.
   if (
     \Drupal::routeMatch()->getParameter('view_id') === 'social_group_invitations' &&
@@ -373,9 +379,9 @@ function social_group_invite_preprocess_page_title(&$variables) {
 /**
  * Implements hook_form_alter().
  */
-function social_group_invite_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_group_invite_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // We need to write a custom form alter, since the ginvite module
-  // has it's own routes, with no group context that loads the
+  // has its own routes, with no group context that loads the
   // join form. Decline is done differently. Due to the fact on joining
   // users need to fill in their membership fields.
   $social_group_types = [];
@@ -433,7 +439,7 @@ function social_group_invite_form_group_form_alter(array &$form, FormStateInterf
 /**
  * Form submit for group invite join form.
  */
-function _social_group_invite_action_form_submit($form, FormStateInterface $form_state) {
+function _social_group_invite_action_form_submit(array $form, FormStateInterface $form_state): void {
   $invite_content = \Drupal::routeMatch()->getParameter('group_content');
   $group = '';
 
@@ -466,7 +472,7 @@ function _social_group_invite_action_form_submit($form, FormStateInterface $form
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function social_group_invite_set_default_permissions_for_role_on_group_type(GroupRoleInterface $role) {
+function social_group_invite_set_default_permissions_for_role_on_group_type(GroupRoleInterface $role): void {
   $role->grantPermissions([
     'delete any invitation',
     'delete own invitations',
@@ -484,7 +490,7 @@ function social_group_invite_set_default_permissions_for_role_on_group_type(Grou
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function social_group_invite_set_default_permissions_for_group_type(GroupTypeInterface $group_type) {
+function social_group_invite_set_default_permissions_for_group_type(GroupTypeInterface $group_type): void {
   /** @var \Drupal\group\Entity\GroupRoleInterface $roles */
   $roles = $group_type->getRoles();
   // Make sure this is done for managers and admins.
@@ -497,7 +503,7 @@ function social_group_invite_set_default_permissions_for_group_type(GroupTypeInt
 /**
  * Implements hook_preprocess_activity().
  */
-function social_group_invite_preprocess_activity(&$variables) {
+function social_group_invite_preprocess_activity(array &$variables): void {
   $activity = $variables['elements']['#activity'];
   $related_entity = $activity->getRelatedEntity();
   // If the related entity is a piece of GroupRelationship and coming from the
@@ -565,7 +571,7 @@ function social_group_invite_preprocess_join(array &$variables): void {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_group_invite_form_social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_group_invite_form_social_group_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $invite_config = \Drupal::config('social_group.settings')
     ->get('group_invite');
 
@@ -658,13 +664,13 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
   $form['group_invite']['email_verification'] = [
     '#type' => 'checkbox',
     '#title' => t('Allow invited user to skip email verification'),
-    '#default_value' => !empty($invite_config['email_verification']) ?? FALSE,
+    '#default_value' => !empty($invite_config['email_verification']),
   ];
   $form['group_invite']['invite_by_members'] = [
     '#type' => 'checkbox',
     '#title' => t('Group managers are able to allow members send invites'),
     '#description' => t('If enabled, group managers can allow group members to send invitations to their group.'),
-    '#default_value' => !empty($invite_config['invite_by_members']) ?? FALSE,
+    '#default_value' => !empty($invite_config['invite_by_members']),
   ];
 
   $form['#submit'][] = '_social_group_invite_settings_submit';
@@ -673,7 +679,7 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
 /**
  * Sets settings for invite mail message.
  */
-function _social_group_invite_settings_submit($form, FormStateInterface $form_state) {
+function _social_group_invite_settings_submit(array $form, FormStateInterface $form_state): void {
   \Drupal::configFactory()->getEditable('social_group.settings')
     ->set('group_invite.invite_subject', $form_state->getValue('invite_subject'))
     ->set('group_invite.invite_message', $form_state->getValue('invite_message'))
@@ -710,7 +716,7 @@ function _social_group_invite_settings_submit($form, FormStateInterface $form_st
 /**
  * Implements hook_tokens_alter().
  */
-function social_group_invite_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+function social_group_invite_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
   if (
     !empty($replacements) &&
     isset($context["data"]["group"]) &&

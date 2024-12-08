@@ -8,6 +8,7 @@ use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
@@ -36,56 +37,56 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
    *
    * @var \Drupal\activity_send_email\EmailFrequencyManager
    */
-  protected $frequencyManager;
+  protected EmailFrequencyManager $frequencyManager;
 
   /**
    * Database services.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The activity notification service.
    *
    * @var \Drupal\activity_creator\ActivityNotifications
    */
-  protected $activityNotifications;
+  protected ActivityNotifications $activityNotifications;
 
   /**
    * Social mail settings.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $socialMailerSettings;
+  protected \Drupal\Core\Config\ImmutableConfig $socialMailerSettings;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The queue service.
    *
    * @var \Drupal\Core\Queue\QueueFactory
    */
-  protected $queueFactory;
+  protected QueueFactory $queueFactory;
 
   /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManager
    */
-  protected $languageManager;
+  protected LanguageManager $languageManager;
 
   /**
    * The group mute notifications.
    *
    * @var \Drupal\social_group\GroupMuteNotify
    */
-  protected $groupMuteNotify;
+  protected GroupMuteNotify $groupMuteNotify;
 
   /**
    * {@inheritdoc}
@@ -117,7 +118,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -136,7 +137,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
+  public function processItem($data): void {
     // First make sure it's an actual Activity entity.
     $activity_storage = $this->entityTypeManager->getStorage('activity');
 
@@ -162,11 +163,13 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
             foreach ($languages = $this->languageManager->getLanguages() as $language) {
               $langcode = $language->getId();
               // Load all user by given language.
-              $user_ids_per_language = $this->database->select('users_field_data', 'ufd')
+              /** @var StatementInterface $result */
+              $result = $this->database->select('users_field_data', 'ufd')
                 ->fields('ufd', ['uid'])
                 ->condition('uid', $recipients, 'IN')
                 ->condition('preferred_langcode', $langcode)
-                ->execute()->fetchAllKeyed(0, 0);
+                ->execute();
+              $user_ids_per_language = $result->fetchAllKeyed(0, 0);
 
               // Prepare the batch per language.
               $this->prepareBatch($data, $user_ids_per_language, $langcode);
@@ -189,7 +192,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
         $message_storage = $this->entityTypeManager->getStorage('message');
         /** @var \Drupal\message\Entity\Message $message */
         $message = $message_storage->load($activity->get('field_activity_message')->target_id);
-        $message_template_id = $message->getTemplate()->id();
+        $message_template_id = (string) $message->getTemplate()->id();
 
         // Prepare an array of all details required to process the item.
         $parameters = [
@@ -257,7 +260,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  private function sendToFrequencyManager(array $parameters) {
+  private function sendToFrequencyManager(array $parameters): void {
     if (empty($parameters['target_recipients'])) {
       return;
     }
@@ -304,7 +307,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
           if ($related_entity->access('view', $target_account)) {
             // If the website is multilingual, get the body text in
             // users preferred language. This will happen when the queue item
-            // is not processed in a batch and thus we can't be sure if all
+            // is not processed in a batch, and thus we can't be sure if all
             // users in the queue have the same language.
             if (empty($parameters['langcode']) && $this->languageManager->isMultilingual()) {
               $body_text = EmailActivityDestination::getSendEmailOutputText(
@@ -315,6 +318,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
 
             if ($this->frequencyManager->hasDefinition($parameters['frequency'])) {
               // Send item to EmailFrequency instance.
+              /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
               $instance = $this->frequencyManager->createInstance($parameters['frequency']);
               $instance->processItem($parameters['activity'], $parameters['message'], $target_account, $body_text);
             }
@@ -334,7 +338,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
    * @param string|null $langcode
    *   Language code.
    */
-  private function prepareBatch(array $data, array $user_ids_per_language, $langcode = NULL) {
+  private function prepareBatch(array $data, array $user_ids_per_language, ?string $langcode = NULL): void {
     // Split up by 50.
     $batches = array_chunk($user_ids_per_language, 50);
 

@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\social_event_an_enroll\Form\EventAnEnrollActionForm;
+
 /**
  * @file
  * The Social event AN enroll module.
@@ -17,7 +19,7 @@ use Drupal\file\Entity\File;
 /**
  * Create and send a invitation email on the given user account.
  */
-function social_event_an_enroll_send_mail($params) {
+function social_event_an_enroll_send_mail(array $params): ?int {
   if (!empty($params['field_event']) && !empty($params['field_email'])) {
     $node = Node::load($params['field_event']);
     $params['node'] = $node;
@@ -31,12 +33,14 @@ function social_event_an_enroll_send_mail($params) {
 
     return empty($mail) ? NULL : $mail['result'];
   }
+
+  return NULL;
 }
 
 /**
  * Implements hook_theme().
  */
-function social_event_an_enroll_theme() {
+function social_event_an_enroll_theme(): array {
   return [
     'event_an_enroll_dialog' => [
       'variables' => [
@@ -55,7 +59,7 @@ function social_event_an_enroll_theme() {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_event_an_enroll_preprocess_views_view_field(&$variables) {
+function social_event_an_enroll_preprocess_views_view_field(array &$variables): void {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = &$variables['view'];
 
@@ -80,14 +84,14 @@ function social_event_an_enroll_preprocess_views_view_field(&$variables) {
 /**
  * Override variables for the social page hero data.
  */
-function social_event_an_enroll_preprocess_node(array &$variables) {
+function social_event_an_enroll_preprocess_node(array &$variables): void {
   $account = \Drupal::currentUser();
   if ($account->isAnonymous() && !empty($variables['event_enrollment'])) {
 
     $node = $variables['node'];
 
     if ($variables['view_mode'] === 'hero' && social_event_an_enroll_is_enabled($node)) {
-      $form = \Drupal::formBuilder()->getForm('Drupal\social_event_an_enroll\Form\EventAnEnrollActionForm', $node);
+      $form = \Drupal::formBuilder()->getForm(EventAnEnrollActionForm::class, $node);
 
       $variables['event_enrollment'] = [
         'enroll_action_form' => $form,
@@ -115,8 +119,8 @@ function social_event_an_enroll_preprocess_node(array &$variables) {
  *
  * Alter "Event enrollments" views. Add number of anonymous enrollments.
  */
-function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
-  if ($view->id() == 'event_enrollments' && $view->current_display == 'event_enrollments') {
+function social_event_an_enroll_views_post_render(ViewExecutable $view, array &$output, CachePluginBase $cache): void {
+  if ($view->id() === 'event_enrollments' && $view->current_display === 'event_enrollments') {
     if (isset($output['#rows']) && !empty($view->args[0])) {
       $nid = $view->args[0];
       $an_count = \Drupal::service('social_event_an_enroll.service')->enrollmentCount($nid);
@@ -134,7 +138,7 @@ function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output
         $default_image = social_profile_get_default_image();
         if (!empty($default_image['id'])) {
           $file = File::load($default_image['id']);
-          $uri = $file->getFileUri();
+          $uri = $file?->getFileUri();
           $output['#rows'][0]['#rows'][] = [
             '#prefix' => '<div class="avatar">',
             '#theme' => 'image_style',
@@ -154,7 +158,7 @@ function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output
  *
  * Check and display "Anonymous Enrollments" tab only for events.
  */
-function social_event_an_enroll_menu_local_tasks_alter(&$data, $route_name) {
+function social_event_an_enroll_menu_local_tasks_alter(array &$data, string $route_name): void {
   $can_show_an_enrollments_link = FALSE;
   $routes_to_check = [
     'view.event_enrollments.view_enrollments',
@@ -183,7 +187,7 @@ function social_event_an_enroll_menu_local_tasks_alter(&$data, $route_name) {
 /**
  * Check if anonymous enrollment is allowed for given event.
  */
-function social_event_an_enroll_is_enabled(Node $node) {
+function social_event_an_enroll_is_enabled(Node $node): bool {
   $config = \Drupal::config('social_event_an_enroll.settings');
   $is_global_enabled = $config->get('event_an_enroll');
   $is_event = $node instanceof Event;
@@ -198,7 +202,7 @@ function social_event_an_enroll_is_enabled(Node $node) {
  *
  * Check and display "Allow anonymous enrollments" checkbox for public events.
  */
-function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_event_an_enroll_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $event_forms = [
     'node_event_form',
     'node_event_edit_form',
@@ -230,7 +234,7 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
  *
  * Display warning if visibility was changed for already enabled AN enroll.
  */
-function social_event_an_enroll_node_update(Node $node) {
+function social_event_an_enroll_node_update(Node $node): void {
   if ($node->getType() === 'event') {
     $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
     $new_visibility = $node->get('field_content_visibility')->getString();
@@ -247,8 +251,9 @@ function social_event_an_enroll_node_update(Node $node) {
  *
  * Set the correct value for AN enroll when enroll method is set to request.
  */
-function social_event_an_enroll_node_presave(EntityInterface $entity) {
+function social_event_an_enroll_node_presave(EntityInterface $entity): void {
   // If the enroll method is request then anonymous must be off.
+  /** @var \Drupal\node\Entity\Node $entity */
   if ($entity->getType() === 'event' && $entity->get('field_enroll_method')->value === '2') {
     $entity->set('field_event_an_enroll', '0');
   }
@@ -257,7 +262,7 @@ function social_event_an_enroll_node_presave(EntityInterface $entity) {
 /**
  * Implements hook_social_event_action_ACTION_ID_finish().
  */
-function social_event_an_enroll_social_event_managers_action_social_event_an_enroll_send_email_action_finish($success) {
+function social_event_an_enroll_social_event_managers_action_social_event_an_enroll_send_email_action_finish(bool $success): array {
   return social_event_managers_social_event_managers_action_social_event_managers_send_email_action_finish($success);
 }
 

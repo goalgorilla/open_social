@@ -5,10 +5,13 @@ namespace Drupal\social_user\Plugin\Action;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\role_delegation\DelegatableRolesInterface;
+use Drupal\user\Entity\User;
 use Drupal\user\Plugin\Action\ChangeUserRoleBase;
 use Drupal\user\RoleInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   type = "social_user"
  * )
  */
-class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPluginInterface {
+class SocialAddRoleUser extends ChangeUserRoleBase{
 
   /**
    * The account proxy interface.
@@ -42,14 +45,14 @@ class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPl
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeInterface $entity_type, AccountProxyInterface $currentUser, DelegatableRolesInterface $delegatableRoles) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type);
     $this->entityType = $entity_type;
-    $this->currentUser = $currentUser->getAccount();
+    $this->currentUser = $currentUser;
     $this->delegatableRoles = $delegatableRoles;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('entity_type.manager')->getDefinition('user_role'),
       $container->get('current_user'),
@@ -60,13 +63,14 @@ class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function execute($account = NULL) {
+  public function execute(AccountProxyInterface $account = NULL): void {
     $rid = $this->configuration['rid'];
     // Skip adding the role to the user if they already have it.
-    if ($account !== FALSE && !$account->hasRole($rid)) {
+    /** @var User $account */
+    if ($account !== NULL && !$account->hasRole($rid)) {
       // For efficiency manually save the original account before applying
       // any changes.
-      $account->original = clone $account;
+      $original_account = clone $account;
       $account->addRole($rid);
       $account->save();
     }
@@ -76,7 +80,7 @@ class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPl
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $roles = $this->delegatableRoles->getAssignableRoles($this->currentUser);
+    $roles = $this->delegatableRoles->getAssignableRoles($this->currentUser->getAccount());
     // Remove the authenticated role.
     unset($roles[RoleInterface::AUTHENTICATED_ID]);
     $form['rid'] = [

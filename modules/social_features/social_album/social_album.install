@@ -10,7 +10,7 @@ use Drupal\user\RoleInterface;
 /**
  * Implements hook_install().
  */
-function social_album_install() {
+function social_album_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -66,14 +66,14 @@ function social_album_install() {
 /**
  * Implements hook_uninstall().
  */
-function social_album_uninstall() {
+function social_album_uninstall(): void {
   _social_album_blocks('_social_core_blocks_unset_paths');
 }
 
 /**
  * Function to set group permissions.
  */
-function _social_album_set_group_permissions() {
+function _social_album_set_group_permissions(): void {
   $common_permissions = [
     'anonymous' => [
       'view group_node:album relationship',
@@ -117,7 +117,11 @@ function _social_album_set_group_permissions() {
   /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $role_storage */
   $role_storage = \Drupal::entityTypeManager()->getStorage('group_role');
 
-  foreach (\Drupal::entityQuery('group_type')->execute() as $type_id) {
+  $execute = \Drupal::entityQuery('group_type')->execute();
+  if (!is_array($execute)) {
+    return;
+  }
+  foreach ($execute  as $type_id) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $type */
     $type = $type_storage->load($type_id);
 

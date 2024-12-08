@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -64,8 +65,8 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
-    parent::preCreate($storage_controller, $values);
+  public static function preCreate(EntityStorageInterface $storage, array &$values): void {
+    parent::preCreate($storage, $values);
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
     ];
@@ -74,7 +75,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function preSave(EntityStorageInterface $storage) {
+  public function preSave(EntityStorageInterface $storage): void {
     $tags = [
       'event_content_list:user:' . $this->getAccount(),
       'event_enrollment_list:' . $this->getFieldValue('field_event', 'target_id'),
@@ -86,9 +87,10 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public static function preDelete(EntityStorageInterface $storage, array $entities) {
+  public static function preDelete(EntityStorageInterface $storage, array $entities): void {
     if (!empty($entities)) {
       $tags = [];
+      /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
       foreach ($entities as $enrollment) {
         $tags = [
           'event_content_list:user:' . $enrollment->getAccount(),
@@ -102,14 +104,14 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function getName() {
+  public function getName(): string {
     return $this->get('name')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function label() {
+  public function label(): string|\Drupal\Core\StringTranslation\TranslatableMarkup|null {
     // When a guest is allowed to join the name and account fields can be empty,
     // but the field for email will be provided.
     // The first and last name are not mandatory,
@@ -130,7 +132,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function setName($name) {
+  public function setName($name): EventEnrollmentInterface|static {
     $this->set('name', $name);
     return $this;
   }
@@ -138,14 +140,14 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function getCreatedTime() {
+  public function getCreatedTime(): int {
     return $this->get('created')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setCreatedTime($timestamp) {
+  public function setCreatedTime($timestamp): EventEnrollmentInterface|static {
     $this->set('created', $timestamp);
     return $this;
   }
@@ -153,15 +155,17 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function getOwner() {
-    return $this->get('user_id')->entity;
+  public function getOwner(): UserInterface {
+    /** @var UserInterface $user */
+    $user = $this->get('user_id')->entity;
+    return $user;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getOwnerId() {
-    return $this->get('user_id')->target_id;
+  public function getOwnerId(): ?int {
+    return $this->getFieldValue('user_id', 'target_id');
   }
 
   /**
@@ -179,13 +183,15 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
       return NULL;
     }
 
-    return $this->get('field_account')->entity;
+    /** @var ?UserInterface $user */
+    $user = $this->get('field_account')->entity;
+    return $user;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public function setOwnerId($uid): EntityOwnerInterface|EventEnrollment|static {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -193,7 +199,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(UserInterface $account): EntityOwnerInterface|EventEnrollment|static {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -222,14 +228,14 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
+  public function isPublished(): bool {
     return (bool) $this->getEntityKey('status');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setPublished($published) {
+  public function setPublished($published): EventEnrollmentInterface|static {
     $this->set('status', $published ? NodeInterface::PUBLISHED : NodeInterface::NOT_PUBLISHED);
     return $this;
   }
@@ -237,7 +243,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Event enrollment entity.'))

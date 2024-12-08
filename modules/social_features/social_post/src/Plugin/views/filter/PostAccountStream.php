@@ -18,26 +18,28 @@ class PostAccountStream extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function adminSummary() {
+  public function adminSummary(): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function operatorForm(&$form, FormStateInterface $form_state) {
+  protected function operatorForm(&$form, FormStateInterface $form_state): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): FALSE {
     return FALSE;
   }
 
   /**
    * Query for the activity stream on the account pages.
    */
-  public function query() {
+  public function query(): void {
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    $query = $this->query;
 
     // Profile user.
     $account_profile = \Drupal::routeMatch()->getParameter('user');
@@ -46,8 +48,8 @@ class PostAccountStream extends FilterPluginBase {
     // - All the posts to community, public by the account user.
     // - All the posts to the user by other users in the community.
     // Same logic for users who are visiting another OR own profile.
-    $this->query->addTable('post__field_visibility');
-    $this->query->addTable('post__field_recipient_user');
+    $query->addTable('post__field_visibility');
+    $query->addTable('post__field_recipient_user');
 
     $or_condition = new Condition('OR');
 
@@ -63,13 +65,15 @@ class PostAccountStream extends FilterPluginBase {
     $recipient_condition->condition('post__field_recipient_user.field_recipient_user_target_id', $account_profile->id(), '=');
     $or_condition->condition($recipient_condition);
 
-    $this->query->addWhere('visibility', $or_condition);
+    $query->addWhere('visibility', $or_condition);
+
+    $this->query = $query;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
 
     // Since the Stream is different per url.

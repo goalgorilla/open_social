@@ -16,7 +16,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
     // Route the old private message page to the inbox.
     if ($route = $collection->get('private_message.private_message_page')) {
       // Deny access to this route.

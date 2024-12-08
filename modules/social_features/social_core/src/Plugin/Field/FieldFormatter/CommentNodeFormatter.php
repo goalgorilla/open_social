@@ -32,7 +32,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
+  public static function defaultSettings(): array {
     return [
       'num_comments' => 2,
       'always_show_all_comments' => FALSE,
@@ -42,13 +42,13 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $elements = [];
     $output = [];
 
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
-    $status = $items->status;
+    $status = $items->get('status')?->getValue()[0]['value'];
     $access_comments_in_group = FALSE;
 
     // Exclude entities without the set id.
@@ -83,7 +83,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       !in_array($this->viewMode, ['search_result', 'search_index'])) {
       $comment_settings = $this->getFieldSettings();
 
-      $comment_count = $entity->get($field_name)->comment_count;
+      $comment_count = (int) $entity->get($field_name)->get('comment_count')?->getValue();
 
       // Only attempt to render comments if the entity has visible comments.
       // Unpublished comments are not included in
@@ -131,11 +131,11 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
         // Attach the attributes.
         $link_url->setOptions($more_link_options);
 
-        if ($comment_count == 0) {
+        if ($comment_count === 0) {
           $more_link = $this->t(':num_comments comments', $t_args);
           $output['more_link'] = $more_link;
         }
-        elseif ($comment_count == 1) {
+        elseif ($comment_count === 1) {
           $more_link = $this->t(':num_comments comment', $t_args);
           $output['more_link'] = $more_link;
         }
@@ -171,7 +171,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
     $element = [];
     $element['num_comments'] = [
       '#type' => 'number',
@@ -192,7 +192,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary() {
+  public function settingsSummary(): array {
     return [];
   }
 
@@ -201,7 +201,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
    *
    * @see Drupal\comment\CommentStorage::loadThead()
    */
-  public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
+  public function loadThread(EntityInterface $entity, string $field_name, int $mode, int $comments_per_page = 0, int $pager_id = 0): array {
     // @todo Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
     $query = \Drupal::database()->select('comment_field_data', 'c');
     $query->addField('c', 'cid');
@@ -220,12 +220,12 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
     if (!$this->currentUser->hasPermission('administer comments')) {
       $query->condition('c.status', CommentInterface::PUBLISHED);
     }
-    if ($mode == CommentManagerInterface::COMMENT_MODE_FLAT) {
+    if ($mode === CommentManagerInterface::COMMENT_MODE_FLAT) {
       $query->orderBy('c.cid', 'DESC');
     }
     else {
       // See comment above. Analysis reveals that this doesn't cost too
-      // much. It scales much much better than having the whole comment
+      // much. It scales much, much better than having the whole comment
       // structure.
       $query->addExpression('SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1))', 'torder');
       $query->orderBy('torder', 'DESC');
@@ -236,7 +236,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       $query->range(0, $comments_per_page);
     }
 
-    $cids = $query->execute()->fetchCol();
+    $cids = $query->execute()?->fetchCol();
 
     $comments = [];
     if ($cids) {

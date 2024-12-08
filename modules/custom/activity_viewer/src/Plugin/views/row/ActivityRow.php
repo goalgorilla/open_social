@@ -26,7 +26,7 @@ class ActivityRow extends EntityRow {
    *
    * @var \Drupal\activity_creator\Plugin\ActivityDestinationManager
    */
-  protected $activityDestinationManager;
+  protected ActivityDestinationManager $activityDestinationManager;
 
   /**
    * ActivityRow constructor.
@@ -37,15 +37,15 @@ class ActivityRow extends EntityRow {
    *   The plugin id.
    * @param array $plugin_definition
    *   The plugin definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   * @param LanguageManagerInterface $language_manager
    *   The language manager.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface|null $entity_repository
+   * @param EntityRepositoryInterface $entity_repository
    *   The entity repository.
-   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface|null $entity_display_repository
+   * @param EntityDisplayRepositoryInterface $entity_display_repository
    *   The entity display repository.
-   * @param \Drupal\activity_creator\Plugin\ActivityDestinationManager $activity_destination_manager
+   * @param ActivityDestinationManager $activity_destination_manager
    *   The activity destination manager.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, EntityRepositoryInterface $entity_repository, EntityDisplayRepositoryInterface $entity_display_repository, ActivityDestinationManager $activity_destination_manager) {
@@ -56,7 +56,7 @@ class ActivityRow extends EntityRow {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -72,7 +72,7 @@ class ActivityRow extends EntityRow {
   /**
    * {@inheritdoc}
    */
-  public function preRender($result) {
+  public function preRender($result): void {
 
     $view_mode = $this->options['view_mode'];
 

@@ -21,7 +21,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Perform actions related to the installation of social_profile.
  */
-function social_profile_install() {
+function social_profile_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::AUTHENTICATED_ID,
@@ -78,7 +78,7 @@ function social_profile_install() {
 
   // Create a profile for user 1.
   Profile::create([
-    'type' => ProfileType::load('profile')->id(),
+    'type' => ProfileType::load('profile')?->id(),
     'uid' => 1,
   ])->save();
 }
@@ -86,7 +86,7 @@ function social_profile_install() {
 /**
  * Function to set default profile image if not set already.
  */
-function _social_profile_add_default_profile_image() {
+function _social_profile_add_default_profile_image(): void {
   $field_image_config = FieldConfig::load('profile.profile.field_profile_image');
   assert($field_image_config !== NULL, "Trying to set default image for missing field, this is an error in Open Social.");
   $field_image_config_uuid = $field_image_config->uuid();
@@ -123,7 +123,7 @@ function _social_profile_add_default_profile_image() {
 /**
  * Implements hook_uninstall().
  */
-function social_profile_uninstall() {
+function social_profile_uninstall(): void {
   \Drupal::service('config.factory')
     ->getEditable('social_profile.settings')
     ->delete();

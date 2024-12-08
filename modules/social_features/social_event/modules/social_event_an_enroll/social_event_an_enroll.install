@@ -13,7 +13,7 @@ use Drupal\field\Entity\FieldConfig;
  *
  * Perform actions related to the installation of social_event_an_enroll.
  */
-function social_event_an_enroll_install() {
+function social_event_an_enroll_install(): void {
   module_set_weight('social_event_an_enroll', 10);
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
@@ -37,7 +37,7 @@ function social_event_an_enroll_install() {
 /**
  * Implements hook_uninstall().
  */
-function social_event_an_enroll_uninstall() {
+function social_event_an_enroll_uninstall(): void {
   $moduleHandler = \Drupal::service('module_handler');
   // Delete the email field is social_event_invite is not enabled.
   // @todo is there a way to get field dependencies instead of manual?
@@ -52,7 +52,7 @@ function social_event_an_enroll_uninstall() {
 /**
  * Fix blocks visibility.
  */
-function _social_event_an_enroll_fix_blocks() {
+function _social_event_an_enroll_fix_blocks(): void {
   $current_theme = \Drupal::configFactory()
     ->get('system.theme')
     ->get('default');

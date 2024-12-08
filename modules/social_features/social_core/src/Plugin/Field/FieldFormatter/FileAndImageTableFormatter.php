@@ -2,6 +2,7 @@
 
 namespace Drupal\social_core\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 use Drupal\file\FileInterface;
@@ -23,11 +24,13 @@ class FileAndImageTableFormatter extends ImageFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     // Grab elements from the ImageFormatter and see if we can attach files?
     $elements = parent::viewElements($items, $langcode);
-
-    foreach ($this->getEntitiesToView($items, $langcode) as $delta => $file) {
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $items */
+    $entities_to_view = $this->getEntitiesToView($items, $langcode);
+    foreach ($entities_to_view as $delta => $file) {
+      /** @var \Drupal\file\FileInterface $file */
       $item = $file->_referringItem;
 
       // If it's a File we render it as a file_link.

@@ -4,6 +4,7 @@ namespace Drupal\social_language;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
+use Drupal\social_language\SocialLanguageModalRenderer;
 
 /**
  * Class SocialLanguageServiceProvider.
@@ -15,9 +16,9 @@ class SocialLanguageServiceProvider extends ServiceProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alter(ContainerBuilder $container) {
+  public function alter(ContainerBuilder $container): void {
     $definition = $container->getDefinition('main_content_renderer.modal');
-    $definition->setClass('Drupal\social_language\SocialLanguageModalRenderer');
+    $definition->setClass(SocialLanguageModalRenderer::class);
   }
 
 }

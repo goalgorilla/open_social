@@ -29,20 +29,20 @@ class EventAnEnrollForm extends EnrollActionForm {
    *
    * @var \Drupal\data_policy\DataPolicyConsentManagerInterface
    */
-  protected $dataPolicyConsentManager;
+  protected \Drupal\data_policy\DataPolicyConsentManagerInterface $dataPolicyConsentManager;
 
   /**
    * Drupal\Core\TempStore\PrivateTempStoreFactory definition.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected \Drupal\Core\TempStore\PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): self {
-    $instance = parent::create($container);
+    $instance = new static();
     if ($instance->moduleHandler->moduleExists('data_policy')) {
       $instance->dataPolicyConsentManager = $container->get('data_policy.manager');
     }
@@ -53,14 +53,14 @@ class EventAnEnrollForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'event_an_enroll_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $node = $this->routeMatch->getRawParameter('node');
 
     // Load node object in case it's not converted for us.
@@ -229,7 +229,7 @@ class EventAnEnrollForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
   }
 

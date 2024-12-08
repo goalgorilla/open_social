@@ -17,10 +17,10 @@ abstract class ActivityWorkerBase extends QueueWorkerBase {
    *
    * @param string $queue_name
    *   The queue name.
-   * @param object $data
+   * @param mixed $data
    *   The $data which should be stored in the queue item.
    */
-  protected function createQueueItem($queue_name, $data) {
+  protected function createQueueItem(string $queue_name, mixed $data): void {
     $queue = \Drupal::queue($queue_name);
     $queue->createItem($data);
   }

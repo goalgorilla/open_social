@@ -11,6 +11,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\RouteObjectInterface;
 use Drupal\node\NodeInterface;
+use Drupal\tour\Annotation\Tip;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -31,42 +32,42 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
-   * The route match.
+   * The request stack.
    *
-   * @var \Drupal\social_tagging\SocialTaggingService
+   * @var RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The entity repository.
    *
    * @var \Drupal\Core\Entity\EntityRepositoryInterface
    */
-  protected $entityRepository;
+  protected EntityRepositoryInterface $entityRepository;
 
   /**
    * The title resolver service.
    *
    * @var \Drupal\Core\Controller\TitleResolverInterface
    */
-  protected $titleResolver;
+  protected TitleResolverInterface $titleResolver;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * SocialPageTitleBlock constructor.
@@ -113,7 +114,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -130,7 +131,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     // Take the raw parameter. We'll load it ourselves.
     $nid = $this->routeMatch->getRawParameter('node');
     $node = FALSE;
@@ -142,6 +143,9 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
     }
 
     $request = $this->requestStack->getCurrentRequest();
+    if ($request === NULL) {
+      return [];
+    }
 
     if ($node instanceof NodeInterface) {
       // Landing pages have their own heroes. Usually we're not displayed for

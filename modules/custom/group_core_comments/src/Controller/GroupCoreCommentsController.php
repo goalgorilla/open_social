@@ -23,7 +23,7 @@ class GroupCoreCommentsController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestService;
+  protected RequestStack $requestService;
 
   /**
    * Constructs a new GroupCoreCommentsController.
@@ -56,7 +56,7 @@ class GroupCoreCommentsController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
@@ -79,7 +79,7 @@ class GroupCoreCommentsController extends ControllerBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function quickJoinGroup(GroupInterface $group) {
+  public function quickJoinGroup(GroupInterface $group): RedirectResponse {
     /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
     $storage = $this->entityTypeManager()->getStorage('group_content_type');
     $relation_type_id = $storage->getRelationshipTypeId((string) $group->getGroupType()->id(), 'group_membership');
@@ -99,7 +99,7 @@ class GroupCoreCommentsController extends ControllerBase {
       $this->messenger()->addError($this->t('Error when joining the group.'));
     }
 
-    $previous_url = $this->requestService->getCurrentRequest()->headers->get('referer');
+    $previous_url = (string) $this->requestService->getCurrentRequest()?->headers->get('referer');
     $request = Request::create($previous_url);
     $referer_path = $request->getRequestUri();
 

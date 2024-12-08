@@ -28,7 +28,7 @@ class PrivateMessageActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\private_message\Service\PrivateMessageServiceInterface
    */
-  protected $privateMessageService;
+  protected PrivateMessageServiceInterface $privateMessageService;
 
   /**
    * PrivateMessageActivityContext constructor.
@@ -65,7 +65,7 @@ class PrivateMessageActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -108,7 +108,7 @@ class PrivateMessageActivityContext extends ActivityContextBase {
               foreach ($members as $member) {
                 if ($member instanceof UserInterface) {
                   // Filter out the author of this message.
-                  if ($member->id() == $data['actor']) {
+                  if ($member->id() === $data['actor']) {
                     continue;
                   }
 

@@ -40,7 +40,7 @@ class ImagePopupController extends ControllerBase {
    * @return \Drupal\social_post_album\Controller\ImagePopupController|static
    *   Instance of the class.
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('file_url_generator')
     );

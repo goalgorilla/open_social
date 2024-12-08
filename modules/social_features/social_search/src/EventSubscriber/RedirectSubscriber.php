@@ -52,7 +52,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
   protected $requestStack;
 
   /**
-   * Redirectsubscriber construct.
+   * Redirect subscriber construct.
    *
    * @param \Drupal\Core\Routing\CurrentRouteMatch $route_match
    *   The current route.
@@ -76,7 +76,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @return mixed
    *   Returns request events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): mixed {
     $events[KernelEvents::REQUEST][] = ['redirectSearchWithPrefilledExposedFilters'];
     return $events;
   }
@@ -87,7 +87,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function redirectSearchWithPrefilledExposedFilters(RequestEvent $event) {
+  public function redirectSearchWithPrefilledExposedFilters(RequestEvent $event): void {
     $routeMatch = [
       'view.search_users.page_no_value',
       'view.search_users.page',
@@ -106,7 +106,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
       $created_op = ['created_op' => '<'];
       $query = empty($query) ? $created_op : array_merge($query, $created_op);
       $parameters = $this->currentRoute->getParameters();
-      $redirect_path = $this->currentRoute->getRouteName();
+      $redirect_path = (string) $this->currentRoute->getRouteName();
       $options = ['query' => $query];
       $route_parameters = ['keys' => $parameters->get('keys')];
       $redirect = Url::fromRoute($redirect_path, $route_parameters, $options);

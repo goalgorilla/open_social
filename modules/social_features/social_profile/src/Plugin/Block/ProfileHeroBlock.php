@@ -26,7 +26,7 @@ class ProfileHeroBlock extends BlockBase implements ContainerFactoryPluginInterf
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * ProfileHeroBlock constructor.
@@ -48,7 +48,7 @@ class ProfileHeroBlock extends BlockBase implements ContainerFactoryPluginInterf
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -60,10 +60,11 @@ class ProfileHeroBlock extends BlockBase implements ContainerFactoryPluginInterf
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $build = [];
     $account = $this->getContextValue('user');
 
+    /** @var \Drupal\profile\ProfileStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('profile');
     $profile = $storage->loadByUser($account, 'profile');
 
@@ -81,8 +82,9 @@ class ProfileHeroBlock extends BlockBase implements ContainerFactoryPluginInterf
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $account = $this->getContextValue('user');
+    /** @var \Drupal\profile\ProfileStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('profile');
     $profile = $storage->loadByUser($account, 'profile');
     $tags = [
@@ -99,7 +101,7 @@ class ProfileHeroBlock extends BlockBase implements ContainerFactoryPluginInterf
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     return Cache::mergeContexts(parent::getCacheContexts(), ['user.permissions']);
   }
 

@@ -38,10 +38,10 @@ class PostTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getCollectionRoute(EntityTypeInterface $entity_type) {
+  protected function getCollectionRoute(EntityTypeInterface $entity_type): ?Route {
     if ($entity_type->hasLinkTemplate('collection') && $entity_type->hasListBuilderClass()) {
       $entity_type_id = $entity_type->id();
-      $route = new Route($entity_type->getLinkTemplate('collection'));
+      $route = new Route((string) $entity_type->getLinkTemplate('collection'));
       $route
         ->setDefaults([
           '_entity_list' => $entity_type_id,
@@ -49,11 +49,13 @@ class PostTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
           // TitleResolver translates this string again.
           '_title' => (string) $entity_type->getLabel(),
         ])
-        ->setRequirement('_permission', $entity_type->getAdminPermission())
+        ->setRequirement('_permission', (string) $entity_type->getAdminPermission())
         ->setOption('_admin_route', TRUE);
 
       return $route;
     }
+
+    return NULL;
   }
 
 }

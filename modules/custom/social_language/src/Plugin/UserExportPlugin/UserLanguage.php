@@ -26,7 +26,7 @@ class UserLanguage extends UserExportPluginBase {
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  public $languageManager;
+  public LanguageManagerInterface $languageManager;
 
   /**
    * UserExportPluginBase constructor.
@@ -55,7 +55,7 @@ class UserLanguage extends UserExportPluginBase {
   /**
    * The create method.
    *
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   * @param ContainerInterface $container
    *   Container interface.
    * @param array $configuration
    *   An array of configuration.
@@ -64,10 +64,10 @@ class UserLanguage extends UserExportPluginBase {
    * @param mixed $plugin_definition
    *   The plugin definition.
    *
-   * @return \Drupal\Core\Plugin\ContainerFactoryPluginInterface|\Drupal\social_user_export\Plugin\UserExportPluginBase
+   * @return UserLanguage
    *   Returns the UserExportPluginBase.
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -82,7 +82,7 @@ class UserLanguage extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader() {
+  public function getHeader(): string|\Drupal\Core\StringTranslation\TranslatableMarkup {
     return $this->t('Language');
   }
 
@@ -90,7 +90,7 @@ class UserLanguage extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity):string {
-    return $this->languageManager->getLanguage($entity->getPreferredLangcode())->getName();
+    return (string) $this->languageManager->getLanguage($entity->getPreferredLangcode())?->getName();
   }
 
 }

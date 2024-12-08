@@ -9,6 +9,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\views\Plugin\views\field\RenderedEntity;
+use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\Plugin\ViewsHandlerManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -26,7 +27,7 @@ class ProfileEntitySortable extends RenderedEntity {
    *
    * @var \Drupal\views\Plugin\ViewsHandlerManager
    */
-  protected $joinManager;
+  protected ViewsHandlerManager $joinManager;
 
   /**
    * The Drupal module handler service.
@@ -40,7 +41,10 @@ class ProfileEntitySortable extends RenderedEntity {
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
+
+  /** @var Sql */
+  public $query;
 
   /**
    * Constructs an GroupContentToEntityBase object.
@@ -105,76 +109,75 @@ class ProfileEntitySortable extends RenderedEntity {
   /**
    * {@inheritdoc}
    */
-  public function clickSort($order) {
-    if (isset($this->field_alias)) {
-      // If we want to sort on the profile name, add the correct alias.
-      if ($this->table === 'profile' && $this->field === 'profile_entity_sortable') {
-        /** @var \Drupal\views\Plugin\views\query\Sql $query */
-        $query = $this->query;
+  public function clickSort($order): void {
+    // If we want to sort on the profile name, add the correct alias.
+    if ($this->table === 'profile' && $this->field === 'profile_entity_sortable') {
+      /** @var \Drupal\views\Plugin\views\query\Sql $query */
+      $query = $this->query;
 
-        // Get a field list that will be used for sorting.
-        $order_by_fields = $this->orderByFields();
+      // Get a field list that will be used for sorting.
+      $order_by_fields = $this->orderByFields();
 
-        // Add relationship for necessary fields.
-        foreach ($order_by_fields as $sort_field) {
-          $definition = [
-            'table' => 'profile__' . $sort_field,
-            'field' => 'entity_id',
-            'left_table' => $this->relationship,
-            'left_field' => 'profile_id',
-          ];
+      // Add relationship for necessary fields.
+      foreach ($order_by_fields as $sort_field) {
+        $definition = [
+          'table' => 'profile__' . $sort_field,
+          'field' => 'entity_id',
+          'left_table' => $this->relationship,
+          'left_field' => 'profile_id',
+        ];
 
-          $join = $this->joinManager->createInstance('standard', $definition);
-          $query->addRelationship($definition['table'], $join, $this->relationship);
-        }
-
-        // If we have more than one field for sort then use Firstname, Lastname,
-        // and Nickname fields.
-        if (count($order_by_fields) > 1) {
-          $this->field_alias = 'profile_full_name';
-          // We will have different expressions depending on is the Nickname
-          // field provided or not.
-          // Members will be sort by next queue:
-          // - Nickname
-          // - Firstname + Lastname (if Nickname is NULL)
-          // - Firstname (if Nickname and Lastname are NULL)
-          // - Lastname (if Nickname and Firstname are NULL)
-          // - Username (if all Name fields are NULL)
-          $field = in_array('field_profile_nick_name', $order_by_fields) ?
-            "CASE WHEN
-              profile__field_profile_nick_name.field_profile_nick_name_value IS NOT NULL
-            THEN
-              TRIM(profile__field_profile_nick_name.field_profile_nick_name_value)
-            WHEN
-              (profile__field_profile_nick_name.field_profile_nick_name_value IS NULL) AND ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
-            THEN
-              CONCAT(TRIM(COALESCE(profile__field_profile_first_name.field_profile_first_name_value, '')), ' ', TRIM(COALESCE(profile__field_profile_last_name.field_profile_last_name_value, '')))
-            ELSE
-              TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
-            END" :
-            "CASE WHEN
-              ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
-            THEN
-              CONCAT(TRIM(COALESCE(profile__field_profile_first_name.field_profile_first_name_value, '')), ' ', TRIM(COALESCE(profile__field_profile_last_name.field_profile_last_name_value, '')))
-            ELSE
-              TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
-            END";
-          $query->addField(
-            NULL,
-            $field,
-            $this->field_alias
-          );
-        }
-        // If we have only one field for sort then use the Profile name field.
-        elseif (count($order_by_fields) === 1) {
-          $this->field_alias = $definition['table'] . '.profile_name_value';
-        }
+        /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
+        $join = $this->joinManager->createInstance('standard', $definition);
+        $query->addRelationship($definition['table'], $join, $this->relationship);
       }
-      // Since fields should always have themselves already added, just
-      // add a sort on the field.
-      $params = $this->options['group_type'] != 'group' ? ['function' => $this->options['group_type']] : [];
-      $this->query->addOrderBy(NULL, NULL, $order, $this->field_alias, $params);
+
+      // If we have more than one field for sort then use Firstname, Lastname,
+      // and Nickname fields.
+      if (count($order_by_fields) > 1) {
+        $this->field_alias = 'profile_full_name';
+        // We will have different expressions depending on is the Nickname
+        // field provided or not.
+        // Members will be sort by next queue:
+        // - Nickname
+        // - Firstname + Lastname (if Nickname is NULL)
+        // - Firstname (if Nickname and Lastname are NULL)
+        // - Lastname (if Nickname and Firstname are NULL)
+        // - Username (if all Name fields are NULL)
+        $field = in_array('field_profile_nick_name', $order_by_fields) ?
+          "CASE WHEN
+            profile__field_profile_nick_name.field_profile_nick_name_value IS NOT NULL
+          THEN
+            TRIM(profile__field_profile_nick_name.field_profile_nick_name_value)
+          WHEN
+            (profile__field_profile_nick_name.field_profile_nick_name_value IS NULL) AND ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
+          THEN
+            CONCAT(TRIM(COALESCE(profile__field_profile_first_name.field_profile_first_name_value, '')), ' ', TRIM(COALESCE(profile__field_profile_last_name.field_profile_last_name_value, '')))
+          ELSE
+            TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
+          END" :
+          "CASE WHEN
+            ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
+          THEN
+            CONCAT(TRIM(COALESCE(profile__field_profile_first_name.field_profile_first_name_value, '')), ' ', TRIM(COALESCE(profile__field_profile_last_name.field_profile_last_name_value, '')))
+          ELSE
+            TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
+          END";
+        $query->addField(
+          NULL,
+          $field,
+          $this->field_alias
+        );
+      }
+      // If we have only one field for sort then use the Profile name field.
+      elseif (count($order_by_fields) === 1) {
+        $this->field_alias = $definition['table'] . '.profile_name_value';
+      }
     }
+    // Since fields should always have themselves already added, just
+    // add a sort on the field.
+    $params = $this->options['group_type'] !== 'group' ? ['function' => $this->options['group_type']] : [];
+    $this->query->addOrderBy(NULL, NULL, $order, $this->field_alias, $params);
   }
 
   /**

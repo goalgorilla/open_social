@@ -20,14 +20,14 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs the configuration override.
@@ -45,7 +45,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     $found = FALSE;
 
@@ -93,7 +93,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    * @param array $overrides
    *   An override configuration.
    */
-  protected function addFilterOverride($text_format, $convert_url, array &$overrides) {
+  protected function addFilterOverride(string $text_format, bool $convert_url, array &$overrides): void {
     $config_name = 'filter.format.' . $text_format;
     /** @var \Drupal\Core\Config\Config $config */
     $config = $this->configFactory->getEditable($config_name);
@@ -133,27 +133,27 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    * @param array $overrides
    *   An override configuration.
    */
-  protected function addEditorOverride($text_format, array &$overrides) {
+  protected function addEditorOverride(string $text_format, array &$overrides): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?\Drupal\Core\Config\StorableConfigBase {
     return NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialEmbedConfigOverride';
   }
 

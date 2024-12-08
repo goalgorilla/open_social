@@ -3,6 +3,7 @@
 namespace Drupal\social_event\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -19,7 +20,7 @@ class EventEnrollmentStandaloneEnrollActivityEntityCondition extends ActivityEnt
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity): bool {
+  public function isValidEntityCondition(ContentEntityInterface $entity): bool {
     if ($entity->getEntityTypeId() === 'event_enrollment') {
       /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
       $event = $entity->getEvent();

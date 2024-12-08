@@ -11,7 +11,7 @@ use Drupal\Core\StreamWrapper\StreamWrapperManager;
 /**
  * Implements hook_help().
  */
-function social_footer_help($route_name, RouteMatchInterface $route_match) {
+function social_footer_help(string $route_name, RouteMatchInterface $route_match): string {
   $output = '';
 
   // Main module help for the social_footer module.
@@ -30,8 +30,8 @@ function social_footer_file_download(string $uri): ?array {
   $scheme = StreamWrapperManager::getScheme($uri);
   $target = StreamWrapperManager::getTarget($uri);
 
-  // Don't act if its not an inline-image.
-  if ($scheme != "private" || !str_contains((string) $target, "inline-images/")) {
+  // Don't act if it's not an inline-image.
+  if ($scheme !== "private" || !str_contains((string) $target, "inline-images/")) {
     return NULL;
   }
 

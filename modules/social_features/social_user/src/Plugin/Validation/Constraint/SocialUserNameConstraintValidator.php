@@ -29,7 +29,7 @@ class SocialUserNameConstraintValidator extends ConstraintValidator implements C
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       // Load the service required to construct this class.
       $container->get('typed_data_manager')
@@ -49,7 +49,8 @@ class SocialUserNameConstraintValidator extends ConstraintValidator implements C
       $definition = DataDefinition::create('string')->setConstraints(['Email' => []]);
       $typed_data = $this->typedDataManager->create($definition, $name);
       $violations = $typed_data->validate();
-      if (count($violations) == 0) {
+      if (count($violations) === 0) {
+        /** @var SocialUserNameConstraint $constraint */
         $this->context->addViolation($constraint->usernameIsEmailMessage);
       }
     }

@@ -33,7 +33,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    *
    * @var \Drupal\social_event\EventEnrollmentInterface
    */
-  protected $entity;
+  protected EventEnrollmentInterface $entity;
 
   /**
    * The event an enroll manager.
@@ -94,7 +94,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $objects) {
+  public function executeMultiple(array $objects): array {
     $guests = [];
     foreach ($objects as $key => $entity) {
       if ($this->socialEventAnEnrollManager->isGuest($entity)) {
@@ -140,7 +140,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
    *   The name of the guest enrolment.
    */
-  public function getDisplayName(EventEnrollmentInterface $entity) {
+  public function getDisplayName(EventEnrollmentInterface $entity): string|\Drupal\Core\StringTranslation\TranslatableMarkup {
     $display_name = $this->socialEventAnEnrollManager->getGuestName($entity, FALSE);
 
     if (!$display_name) {

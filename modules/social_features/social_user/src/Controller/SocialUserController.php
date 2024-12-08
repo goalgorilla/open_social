@@ -3,6 +3,7 @@
 namespace Drupal\social_user\Controller;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatch;
@@ -38,7 +39,7 @@ class SocialUserController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): SocialUserController {
     return new static(
       $container->get('entity_type.manager')
     );
@@ -60,10 +61,11 @@ class SocialUserController extends ControllerBase {
    * @return string
    *   The first and/or last name with the AccountName as a fallback.
    */
-  public function setUserStreamTitle(UserInterface $user = NULL) {
+  public function setUserStreamTitle(UserInterface $user = NULL): string {
     if ($user instanceof UserInterface) {
       return $user->getDisplayName();
     }
+    return '';
   }
 
   /**
@@ -72,10 +74,10 @@ class SocialUserController extends ControllerBase {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
    *
-   * @return \Drupal\Core\Access\AccessResult
+   * @return \Drupal\Core\Access\AccessResultInterface
    *   Check standard and custom permissions.
    */
-  public function access(AccountInterface $account) {
+  public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIfHasPermissions($account, [
       'administer users',
       'view users',
@@ -93,7 +95,7 @@ class SocialUserController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch) {
+  public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch): AccessResultInterface {
     $user = $routeMatch->getParameter('user');
     if ($user === NULL) {
       return AccessResult::neutral();

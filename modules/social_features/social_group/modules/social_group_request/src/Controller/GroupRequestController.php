@@ -3,6 +3,7 @@
 namespace Drupal\social_group_request\Controller;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
@@ -12,6 +13,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\GroupRelationshipInterface;
@@ -31,7 +33,7 @@ class GroupRequestController extends ControllerBase {
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
    * GroupRequestController constructor.
@@ -87,21 +89,21 @@ class GroupRequestController extends ControllerBase {
   /**
    * Return the title for approve request confirmation page.
    */
-  public function getTitleApproveRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
+  public function getTitleApproveRequest(GroupInterface $group, GroupRelationshipInterface $group_content): TranslatableMarkup {
     return $this->t('Approve membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
   /**
    * Return the title for reject request confirmation page.
    */
-  public function getTitleRejectRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
+  public function getTitleRejectRequest(GroupInterface $group, GroupRelationshipInterface $group_content): TranslatableMarkup {
     return $this->t('Reject membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
   /**
    * Builds the form to create new membership on membership request approve.
    */
-  public function approveRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
+  public function approveRequest(GroupInterface $group, GroupRelationshipInterface $group_content): array {
     /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
     $storage = $this->entityTypeManager()->getStorage('group_content_type');
     $plugin = $group->getGroupType()->getPlugin('group_membership');
@@ -123,7 +125,7 @@ class GroupRequestController extends ControllerBase {
   /**
    * Callback to request membership.
    */
-  public function requestMembership(GroupInterface $group) {
+  public function requestMembership(GroupInterface $group): AjaxResponse {
     $response = new AjaxResponse();
 
     /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
@@ -154,7 +156,7 @@ class GroupRequestController extends ControllerBase {
   /**
    * Callback to request membership for anonymous.
    */
-  public function anonymousRequestMembership(GroupInterface $group) {
+  public function anonymousRequestMembership(GroupInterface $group): AjaxResponse {
     $request_form = $this->formBuilder()->getForm(GroupRequestMembershipRequestAnonymousForm::class, $group);
 
     $response = new AjaxResponse();
@@ -169,7 +171,7 @@ class GroupRequestController extends ControllerBase {
   /**
    * Callback to cancel the request of membership.
    */
-  public function cancelRequest(GroupInterface $group) {
+  public function cancelRequest(GroupInterface $group): \Symfony\Component\HttpFoundation\RedirectResponse {
     /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
     $storage = $this->entityTypeManager()->getStorage('group_content_type');
     $group_type_id = (string) $group->getGroupType()->id();
@@ -202,7 +204,7 @@ class GroupRequestController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function routeAccess(AccountInterface $account) {
+  public function routeAccess(AccountInterface $account): AccessResultInterface {
     // @todo refactor this when Group entity query access lands.
     $has_administer_users = $account->hasPermission('administer members');
     if ($has_administer_users) {
@@ -218,7 +220,7 @@ class GroupRequestController extends ControllerBase {
       $group = Group::load($group_id);
     }
     $is_group_page = isset($group);
-    $is_group_manager = $group->hasPermission('administer members', $account);
+    $is_group_manager = $group?->hasPermission('administer members', $account);
     return AccessResult::allowedIf($is_group_page && $is_group_manager);
   }
 

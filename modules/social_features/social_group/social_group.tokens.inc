@@ -19,7 +19,7 @@ use Drupal\Core\Render\Markup;
 /**
  * Implements hook_token_info().
  */
-function social_group_token_info() {
+function social_group_token_info(): array {
 
   $type = [
     'name' => t('Social Group'),
@@ -52,10 +52,11 @@ function social_group_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_group_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_group_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
+  $content_url = new Url('none');
 
-  if ($type == 'social_group' && !empty($data['message'])) {
+  if ($type === 'social_group' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
@@ -121,9 +122,8 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                     $display_name = t('a @content_type', ['@content_type' => $display_name]);
                   }
                 }
-
                 if ($name === 'content_url') {
-                  if (isset($content_url)) {
+                  if ($content_url->getRouteName() !== 'none') {
                     $replacements[$original] = $content_url->toString();
                   }
                 }
@@ -159,8 +159,8 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
 /**
  * Implements hook_tokens_alter().
  */
-function social_group_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
-  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+function social_group_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
+  if ($context['type'] === 'message' && !empty($context['data']['message'])) {
     // Alter the [message:cta_button] and [message:preview] token, and
     // replace it with the rendered content with new text and link.
     if (isset($context['tokens']['cta_button'])|| isset($context['tokens']['preview'])) {

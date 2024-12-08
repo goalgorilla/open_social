@@ -16,7 +16,7 @@ use Drupal\paragraphs\ParagraphInterface;
 /**
  * Implements hook_theme().
  */
-function social_follow_landing_page_theme() {
+function social_follow_landing_page_theme(): array {
   return [
     'paragraph__tag__default' => [
       'base hook' => 'paragraph',
@@ -31,7 +31,7 @@ function social_follow_landing_page_theme() {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_follow_landing_page_preprocess_paragraph(&$variables) {
+function social_follow_landing_page_preprocess_paragraph(array &$variables): void {
   $terms = [];
   /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
   $entity = $variables['elements']['#paragraph'];
@@ -127,7 +127,7 @@ function social_follow_landing_page_field_widget_single_element_entity_reference
       $subform['field_tag']['widget']['#multiple'] = FALSE;
       $subform['field_tag']['widget']['#description'] = t('Selected tag will be displayed in a block with the options to follow this tag and see content relates to this tag.');
 
-      // Remove parent terms if they not allowed to follow.
+      // Remove parent terms if they are not allowed to follow.
       if ($tag_service->allowSplit() && !$tag_service->useCategoryParent()) {
         $tag_options = &$subform['field_tag']['widget']['#options'];
         foreach ($tag_options as $tid => $tag_option) {
@@ -182,7 +182,9 @@ function social_follow_landing_page_field_widget_single_element_entity_reference
               if (isset($parent_value[$parents[1]]['entity'])) {
                 /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
                 $paragraph_entity = $parent_value[$parents[1]]['entity'];
-                $tag_value = $paragraph_entity->get('field_section_paragraph')->entity->get('field_tag')->getValue();
+                /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_section */
+                $paragraph_section = $paragraph_entity->get('field_section_paragraph')->entity;
+                $tag_value = $paragraph_section->get('field_tag')->getValue();
               }
               elseif (isset($parent_value[$parents[1]]['target_id'])) {
                 /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
@@ -250,7 +252,7 @@ function social_follow_landing_page_field_widget_single_element_entity_reference
       }
       // Deny access the social_tagging field altogether.
       $subform['field_tag']['#access'] = FALSE;
-      // Add a custom submithandler.
+      // Add a custom submit handler.
       $element['#element_validate'][] = '_social_follow_landing_page_entity_validate';
     }
     else {
@@ -266,7 +268,7 @@ function social_follow_landing_page_field_widget_single_element_entity_reference
 /**
  * Validate function that overrides the tagging field with new values.
  */
-function _social_follow_landing_page_entity_validate($element, FormStateInterface $form_state) {
+function _social_follow_landing_page_entity_validate(array $element, FormStateInterface $form_state): void {
   $parents = $element['#parents'];
   if (!empty($parents[0]) && !empty($form_state->getValue($parents[0]))) {
     $parent_value = $form_state->getValue($parents[0]);

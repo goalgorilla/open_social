@@ -3,6 +3,7 @@
 namespace Drupal\social_event_invite\Controller;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -24,7 +25,7 @@ class CancelEnrollInviteController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The current user.
@@ -49,7 +50,7 @@ class CancelEnrollInviteController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('request_stack'),
       $container->get('current_user')
@@ -69,14 +70,14 @@ class CancelEnrollInviteController extends ControllerBase {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function cancelEnrollmentInvite(NodeInterface $node, EventEnrollmentInterface $event_enrollment) {
+  public function cancelEnrollmentInvite(NodeInterface $node, EventEnrollmentInterface $event_enrollment): RedirectResponse {
     // When the event owner/organizer cancelled the invite, simply remove the
     // whole event enrollment.
     $this->messenger()->addStatus(t('The invite has been removed.'));
     $event_enrollment->delete();
 
     // Get the redirect destination we're given in the request for the response.
-    $destination = $this->requestStack->getCurrentRequest()->query->get('destination');
+    $destination = $this->requestStack->getCurrentRequest()?->query->get('destination');
     assert(is_string($destination), new \InvalidArgumentException());
     return new RedirectResponse($destination);
   }
@@ -90,7 +91,7 @@ class CancelEnrollInviteController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function access(AccountInterface $account) {
+  public function access(AccountInterface $account): AccessResultInterface {
     $hasPermissionIsOwnerOrOrganizer = social_event_manager_or_organizer();
     return AccessResult::allowedIf($hasPermissionIsOwnerOrOrganizer === TRUE);
   }

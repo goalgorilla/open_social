@@ -3,9 +3,12 @@
 namespace Drupal\social_group_invite\Plugin\Action;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\TempStore\SharedTempStore;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -32,21 +35,21 @@ class SocialGroupInviteResend extends ViewsBulkOperationsActionBase implements C
    *
    * @var string
    */
-  const TEMP_STORE_ID = 'resent_invite_ids';
+  public const TEMP_STORE_ID = 'resent_invite_ids';
 
   /**
    * The time service.
    *
    * @var \Drupal\Component\Datetime\TimeInterface
    */
-  protected $time;
+  protected TimeInterface $time;
 
   /**
    * Stores the shared tempstore.
    *
    * @var \Drupal\Core\TempStore\SharedTempStore
    */
-  protected $tempStore;
+  protected SharedTempStore $tempStore;
 
   /**
    * Constructs a \Drupal\Component\Plugin\PluginBase object.
@@ -87,8 +90,14 @@ class SocialGroupInviteResend extends ViewsBulkOperationsActionBase implements C
    * @throws \Drupal\Core\TempStore\TempStoreException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function execute($entity = NULL): void {
-    $is_member = $entity->getGroup()->getMember($entity->getEntity());
+  public function execute(GroupRelationshipInterface $entity = NULL): void {
+    if ($entity === NULL) {
+      return;
+    }
+
+    /** @var AccountInterface $account */
+    $account = $entity->getEntity();
+    $is_member = $entity->getGroup()->getMember($account);
     if (is_object($is_member)) {
       return;
     }
@@ -96,7 +105,6 @@ class SocialGroupInviteResend extends ViewsBulkOperationsActionBase implements C
     // This action allows to resend invitations for each member.
     $time = $this->time->getCurrentTime();
 
-    /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
     $duplicate = $entity->createDuplicate();
     // We can leave the "created" field value without changes.
     // But we want to "bring up" our resent invitation to the top of

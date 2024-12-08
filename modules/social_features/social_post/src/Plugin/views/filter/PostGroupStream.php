@@ -20,41 +20,46 @@ class PostGroupStream extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function adminSummary() {
+  public function adminSummary(): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function operatorForm(&$form, FormStateInterface $form_state) {
+  protected function operatorForm(&$form, FormStateInterface $form_state): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): FALSE {
     return FALSE;
   }
 
   /**
    * Query for the activity stream on the group pages.
    */
-  public function query() {
+  public function query(): void {
+
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    $query = $this->query;
 
     // Get the group.
     $group = \Drupal::routeMatch()->getParameter('group');
 
     // Visibility logic when visiting a post stream on group page:
     // - All the posts to the group by you and other users in the community.
-    $this->query->addTable('post__field_visibility');
-    $this->query->addTable('post__field_recipient_group');
+    $query->addTable('post__field_visibility');
+    $query->addTable('post__field_recipient_group');
 
     // Or posted to the group by the community.
     $recipient_condition = new Condition('AND');
     $recipient_condition->condition('post__field_visibility.field_visibility_value', '0', '=');
     $recipient_condition->condition('post__field_recipient_group.field_recipient_group_target_id', $group->id(), '=');
 
-    $this->query->addWhere('visibility', $recipient_condition);
+    $query->addWhere('visibility', $recipient_condition);
+
+    $this->query = $query;
   }
 
   /**

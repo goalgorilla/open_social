@@ -20,14 +20,17 @@ use Drupal\social_post\Entity\PostInterface;
  * @param array $updates
  *   Array of key/value pairs with post field names and the value to update that
  *   field to.
- * @param string $langcode
+ * @param string|null $langcode
  *   (optional) The language updates should be applied to. If none is specified
  *   all available languages are processed.
  * @param bool $load
  *   (optional) TRUE if $posts contains an array of post IDs to be loaded, FALSE
  *   if it contains fully loaded posts. Defaults to FALSE.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_post_mass_update(array $posts, array $updates, $langcode = NULL, $load = FALSE) {
+function social_post_mass_update(array $posts, array $updates, ?string $langcode = NULL, bool $load = FALSE): void {
   // We use batch processing to prevent timeout when updating a large number
   // of posts.
   if (count($posts) > 10) {
@@ -65,26 +68,28 @@ function social_post_mass_update(array $posts, array $updates, $langcode = NULL,
 /**
  * Updates individual posts when fewer than 10 are queued.
  *
- * @param \Drupal\social_post\Entity\PostInterface $post
+ * @param PostInterface $post
  *   A post to update.
  * @param array $updates
  *   Associative array of updates.
- * @param string $langcode
+ * @param string|null $langcode
  *   (optional) The language updates should be applied to. If none is specified
  *   all available languages are processed.
  *
- * @return \Drupal\social_post\Entity\PostInterface
+ * @return PostInterface
  *   An updated post object.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
  *
  * @see social_post_mass_update()
  */
-function _social_post_mass_update_helper(PostInterface $post, array $updates, $langcode = NULL) {
-  $langcodes = isset($langcode) ? [$langcode] : array_keys($post->getTranslationLanguages());
+function _social_post_mass_update_helper(PostInterface $post, array $updates, ?string $langcode = NULL): PostInterface {
+  $lang_codes = isset($langcode) ? [$langcode] : array_keys($post->getTranslationLanguages());
   // For efficiency manually save the original post before applying any changes.
-  $post->original = clone $post;
-  foreach ($langcodes as $langcode) {
+  $original_post = clone $post;
+  foreach ($lang_codes as $lang_code) {
     foreach ($updates as $name => $value) {
-      $post->getTranslation($langcode)->$name = $value;
+      $post->getTranslation($lang_code)->$name = $value;
     }
   }
   $post->save();
@@ -106,10 +111,15 @@ function _social_post_mass_update_helper(PostInterface $post, array $updates, $l
  * @param bool $load
  *   TRUE if $posts contains an array of post IDs to be loaded, FALSE if it
  *   contains fully loaded posts.
- * @param array|\ArrayAccess $context
+ * @param array|ArrayAccess $context
  *   An array of contextual key/values.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityMalformedException
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _social_post_mass_update_batch_process(array $posts, array $updates, $langcode, $load, &$context) {
+function _social_post_mass_update_batch_process(array $posts, array $updates, string $langcode, bool $load, array|\ArrayAccess $context): void {
   if (!isset($context['sandbox']['progress'])) {
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['max'] = count($posts);
@@ -139,7 +149,7 @@ function _social_post_mass_update_batch_process(array $posts, array $updates, $l
 
   // Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+  if ((int) $context['sandbox']['progress'] !== (int) $context['sandbox']['max']) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
 }
@@ -160,7 +170,7 @@ function _social_post_mass_update_batch_process(array $posts, array $updates, $l
  *
  * @see _social_post_mass_update_batch_process()
  */
-function _social_post_mass_update_batch_finished($success, array $results, array $operations) {
+function _social_post_mass_update_batch_finished($success, array $results, array $operations): void {
   if ($success) {
     \Drupal::messenger()->addStatus(t('The update has been performed.'));
   }

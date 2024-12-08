@@ -17,7 +17,7 @@ class SocialProfilePrivacyBatchHelper {
   /**
    * Update profile names in a batch.
    */
-  public static function bulkUpdateProfileNames() {
+  public static function bulkUpdateProfileNames(): void {
     /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
     $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
 
@@ -29,10 +29,10 @@ class SocialProfilePrivacyBatchHelper {
     $batch_builder = (new BatchBuilder())
       ->setTitle(t('Updating profile names...'))
       ->setFinishCallback([
-        SocialProfilePrivacyBatchHelper::class,
+        __CLASS__,
         'finishProcess',
       ])
-      ->addOperation([SocialProfilePrivacyBatchHelper::class, 'updateProcess'], [$pids]);
+      ->addOperation([__CLASS__, 'updateProcess'], [$pids]);
 
     batch_set($batch_builder->toArray());
   }
@@ -45,7 +45,7 @@ class SocialProfilePrivacyBatchHelper {
    * @param array $context
    *   An array that may or may not contain placeholder variables.
    */
-  public static function updateProcess(array $items, array &$context) {
+  public static function updateProcess(array $items, array &$context): void {
     // Elements per operation.
     $limit = 50;
 
@@ -104,7 +104,7 @@ class SocialProfilePrivacyBatchHelper {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function finishProcess($success, array $results, array $operations) {
+  public static function finishProcess(bool $success, array $results, array $operations): void {
     $message = t('Number of profiles affected by batch: @count', [
       '@count' => $results['processed'],
     ]);
@@ -119,17 +119,15 @@ class SocialProfilePrivacyBatchHelper {
    * @param \Drupal\profile\Entity\ProfileInterface $profile
    *   The profile.
    */
-  public static function updateProfileName(ProfileInterface $profile) {
-    if ($profile instanceof ProfileInterface) {
-      /** @var \Drupal\social_profile\SocialProfileNameService $profile_name_service */
-      $profile_name_service = \Drupal::service('social_profile.name_service');
+  public static function updateProfileName(ProfileInterface $profile): void {
+    /** @var \Drupal\social_profile\SocialProfileNameService $profile_name_service */
+    $profile_name_service = \Drupal::service('social_profile.name_service');
 
-      // Get generated profile name.
-      $profile_name = $profile_name_service->getProfileName($profile);
-      // Update profile name and save.
-      $profile->set('profile_name', $profile_name);
-      $profile->save();
-    }
+    // Get generated profile name.
+    $profile_name = $profile_name_service->getProfileName($profile);
+    // Update profile name and save.
+    $profile->set('profile_name', $profile_name);
+    $profile->save();
   }
 
 }

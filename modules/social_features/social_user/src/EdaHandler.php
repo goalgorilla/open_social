@@ -241,7 +241,7 @@ final class EdaHandler {
       $user_settings = $this->configFactory->get('user.settings');
 
       // If admin approval is required.
-      if ($user_settings->get('register') == 'visitors_admin_approval') {
+      if ($user_settings->get('register') === 'visitors_admin_approval') {
         $status = 'pending';
       }
       else {

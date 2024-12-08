@@ -40,7 +40,7 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): ContainerFactoryPluginInterface|ActivityOverviewBlock|static {
     return new static(
       $configuration,
       $plugin_id,
@@ -52,7 +52,7 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     return [
       [
         '#type' => 'container',
@@ -279,66 +279,96 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
   /**
    * Get total count of events.
    */
-  protected function getEventsCount() {
+  protected function getEventsCount(): mixed {
     $query = $this->connection->select('node_field_data', 'n');
     $query->addExpression('COUNT(*)');
     $query->condition('n.type', 'event');
     $query->condition('n.status', 1);
-    return $query->execute()->fetchField();
+
+    $result = $query->execute();
+    if ($result) {
+      return $result->fetchField();
+    }
+    return [];
   }
 
   /**
    * Get total count of topics.
    */
-  protected function getTopicsCount() {
+  protected function getTopicsCount(): mixed {
     $query = $this->connection->select('node_field_data', 'n');
     $query->addExpression('COUNT(*)');
     $query->condition('n.type', 'topic');
     $query->condition('n.status', 1);
-    return $query->execute()->fetchField();
+
+    $result = $query->execute();
+    if ($result) {
+      return $result->fetchField();
+    }
+    return [];
   }
 
   /**
    * Get total count of groups.
    */
-  protected function getGroupsCount() {
+  protected function getGroupsCount(): mixed {
     // There is no unpublished option for groups.
     $query = $this->connection->select('groups', 'g');
     $query->addExpression('COUNT(*)');
-    return $query->execute()->fetchField();
+
+    $result = $query->execute();
+    if ($result) {
+      return $result->fetchField();
+    }
+    return [];
   }
 
   /**
    * Get total count of users.
    */
-  protected function getUsersCount() {
+  protected function getUsersCount(): mixed {
     // Skip blocked users and user 1.
     $query = $this->connection->select('users_field_data', 'u');
     $query->addExpression('COUNT(*)');
     $query->condition('u.status', 1);
     $query->condition('u.uid', 1, '<>');
-    return $query->execute()->fetchField();
+
+    $result = $query->execute();
+    if ($result) {
+      return $result->fetchField();
+    }
+    return [];
   }
 
   /**
    * Get total count of posts.
    */
-  protected function getPostsCount() {
+  protected function getPostsCount(): mixed {
     $query = $this->connection->select('post_field_data', 'p');
     $query->addExpression('COUNT(*)');
     $query->condition('p.status', 1);
-    return $query->execute()->fetchField();
+
+    $result = $query->execute();
+    if ($result) {
+      return $result->fetchField();
+    }
+    return [];
   }
 
   /**
    * Get total count of comments.
    */
-  protected function getCommentsCount() {
+  protected function getCommentsCount(): mixed {
     // Count both comment and post_comment type.
     $query = $this->connection->select('comment_field_data', 'c');
     $query->addExpression('COUNT(*)');
     $query->condition('c.status', 1);
-    return $query->execute()->fetchField();
+
+    $result = $query->execute();
+    if ($result) {
+      return $result->fetchField();
+    }
+    return [];
   }
 
 }

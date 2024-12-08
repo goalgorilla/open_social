@@ -49,7 +49,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
 
-    $status = $items->status;
+    $status = $items->get('status')?->getValue();
 
     $comments_per_page = $this->getSetting('num_comments');
 
@@ -60,7 +60,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       !in_array($this->viewMode, ['search_result', 'search_index'])) {
       $comment_settings = $this->getFieldSettings();
 
-      $comment_count = $entity->get($field_name)->comment_count;
+      $comment_count = $entity->get($field_name)->get('comment_count');
 
       // Only attempt to render comments if the entity has visible comments.
       // Unpublished comments are not included in

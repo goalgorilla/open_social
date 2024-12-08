@@ -16,7 +16,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
 
     // Override default title for the latest topics view.
     if ($route = $collection->get('view.latest_topics.page_latest_topics')) {

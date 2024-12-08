@@ -33,7 +33,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  protected function defineOptions() {
+  protected function defineOptions(): array {
     $options = parent::defineOptions();
 
     $options['tags_filter'] = [
@@ -49,7 +49,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  public function blockSettings(array $settings) {
+  public function blockSettings(array $settings): array {
     $settings = parent::blockSettings($settings);
 
     $settings['vocabulary'] = 'none';
@@ -63,7 +63,7 @@ class FilterBlock extends ModeBlock {
    *
    * This output is returned as an array.
    */
-  public function optionsSummary(&$categories, &$options) {
+  public function optionsSummary(mixed &$categories, mixed &$options): void {
     parent::optionsSummary($categories, $options);
 
     if ($this->getOption('override_tags_filter')) {
@@ -74,7 +74,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state): void {
     parent::buildOptionsForm($form, $form_state);
 
     if ($form_state->get('section') !== 'allow') {
@@ -92,7 +92,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
+  public function submitOptionsForm(&$form, FormStateInterface $form_state): void {
     parent::submitOptionsForm($form, $form_state);
 
     if ($form_state->get('section') === 'allow') {
@@ -103,7 +103,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  public function blockForm(ViewsBlock $block, array &$form, FormStateInterface $form_state) {
+  public function blockForm(ViewsBlock $block, array &$form, FormStateInterface $form_state): array {
     parent::blockForm($block, $form, $form_state);
 
     // Check if overridden filter option is enabled for current views block.
@@ -111,6 +111,7 @@ class FilterBlock extends ModeBlock {
       return $form;
     }
 
+    /** @var array $allow_settings */
     $allow_settings = $this->getOption('tags_filter');
     $allow_settings += array_filter($this->getOption('allow'));
     $block_configuration = $block->getConfiguration();
@@ -119,6 +120,7 @@ class FilterBlock extends ModeBlock {
       $delta = $block_configuration['delta'];
     }
     else {
+      /** @var \ArrayAccess $triggered */
       $triggered = $form_state->getTriggeringElement();
       $delta = is_int($triggered['#parents'][1]) ? $triggered['#parents'][1] : '';
     }
@@ -198,7 +200,7 @@ class FilterBlock extends ModeBlock {
    * @return array
    *   The processed element.
    */
-  public static function processFilterTags(array &$element, FormStateInterface $form_state, array &$complete_form) {
+  public static function processFilterTags(array &$element, FormStateInterface $form_state, array &$complete_form): array {
     // Get selected vocabulary value.
     $parents = $element["#parents"];
     $input = $form_state->getUserInput();
@@ -214,7 +216,7 @@ class FilterBlock extends ModeBlock {
   /**
    * Handles switching the available terms based on the selected vocabulary.
    */
-  public static function updateTagsOptions(array $form, FormStateInterface $form_state) {
+  public static function updateTagsOptions(array $form, FormStateInterface $form_state): ?AjaxResponse {
 
     // Check if there is triggered parent of element.
     if ($triggered = $form_state->getTriggeringElement()) {
@@ -234,12 +236,14 @@ class FilterBlock extends ModeBlock {
 
       return $response;
     }
+
+    return NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit(ViewsBlock $block, $form, FormStateInterface $form_state) {
+  public function blockSubmit(ViewsBlock $block, $form, FormStateInterface $form_state): void {
     parent::blockSubmit($block, $form, $form_state);
 
     if ($tags = $form_state->getValue(['override', 'tags'])) {
@@ -262,14 +266,14 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  public function preBlockBuild(ViewsBlock $block) {
+  public function preBlockBuild(ViewsBlock $block): void {
     parent::preBlockBuild($block);
 
     // Prepare values to use it in the views filter.
     $block_configuration = $block->getConfiguration();
 
     if (isset($block_configuration['tags'])) {
-      $this->view->filter_tags = $block_configuration['tags'];
+      $this->view->filter['tags'] = $block_configuration['tags'];
     }
 
     $taxonomy_fields = $this->configFactory
@@ -278,10 +282,11 @@ class FilterBlock extends ModeBlock {
     $vid = $block_configuration['vocabulary'];
 
     if (!empty($taxonomy_fields[$vid])) {
-      $this->view->filter_vocabulary = $taxonomy_fields[$vid];
+      $this->view->filter['vocabulary'] = $taxonomy_fields[$vid];
     }
     else {
-      $this->view->filter_vocabulary = '';
+      $vocabulary_filter = $this->view->filter['vocabulary'];
+      $vocabulary_filter->value = '';
     }
   }
 
@@ -294,7 +299,7 @@ class FilterBlock extends ModeBlock {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getVocabularyOptionsList() {
+  public function getVocabularyOptionsList(): array {
     $config = $this->configFactory->getEditable('social_activity_filter.settings');
 
     $allowed_list = $config->get('vocabulary');
@@ -327,13 +332,13 @@ class FilterBlock extends ModeBlock {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getTermOptionslist($vid) {
+  public function getTermOptionslist(string $vid): array {
     $taxonomy_storage = $this->entityTypeManager->getStorage('taxonomy_term');
     $taxonomy_terms = $taxonomy_storage->loadTree($vid);
     $term_list = [];
     /** @var \Drupal\taxonomy\Entity\Term $taxonomy_term */
     foreach ($taxonomy_terms as $taxonomy_term) {
-      $term_list[$taxonomy_term->tid] = $taxonomy_term->name;
+      $term_list[$taxonomy_term->get('tid')->getValue()] = $taxonomy_term->getName();
     }
     return $term_list;
   }

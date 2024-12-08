@@ -39,21 +39,21 @@ class EnrollActionForm extends FormBase {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $enrollmentStorage;
+  protected \Drupal\Core\Entity\EntityStorageInterface $enrollmentStorage;
 
   /**
    * The user storage.
    *
    * @var \Drupal\user\UserStorageInterface
    */
-  protected $userStorage;
+  protected \Drupal\user\UserStorageInterface $userStorage;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The config factory.
@@ -67,26 +67,26 @@ class EnrollActionForm extends FormBase {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler;
 
   /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected \Drupal\Core\Form\FormBuilderInterface $formBuilder;
 
   /**
    * The event invite status helper.
    *
    * @var \Drupal\social_event\EventEnrollmentStatusHelper
    */
-  protected $eventHelper;
+  protected \Drupal\social_event\EventEnrollmentStatusHelper $eventHelper;
 
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'enroll_action_form';
   }
 
@@ -109,7 +109,7 @@ class EnrollActionForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $enrollment = NULL;
     $node = $this->routeMatch->getParameter('node');
     $current_user = $this->currentUser();
@@ -465,7 +465,7 @@ class EnrollActionForm extends FormBase {
         if ($this->moduleHandler->moduleExists('social_event_invite')) {
           $event_invites = $this->eventHelper->getAllUserEventEnrollments((string) $current_user->id());
 
-          if (NULL !== $event_invites && $event_invites > 0 && array_key_exists((int) $enrollment->id(), $event_invites)) {
+          if (count($event_invites) > 0 && array_key_exists((int) $enrollment->id(), $event_invites)) {
             $enrollment->set('field_request_or_invite_status', EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED);
           }
         }

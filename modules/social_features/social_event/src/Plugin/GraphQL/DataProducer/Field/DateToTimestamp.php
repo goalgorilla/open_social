@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Plugin\GraphQL\DataProducer\Field;
 
+use Drupal\Core\TypedData\Type\DateTimeInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeFieldItemList;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItem;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
@@ -34,12 +35,15 @@ class DateToTimestamp extends DataProducerPluginBase {
    * @return int|null
    *   An event start or end day timestamp.
    */
-  public function resolve(DateTimeFieldItemList $field) {
+  public function resolve(DateTimeFieldItemList $field): ?int {
     if ($field->isEmpty()) {
       return NULL;
     }
 
-    return $field->{DateTimeItem::DATETIME_TYPE_DATE}->getTimestamp();
+    /** @var DateTimeInterface $date_item */
+    $date_item = $field->get(DateTimeItem::DATETIME_TYPE_DATE);
+
+    return $date_item->getDateTime()?->getTimestamp();
   }
 
 }

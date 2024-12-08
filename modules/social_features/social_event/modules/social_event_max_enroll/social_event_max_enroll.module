@@ -16,7 +16,7 @@ use Drupal\views\ViewExecutable;
  *
  * Alter "Event enrollments" views. Add number of spots left.
  */
-function social_event_max_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+function social_event_max_enroll_views_post_render(ViewExecutable $view, array &$output, CachePluginBase $cache): void {
   if (
     $view->current_display === 'event_enrollments' &&
     $view->id() === 'event_enrollments' &&
@@ -24,6 +24,7 @@ function social_event_max_enroll_views_post_render(ViewExecutable $view, &$outpu
     !empty($view->args[0])
   ) {
     $nid = $view->args[0];
+    /** @var NodeInterface $node */
     $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
     $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
 
@@ -50,7 +51,7 @@ function social_event_max_enroll_views_post_render(ViewExecutable $view, &$outpu
  *
  * Check and display "Allow anonymous enrollments" checkbox for public events.
  */
-function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_event_max_enroll_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   switch ($form_id) {
     // Alter the Node Event forms.
     case 'node_event_form':
@@ -200,8 +201,9 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
  *
  * Set the correct value for AN enroll when enroll method is set to request.
  */
-function social_event_max_enroll_node_presave(EntityInterface $entity) {
+function social_event_max_enroll_node_presave(EntityInterface $entity): void {
   // If the enroll method is invite then max enrollment must be off.
+  /** @var \Drupal\node\NodeInterface $entity */
   if ($entity->getType() === 'event' && $entity->get('field_enroll_method')->value === '3') {
     $entity->set('field_event_max_enroll', '0');
   }
@@ -210,7 +212,7 @@ function social_event_max_enroll_node_presave(EntityInterface $entity) {
 /**
  * Implements hook_field_widget_single_element_form_alter().
  */
-function social_event_max_enroll_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_event_max_enroll_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   $field_definition = $context['items']->getFieldDefinition();
   if ($field_definition->getName() === 'field_event_max_enroll_num') {
     $element['value']['#title_display'] = 'none';
@@ -220,7 +222,7 @@ function social_event_max_enroll_field_widget_single_element_form_alter(&$elemen
 /**
  * Override variables for the social page hero data.
  */
-function social_event_max_enroll_preprocess_page_hero_data(array &$variables) {
+function social_event_max_enroll_preprocess_page_hero_data(array &$variables): void {
   $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
   $node = $variables['node'];
 

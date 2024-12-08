@@ -124,7 +124,7 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
         return array_map(
           fn (Comment $entity) => new Edge(
             $entity,
-            new Cursor('comment', $entity->id(), $this->sortKey, $this->getSortValue($entity))
+            new Cursor('comment', (int) $entity->id(), $this->sortKey, $this->getSortValue($entity))
           ),
           $callback()
         );
@@ -138,10 +138,10 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
    * @param \Drupal\comment\Entity\Comment $comment
    *   The comment entity.
    *
-   * @return mixed
+   * @return int|null
    *   The sort value.
    */
-  protected function getSortValue(Comment $comment) {
+  protected function getSortValue(Comment $comment): ?int {
     switch ($this->sortKey) {
       case 'CREATED_AT':
         return $comment->getCreatedTime();

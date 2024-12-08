@@ -15,7 +15,7 @@ use Drupal\user\UserInterface;
 /**
  * Implements hook_token_info().
  */
-function social_group_request_token_info() {
+function social_group_request_token_info(): array {
 
   $type = [
     'name' => t('Social Group Request'),
@@ -38,7 +38,7 @@ function social_group_request_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_group_request_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_group_request_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
 
   if ($type === 'social_group_request' && !empty($data['message'])) {
@@ -74,8 +74,8 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
 /**
  * Implements hook_tokens_alter().
  */
-function social_group_request_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
-  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+function social_group_request_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
+  if ($context['type'] === 'message' && !empty($context['data']['message'])) {
     // Translate hook_tokens options to the options for TranslatableMarkup.
     $translation_options = [
       'langcode' => $context['options']['langcode'] ?? NULL,

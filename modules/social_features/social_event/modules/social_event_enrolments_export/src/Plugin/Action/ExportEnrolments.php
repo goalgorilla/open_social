@@ -23,7 +23,7 @@ class ExportEnrolments extends ExportUser {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities) {
+  public function executeMultiple(array $entities): array {
     /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
     foreach ($entities as &$entity) {
       $entity = $this->getAccount($entity);
@@ -35,7 +35,7 @@ class ExportEnrolments extends ExportUser {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|\Drupal\Core\Access\AccessResultInterface {
     if ($object instanceof EventEnrollmentInterface) {
       $access = $this->getAccount($object)->access('view', $account, TRUE);
     }

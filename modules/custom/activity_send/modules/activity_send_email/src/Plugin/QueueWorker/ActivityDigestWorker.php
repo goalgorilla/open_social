@@ -36,28 +36,28 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The email frequency manager.
    *
    * @var \Drupal\activity_send_email\EmailFrequencyManager
    */
-  protected $emailFrequencyManager;
+  protected EmailFrequencyManager $emailFrequencyManager;
 
   /**
    * The mail manager.
    *
    * @var \Drupal\Core\Mail\MailManagerInterface
    */
-  protected $mailManager;
+  protected MailManagerInterface $mailManager;
 
   /**
    * The renderer.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * {@inheritdoc}
@@ -81,7 +81,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -96,7 +96,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
+  public function processItem($data): void {
     if (!empty($data['uid']) && !empty($data['frequency']) && !empty($data['activities'])) {
       /** @var \Drupal\user\UserStorage $user_storage */
       $user_storage = $this->entityTypeManager->getStorage('user');
@@ -165,7 +165,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
             // Translating frequency instance in the language of the user.
             // @codingStandardsIgnoreStart
             $frequency_translated = $this->t(
-              $instance->getName()->getUntranslatedString(),
+              $instance->getName(),
               [],
               ['langcode' => $langcode]
             );
@@ -192,7 +192,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
             $this->mailManager->mail(
               'activity_send_email',
               'activity_send_email',
-              $target->getEmail(),
+              (string) $target->getEmail(),
               $langcode,
               $params,
               NULL,

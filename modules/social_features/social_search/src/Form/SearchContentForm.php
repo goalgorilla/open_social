@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  *
  * @package Drupal\social_search\Form
  */
-class SearchContentForm extends FormBase implements ContainerInjectionInterface {
+class SearchContentForm extends FormBase {
 
   /**
    * The request stack.
@@ -38,7 +38,7 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('request_stack')
     );
@@ -47,14 +47,14 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'search_content_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     $form['search_input_content'] = [
       '#type' => 'textfield',
@@ -78,9 +78,14 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $search_all_view = 'search_all';
-    $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all());
+
+    $current_request = $this->requestStack->getCurrentRequest();
+    if ($current_request === NULL) {
+      return;
+    }
+    $query = UrlHelper::filterQueryParameters($current_request->query->all());
 
     // Unset the page parameter. When someone starts a new search query they
     // should always start again at the first page.
@@ -97,7 +102,7 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
       // Redirect to the search content page with filters in the GET parameters.
       $search_input = Xss::filter($form_state->getValue('search_input_content'));
       $search_input = preg_replace('/[\/]+/', ' ', $search_input);
-      $search_input = str_replace('&amp;', '&', $search_input);
+      $search_input = str_replace('&amp;', '&', (string) $search_input);
       $parameters['keys'] = $search_input;
       $page = "view.$search_all_view.page";
     }

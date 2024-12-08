@@ -76,7 +76,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->renderer = $container->get('renderer');
@@ -97,7 +97,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    * @return string
    *   The unique string identifying the form.
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_event_managers_enrollment_add';
   }
 
@@ -109,7 +109,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $enroll_uid = $form_state->getValue('entity_id_new');
     $event = $form_state->getValue('node_id');
     $count = 0;
@@ -158,7 +158,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    * @return array
    *   Form definition array.
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#attributes']['class'][] = 'form--default';
     $nid = $this->getRouteMatch()->getRawParameter('node');
 
@@ -335,7 +335,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
   /**
    * Public function to validate members against enrollments.
    */
-  public function uniqueMembers($element, &$form_state, $complete_form) {
+  public function uniqueMembers(array $element, FormStateInterface $form_state, array $complete_form): void {
     // Call the autocomplete function to make sure enrollees are unique.
     SocialEnrollmentAutocomplete::validateEntityAutocomplete($element, $form_state, $complete_form, TRUE);
   }

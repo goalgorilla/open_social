@@ -15,14 +15,14 @@ class SocialProfileFieldsHelper {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Module handler service.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs a new SocialProfileFieldsHelper object.
@@ -46,7 +46,7 @@ class SocialProfileFieldsHelper {
    * @return array
    *   An array of fields.
    */
-  public function getProfileFields($profile_type_id) {
+  public function getProfileFields(string $profile_type_id): array {
     $fields = [];
 
     // Use storage to get only the profile fields of the current bundle type.
@@ -65,7 +65,7 @@ class SocialProfileFieldsHelper {
     /** @var \Drupal\Core\Field\FieldConfigInterface $profile_field */
     foreach ($profile_fields as $profile_field) {
       // Rewrite the ID a bit, since otherwise config thinks it's an array.
-      $id = str_replace('.', '_', $profile_field->id());
+      $id = str_replace('.', '_', (string) $profile_field->id());
       // Build the array.
       $fields[$id] = [
         'id' => $id,
@@ -87,7 +87,7 @@ class SocialProfileFieldsHelper {
    * @return array
    *   An array of plugins.
    */
-  public function getUserExportPluginIdForField($field_id) {
+  public function getUserExportPluginIdForField(string $field_id): array {
     $mapping = $this->mapProfileFieldsToUserExportPlugin();
     return array_keys($mapping, $field_id);
   }
@@ -98,7 +98,7 @@ class SocialProfileFieldsHelper {
    * @return array
    *   An array of fields and user export plugins.
    */
-  public function mapProfileFieldsToUserExportPlugin() {
+  public function mapProfileFieldsToUserExportPlugin(): array {
     $mapping = [
       'user_first_name' => 'profile_profile_field_profile_first_name',
       'user_last_name' => 'profile_profile_field_profile_last_name',

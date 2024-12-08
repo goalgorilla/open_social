@@ -3,6 +3,7 @@
 namespace Drupal\social_group\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -31,7 +32,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $storage;
+  protected \Drupal\Core\Entity\EntityStorageInterface $storage;
 
   /**
    * Constructs a ViewsBulkOperationSendEmail object.
@@ -71,7 +72,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL) {
+  public function execute($entity = NULL): \Drupal\Core\StringTranslation\TranslatableMarkup {
     // Load the Group.
     $group = $this->storage->load($this->configuration['groups']);
 
@@ -87,14 +88,14 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
       return $this->t('Amount of existing members');
     }
 
-    // Fail safe if something went wrong.
+    // Fail-safe if something went wrong.
     return $this->t('Amount of users added not added');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): AccessResultInterface|bool {
     // There is no permission to check if a user is able to be "added" to a
     // group. Joining doesn't cover it since we also want people to be able
     // to be added to a Secret/Closed group.
@@ -113,15 +114,15 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form['#title'] = $this->formatPlural($this->context['selected_count'], 'Add selected member to a group', 'Add @count selected members to a group');
 
     $groups = Group::loadMultiple();
 
+    /** @var \ArrayAccess $options */
     $options = [];
     // Grab all the groups, sorted by group type for the select list.
     foreach ($groups as $group) {
-      /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
       $group_type = $group->getGroupType();
       $options[$group_type->label()][$group->id()] = $group->label();
     }

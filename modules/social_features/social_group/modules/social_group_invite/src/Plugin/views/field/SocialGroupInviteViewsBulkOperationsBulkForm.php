@@ -35,7 +35,7 @@ class SocialGroupInviteViewsBulkOperationsBulkForm extends ViewsBulkOperationsBu
    * {@inheritdoc}
    */
   public function viewsForm(array &$form, FormStateInterface $form_state): void {
-    $this->view->setExposedInput(['status' => TRUE]);
+    $this->view->setExposedInput(['status' => 'TRUE']);
 
     parent::viewsForm($form, $form_state);
 

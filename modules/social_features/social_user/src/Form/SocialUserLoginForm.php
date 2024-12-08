@@ -25,14 +25,14 @@ class SocialUserLoginForm extends UserLoginForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_user_login_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('system.site');
 
     // We create a fieldset for the default username login.
@@ -128,7 +128,8 @@ class SocialUserLoginForm extends UserLoginForm {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    /** @var \Drupal\user\UserInterface $account */
     $account = $this->userStorage->load($form_state->get('uid'));
     // A destination was set, probably on an exception controller,.
     // @todo Add validation if route exists.
@@ -145,7 +146,7 @@ class SocialUserLoginForm extends UserLoginForm {
   /**
    * Sets an error if supplied username or mail has been blocked.
    */
-  public function validateNameMail(array &$form, FormStateInterface $form_state) {
+  public function validateNameMail(array &$form, FormStateInterface $form_state): void {
     $user_blocked = social_user_is_blocked($form_state->getValue('name_or_mail'));
     if ($user_blocked) {
       // Blocked in user administration.
@@ -163,7 +164,7 @@ class SocialUserLoginForm extends UserLoginForm {
    *
    * If successful, $form_state->get('uid') is set to the matching user ID.
    */
-  public function validateAuthentication(array &$form, FormStateInterface $form_state) {
+  public function validateAuthentication(array &$form, FormStateInterface $form_state): void {
     $password = trim($form_state->getValue('pass'));
     $flood_config = $this->config('user.flood');
     if (!$form_state->isValueEmpty('name_or_mail') && strlen($password) > 0) {
@@ -225,7 +226,7 @@ class SocialUserLoginForm extends UserLoginForm {
    *
    * This validation function should always be the last one.
    */
-  public function validateFinal(array &$form, FormStateInterface $form_state) {
+  public function validateFinal(array &$form, FormStateInterface $form_state): void {
     $flood_config = $this->config('user.flood');
     if (!$form_state->get('uid')) {
       // Set general error message to not leak privacy information.
@@ -266,7 +267,7 @@ class SocialUserLoginForm extends UserLoginForm {
   /**
    * {@inheritdoc}
    */
-  protected function setGeneralErrorMessage(array &$form, FormStateInterface $form_state) {
+  protected function setGeneralErrorMessage(array &$form, FormStateInterface $form_state): void {
     $form_state->setErrorByName('name_or_mail', $this->t('
         <p>Oops, there was an error. This may have happened for the following reasons:</p>
         <ul>

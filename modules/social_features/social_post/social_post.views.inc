@@ -8,7 +8,7 @@
 /**
  * Implements hook_views_data().
  */
-function social_post_views_data() {
+function social_post_views_data(): array {
   $data = [];
   $data['views']['post_form'] = [
     'title' => t('Sitewide Post form'),

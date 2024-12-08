@@ -10,6 +10,8 @@ use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Form\FormBuilder;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\Form\EnrollRequestModalForm;
+use Drupal\social_event\Form\EnrollRequestAnonymousForm;
 
 /**
  * Contains methods for the modal form when requesting to enroll in an event.
@@ -53,7 +55,7 @@ class EnrollRequestDialogController extends ControllerBase {
    *
    * @return static
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('form_builder'),
       $container->get('current_user')
@@ -66,10 +68,10 @@ class EnrollRequestDialogController extends ControllerBase {
    * @return string[]
    *   An array of jQuery UI elements to pass on to our dialog form.
    */
-  protected static function getDataDialogOptions() {
+  protected static function getDataDialogOptions(): array {
     return [
       'dialogClass' => 'form--default social_event-popup',
-      'closeOnEscape' => TRUE,
+      'closeOnEscape' => 'TRUE',
       'width' => '582',
     ];
   }
@@ -77,14 +79,14 @@ class EnrollRequestDialogController extends ControllerBase {
   /**
    * Enroll dialog callback.
    */
-  public function enrollDialog() {
+  public function enrollDialog(): AjaxResponse {
     $response = new AjaxResponse();
 
     // Get the modal form using the form builder.
-    $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollRequestModalForm');
+    $form = $this->formBuilder->getForm(EnrollRequestModalForm::class);
 
     if ($this->currentUser()->isAnonymous()) {
-      $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollRequestAnonymousForm');
+      $form = $this->formBuilder->getForm(EnrollRequestAnonymousForm::class);
       $response->addCommand(new OpenModalDialogCommand($this->t('Request to enroll'), $form, [
         'width' => '337px',
         'closeOnEscape' => TRUE,
@@ -107,14 +109,14 @@ class EnrollRequestDialogController extends ControllerBase {
    * @return string
    *   The page title.
    */
-  public function enrollTitle(NodeInterface $node) {
+  public function enrollTitle(NodeInterface $node): string {
     return $this->t('Request enrollment in @label Event', ['@label' => $node->label()]);
   }
 
   /**
    * Determines if user has access to enroll form.
    */
-  public function enrollAccess(NodeInterface $node) {
+  public function enrollAccess(NodeInterface $node): \Drupal\Core\Access\AccessResultAllowed {
     return AccessResult::allowed();
   }
 

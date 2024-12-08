@@ -21,7 +21,7 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
    *
    * @var \Drupal\group\Entity\GroupInterface
    */
-  protected $group;
+  protected GroupInterface $group;
 
   /**
    * Request stack.
@@ -46,7 +46,7 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('string_translation'),
       $container->get('request_stack')
@@ -56,15 +56,17 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_group_request_membership_request_anonymous';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL) {
-    $this->group = $group;
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL): array {
+    if ($group !== NULL) {
+      $this->group = $group;
+    }
 
     $form['description'] = [
       '#type' => 'html_tag',
@@ -120,6 +122,6 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {}
+  public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
 }

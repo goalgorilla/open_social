@@ -3,6 +3,7 @@
 namespace Drupal\entity_access_by_field\Plugin\search_api\processor;
 
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\search_api\Item\ItemInterface;
 use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Plugin\search_api\processor\ContentAccess;
@@ -45,12 +46,12 @@ class EntityAccessByField extends ContentAccess {
    *
    * @var \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface
    */
-  protected $groupRelationshipStorage;
+  protected \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface $groupRelationshipStorage;
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     /** @var static $processor */
     $processor = parent::create($container, $configuration, $plugin_id, $plugin_definition);
 
@@ -68,7 +69,7 @@ class EntityAccessByField extends ContentAccess {
   /**
    * {@inheritdoc}
    */
-  public function addFieldValues(ItemInterface $item) {
+  public function addFieldValues(ItemInterface $item): void {
     static $anonymous_user;
 
     if (!isset($anonymous_user)) {
@@ -83,7 +84,9 @@ class EntityAccessByField extends ContentAccess {
     }
 
     // Get the node object.
-    $node = $this->getNode($item->getOriginalObject());
+    /** @var ComplexDataInterface $original_object */
+    $original_object = $item->getOriginalObject();
+    $node = $this->getNode($original_object);
     if (!$node) {
       // Apparently we were active for a wrong item.
       return;
@@ -117,7 +120,9 @@ class EntityAccessByField extends ContentAccess {
             ':nid' => $node->id(),
             ':realm' => $this->getDatabase()->escapeLike($realm) . '%',
           ];
-          $grant_records = $this->getDatabase()->query($sql, $args)->fetchAll();
+          /** @var \Drupal\Core\Database\StatementInterface $result */
+          $result = $this->getDatabase()->query($sql, $args);
+          $grant_records = $result->fetchAll();
           if ($grant_records) {
             foreach ($grant_records as $grant) {
               $field->addValue("node_access_{$grant->realm}:{$grant->gid}");

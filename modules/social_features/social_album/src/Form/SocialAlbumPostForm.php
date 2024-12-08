@@ -22,7 +22,7 @@ class SocialAlbumPostForm extends PostForm {
    * @see field.storage.node.field_content_visibility.yml
    * @see field.storage.post.field_visibility.yml
    */
-  const VISIBILITY_MAPPING = [
+  public const VISIBILITY_MAPPING = [
     'public' => '1',
     'community' => '2',
     'group' => '3',
@@ -33,7 +33,7 @@ class SocialAlbumPostForm extends PostForm {
    *
    * @var \Drupal\node\NodeInterface|null
    */
-  protected $node;
+  protected ?NodeInterface $node;
 
   /**
    * Form constructor.
@@ -48,7 +48,7 @@ class SocialAlbumPostForm extends PostForm {
    * @return array
    *   The form structure.
    */
-  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL): array {
     $this->node = $node;
 
     $form = parent::buildForm($form, $form_state);
@@ -68,7 +68,7 @@ class SocialAlbumPostForm extends PostForm {
   /**
    * {@inheritdoc}
    */
-  protected function actionsElement(array $form, FormStateInterface $form_state) {
+  protected function actionsElement(array $form, FormStateInterface $form_state): array {
     $element = parent::actionsElement($form, $form_state);
 
     if ($this->node) {
@@ -81,7 +81,7 @@ class SocialAlbumPostForm extends PostForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): int {
     parent::save($form, $form_state);
 
     if ($this->node) {
@@ -89,12 +89,14 @@ class SocialAlbumPostForm extends PostForm {
         'node' => $this->node->id(),
       ]);
     }
+
+    return 0;
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function configureVisibilityField(array &$form, FormStateInterface $form_state) {
+  protected function configureVisibilityField(array &$form, FormStateInterface $form_state): void {
     parent::configureVisibilityField($form, $form_state);
 
     if ($this->node) {

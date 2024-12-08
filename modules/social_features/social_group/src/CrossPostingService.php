@@ -21,28 +21,28 @@ class CrossPostingService {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The group relation type manager under test.
    *
    * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
-  protected $groupRelationTypeManager;
+  protected GroupRelationTypeManagerInterface $groupRelationTypeManager;
 
   /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The Group storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $groupStorage;
+  protected \Drupal\Core\Entity\EntityStorageInterface $groupStorage;
 
   /**
    * Constructs a GroupRelationMultipleActivityEntityCondition object.
@@ -78,7 +78,11 @@ class CrossPostingService {
     $query->condition('gc.entity_id', $node->id());
     $query->condition('gc.type', $validPlugins, 'IN');
 
-    $gids = $query->execute()->fetchAllKeyed(0, 0);
+    $result = $query->execute();
+    if ($result === NULL) {
+      return [];
+    }
+    $gids = $result->fetchAllKeyed(0, 0);
 
     if ($gids) {
       // Check access to groups.
@@ -133,7 +137,11 @@ class CrossPostingService {
     $query->condition('gc.entity_id', $subQuery);
     $query->condition('gc.type', $validPlugins, 'IN');
 
-    $gids = $query->execute()->fetchAllKeyed(0, 0);
+    $result = $query->execute();
+    if ($result === NULL) {
+      return [];
+    }
+    $gids = $result->fetchAllKeyed(0, 0);
 
     if ($gids) {
       // Check access to groups.

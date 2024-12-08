@@ -89,7 +89,7 @@ class SocialAlbumController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('string_translation'),
       $container->get('database'),
@@ -151,7 +151,12 @@ class SocialAlbumController extends ControllerBase {
     /** @var \Drupal\file\FileStorageInterface $storage */
     $storage = $this->entityTypeManager()->getStorage('file');
 
-    foreach ($query->execute()->fetchAllKeyed() as $file_id => $post_id) {
+    $result = $query->execute();
+    if ($result === NULL){
+      return [];
+    }
+
+    foreach ($result->fetchAllKeyed() as $file_id => $post_id) {
       if (!$found && $file_id === $fid) {
         $found = TRUE;
       }

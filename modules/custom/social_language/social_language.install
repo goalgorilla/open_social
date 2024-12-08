@@ -13,7 +13,7 @@ use Drupal\language\ConfigurableLanguageManagerInterface;
  *
  * Perform actions related to the installation of social_language.
  */
-function social_language_install() {
+function social_language_install(): void {
   // Make sure the module has more weight then "Content Translation" module.
   module_set_weight('social_language', 11);
 

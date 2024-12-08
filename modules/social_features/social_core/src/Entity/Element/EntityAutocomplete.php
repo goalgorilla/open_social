@@ -20,7 +20,7 @@ class EntityAutocomplete extends EntityAutocompleteBase {
   /**
    * {@inheritdoc}
    */
-  public static function getEntityLabels(array $entities, $hide_id = FALSE) {
+  public static function getEntityLabels(array $entities, bool $hide_id = FALSE): string {
     $entity_labels = [];
 
     foreach ($entities as $entity) {
@@ -34,7 +34,7 @@ class EntityAutocomplete extends EntityAutocompleteBase {
       }
 
       // Labels containing commas or quotes must be wrapped in quotes.
-      $entity_labels[] = Tags::encode($label);
+      $entity_labels[] = Tags::encode((string) $label);
     }
 
     return implode(', ', $entity_labels);

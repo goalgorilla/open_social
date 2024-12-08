@@ -40,19 +40,19 @@ class SocialDate extends SearchApiDate {
     }
 
     // Fallback for exposed operator.
-    $operatorfromurl = NULL;
+    $operator_from_url = NULL;
     if ($operator === NULL && $this->realField === 'created') {
       // Check if we have it in the query.
-      $operatorfromurl = \Drupal::request()->query->get('created_op');
-      assert(is_string($operatorfromurl), new \InvalidArgumentException());
-      if (!empty($operatorfromurl)) {
-        $this->operator = $operatorfromurl;
-        $input['created_op'] = $operatorfromurl;
+      $operator_from_url = \Drupal::request()->query->get('created_op');
+      assert(is_string($operator_from_url), new \InvalidArgumentException());
+      if (!empty($operator_from_url)) {
+        $this->operator = $operator_from_url;
+        $input['created_op'] = $operator_from_url;
         $this->view->exposed_raw_input = $this->view->getExposedInput();
       }
     }
 
-    if ($operator === NULL && $operatorfromurl === NULL) {
+    if ($operator === NULL && $operator_from_url === NULL) {
       return FALSE;
     }
 
@@ -87,10 +87,8 @@ class SocialDate extends SearchApiDate {
 
     // Remove unnecessary exposed operators.
     foreach ($operators as $operator_name => $value) {
-      if (is_string($operator_name) && !in_array($operator_name, $operators_to_keep, FALSE)) {
-        if (!empty($operators[$operator_name])) {
-          unset($operators[$operator_name]);
-        }
+      if (is_string($operator_name) && !in_array($operator_name, $operators_to_keep, FALSE) && !empty($value)) {
+        unset($operators[$operator_name]);
       }
     }
 
@@ -100,7 +98,7 @@ class SocialDate extends SearchApiDate {
   /**
    * {@inheritdoc}
    */
-  protected function valueForm(&$form, FormStateInterface $form_state) {
+  protected function valueForm(&$form, FormStateInterface $form_state): void {
     parent::valueForm($form, $form_state);
 
     // Key is form field name, value is title name.

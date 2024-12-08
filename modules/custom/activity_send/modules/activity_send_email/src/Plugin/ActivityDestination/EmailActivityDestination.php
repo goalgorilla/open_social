@@ -4,6 +4,7 @@ namespace Drupal\activity_send_email\Plugin\ActivityDestination;
 
 use Drupal\activity_send\Plugin\SendActivityDestinationBase;
 use Drupal\message\Entity\Message;
+use Drupal\social_user\Entity\User;
 
 /**
  * Provides a 'EmailActivityDestination' activity destination.
@@ -20,35 +21,35 @@ class EmailActivityDestination extends SendActivityDestinationBase {
   /**
    * {@inheritdoc}
    */
-  public static function getSendEmailMessageTemplates() {
+  public static function getSendEmailMessageTemplates(): array {
     return parent::getSendMessageTemplates('email');
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function getSendEmailUserSettings($account) {
+  public static function getSendEmailUserSettings(User $account): array {
     return parent::getSendUserSettings('email', $account);
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function getSendEmailAllUsersSetting($account_ids, $message_template_id) {
+  public static function getSendEmailAllUsersSetting(array $account_ids, string $message_template_id): array {
     return parent::getSendAllUsersSetting('email', $account_ids, $message_template_id);
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function getSendEmailUsersIdsByFrequency($account_ids, $message_template_id, $frequency = 'immediately') {
+  public static function getSendEmailUsersIdsByFrequency(array $account_ids, string $message_template_id, string $frequency = 'immediately'): array {
     return parent::getSendUserIdsByFrequency('email', $account_ids, $frequency, $message_template_id);
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function setSendEmailUserSettings($account, $values) {
+  public static function setSendEmailUserSettings(User $account, array $values): void {
     parent::setSendUserSettings('email', $account, $values);
   }
 
@@ -63,7 +64,7 @@ class EmailActivityDestination extends SendActivityDestinationBase {
    * @return string|null
    *   If we have message text we return the text, otherwise null.
    */
-  public static function getSendEmailOutputText(Message $message, $langcode = '') {
+  public static function getSendEmailOutputText(Message $message, string $langcode = ''): ?string {
     $activity_factory = \Drupal::service('activity_creator.activity_factory');
     $value = $activity_factory->getMessageText($message, $langcode);
 

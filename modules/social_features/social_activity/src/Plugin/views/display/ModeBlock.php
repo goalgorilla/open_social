@@ -39,7 +39,7 @@ class ModeBlock extends Block {
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $configFactory;
+  protected ConfigFactory $configFactory;
 
   /**
    * Constructs a new Block instance.
@@ -72,7 +72,7 @@ class ModeBlock extends Block {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -86,7 +86,7 @@ class ModeBlock extends Block {
   /**
    * {@inheritdoc}
    */
-  protected function defineOptions() {
+  protected function defineOptions(): array {
     $options = parent::defineOptions();
 
     $options['view_mode'] = [
@@ -101,7 +101,7 @@ class ModeBlock extends Block {
   /**
    * {@inheritdoc}
    */
-  public function blockSettings(array $settings) {
+  public function blockSettings(array $settings): array {
     $settings = parent::blockSettings($settings);
     $settings['type'] = 'none';
 
@@ -111,7 +111,7 @@ class ModeBlock extends Block {
   /**
    * {@inheritdoc}
    */
-  public function blockForm(ViewsBlock $block, array &$form, FormStateInterface $form_state) {
+  public function blockForm(ViewsBlock $block, array &$form, FormStateInterface $form_state): array {
     parent::blockForm($block, $form, $form_state);
 
     $info = $form_state->getBuildInfo();
@@ -146,7 +146,7 @@ class ModeBlock extends Block {
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit(ViewsBlock $block, $form, FormStateInterface $form_state) {
+  public function blockSubmit(ViewsBlock $block, $form, FormStateInterface $form_state): void {
     parent::blockSubmit($block, $form, $form_state);
 
     if ($value = $form_state->getValue(['override', 'type'])) {
@@ -158,14 +158,15 @@ class ModeBlock extends Block {
   /**
    * {@inheritdoc}
    */
-  public function preBlockBuild(ViewsBlock $block) {
+  public function preBlockBuild(ViewsBlock $block): void {
     parent::preBlockBuild($block);
 
     // Prepare values to use it in the views filter.
     $block_configuration = $block->getConfiguration();
 
     if (isset($block_configuration['type'])) {
-      $this->view->filter_type = $block_configuration['type'];
+      $type_filter = $this->view->filter['type'];
+      $type_filter->value = $block_configuration['type'];
     }
   }
 

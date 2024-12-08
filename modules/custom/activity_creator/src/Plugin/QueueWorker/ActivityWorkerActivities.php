@@ -28,7 +28,7 @@ class ActivityWorkerActivities extends ActivityWorkerBase implements ContainerFa
    *
    * @var \Drupal\activity_creator\ActivityFactory
    */
-  private $activityFactory;
+  private ActivityFactory $activityFactory;
 
   /**
    * {@inheritdoc}
@@ -42,7 +42,7 @@ class ActivityWorkerActivities extends ActivityWorkerBase implements ContainerFa
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -56,7 +56,7 @@ class ActivityWorkerActivities extends ActivityWorkerBase implements ContainerFa
    *
    * @todo Can one item have multiple destinations; if not: split.
    */
-  public function processItem($data) {
+  public function processItem($data): void {
     // Let the factory work.
     $this->activityFactory->createActivities($data);
   }

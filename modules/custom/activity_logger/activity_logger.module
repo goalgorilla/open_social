@@ -14,7 +14,7 @@ use Drupal\Core\Config\Entity\ConfigEntityType;
 /**
  * Implements hook_help().
  */
-function activity_logger_help($route_name, RouteMatchInterface $route_match) {
+function activity_logger_help(string $route_name, RouteMatchInterface $route_match): string {
   switch ($route_name) {
     // Main module help for the activity_logger module.
     case 'help.page.activity_logger':
@@ -25,6 +25,8 @@ function activity_logger_help($route_name, RouteMatchInterface $route_match) {
 
     default:
   }
+
+  return '';
 }
 
 /**
@@ -33,7 +35,7 @@ function activity_logger_help($route_name, RouteMatchInterface $route_match) {
  * @return array
  *   Entity content data.
  */
-function _activity_logger_get_content_entities() {
+function _activity_logger_get_content_entities(): array {
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $options = [];
   foreach ($entity_type_manager->getDefinitions() as $entity_id => $entity_type) {
@@ -62,9 +64,12 @@ function _activity_logger_get_content_entities() {
 /**
  * Implements hook_form_FORM_ID_alter() for message_template_form().
  */
-function activity_logger_form_message_template_form_alter(&$form, FormStateInterface $form_state) {
+function activity_logger_form_message_template_form_alter(array &$form, FormStateInterface $form_state): void {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+
   /** @var \Drupal\message\MessageTemplateInterface $message_template */
-  $message_template = $form_state->getFormObject()->getEntity();
+  $message_template = $form_object->getEntity();
 
   $form['email_subject'] = [
     '#title' => t('Subject line for email notifications'),
@@ -195,7 +200,7 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
  *
  * @see activity_logger_form_message_template_form_alter()
  */
-function activity_logger_form_message_template_form_builder($entity_type, MessageTemplateInterface $message_template, &$form, FormStateInterface $form_state) {
+function activity_logger_form_message_template_form_builder(string $entity_type, MessageTemplateInterface $message_template, array &$form, FormStateInterface $form_state): void {
   $message_template->setThirdPartySetting('activity_logger', 'activity_bundle_entities', $form_state->getValue('activity_bundle_entities'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_action', $form_state->getValue('activity_action'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_context', $form_state->getValue('activity_context'));
@@ -209,6 +214,6 @@ function activity_logger_form_message_template_form_builder($entity_type, Messag
 /**
  * Handles switching the entity condition selector.
  */
-function _activity_logger_form_message_template_entity_ajax_callback(&$form, FormStateInterface $form_state) {
+function _activity_logger_form_message_template_entity_ajax_callback(array &$form, FormStateInterface $form_state): array {
   return $form['activity_entity_condition_wrapper'];
 }

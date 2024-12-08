@@ -14,14 +14,14 @@ class EnrollRequestAnonymousForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'request_enrollment_modal_form_anonymous';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $options = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, bool $options = NULL): array {
     $node = \Drupal::routeMatch()->getParameter('node');
     $nid = $node->id();
     $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])->toString();
@@ -73,6 +73,6 @@ class EnrollRequestAnonymousForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {}
+  public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
 }

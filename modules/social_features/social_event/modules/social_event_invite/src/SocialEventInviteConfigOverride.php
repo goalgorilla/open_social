@@ -22,28 +22,28 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * Email validator.
    *
    * @var \Drupal\Component\Utility\EmailValidatorInterface
    */
-  protected $emailValidator;
+  protected EmailValidatorInterface $emailValidator;
 
   /**
    * The current active database's master connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs the configuration override.
@@ -72,7 +72,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
   /**
    * Load overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     $config_name = 'user.settings';
@@ -89,8 +89,8 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
       if ($ignore_email_verification === TRUE && $verify_mail === TRUE) {
         $request = $this->requestStack->getCurrentRequest();
 
-        $invitee_mail = $request->query->get('invitee_mail', '');
-        $destination = $request->query->get('destination', '');
+        $invitee_mail = $request?->query->get('invitee_mail', '');
+        $destination = $request?->query->get('destination', '');
         assert(is_string($invitee_mail) && is_string($destination));
         $is_valid = $this->validateInviteData($invitee_mail, $destination);
 
@@ -114,7 +114,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * @return bool
    *   TRUE if invited data is valid.
    */
-  public function validateInviteData($invitee_mail, $destination) {
+  public function validateInviteData(string $invitee_mail, string $destination): bool {
 
     if (empty($invitee_mail) || empty($destination)) {
       return FALSE;
@@ -151,14 +151,16 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
     $query->join('event_enrollment__field_event', 'eefev', 'eefe.entity_id = eefev.entity_id');
     $query->condition('eefev.field_event_target_id', $id);
 
-    $invitations = $query->execute()->fetchField();
+    $result = $query->execute();
+    if ($result) {
+      $invitations = $result->fetchField();
+    }
 
     if (empty($invitations)) {
       return FALSE;
     }
-    else {
-      return TRUE;
-    }
+
+    return TRUE;
   }
 
   /**
@@ -170,14 +172,18 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * @return string
    *   The path represented by alias, or the alias if no path was found.
    */
-  private function getPathByAlias($alias) {
+  private function getPathByAlias(string $alias): string {
     $query = $this->database->select('path_alias', 'base_table');
     $query->condition('base_table.status', '1');
     $query->fields('base_table', ['path']);
     $query->condition('base_table.alias', $this->database->escapeLike($alias), 'LIKE');
 
-    if ($path = $query->execute()->fetchField()) {
-      return $path;
+    $result = $query->execute();
+    if ($result) {
+      $path = $result->fetchField();
+      if ($path) {
+        return $path;
+      }
     }
 
     return $alias;
@@ -186,14 +192,14 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialGroupInviteConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 
@@ -208,7 +214,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * @return \Drupal\Core\Config\StorableConfigBase|null
    *   The configuration object for the provided name and collection.
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?\Drupal\Core\Config\StorableConfigBase {
     return NULL;
   }
 

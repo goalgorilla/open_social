@@ -34,14 +34,14 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getResolverRegistry() {
+  public function getResolverRegistry(): ResolverRegistry|ResolverRegistryInterface {
     return new ResolverRegistry();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSchema(ResolverRegistryInterface $registry) {
+  public function getSchema(ResolverRegistryInterface $registry): \GraphQL\Type\Schema {
     // Add Open Social base types to the schema.
     $this->getBaseSchema($registry);
 
@@ -58,7 +58,7 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
    * @param \Drupal\graphql\GraphQL\ResolverRegistryInterface $registry
    *   The resolver registry.
    */
-  protected function getBaseSchema(ResolverRegistryInterface $registry) {
+  protected function getBaseSchema(ResolverRegistryInterface $registry): void {
     $builder = new ResolverBuilder();
 
     // TextFormat fields.

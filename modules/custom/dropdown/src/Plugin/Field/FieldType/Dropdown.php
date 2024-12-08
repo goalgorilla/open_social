@@ -24,7 +24,7 @@ class Dropdown extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public static function defaultStorageSettings() {
+  public static function defaultStorageSettings(): array {
     return [
       'allowed_values' => [],
     ] + parent::defaultStorageSettings();
@@ -33,7 +33,7 @@ class Dropdown extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
+  public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition): array {
     $properties['value'] = DataDefinition::create('string')
       ->setLabel(t('Text value'))
       ->addConstraint('Length', ['max' => 255])
@@ -45,7 +45,7 @@ class Dropdown extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public static function schema(FieldStorageDefinitionInterface $field_definition) {
+  public static function schema(FieldStorageDefinitionInterface $field_definition): array {
     return [
       'columns' => [
         'value' => [
@@ -62,7 +62,7 @@ class Dropdown extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
+  public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data): array {
     $allowed_values = $this->getSetting('allowed_values');
 
     $element['allowed_values'] = [
@@ -94,7 +94,7 @@ class Dropdown extends FieldItemBase {
    *
    * @see \Drupal\Core\Render\Element\FormElement::processPattern()
    */
-  public static function validateAllowedValues(array $element, FormStateInterface $form_state) {
+  public static function validateAllowedValues(array $element, FormStateInterface $form_state): void {
     $values = static::extractAllowedValues($element['#value'], $element['#field_has_data']);
 
     if (!is_array($values)) {
@@ -124,7 +124,7 @@ class Dropdown extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     // We're empty if we have no value set,
     // or we have a value that's neither a string nor an integer.
     return !isset($this->values['value']) || (!is_int($this->values['value']) && !is_string($this->values['value']));
@@ -144,7 +144,7 @@ class Dropdown extends FieldItemBase {
    *    - Values are separated by a carriage return.
    *    - Each value is in the format "value|label" or "value".
    */
-  protected function allowedValuesString(array $values) {
+  protected function allowedValuesString(array $values): string {
     $lines = [];
     foreach ($values as $key => $value) {
       if (is_array($value)) {
@@ -167,7 +167,7 @@ class Dropdown extends FieldItemBase {
    *
    * @see \Drupal\options\Plugin\Field\FieldType\ListTextItem::allowedValuesString()
    */
-  protected static function extractAllowedValues($string, $has_data) {
+  protected static function extractAllowedValues(string $string, bool $has_data): ?array {
     $values = [];
 
     $list = explode("\n", $string);
@@ -213,12 +213,14 @@ class Dropdown extends FieldItemBase {
    * @param string $option
    *   The option value entered by the user.
    */
-  protected static function validateAllowedValue($option) {}
+  protected static function validateAllowedValue(string $option): string {
+    return '';
+  }
 
   /**
    * {@inheritdoc}
    */
-  protected function allowedValuesDescription() {
+  protected function allowedValuesDescription(): string {
     $description = '<p>' . t('The possible values this field can contain. Enter one value per line, in the format value|label|description.');
     $description .= '<br/>' . t('The value is the stored value. The label and description will be used in displayed values and edit forms.');
     $description .= '<br/>' . t('The description is optional: if a line contains value|label a description will not be shown.');

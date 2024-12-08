@@ -20,9 +20,9 @@ use Drupal\Core\Routing\RouteMatchInterface;
  * @return \Drupal\Core\Entity\EntityInterface|null
  *   Return an entity, if the route should use metatags.
  */
-function social_metatag_metatag_route_entity(RouteMatchInterface $route_match) {
+function social_metatag_metatag_route_entity(RouteMatchInterface $route_match): ?\Drupal\Core\Entity\EntityInterface {
   // Metatag_views will override all the views Metatags with defaults.
-  // if it's not enabled we can continue provide Group & Events to the tabs
+  // if it's not enabled we can continue to provide Group & Events to the tabs
   // which are basically views metatags but now coming from Entity defaults.
   if (\Drupal::moduleHandler()->moduleExists('metatag_views')) {
     return NULL;

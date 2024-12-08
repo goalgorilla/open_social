@@ -17,7 +17,7 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_views_plugins_display_alter().
  */
-function social_activity_views_plugins_display_alter(array &$plugins) {
+function social_activity_views_plugins_display_alter(array &$plugins): void {
   $plugins['block']['class'] = 'Drupal\social_activity\Plugin\views\display\ModeBlock';
 }
 
@@ -26,7 +26,7 @@ function social_activity_views_plugins_display_alter(array &$plugins) {
  *
  * Adds the Notification Center to the account header block.
  */
-function social_activity_social_user_account_header_items(array $context) {
+function social_activity_social_user_account_header_items(array $context): array {
   // We require a valid user to load the notifications for.
   if (empty($context['user'])) {
     return [];
@@ -113,8 +113,8 @@ function social_activity_social_user_account_header_items(array $context) {
  * Adds the mobile indicator for activity notifications under the profile icon
  * menu.
  */
-function social_activity_social_user_account_header_account_links(array $context) {
-  // We require a logged in user for this indicator.
+function social_activity_social_user_account_header_account_links(array $context): array {
+  // We require a logged-in user for this indicator.
   if (empty($context['user']) || !$context['user']->isAuthenticated()) {
     return [];
   }
@@ -163,7 +163,7 @@ function social_activity_social_user_account_header_account_links(array $context
  *
  * Adds an indicator to the user account menu on mobile.
  */
-function social_activity_social_user_account_header_items_alter(array &$menu_links, array $context) {
+function social_activity_social_user_account_header_items_alter(array &$menu_links, array $context): void {
   // We require a logged in user for this indicator.
   if (empty($context['user']) || !$context['user']->isAuthenticated()) {
     return;
@@ -184,7 +184,7 @@ function social_activity_social_user_account_header_items_alter(array &$menu_lin
 /**
  * Implements hook_theme().
  */
-function social_activity_theme($existing, $type, $theme, $path) {
+function social_activity_theme(array $existing, string $type, string $theme, string $path): array {
   return [
     'message_post_teaser' => [
       'variables' => [
@@ -256,20 +256,20 @@ function social_activity_theme($existing, $type, $theme, $path) {
 function social_activity_social_account_notifications_counter(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]) : int {
   $account_notifications = \Drupal::service('activity_creator.activity_notifications');
 
-  return count($account_notifications->getNotifications($account, $status)) ?? 0;
+  return count($account_notifications->getNotifications($account, $status));
 }
 
 /**
  * Implements hook_views_post_build().
  */
-function social_activity_views_post_build(ViewExecutable $view) {
+function social_activity_views_post_build(ViewExecutable $view): void {
   $override_displays = [
     'block_stream_explore',
     'block_stream_homepage',
     'block_stream_homepage_without_post',
   ];
 
-  if ($view->id() == "activity_stream" && in_array($view->current_display, $override_displays)) {
+  if ($view->id() === "activity_stream" && in_array($view->current_display, $override_displays)) {
     if (isset($view->filter_type) && $view->filter_type === 'dashboard') {
       // Override default view mode for activity stream views block if it was
       // added via layout builder.
@@ -284,7 +284,7 @@ function social_activity_views_post_build(ViewExecutable $view) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_activity_preprocess_block(&$variables) {
+function social_activity_preprocess_block(array &$variables): void {
   $route_match = \Drupal::routeMatch();
   $allowed_routes = [
     'entity.node.canonical',
@@ -354,7 +354,7 @@ function social_activity_preprocess_block(&$variables) {
 /**
  * Implements hook_social_core_default_main_menu_links_alter().
  */
-function social_activity_social_core_default_main_menu_links_alter(array &$links) {
+function social_activity_social_core_default_main_menu_links_alter(array &$links): void {
   $link = \Drupal::entityTypeManager()->getStorage('menu_link_content')
     ->loadByProperties([
       'title' => 'Community',

@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Cache\Cache;
@@ -38,7 +39,7 @@ use Drupal\views\Views;
  *
  * @ingroup social_group_api
  */
-function social_group_flexible_group_social_group_types_alter(array &$social_group_types) {
+function social_group_flexible_group_social_group_types_alter(array &$social_group_types): void {
   $social_group_types[] = 'flexible_group';
 }
 
@@ -58,7 +59,7 @@ function social_group_flexible_group_social_email_broadcast_notifications_alter(
 /**
  * Implements hook_form_FORM_ID_form_alter().
  */
-function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_group_flexible_group_form_group_flexible_group_edit_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $form['field_flexible_group_visibility']['#prefix'] =
     t('Altering the visibility options could result in changes in access for content within this group and the group itself.');
 
@@ -68,7 +69,7 @@ function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&
 /**
  * Implements hook_form_alter().
  */
-function social_group_flexible_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_group_flexible_group_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Exposed Filter block on the all-groups overview and search.
   if ($form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
     $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
@@ -192,7 +193,7 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
  * @return void
  *   Void as it will trigger setErrorByName method.
  */
-function _flexible_group_visibility_validation($form, &$form_state) {
+function _flexible_group_visibility_validation(array $form, FormStateInterface $form_state): void {
   // Get visibility options.
   $visibilities = $form['field_flexible_group_visibility']['widget']['#options'];
 
@@ -228,10 +229,10 @@ function _flexible_group_visibility_validation($form, &$form_state) {
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state.
  *
- * @return mixed
+ * @return array
  *   The form array containing the default values & states.
  */
-function social_group_flexible_group_flexible_group_add_after_build(array $form, FormStateInterface $form_state) {
+function social_group_flexible_group_flexible_group_add_after_build(array $form, FormStateInterface $form_state): array {
   $group_types = ['flexible_group'];
   \Drupal::moduleHandler()->alter('social_group_settings', $group_types);
 
@@ -291,7 +292,7 @@ function social_group_flexible_group_flexible_group_add_after_build(array $form,
 /**
  * Implements hook_ENTITY_TYPE_access().
  */
-function social_group_flexible_group_group_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function social_group_flexible_group_group_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
   $result = AccessResult::neutral();
   // Write custom access checks based on the new group visibility field.
   // If group visibility doesn't exist we can skip this.
@@ -299,7 +300,7 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   if ($operation !== 'view' || !$entity->hasField('field_flexible_group_visibility')) {
     return $result;
   }
-  // If user has administer groups access we can skip this.
+  // If user has administered groups access we can skip this.
   if ($account->hasPermission('manage all groups')) {
     return $result;
   }
@@ -340,7 +341,7 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_group_flexible_group_group_insert(GroupInterface $group): void {
-  if ($group->bundle() == "flexible_group") {
+  if ($group->bundle() === "flexible_group") {
     \Drupal::service('social_group_flexible_group.eda_handler')->groupCreate($group);
   }
 }
@@ -359,7 +360,7 @@ function social_group_flexible_group_group_update(EntityInterface $entity): void
  */
 function social_group_flexible_group_social_core_group_unpublished(EntityInterface $entity): void {
   // When a group is unpublished, dispatch the proper EDA event.
-  if ($entity instanceof GroupInterface && $entity->bundle() == "flexible_group") {
+  if ($entity instanceof GroupInterface && $entity->bundle() === "flexible_group") {
     \Drupal::service('social_group_flexible_group.eda_handler')->groupUnpublish($entity);
   }
 }
@@ -368,7 +369,7 @@ function social_group_flexible_group_social_core_group_unpublished(EntityInterfa
  * Implements hook_social_core_ENTITY_TYPE_published().
  */
 function social_group_flexible_group_social_core_group_published(EntityInterface $entity): void {
-  if ($entity instanceof GroupInterface && $entity->bundle() == 'flexible_group') {
+  if ($entity instanceof GroupInterface && $entity->bundle() === 'flexible_group') {
     \Drupal::service('social_group_flexible_group.eda_handler')->groupPublish($entity);
   }
 }
@@ -377,7 +378,7 @@ function social_group_flexible_group_social_core_group_published(EntityInterface
  * Implements hook_entity_delete().
  */
 function social_group_flexible_group_entity_delete(EntityInterface $entity): void {
-  if ($entity instanceof GroupInterface && $entity->bundle() == "flexible_group") {
+  if ($entity instanceof GroupInterface && $entity->bundle() === "flexible_group") {
     \Drupal::service('social_group_flexible_group.eda_handler')
       ->groupDelete($entity);
   }
@@ -386,7 +387,7 @@ function social_group_flexible_group_entity_delete(EntityInterface $entity): voi
 /**
  * Implements template_preprocess_form_element().
  */
-function social_group_flexible_group_preprocess_form_element(&$variables) {
+function social_group_flexible_group_preprocess_form_element(array &$variables): void {
   // Make sure our flexible group visibility field renders icons in the radio
   // labels. We add a new property to the form element label render array.
   // This is used in FormElementLabel.php to add data for templating.
@@ -492,10 +493,8 @@ function social_group_flexible_group_social_tagging_type_alter(array &$items): v
  *   The form array.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state.
- *
- * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _social_flexible_group_edit_submit(array $form, FormStateInterface $form_state) {
+function _social_flexible_group_edit_submit(array $form, FormStateInterface $form_state): void {
   // Check if the visibility changed.
   $default_visibility = $form['field_group_allowed_visibility']['widget']['#default_value'];
   $new_visibility = $form_state->getValue('field_group_allowed_visibility');
@@ -532,7 +531,7 @@ function _social_flexible_group_edit_submit(array $form, FormStateInterface $for
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_group_flexible_group_form_social_group_add_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_group_flexible_group_form_social_group_add_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Rearrange all the options so flexible is last
   // we will need the space for the configuration.
   $type_options = $form['group_settings']['group_type']['#options'];
@@ -698,8 +697,8 @@ function social_group_flexible_group_can_view_flexible_groups(
  *
  * Hide flexible groups everywhere when the current user cant see it.
  */
-function social_group_flexible_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  if (empty($view->rowPlugin) || !($view->rowPlugin instanceof EntityRow) || $view->rowPlugin->getEntityTypeId() !== 'group') {
+function social_group_flexible_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query): void {
+  if (!($view->rowPlugin instanceof EntityRow) || $view->rowPlugin->getEntityTypeId() !== 'group') {
     return;
   }
 
@@ -731,8 +730,9 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
 
   $alias = 'groups_field_flexible_group_visibility';
 
-  /** @var \Drupal\views\Plugin\views\query\Sql $query */
+  /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
   $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+  /** @var \Drupal\views\Plugin\views\query\Sql $query */
   $rel = $query->addRelationship($alias, $join, 'groups_field_data');
   $query->addTable('group__field_flexible_group_visibility', $rel, $join, $alias);
 
@@ -743,7 +743,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   $new_where = $current_where + 1;
 
   // We need to add our group by using a query tag.
-  // Otherwise views doesn't accept it.
+  // Otherwise, views doesn't accept it.
   $query->addTag('flexible_group_by');
 
   // Get all LU groups.
@@ -783,14 +783,15 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
 /**
  * Implements hook_query_TAG_alter().
  */
-function social_group_flexible_group_query_flexible_group_by_alter(AlterableInterface $query) {
+function social_group_flexible_group_query_flexible_group_by_alter(AlterableInterface $query): void {
+  /** @var \Drupal\Core\Database\Query\SelectInterface $query */
   $query->distinct();
 }
 
 /**
  * Implements hook_block_access().
  */
-function social_group_flexible_group_block_access(Block $block, $operation, AccountInterface $account) {
+function social_group_flexible_group_block_access(Block $block, string $operation, AccountInterface $account): AccessResultInterface {
   // This is a list of the blocks that this function cares about, if we're being
   // called for a different block we exit early.
   $block_id = $block->getPluginId();
@@ -839,7 +840,7 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
 /**
  * Sets dynamic allowed values for the group type icon field.
  */
-function social_group_flexible_group_type_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+function social_group_flexible_group_type_allowed_values_function(FieldStorageConfig $definition, mixed $cacheable, ?ContentEntityInterface $entity = NULL): array {
   $theme_path = \Drupal::service('extension.list.theme')->getPath('socialbase');
   $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
 
@@ -854,7 +855,7 @@ function social_group_flexible_group_type_allowed_values_function(FieldStorageCo
 /**
  * Sets the default value for the group type icon field.
  */
-function social_group_flexible_group_type_default_value_function(ContentEntityInterface $entity, FieldDefinitionInterface $definition) {
+function social_group_flexible_group_type_default_value_function(ContentEntityInterface $entity, FieldDefinitionInterface $definition): array {
   return [
     ['value' => 'icon-event'],
   ];
@@ -863,7 +864,7 @@ function social_group_flexible_group_type_default_value_function(ContentEntityIn
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_group_flexible_group_form_taxonomy_term_group_type_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_group_flexible_group_form_taxonomy_term_group_type_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   if (!isset($form['field_group_type_icon'])) {
     return;
   }
@@ -889,7 +890,7 @@ function social_group_flexible_group_form_taxonomy_term_group_type_form_alter(&$
 /**
  * Ajax callback to change group type icon.
  */
-function _social_group_flexible_group_type_change_topic_icon_ajax(array $form, FormStateInterface $form_state) {
+function _social_group_flexible_group_type_change_topic_icon_ajax(array $form, FormStateInterface $form_state): AjaxResponse {
   $response = new AjaxResponse();
 
   $icon = $form_state->getValue('field_group_type_icon')[0]['value'];
@@ -911,7 +912,7 @@ function _social_group_flexible_group_type_change_topic_icon_ajax(array $form, F
  *
  * Adds the "Create Group" link to the content creation menu.
  */
-function social_group_flexible_group_social_user_account_header_create_links($context) {
+function social_group_flexible_group_social_user_account_header_create_links(array $context): array {
   $link = Link::createFromRoute((new TranslatableMarkup('New Group')), 'entity.group.add_form', [
     'group_type' => 'flexible_group',
   ]);

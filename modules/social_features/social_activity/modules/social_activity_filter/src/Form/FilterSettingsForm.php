@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Updater\Module;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,28 +17,28 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\social_activity_filter\Form
  */
-class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class FilterSettingsForm extends ConfigFormBase {
 
   /**
    * The Module Handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The entity field manager.
    *
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
-  protected $entityFieldManager;
+  protected EntityFieldManagerInterface $entityFieldManager;
 
   /**
    * The entity manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * {@inheritdoc}
@@ -52,7 +53,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('module_handler'),
@@ -64,21 +65,21 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_activity_filter_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_activity_filter.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     // Get the configuration file.
     $config = $this->config('social_activity_filter.settings');
@@ -126,7 +127,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     // Get the configuration file.
     $config = $this->config('social_activity_filter.settings');
@@ -159,7 +160,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    * @return array
    *   Mapped array: vid => taxonomy_field.
    */
-  public function getReferencedTaxonomyFields(array $vocabulary_list) {
+  public function getReferencedTaxonomyFields(array $vocabulary_list): array {
 
     $content_types = $this->entityTypeManager->getStorage('node_type')
       ->loadMultiple();
@@ -172,7 +173,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
 
         foreach ($field_definitions as $field_definition) {
 
-          if ($field_definition->getType() == 'entity_reference' && $field_definition->getSetting('target_type') == 'taxonomy_term') {
+          if ($field_definition->getType() === 'entity_reference' && $field_definition->getSetting('target_type') === 'taxonomy_term') {
             $handler_settings = $field_definition->getSetting('handler_settings');
 
             if (isset($handler_settings['target_bundles'][$vocabulary])) {
@@ -199,11 +200,11 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    * @return array
    *   Mapped array of views displays.
    */
-  public function getDisplayBlocks($views_id) {
+  public function getDisplayBlocks(string $views_id): array {
     $view = $this->entityTypeManager->getStorage('view')->load($views_id);
 
     $blocks = [];
-    foreach ($view->get('display') as $display) {
+    foreach ($view?->get('display') as $display) {
       if ($display['display_plugin'] === 'block') {
         $blocks["{$views_id}__{$display['id']}"] = $display['display_title'];
       }
@@ -221,7 +222,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    * @param bool $enabled
    *   Flag to update/cleanup values.
    */
-  public function updateDisplayBlock($views_id, $display_id, $enabled = FALSE) {
+  public function updateDisplayBlock(string $views_id, string $display_id, bool $enabled = FALSE): void {
     $config = $this->configFactory->getEditable("views.view.{$views_id}");
     $override_tags_filter = "display.{$display_id}.display_options.override_tags_filter";
     $activity_filter_tags = "display.{$display_id}.display_options.filters.activity_filter_tags";

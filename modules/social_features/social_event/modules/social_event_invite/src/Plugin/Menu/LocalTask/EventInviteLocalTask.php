@@ -22,7 +22,7 @@ class EventInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Construct the UnapprovedComments object.
@@ -44,7 +44,7 @@ class EventInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -56,14 +56,14 @@ class EventInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getTitle(Request $request = NULL) {
+  public function getTitle(Request $request = NULL): string|\Drupal\Core\StringTranslation\TranslatableMarkup {
     /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
     $enrollments = \Drupal::service('social_event.status_helper');
 
-    if ($enrollments->getAllUserEventEnrollments(NULL)) {
+    if ($enrollments->getAllUserEventEnrollments('')) {
       // We don't need plural because users will be redirected
       // if there is no invite.
-      return $this->t('Event invites (@count)', ['@count' => count($enrollments->getAllUserEventEnrollments(NULL))]);
+      return $this->t('Event invites (@count)', ['@count' => count($enrollments->getAllUserEventEnrollments(''))]);
     }
 
     return $this->t('Event invites');

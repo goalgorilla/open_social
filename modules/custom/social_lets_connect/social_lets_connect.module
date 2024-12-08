@@ -8,6 +8,6 @@
 /**
  * Implements hook_toolbar_alter().
  */
-function social_lets_connect_toolbar_alter(&$items) {
+function social_lets_connect_toolbar_alter(array &$items): void {
   $items['administration']['#attached']['library'][] = 'social_lets_connect/toolbar';
 }

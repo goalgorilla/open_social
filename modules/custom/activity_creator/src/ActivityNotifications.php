@@ -24,7 +24,7 @@ class ActivityNotifications extends ControllerBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * ActivityNotifications constructor.
@@ -39,7 +39,7 @@ class ActivityNotifications extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('database')
     );
@@ -209,7 +209,12 @@ class ActivityNotifications extends ControllerBase {
         if (!empty($status)) {
           $query->condition('status', $status, 'IN');
         }
-        return $query->execute()->fetchCol();
+
+        $result = $query->execute();
+        if ($result) {
+          return $result->fetchCol();
+        }
+        return [];
       }
       catch (\Exception $exception) {
         // Log the exception to watchdog.
@@ -270,7 +275,11 @@ class ActivityNotifications extends ControllerBase {
           ->fields('ans', ['status'])
           ->condition('aid', $id)
           ->condition('uid', $account->id());
-        return $query->execute()->fetchField();
+        $result = $query->execute();
+        if ($result) {
+          return $result->fetchCol();
+        }
+        return [];
       }
       catch (\Exception $exception) {
         // Log the exception to watchdog.

@@ -18,23 +18,16 @@ namespace Drupal\activity_creator\Plugin\QueueWorker;
 class ActivityWorkerLogger extends ActivityWorkerBase {
 
   /**
-   * The ActivityContext manager.
-   *
-   * @var \Drupal\activity_creator\Plugin\ActivityContextManager
-   */
-  protected $contextPluginManager;
-
-  /**
    * The state.
    *
-   * @var \Drupal\Core\State\
+   * @var \Drupal\Core\State\StateInterface
    */
-  protected $state;
+  protected \Drupal\Core\State\StateInterface $state;
 
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
+  public function processItem($data): void {
 
     // Get 100 Recipients at a time.
     $limit = 0;
@@ -81,6 +74,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
         }
 
         // Now create new queue item for activity_creator_logger if necessary.
+        // @phpstan-ignore-next-line
         if ($limit !== 0 && isset($last_uid) && count($recipients) >= $limit) {
           $data['last_uid'] = $last_uid;
           $data['status'] = 'processing';

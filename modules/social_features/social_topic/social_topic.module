@@ -43,7 +43,7 @@ use Drupal\views\ViewExecutable;
  *   - node: The node object.
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
-function social_topic_preprocess_node(array &$variables) {
+function social_topic_preprocess_node(array &$variables): void {
   /** @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
   if ($node->getType() === 'topic') {
@@ -85,7 +85,7 @@ function social_topic_preprocess_node(array &$variables) {
  *
  * Enhance the exposed filter form of the topic overview.
  */
-function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_topic_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // On user topics overview.
   if ($form['#id'] === 'views-exposed-form-topics-page-profile') {
     $form['type']['#options']['All'] = t('All types');
@@ -136,6 +136,7 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
     $form['type']['#options']['All'] = t('All types');
 
     // Get group from route.
+    $group_id = 0;
     if (!empty($group_from_route)) {
       $group_id = $group_from_route->id();
     }
@@ -152,7 +153,7 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
  *
  * Add a title to the exposed filter block on the topics overview.
  */
-function social_topic_block_view_alter(array &$build, BlockPluginInterface $block) {
+function social_topic_block_view_alter(array &$build, BlockPluginInterface $block): void {
   // @todo check out why this happens, is this is a views bug?
   if (isset($build['#plugin_id']) && $build['#plugin_id'] === 'views_exposed_filter_block:topics-page_profile') {
     $build['#configuration']['label'] = $build['#configuration']['views_label'];
@@ -162,21 +163,23 @@ function social_topic_block_view_alter(array &$build, BlockPluginInterface $bloc
 /**
  * Implements hook_views_query_alter().
  */
-function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  if ($view->id() == 'topics' && $view->getDisplay()->display['id'] == 'page_profile') {
+function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $query): void {
+  /** @var \Drupal\views\Plugin\views\query\Sql $query */
+  if ($view->id() === 'topics' && $view->getDisplay()->display['id'] === 'page_profile') {
     $account_uid = \Drupal::routeMatch()->getParameter('user');
     $current_uid = \Drupal::currentUser()->id();
-    if ($view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
-      $query->where[1]['conditions'][] = [
-        'field' => 'node_field_data.status',
-        'value' => NodeInterface::PUBLISHED,
-        'operator' => '=',
-      ];
+    if ($view->exposed_raw_input['status'] === NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
+      $query->addWhere(
+        1,
+        'node_field_data.status',
+        NodeInterface::PUBLISHED,
+        '='
+      );
     }
   }
   // Only show the unpublished option when you are member of the group.
   // You can't place content in a group you are not a member of anyway.
-  if ($view->id() == 'group_topics' && $view->getDisplay()->display['id'] == 'page_group_topics') {
+  if ($view->id() === 'group_topics' && $view->getDisplay()->display['id'] === 'page_group_topics') {
     $group_from_route = _social_group_get_current_group();
     $membership = FALSE;
 
@@ -190,12 +193,13 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
 
     // Needs 1 and NODE_PUBLISHED, because it can be TRUE ( default ) or "1"
     // (see form alter when published is selected).
-    if ($view->exposed_raw_input['status'] == "1" || $view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || !$membership) {
-      $query->where[1]['conditions'][] = [
-        'field' => 'node_field_data_group_relationship_field_data.status',
-        'value' => NodeInterface::PUBLISHED,
-        'operator' => '=',
-      ];
+    if ($view->exposed_raw_input['status'] === "1" || $view->exposed_raw_input['status'] === NodeInterface::PUBLISHED || !$membership) {
+      $query->addWhere(
+        1,
+        'node_field_data_group_relationship_field_data.status',
+        NodeInterface::PUBLISHED,
+        '='
+      );
     }
   }
 }
@@ -212,7 +216,7 @@ function social_topic_social_tagging_type_alter(array &$items): void {
  *
  * Adds the "Create Topic" link to the content creation menu.
  */
-function social_topic_social_user_account_header_create_links($context) {
+function social_topic_social_user_account_header_create_links(array $context): array {
   $link = Link::createFromRoute((new TranslatableMarkup('New Topic')), 'node.add', [
     'node_type' => 'topic',
   ]);
@@ -234,7 +238,7 @@ function social_topic_social_user_account_header_create_links($context) {
  *
  * Adds the "View my topics" link to the user menu.
  */
-function social_topic_social_user_account_header_account_links(array $context) {
+function social_topic_social_user_account_header_account_links(array $context): array {
   // We require a user for this link.
   if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
     return [];
@@ -259,14 +263,14 @@ function social_topic_social_user_account_header_account_links(array $context) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_topic_form_node_topic_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_topic_form_node_topic_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   social_topic_widget_alter($form);
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_topic_form_node_topic_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_topic_form_node_topic_edit_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   social_topic_widget_alter($form);
 }
 
@@ -276,8 +280,7 @@ function social_topic_form_node_topic_edit_form_alter(&$form, FormStateInterface
  * @param array $form
  *   Form array.
  */
-function social_topic_widget_alter(array &$form) {
-  /** @var \Drupal\Core\Config\ImmutableConfig $config */
+function social_topic_widget_alter(array &$form): void {
   $config = \Drupal::config('social_topic.settings');
 
   // Change the widget if more than X.
@@ -297,7 +300,7 @@ function social_topic_widget_alter(array &$form) {
  *
  * Implements hook_block_access().
  */
-function social_topic_block_access(Block $block, $operation, AccountInterface $account) {
+function social_topic_block_access(Block $block, string $operation, AccountInterface $account): \Drupal\Core\Access\AccessResultForbidden|AccessResultNeutral|AccessResult {
 
   if ($operation === 'view' && ($block->getPluginId() === 'views_exposed_filter_block:topics-page_profile' || $block->getPluginId() === 'views_block:topics-block_user_topics')) {
     // Here we're going to assume by default access is not granted.
@@ -320,14 +323,14 @@ function social_topic_block_access(Block $block, $operation, AccountInterface $a
 /**
  * Implements hook_social_follow_content_types_alter().
  */
-function social_topic_social_follow_content_types_alter(array &$types) {
+function social_topic_social_follow_content_types_alter(array &$types): void {
   $types[] = 'topic';
 }
 
 /**
  * Sets dynamic allowed values for the topic type icon field.
  */
-function social_topic_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+function social_topic_allowed_values_function(FieldStorageConfig $definition, mixed $cacheable): array {
   $theme_path = \Drupal::service('extension.list.theme')->getPath('socialbase');
   $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
 
@@ -342,7 +345,7 @@ function social_topic_allowed_values_function(FieldStorageConfig $definition, Co
 /**
  * Sets the default value for the topic type icon field.
  */
-function social_topic_default_value_function(ContentEntityInterface $entity, FieldDefinitionInterface $definition) {
+function social_topic_default_value_function(ContentEntityInterface $entity, FieldDefinitionInterface $definition): array {
   return [
     ['value' => 'icon-topic'],
   ];
@@ -351,7 +354,7 @@ function social_topic_default_value_function(ContentEntityInterface $entity, Fie
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_topic_form_taxonomy_term_topic_types_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_topic_form_taxonomy_term_topic_types_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   if (!isset($form['field_topic_type_icon'])) {
     return;
   }
@@ -377,7 +380,7 @@ function social_topic_form_taxonomy_term_topic_types_form_alter(&$form, FormStat
 /**
  * Ajax callback to change topic type icon.
  */
-function _social_topic_change_topic_icon_ajax(array $form, FormStateInterface $form_state) {
+function _social_topic_change_topic_icon_ajax(array $form, FormStateInterface $form_state): AjaxResponse {
   $response = new AjaxResponse();
 
   $icon = $form_state->getValue('field_topic_type_icon')[0]['value'];
@@ -397,7 +400,7 @@ function _social_topic_change_topic_icon_ajax(array $form, FormStateInterface $f
 /**
  * Implements hook_social_core_default_main_menu_links_alter().
  */
-function social_topic_social_core_default_main_menu_links_alter(array &$links) {
+function social_topic_social_core_default_main_menu_links_alter(array &$links): void {
   $link = \Drupal::entityTypeManager()->getStorage('menu_link_content')
     ->loadByProperties([
       'title' => 'All topics',

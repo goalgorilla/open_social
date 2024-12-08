@@ -27,14 +27,14 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * GroupAddBookBlock constructor.
@@ -59,7 +59,7 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -72,7 +72,7 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     return ['label_display' => FALSE];
   }
 
@@ -81,7 +81,7 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * Custom access logic to display the block.
    */
-  public function blockAccess(AccountInterface $account) {
+  public function blockAccess(AccountInterface $account): \Drupal\Core\Access\AccessResultForbidden|\Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultInterface {
     if ($this->moduleHandler->moduleExists('social_group')) {
       $group = _social_group_get_current_group();
     }

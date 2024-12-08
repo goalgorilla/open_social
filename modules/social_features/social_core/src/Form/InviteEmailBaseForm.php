@@ -35,7 +35,7 @@ class InviteEmailBaseForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     $instance = parent::create($container);
     $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->loggerFactory = $container->get('logger.factory');
@@ -46,14 +46,14 @@ class InviteEmailBaseForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'invite_email_base_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['users_fieldset'] = [
       '#type' => 'fieldset',
       '#tree' => TRUE,
@@ -100,13 +100,13 @@ class InviteEmailBaseForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
   }
 
   /**
    * Custom function to extract email addresses from a string.
    */
-  public function extractEmailsFrom($string) {
+  public function extractEmailsFrom(string $string): array {
     // Remove select2 ID parameter.
     $string = str_replace('$ID:', '', $string);
     preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $string, $matches);

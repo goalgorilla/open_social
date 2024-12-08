@@ -21,7 +21,7 @@ class ProfileLabelSubscriber implements EventSubscriberInterface {
    * @return mixed
    *   Returns request events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): mixed {
     $events[ProfileEvents::PROFILE_LABEL][] = ['overrideProfileLabel'];
     return $events;
   }
@@ -32,7 +32,7 @@ class ProfileLabelSubscriber implements EventSubscriberInterface {
    * @param \Drupal\profile\Event\ProfileLabelEvent $event
    *   The event.
    */
-  public function overrideProfileLabel(ProfileLabelEvent $event) {
+  public function overrideProfileLabel(ProfileLabelEvent $event): void {
     $profile = $event->getProfile();
 
     if ($profile instanceof Profile) {

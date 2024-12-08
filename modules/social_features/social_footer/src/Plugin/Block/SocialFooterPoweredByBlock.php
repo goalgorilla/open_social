@@ -30,14 +30,14 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The file storage.
    *
    * @var \Drupal\file\FileStorageInterface
    */
-  protected $storage;
+  protected FileStorageInterface $storage;
 
   /**
    * The extension service.
@@ -80,7 +80,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -94,7 +94,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     return parent::defaultConfiguration() + [
       'logo' => '',
       'text' => [
@@ -111,7 +111,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
   /**
    * {@inheritdoc}
    */
-  public function blockForm($form, FormStateInterface $form_state) {
+  public function blockForm($form, FormStateInterface $form_state): array {
     $config = $this->configuration;
 
     $default_scheme = $this->configFactory->get('system.file')
@@ -157,7 +157,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit($form, FormStateInterface $form_state) {
+  public function blockSubmit($form, FormStateInterface $form_state): void {
     $logo = '';
 
     if ($items = $form_state->getValue('logo')) {

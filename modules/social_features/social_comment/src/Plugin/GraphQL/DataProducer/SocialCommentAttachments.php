@@ -6,6 +6,10 @@ use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
+use Drupal\graphql\GraphQL\Buffers\EntityRevisionBuffer;
+use Drupal\graphql\GraphQL\Buffers\EntityUuidBuffer;
+use Drupal\social_graphql\GraphQL\ConnectionInterface;
 use Drupal\social_graphql\GraphQL\EntityConnection;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
 use Drupal\social_comment\Plugin\GraphQL\QueryHelper\CommentAttachmentsQueryHelper;
@@ -62,20 +66,23 @@ class SocialCommentAttachments extends EntityDataProducerPluginBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * {@inheritdoc}
    *
    * @codeCoverageIgnore
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('database')
+      $container->get('database'),
+      $container->get('graphql.buffer.entity'),
+      $container->get('graphql.buffer.entity_uuid'),
+      $container->get('graphql.buffer.entity_revision'),
     );
   }
 
@@ -100,16 +107,27 @@ class SocialCommentAttachments extends EntityDataProducerPluginBase {
     $pluginId,
     array $pluginDefinition,
     EntityTypeManagerInterface $entityTypeManager,
-    Connection $database
+    Connection $database,
+    EntityBuffer $graphqlEntityBuffer,
+    EntityUuidBuffer $graphqlEntityUuidBuffer,
+    EntityRevisionBuffer $graphqlEntityRevisionBuffer,
   ) {
-    parent::__construct($configuration, $pluginId, $pluginDefinition, $entityTypeManager);
+    parent::__construct(
+      $configuration,
+      $pluginId,
+      $pluginDefinition,
+      $entityTypeManager,
+      $graphqlEntityBuffer,
+      $graphqlEntityUuidBuffer,
+      $graphqlEntityRevisionBuffer
+    );
     $this->database = $database;
   }
 
   /**
    * Resolves the request to the requested values.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $parent
+   * @param EntityInterface $parent
    *   The conversation to fetch participants for.
    * @param int|null $first
    *   Fetch the first X results.
@@ -123,13 +141,13 @@ class SocialCommentAttachments extends EntityDataProducerPluginBase {
    *   Reverses the order of the data.
    * @param string $sortKey
    *   Key to sort by.
-   * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
+   * @param RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
+   * @return EntityConnection|ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    */
-  public function resolve(EntityInterface $parent, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(EntityInterface $parent, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata): EntityConnection|\Drupal\social_graphql\GraphQL\ConnectionInterface {
     $query_helper = new CommentAttachmentsQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $this->database, $parent);
     $metadata->addCacheableDependency($query_helper);
 

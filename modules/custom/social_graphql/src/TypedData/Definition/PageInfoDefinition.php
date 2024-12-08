@@ -13,8 +13,8 @@ class PageInfoDefinition extends ComplexDataDefinitionBase {
   /**
    * {@inheritdoc}
    */
-  public function getPropertyDefinitions() {
-    if (!isset($this->propertyDefinitions)) {
+  public function getPropertyDefinitions(): array {
+    if (count($this->propertyDefinitions) > 0) {
       $info = &$this->propertyDefinitions;
 
       $info['hasNextPage'] = DataDefinition::create('boolean')

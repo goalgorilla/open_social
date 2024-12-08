@@ -4,6 +4,7 @@ namespace Drupal\social_group\Form;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -25,21 +26,21 @@ class SocialGroupSettings extends ConfigFormBase {
    *
    * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
-  protected $groupRelationTypeManager;
+  protected GroupRelationTypeManagerInterface $groupRelationTypeManager;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs a \Drupal\system\ConfigFormBase object.
@@ -68,7 +69,7 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
@@ -80,7 +81,7 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'social_group.settings',
     ];
@@ -89,16 +90,16 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_group_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_group.settings');
-
+    /** @var \ArrayAccess $form */
     $form['permissions'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Group permissions'),
@@ -112,7 +113,7 @@ class SocialGroupSettings extends ConfigFormBase {
     ];
 
     foreach (array_keys($form['permissions']['#options']) as $permission) {
-      if ($this->hasPermission($permission)) {
+      if ($this->hasPermission((string) $permission)) {
         $form['permissions']['#default_value'][] = $permission;
       }
     }
@@ -165,14 +166,14 @@ class SocialGroupSettings extends ConfigFormBase {
         ],
       ],
     ];
-
+    /** @var array $form */
     return parent::buildForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     $content_types = Checkboxes::getCheckedCheckboxes($form_state->getValue([
       'cross_posting', 'content_types',
     ]));
@@ -189,7 +190,7 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     $config = $this->config('social_group.settings');
@@ -251,7 +252,7 @@ class SocialGroupSettings extends ConfigFormBase {
    * @return bool
    *   TRUE if permission is granted.
    */
-  protected function hasPermission($name) {
+  protected function hasPermission(string $name): bool {
     return !empty($this->config('social_group.settings')->get($name));
   }
 
@@ -261,7 +262,7 @@ class SocialGroupSettings extends ConfigFormBase {
    * @return array
    *   An array with options.
    */
-  private function getCrossPostingEntityTypesOptions() {
+  private function getCrossPostingEntityTypesOptions(): array {
     // The list of node types allowed for cross-posting in groups.
     // @todo maybe is better to create a list of entity bundles keyed by entity type.
     $content_types = ['topic', 'event'];
@@ -272,6 +273,7 @@ class SocialGroupSettings extends ConfigFormBase {
     foreach ($content_types as $bundle) {
       $plugin_id = 'group_node:' . $bundle;
       if (in_array($plugin_id, $group_content_types)) {
+        /** @var EntityInterface $node_type */
         $node_type = $this->entityTypeManager->getStorage('node_type')->load($bundle);
         $options[$bundle] = $node_type->label();
       }
@@ -286,7 +288,7 @@ class SocialGroupSettings extends ConfigFormBase {
    * @return array
    *   An array with options.
    */
-  private function getGroupTypesOptions() {
+  private function getGroupTypesOptions(): array {
     $group_types = $this->entityTypeManager->getStorage('group_type')->loadMultiple();
     foreach ($group_types as $id => $group_type) {
       $options[$id] = $group_type->label();

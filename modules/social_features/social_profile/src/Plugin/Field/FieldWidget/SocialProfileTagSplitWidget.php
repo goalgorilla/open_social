@@ -27,7 +27,7 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
    *
    * @var \Drupal\social_profile\SocialProfileTagServiceInterface
    */
-  protected $profileTagService;
+  protected SocialProfileTagServiceInterface $profileTagService;
 
   /**
    * {@inheritdoc}
@@ -44,7 +44,7 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
    * @param \Drupal\social_profile\SocialProfileTagServiceInterface $social_profile_tag_service
    *   The social profile tag service.
    */
-  protected function setSocialProfileTagService(SocialProfileTagServiceInterface $social_profile_tag_service) {
+  protected function setSocialProfileTagService(SocialProfileTagServiceInterface $social_profile_tag_service): void {
     $this->profileTagService = $social_profile_tag_service;
   }
 

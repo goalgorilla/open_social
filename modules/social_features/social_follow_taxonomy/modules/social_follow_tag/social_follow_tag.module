@@ -8,6 +8,7 @@
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
@@ -20,7 +21,7 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_theme().
  */
-function social_follow_tag_theme() {
+function social_follow_tag_theme(): array {
   return [
     'social_tagging_nosplit' => [
       'base hook' => 'social_tagging_nosplit',
@@ -74,7 +75,7 @@ function social_follow_tag_module_implements_alter(array &$implementations, stri
  *
  * {@inheritdoc}
  */
-function social_follow_tag_social_follow_taxonomy_terms_list_alter(array &$term_ids, $entity) {
+function social_follow_tag_social_follow_taxonomy_terms_list_alter(array &$term_ids, ContentEntityInterface $entity): array {
   /** @var \Drupal\node\Entity\Node $entity */
   if ($entity instanceof NodeInterface && $entity->hasField('social_tagging')) {
     if (!empty($entity->get('social_tagging')->getValue())) {
@@ -95,7 +96,7 @@ function social_follow_tag_social_follow_taxonomy_terms_list_alter(array &$term_
  * Implements hook_preprocess_HOOK().
  * {@inheritdoc}
  */
-function social_follow_tag_preprocess_social_tagging_split(&$variables) {
+function social_follow_tag_preprocess_social_tagging_split(array &$variables): void {
   if (!isset($variables['taghierarchy'])) {
     return;
   }
@@ -120,7 +121,7 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
         continue;
       }
       // Get current term parent.
-      $parents = $term_storage->loadParents($current_term->id());
+      $parents = $term_storage->loadParents((int) $current_term->id());
       if (!empty($parents)) {
         $wrapped_term = reset($parents);
       }
@@ -159,7 +160,7 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
  * Implements hook_preprocess_HOOK().
  * {@inheritdoc}
  */
-function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
+function social_follow_tag_preprocess_social_tagging_nosplit(array &$variables): void {
   if (!isset($variables['tags'])) {
     return;
   }
@@ -260,7 +261,7 @@ function social_follow_tag_preprocess_taxonomy_term__followers_count(array &$var
  * Implements hook_entity_update().
  * {@inheritdoc}
  */
-function social_follow_tag_entity_update(EntityInterface $entity) {
+function social_follow_tag_entity_update(EntityInterface $entity): void {
   $taxonomy_ids = [];
   $original_taxonomy_ids = [];
 

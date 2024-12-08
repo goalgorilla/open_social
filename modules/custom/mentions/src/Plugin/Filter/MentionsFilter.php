@@ -125,7 +125,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     $entity_type_manager = $container->get('entity_type.manager');
     $renderer = $container->get('renderer');
     $config = $container->get('config.factory');

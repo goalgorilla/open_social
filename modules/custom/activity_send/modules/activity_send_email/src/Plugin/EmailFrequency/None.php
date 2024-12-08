@@ -22,6 +22,6 @@ class None extends EmailFrequencyBase {
   /**
    * {@inheritdoc}
    */
-  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL) {}
+  public function processItem(Activity $activity, Message $message, User $target, ?string $body_text = NULL): void {}
 
 }

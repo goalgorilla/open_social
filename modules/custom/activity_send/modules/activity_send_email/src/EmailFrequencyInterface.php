@@ -18,7 +18,7 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    * @return string
    *   The name of the email frequency.
    */
-  public function getName();
+  public function getName(): string;
 
   /**
    * Return the weight of the frequency option.
@@ -26,7 +26,7 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    * @return int
    *   The weight of the frequency option.
    */
-  public function getWeight();
+  public function getWeight(): int;
 
   /**
    * Return the interval of the email frequency in seconds.
@@ -34,7 +34,7 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    * @return int
    *   The interval in seconds.
    */
-  public function getInterval();
+  public function getInterval(): int;
 
   /**
    * Processes an activity item.
@@ -48,6 +48,6 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    * @param string|null $body_text
    *   The output text of message.
    */
-  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL);
+  public function processItem(Activity $activity, Message $message, User $target, ?string$body_text = NULL): void ;
 
 }

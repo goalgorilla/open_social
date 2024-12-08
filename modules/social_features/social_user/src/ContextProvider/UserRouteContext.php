@@ -77,7 +77,7 @@ class UserRouteContext implements ContextProviderInterface {
    * @return \Drupal\user\UserInterface|null
    *   A user entity if one could be found, NULL otherwise.
    */
-  public function getUserFromRoute() {
+  public function getUserFromRoute(): ?UserInterface {
     $route_match = $this->currentRouteMatch;
 
     // See if the route has a user parameter and try to retrieve it.
@@ -85,7 +85,8 @@ class UserRouteContext implements ContextProviderInterface {
       if ($account instanceof UserInterface) {
         return $account;
       }
-      elseif (is_numeric($account)) {
+
+      if (is_numeric($account)) {
         $account = $this->userStorage->load($account);
 
         if ($account instanceof UserInterface) {
@@ -93,12 +94,14 @@ class UserRouteContext implements ContextProviderInterface {
         }
       }
     }
+
+    return NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getAvailableContexts() {
+  public function getAvailableContexts(): array {
     return [
       'user' => EntityContext::fromEntityTypeId('user', $this->t('User entity from URL')),
       'social_user' => EntityContext::fromEntityTypeId('user', $this->t('Social User entity from URL')),

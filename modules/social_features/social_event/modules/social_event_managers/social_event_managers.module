@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -25,7 +26,7 @@ use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
 /**
  * Implements hook_preprocess_block().
  */
-function social_event_managers_preprocess_block(&$variables) {
+function social_event_managers_preprocess_block(array &$variables): void {
   /** @var \Drupal\node\Entity\Node $node */
   $node = \Drupal::routeMatch()->getParameter('node');
 
@@ -44,7 +45,7 @@ function social_event_managers_preprocess_block(&$variables) {
 /**
  * Implements hook_views_data_alter().
  */
-function social_event_managers_views_data_alter(array &$data) {
+function social_event_managers_views_data_alter(array &$data): void {
   // Create our own views VBO field for enrollments.
   $data['views']['social_views_bulk_operations_bulk_form_enrollments'] = [
     'title' => t('Social Views bulk operations for Enrollments'),
@@ -58,7 +59,7 @@ function social_event_managers_views_data_alter(array &$data) {
 /**
  * Implements hook_activity_send_email_notifications_alter().
  */
-function social_event_managers_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+function social_event_managers_activity_send_email_notifications_alter(array &$items, array $email_message_templates): void {
   // If a member_added_by_event_organiser template is enabled then we add it in
   // the "Message to Me" section.
   if (isset($email_message_templates['member_added_by_event_organiser'])) {
@@ -113,11 +114,11 @@ function social_event_managers_event_enrollment_access(EventEnrollment $event_en
 /**
  * Implements hook_block_access().
  */
-function social_event_managers_block_access(Block $block, $operation, AccountInterface $account) {
-  if ($operation == 'view' && $block->getPluginId() == 'views_block:managers-event_managers') {
+function social_event_managers_block_access(Block $block, string $operation, AccountInterface $account): AccessResultInterface {
+  if ($operation === 'view' && $block->getPluginId() === 'views_block:managers-event_managers') {
     // Exclude block form edit node page.
     $route_name = \Drupal::routeMatch()->getRouteName();
-    if ($route_name == 'entity.node.edit_form') {
+    if ($route_name === 'entity.node.edit_form') {
       return AccessResult::forbidden();
     }
   }
@@ -143,7 +144,7 @@ function social_event_managers_block_access(Block $block, $operation, AccountInt
 /**
  * Implements hook_link_alter().
  */
-function social_event_managers_link_alter(&$variables) {
+function social_event_managers_link_alter(array &$variables): void {
   /** @var \Drupal\Core\Url $url */
   $url = $variables['url'];
 
@@ -158,7 +159,7 @@ function social_event_managers_link_alter(&$variables) {
 /**
  * Implements hook_entity_access().
  */
-function social_event_managers_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function social_event_managers_entity_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
   // Event Manager & Organizers can view/delete/edit enrollments for events
   // they are organizing.
   if ($entity instanceof EventEnrollmentInterface) {
@@ -166,14 +167,17 @@ function social_event_managers_entity_access(EntityInterface $entity, $operation
       return AccessResult::allowedIf($entity instanceof EventEnrollmentInterface);
     }
   }
+
+  return AccessResult::neutral();
 }
 
 /**
  * Implements hook_form_alter().
  */
-function social_event_managers_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_event_managers_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Make sure we pass along the ccorrect view id, display id and node
   // parameter to our custom views bulk forms and redirects.
+  $display_id = '';
   if (isset($form['views_bulk_operations_bulk_form']) && isset($form['output'][0]['#view'])) {
     $view = &$form['output'][0]['#view'];
 
@@ -221,7 +225,7 @@ function social_event_managers_form_alter(&$form, FormStateInterface $form_state
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_event_managers_form_node_event_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_event_managers_form_node_event_edit_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // On event event edit node form we check if users can alter author.
   $node = \Drupal::routeMatch()->getParameter('node');
 
@@ -234,7 +238,7 @@ function social_event_managers_form_node_event_edit_form_alter(&$form, FormState
     // Remove authoring information for everybody on node event edit form.
     $form['author']['#access'] = FALSE;
 
-    // Check for permission. Otherwise you can't change the author.
+    // Check for permission. Otherwise, you can't change the author.
     // Unless you are the author / have the right permissions.
     if ($user->hasPermission('administer nodes') || $user->id() == $node->getOwnerId()) {
       $form['author']['#access'] = TRUE;
@@ -267,7 +271,7 @@ function social_event_managers_form_views_exposed_form_alter(array &$form, FormS
 /**
  * Implements hook_views_pre_view().
  */
-function social_event_managers_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+function social_event_managers_views_pre_view(ViewExecutable $view, string $display_id, array &$args): void {
   if ($view->id() === 'event_manage_enrollments') {
     // Remove fields from the Enrollment Management tab if the user is not a
     // manager or organiser.
@@ -293,7 +297,7 @@ function social_event_managers_views_pre_view(ViewExecutable $view, $display_id,
 /**
  * Implements hook_node_access_records().
  */
-function social_event_managers_node_access_records(NodeInterface $node) {
+function social_event_managers_node_access_records(NodeInterface $node): array {
   $grants = [];
   // Only for events.
   if (($node->getType() === 'event') && $event_managers_ids = array_column($node->get('field_event_managers')
@@ -323,7 +327,7 @@ function social_event_managers_node_access_records(NodeInterface $node) {
 /**
  * Implements hook_node_grants().
  */
-function social_event_managers_node_grants(AccountInterface $account, $op) {
+function social_event_managers_node_grants(AccountInterface $account, string $op): array {
 
   $grants = [];
 
@@ -333,7 +337,11 @@ function social_event_managers_node_grants(AccountInterface $account, $op) {
   $query->fields('em', ['entity_id']);
   $query->condition('em.field_event_managers_target_id', $account->id());
   // Add grants.
-  foreach ($query->execute()->fetchAllAssoc('entity_id') as $nid) {
+  $result = $query->execute();
+  if ($result === NULL) {
+    return [];
+  }
+  foreach ($result->fetchAllAssoc('entity_id') as $nid) {
     $grants['social_event_managers:' . $nid->entity_id][] = $account->id();
   }
 
@@ -357,14 +365,14 @@ function social_event_managers_node_grants(AccountInterface $account, $op) {
  * we are in operation update and if gnode already returns forbidden we are able
  * to return an allowed if user is an event manager.
  */
-function social_event_managers_node_access(NodeInterface $node, $op, AccountInterface $account) {
+function social_event_managers_node_access(NodeInterface $node,string  $op, AccountInterface $account): AccessResult {
   return SocialEventManagersAccessHelper::getEntityAccessResult($node, $op, $account);
 }
 
 /**
  * Implements hook_menu_local_tasks_alter().
  */
-function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
+function social_event_managers_menu_local_tasks_alter(array &$data, string $route_name): void {
   $can_show_managers_link = FALSE;
   $routes_to_check = _social_event_menu_local_tasks_routes();
 
@@ -405,7 +413,7 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_event_managers_form_node_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_event_managers_form_node_event_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Set author of event as event organiser automatically.
   $config = \Drupal::configFactory()
     ->getEditable('social_event_managers.settings');
@@ -430,13 +438,13 @@ function social_event_managers_form_node_event_form_alter(&$form, FormStateInter
 /**
  * Implements hook_activity_recipient_organizer_alter().
  */
-function social_event_managers_activity_recipient_organizer_alter(array &$recipients, Node $event, $data) {
+function social_event_managers_activity_recipient_organizer_alter(array &$recipients, Node $event, array $data): void {
   $receiver = '';
   $organizers = $event->get('field_event_managers')->getValue();
 
   if ($data['target_type'] === 'event_enrollment' && !empty($data['target_id'])) {
     $enrollment = EventEnrollment::load($data['target_id']);
-    $receiver = $enrollment->getAccount();
+    $receiver = $enrollment?->getAccount();
   }
 
   // If there are more organizers we want them to receive a notification too
@@ -463,7 +471,7 @@ function social_event_managers_activity_recipient_organizer_alter(array &$recipi
 /**
  * Implements hook_batch_alter().
  */
-function social_event_managers_batch_alter(&$batch) {
+function social_event_managers_batch_alter(array &$batch): void {
   if (!isset($batch['source_url'])) {
     return;
   }
@@ -502,7 +510,7 @@ function social_event_managers_batch_alter(&$batch) {
  * @param array $operations
  *   Performed operations array.
  */
-function _social_event_managers_action_batch_finish($success, array $results, array $operations) {
+function _social_event_managers_action_batch_finish(bool $success, array $results, array $operations): void {
   // When we do a bulk action on all the items in a view, across multiple pages,
   // the saveList function needs to be called. So after pre-populating the list
   // the actual action is performed on the entities.
@@ -559,7 +567,7 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
  * @return string
  *   Returns the batch action id.
  */
-function _social_event_managers_get_action_id(array &$batch) {
+function _social_event_managers_get_action_id(array &$batch): string {
   $form_state = &$batch['form_state'];
 
   $action_id = '';
@@ -595,9 +603,9 @@ function _social_event_managers_get_action_id(array &$batch) {
 /**
  * Implements hook_social_event_action_ACTION_ID_finish().
  */
-function social_event_managers_social_event_managers_action_social_event_managers_send_email_action_finish($success) {
+function social_event_managers_social_event_managers_action_social_event_managers_send_email_action_finish(bool $success): array {
   if ($success) {
-    // When the queue storage module is enabled the email is send in the
+    // When the queue storage module is enabled the email is sent in the
     // background.
     if (\Drupal::moduleHandler()->moduleExists('social_queue_storage')) {
       return [
@@ -621,7 +629,7 @@ function social_event_managers_social_event_managers_action_social_event_manager
 /**
  * Implements hook_social_event_action_ACTION_ID_finish().
  */
-function social_event_managers_social_event_managers_action_social_event_managers_delete_event_enrollment_action_finish($success) {
+function social_event_managers_social_event_managers_action_social_event_managers_delete_event_enrollment_action_finish(bool $success): array {
   if ($success) {
     return [
       'singular' => '1 selected enrollee has been removed from the event successfully',
@@ -638,7 +646,7 @@ function social_event_managers_social_event_managers_action_social_event_manager
 /**
  * Add node ID to the route of action confirmation step.
  */
-function _social_event_managers_views_bulk_operations_bulk_form_submit($form, FormStateInterface $form_state) {
+function _social_event_managers_views_bulk_operations_bulk_form_submit(array $form, FormStateInterface $form_state): void {
   $node = '';
 
   /** @var \Drupal\Core\Url|null $url */
@@ -681,7 +689,7 @@ function _social_event_managers_views_bulk_operations_bulk_form_submit($form, Fo
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_event_managers_preprocess_views_view(&$variables) {
+function social_event_managers_preprocess_views_view(array &$variables): void {
   if (!\Drupal::moduleHandler()->moduleExists('social_event_invite')) {
     /** @var \Drupal\views\ViewExecutable $view */
     $view = &$variables['view'];
@@ -697,10 +705,11 @@ function social_event_managers_preprocess_views_view(&$variables) {
 
       $block = \Drupal::entityTypeManager()->getStorage('block')
         ->load('socialblue_local_actions');
-
-      $variables['header']['actions'] = \Drupal::entityTypeManager()
-        ->getViewBuilder('block')
-        ->view($block);
+      if ($block !== NULL) {
+        $variables['header']['actions'] = \Drupal::entityTypeManager()
+          ->getViewBuilder('block')
+          ->view($block);
+      }
     }
   }
 

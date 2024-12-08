@@ -92,7 +92,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -108,7 +108,8 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public function processItem(ActivityInterface $activity, MessageInterface $message, User $target, $body_text = NULL) {
+  public function processItem(ActivityInterface $activity, MessageInterface $message, User $target, ?string $body_text = NULL): void {
+    /** @var \Drupal\social_user\Entity\User $target */
     // If the user is blocked, we don't want to process this item further.
     if ($target->isBlocked() || $activity->getRelatedEntity() === NULL) {
       return;
@@ -165,11 +166,11 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
    * @param string $subject
    *   The email subject.
    */
-  protected function sendEmail(string $body_text, string $langcode, User $target, string $subject = '') {
+  protected function sendEmail(string $body_text, string $langcode, User $target, string $subject = ''): void {
     $params = [];
     // Translating frequency instance in the language of the user.
     $frequency_translated = $this->t('@frequency_name', [
-      '@frequency_name' => $this->getName()->getUntranslatedString(),
+      '@frequency_name' => $this->getName(),
     ],
       ['langcode' => $langcode]
     );

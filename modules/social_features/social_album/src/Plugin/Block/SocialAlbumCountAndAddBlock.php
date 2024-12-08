@@ -26,7 +26,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
   /**
    * The templates for labels with the number of entities.
    */
-  const ITEM = [
+  public const ITEM = [
     'count' => [
       'singular' => '@count album',
       'plural' => '@count albums',
@@ -38,7 +38,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Constructs a SocialAlbumCountAndAddBlock object.
@@ -66,7 +66,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -85,6 +85,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
       return $build;
     }
 
+    /** @var \Drupal\views\ViewExecutable $view */
     $view = Views::getView('albums');
     $view->setArguments([$this->routeMatch->getRawParameter($properties['type'])]);
     $view->execute($properties['display']);

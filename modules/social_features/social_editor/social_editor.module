@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_element_info_alter().
  */
-function social_editor_element_info_alter(array &$types) {
+function social_editor_element_info_alter(array &$types): void {
   // Our process callback must run directly after TextFormat::processFormat().
   if (isset($types['text_format']) && isset($types['text_format']['#process'])) {
     $search_value = ['Drupal\filter\Element\TextFormat', 'processFormat'];
@@ -33,7 +33,7 @@ function social_editor_element_info_alter(array &$types) {
  *
  * @see \Drupal\filter\Element\TextFormat::processFormat()
  */
-function social_editor_filter_process_format(array &$element, FormStateInterface $form_state, array $complete_form) {
+function social_editor_filter_process_format(array &$element, FormStateInterface $form_state, array $complete_form): array {
   // Init.
   $disable_fields = FALSE;
 
@@ -84,7 +84,7 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
  *
  * @see editor_advanced_link_form_editor_link_dialog_alter()
  */
-function social_editor_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_editor_form_editor_link_dialog_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // This helps to keep the form clean and less confusing.
   if (isset($form['attributes'])) {
     // Unset un-required attribute's form elements.

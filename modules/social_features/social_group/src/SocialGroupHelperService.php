@@ -33,28 +33,28 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
    *
    * @var array
    */
-  protected $cache;
+  protected array $cache;
 
   /**
    * The database connection object.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  private $entityTypeManager;
+  private EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The renderer.
@@ -208,11 +208,12 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
         // This should always be TRUE but Drupal's interface implementations
         // are such that PHPStan needs some help.
         assert(is_int($uid));
+        /** @var array $cache */
         $cache[] = $uid;
       }
     }
 
-    return $cache;
+    return (array) $cache;
   }
 
   /**

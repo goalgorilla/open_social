@@ -29,11 +29,13 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
     bool $select2 = FALSE
   ): void {
     $duplicated_values = $value = [];
+    $invited_or_joined = TRUE;
 
     // Load the current Event enrollments so we can check duplicates.
     $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
 
     $node = \Drupal::routeMatch()->getParameter('node');
+    $nid = 0;
     if ($node instanceof NodeInterface) {
       // You can get nid and anything else you need from the node object.
       $nid = $node->id();
@@ -61,7 +63,7 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
           'handler' => $element['#selection_handler'],
         ];
 
-        /** @var /Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
+        /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
         $handler = \Drupal::service('plugin.manager.entity_reference_selection')->getInstance($options);
         $autocreate = (bool) $element['#autocreate'] && $handler instanceof SelectionWithAutocreateInterface;
         // Try to get a match from the input string when the user didn't use
@@ -81,9 +83,8 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
         ]);
 
         // If the social_event_invite module is enabled, we want to check if
-        // an user is already invited, but not really enrolled yet.
+        // a user is already invited, but not really enrolled yet.
         if (\Drupal::moduleHandler()->moduleExists('social_event_invite')) {
-          $invited_or_joined = TRUE;
           // So if this user is already invited or joined we keep them.
           $status_checks = [
             EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,

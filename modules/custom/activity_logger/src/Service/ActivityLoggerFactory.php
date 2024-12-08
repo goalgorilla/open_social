@@ -2,10 +2,15 @@
 
 namespace Drupal\activity_logger\Service;
 
+use Drupal\activity_creator\Plugin\ActivityContextInterface;
 use Drupal\activity_creator\Plugin\ActivityContextManager;
+use Drupal\activity_creator\Plugin\ActivityEntityConditionInterface;
 use Drupal\activity_creator\Plugin\ActivityEntityConditionManager;
 use Drupal\activity_logger\Entity\NotificationConfigEntityInterface;
+use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\FieldConfigInterface;
@@ -25,28 +30,28 @@ class ActivityLoggerFactory {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The condition manager.
    *
    * @var \Drupal\activity_creator\Plugin\ActivityEntityConditionManager
    */
-  protected $activityEntityConditionManager;
+  protected ActivityEntityConditionManager $activityEntityConditionManager;
 
   /**
    * The context manager.
    *
    * @var \Drupal\activity_creator\Plugin\ActivityContextManager
    */
-  protected $activityContextManager;
+  protected ActivityContextManager $activityContextManager;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * ActivityLoggerFactory constructor.
@@ -79,7 +84,7 @@ class ActivityLoggerFactory {
    * @param string $action
    *   Action string. Defaults to 'create'.
    */
-  public function createMessages(EntityBase $entity, $action): void {
+  public function createMessages(EntityBase $entity, string $action): void {
     // Get all messages that are responsible for creating items.
     $message_types = $this->getMessageTypes($action, $entity);
     // Loop through those message types and create messages.
@@ -115,22 +120,27 @@ class ActivityLoggerFactory {
       $new_message['field_message_destination'] = $destinations;
 
       if ($entity instanceof NotificationConfigEntityInterface) {
+        /** @var EntityBase $entity_base */
+        $entity_base = $entity;
         $new_message['field_message_related_object'] = [
-          'target_type' => $entity->getEntityTypeId(),
+          'target_type' => $entity_base->getEntityTypeId(),
           'target_id' => $entity->getUniqueId(),
         ];
         $new_message['created'] = $entity->getCreatedTime();
       }
       else {
+        /** @var EntityInterface $entity */
         $new_message['field_message_related_object'] = [
           'target_type' => $entity->getEntityTypeId(),
           'target_id' => $entity->id(),
         ];
         // The flagging entity does not implement getCreatedTime().
         if ($entity->getEntityTypeId() === 'flagging') {
+          /** @var ContentEntityInterface $entity */
           $new_message['created'] = $entity->get('created')->value;
         }
         else {
+          /** @var NotificationConfigEntityInterface $entity */
           $new_message['created'] = $entity->getCreatedTime();
         }
       }
@@ -159,20 +169,21 @@ class ActivityLoggerFactory {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function getMessageTypes($action, EntityBase $entity) {
+  public function getMessageTypes(string $action, EntityBase $entity): array {
     // Init.
-    $messagetypes = [];
+    $message_types = [];
 
     // Message type storage.
     $message_storage = $this->entityTypeManager->getStorage('message_template');
 
     // Check all enabled messages.
-    foreach ($message_storage->loadByProperties(['status' => '1']) as $key => $messagetype) {
-      $mt_entity_bundles = $messagetype->getThirdPartySetting('activity_logger', 'activity_bundle_entities', []);
-      $mt_action = $messagetype->getThirdPartySetting('activity_logger', 'activity_action', NULL);
-      $mt_context = $messagetype->getThirdPartySetting('activity_logger', 'activity_context', NULL);
-      $mt_destinations = $messagetype->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
-      $mt_entity_condition = $messagetype->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
+    foreach ($message_storage->loadByProperties(['status' => '1']) as $key => $message_type) {
+      /** @var ConfigEntityBase $message_type */
+      $mt_entity_bundles = $message_type->getThirdPartySetting('activity_logger', 'activity_bundle_entities', []);
+      $mt_action = $message_type->getThirdPartySetting('activity_logger', 'activity_action', NULL);
+      $mt_context = $message_type->getThirdPartySetting('activity_logger', 'activity_context', NULL);
+      $mt_destinations = $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
+      $mt_entity_condition = $message_type->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
 
       if ($mt_action !== $action) {
         continue;
@@ -187,18 +198,22 @@ class ActivityLoggerFactory {
         continue;
       }
 
+      /** @var ActivityEntityConditionInterface $entity_condition */
+      /** @var ContentEntityInterface $entity */
+      $entity_condition = $this->activityEntityConditionManager->createInstance($mt_entity_condition);
       if (
         !empty($mt_entity_condition)
         && $this->activityEntityConditionManager->hasDefinition($mt_entity_condition)
-        && !$this->activityEntityConditionManager->createInstance($mt_entity_condition)->isValidEntityCondition($entity)
+        && !$entity_condition->isValidEntityCondition($entity)
       ) {
         continue;
       }
 
+      /** @var ActivityContextInterface $context_plugin */
       $context_plugin = $this->activityContextManager->createInstance($mt_context);
       if ($context_plugin->isValidEntity($entity)) {
-        $messagetypes[$key] = [
-          'messagetype' => $messagetype,
+        $message_types[$key] = [
+          'messagetype' => $message_type,
           'bundle' => $entity_bundle_name,
           'destinations' => $mt_destinations,
           'context' => $mt_context,
@@ -207,7 +222,7 @@ class ActivityLoggerFactory {
     }
 
     // Return the message types that belong to the requested action.
-    return $messagetypes;
+    return $message_types;
   }
 
   /**

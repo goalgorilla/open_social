@@ -13,7 +13,7 @@ use Drupal\node\NodeInterface;
 /**
  * Implements hook_node_links_alter().
  */
-function social_book_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
+function social_book_node_links_alter(array &$links, NodeInterface $entity, array &$context): void {
   // Remove the printer-friendly version link.
   unset($links['book']['#links']['book_printer']);
   unset($links['book']['#links']['book_add_child']);
@@ -22,7 +22,7 @@ function social_book_node_links_alter(array &$links, NodeInterface $entity, arra
 /**
  * Implements hook_menu_local_tasks_alter().
  */
-function social_book_menu_local_tasks_alter(&$data, $route_name) {
+function social_book_menu_local_tasks_alter(array &$data, string $route_name): void {
   // Remove the outline from ALL pages.
   if (isset($data['tabs'][0]['entity.node.book_outline_form'])) {
     unset($data['tabs'][0]['entity.node.book_outline_form']);
@@ -35,7 +35,7 @@ function social_book_menu_local_tasks_alter(&$data, $route_name) {
  * Adds the "Create Book" link to the content creation menu if the user is
  * allowed to create new books.
  */
-function social_book_social_user_account_header_create_links($context): array {
+function social_book_social_user_account_header_create_links(array $context): array {
   $link = Link::createFromRoute((new TranslatableMarkup('New Book Page')), 'node.add', [
     'node_type' => 'book',
   ]);
@@ -54,7 +54,7 @@ function social_book_social_user_account_header_create_links($context): array {
 /**
  * Implements hook_social_core_compatible_content_forms_alter().
  */
-function social_book_social_core_compatible_content_forms_alter(&$compatible_content_type_forms) {
+function social_book_social_core_compatible_content_forms_alter(array &$compatible_content_type_forms): void {
   $compatible_content_type_forms[] = 'node_book_form';
   $compatible_content_type_forms[] = 'node_book_edit_form';
 }

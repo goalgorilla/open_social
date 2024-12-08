@@ -4,7 +4,10 @@ namespace Drupal\social_event\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\UserInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
+use Drupal\views\Plugin\views\join\JoinPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\Views;
 
 /**
@@ -19,30 +22,33 @@ class EventEnrolledOrCreated extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function adminSummary() {
+  public function adminSummary(): string {
+    return '';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function operatorForm(&$form, FormStateInterface $form_state) {
+  protected function operatorForm(&$form, FormStateInterface $form_state): array {
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): FALSE {
     return FALSE;
   }
 
   /**
    * Query for the activity stream on the account pages.
    */
-  public function query() {
-    // Profile user.
-    $account_profile = \Drupal::routeMatch()->getParameter('user');
+  public function query(): void {
+    /** @var Sql $query */
+    $query = $this->query;
 
-    if (!is_null($account_profile) && is_object($account_profile)) {
+    $account_profile = \Drupal::routeMatch()->getParameter('user');
+    if ($account_profile instanceof UserInterface) {
       $account_profile = $account_profile->id();
     }
 
@@ -54,8 +60,9 @@ class EventEnrolledOrCreated extends FilterPluginBase {
       'left_field' => 'nid',
       'operator' => '=',
     ];
+    /** @var JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('event_enrollment__field_event', $join, 'node_field_data');
+    $query->addRelationship('event_enrollment__field_event', $join, 'node_field_data');
 
     $configuration = [
       'table' => 'event_enrollment_field_data',
@@ -64,8 +71,9 @@ class EventEnrolledOrCreated extends FilterPluginBase {
       'left_field' => 'entity_id',
       'operator' => '=',
     ];
+    /** @var JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('event_enrollment_field_data', $join, 'node_field_data');
+    $query->addRelationship('event_enrollment_field_data', $join, 'node_field_data');
 
     $configuration = [
       'table' => 'event_enrollment__field_enrollment_status',
@@ -74,8 +82,9 @@ class EventEnrolledOrCreated extends FilterPluginBase {
       'left_field' => 'entity_id',
       'operator' => '=',
     ];
+    /** @var JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('event_enrollment__field_enrollment_status', $join, 'node_field_data');
+    $query->addRelationship('event_enrollment__field_enrollment_status', $join, 'node_field_data');
 
     $configuration = [
       'table' => 'event_enrollment__field_account',
@@ -84,8 +93,9 @@ class EventEnrolledOrCreated extends FilterPluginBase {
       'left_field' => 'entity_id',
       'operator' => '=',
     ];
+    /** @var JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('event_enrollment__field_account', $join, 'node_field_data');
+    $query->addRelationship('event_enrollment__field_account', $join, 'node_field_data');
 
     $or_condition = new Condition('OR');
 
@@ -101,13 +111,15 @@ class EventEnrolledOrCreated extends FilterPluginBase {
     $enrolled_to_event->condition('event_enrollment__field_enrollment_status.field_enrollment_status_value', '1', '=');
     $or_condition->condition($enrolled_to_event);
 
-    $this->query->addWhere('enrolled_or_created', $or_condition);
+    $query->addWhere('enrolled_or_created', $or_condition);
+
+    $this->query = $query;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
 
     // Since the Stream is different per url.

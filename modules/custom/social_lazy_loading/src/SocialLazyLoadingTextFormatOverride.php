@@ -19,7 +19,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs the configuration override.
@@ -34,7 +34,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     $formats = [
@@ -67,7 +67,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
    * @param array $overrides
    *   An override configuration.
    */
-  protected function addFilterOverride($text_format, $convert_url, array &$overrides) {
+  protected function addFilterOverride(string $text_format, bool $convert_url, array &$overrides): void {
     $config_name = 'filter.format.' . $text_format;
 
     if ($convert_url) {
@@ -88,21 +88,21 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?\Drupal\Core\Config\StorableConfigBase {
     return NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialLazyLoadingTextFormatOverride';
   }
 

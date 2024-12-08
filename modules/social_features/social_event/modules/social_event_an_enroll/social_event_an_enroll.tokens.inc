@@ -10,7 +10,7 @@ use Drupal\Core\Render\BubbleableMetadata;
 /**
  * Implements hook_token_info().
  */
-function social_event_an_enroll_token_info() {
+function social_event_an_enroll_token_info(): array {
 
   $type = [
     'name' => t('Social Event AN Enroll'),
@@ -33,9 +33,9 @@ function social_event_an_enroll_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_event_an_enroll_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_event_an_enroll_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
-  if ($type == 'social_event_an_enroll' && !empty($data['node']) && !empty($data['token'])) {
+  if ($type === 'social_event_an_enroll' && !empty($data['node']) && !empty($data['token'])) {
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'enrolled_event':

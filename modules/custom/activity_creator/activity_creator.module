@@ -37,12 +37,10 @@ const ACTIVITY_STATUS_SEEN = 2;
  */
 function activity_creator_field_activity_status_allowed_values(): array {
 
-  $allowed_values = [
+  return [
     ACTIVITY_STATUS_RECEIVED => 'Received',
     ACTIVITY_STATUS_SEEN => 'Seen',
   ];
-
-  return $allowed_values;
 }
 
 /**
@@ -53,21 +51,19 @@ function activity_creator_field_activity_status_allowed_values(): array {
  */
 function activity_creator_field_activity_destinations_allowed_values(): array {
 
-  $allowed_values = [
+  return [
     'stream_profile' => 'Stream (profile)',
     'stream_home' => 'Stream (home)',
     'stream_group' => 'Stream (group)',
     'stream_explore' => 'Stream (explore)',
     'notifications' => 'Notifications',
   ];
-
-  return $allowed_values;
 }
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function activity_creator_message_insert(Message $entity) {
+function activity_creator_message_insert(Message $entity): void {
   // @todo Move all this logic to services (also in Queue).
   $mid = $entity->id();
   $message_template_id = $entity->getTemplate()->id();
@@ -171,11 +167,12 @@ function activity_creator_message_insert(Message $entity) {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function activity_creator_activity_insert(ActivityInterface $activity) {
+function activity_creator_activity_insert(ActivityInterface $activity): void {
   // We only care about status for activities when we're dealing with
   // notifications.
   if (in_array('notifications', $activity->getDestinations(), TRUE)) {
     // Get recipients.
+    /** @var Activity $activity */
     $recipients = $activity->getRecipient();
 
     if (is_array($recipients)) {
@@ -207,7 +204,7 @@ function activity_creator_activity_insert(ActivityInterface $activity) {
 /**
  * Implements hook_views_data().
  */
-function activity_creator_views_data() {
+function activity_creator_views_data(): array {
   $data['activity']['activity_visibility_access_filter'] = [
     'title' => t('Activity visibility access'),
     'filter' => [
@@ -257,7 +254,7 @@ function activity_creator_views_data() {
 /**
  * Implements hook_theme().
  */
-function activity_creator_theme() {
+function activity_creator_theme(): array {
   $items = [
     'activity' => [
       'render element' => 'elements',
@@ -271,7 +268,7 @@ function activity_creator_theme() {
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
-function activity_creator_theme_suggestions_activity(array $variables) {
+function activity_creator_theme_suggestions_activity(array $variables): array {
   $suggestions = [];
   $activity = $variables['elements']['#activity'];
   $sanitized_view_mode = str_replace('.', '_', $variables['elements']['#view_mode']);
@@ -288,7 +285,7 @@ function activity_creator_theme_suggestions_activity(array $variables) {
  *
  * Mark notifications as read.
  */
-function activity_creator_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+function activity_creator_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
   // Generate the output text for the user in it's selected language.
   if ($entity instanceof Activity && !empty($entity->get('field_activity_message')->target_id)) {
     $message = Message::load($entity->get('field_activity_message')->target_id);
@@ -306,7 +303,7 @@ function activity_creator_entity_view(array &$build, EntityInterface $entity, En
  *
  * Clear cache tags for related activities.
  */
-function activity_creator_entity_update(EntityInterface $entity) {
+function activity_creator_entity_update(EntityInterface $entity): void {
   _activity_creator_activity_for_entity_updater('update', $entity);
 }
 
@@ -315,7 +312,7 @@ function activity_creator_entity_update(EntityInterface $entity) {
  *
  * Delete activity items when related entities are deleted.
  */
-function activity_creator_entity_delete(EntityInterface $entity) {
+function activity_creator_entity_delete(EntityInterface $entity): void {
   _activity_creator_activity_for_entity_updater('delete', $entity);
 }
 
@@ -329,9 +326,8 @@ function activity_creator_entity_delete(EntityInterface $entity) {
  *
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
- * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _activity_creator_activity_for_entity_updater($action, EntityInterface $entity) {
+function _activity_creator_activity_for_entity_updater($action, EntityInterface $entity): void {
   if ($entity !== NULL) {
     // We never create activities for configuration entities but accessing
     // entity queries during configuration changes may cause errors.
@@ -368,7 +364,7 @@ function _activity_creator_activity_for_entity_updater($action, EntityInterface 
 /**
  * Implements hook_cron().
  */
-function activity_creator_cron() {
+function activity_creator_cron(): void {
   // Empty activity stream queues.
   activity_creator_empty_queue();
 }
@@ -376,7 +372,7 @@ function activity_creator_cron() {
 /**
  * Function that empties the activity queues.
  */
-function activity_creator_empty_queue() {
+function activity_creator_empty_queue(): void {
   // Activity queues.
   $queues = [
     'activity_creator_activities',
@@ -423,7 +419,7 @@ function activity_creator_empty_queue() {
  * @param string $view_mode_id
  *   The view mode to use in the activity entity reference field.
  */
-function activity_creator_set_entity_view_mode(string $entity_type_id, string $view_mode_id) {
+function activity_creator_set_entity_view_mode(string $entity_type_id, string $view_mode_id): void {
   /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $activity_display */
   $activity_display = \Drupal::service('entity_type.manager')
     ->getStorage('entity_view_display')
