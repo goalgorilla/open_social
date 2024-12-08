@@ -209,7 +209,7 @@ class ActivityNotifications extends ControllerBase {
         if (!empty($status)) {
           $query->condition('status', $status, 'IN');
         }
-        return $query->execute()->fetchCol();
+        return $query->execute()?->fetchCol();
       }
       catch (\Exception $exception) {
         // Log the exception to watchdog.

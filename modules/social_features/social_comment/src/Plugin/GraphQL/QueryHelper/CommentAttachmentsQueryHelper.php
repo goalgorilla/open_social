@@ -75,7 +75,7 @@ class CommentAttachmentsQueryHelper extends ConnectionQueryHelperBase {
     $query->addField('fu', 'fid');
     $query->condition('id', $this->entity->id());
     $query->condition('type', $this->entity->getEntityTypeId());
-    $fids = $query->execute()->fetchCol();
+    $fids = $query->execute()?->fetchCol();
 
     return $this->entityTypeManager->getStorage('file')
       ->getQuery()

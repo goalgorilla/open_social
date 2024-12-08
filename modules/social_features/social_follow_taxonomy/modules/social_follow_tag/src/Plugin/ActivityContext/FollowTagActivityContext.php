@@ -18,7 +18,7 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
   /**
    * Returns recipients from followed taxonomies.
    */
-  public function getRecipientsWhoFollowTaxonomy(array $related_entity, array $data) {
+  public function getRecipientsWhoFollowTaxonomy(array $related_entity, array $data): array {
     $recipients = [];
 
     $entity = $this->entityTypeManager->getStorage($related_entity['target_type'])
@@ -42,7 +42,7 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
       ->condition('entity_type', 'taxonomy_term')
       ->condition('entity_id', $tids, 'IN')
       ->groupBy('uid')
-      ->execute()->fetchCol();
+      ->execute()?->fetchCol();
 
     /** @var \Drupal\user\UserInterface[] $users */
     $users = $this->entityTypeManager->getStorage('user')->loadMultiple($uids);

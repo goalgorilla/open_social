@@ -292,7 +292,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
         $node_status[] = '0';
       }
       $query->condition('nfd.status', $node_status, 'IN');
-      $nids = $query->execute()->fetchCol();
+      $nids = $query->execute()?->fetchCol();
     }
 
     return array_unique($nids);
@@ -355,7 +355,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     }
     $query->condition('pfd.status', $post_status, 'IN');
 
-    $pids = $query->execute()->fetchCol();
+    $pids = $query->execute()?->fetchCol();
 
     return array_unique($pids);
   }
@@ -401,7 +401,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     }
     $query->condition('cfd.status', '1');
 
-    $cids = $query->execute()->fetchCol();
+    $cids = $query->execute()?->fetchCol();
 
     return array_unique($cids);
   }

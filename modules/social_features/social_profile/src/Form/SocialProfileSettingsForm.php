@@ -180,7 +180,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     $query->addField('p', 'profile_id');
     $query->condition('p.type', 'profile');
     $query->condition('p.status', '1');
-    $ids = $query->execute()->fetchCol();
+    $ids = $query->execute()?->fetchCol();
 
     if (!empty($ids)) {
       $cache_tags = [];
