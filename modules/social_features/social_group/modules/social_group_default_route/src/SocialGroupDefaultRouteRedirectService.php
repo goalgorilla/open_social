@@ -70,29 +70,19 @@ class SocialGroupDefaultRouteRedirectService {
    *   The group object.
    */
   public function doRedirect(ExceptionEvent|RequestEvent $event, SocialGroupInterface $group): void {
-    $route_name = $this->routeMatch->getRouteName();
-    // Check if current user is a member.
-    $route = $group->hasMember($this->currentUser) ?
+    $current_route = $this->routeMatch->getRouteName();
+    // Get default route for current user.
+    $default_route = $group->hasMember($this->currentUser) ?
       $this->getDefaultMemberRoute($group) :
       $this->getDefaultNonMemberRoute($group);
 
     // Determine the URL we want to redirect to.
-    $url = Url::fromRoute($route, ['group' => $group->id()]);
+    $url = Url::fromRoute($default_route, ['group' => $group->id()]);
 
     // If it's not set, set to canonical, or the current user has no access.
-    if ($route === $route_name) {
+    if ($default_route === $current_route || $url->access($this->currentUser) === FALSE) {
       // This basically means that the normal flow remains intact.
       return;
-    }
-
-    // If  current user has no access.
-    if ($url->access($this->currentUser) === FALSE) {
-      $route = $group->hasMember($this->currentUser) ?
-        self::GROUP_STREAM_ROUTE :
-        self::GROUP_ABOUT_ROUTE;
-
-      $url = Url::fromRoute($route, ['group' => $group->id()]);
-      $event->setResponse(new RedirectResponse($url->toString()));
     }
 
     // Redirect.
@@ -208,9 +198,29 @@ class SocialGroupDefaultRouteRedirectService {
    *   The array of routes.
    */
   public function getGroupDefaultRoutes(GroupInterface $group): array {
+    // Get available group default routes.
+    $available_member_routes = array_keys($this->getMemberRoutes($group));
+    $available_non_member_routes = array_keys($this->getNonMemberRoutes($group));
+    // Get all group routes provided by other modules.
     $group_bundles = $this->moduleHandler->invokeAll('social_group_default_route_group_types');
     $this->moduleHandler->alter('social_group_default_route_group_types', $group_bundles);
-    return $group_bundles[$group->bundle()] ?? [];
+    // Get the route names.
+    $default_member_route = $group_bundles[$group->bundle()][GroupLandingTabManagerInterface::MEMBER] ?? '';
+    $default_non_member_route = $group_bundles[$group->bundle()][GroupLandingTabManagerInterface::NON_MEMBER] ?? '';
+    // Check if the default routes are available.
+    $member_route = in_array($default_member_route, $available_member_routes) ? $default_member_route : '';
+    $non_member_route = in_array($default_non_member_route, $available_non_member_routes) ? $default_non_member_route : '';
+
+    $result = [];
+    if ($member_route) {
+      $result[GroupLandingTabManagerInterface::MEMBER] = $member_route;
+    }
+
+    if ($non_member_route) {
+      $result[GroupLandingTabManagerInterface::NON_MEMBER] = $non_member_route;
+    }
+
+    return $result;
   }
 
   /**
