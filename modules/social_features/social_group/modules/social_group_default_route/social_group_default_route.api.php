@@ -28,7 +28,8 @@ function hook_social_group_default_route_types_alter(array $types) {
  * @return array
  *   An associative array of group bundles that shows if group tab management
  *    should be applied and the default routes for applicable group bundle,
- *    keyed by group bundle.
+ *    keyed by group bundle. The route should be available as a "Landing Tab"
+ *    for the provided group type, otherwise the route will be ignored.
  */
 function hook_social_group_default_route_group_types(): array {
   return [
@@ -43,7 +44,9 @@ function hook_social_group_default_route_group_types(): array {
  * Alter group bundles for which entities redirection will be applicable.
  *
  * @param array $types
- *   An associative array of group bundles.
+ *   An associative array of group bundles and default routes. The route should
+ *    be available as a "Landing Tab" for the provided group type, otherwise
+ *    the route will be ignored.
  */
 function hook_social_group_default_route_group_types_alter(array &$types): void {
   if (isset($types['flexible_group']) && !$types['flexible_group']) {
