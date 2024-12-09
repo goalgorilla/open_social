@@ -286,7 +286,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     $query->addField('p', 'profile_id');
     $query->condition('p.type', 'profile');
     $query->condition('p.status', 1);
-    $ids = $query->execute()->fetchCol();
+    $ids = $query->execute()?->fetchCol();
 
     $cache_tags = ['profile', 'profile_list', 'profile_view'];
     if (!empty($ids)) {

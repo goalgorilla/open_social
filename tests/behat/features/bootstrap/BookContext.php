@@ -1,7 +1,7 @@
 <?php
 
 namespace Drupal\social\Behat;
-
+// phpcs:ignoreFile Generic.Files.LineLength.TooLong
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
@@ -59,8 +59,10 @@ class BookContext extends RawMinkContext {
    * View the book creation page.
    *
    * @When /^(?:|I )view the book creation page$/
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    */
-  public function whenIViewTheBookCreationPage() : void {
+  public function iViewTheBookCreationPage() : void {
     $this->visitPath(self::CREATE_PAGE);
     $this->assertSession()->statusCodeEquals(200);
   }
@@ -74,6 +76,8 @@ class BookContext extends RawMinkContext {
    * | ...      | ...             | ...      | ...                      |  ...       | ...    |
    *
    * @Given books:
+   *
+   * @throws \Exception
    */
   public function createTopics(TableNode $topicsTable) : void {
     foreach ($topicsTable->getHash() as $bookHash) {
@@ -91,7 +95,7 @@ class BookContext extends RawMinkContext {
     $config = \Drupal::configFactory()->getEditable('book.settings');
 
     if ($config->isNew()) {
-      throw new \Exception("The book.settings configuration did not yet exist, is the 'book' module enabled?");
+      throw new \RuntimeException("The book.settings configuration did not yet exist, is the 'book' module enabled?");
     }
 
     $allowed_types = $config->get('allowed_types');
@@ -111,8 +115,11 @@ class BookContext extends RawMinkContext {
    *              | Description | It's the best |
    *
    * @When /^(?:|I )create a book using its creation page:$/
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   * @throws \Exception
    */
-  public function whenICreateABookUsingTheForm(TableNode $fields): void {
+  public function iCreateOneBookUsingTheForm(TableNode $fields): void {
     // Go to the form.
     $this->visitPath(self::CREATE_PAGE);
     $page = $this->getSession()->getPage();
@@ -143,7 +150,7 @@ class BookContext extends RawMinkContext {
       elseif ($key === "group") {
         $group_id = $this->getNewestGroupIdFromTitle($value);
         if ($group_id === NULL) {
-          throw new \Exception("Group '{$value}' does not exist.");
+          throw new \RuntimeException("Group '{$value}' does not exist.");
         }
         $page->selectFieldOption($field, $group_id);
         // Changing the group of a book updates the visibility settings so we
@@ -174,8 +181,10 @@ class BookContext extends RawMinkContext {
    * Check that a book that was just created is properly shown.
    *
    * @Then /^(?:|I )should see the book I just created$/
+   *
+   * @throws \Exception
    */
-  public function thenIShouldSeeTheBookIJustCreated() : void {
+  public function iShouldSeeTheCreatedBook() : void {
     $regions = [
       'title' => "Hero block",
       'description' => 'Main content',
@@ -206,8 +215,10 @@ class BookContext extends RawMinkContext {
    * Check that author information is not shown.
    *
    * @Then it should not show author information
+   *
+   * @throws \Exception
    */
-  public function  itShouldNotShowAuthorInformation() : void {
+  public function itShouldNotShowAuthorInformation() : void {
     $this->minkContext->assertNotRegionText("By", "Hero block");
     $this->minkContext->assertNotRegionText(" on ", "Hero block");
   }
@@ -220,7 +231,7 @@ class BookContext extends RawMinkContext {
   public function shouldBeOnBookCreationForm() : void {
     $status_code = $this->getSession()->getStatusCode();
     if ($status_code !== 200) {
-      throw new \Exception("The page status code {$status_code} dis not match 200 Ok.");
+      throw new \RuntimeException("The page status code {$status_code} dis not match 200 Ok.");
     }
 
     $this->minkContext->assertPageContainsText("Create a book page");
@@ -234,6 +245,10 @@ class BookContext extends RawMinkContext {
    *
    * @return \Drupal\node\Entity\Node
    *   The created book.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   private function bookCreate(array $book) : Node {
     // Filter out any empty strings that may be present due to the table format
@@ -248,13 +263,13 @@ class BookContext extends RawMinkContext {
     else {
       $account = user_load_by_name($book['author']);
       if (!$account) {
-        throw new \Exception("Could not load author");
+        throw new \RuntimeException("Could not load author");
       }
       if ($account->id() !== 0) {
         $book['uid'] = $account->id();
       }
       else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $book['author']));
+        throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $book['author']));
       }
     }
     unset($book['author']);
@@ -262,7 +277,7 @@ class BookContext extends RawMinkContext {
     if (isset($book['group'])) {
       $group_id = $this->getNewestGroupIdFromTitle($book['group']);
       if ($group_id === NULL) {
-        throw new \Exception("Group '{$book['group']}' does not exist.");
+        throw new \RuntimeException("Group '{$book['group']}' does not exist.");
       }
       unset($book['group']);
     }
@@ -270,13 +285,13 @@ class BookContext extends RawMinkContext {
     if (!isset($book['book']) || trim($book['book']) === "") {
       $book_id = 'new';
       if (isset($book['parent']) && trim($book['parent']) !== "") {
-        throw new \Exception("Can not set property 'parent' without specifying 'book'.");
+        throw new \RuntimeException("Can not set property 'parent' without specifying 'book'.");
       }
     }
     else {
       $book_id = $this->getBookIdFromTitle($book['book']);
       if ($book_id === NULL) {
-        throw new \Exception("Book '{$book['book']}' does not exist.");
+        throw new \RuntimeException("Book '{$book['book']}' does not exist.");
       }
     }
     unset($book['book']);
@@ -286,7 +301,7 @@ class BookContext extends RawMinkContext {
     $book_object = Node::create($book);
     $violations = $book_object->validate();
     if ($violations->count() !== 0) {
-      throw new \Exception("The book you tried to create is invalid: $violations");
+      throw new \RuntimeException("The book you tried to create is invalid: $violations");
     }
 
     $book_object->book = \Drupal::service('book.manager')->getLinkDefaults($book_object);
@@ -300,7 +315,7 @@ class BookContext extends RawMinkContext {
     if (isset($book['parent'])) {
       $parent_id = $this->getBookIdFromTitle($book['parent']);
       if ($parent_id === NULL) {
-        throw new \Exception("Book '{$book['parent']}' does not exist.");
+        throw new \RuntimeException("Book '{$book['parent']}' does not exist.");
       }
       $book_object->book['pid'] = $parent_id;
     }
@@ -314,7 +329,7 @@ class BookContext extends RawMinkContext {
         Group::load($group_id)?->addRelationship($book_object, "group_node:book");
       }
       catch (PluginNotFoundException $_) {
-        throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
+        throw new \RuntimeException("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
       }
     }
 
@@ -329,6 +344,9 @@ class BookContext extends RawMinkContext {
    *
    * @return int|null
    *   The integer ID of the book or NULL if no book could be found.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
   private function getBookIdFromTitle(string $title) : ?int {
     return $this->getNodeIdFromTitle("book", $title);

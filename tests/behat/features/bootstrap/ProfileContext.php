@@ -29,7 +29,7 @@ class ProfileContext extends RawMinkContext {
    *
    * @BeforeScenario
    */
-  public function gatherContexts(BeforeScenarioScope $scope) {
+  public function gatherContexts(BeforeScenarioScope $scope): void {
     $environment = $scope->getEnvironment();
 
     $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
@@ -37,6 +37,8 @@ class ProfileContext extends RawMinkContext {
 
   /**
    * Go to the profile page for the current user.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    *
    * @When I am viewing my profile
    */
@@ -48,6 +50,9 @@ class ProfileContext extends RawMinkContext {
 
   /**
    * Try to view a specific profile even if you might not have access.
+   *
+   * @param string $user
+   *   The username of the user to view.
    *
    * @When I try to view the profile of :user
    */
@@ -73,9 +78,16 @@ class ProfileContext extends RawMinkContext {
   /**
    * Create or update the profile for a user with a specific nickname.
    *
-   * Updates a profile in the form:
-   * | field_profile_first_name | John |
-   * | field_profile_last_name  | Doe  |
+   * @param string $username
+   *   The username of the user to update.
+   * @param \Behat\Gherkin\Node\TableNode $profileTable
+   *   The profile fields to update.
+   *
+   *   Updates a profile in the form:
+   *   | field_profile_first_name | John |
+   *   | field_profile_last_name  | Doe  |.
+   *
+   * @throws \Exception
    *
    * @Given user :username has a profile filled with:
    */
@@ -88,9 +100,14 @@ class ProfileContext extends RawMinkContext {
   /**
    * Create or update the profile for the current user.
    *
-   * Updates a profile in the form:
-   * | field_profile_first_name | John |
-   * | field_profile_last_name  | Doe  |
+   *  Updates a profile in the form:
+   *  | field_profile_first_name | John |
+   *  | field_profile_last_name  | Doe  |
+   *
+   * @param \Behat\Gherkin\Node\TableNode $profileTable
+   *   The profile fields to update.
+   *
+   * @throws \Exception
    *
    * @Given I have a profile filled with:
    * @Given have a profile filled with:
@@ -108,6 +125,8 @@ class ProfileContext extends RawMinkContext {
 
   /**
    * Go to the profile edit page for the current user.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    *
    * @When I am editing my profile
    */
@@ -191,6 +210,11 @@ class ProfileContext extends RawMinkContext {
    *
    * @return \Drupal\profile\Entity\Profile
    *   The updated profile.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Exception
    */
   private function profileUpdate(array $profile) : Profile {
     if (!isset($profile['owner'])) {
@@ -203,7 +227,7 @@ class ProfileContext extends RawMinkContext {
         $profile['uid'] ??= $account->id();
       }
       else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $profile['owner']));
+        throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $profile['owner']));
       }
       unset($profile['owner']);
     }
@@ -226,7 +250,7 @@ class ProfileContext extends RawMinkContext {
 
     $violations = $profile_object->validate();
     if ($violations->count() !== 0) {
-      throw new \Exception("The profile you tried to update is invalid: $violations");
+      throw new \RuntimeException("The profile you tried to update is invalid: $violations");
     }
     $profile_object->save();
 

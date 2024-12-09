@@ -296,11 +296,14 @@ class ActivityFactory extends ControllerBase {
     if (!empty($related_activities)) {
       // Update related activities.
       foreach ($related_activities as $related_activity) {
-        $destination = $related_activity->field_activity_destinations->value;
+        $destination = $related_activity->get('field_activity_destinations')->value;
         // If user already have related activity we remove it and create new.
         // And we also remove related activities from common streams.
-        if ($related_activity->getOwnerId() == $this->getActor($data) || in_array($destination, $common_destinations)) {
-          // @todo Consider if need to delete or unpublish old activites.
+        if (
+          in_array($destination, $common_destinations, FALSE)
+          || $related_activity->getOwnerId() === $this->getActor($data)
+        ) {
+          // @todo Consider if need to delete or unpublish old activities.
           $related_activity->delete();
         }
         else {

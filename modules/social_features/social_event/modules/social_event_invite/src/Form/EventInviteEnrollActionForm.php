@@ -19,14 +19,14 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'event_invite_enroll_action_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, Node $node = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, Node $node = NULL): array {
     $form = parent::buildForm($form, $form_state);
     $nid = $this->routeMatch->getRawParameter('node');
     $current_user = $this->currentUser();
@@ -44,20 +44,20 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       /** @var \Drupal\social_event\EventEnrollmentInterface[] $enrollments */
       $enrollments = $this->enrollmentStorage->loadByProperties($conditions);
 
-      // If the event is invite only and you have not been invited, return.
+      // If the event is invite only, and you have not been invited, return.
       // Unless you are the node owner or organizer.
       $enrollment = array_pop($enrollments);
       if ($enrollment === NULL) {
-        if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
+        if ((int) $node->get('field_enroll_method')->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
           && social_event_manager_or_organizer() === FALSE) {
           return [];
         }
       }
       else {
-        $enroll_request_status = $enrollment->field_request_or_invite_status->value;
+        $enroll_request_status = $enrollment->get('field_request_or_invite_status')->value;
 
         // If user got invited perform actions.
-        if ($enroll_request_status == '4') {
+        if ($enroll_request_status === '4') {
 
           $submit_text = $this->t('Accept');
 
@@ -136,7 +136,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     // invite only as option. Let's make it similar to a Group experience
     // where there is no button rendered.
     // We unset it here because in the parent form and this form
-    // a lot of times this button get's overridden.
+    // a lot of times this button gets overridden.
     if ($current_user->isAnonymous()) {
       unset($form['enroll_for_this_event']);
     }
@@ -147,7 +147,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
     $operation = $form_state->getValue('operation');
     $current_user = $this->currentUser();
@@ -162,7 +162,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     /** @var \Drupal\social_event\EventEnrollmentInterface[] $enrollments */
     $enrollments = $this->enrollmentStorage->loadByProperties($conditions);
 
-    // @todo also clear the breadcrumb cachetags.
+    // @todo also clear the breadcrumb cache-tags.
     // Invalidate cache for our enrollment cache tag in
     // social_event_node_view_alter().
     $tags = [];
@@ -177,15 +177,15 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
         // Delete any messages since it would show a 'successful enrollment'.
         $this->messenger()->deleteAll();
         // Accept the invite.
-        $enrollment->field_enrollment_status->value = '1';
-        $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
+        $enrollment->get('field_enrollment_status')->value = '1';
+        $enrollment->get('field_request_or_invite_status')->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
 
-        // If decline is chosen, set invite to declined.
+        // If decline is chosen, set invite to decline.
         if ($operation === 'decline') {
           // Delete any messages since it would show a 'successful enrollment'.
           $this->messenger()->deleteAll();
-          $enrollment->field_enrollment_status->value = '0';
-          $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+          $enrollment->get('field_enrollment_status')->value = '0';
+          $enrollment->get('field_request_or_invite_status')->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
         }
         $enrollment->save();
       }

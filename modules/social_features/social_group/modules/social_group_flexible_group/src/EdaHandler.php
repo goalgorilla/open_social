@@ -221,7 +221,7 @@ final class EdaHandler {
       $user = $this->currentUser;
     }
 
-    if ($this->routeName == 'entity.ultimate_cron_job.run') {
+    if ($this->routeName === 'entity.ultimate_cron_job.run') {
       $application = 'cron';
     }
 

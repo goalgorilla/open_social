@@ -123,12 +123,12 @@ class ContentBuilder implements ContentBuilderInterface {
     $block_content = $this->entityTypeManager->getStorage('block_content')
       ->load($block_id);
 
-    $plugin_id = $block_content->field_plugin_id->getValue()[0]['value'];
+    $plugin_id = $block_content->get('field_plugin_id')->getValue()[0]['value'];
     if ($definition = $this->contentBlockManager->getDefinition($plugin_id)) {
       // When the user didn't select any filter in the "Content selection" field
       // then the block base query will be built based on all filled filterable
       // fields.
-      if (($field = $block_content->field_plugin_field)->isEmpty()) {
+      if (($field = $block_content->get('field_plugin_field'))->isEmpty()) {
         // It could be that the plugin supports more fields than are currently
         // available, those are removed.
         $field_names = array_filter(
@@ -190,11 +190,11 @@ class ContentBuilder implements ContentBuilderInterface {
         // Apply our sorting logic.
         $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
         // Add range.
-        $query->range(0, $block_content->field_item_amount->value);
+        $query->range(0, $block_content->get('field_item_amount')->value);
 
         // Execute the query to get the results.
         $result = $query->execute();
-        $entities = $result !== NULL ? $result->fetchAllKeyed(0, 0) : NULL;
+        $entities = $result?->fetchAllKeyed(0, 0);
 
         if ($entities) {
           // Load all the topics so we can give them back.
@@ -232,16 +232,27 @@ class ContentBuilder implements ContentBuilderInterface {
    *
    * @param \Drupal\block_content\BlockContentInterface $block_content
    *   The block content where we get the settings from.
+   *
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   protected function getLink(BlockContentInterface $block_content) : array {
-    $field = $block_content->field_link;
+    $field = $block_content->get('field_link');
 
     if (!$field->isEmpty()) {
-      $url = Url::fromUri($field->uri);
-      $attributes = ['class' => ['btn', 'btn-flat']];
-      $url->setOption('attributes', $attributes);
+      // Get the first field item.
+      $first_item = $field->first();
+      if ($first_item !== NULL) {
+        $field_values = $first_item->getValue();
 
-      return Link::fromTextAndUrl($field->title, $url)->toRenderable();
+        // Ensure the necessary values are present.
+        if (!empty($field_values['uri']) && !empty($field_values['title'])) {
+          $url = Url::fromUri($field_values['uri']);
+          $attributes = ['class' => ['btn', 'btn-flat']];
+          $url->setOption('attributes', $attributes);
+
+          return Link::fromTextAndUrl($field_values['title'], $url)->toRenderable();
+        }
+      }
     }
 
     return [];
@@ -508,7 +519,7 @@ class ContentBuilder implements ContentBuilderInterface {
     // Define a lower limit for popular content so that content with a large
     // amount of comments/votes is not popular forever.
     // Sorry cool kids, your time's up.
-    if (!($field = $block_content->field_duration)->isEmpty()) {
+    if (!($field = $block_content->get('field_duration'))->isEmpty()) {
       $days = $field->getValue()[0]['value'];
       $popularity_time_start = strtotime("-$days days", $this->time->getRequestTime());
 
@@ -521,7 +532,7 @@ class ContentBuilder implements ContentBuilderInterface {
     }
 
     // Provide some values that are often used in the query.
-    $sort_by = $block_content->field_sorting->getValue()[0]['value'];
+    $sort_by = $block_content->get('field_sorting')->getValue()[0]['value'];
     $entity_type_id = $entity_type->id();
     $entity_id_key = $entity_type->getKey('id');
     $arguments = ['entity_type' => $entity_type_id];

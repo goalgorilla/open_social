@@ -15,7 +15,7 @@ use Drupal\user\EntityOwnerInterface;
 /**
  * Implements hook_token_info().
  */
-function social_activity_token_info() {
+function social_activity_token_info(): array {
   // The token additional information has been deprecated in 10.x.
   // It will be removed from 11.x.
   $tokens['additional_information'] = [
@@ -53,7 +53,7 @@ function social_activity_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_activity_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_activity_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
 
   if ($type === 'message' && !empty($data['message'])) {
@@ -73,8 +73,9 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
       /** @var \Drupal\social_activity\EmailTokenServices $email_token_services */
       $email_token_services = \Drupal::service('social_activity.email_token_services');
 
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
       $entity = $email_token_services->getRelatedObject($message);
-      if ($entity) {
+      if ($entity !== NULL) {
         $date_formatter = \Drupal::service('date.formatter');
         $date_format = 'social_long_date';
         $summary = '';
@@ -165,16 +166,11 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
         // Loading user data to user token as "object".
         $token_service = \Drupal::token();
         if ($author_tokens = $token_service->findWithPrefix($tokens, 'revision_author')) {
-          if ($message->field_message_related_object->isEmpty()) {
-            return $replacements;
-          }
-
-          // Get related content to change tokens.
-          $related_object_value = current($message->field_message_related_object->getValue());
+          $related_object_value = current($message->get('field_message_related_object')->getValue());
           $related_object_content = \Drupal::entityTypeManager()
             ->getStorage($related_object_value['target_type'])
             ->load($related_object_value['target_id']);
-          if (empty($related_object_content)) {
+          if ($related_object_content === NULL) {
             return $replacements;
           }
 

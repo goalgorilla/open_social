@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -25,7 +26,7 @@ use Drupal\message\Entity\Message;
 /**
  * Implements hook_ENTITY_TYPE_insert() for group_content_type.
  */
-function social_group_request_group_content_type_insert(GroupRelationshipTypeInterface $group_content_type) {
+function social_group_request_group_content_type_insert(GroupRelationshipTypeInterface $group_content_type): void {
   if ($group_content_type->getPluginId() === 'group_membership_request') {
     // Add Message field.
     FieldConfig::create([
@@ -43,7 +44,7 @@ function social_group_request_group_content_type_insert(GroupRelationshipTypeInt
 /**
  * Implements hook_entity_base_field_info().
  */
-function social_group_request_entity_base_field_info(EntityTypeInterface $entity_type) {
+function social_group_request_entity_base_field_info(EntityTypeInterface $entity_type): array {
   $fields = [];
 
   if ($entity_type->id() === 'group') {
@@ -90,7 +91,7 @@ function social_group_request_social_group_join_method_info(): array {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_group_request_group_content_insert(GroupRelationshipInterface $group_content) {
+function social_group_request_group_content_insert(GroupRelationshipInterface $group_content): void {
   $type = $group_content->getPluginId();
   $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasPlugin('group_membership_request');
 
@@ -129,8 +130,8 @@ function social_group_request_group_content_insert(GroupRelationshipInterface $g
 /**
  * Implements hook_module_implements_alter().
  */
-function social_group_request_module_implements_alter(&$implementations, $hook) {
-  if ($hook == 'group_content_insert') {
+function social_group_request_module_implements_alter(array &$implementations, string $hook): void {
+  if ($hook === 'group_content_insert') {
     // Remove the grequest implementation, we have a fallback in our hook.
     if (isset($implementations['grequest'])) {
       unset($implementations['grequest']);
@@ -141,7 +142,7 @@ function social_group_request_module_implements_alter(&$implementations, $hook) 
 /**
  * Implements hook_activity_send_email_notifications_alter().
  */
-function social_group_request_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+function social_group_request_activity_send_email_notifications_alter(array &$items, array $email_message_templates): void {
   if (isset($email_message_templates['request_to_join_a_group'])) {
     $items['what_manage']['templates'][] = 'request_to_join_a_group';
   }
@@ -240,13 +241,13 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
 /**
  * Implements hook_preprocess_activity().
  */
-function social_group_request_preprocess_activity(array &$variables) {
-  /** @var \Drupal\activity_creator\ActivityInterface $activity */
+function social_group_request_preprocess_activity(array &$variables): void {
+  /** @var \Drupal\activity_creator\Entity\Activity $activity */
   $activity = $variables['elements']['#activity'];
 
   if (!$activity->get('field_activity_message')->isEmpty()) {
     /** @var Drupal\message\Entity\Message $message */
-    $message = $activity->field_activity_message->entity;
+    $message = $activity->get('field_activity_message')->entity;
 
     if ($message instanceof Message && !$message->get('template')->isEmpty()) {
       switch ($message->template->target_id) {
@@ -275,7 +276,7 @@ function social_group_request_preprocess_activity(array &$variables) {
 /**
  * Implements hook_preprocess_page_title().
  */
-function social_group_request_preprocess_page_title(&$variables) {
+function social_group_request_preprocess_page_title(array &$variables): void {
   if (\Drupal::routeMatch()->getRouteName() !== 'view.group_pending_members.membership_requests') {
     return;
   }
@@ -315,8 +316,11 @@ function social_group_request_preprocess_page_title(&$variables) {
 /**
  * Implements hook_views_pre_view().
  */
-function social_group_request_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
-  if ($view->id() === 'group_pending_members' && $display_id === 'membership_requests') {
+function social_group_request_views_pre_view(ViewExecutable $view, string $display_id, array &$args): void {
+  if (
+    $display_id === 'membership_requests'
+    && $view->id() === 'group_pending_members'
+  ) {
     $options = [
       'id' => 'area_text_custom',
       'table' => 'views',
@@ -345,16 +349,17 @@ function social_group_request_views_pre_view(ViewExecutable $view, $display_id, 
 /**
  * Implements hook_block_access().
  */
-function social_group_request_block_access(Block $block, $operation, AccountInterface $account) {
-  if ($operation == 'view' && $block->getPluginId() == 'group_hero_block') {
+function social_group_request_block_access(Block $block, string $operation, AccountInterface $account): AccessResultInterface {
+  if ($operation === 'view' && $block->getPluginId() === 'group_hero_block') {
     $route_name = \Drupal::routeMatch()->getRouteName();
     $excluded_routes = [
       'grequest.group_request_membership_approve',
       'grequest.group_request_membership_reject',
     ];
 
-    if (in_array($route_name, $excluded_routes)) {
+    if (in_array($route_name, $excluded_routes, FALSE)) {
       return AccessResult::forbidden();
     }
   }
+  return AccessResult::neutral();
 }

@@ -18,7 +18,7 @@ trait GroupTrait {
    * @return int|null
    *   The integer ID of the group or NULL if no group could be found.
    */
-  protected function getNewestGroupIdFromTitle($group_title) : ?int {
+  protected function getNewestGroupIdFromTitle(string $group_title) : ?int {
     $query = \Drupal::entityQuery('group')
       ->accessCheck(FALSE)
       ->condition('label', $group_title);

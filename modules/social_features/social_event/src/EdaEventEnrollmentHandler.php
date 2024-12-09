@@ -279,6 +279,7 @@ final class EdaEventEnrollmentHandler {
       return;
     }
 
+
     // An event enrolment should always have an event and a user associated
     // with it.
     if (!$event_enrollment->getEvent() || !$event_enrollment->getAccountEntity()) {
@@ -286,6 +287,7 @@ final class EdaEventEnrollmentHandler {
     }
 
     // Build the event.
+    /** @var \CloudEvents\CloudEventInterface $event */
     $event = $this->fromEntity($event_enrollment, $event_type);
 
     // Dispatch to message broker.

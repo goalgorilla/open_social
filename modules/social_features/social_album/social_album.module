@@ -6,13 +6,16 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_album\Form\SocialAlbumImageForm;
 use Drupal\social_album\Form\SocialAlbumPostForm;
@@ -21,7 +24,7 @@ use Drupal\social_album\Plugin\Field\FieldWidget\SocialAlbumOptionsSelectWidget;
 /**
  * Implements hook_theme().
  */
-function social_album_theme($existing, $type, $theme, $path) {
+function social_album_theme(array $existing, string $type, string $theme, string $path): array {
   return [
     'social_album_post' => [
       'variables' => [
@@ -35,7 +38,7 @@ function social_album_theme($existing, $type, $theme, $path) {
 /**
  * Implements hook_entity_extra_field_info().
  */
-function social_album_entity_extra_field_info() {
+function social_album_entity_extra_field_info(): array {
   return [
     'node' => [
       'album' => [
@@ -53,7 +56,7 @@ function social_album_entity_extra_field_info() {
 /**
  * Implements hook_entity_view().
  */
-function social_album_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+function social_album_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
   if ($display->getComponent('social_album_images')) {
     $build['social_album_images'] = views_embed_view('albums', 'embed_album_overview');
   }
@@ -64,15 +67,19 @@ function social_album_entity_view(array &$build, EntityInterface $entity, Entity
  *
  * Adds the "Create Album" link to the content creation menu.
  */
-function social_album_social_user_account_header_create_links($context) {
+function social_album_social_user_account_header_create_links(array $context): array {
   // We require a user for this link with the permission to create albums.
   $status = \Drupal::config('social_album.settings')->get('status');
 
-  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)
-    || !$context['user']->hasPermission('create album content') || !$status) {
+  if (
+    empty($context['user'])
+    || !($context['user'] instanceof AccountInterface)
+    || !$status
+    || !$context['user']->hasPermission('create album content')
+  ) {
     return [];
   }
-  // Lets add the new create album button to the + dropdown.
+  // Let's add the new create album button to the + dropdown.
   return [
     'add_personal_album' => [
       '#type' => 'link',
@@ -87,7 +94,7 @@ function social_album_social_user_account_header_create_links($context) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_album_preprocess_block__social_post(&$variables) {
+function social_album_preprocess_block__social_post(array &$variables): void {
   if (
     \Drupal::routeMatch()->getRouteName() === 'social_album.post' &&
     ($content = \Drupal::service('social_post.helper')->buildCurrentUserImage())
@@ -102,7 +109,7 @@ function social_album_preprocess_block__social_post(&$variables) {
 /**
  * Implements hook_social_path_manager_group_tabs_alter().
  */
-function social_album_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface $cacheability) {
+function social_album_menu_local_tasks_alter(array &$data, string $route_name, RefinableCacheableDependencyInterface $cacheability): void {
   // Move Album to the end of the list.
   if (!empty($data['tabs'][0]['social_album.group'])) {
     $data['tabs'][0]['social_album.group']['#weight'] = 200;
@@ -112,7 +119,7 @@ function social_album_menu_local_tasks_alter(&$data, $route_name, RefinableCache
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_album_preprocess_node(&$variables) {
+function social_album_preprocess_node(array &$variables): void {
   /** @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
 
@@ -129,7 +136,7 @@ function social_album_preprocess_node(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_album_preprocess_views_view(&$variables) {
+function social_album_preprocess_views_view(array &$variables): void {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = $variables['view'];
 
@@ -144,7 +151,7 @@ function social_album_preprocess_views_view(&$variables) {
       $variables['#attached']['library'][] = $library[$view->current_display];
     }
 
-    if ($view->current_display == 'embed_album_cover') {
+    if ($view->current_display === 'embed_album_cover') {
       $variables['#attached']['library'][] = 'social_album/social_album_teaser';
     }
   }
@@ -153,7 +160,7 @@ function social_album_preprocess_views_view(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_album_preprocess_social_album_post(&$variables) {
+function social_album_preprocess_social_album_post(array &$variables): void {
   $items = [];
 
   foreach ($variables['items'] as $item) {
@@ -172,18 +179,18 @@ function social_album_preprocess_social_album_post(&$variables) {
 /**
  * Implements hook_ENTITY_TYPE_presave().
  */
-function social_album_post_presave(EntityInterface $entity) {
+function social_album_post_presave(ContentEntityInterface $entity): void {
   if (
     $entity->isNew() &&
     $entity->bundle() === 'photo' &&
-    !$entity->field_album->isEmpty() &&
-    $entity->field_recipient_group->isEmpty()
+    !$entity->get('field_album')->isEmpty() &&
+    $entity->get('field_recipient_group')->isEmpty()
   ) {
     $group_content = \Drupal::entityTypeManager()->getStorage('group_content')
-      ->loadByEntity($entity->field_album->entity);
+      ->loadByEntity($entity->get('field_album')->entity);
 
     if ($group_content) {
-      $entity->field_recipient_group->setValue(reset($group_content)->getGroup());
+      $entity->get('field_recipient_group')->setValue(reset($group_content)->getGroup());
     }
   }
 }
@@ -193,9 +200,9 @@ function social_album_post_presave(EntityInterface $entity) {
  */
 function _social_album_invalidate_tags(EntityInterface $entity): void {
   /** @var \Drupal\social_post\Entity\PostInterface $entity */
-  if ($entity->bundle() === 'photo' && !$entity->field_album->isEmpty()) {
+  if ($entity->bundle() === 'photo' && !$entity->get('field_album')->isEmpty()) {
     \Drupal::service('cache_tags.invalidator')->invalidateTags([
-      'node:' . $entity->field_album->entity->id(),
+      'node:' . $entity->get('field_album')->entity->id(),
       'user:' . $entity->getOwnerId(),
     ]);
   }
@@ -204,21 +211,21 @@ function _social_album_invalidate_tags(EntityInterface $entity): void {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_album_post_insert(EntityInterface $entity) {
+function social_album_post_insert(EntityInterface $entity): void {
   _social_album_invalidate_tags($entity);
 }
 
 /**
  * Implements hook_ENTITY_TYPE_update().
  */
-function social_album_post_update(EntityInterface $entity) {
+function social_album_post_update(EntityInterface $entity): void {
   _social_album_invalidate_tags($entity);
 }
 
 /**
  * Implements hook_ENTITY_TYPE_create_access().
  */
-function social_album_node_create_access(AccountInterface $account, array $context, $entity_bundle) {
+function social_album_node_create_access(AccountInterface $account, array $context, string $entity_bundle): AccessResultInterface {
   if (
     $entity_bundle === 'album' &&
     \Drupal::routeMatch()->getRouteName() === 'view.albums.page_albums_overview' &&
@@ -233,7 +240,7 @@ function social_album_node_create_access(AccountInterface $account, array $conte
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_album_node_insert(EntityInterface $entity) {
+function social_album_node_insert(EntityInterface $entity): void {
   /** @var \Drupal\node\NodeInterface $entity */
   if ($entity->bundle() === 'album') {
     \Drupal::service('cache_tags.invalidator')->invalidateTags([
@@ -245,14 +252,14 @@ function social_album_node_insert(EntityInterface $entity) {
 /**
  * Implements hook_social_core_node_default_title_route().
  */
-function social_album_social_core_node_default_title_route() {
+function social_album_social_core_node_default_title_route(): string {
   return 'social_album.post';
 }
 
 /**
  * Implements hook_social_node_message().
  */
-function social_album_social_node_message(NodeInterface $node) {
+function social_album_social_node_message(NodeInterface $node): ?TranslatableMarkup {
   if ($node->bundle() === 'album' && $node->isNew()) {
     return t('Album @title is successfully created. Now you can add images to this album.', [
       '@title' => $node->label(),
@@ -265,13 +272,16 @@ function social_album_social_node_message(NodeInterface $node) {
 /**
  * Implements hook_social_post_message_alter().
  */
-function social_album_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state) {
+function social_album_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state): void {
   if ($form_state->has('album')) {
-    $post = $form_state->getFormObject()->getEntity();
+    /** @var \Drupal\Core\Entity\ContentEntityForm $formObject */
+    $formObject = $form_state->getFormObject();
+    /** @var \Drupal\social_post\Entity\PostInterface $post */
+    $post = $formObject->getEntity();
 
-    if (!$post->field_album->isEmpty()) {
+    if (!$post->get('field_album')->isEmpty()) {
       $message = t('You have posted successfully in your new album @link', [
-        '@link' => $post->field_album->entity->toLink()->toString(),
+        '@link' => $post->get('field_album')->entity->toLink()->toString(),
       ]);
     }
   }
@@ -280,7 +290,7 @@ function social_album_social_post_message_alter(TranslatableMarkup &$message, Fo
 /**
  * Implements hook_entity_type_alter().
  */
-function social_album_entity_type_alter(array &$entity_types) {
+function social_album_entity_type_alter(array &$entity_types): void {
   /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
   $entity_types['post']
     ->setFormClass('album', SocialAlbumPostForm::class)
@@ -290,7 +300,7 @@ function social_album_entity_type_alter(array &$entity_types) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_album_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_album_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   if (
     $form['#id'] === 'views-exposed-form-search-content-page' &&
     isset($form['type']['#options']['album'])
@@ -302,12 +312,15 @@ function social_album_form_views_exposed_form_alter(&$form, FormStateInterface $
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_album_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_album_form_comment_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $route_name = \Drupal::routeMatch()->getRouteName();
 
   if ($is_image_view = $route_name === 'social_album.image.view') {
+    /** @var \Drupal\Core\Entity\ContentEntityForm $formObject */
+    $formObject = $form_state->getFormObject();
+
     /** @var \Drupal\comment\CommentInterface $comment */
-    $comment = $form_state->getFormObject()->getEntity();
+    $comment = $formObject->getEntity();
 
     $form['actions']['submit']['#attributes']['class'][] = 'post-index-' . $comment->getCommentedEntityId();
 
@@ -338,9 +351,9 @@ function social_album_form_comment_form_alter(&$form, FormStateInterface $form_s
     /** @var \Drupal\social_post\Entity\PostInterface $post */
     $post = \Drupal::routeMatch()->getParameter('entity');
 
-    if ($post->hasField('field_album') && !$post->field_album->isEmpty()) {
+    if ($post->hasField('field_album') && !$post->get('field_album')->isEmpty()) {
       /** @var \Drupal\node\NodeInterface $album */
-      $album = $post->field_album->entity;
+      $album = $post->get('field_album')->entity;
 
       if ($album->toUrl()->setAbsolute()->toString() === \Drupal::request()->headers->get('referer')) {
         $allow = TRUE;
@@ -356,7 +369,7 @@ function social_album_form_comment_form_alter(&$form, FormStateInterface $form_s
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_album_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_album_form_post_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   if (\Drupal::routeMatch()->getRouteName() === 'social_album.post') {
     if (isset($form['current_user_image'])) {
       unset($form['current_user_image']);
@@ -376,9 +389,12 @@ function social_album_form_post_form_alter(&$form, FormStateInterface $form_stat
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_album_form_social_post_entity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_album_form_social_post_entity_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  /** @var \Drupal\Core\Entity\ContentEntityForm $formObject */
+  $formObject = $form_state->getFormObject();
+
   /** @var \Drupal\social_post\Entity\PostInterface $post */
-  $post = $form_state->getFormObject()->getEntity();
+  $post = $formObject->getEntity();
 
   if (
     $post->bundle() === 'photo' &&
@@ -392,7 +408,7 @@ function social_album_form_social_post_entity_form_alter(&$form, FormStateInterf
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_album_form_node_album_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_album_form_node_album_edit_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // We don't allow changing albums group as the post and comments inside
   // won't be updated.
   // @todo update the content within the album if an album changes group types
@@ -405,15 +421,15 @@ function social_album_form_node_album_edit_form_alter(&$form, FormStateInterface
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_album_form_node_album_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_album_form_node_album_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $form['actions']['submit']['#submit'][] = '_social_album_create_post';
 }
 
 /**
  * Implements hook_field_group_form_process_alter().
  */
-function social_album_field_group_form_process_alter(array &$element, &$group, &$complete_form) {
-  if ($group->group_name === 'group_album_settings') {
+function social_album_field_group_form_process_alter(array &$element, GroupInterface $group, array &$complete_form): void {
+  if ($group->get('group_name')->getValue() === 'group_album_settings') {
     $element['#states'] = [
       'visible' => [
         ':input[name="groups"]' => [
@@ -427,7 +443,7 @@ function social_album_field_group_form_process_alter(array &$element, &$group, &
 /**
  * Implements hook_views_data().
  */
-function social_album_views_data() {
+function social_album_views_data(): array {
   return [
     \Drupal::entityTypeManager()->getStorage('post')->getEntityType()->getBaseTable() => [
       'post_operations' => [
@@ -448,14 +464,22 @@ function social_album_views_data() {
  *   An associative array containing the structure of the form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The current state of the form.
+ *
+ * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function _social_album_comment_submit(array $form, FormStateInterface $form_state) {
-  /** @var \Drupal\comment\CommentInterface $comment */
-  $comment = $form_state->getFormObject()->getEntity();
+function _social_album_comment_submit(array $form, FormStateInterface $form_state): void {
+  /** @var \Drupal\Core\Entity\ContentEntityForm $formObject */
+  $formObject = $form_state->getFormObject();
 
-  $url = $comment
-    ->getCommentedEntity()
-    ->toUrl()
+  /** @var \Drupal\comment\CommentInterface $comment */
+  $comment = $formObject->getEntity();
+
+  $commentedEntity = $comment->getCommentedEntity();
+  if ($commentedEntity === NULL) {
+    return;
+  }
+
+  $url = $commentedEntity->toUrl()
     ->setOption('fragment', 'comment-' . $comment->id());
 
   $form_state->setRedirectUrl($url);
@@ -469,10 +493,12 @@ function _social_album_comment_submit(array $form, FormStateInterface $form_stat
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The current state of the form.
  */
-function _social_album_create_post(array $form, FormStateInterface $form_state) {
+function _social_album_create_post(array $form, FormStateInterface $form_state): void {
   if ($form_state->getRedirect()) {
+    /** @var \Drupal\Core\Entity\ContentEntityForm $formObject */
+    $formObject = $form_state->getFormObject();
     $form_state->setRedirect('social_album.post', [
-      'node' => $form_state->getFormObject()->getEntity()->id(),
+      'node' => $formObject->getEntity()->id(),
     ]);
   }
 }
@@ -484,16 +510,22 @@ function _social_album_create_post(array $form, FormStateInterface $form_state) 
  *   An associative array containing the structure of the form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The current state of the form.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _social_album_post_submit(array $form, FormStateInterface $form_state) {
+function _social_album_post_submit(array $form, FormStateInterface $form_state): void {
   if ($form_state->hasValue('field_album')) {
     return;
   }
 
   $input = $form_state->getUserInput()['field_album'];
 
+  /** @var \Drupal\Core\Entity\ContentEntityForm $formObject */
+  $formObject = $form_state->getFormObject();
   /** @var \Drupal\social_post\Entity\PostInterface $post */
-  $post = $form_state->getFormObject()->getEntity();
+  $post = $formObject->getEntity();
 
   if ($input['value'] === '_add') {
     if (empty($input['title'])) {
@@ -518,7 +550,7 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
     $node->save();
 
     /** @var \Drupal\group\Entity\Group $group */
-    $group = $post->field_recipient_group->entity;
+    $group = $post->get('field_recipient_group')->entity;
     \Drupal::service('social_group.set_groups_for_node_service')->addGroupRelationship($node, $group);
 
     $post->set('field_album', $node->id());
@@ -535,7 +567,7 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
  *
  * Adds the "View my albums" link to the user menu.
  */
-function social_album_social_user_account_header_account_links(array $context) {
+function social_album_social_user_account_header_account_links(array $context): array {
   // We require a user for this link.
   if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
     return [];
@@ -562,7 +594,7 @@ function social_album_social_user_account_header_account_links(array $context) {
 /**
  * Implements hook_social_core_compatible_content_forms_alter().
  */
-function social_album_social_core_compatible_content_forms_alter(&$compatible_content_type_forms) {
+function social_album_social_core_compatible_content_forms_alter(array &$compatible_content_type_forms): void {
   $compatible_content_type_forms[] = 'node_album_form';
   $compatible_content_type_forms[] = 'node_album_edit_form';
 }

@@ -19,7 +19,7 @@ class SocialUserLoginBlock extends UserLoginBlock {
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $form = \Drupal::formBuilder()->getForm('Drupal\social_user\Form\SocialUserLoginForm');
     unset($form['name_or_mail']['#attributes']['autofocus']);
     // When unsetting field descriptions, also unset aria-describedby attributes

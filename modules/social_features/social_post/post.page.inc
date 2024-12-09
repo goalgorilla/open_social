@@ -59,7 +59,7 @@ function template_preprocess_post(array &$variables) {
     }
 
     // Visibility icon and label for template use.
-    $visibility = $post->field_visibility->value;
+    $visibility = $post->get('field_visibility')->value;
     $variables['visibility_icon'] = social_post_get_visibility_details($visibility);
     $variables['visibility_label'] = social_post_get_visibility_details($visibility, 'label');
 
