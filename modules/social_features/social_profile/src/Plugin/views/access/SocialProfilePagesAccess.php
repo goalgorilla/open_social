@@ -1,0 +1,36 @@
+<?php
+
+namespace Drupal\social_profile\Plugin\views\access;
+
+use Drupal\Core\Session\AccountInterface;
+use Drupal\views\Plugin\views\access\AccessPluginBase;
+use Symfony\Component\Routing\Route;
+
+/**
+ * Access plugin that provides access control to user information page.
+ *
+ * @ingroup views_access_plugins
+ *
+ * @ViewsAccess(
+ *   id = "profile_pages_access",
+ *   title = @Translation("Profile pages access"),
+ *   help = @Translation("Access to any profile page."),
+ * )
+ */
+class SocialProfilePagesAccess extends AccessPluginBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access(AccountInterface $account): bool {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function alterRouteDefinition(Route $route): void {
+    $route->setRequirement('_custom_access', '\Drupal\social_profile\Service\SocialProfileAccessService::access');
+  }
+
+}
