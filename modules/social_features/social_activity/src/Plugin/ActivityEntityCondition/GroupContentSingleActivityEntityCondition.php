@@ -3,6 +3,7 @@
 namespace Drupal\social_activity\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\social_group\CrossPostingService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -57,7 +58,7 @@ class GroupContentSingleActivityEntityCondition extends ActivityEntityConditionB
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) {
+  public function isValidEntityCondition(ContentEntityInterface $entity): bool {
     if (in_array($entity->getEntityTypeId(), ['group_content', 'post'])) {
       // If node is added only to one group then condition is valid.
       if (!$this->crossPostingService->nodeExistsInMultipleGroups($entity)) {

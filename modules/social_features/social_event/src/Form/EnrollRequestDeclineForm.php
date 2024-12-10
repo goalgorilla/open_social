@@ -102,7 +102,7 @@ class EnrollRequestDeclineForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('redirect.destination'),
       $container->get('current_user'),
@@ -190,7 +190,7 @@ class EnrollRequestDeclineForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     if (!empty($this->eventEnrollment)) {
-      $this->eventEnrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+      $this->eventEnrollment->get('field_request_or_invite_status')->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
       $this->eventEnrollment->save();
     }
 

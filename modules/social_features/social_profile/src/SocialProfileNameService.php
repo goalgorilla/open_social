@@ -129,13 +129,13 @@ class SocialProfileNameService {
     if ($this->moduleHandler->moduleExists('social_profile_privacy')) {
       // Get profile private fields list.
       $uid = $account->id();
-      $private_fields_list = social_profile_privacy_private_fields_list($uid);
+      $private_fields_list = social_profile_privacy_private_fields_list((int) $uid);
     }
 
-    $account_name_fields = SocialProfileNameService::getProfileNameFields();
+    $account_name_fields = self::getProfileNameFields();
 
     // We do nothing further if all fields of the Profile name are hidden.
-    if (count(array_intersect($private_fields_list, $account_name_fields)) == count($account_name_fields)) {
+    if (count(array_intersect($private_fields_list, $account_name_fields)) === count($account_name_fields)) {
       return $account_name;
     }
 
@@ -154,7 +154,8 @@ class SocialProfileNameService {
           $account_name_values[] = $name_field;
         }
       }
-      if (!empty($account_name_values) && !empty($full_name = implode(" ", $account_name_values))) {
+      $full_name = implode(" ", $account_name_values);
+      if (!empty($account_name_values) && !empty($full_name)) {
         $account_name = $full_name;
       }
     }

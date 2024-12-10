@@ -65,7 +65,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     $instance = parent::create($container);
     $instance->entityStorage = $instance->entityTypeManager->getStorage('event_enrollment');
     $instance->tempStoreFactory = $container->get('tempstore.private');
@@ -225,7 +225,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
           EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
           EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
         ];
-        if (in_array($enrollment->field_request_or_invite_status->value, $status_checks)) {
+        if (in_array($enrollment->get('field_request_or_invite_status')->value, $status_checks, FALSE)) {
           $enrollment->delete();
           unset($enrollments[$enrollment->id()]);
         }

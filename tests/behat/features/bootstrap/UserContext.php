@@ -20,12 +20,14 @@ class UserContext extends RawMinkContext {
    *  user_cancel_block: disable user, leave content
    *  user_cancel_block_unpublish: disable user, unpublish content
    *  user_cancel_reassign: delete user, reassign content to uid=0
-   *  user_cancel_delete: delete user, delete content
+   *  user_cancel_delete: delete user, delete content.
    *
    * @When I delete user :username
    * @When I delete user :username with method :method
+   *
+   * @throws \Exception
    */
-  public function cancelUser($username, $method = 'user_cancel_delete') {
+  public function cancelUser($username, $method = 'user_cancel_delete'): void {
     $uid = $this->userLoadByName($username);
     user_cancel([], $uid, $method);
 
@@ -39,8 +41,10 @@ class UserContext extends RawMinkContext {
    * View the user registration page.
    *
    * @When /^(?:|I )am on the registration page$/
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    */
-  public function whenIViewTheUserRegistrationPage(): void {
+  public function iViewTheUserRegistrationPage(): void {
     $this->visitPath(self::REGISTRATION_PAGE);
     $this->assertSession()->statusCodeEquals(200);
   }
@@ -51,19 +55,20 @@ class UserContext extends RawMinkContext {
    * Throws an error if user id with given username does not exist.
    *
    * @param string $username
-   *  Username string
-   * @return mixed
-   *  User account ID.
+   *   Username string.
+   *
+   * @return string|int|null
+   *   User account ID.
+   *
    * @throws \Exception
    */
-  private function userLoadByName(string $username) {
+  private function userLoadByName(string $username): string|int|null {
     $account = user_load_by_name($username);
     if ($account->id() !== 0) {
       return $account->id();
     }
-    else {
-      throw new \Exception(sprintf("User with username '%s' does not exist.", $username));
-    }
+
+    throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $username));
   }
 
 }

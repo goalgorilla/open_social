@@ -12,7 +12,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Implements hook_install().
  */
-function social_profile_fields_install() {
+function social_profile_fields_install(): void {
   // Set some default permissions.
   // Clear the entity field manager cached field definitions as the address
   // field overrides settings need to be applied.
@@ -33,7 +33,7 @@ function social_profile_fields_install() {
 /**
  * Function to set permissions.
  */
-function _social_profile_fields_set_permissions() {
+function _social_profile_fields_set_permissions(): void {
   user_role_grant_permissions('sitemanager', ['social profile fields change used profile fields']);
 }
 
@@ -43,21 +43,23 @@ function _social_profile_fields_set_permissions() {
  * @param string $index_id
  *   The search index ID.
  */
-function _social_profile_fields_update_search_index($index_id = 'social_users') {
+function _social_profile_fields_update_search_index(string $index_id = 'social_users'): void {
   /** @var \Drupal\search_api\IndexInterface $index */
   $index = Index::load($index_id);
 
   $logger = \Drupal::logger('social_profile_fields');
   $logger->info('Loaded search index');
 
-  // If currently enabled we will first disabled and enable the index.
+  // If currently enabled we will first disable and enable the index.
   if ($index !== NULL && $index->status()) {
     $logger->info('Search index exists');
 
     // Elevate permissions so we can index *all* the items.
     $accountSwitcher = \Drupal::service('account_switcher');
     $account = User::load(1);
-    $accountSwitcher->switchTo($account);
+    if ($account !== NULL) {
+      $accountSwitcher->switchTo($account);
+    }
 
     // Disable and enable the index so the tagging field is properly added.
     $index->disable()->save();
@@ -73,7 +75,7 @@ function _social_profile_fields_update_search_index($index_id = 'social_users') 
 /**
  * Create taxonomy terms for nationalities in the "Nationality" vocabulary.
  */
-function _social_profile_fields_nationalities() {
+function _social_profile_fields_nationalities(): void {
   $path = \Drupal::service('extension.list.module')->getPath('social_profile_fields') . '/content/';
   $data = Yaml::parseFile($path . 'nationalities.yml');
 

@@ -57,7 +57,7 @@ class InviteService {
    * @return array|string
    *   Array containing the route name and or invite amount.
    */
-  public function getInviteData($specific = '') {
+  public function getInviteData(string $specific = ''): array|string {
     // Empty by default, we will decorate this in our custom extensions.
     // these can decide on priority what the baseRoute should be.
     $route = [

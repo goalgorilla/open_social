@@ -17,7 +17,7 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
   /**
    * {@inheritdoc}
    */
-  public function getRoutes(EntityTypeInterface $entity_type) {
+  public function getRoutes(EntityTypeInterface $entity_type): array|\Symfony\Component\Routing\RouteCollection {
     $collection = parent::getRoutes($entity_type);
 
     $entity_type_id = $entity_type->id();
@@ -42,10 +42,10 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getCollectionRoute(EntityTypeInterface $entity_type) {
+  protected function getCollectionRoute(EntityTypeInterface $entity_type): ?Route {
     if ($entity_type->hasLinkTemplate('collection') && $entity_type->hasListBuilderClass()) {
       $entity_type_id = $entity_type->id();
-      $route = new Route($entity_type->getLinkTemplate('collection'));
+      $route = new Route((string) $entity_type->getLinkTemplate('collection'));
 
       $route
         ->setDefaults([
@@ -57,6 +57,8 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
 
       return $route;
     }
+
+    return NULL;
   }
 
   /**
@@ -68,7 +70,7 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getSettingsFormRoute(EntityTypeInterface $entity_type) {
+  protected function getSettingsFormRoute(EntityTypeInterface $entity_type): ?Route {
     if (!$entity_type->getBundleEntityType()) {
       $route = new Route("/admin/structure/{$entity_type->id()}/settings");
       $route
@@ -76,11 +78,13 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_form' => 'Drupal\social_post\Form\PostSettingsForm',
           '_title' => "{$entity_type->getLabel()} settings",
         ])
-        ->setRequirement('_permission', $entity_type->getAdminPermission())
+        ->setRequirement('_permission', (string) $entity_type->getAdminPermission())
         ->setOption('_admin_route', TRUE);
 
       return $route;
     }
+
+    return NULL;
   }
 
 }

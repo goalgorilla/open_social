@@ -20,14 +20,14 @@ class UserAnalyticsPrivateMessage extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader() {
+  public function getHeader(): string|\Drupal\Core\StringTranslation\TranslatableMarkup {
     return $this->t('Number of Private messages');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): int|string {
     $value = '';
 
     try {

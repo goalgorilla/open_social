@@ -40,7 +40,7 @@ class ImagePopupController extends ControllerBase {
    * @return \Drupal\social_post_album\Controller\ImagePopupController|static
    *   Instance of the class.
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('file_url_generator')
     );
@@ -67,8 +67,8 @@ class ImagePopupController extends ControllerBase {
     $storage = $this->entityTypeManager()->getStorage('file');
 
     // Show images in the correct order.
-    foreach ($post->field_post_image->getValue() as $file) {
-      if (!$found && $file['target_id'] == $first_fid) {
+    foreach ($post->get('field_post_image')->getValue() as $file) {
+      if (!$found && $file['target_id'] === $first_fid) {
         $found = TRUE;
       }
 

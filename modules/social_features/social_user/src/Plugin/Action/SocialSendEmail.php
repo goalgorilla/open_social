@@ -11,6 +11,8 @@ use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Utility\Token;
+use Drupal\social_queue_storage\Entity\QueueStorageEntity;
+use Drupal\social_user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsPreconfigurationInterface;
@@ -40,9 +42,9 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * The user storage.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $storage;
+  protected $entityTypeManager;
 
   /**
    * A logger instance.
@@ -106,11 +108,22 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, LanguageManagerInterface $language_manager, EmailValidator $email_validator, QueueFactory $queue_factory, $allow_text_format) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    Token $token,
+    EntityTypeManagerInterface $entity_type_manager,
+    LoggerInterface $logger,
+    LanguageManagerInterface $language_manager,
+    EmailValidator $email_validator,
+    QueueFactory $queue_factory,
+    bool $allow_text_format,
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->token = $token;
-    $this->storage = $entity_type_manager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->logger = $logger;
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
@@ -121,7 +134,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('token'),
       $container->get('entity_type.manager'),
@@ -145,7 +158,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $objects) {
+  public function executeMultiple(array $objects): array {
     // Array $objects contain all the entities of this bulk operation batch.
     // We want smaller queue items then this so we chunk these.
     // @todo make the chunk size configurable or dependable on the batch size.
@@ -176,9 +189,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL) {
-    /** @var \Drupal\user\UserInterface $entity */
-    return $entity->id();
+  public function execute(?UserInterface $entity = NULL): int|string|null {
+    return $entity?->id();
   }
 
   /**
@@ -189,9 +201,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * @param array $data
    *   The queue data.
    */
-  public function createQueueItem($name, array $data) {
+  public function createQueueItem(string $name, array $data): void {
     // Put the $data in the queue item.
-    /** @var \Drupal\Core\Queue\QueueInterface $queue */
     $queue = $this->queue->get($name);
     $queue->createItem($data);
   }
@@ -213,7 +224,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function buildPreConfigurationForm(array $form, array $values, FormStateInterface $form_state): array {
+  public function buildPreConfigurationForm(array $element, array $values, FormStateInterface $form_state): array {
     return [];
   }
 
@@ -231,7 +242,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * @return array
    *   The configuration form.
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form['reply'] = [
       '#type' => 'email',
       '#title' => $this->t('Reply-to'),
@@ -297,12 +308,13 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     parent::submitConfigurationForm($form, $form_state);
     // Clean form values.
     $form_state->cleanValues();
     // Get the queue storage entity and create a new entry.
-    $queue_storage = $this->storage->getStorage('queue_storage_entity');
+    $queue_storage = $this->entityTypeManager->getStorage('queue_storage_entity');
+    /** @var QueueStorageEntity $entity */
     $entity = $queue_storage->create([
       'name' => 'user_email_queue',
       'type' => 'email',

@@ -85,7 +85,7 @@ class TopicQueryHelper extends ConnectionQueryHelperBase {
         return array_map(
           fn (Node $entity) => new Edge(
             $entity,
-            new Cursor('node', $entity->id(), $this->sortKey, $this->getSortValue($entity))
+            new Cursor('node', (int) $entity->id(), $this->sortKey, $this->getSortValue($entity))
           ),
           $callback()
         );
@@ -102,7 +102,7 @@ class TopicQueryHelper extends ConnectionQueryHelperBase {
    * @return mixed
    *   The sort value.
    */
-  protected function getSortValue(Node $node) {
+  protected function getSortValue(Node $node): mixed {
     switch ($this->sortKey) {
       case 'CREATED_AT':
         return $node->getCreatedTime();

@@ -18,19 +18,19 @@ class PostVisibilityAccess extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function adminSummary() {
+  public function adminSummary(): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function operatorForm(&$form, FormStateInterface $form_state) {
+  protected function operatorForm(&$form, FormStateInterface $form_state): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): false {
     return FALSE;
   }
 
@@ -41,9 +41,12 @@ class PostVisibilityAccess extends FilterPluginBase {
    * system when this is implemented.
    * See https://www.drupal.org/node/777578
    */
-  public function query() {
+  public function query(): void {
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    $query = $this->query;
+
     $account = $this->view->getUser();
-    $this->query->addTable('post__field_visibility');
+    $query->addTable('post__field_visibility');
 
     $and_condition = new Condition('AND');
     $should_add_where_clause = FALSE;
@@ -56,8 +59,10 @@ class PostVisibilityAccess extends FilterPluginBase {
       $should_add_where_clause = TRUE;
     }
     if ($should_add_where_clause) {
-      $this->query->addWhere('visibility', $and_condition);
+      $query->addWhere('visibility', $and_condition);
     }
+
+    $this->query = $query;
   }
 
 }

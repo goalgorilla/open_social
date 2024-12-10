@@ -2,6 +2,7 @@
 
 namespace Drupal\social_follow_tag\Plugin\ActivityContext;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\social_follow_taxonomy\Plugin\ActivityContext\FollowTaxonomyActivityContext;
 use Drupal\user\UserInterface;
 
@@ -17,14 +18,16 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
 
   /**
    * Returns recipients from followed taxonomies.
+   * @throws \Exception
    */
-  public function getRecipientsWhoFollowTaxonomy(array $related_entity, array $data) {
+  public function getRecipientsWhoFollowTaxonomy(array $related_entity, array $data): array {
     $recipients = [];
 
+    /** @var ContentEntityInterface $entity */
     $entity = $this->entityTypeManager->getStorage($related_entity['target_type'])
       ->load($related_entity['target_id']);
 
-    if (!empty($entity)) {
+    if ($entity !== NULL) {
       $tids = $this->taxonomyTermsList($entity);
     }
 
@@ -42,7 +45,7 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
       ->condition('entity_type', 'taxonomy_term')
       ->condition('entity_id', $tids, 'IN')
       ->groupBy('uid')
-      ->execute()->fetchCol();
+      ->execute()?->fetchCol();
 
     /** @var \Drupal\user\UserInterface[] $users */
     $users = $this->entityTypeManager->getStorage('user')->loadMultiple($uids);
@@ -55,6 +58,7 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
       }
 
       // We don't send notifications to content creator.
+      /** @var \Drupal\node\NodeInterface $entity */
       if ($recipient->id() === $entity->getOwnerId()) {
         continue;
       }
@@ -68,7 +72,7 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
       }
 
       // Check if user have access to view node.
-      if (!$this->haveAccessToNode($recipient, $entity->id())) {
+      if (!$this->haveAccessToNode($recipient, (string) $entity->id())) {
         continue;
       }
 

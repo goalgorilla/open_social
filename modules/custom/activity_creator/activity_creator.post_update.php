@@ -6,15 +6,16 @@
  */
 
 use Drupal\Core\Site\Settings;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Migrate all the activity status information to new table.
  *
  * This is necessary as we have changed the logic of reading notifications
- * and marking them as seen. So, we have migrate the existing activity entries
- * to new table so as to avoid any missing notifications by users.
+ * and marking them as seen. So, we have migrated the existing activity entries
+ * to new table to avoid any missing notifications by users.
  */
-function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
+function activity_creator_post_update_8001_one_to_many_activities(array &$sandbox): TranslatableMarkup {
   // Fetching amount of data we need to process.
   // Runs only once per update.
   $connection = \Drupal::database();
@@ -27,7 +28,7 @@ function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
       ->fields('aur', ['entity_id', 'field_activity_recipient_user_target_id'])
       ->fields('asv', ['field_activity_status_value'])
       ->countQuery()
-      ->execute()->fetchField();
+      ->execute()?->fetchField();
 
     // Write total of entities need to be processed to $sandbox.
     $sandbox['total'] = $number_of_activities;
@@ -73,7 +74,7 @@ function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
 /**
  * Remove orphaned activities notification status.
  */
-function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox) {
+function activity_creator_post_update_8802_remove_orphaned_activities(array &$sandbox): void {
   $database = \Drupal::database();
 
   // On the first run, we gather all of our initial
@@ -85,10 +86,10 @@ function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox)
     // will be cached by the Batch API so we do not have to look up
     // this data again during each iteration of the batch.
     // Get all the activity ids from our notification table.
-    $activity_notification_ids = $database->select('activity_notification_status', 'ans')->fields('ans', ['aid'])->execute()->fetchCol();
+    $activity_notification_ids = $database->select('activity_notification_status', 'ans')->fields('ans', ['aid'])->execute()?->fetchCol();
 
     // Get activity ids from entity table.
-    $activity_ids = $database->select('activity', 'aid')->fields('aid', ['id'])->execute()->fetchCol();
+    $activity_ids = $database->select('activity', 'aid')->fields('aid', ['id'])->execute()?->fetchCol();
 
     // Now we initialize the sandbox variables.
     // These variables will persist across the Batch API’s subsequent calls
@@ -149,25 +150,29 @@ function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox)
 /**
  * Remove activities notification status if it's related entity not exist.
  */
-function activity_creator_post_update_8803_remove_activities_with_no_related_entities(&$sandbox) {
+function activity_creator_post_update_8803_remove_activities_with_no_related_entities(array &$sandbox): void {
   $database = \Drupal::database();
 
   if (!isset($sandbox['activities_id'])) {
     // Get activity ids from entity table.
-    $activity_ids = $database->select('activity', 'aid')->fields('aid', ['id'])->execute()->fetchCol();
+    $activity_ids = $database->select('activity', 'aid')->fields('aid', ['id'])->execute()?->fetchCol();
 
     // Get activity ids from activity__field_activity_entity table.
     // This table contains data of field_activity_entity which tells us about
     // any related entity to an activity.
     $afce_ids = $database->select('activity__field_activity_entity', 'afce')
       ->fields('afce', ['entity_id'])
-      ->execute()->fetchCol();
+      ->execute()?->fetchCol();
+
+    if ($afce_ids === NULL) {
+      $afce_ids = [];
+    }
 
     // 'count' is the number of total records we’ll be processing.
     $sandbox['count'] = 0;
 
     // We take store a diff of both the results which will contain the result
-    // of activity ids which doesn't have valid referenced entities any more.
+    // of activity ids which doesn't have valid referenced entities anymore.
     // We will remove them in batch later. Also, we are only checking
     // $activity_id to be not empty because $afce_ids is null, that means we
     // shall remove all activities as none of them will have valid referenced

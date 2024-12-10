@@ -10,7 +10,7 @@ use Drupal\Core\Database\Database;
 /**
  * Trigger clean up functions for orphaned posts.
  */
-function social_post_post_update_remove_orphaned_posts() {
+function social_post_post_update_remove_orphaned_posts(): void {
   $connection = Database::getConnection();
 
   // Inner select of all users for the WHERE clause.
@@ -22,10 +22,13 @@ function social_post_post_update_remove_orphaned_posts() {
     ->select('post_field_data', 'p')
     ->fields('p', ['id'])
     ->condition('user_id', $user_query, 'NOT IN')
-    ->execute()
-    ->fetchAll();
+    ->execute();
+    if ($result) {
+      $result = $result->fetchAll();
+    }
 
   $pids = [];
+    /** @var array $result */
   foreach ($result as $row) {
     $pids[] = $row->id;
   }
@@ -40,7 +43,7 @@ function social_post_post_update_remove_orphaned_posts() {
 /**
  * Grant permission to administer post entities to CM and SM.
  */
-function social_post_post_update_8601_administer_post_permissions() {
+function social_post_post_update_8601_administer_post_permissions(): void {
   user_role_grant_permissions('contentmanager', ['administer post entities']);
   user_role_grant_permissions('sitemanager', ['administer post entities']);
 }

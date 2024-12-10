@@ -21,21 +21,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class BlockIdFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
+class BlockIdFormatter extends FormatterBase {
 
   /**
    * The renderer service.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  private $renderer;
+  private RendererInterface $renderer;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * Construct a BlockIdFormatter object.
@@ -72,7 +72,7 @@ class BlockIdFormatter extends FormatterBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $plugin_id,
       $plugin_definition,
@@ -89,7 +89,7 @@ class BlockIdFormatter extends FormatterBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $elements = [];
     foreach ($items as $delta => $item) {
       /** @var \Drupal\block_field\BlockFieldItemInterface $item */
@@ -101,7 +101,6 @@ class BlockIdFormatter extends FormatterBase implements ContainerFactoryPluginIn
 
       $elements[$delta] = ['#plain_text' => $block_instance->label() . ' (' . $block_instance->getPluginId() . ')'];
 
-      /** @var \Drupal\Core\Render\RendererInterface $renderer */
       $this->renderer->addCacheableDependency($elements[$delta], $block_instance);
     }
     return $elements;

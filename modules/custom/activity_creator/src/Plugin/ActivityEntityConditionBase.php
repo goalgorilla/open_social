@@ -3,6 +3,7 @@
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
  * Base class for Activity entity condition plugins.
@@ -12,7 +13,7 @@ abstract class ActivityEntityConditionBase extends PluginBase implements Activit
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) {
+  public function isValidEntityCondition(ContentEntityInterface $entity): bool {
     return TRUE;
   }
 

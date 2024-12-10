@@ -24,7 +24,7 @@ class SuperUser extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function supportsIndex(IndexInterface $index) {
+  public static function supportsIndex(IndexInterface $index): bool {
     $supported_entity_types = ['profile'];
     foreach ($index->getDatasources() as $datasource) {
       if (in_array($datasource->getEntityTypeId(), $supported_entity_types)) {
@@ -37,17 +37,19 @@ class SuperUser extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function alterIndexedItems(array &$items) {
+  public function alterIndexedItems(array &$items): void {
     foreach ($items as $item_id => $item) {
-      $object = $item->getOriginalObject()->getValue();
+      /** @var \Drupal\Core\TypedData\TraversableTypedDataInterface $original_object */
+      $original_object = $item->getOriginalObject();
+      $object = $original_object->getValue();
       if ($object instanceof ProfileInterface) {
         // Profile ownedId is the userId.
-        if ($object->getOwnerId() == '1') {
+        if ((string) $object->getOwnerId() === '1') {
           unset($items[$item_id]);
         }
       }
       elseif ($object instanceof UserInterface) {
-        if ($object->id() == '1') {
+        if ((string) $object->id() === '1') {
           unset($items[$item_id]);
         }
       }

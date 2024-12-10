@@ -44,7 +44,7 @@ class AlbumContext extends RawMinkContext {
    *
    * @Then /^(?:|I )should see the album I just created$/
    */
-  public function thenIShouldSeeTheAlbumIJustCreated(): void {
+  public function iShouldSeeTheCreatedAlbum(): void {
     $fields = end($this->created);
 
     $this->minkContext->assertPageContainsText("Album {$fields['title']} is successfully created. Now you can add images to this album.");
@@ -59,8 +59,11 @@ class AlbumContext extends RawMinkContext {
    *              | group                          | My group |
    *
    * @When /^(?:|I )create an album using its creation page:$/
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   * @throws \Exception
    */
-  public function whenICreateAnAlbumUsingTheForm(TableNode $fields): void {
+  public function iCreateAnAlbumUsingTheForm(TableNode $fields): void {
     // Go to the form.
     $this->visitPath(self::CREATE_PAGE);
     $page = $this->getSession()->getPage();
@@ -85,7 +88,7 @@ class AlbumContext extends RawMinkContext {
       elseif ($key === "group") {
         $group_id = $this->getNewestGroupIdFromTitle($value);
         if ($group_id === NULL) {
-          throw new \Exception("Group '{$value}' does not exist.");
+          throw new \RuntimeException("Group '{$value}' does not exist.");
         }
         $page->selectFieldOption($field, $group_id);
         // Changing the group of an album updates the visibility settings so we
@@ -99,8 +102,8 @@ class AlbumContext extends RawMinkContext {
         $page->fillField($field, $value);
       }
 
-      // Changing the group of an album updates the visibility settings so we must
-      // wait for that to be complete.
+      // Changing the group of an album updates the visibility settings so we
+      // must wait for that to be complete.
       if ($key === "group") {
         $this->minkContext->iWaitForAjaxToFinish();
       }
@@ -134,9 +137,9 @@ class AlbumContext extends RawMinkContext {
   public function viewingAlbum(string $album): void {
     $album_id = $this->getAlbumIdFromTitle($album);
     if ($album_id === NULL) {
-      throw new \Exception("Album '${album}' does not exist.");
+      throw new \RuntimeException("Album '$album' does not exist.");
     }
-    $this->visitPath("/node/${album_id}");
+    $this->visitPath("/node/$album_id");
   }
 
   /**
@@ -148,9 +151,9 @@ class AlbumContext extends RawMinkContext {
   public function editingAlbum(string $album): void {
     $album_id = $this->getAlbumIdFromTitle($album);
     if ($album_id === NULL) {
-      throw new \Exception("Album '${album}' does not exist.");
+      throw new \RuntimeException("Album '$album' does not exist.");
     }
-    $this->visitPath("/node/${album_id}/edit");
+    $this->visitPath("/node/$album_id/edit");
   }
 
 }

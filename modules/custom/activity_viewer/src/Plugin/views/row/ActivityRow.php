@@ -56,7 +56,7 @@ class ActivityRow extends EntityRow {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -82,7 +82,7 @@ class ActivityRow extends EntityRow {
         $render_result[] = $row;
         $entity = $row->_entity;
 
-        foreach ($entity->field_activity_destinations as $destination) {
+        foreach ($entity->get('field_activity_destinations') as $destination) {
           if ($this->activityDestinationManager->hasDefinition($destination->value)) {
             /** @var \Drupal\activity_creator\Plugin\ActivityDestinationBase $plugin */
             $plugin = $this->activityDestinationManager->createInstance($destination->value);

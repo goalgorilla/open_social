@@ -68,7 +68,7 @@ class ExportEnrolments extends ExportUser {
    *   The user.
    */
   public function getAccount(EventEnrollmentInterface $entity) {
-    $accounts = $entity->field_account->referencedEntities();
+    $accounts = $entity->get('field_account')->referencedEntities();
     return reset($accounts);
   }
 

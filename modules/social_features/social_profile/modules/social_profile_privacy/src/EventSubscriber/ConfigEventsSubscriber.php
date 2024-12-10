@@ -7,6 +7,7 @@ use Drupal\Core\Config\ConfigEvents;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -21,21 +22,21 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The Drupal entity type handler.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * A way for this module to log messages.
    *
    * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
-  protected $logger;
+  protected LoggerChannelInterface $logger;
 
   /**
    * ConfigEventsSubscriber constructor.
@@ -60,7 +61,7 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     return [
       ConfigEvents::SAVE => 'configSave',
     ];
@@ -76,7 +77,7 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\search_api\SearchApiException
    */
-  public function configSave(ConfigCrudEvent $event) {
+  public function configSave(ConfigCrudEvent $event): void {
     // A list of configuration changes that trigger an index update.
     $triggers = [
       'social_profile_privacy.settings' => 'limit_search_and_mention',

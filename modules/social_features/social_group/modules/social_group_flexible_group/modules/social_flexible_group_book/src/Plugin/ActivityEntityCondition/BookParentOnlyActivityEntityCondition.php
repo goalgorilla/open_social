@@ -3,6 +3,7 @@
 namespace Drupal\social_flexible_group_book\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -19,7 +20,7 @@ class BookParentOnlyActivityEntityCondition extends ActivityEntityConditionBase 
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity): bool {
+  public function isValidEntityCondition(ContentEntityInterface $entity): bool {
     if ($entity->getEntityTypeId() === 'group_content') {
       $node = $entity->getEntity();
     }

@@ -37,7 +37,7 @@ class SocialAlbumImageForm extends PostDeleteForm {
     $entity = $this->getEntity();
 
     /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $field */
-    $field = $entity->field_post_image;
+    $field = $entity->get('field_post_image');
 
     foreach ($field->getValue() as $index => $item) {
       if ($item['target_id'] === $fid) {

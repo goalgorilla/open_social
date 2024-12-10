@@ -72,7 +72,7 @@ abstract class PushBase extends PluginBase implements PushInterface {
     array $configuration,
     $plugin_id,
     $plugin_definition
-  ) {
+  ): self {
     return new static(
       $configuration,
       $plugin_id,

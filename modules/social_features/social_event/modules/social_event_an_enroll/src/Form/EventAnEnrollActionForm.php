@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\social_event_an_enroll\Form
  */
-class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInterface {
+class EventAnEnrollActionForm extends FormBase {
 
   use SocialEventTrait;
 
@@ -100,7 +100,7 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
       '#id' => 'enroll-wrapper',
     ];
 
-    if (!empty($token) && $this->eventAnEnrollService->tokenExists($token, $nid)) {
+    if (!empty($token) && $this->eventAnEnrollService->tokenExists($token, (int) $nid)) {
       $form['event'] = [
         '#type' => 'hidden',
         '#value' => $nid,
@@ -245,7 +245,7 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
   }
 

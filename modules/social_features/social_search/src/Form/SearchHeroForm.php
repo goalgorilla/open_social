@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  *
  * @package Drupal\social_search\Form
  */
-class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
+class SearchHeroForm extends FormBase {
 
   /**
    * The route match.
@@ -49,7 +49,7 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('current_route_match'),
       $container->get('request_stack')
@@ -59,14 +59,14 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'search_hero_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     $form['search_input'] = [
       '#type' => 'textfield',
@@ -91,11 +91,15 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $current_route = $this->routeMatch->getRouteName();
     $route_parts = explode('.', ($current_route ?? ''));
 
-    $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all());
+    $current_request = $this->requestStack->getCurrentRequest();
+    if ($current_request === NULL) {
+      return;
+    }
+    $query = UrlHelper::filterQueryParameters($current_request->query->all());
 
     // Unset the page parameter. When someone starts a new search query they
     // should always start again at the first page.
@@ -112,7 +116,7 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
       // Redirect to the search page with filters in the GET parameters.
       $search_input = Xss::filter($form_state->getValue('search_input'));
       $search_input = preg_replace('/[\/]+/', ' ', $search_input);
-      $search_input = str_replace('&amp;', '&', $search_input);
+      $search_input = str_replace('&amp;', '&', (string) $search_input);
       $parameters['keys'] = $search_input;
 
       $new_route = "view.{$route_parts[1]}.page";
