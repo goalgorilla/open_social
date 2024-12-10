@@ -30,3 +30,10 @@ function social_user_export_install(): void {
 function social_user_export_update_last_removed() : int {
   return 11002;
 }
+
+/**
+ * Assign a new administer social_user_export permission to SM.
+ */
+function social_user_export_update_11003(): void {
+  user_role_grant_permissions('sitemanager', ['administer social_user_export']);
+}
