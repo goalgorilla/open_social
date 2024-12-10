@@ -161,3 +161,32 @@ function social_profile_fields_update_130001(): void {
   ];
   user_role_grant_permissions('sitemanager', $permissions);
 }
+
+/**
+ * Hidden path from Nationality taxonomy.
+ */
+function social_profile_fields_update_130002(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
+  $form_display = $storage->load('taxonomy_term.nationality.default');
+
+  // If the entity-form-display isn't found, return early.
+  if (empty($form_display)) {
+    \Drupal::logger('social_profile_fields')->info('The entity-form-display from Nationality taxonomy is empty.');
+    return;
+  }
+
+  // Get fields and check if path is already be hidden.
+  $hidden = $form_display->get('hidden');
+  $content = $form_display->get('content');
+  if (in_array('path', array_keys($hidden))) {
+    \Drupal::logger('social_profile_fields')->info('The path field already is hidden on Nationality taxonomy.');
+    return;
+  }
+
+  // Manipulate path field to be hidden and save.
+  $hidden['path'] = TRUE;
+  unset($content['path']);
+  $form_display->set('hidden', $hidden)
+    ->set('content', $content)
+    ->save();
+}
