@@ -505,8 +505,8 @@ class EnrollActionForm extends FormBase {
       ));
     }
 
-    $new_form = $this->buildForm($form, $form_state);
-    $new_form = $this->formBuilder->doBuildForm($this->getFormId(), $new_form, $form_state);
+    // Rebuild the form.
+    $new_form = $this->formBuilder->rebuildForm($this->getFormId(), $form_state, $form);
     $response->addCommand(new ReplaceCommand('#enroll-wrapper', $new_form['enroll_wrapper']));
     return $response;
   }
