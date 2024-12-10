@@ -29,3 +29,21 @@ function social_editor_update_13001(): string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Install and enable fullscreen button to CKEditor 5.
+ */
+function social_editor_update_13002(): string {
+  if (!\Drupal::service('module_handler')->moduleExists('ckeditor5_premium_features_fullscreen')) {
+    \Drupal::service('module_installer')->install(['ckeditor5_premium_features_fullscreen']);
+  }
+
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_editor', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
