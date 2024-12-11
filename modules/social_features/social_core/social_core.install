@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Config\FileStorage;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\crop\Entity\CropType;
@@ -432,4 +433,70 @@ function social_core_update_124002(): void {
     'jquery_ui_resizable',
   ];
   \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Update editor.
+ */
+function social_core_update_124003() : void {
+  $editor_ids = [
+    'editor.editor.basic_html',
+    'editor.editor.full_html',
+  ];
+
+  foreach ($editor_ids as $editor_id) {
+    $editor_config = \Drupal::configFactory()->getEditable($editor_id);
+    // Skip editor configs that don't yet exist.
+    if ($editor_config->isNew()) {
+      continue;
+    }
+    // Only update config that isn't already private.
+    if ($editor_config->get('image_upload.scheme') === "public") {
+      $editor_config->set('image_upload.scheme', 'private')->save();
+    }
+  }
+}
+
+/**
+ * Fix move config overrides into active configuration.
+ */
+function social_core_update_124004() : void {
+  /** @var \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory */
+  $logger_factory = \Drupal::service('logger.factory');
+  $logger = $logger_factory->get('os_private_update_logger');
+
+  $field_storages = [
+    ['entity_type' => 'block_content', 'field_name' => 'field_hero_image'],
+    ['entity_type' => 'comment', 'field_name' => 'field_comment_files'],
+    ['entity_type' => 'group', 'field_name' => 'field_group_image'],
+    ['entity_type' => 'node', 'field_name' => 'field_book_image'],
+    ['entity_type' => 'node', 'field_name' => 'field_event_image'],
+    ['entity_type' => 'node', 'field_name' => 'field_files'],
+    ['entity_type' => 'node', 'field_name' => 'field_page_image'],
+    ['entity_type' => 'node', 'field_name' => 'field_topic_image'],
+    ['entity_type' => 'post', 'field_name' => 'field_post_image'],
+    ['entity_type' => 'profile', 'field_name' => 'field_profile_image'],
+    ['entity_type' => 'profile', 'field_name' => 'field_profile_banner_image'],
+    ['entity_type' => 'paragraph', 'field_name' => 'field_hero_image'],
+    ['entity_type' => 'paragraph', 'field_name' => 'field_hero_small_image'],
+  ];
+
+  foreach ($field_storages as $field_storage) {
+    $storage = FieldStorageConfig::loadByName($field_storage['entity_type'], $field_storage['field_name']);
+    // No need to update fields that aren't installed.
+    if ($storage === NULL) {
+      $logger->info('Field storage not found: ' . $field_storage['entity_type'] . '.' . $field_storage['field_name']);
+      continue;
+    }
+    // Only update fields that aren't already private.
+    if ($storage->getSetting("uri_scheme") === "public") {
+      $logger->info('Updating field storage: ' . $field_storage['entity_type'] . '.' . $field_storage['field_name']);
+      $storage->setSetting("uri_scheme", "private");
+      $storage->save();
+      $logger->info('Field storage updated: ' . $field_storage['entity_type'] . '.' . $field_storage['field_name']);
+    }
+    else {
+      $logger->info('Field storage already private: ' . $field_storage['entity_type'] . '.' . $field_storage['field_name']);
+    }
+  }
 }
