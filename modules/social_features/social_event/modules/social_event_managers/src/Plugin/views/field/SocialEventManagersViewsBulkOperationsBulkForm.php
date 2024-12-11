@@ -3,6 +3,7 @@
 namespace Drupal\social_event_managers\Plugin\views\field;
 
 use Drupal\Core\Action\ActionManager;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -42,6 +43,13 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   protected $pluginActionManager;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Constructs a new SocialEventManagersViewsBulkOperationsBulkForm object.
    *
    * @param array $configuration
@@ -66,6 +74,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    *   The entity type manager.
    * @param \Drupal\Core\Action\ActionManager $pluginActionManager
    *   The action manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
    */
   public function __construct(
     array $configuration,
@@ -78,12 +88,14 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     AccountInterface $currentUser,
     RequestStack $requestStack,
     EntityTypeManagerInterface $entity_type_manager,
-    ActionManager $pluginActionManager
+    ActionManager $pluginActionManager,
+    ConfigFactoryInterface $config_factory
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack);
 
     $this->entityTypeManager = $entity_type_manager;
     $this->pluginActionManager = $pluginActionManager;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -101,7 +113,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       $container->get('current_user'),
       $container->get('request_stack'),
       $container->get('entity_type.manager'),
-      $container->get('plugin.manager.action')
+      $container->get('plugin.manager.action'),
+      $container->get('config.factory')
     );
   }
 
@@ -116,6 +129,24 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     }
 
     foreach ($this->options['selected_actions'] as $key => $selected_action_data) {
+      $export_actions = [
+        "social_event_enrolments_export_enrollments_action",
+        "social_event_an_enroll_enrolments_export_action",
+      ];
+      // Check if we have enabled the export.
+      if (in_array($selected_action_data['action_id'], $export_actions)) {
+        $social_user_settings = $this->configFactory->get('social_user_export.settings');
+        $social_user_settings_plugins = array_filter($social_user_settings->get('plugins'));
+
+        if (!$this->currentUser()->hasPermission('administer social_user_export') && empty($social_user_settings_plugins)) {
+          unset($this->options['selected_actions'][$key]);
+          unset($bulk_options[$key]);
+          unset($this->bulkOptions[$key]);
+          break;
+        }
+
+      }
+
       $definition = $this->actions[$selected_action_data['action_id']];
       if (!empty($selected_action_data['preconfiguration']['label_override'])) {
         $real_label = $selected_action_data['preconfiguration']['label_override'];
