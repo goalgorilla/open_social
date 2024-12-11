@@ -2,11 +2,19 @@
 
 namespace Drupal\social_group\Plugin\views\field;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
+use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager;
+use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
+use Drupal\views_bulk_operations\Service\ViewsBulkOperationsViewDataInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Defines the Groups Views Bulk Operations field plugin.
@@ -16,6 +24,72 @@ use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
  * @ViewsField("social_views_bulk_operations_bulk_form_group")
  */
 class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Constructs a new SocialGroupViewsBulkOperationsBulkForm object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsViewDataInterface $viewData
+   *   The VBO View Data provider service.
+   * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager $actionManager
+   *   Extended action manager object.
+   * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface $actionProcessor
+   *   Views Bulk Operations action processor.
+   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $tempStoreFactory
+   *   User private temporary storage factory.
+   * @param \Drupal\Core\Session\AccountInterface $currentUser
+   *   The current user object.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   *   The request stack.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    ViewsBulkOperationsViewDataInterface $viewData,
+    ViewsBulkOperationsActionManager $actionManager,
+    ViewsBulkOperationsActionProcessorInterface $actionProcessor,
+    PrivateTempStoreFactory $tempStoreFactory,
+    AccountInterface $currentUser,
+    RequestStack $requestStack,
+    ConfigFactoryInterface $config_factory
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack);
+
+    $this->configFactory = $config_factory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('views_bulk_operations.data'),
+      $container->get('plugin.manager.views_bulk_operations_action'),
+      $container->get('views_bulk_operations.processor'),
+      $container->get('tempstore.private'),
+      $container->get('current_user'),
+      $container->get('request_stack'),
+      $container->get('config.factory')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -39,6 +113,20 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       switch ($selected_action_data['action_id']) {
         case 'social_group_members_export_member_action':
         case 'social_group_delete_group_content_action':
+          // Check if we have enabled the export.
+          if ($selected_action_data['action_id'] == "social_group_members_export_member_action") {
+            $social_user_settings = $this->configFactory->get('social_user_export.settings');
+            $social_user_settings_plugins = array_filter($social_user_settings->get('plugins'));
+
+            if (!$this->currentUser()->hasPermission('administer social_user_export') && empty($social_user_settings_plugins)) {
+              unset($this->options['selected_actions'][$key]);
+              unset($bulk_options[$key]);
+              unset($this->bulkOptions[$key]);
+              break;
+            }
+
+          }
+
           $bulk_options[$key] = $this->t('<b>@action</b> selected members', [
             '@action' => $real_label,
           ]);

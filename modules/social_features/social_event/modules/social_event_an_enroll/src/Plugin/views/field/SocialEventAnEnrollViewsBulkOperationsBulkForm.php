@@ -3,6 +3,7 @@
 namespace Drupal\social_event_an_enroll\Plugin\views\field;
 
 use Drupal\Core\Action\ActionManager;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -53,6 +54,8 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
    *   The entity type manager.
    * @param \Drupal\Core\Action\ActionManager $pluginActionManager
    *   The action manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
    * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
    *   The event an enroll manager.
    */
@@ -68,10 +71,10 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
     RequestStack $requestStack,
     EntityTypeManagerInterface $entity_type_manager,
     ActionManager $pluginActionManager,
-    EventAnEnrollManager $social_event_an_enroll_manager
+    ConfigFactoryInterface $config_factory,
+    EventAnEnrollManager $social_event_an_enroll_manager,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack, $entity_type_manager, $pluginActionManager);
-
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack, $entity_type_manager, $pluginActionManager, $config_factory);
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
   }
 

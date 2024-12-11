@@ -240,3 +240,17 @@ Feature: Export users
       3,34fff0f1-8897-4ca8-a682-707c9dd87501,ExportUser2,ExportUser2,exportuser2@example.com,never,never,"02/17/2023 - 14:42",Active,"authenticated, verified",1,1,1,1,1,0,0,,0
       2,85e14211-147c-4f01-ae18-b97300671de6,ExportUser1,ExportUser1,exportuser1@example.com,never,never,"02/17/2023 - 14:42",Active,"authenticated, verified",1,1,1,1,1,0,0,,1
       """
+
+  Scenario: The export group members is not displayed if every export plugin is disabled
+    Given I am logged in as a user with the "sitemanager" role
+
+    When I am on "/admin/config/opensocial/export"
+    And I uncheck the box "edit-plugins-display-name"
+    And I uncheck the box "edit-plugins-user-first-name"
+    And I uncheck the box "edit-plugins-user-last-name"
+    And I press the "Save configuration" button
+    And I enable the module "social_group_members_export"
+    And I am on "group/1/membership"
+    And I should see the button "Actions"
+    And I click the xth "0" element with the css "#vbo-action-form-wrapper .dropdown .dropdown-toggle"
+    And I should not see the link "Export selected enrollees"
