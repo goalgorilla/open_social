@@ -113,3 +113,16 @@ function social_book_update_130000(): ?string {
   // Output logged messages to a related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Enable author info on book pages.
+ */
+function social_book_update_130001(): void {
+  $config = \Drupal::configFactory()->getEditable('node.type.book');
+  if (!empty($config->getRawData())) {
+    \Drupal::configFactory()
+      ->getEditable('node.type.book')
+      ->set('display_submitted', TRUE)
+      ->save(TRUE);
+  }
+}
