@@ -68,9 +68,9 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
     RequestStack $requestStack,
     EntityTypeManagerInterface $entity_type_manager,
     ActionManager $pluginActionManager,
-    EventAnEnrollManager $social_event_an_enroll_manager
+    EventAnEnrollManager $social_event_an_enroll_manager,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack, $entity_type_manager, $pluginActionManager);
+:   parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack, $entity_type_manager, $pluginActionManager, $social_event_an_enroll_manager);
 
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
   }
