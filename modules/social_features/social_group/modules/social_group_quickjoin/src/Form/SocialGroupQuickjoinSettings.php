@@ -5,7 +5,6 @@ namespace Drupal\social_group_quickjoin\Form;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\group\Entity\GroupType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -139,17 +138,25 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
    */
   protected function getGroups() {
     $types = [];
-    /** @var \Drupal\group\Entity\GroupType $group_type */
-    foreach (GroupType::loadMultiple() as $group_type) {
-      /** @var \Drupal\group\Entity\GroupRoleInterface $outsider_role */
-      $outsider_role = $this->entityTypeManager
-        ->getStorage('group_role')
-        ->load($group_type->id() . '-outsider');
 
-      // We can only select group types that have the 'join group'
-      // permission enabled.
-      if (in_array('join group', $outsider_role->getPermissions())) {
-        $types[] = $group_type;
+    $group_roles = $this->entityTypeManager
+      ->getStorage('group_role')
+      ->loadMultiple();
+
+    // Instead of loading by group type, we load all group roles.
+    // So we can find those with a scope outsider, and permission
+    // join group. As we can only configure those group types. If
+    // there aren't any with that permission it means nobody
+    // is able to join the group directly, so configuring this
+    // doesn't make sense.
+    if ($group_roles) {
+      /** @var \Drupal\group\Entity\GroupRole $group_role */
+      foreach ($group_roles as $group_role) {
+        if ($group_role->isOutsider() && $group_role->hasPermission('join_group')) {
+          if (!in_array($group_role->getGroupType(), $types)) {
+            $types[] = $group_role->getGroupType();
+          }
+        }
       }
     }
     return $types;
