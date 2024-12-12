@@ -363,13 +363,20 @@ function social_album_form_post_form_alter(&$form, FormStateInterface $form_stat
     }
   }
   elseif (isset($form['field_album'])) {
-    $form['field_album']['#states'] = [
-      'visible' => [
-        ':input[name="field_post_image[0][fids]"]' => [
-          'filled' => TRUE,
+    // Hide album select field when feature is disabled on the image post form.
+    $status = \Drupal::config('social_album.settings')->get('status');
+    if (!$status) {
+      unset($form['field_album']);
+    }
+    else {
+      $form['field_album']['#states'] = [
+        'visible' => [
+          ':input[name="field_post_image[0][fids]"]' => [
+            'filled' => TRUE,
+          ],
         ],
-      ],
-    ];
+      ];
+    }
   }
 }
 
