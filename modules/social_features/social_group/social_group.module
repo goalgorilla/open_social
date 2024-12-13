@@ -2542,7 +2542,7 @@ function social_group_render_tooltip($field_name, TranslatableMarkup $data_title
 
     $icon = [
       '#type' => "inline_template",
-      '#template' => '<svg class="icon-white ' . $icon_size . '"><use xlink:href="#icon-cog"></use></svg>',
+      '#template' => '<svg class="icon-white ' . $icon_size . '"><title>' . $title . '</title><use xlink:href="#icon-cog"></use></svg>',
     ];
   }
 
