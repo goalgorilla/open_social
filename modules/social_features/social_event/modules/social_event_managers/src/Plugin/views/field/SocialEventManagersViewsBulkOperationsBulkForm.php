@@ -4,12 +4,10 @@ namespace Drupal\social_event_managers\Plugin\views\field;
 
 use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
@@ -35,28 +33,21 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected EntityTypeManagerInterface $entityTypeManager;
+  protected $entityTypeManager;
 
   /**
    * The action plugin manager.
    *
    * @var \Drupal\Core\Action\ActionManager
    */
-  protected ActionManager $pluginActionManager;
-
-  /**
-   * The route match.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
-   */
-  private RouteMatchInterface $routeMatch;
+  protected $pluginActionManager;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected ConfigFactoryInterface $configFactory;
+  protected $configFactory;
 
   /**
    * Constructs a new SocialEventManagersViewsBulkOperationsBulkForm object.
@@ -83,11 +74,13 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    *   The entity type manager.
    * @param \Drupal\Core\Action\ActionManager $pluginActionManager
    *   The action manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
    */
   public function __construct(
     array $configuration,
-    $plugin_id,
-    $plugin_definition,
+          $plugin_id,
+          $plugin_definition,
     ViewsBulkOperationsViewDataInterface $viewData,
     ViewsBulkOperationsActionManager $actionManager,
     ViewsBulkOperationsActionProcessorInterface $actionProcessor,
@@ -96,13 +89,13 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     RequestStack $requestStack,
     EntityTypeManagerInterface $entity_type_manager,
     ActionManager $pluginActionManager,
-    RouteMatchInterface $routeMatch,
-    ConfigFactoryInterface $config_factory,
+    ConfigFactoryInterface $config_factory
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack);
 
     $this->entityTypeManager = $entity_type_manager;
     $this->pluginActionManager = $pluginActionManager;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -121,8 +114,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       $container->get('request_stack'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.action'),
-      $container->get('current_route_match'),
-      $container->get('config.factory'),
+      $container->get('config.factory')
     );
   }
 
@@ -190,12 +182,10 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       $list = &$form[$this->options['id']];
 
       foreach ($this->view->result as $row_index => $row) {
-        /** @var \Drupal\Core\Entity\ContentEntityInterface|NULL $entity */
         $entity = $this->getEntity($row);
-        if ($entity === NULL) {
-          continue;
+        if ($entity !== NULL) {
+          $list[$row_index]['#title'] = $this->getEntityLabel($entity);
         }
-        $list[$row_index]['#title'] = $this->getEntityLabel($entity);
       }
     }
 
@@ -401,7 +391,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
         $parameters = $url->getRouteParameters();
 
         if (empty($parameters['node'])) {
-          $node = $this->routeMatch->getParameter('node');
+          $node = \Drupal::routeMatch()->getParameter('node');
           if ($node instanceof NodeInterface) {
             // You can get nid and anything else you need from the node object.
             $parameters['node'] = $node->id();
@@ -423,16 +413,17 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * Returns modified entity label.
    *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity.
    *
    * @return string
    *   The label text.
    */
-  public function getEntityLabel(ContentEntityInterface $entity): string {
+  public function getEntityLabel(EntityInterface $entity): string {
+    /** @var \Drupal\Core\Entity\ContentEntityBase $entity */
     $profiles = $this->entityTypeManager->getStorage('profile')
       ->loadByProperties([
-        'uid' => $entity->get('field_account')->target_id
+        'uid' => $entity->getFieldValue('field_account', 'target_id'),
       ]);
 
     $profile = reset($profiles);
@@ -489,7 +480,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    * @return array
    *   Returns array of bulk options.
    */
-  protected function bulkOptionAccess(array $bulkOptions): array {
+  protected function bulkOptionAccess(array $bulkOptions) {
     /** @var \Drupal\node\NodeInterface $event */
     $event = social_event_get_current_event();
     $isEventOrganizer = social_event_manager_or_organizer($event);

@@ -279,7 +279,6 @@ final class EdaEventEnrollmentHandler {
       return;
     }
 
-
     // An event enrolment should always have an event and a user associated
     // with it.
     if (!$event_enrollment->getEvent() || !$event_enrollment->getAccountEntity()) {

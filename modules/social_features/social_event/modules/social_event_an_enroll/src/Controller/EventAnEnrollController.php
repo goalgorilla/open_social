@@ -74,10 +74,10 @@ class EventAnEnrollController extends ControllerBase {
   /**
    * Determines if user has access to enroll form.
    *
-   * @param NodeInterface $node
+   * @param \Drupal\node\NodeInterface $node
    *   The node.
    *
-   * @return AccessResultInterface Allowed or not allowed.
+   * @return \Drupal\Core\Access\AccessResultInterface
    *   Allowed or not allowed.
    */
   public function enrollAccess(NodeInterface $node): AccessResultInterface {

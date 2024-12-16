@@ -25,7 +25,7 @@ class EnrollRequestDeclineForm extends FormBase {
   /**
    * The event enrollment entity.
    *
-   * @var \Drupal\social_event\Entity\EventEnrollment|NULL
+   * @var \Drupal\social_event\Entity\EventEnrollment|null
    */
   protected ?EventEnrollment $eventEnrollment;
 

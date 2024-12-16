@@ -2,6 +2,8 @@
 
 namespace Drupal\social_post\Entity;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -111,7 +113,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid): \Drupal\user\EntityOwnerInterface|Post|static {
+  public function setOwnerId($uid): EntityOwnerInterface|Post|static {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -119,7 +121,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account): \Drupal\user\EntityOwnerInterface|Post|static {
+  public function setOwner(UserInterface $account): EntityOwnerInterface|Post|static {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -157,7 +159,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getDisplayName(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getDisplayName(): TranslatableMarkup {
     if ($this->hasField('field_post_image') && !$this->get('field_post_image')
       ->isEmpty()) {
       return $this->t('photo');

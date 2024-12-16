@@ -1,5 +1,5 @@
 <?php
-// phpstan:ignoreFile
+
 namespace Drupal\entity_access_by_field\Tests;
 
 use Drupal\Core\Session\AccountInterface;
@@ -7,6 +7,8 @@ use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\entity_access_by_field\EntityAccessHelper;
 use Prophecy\Prophet;
+
+// phpstan:ignoreFile.
 
 /**
  * Unit test of entity_access_by_field hook_node_access implementation.

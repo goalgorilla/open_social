@@ -431,9 +431,6 @@ function social_profile_preprocess_profile(array &$variables): void {
     !empty($profile->get('field_profile_banner_image')->entity)
     && $profile->get('field_profile_banner_image')->access('view')
   ) {
-    // $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
-    //   ?->buildUrl($profile->get('field_profile_banner_image')->entity->getFileUri());
-
     /** @var \Drupal\file\Entity\File $file */
     $file = $profile->get('field_profile_banner_image')->entity;
     $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')?->buildUrl((string) $file->getFileUri());

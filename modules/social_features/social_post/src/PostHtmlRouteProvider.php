@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post;
 
+use Symfony\Component\Routing\RouteCollection;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
 use Symfony\Component\Routing\Route;
@@ -17,7 +18,7 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
   /**
    * {@inheritdoc}
    */
-  public function getRoutes(EntityTypeInterface $entity_type): array|\Symfony\Component\Routing\RouteCollection {
+  public function getRoutes(EntityTypeInterface $entity_type): array|RouteCollection {
     $collection = parent::getRoutes($entity_type);
 
     $entity_type_id = $entity_type->id();

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_graphql\Plugin\GraphQL\Schema;
 
+use GraphQL\Type\Schema;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
@@ -41,7 +42,7 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getSchema(ResolverRegistryInterface $registry): \GraphQL\Type\Schema {
+  public function getSchema(ResolverRegistryInterface $registry): Schema {
     // Add Open Social base types to the schema.
     $this->getBaseSchema($registry);
 

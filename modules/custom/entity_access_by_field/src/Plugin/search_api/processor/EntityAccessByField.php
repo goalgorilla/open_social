@@ -2,8 +2,8 @@
 
 namespace Drupal\entity_access_by_field\Plugin\search_api\processor;
 
+use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
-use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\search_api\Item\ItemInterface;
 use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Plugin\search_api\processor\ContentAccess;
@@ -46,7 +46,7 @@ class EntityAccessByField extends ContentAccess {
    *
    * @var \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface
    */
-  protected \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface $groupRelationshipStorage;
+  protected GroupRelationshipStorageInterface $groupRelationshipStorage;
 
   /**
    * {@inheritdoc}
@@ -84,7 +84,7 @@ class EntityAccessByField extends ContentAccess {
     }
 
     // Get the node object.
-    /** @var ComplexDataInterface $original_object */
+    /** @var \Drupal\Core\TypedData\ComplexDataInterface $original_object */
     $original_object = $item->getOriginalObject();
     $node = $this->getNode($original_object);
     if (!$node) {

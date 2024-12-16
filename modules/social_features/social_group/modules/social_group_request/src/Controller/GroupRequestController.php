@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_request\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -171,7 +172,7 @@ class GroupRequestController extends ControllerBase {
   /**
    * Callback to cancel the request of membership.
    */
-  public function cancelRequest(GroupInterface $group): \Symfony\Component\HttpFoundation\RedirectResponse {
+  public function cancelRequest(GroupInterface $group): RedirectResponse {
     /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
     $storage = $this->entityTypeManager()->getStorage('group_content_type');
     $group_type_id = (string) $group->getGroupType()->id();

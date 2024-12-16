@@ -5,7 +5,6 @@
  * The Social profile organization tag module.
  */
 
-use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -102,7 +101,7 @@ function social_profile_organization_tag_tokens_alter(array &$replacements, arra
  */
 function social_profile_organization_tag_fetch(Profile $profile, bool $return_html = TRUE): FormattableMarkup {
   if (!$profile->get('field_profile_organization_tag')->isEmpty()) {
-    /** @var EntityReferenceFieldItemListInterface $organization_tag */
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $organization_tag */
     $organization_tag = $profile->get('field_profile_organization_tag');
     $organization_tag_entities = $organization_tag->referencedEntities();
     if (count($organization_tag_entities) === 1) {

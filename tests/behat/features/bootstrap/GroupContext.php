@@ -514,12 +514,12 @@ class GroupContext extends RawMinkContext {
   public function shouldBeViewingGroup(string $group) : void {
     $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
-      throw new \RuntimeException("Group '${group}' does not exist.");
+      throw new \RuntimeException("Group '{$group}' does not exist.");
     }
     $this->assertSession()->statusCodeEquals(200);
     // We may need to change the path here since the default group page is
     // configurable.
-    $this->assertSession()->addressEquals("/group/${group_id}/about");
+    $this->assertSession()->addressEquals("/group/{$group_id}/about");
   }
 
   /**
@@ -562,7 +562,7 @@ class GroupContext extends RawMinkContext {
 
     $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
-      throw new \RuntimeException("Group '${group}' does not exist.");
+      throw new \RuntimeException("Group '{$group}' does not exist.");
     }
 
     $selected = $field->getValue();

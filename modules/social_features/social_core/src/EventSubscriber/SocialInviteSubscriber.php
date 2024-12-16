@@ -2,6 +2,8 @@
 
 namespace Drupal\social_core\EventSubscriber;
 
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -55,14 +57,14 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
    */
-  protected \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $alternativeFrontpageSettings;
+  protected Config|ImmutableConfig $alternativeFrontpageSettings;
 
   /**
    * The site settings.
    *
    * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
    */
-  protected \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $siteSettings;
+  protected Config|ImmutableConfig $siteSettings;
 
   /**
    * Constructs SocialInviteSubscriber.

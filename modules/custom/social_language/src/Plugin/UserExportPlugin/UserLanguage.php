@@ -2,6 +2,7 @@
 
 namespace Drupal\social_language\Plugin\UserExportPlugin;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -55,7 +56,7 @@ class UserLanguage extends UserExportPluginBase {
   /**
    * The create method.
    *
-   * @param ContainerInterface $container
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    *   Container interface.
    * @param array $configuration
    *   An array of configuration.
@@ -82,7 +83,7 @@ class UserLanguage extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): string|\Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getHeader(): string|TranslatableMarkup {
     return $this->t('Language');
   }
 

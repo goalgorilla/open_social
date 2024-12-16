@@ -2,8 +2,9 @@
 
 namespace Drupal\social_comment\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Entity\EntityBase;
-use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Url;
 use Drupal\comment\CommentInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ class SocialCommentController extends CommentController {
    *
    * @inheritdoc
    */
-  public function commentPermalink(Request $request, CommentInterface $comment): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response {
+  public function commentPermalink(Request $request, CommentInterface $comment): RedirectResponse|Response {
     if ($entity = $comment->getCommentedEntity()) {
       // Check access permissions for the entity.
       /** @var \Drupal\Core\Entity\EntityBase $entity */
@@ -41,15 +42,15 @@ class SocialCommentController extends CommentController {
    *
    * @param \Drupal\Core\Url $url
    *   The canonical url.
-   * @param \Drupal\comment\CommentInterface|NULL $comment
+   * @param \Drupal\comment\CommentInterface|null $comment
    *   The comment interface.
-   * @param \Drupal\Core\Entity\EntityBase|NULL $entity
+   * @param \Drupal\Core\Entity\EntityBase|null $entity
    *   The Entity to redirect to.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Returns the Redirect Response.
    */
-  public function redirectToOriginalEntity(Url $url, CommentInterface $comment = NULL, EntityBase $entity = NULL): \Symfony\Component\HttpFoundation\RedirectResponse {
+  public function redirectToOriginalEntity(Url $url, CommentInterface $comment = NULL, EntityBase $entity = NULL): RedirectResponse {
     $options = [];
     if (isset($comment)) {
       $options = ['fragment' => 'comment-' . $comment->id()];
@@ -67,9 +68,9 @@ class SocialCommentController extends CommentController {
    *   Redirect to where.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
-   * @throws EntityMalformedException
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function commentUnpublish(CommentInterface $comment): \Symfony\Component\HttpFoundation\RedirectResponse {
+  public function commentUnpublish(CommentInterface $comment): RedirectResponse {
     $comment->setUnpublished();
     $comment->save();
 

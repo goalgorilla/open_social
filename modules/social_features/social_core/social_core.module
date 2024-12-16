@@ -1,11 +1,11 @@
 <?php
 
-use Drupal\social_core\Entity\Element\EntityAutocomplete;
-
 /**
  * @file
  * The Social core module.
  */
+
+use Drupal\social_core\Entity\Element\EntityAutocomplete;
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
@@ -312,7 +312,7 @@ function _social_core_find_image_field(FieldItemList $field): ?FieldItemList {
  */
 function social_core_form_system_site_information_settings_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   // Hide site slogan field and make it disabled as well whenever the user
-  // is able to fill out the textfied.
+  // is able to fill out the text field.
   if (!empty($form['site_information']['site_slogan'])) {
     $form['site_information']['site_slogan']['#type'] = 'hidden';
     $form['site_information']['site_slogan']['#disabled'] = TRUE;
@@ -1300,7 +1300,7 @@ function social_core_preprocess_status_messages(array &$variables): void {
     // Loop through them to find the relevant messages we are looking for.
     foreach ($status_messages as $delta => $message) {
       // Unset them finally.
-      if (str_contains((string)$message, 'The crop')) {
+      if (str_contains((string) $message, 'The crop')) {
         unset($variables['message_list']['status'][$delta]);
       }
     }

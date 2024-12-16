@@ -71,7 +71,7 @@ function social_follow_taxonomy_theme_suggestions_activity_alter(
   array &$suggestions,
   array $variables
 ): void {
-  /** @var ContentEntityInterface $activity */
+  /** @var \Drupal\Core\Entity\ContentEntityInterface $activity */
   $activity = $variables['elements']['#activity'];
 
   if (
@@ -88,7 +88,6 @@ function social_follow_taxonomy_theme_suggestions_activity_alter(
   /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $field */
   $field = $activity->get('field_activity_entity');
   $entity_type = $field->getFieldDefinition()->getSetting('target_type');
-
 
   if ($entity_type !== 'node' && $entity_type !== 'post') {
     return;

@@ -71,9 +71,14 @@ parameters:
       - '#\\Drupal calls should be avoided in classes#'
       - '#Usage of deprecated trait Drupal\\social_profile\\SocialProfileTrait#'
       - '#Plugin definitions cannot be altered\.#'
-      - '#Access to an undefined property Drupal\\file\\FileInterface::\$\_referringItem\.#'
+      - '#Access to an undefined property Drupal\\file\\FileInterface::\$_referringItem\.#'
       - '#Access to an undefined property Drupal\\file\\FileInterface::\$download\.#'
-      ## Need to create services for that.
+      - '#Parameter \$item of static method Drupal\\social_eda\\Types\\Address::fromFieldItem\(\) expects Drupal\\address\\Plugin\\Field\\FieldType\\AddressItem\|null, Drupal\\Core\\Field\\FieldItemInterface\|null given.#'
+      ## Extend things from OS product.
+#      - '#Class Drupal\\social_eda_dispatcher\\Dispatcher not found.#'
+      - '#.*CloudEvents\\V1\\CloudEvent.*#'
+      - '#.*CloudEvents\\CloudEventInterface.*#'
+      ## Need to create services for that.a
       - '#Not allowed to call private function _activity_basics_entity_action from module social_follow_tag#'
       - '#Not allowed to call private function _activity_send_email_default_template_items from module social_swiftmail#'
       - '#Not allowed to call private function _addresses_to_string from module social_swiftmail#'
@@ -88,7 +93,7 @@ parameters:
       - '#Not allowed to call private function _social_event_format_date from module social_activity#'
       - '#Not allowed to call private function _social_event_menu_local_tasks_routes from module social_event_managers#'
       - '#Not allowed to call private function _social_group_cache_tags from module social_group_flexible_group#'
-      - '#Not allowed to call private function _social_group_get_current_group from module social_(profile_manager_notes|post|profile_manager_notes|group_request|group_invite|group_gvbo|group_flexible_group|topic|flexible_group_book|follow_tag|social_book|social_metatag)#'
+      - '#Not allowed to call private function _social_group_get_current_group from module social_(profile_manager_notes|post|profile_manager_notes|group_request|group_invite|group_gvbo|group_flexible_group|topic|flexible_group_book|follow_tag|book|metatag|event)#'
       - '#Not allowed to call private function _social_group_get_group_invite_value from module social_group_invite#'
       - '#Not allowed to call private function _social_profile_get_profile_from_route from module social_profile_fields#'
       - '#Not allowed to call private function _social_profile_get_profile_from_route from module social_profile_manager_notes#'
@@ -99,8 +104,11 @@ parameters:
       - '#Method Drupal\\.*\\Form\\.*::buildForm\(\) has parameter \$view_id with no type specified\.#'
       - '#Method Drupal\\.*\\Form\\.*::submitForm\(\) has no return type specified\.#'
       - '#Method Drupal\\.*\\Plugin\\views\\field\\.*::viewsFormValidate\(\) has parameter \$form with no type specified\.#'
-      - '#Method Drupal\\social_post\\Plugin\\views\\area\\SocialPostPostForm::buildOptionsForm\(\) has parameter \$form with no type specified\.#'
+      - '#Method Drupal\\.*\\Plugin\\views\\.*\\.*::buildOptionsForm\(\) has parameter \$form with no type specified\.#'
+      - '#Parameter \$group_membership_loader of method Drupal\\social_group_invite\\Form\\SocialBulkGroupInvitation::__construct\(\) has typehint with deprecated interface Drupal\\group\\GroupMembershipLoaderInterface.#'
       ## To review after Drupal 11
+      - '#Access to an undefined property Drupal\\views\\ViewExecutable::\$filter_type.#'
+      - '#Access to an undefined property Drupal\\node\\NodeInterface::\$original\.#'
       - '#Method Drupal\\Core\\Form\\FormBuilderInterface::getForm\(\) invoked with 2 parameters, 1 required#'
       - '#Method Drupal\\social_group\\Plugin\\views\\argument\\UserUid::query\(\) has parameter \$group_by with no type specified\.#'
       - '#Method Drupal\\activity_viewer\\Plugin\\views\\argument\\ActivityProfileArgument::query\(\) has parameter \$group_by with no type specified\.#'
@@ -108,7 +116,6 @@ parameters:
       - '#Method Drupal\\.*\\Plugin\\Action\\.*::execute\(\) has parameter \$entity with no type specified\.#'
       - '#Method Drupal\\activity_viewer\\Plugin\\views\\row\\ActivityRow::preRender\(\) has parameter \$result with no type specified\.#'
       - '#Method Drupal\\social_post_album\\Element\\SocialPostAlbumManagedFile::processManagedFile\(\) has (?:no return type specified\.|parameter \$complete_form with no type specified\.|parameter \$element with no type specified\.)#'
-
       ## Extend of @internal API
       - '#Class .* extends @internal class .*\.#'
 

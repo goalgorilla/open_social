@@ -4,7 +4,6 @@ namespace Drupal\social_language;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
-use Drupal\social_language\SocialLanguageModalRenderer;
 
 /**
  * Class SocialLanguageServiceProvider.

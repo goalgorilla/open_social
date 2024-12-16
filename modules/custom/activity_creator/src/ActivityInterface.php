@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_creator;
 
+use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -59,7 +60,7 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return \Drupal\Core\Url|string
    *   Empty string if entity canonical url could not be found.
    */
-  public function getRelatedEntityUrl(): string|\Drupal\Core\Url;
+  public function getRelatedEntityUrl(): string|Url;
 
   /**
    * Get destinations.

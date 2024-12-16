@@ -5,8 +5,6 @@ namespace Drupal\social_event\Plugin\views\filter;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\filter\InOperator;
-use Drupal\views\Plugin\views\join\JoinPluginBase;
-use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 
@@ -48,7 +46,7 @@ class EventDate extends InOperator {
    * {@inheritdoc}
    */
   public function query(): void {
-    /** @var Sql $query */
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
     $query = $this->query;
 
     $value = (int) current($this->value);
@@ -79,13 +77,13 @@ class EventDate extends InOperator {
       'left_field' => 'nid',
     ];
 
-    /** @var JoinPluginBase $join */
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')
       ->createInstance('standard', $configuration);
     $alias = $query->addRelationship($configuration['table'], $join, $base_table);
     $field_end = $query->getDateFormat($alias . '.field_event_date_end_value', DateTimeItemInterface::DATETIME_STORAGE_FORMAT, TRUE);
 
-    /** @var JoinPluginBase $all_day_join */
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $all_day_join */
     $all_day_join = Views::pluginManager('join')
       ->createInstance('standard', $configuration_all_day);
     $all_day_alias = $query->addRelationship($configuration_all_day['table'], $all_day_join, $base_table);

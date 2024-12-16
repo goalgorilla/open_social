@@ -3,7 +3,6 @@
 namespace Drupal\social_like\Plugin\ActivityContext;
 
 use Drupal\activity_creator\ActivityFactory;
-use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -113,7 +112,7 @@ class VoteActivityContext extends ActivityContextBase {
             }
           }
 
-          /** @var Activity $entity */
+          /** @var \Drupal\activity_creator\Entity\Activity $entity */
           $uid = $entity->getOwnerId();
 
           // Don't send notifications to myself.

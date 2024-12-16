@@ -2,6 +2,7 @@
 
 namespace Drupal\social_private_message\Plugin\UserExportPlugin;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\ContentEntityStorageInterface;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
@@ -20,7 +21,7 @@ class UserAnalyticsPrivateMessage extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): string|\Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getHeader(): string|TranslatableMarkup {
     return $this->t('Number of Private messages');
   }
 

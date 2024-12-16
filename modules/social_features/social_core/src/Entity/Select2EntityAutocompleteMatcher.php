@@ -2,8 +2,6 @@
 
 namespace Drupal\social_core\Entity;
 
-use Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface;
-use Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManager;
 use Drupal\select2\EntityAutocompleteMatcher as EntityAutocompleteMatcherBase;
 use Drupal\Component\Utility\Html;
 use Drupal\social_user\VerifyableUserInterface;
@@ -26,7 +24,7 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
       'target_type' => $target_type,
       'handler' => $selection_handler,
     ];
-    /** @var SelectionInterface $handler */
+    /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
     $handler = $this->selectionManager->getInstance($options);
 
     // Get an array of matching entities.

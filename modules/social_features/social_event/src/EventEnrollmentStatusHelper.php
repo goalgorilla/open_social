@@ -5,7 +5,6 @@ namespace Drupal\social_event;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -71,9 +70,9 @@ class EventEnrollmentStatusHelper {
    *
    * @param string $user
    *   The email or userid you want to check on.
-   * @param int|NULL $event
+   * @param int|null $event
    *   The event id you want to check on, use 0 for all.
-   * @param int|NULL $invite_status
+   * @param int|null $invite_status
    *   The event status to filter on.
    *
    * @return array
@@ -121,7 +120,7 @@ class EventEnrollmentStatusHelper {
    *
    * @param int $event
    *   The event id you want to check on.
-   * @param int|NULL $invite_status
+   * @param int|null $invite_status
    *   The event status to filter on.
    *
    * @return array
@@ -145,9 +144,10 @@ class EventEnrollmentStatusHelper {
    * Get all enrollments for a user.
    *
    * @param string $user
-   *  The email or userid you want to check on.
-   * @return EntityInterface[]
-   *  Returns all enrollments for a user.
+   *   The email or userid you want to check on.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface[]
+   *   Returns all enrollments for a user.
    */
   public function getAllUserEventEnrollments(string $user): array {
     $conditions = $this->userEnrollments($user, NULL);
@@ -157,8 +157,9 @@ class EventEnrollmentStatusHelper {
     try {
       return $this->entityTypeManager->getStorage('event_enrollment')
         ->loadByProperties($conditions);
-    } catch (InvalidPluginDefinitionException|PluginNotFoundException $e) {
-     return [];
+    }
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      return [];
     }
   }
 

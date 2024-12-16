@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\Storage\GroupRoleStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -126,7 +125,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
                       }
                     }
 
-                    /** @var GroupRoleStorageInterface $group_role_storage */
+                    /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $group_role_storage */
                     $group_role_storage = $this->entityTypeManager->getStorage('group_role');
                     $group_roles = $group_role_storage->loadByUserAndGroup($account, $group);
                     foreach ($group_roles as $group_role) {

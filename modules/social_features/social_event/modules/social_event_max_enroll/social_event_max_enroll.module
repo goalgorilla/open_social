@@ -24,7 +24,7 @@ function social_event_max_enroll_views_post_render(ViewExecutable $view, array &
     !empty($view->args[0])
   ) {
     $nid = $view->args[0];
-    /** @var NodeInterface $node */
+    /** @var \Drupal\node\NodeInterface $node */
     $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
     $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
 

@@ -354,6 +354,7 @@ final class EdaHandler {
     }
 
     // Build the event.
+    /** @var \CloudEvents\CloudEventInterface $event */
     $event = $this->fromEntity($user, $event_type);
 
     // Dispatch to message broker.

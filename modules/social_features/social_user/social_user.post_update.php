@@ -65,6 +65,5 @@ function social_user_post_update_10101_add_verified_role_to_existing_users(array
     ? 1
     : (((int) $sandbox['count']) - count($sandbox['ids'])) / ((int) $sandbox['count']);
 
-
   return (bool) $sandbox['#finished'];
 }

@@ -5,7 +5,6 @@ namespace Drupal\group_core_comments\Plugin\Field\FieldFormatter;
 use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -17,7 +16,6 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupRelationship;
-use Drupal\group\Entity\GroupRelationshipInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -146,7 +144,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
 
     // Exclude entities without the set id.
     if (!empty($entity->id())) {
-      /** @var ContentEntityInterface[] $group_contents */
+      /** @var \Drupal\Core\Entity\ContentEntityInterface[] $group_contents */
       $group_contents = GroupRelationship::loadByEntity($entity);
     }
 
@@ -156,7 +154,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
       $output['#cache']['contexts'][] = 'user.group_permissions';
 
       $account = $this->currentUser;
-      /** @var GroupRelationshipInterface $group_content */
+      /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_content */
       $group_content = reset($group_contents);
       $group = $group_content->getGroup();
       $group_url = $group->toUrl('canonical', ['language' => $group->language()]);
@@ -295,7 +293,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
    */
   protected function getPermissionInGroups(string $perm, AccountInterface $account, array $group_contents, array &$output): AccessResultInterface {
     foreach ($group_contents as $group_content) {
-      /** @var GroupRelationshipInterface $group_content */
+      /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_content */
       $group = $group_content->getGroup();
 
       // Add cacheable dependency.

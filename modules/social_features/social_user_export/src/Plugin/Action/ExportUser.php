@@ -2,6 +2,8 @@
 
 namespace Drupal\social_user_export\Plugin\Action;
 
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\File\FileSystem;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -10,7 +12,6 @@ use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\file\FileRepository;
-use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -46,35 +47,35 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *
    * @var \Drupal\social_user_export\Plugin\UserExportPluginManager
    */
-  protected $userExportPlugin;
+  protected UserExportPluginManager $userExportPlugin;
 
   /**
    * User export plugin definitions.
    *
    * @var array
    */
-  protected $pluginDefinitions;
+  protected array $pluginDefinitions;
 
   /**
    * A logger instance.
    *
    * @var \Psr\Log\LoggerInterface
    */
-  protected $logger;
+  protected LoggerInterface $logger;
 
   /**
    * The current user account.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The user export plugin config object.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $config;
+  protected ImmutableConfig $config;
 
   /**
    * File URL Generator services.
@@ -118,6 +119,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *   The file url generator service.
    * @param \Drupal\file\FileRepository $file_repository
    *   The file repository service.
+   * @param \Drupal\Core\File\FileSystem $file_system
+   *   The file system service.
    */
   public function __construct(
     array $configuration,
@@ -171,7 +174,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     if (empty($this->context['sandbox']['results']['headers'])) {
       $headers = [];
       foreach ($this->pluginDefinitions as $plugin) {
-        /** @var UserExportPluginBase $instance */
+        /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
         $instance = $this->userExportPlugin->createInstance($plugin['id']);
         $headers[] = $instance->getHeader();
       }
@@ -207,7 +210,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
       $row = [];
       foreach ($this->pluginDefinitions as $plugin) {
         $configuration = $this->getPluginConfiguration($plugin['id'], $entity_id);
-        /** @var UserExportPluginBase $instance */
+        /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
         $instance = $this->userExportPlugin->createInstance($plugin['id'], $configuration);
         $this->writeRow($row, $instance->getValue($entity));
       }
@@ -269,7 +272,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|\Drupal\Core\Access\AccessResultInterface {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|AccessResultInterface {
     /** @var \Drupal\user\UserInterface $object */
     // @todo Check for export access instead.
     return $object->access('view', $account, $return_as_object);

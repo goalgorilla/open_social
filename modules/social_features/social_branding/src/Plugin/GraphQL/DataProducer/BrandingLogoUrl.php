@@ -5,7 +5,6 @@ namespace Drupal\social_branding\Plugin\GraphQL\DataProducer;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\StreamWrapper\StreamWrapperInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -77,7 +76,7 @@ class BrandingLogoUrl extends DataProducerPluginBase implements ContainerFactory
   public function resolve(ImmutableConfig $community_branding) : ?string {
     if ($community_branding->get('default') === 'socialblue') {
       if ($this->config->get('socialblue.settings')->get('logo.path')) {
-        /** @var StreamWrapperInterface $wrapper */
+        /** @var \Drupal\Core\StreamWrapper\StreamWrapperInterface $wrapper */
         $wrapper = \Drupal::service('stream_wrapper_manager')
           ->getViaUri($this->config->get('socialblue.settings')->get('logo.path'));
         return $wrapper->getExternalUrl();

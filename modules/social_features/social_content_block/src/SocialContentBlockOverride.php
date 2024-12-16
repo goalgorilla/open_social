@@ -2,6 +2,8 @@
 
 namespace Drupal\social_content_block;
 
+use Drupal\Core\Config\StorableConfigBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
@@ -196,7 +198,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected static function getBlockContent(): \Drupal\Core\Entity\EntityStorageInterface {
+  protected static function getBlockContent(): EntityStorageInterface {
     return \Drupal::entityTypeManager()
       ->getStorage('block_content');
   }
@@ -218,7 +220,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?\Drupal\Core\Config\StorableConfigBase {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?StorableConfigBase {
     return NULL;
   }
 

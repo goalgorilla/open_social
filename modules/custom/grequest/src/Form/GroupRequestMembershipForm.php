@@ -2,6 +2,7 @@
 
 namespace Drupal\grequest\Form;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -59,7 +60,7 @@ class GroupRequestMembershipForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t("Are you sure you want to request membership the group @group", ['@group' => $this->group?->label()]);
   }
 

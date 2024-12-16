@@ -1,11 +1,11 @@
 <?php
 
-use Drupal\social_event_an_enroll\Form\EventAnEnrollActionForm;
-
 /**
  * @file
  * The Social event AN enroll module.
  */
+
+use Drupal\social_event_an_enroll\Form\EventAnEnrollActionForm;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -17,7 +17,7 @@ use Drupal\node\Entity\Node;
 use Drupal\file\Entity\File;
 
 /**
- * Create and send a invitation email on the given user account.
+ * Create and send an invitation email on the given user account.
  */
 function social_event_an_enroll_send_mail(array $params): ?int {
   if (!empty($params['field_event']) && !empty($params['field_email'])) {

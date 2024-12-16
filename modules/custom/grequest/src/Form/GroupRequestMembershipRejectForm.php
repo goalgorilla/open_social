@@ -2,6 +2,7 @@
 
 namespace Drupal\grequest\Form;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -38,7 +39,7 @@ class GroupRequestMembershipRejectForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t('Are you sure you want to Reject this request?');
   }
 

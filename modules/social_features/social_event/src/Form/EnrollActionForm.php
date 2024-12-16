@@ -2,6 +2,12 @@
 
 namespace Drupal\social_event\Form;
 
+use Drupal\social_event\EventEnrollmentStatusHelper;
+use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\user\UserStorageInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Ajax\RedirectCommand;
@@ -39,21 +45,21 @@ class EnrollActionForm extends FormBase {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected \Drupal\Core\Entity\EntityStorageInterface $enrollmentStorage;
+  protected EntityStorageInterface $enrollmentStorage;
 
   /**
    * The user storage.
    *
    * @var \Drupal\user\UserStorageInterface
    */
-  protected \Drupal\user\UserStorageInterface $userStorage;
+  protected UserStorageInterface $userStorage;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The config factory.
@@ -67,21 +73,21 @@ class EnrollActionForm extends FormBase {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected \Drupal\Core\Form\FormBuilderInterface $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * The event invite status helper.
    *
    * @var \Drupal\social_event\EventEnrollmentStatusHelper
    */
-  protected \Drupal\social_event\EventEnrollmentStatusHelper $eventHelper;
+  protected EventEnrollmentStatusHelper $eventHelper;
 
   /**
    * {@inheritdoc}

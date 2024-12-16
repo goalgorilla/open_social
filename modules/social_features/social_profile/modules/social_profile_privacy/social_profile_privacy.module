@@ -405,7 +405,7 @@ function social_profile_privacy_entity_field_access(string $operation, FieldDefi
     // If owner.
     $access = ($uid === $account->id());
     // If field is not hidden.
-    $access = $access || !in_array($field_definition->getName(), $fields, true);
+    $access = $access || !in_array($field_definition->getName(), $fields, TRUE);
     // If user has access to view hidden fields.
     $access = $access || $account->hasPermission('social profile privacy view hidden fields');
 

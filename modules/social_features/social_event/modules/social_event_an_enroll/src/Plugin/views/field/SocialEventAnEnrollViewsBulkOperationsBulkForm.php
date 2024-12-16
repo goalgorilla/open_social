@@ -6,8 +6,6 @@ use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_managers\Plugin\views\field\SocialEventManagersViewsBulkOperationsBulkForm;
@@ -21,7 +19,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Defines the Views Bulk Operations field plugin.
  */
-class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagersViewsBulkOperationsBulkForm implements ContainerFactoryPluginInterface {
+class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagersViewsBulkOperationsBulkForm {
 
   /**
    * The event an enroll manager.
@@ -55,13 +53,15 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
    *   The entity type manager.
    * @param \Drupal\Core\Action\ActionManager $pluginActionManager
    *   The action manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
    * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
    *   The event an enroll manager.
    */
   public function __construct(
     array $configuration,
-    $plugin_id,
-    $plugin_definition,
+          $plugin_id,
+          $plugin_definition,
     ViewsBulkOperationsViewDataInterface $viewData,
     ViewsBulkOperationsActionManager $actionManager,
     ViewsBulkOperationsActionProcessorInterface $actionProcessor,
@@ -70,26 +70,10 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
     RequestStack $requestStack,
     EntityTypeManagerInterface $entity_type_manager,
     ActionManager $pluginActionManager,
-    RouteMatchInterface $routeMatch,
     ConfigFactoryInterface $config_factory,
     EventAnEnrollManager $social_event_an_enroll_manager,
   ) {
-    parent::__construct(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $viewData,
-      $actionManager,
-      $actionProcessor,
-      $tempStoreFactory,
-      $currentUser,
-      $requestStack,
-      $entity_type_manager,
-      $pluginActionManager,
-      $routeMatch,
-      $config_factory,
-    );
-
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack, $entity_type_manager, $pluginActionManager, $config_factory);
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
   }
 
@@ -109,9 +93,8 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
       $container->get('request_stack'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.action'),
-      $container->get('current_route_match'),
       $container->get('config.factory'),
-      $container->get('social_event_an_enroll.manager'),
+      $container->get('social_event_an_enroll.manager')
     );
   }
 

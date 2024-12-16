@@ -5,6 +5,7 @@
  * The Social topic module.
  */
 
+use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
@@ -300,7 +301,7 @@ function social_topic_widget_alter(array &$form): void {
  *
  * Implements hook_block_access().
  */
-function social_topic_block_access(Block $block, string $operation, AccountInterface $account): \Drupal\Core\Access\AccessResultForbidden|AccessResultNeutral|AccessResult {
+function social_topic_block_access(Block $block, string $operation, AccountInterface $account): AccessResultForbidden|AccessResultNeutral|AccessResult {
 
   if ($operation === 'view' && ($block->getPluginId() === 'views_exposed_filter_block:topics-page_profile' || $block->getPluginId() === 'views_block:topics-block_user_topics')) {
     // Here we're going to assume by default access is not granted.

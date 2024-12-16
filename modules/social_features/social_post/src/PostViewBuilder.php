@@ -3,9 +3,7 @@
 namespace Drupal\social_post;
 
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityViewBuilder;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -13,13 +11,10 @@ use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Render\Element\Link;
 use Drupal\Core\Theme\Registry;
 use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupInterface;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\social_group\SocialGroupHelperService;
 use Drupal\social_post\Entity\Post;
-use Drupal\social_post\Entity\PostInterface;
 use Drupal\user\Entity\User;
-use League\OAuth2\Server\Entities\UserEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,7 +25,7 @@ class PostViewBuilder extends EntityViewBuilder {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return [
       'build',
       'buildMultiple',
@@ -43,7 +38,7 @@ class PostViewBuilder extends EntityViewBuilder {
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $socialGroupHelperService;
+  protected SocialGroupHelperService $socialGroupHelperService;
 
   /**
    * The database service.
@@ -51,7 +46,6 @@ class PostViewBuilder extends EntityViewBuilder {
    * @var \Drupal\Core\Database\Connection
    */
   private Connection $database;
-
 
   /**
    * Constructs a new EntityViewBuilder.
@@ -68,6 +62,8 @@ class PostViewBuilder extends EntityViewBuilder {
    *   The entity display repository.
    * @param \Drupal\social_group\SocialGroupHelperService $social_group_helper_service
    *   The social group helper service.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database service.
    */
   public function __construct(
     EntityTypeInterface $entity_type,
@@ -153,7 +149,7 @@ class PostViewBuilder extends EntityViewBuilder {
       if (!(in_array($template_id, $template_ids) && in_array($template_id, $template_types))) {
         continue;
       }
-      /** @var PostInterface $entity
+      /** @var \Drupal\social_post\Entity\PostInterface $entity
        */
       $account = $entity->getOwner();
 
@@ -172,7 +168,7 @@ class PostViewBuilder extends EntityViewBuilder {
           continue;
         }
 
-        /** @var GroupInterface $group */
+        /** @var \Drupal\group\Entity\GroupInterface $group */
         $group = Group::load($group_id);
 
         $replacements['[message:gurl]'] = $group->toLink()->getUrl()->toString();
@@ -192,7 +188,7 @@ class PostViewBuilder extends EntityViewBuilder {
         $result = $query->execute();
         if ($result) {
           $user_id = $result->fetchField();
-          /** @var User $account */
+          /** @var \Drupal\user\Entity\User $account */
           $account = User::load($user_id);
 
           $replacements['[message:recipient-user-url]'] = $account->toLink()->getUrl()->toString();

@@ -4,7 +4,6 @@ namespace Drupal\social_activity;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
-use Drupal\views\ViewEntityInterface;
 use Drupal\views\ViewExecutableFactory;
 
 /**
@@ -69,7 +68,7 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
    */
   public function viewsLazyBuild(string $view_id, string $display_id, string $node_type, int $item_per_page, ?string $vocabulary = NULL, ...$tags): ?array {
     // Get view.
-    /** @var ViewEntityInterface $view_entity */
+    /** @var \Drupal\views\ViewEntityInterface $view_entity */
     $view_entity = $this->entityTypeManager->getStorage('view')->load($view_id);
     $view = $this->viewExecutable->get($view_entity);
     $view->setDisplay($display_id);

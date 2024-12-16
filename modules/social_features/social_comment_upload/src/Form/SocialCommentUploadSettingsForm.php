@@ -2,8 +2,8 @@
 
 namespace Drupal\social_comment_upload\Form;
 
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -21,7 +21,7 @@ class SocialCommentUploadSettingsForm extends ConfigFormBase {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected null|ModuleHandlerInterface|\Drupal\Core\Config\TypedConfigManagerInterface $moduleHandler;
+  protected null|ModuleHandlerInterface|TypedConfigManagerInterface $moduleHandler;
 
   /**
    * {@inheritdoc}

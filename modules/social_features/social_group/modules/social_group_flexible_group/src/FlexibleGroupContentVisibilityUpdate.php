@@ -3,14 +3,11 @@
 namespace Drupal\social_group_flexible_group;
 
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\group\GroupMembership;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
 use Drupal\user\RoleInterface;
@@ -54,7 +51,7 @@ class FlexibleGroupContentVisibilityUpdate {
   /**
    * Update Group content after Group changed.
    *
-   * @param GroupInterface $group
+   * @param \Drupal\group\Entity\GroupInterface $group
    *   The Group we've updated.
    * @param array $changed_visibility
    *   The Group's old visibility.
@@ -107,14 +104,14 @@ class FlexibleGroupContentVisibilityUpdate {
   /**
    * Update visibility for all Group Content based on a new group type.
    *
-   * @param ContentEntityInterface $entity
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The content we are updating.
    * @param array $new_options
    *   The Group's new visibility options.
    * @param array $context
    *   Passed on by reference.
    *
-   * @throws EntityStorageException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public static function updateVisibility(ContentEntityInterface $entity, array $new_options, array &$context): void {
     // Store some results for post-processing in the 'finished' callback.
@@ -191,13 +188,13 @@ class FlexibleGroupContentVisibilityUpdate {
       $query->addField('pst', 'entity_id');
       $query->condition('pst.field_recipient_group_target_id', $group->id());
       $result = $query->execute();
-      if($result !== NULL) {
+      if ($result !== NULL) {
         $result->fetchAll();
       }
 
       $post_result = $query->execute();
       $post_keys = [];
-      if($post_result !== NULL) {
+      if ($post_result !== NULL) {
         $post_keys = $post_result->fetchAllAssoc('entity_id');
       }
 

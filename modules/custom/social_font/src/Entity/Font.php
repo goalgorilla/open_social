@@ -2,6 +2,7 @@
 
 namespace Drupal\social_font\Entity;
 
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -114,7 +115,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid): \Drupal\user\EntityOwnerInterface|Font|static {
+  public function setOwnerId($uid): EntityOwnerInterface|Font|static {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -122,7 +123,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account): \Drupal\user\EntityOwnerInterface|Font|static {
+  public function setOwner(UserInterface $account): EntityOwnerInterface|Font|static {
     $this->set('user_id', $account->id());
     return $this;
   }

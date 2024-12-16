@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post\Form;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -14,7 +15,7 @@ class PostTypeDeleteForm extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t('Are you sure you want to delete %name?', ['%name' => $this->entity->label()]);
   }
 
@@ -28,7 +29,7 @@ class PostTypeDeleteForm extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getConfirmText(): TranslatableMarkup {
     return $this->t('Delete');
   }
 

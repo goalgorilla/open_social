@@ -236,9 +236,9 @@ class TopicContext extends RawMinkContext {
   public function iEditTopicUsingTheForm(string $title, TableNode $fields) : void {
     $topic_id = $this->getTopicIdFromTitle($title);
     if ($topic_id === NULL) {
-      throw new \RuntimeException("Topic with title '${title}' does not exist. Did you create it in the test?");
+      throw new \RuntimeException("Topic with title '{$title}' does not exist. Did you create it in the test?");
     }
-    $this->visitPath("/node/${topic_id}/edit");
+    $this->visitPath("/node/{$topic_id}/edit");
 
     $this->minkContext->saveScreenshot("edit-topic.png", "/var/www/html/profiles/contrib/social/tests/behat/logs");
 
@@ -302,15 +302,15 @@ class TopicContext extends RawMinkContext {
           do {
             $element = $element->getParent();
             if ($element->getTagName() === "body") {
-              throw new \RuntimeException("${field} was not visible but could not find a parent 'details' element to expand.");
+              throw new \RuntimeException("{$field} was not visible but could not find a parent 'details' element to expand.");
             }
           } while ($element->getTagName() !== "details");
           if ($element->hasAttribute("open")) {
-            throw new \RuntimeException("${field} was in an open details element but was still not visible.");
+            throw new \RuntimeException("{$field} was in an open details element but was still not visible.");
           }
           $summary = $element->find('named', 'summary');
           if ($summary === NULL) {
-            throw new \RuntimeException("${field} was in a closed details element but the details element did not contain a summary to expand it.");
+            throw new \RuntimeException("{$field} was in a closed details element but the details element did not contain a summary to expand it.");
           }
           // This should expand the details so that we can check the field.
           $summary->click();

@@ -8,7 +8,6 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\node\NodeForm;
@@ -117,7 +116,7 @@ class SocialNodeForm extends NodeForm {
    * @return \Drupal\social_node\Service\SocialNodeMessengerInterface
    *   The messenger.
    */
-  public function messenger(): \Drupal\social_node\Service\SocialNodeMessengerInterface {
+  public function messenger(): SocialNodeMessengerInterface {
     /** @var \Drupal\social_node\Service\SocialNodeMessengerInterface $messenger */
     $messenger = $this->messenger;
     return $messenger;

@@ -2,8 +2,6 @@
 
 namespace Drupal\social_graphql\Wrappers;
 
-use Drupal\node\NodeInterface;
-
 /**
  * Provides a common interface for edges that DataProducers can work with.
  */

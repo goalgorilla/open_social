@@ -2,15 +2,10 @@
 
 namespace Drupal\activity_logger\Service;
 
-use Drupal\activity_creator\Plugin\ActivityContextInterface;
 use Drupal\activity_creator\Plugin\ActivityContextManager;
-use Drupal\activity_creator\Plugin\ActivityEntityConditionInterface;
 use Drupal\activity_creator\Plugin\ActivityEntityConditionManager;
 use Drupal\activity_logger\Entity\NotificationConfigEntityInterface;
-use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityBase;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\FieldConfigInterface;
@@ -120,7 +115,7 @@ class ActivityLoggerFactory {
       $new_message['field_message_destination'] = $destinations;
 
       if ($entity instanceof NotificationConfigEntityInterface) {
-        /** @var EntityBase $entity_base */
+        /** @var \Drupal\Core\Entity\EntityBase $entity_base */
         $entity_base = $entity;
         $new_message['field_message_related_object'] = [
           'target_type' => $entity_base->getEntityTypeId(),
@@ -129,18 +124,18 @@ class ActivityLoggerFactory {
         $new_message['created'] = $entity->getCreatedTime();
       }
       else {
-        /** @var EntityInterface $entity */
+        /** @var \Drupal\Core\Entity\EntityInterface $entity */
         $new_message['field_message_related_object'] = [
           'target_type' => $entity->getEntityTypeId(),
           'target_id' => $entity->id(),
         ];
         // The flagging entity does not implement getCreatedTime().
         if ($entity->getEntityTypeId() === 'flagging') {
-          /** @var ContentEntityInterface $entity */
+          /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
           $new_message['created'] = $entity->get('created')->value;
         }
         else {
-          /** @var NotificationConfigEntityInterface $entity */
+          /** @var \Drupal\activity_logger\Entity\NotificationConfigEntityInterface $entity */
           $new_message['created'] = $entity->getCreatedTime();
         }
       }
@@ -178,12 +173,12 @@ class ActivityLoggerFactory {
 
     // Check all enabled messages.
     foreach ($message_storage->loadByProperties(['status' => '1']) as $key => $message_type) {
-      /** @var ConfigEntityBase $message_type */
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityBase $message_type */
       $mt_entity_bundles = $message_type->getThirdPartySetting('activity_logger', 'activity_bundle_entities', []);
       $mt_action = $message_type->getThirdPartySetting('activity_logger', 'activity_action', NULL);
       $mt_context = $message_type->getThirdPartySetting('activity_logger', 'activity_context', NULL);
       $mt_destinations = $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
-      $mt_entity_condition = $message_type->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
+      $mt_entity_condition = (string) $message_type->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
 
       if ($mt_action !== $action) {
         continue;
@@ -198,19 +193,22 @@ class ActivityLoggerFactory {
         continue;
       }
 
-      /** @var ActivityEntityConditionInterface $entity_condition */
-      /** @var ContentEntityInterface $entity */
-      $entity_condition = $this->activityEntityConditionManager->createInstance($mt_entity_condition);
-      if (
-        !empty($mt_entity_condition)
-        && $this->activityEntityConditionManager->hasDefinition($mt_entity_condition)
-        && !$entity_condition->isValidEntityCondition($entity)
-      ) {
+      if (!empty($mt_entity_condition)) {
         continue;
       }
 
-      /** @var ActivityContextInterface $context_plugin */
+      if ($this->activityEntityConditionManager->hasDefinition($mt_entity_condition)) {
+        continue;
+      }
+
+      /** @var \Drupal\activity_creator\Plugin\ActivityEntityConditionInterface $context_plugin */
       $context_plugin = $this->activityContextManager->createInstance($mt_context);
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+      if (!$context_plugin->isValidEntityCondition($entity)) {
+        continue;
+      }
+
+      /** @var \Drupal\activity_creator\Plugin\ActivityContextInterface $context_plugin */
       if ($context_plugin->isValidEntity($entity)) {
         $message_types[$key] = [
           'messagetype' => $message_type,

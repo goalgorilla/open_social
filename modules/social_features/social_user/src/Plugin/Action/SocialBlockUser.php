@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user\Plugin\Action;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Action\ActionBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserInterface;
@@ -36,7 +37,7 @@ class SocialBlockUser extends ActionBase {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|int|\Drupal\Core\Access\AccessResultInterface {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|int|AccessResultInterface {
     /** @var \Drupal\user\UserInterface $object */
     $access = $object->get('status')->access('edit', $account, TRUE)
       ->andIf($object->access('update', $account, TRUE));

@@ -33,13 +33,6 @@ class QueueStorageEntityForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state): array {
-    return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function save(array $form, FormStateInterface $form_state): int {
     // Possibility to add additional data to the entity upon saving.
     $entity = $this->entity;
@@ -62,4 +55,5 @@ class QueueStorageEntityForm extends ContentEntityForm {
     $form_state->setRedirect('entity.queue_storage_entity.canonical', ['queue_storage_entity' => $entity->id()]);
     return 0;
   }
+
 }

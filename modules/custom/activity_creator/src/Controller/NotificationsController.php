@@ -65,7 +65,6 @@ class NotificationsController extends ControllerBase {
       ? '0'
       : (string) count($this->activities->getNotifications($this->currentUser()));
 
-    // $notification_count = $this->activities->markAllNotificationsAsSeen($this->currentUser()) ? 0 : count($this->activities->getNotifications($this->currentUser()));
     $response->addCommand(new HtmlCommand('.notification-bell .badge', $notification_count));
 
     return $response;

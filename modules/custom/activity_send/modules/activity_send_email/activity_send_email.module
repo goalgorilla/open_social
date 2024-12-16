@@ -169,7 +169,6 @@ function activity_send_email_form_user_form_alter(array &$form, FormStateInterfa
 
   $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($account);
 
-
   foreach ($items as $item_id => $item) {
     // Don't render the fieldset when there are no templates.
     if (empty($item['templates'])) {

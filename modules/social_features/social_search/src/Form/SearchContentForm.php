@@ -3,7 +3,6 @@
 namespace Drupal\social_search\Form;
 
 use Drupal\Component\Utility\Xss;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;

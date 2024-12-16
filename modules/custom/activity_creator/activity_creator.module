@@ -172,7 +172,7 @@ function activity_creator_activity_insert(ActivityInterface $activity): void {
   // notifications.
   if (in_array('notifications', $activity->getDestinations(), TRUE)) {
     // Get recipients.
-    /** @var Activity $activity */
+    /** @var \Drupal\activity_creator\Entity\Activity $activity */
     $recipients = $activity->getRecipient();
 
     if (is_array($recipients)) {

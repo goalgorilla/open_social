@@ -2,6 +2,7 @@
 
 namespace Drupal\social_queue_storage\Entity;
 
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -117,7 +118,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
    * {@inheritdoc}
    */
   public function getOwner(): UserInterface {
-    /** @var UserInterface $user */
+    /** @var \Drupal\user\UserInterface $user */
     $user = $this->get('user_id')->entity;
     return $user;
   }
@@ -132,7 +133,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid): QueueStorageEntity|\Drupal\user\EntityOwnerInterface|static {
+  public function setOwnerId($uid): QueueStorageEntity|EntityOwnerInterface|static {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -140,7 +141,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account): QueueStorageEntity|\Drupal\user\EntityOwnerInterface|static {
+  public function setOwner(UserInterface $account): QueueStorageEntity|EntityOwnerInterface|static {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -148,7 +149,6 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-
   public function isFinished(): bool {
     return (bool) $this->get('finished')->value;
   }

@@ -25,7 +25,8 @@ class SocialProfileFieldsBatch {
    * @param array $context
    *   The context of the flush.
    *
-   * @throws \Drupal\Core\Entity\EntityStorageException|\Drupal\Core\TypedData\Exception\ReadOnlyException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
    */
   public static function performFlush(array $pids, array $fields, array &$context): void {
     $message = 'Flushing profile data...';

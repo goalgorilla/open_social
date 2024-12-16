@@ -128,7 +128,7 @@ class OrganizerActivityContext extends ActivityContextBase {
       && $original_related_object['target_type'] === 'event_enrollment'
       && $related_entity !== NULL) {
       $storage = $this->entityTypeManager->getStorage($related_entity['target_type']);
-      /** @var EventEnrollmentInterface|NULL $event */
+      /** @var \Drupal\social_event\EventEnrollmentInterface|NULL $event */
       $event = $storage->load($related_entity['target_id']);
 
       if ($event === NULL) {

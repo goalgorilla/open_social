@@ -68,7 +68,7 @@ function social_post_mass_update(array $posts, array $updates, ?string $langcode
 /**
  * Updates individual posts when fewer than 10 are queued.
  *
- * @param PostInterface $post
+ * @param \Drupal\social_post\Entity\PostInterface $post
  *   A post to update.
  * @param array $updates
  *   Associative array of updates.
@@ -76,7 +76,7 @@ function social_post_mass_update(array $posts, array $updates, ?string $langcode
  *   (optional) The language updates should be applied to. If none is specified
  *   all available languages are processed.
  *
- * @return PostInterface
+ * @return \Drupal\social_post\Entity\PostInterface
  *   An updated post object.
  *
  * @throws \Drupal\Core\Entity\EntityStorageException

@@ -2,14 +2,12 @@
 
 namespace Drupal\download_count\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\ByteSizeMarkup;
 use Drupal\Core\Theme\ThemeManagerInterface;
-use Drupal\file\FileInterface;
 use Drupal\file\IconMimeTypes;
 use Drupal\file\Plugin\Field\FieldFormatter\GenericFileFormatter;
 use Drupal\Core\Database\Database;
@@ -116,7 +114,7 @@ class FieldDownloadCount extends GenericFileFormatter {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
-    /** @var EntityReferenceFieldItemListInterface $items */
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $items */
 
     $element = [];
     $entity = $items->getEntity();
@@ -124,7 +122,7 @@ class FieldDownloadCount extends GenericFileFormatter {
     $access = $this->currentUser->hasPermission('view download counts');
     $download = 0;
 
-    /** @var FileInterface $file */
+    /** @var \Drupal\file\FileInterface $file */
     foreach ($this->getEntitiesToView($items, $langcode) as $delta => $file) {
       $item = $file->_referringItem;
 
@@ -136,7 +134,7 @@ class FieldDownloadCount extends GenericFileFormatter {
             ':type' => $entity_type,
             ':id' => $entity->id(),
           ]);
-        If ($result !== NULL) {
+        if ($result !== NULL) {
           $download = $result->fetchField();
           $file->download = (int) $download;
         }

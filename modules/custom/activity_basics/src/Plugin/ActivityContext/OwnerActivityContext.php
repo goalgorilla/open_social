@@ -4,7 +4,6 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\group\Entity\GroupInterface;
@@ -120,7 +119,7 @@ class OwnerActivityContext extends ActivityContextBase {
     $recipients = [];
 
     $entity_storage = $this->entityTypeManager->getStorage($related_entity['target_type']);
-    /** @var EntityOwnerInterface|NULL $entity */
+    /** @var \Drupal\user\EntityOwnerInterface|NULL $entity */
     $entity = $entity_storage->load($related_entity['target_id']);
 
     // It could happen that a notification has been queued but the content
@@ -134,7 +133,7 @@ class OwnerActivityContext extends ActivityContextBase {
     $original_related_object = $data['related_object'][0];
     if (isset($original_related_object['target_type']) && $original_related_object['target_type'] === 'comment') {
       $storage = $this->entityTypeManager->getStorage($original_related_object['target_type']);
-      /** @var EntityOwnerInterface $original_related_entity */
+      /** @var \Drupal\user\EntityOwnerInterface $original_related_entity */
       $original_related_entity = $storage->load($original_related_object['target_id']);
 
       if ($original_related_entity !== NULL && $original_related_entity->getOwnerId() === $entity->getOwnerId()) {
@@ -144,7 +143,7 @@ class OwnerActivityContext extends ActivityContextBase {
 
     if ($entity instanceof EntityOwnerInterface) {
       $account = $entity->getOwner();
-      /** @var EntityInterface $entity */
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
       $group = $this->groupMuteNotify->getGroupByContent($entity);
       // Check if we have $group set which means that this content was
       // posted in a group.

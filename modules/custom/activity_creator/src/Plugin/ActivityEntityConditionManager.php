@@ -6,6 +6,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\activity_creator\Annotation\ActivityEntityCondition;
 
 /**
  * Provides the Activity entity condition plugin manager.
@@ -24,7 +25,7 @@ class ActivityEntityConditionManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/ActivityEntityCondition', $namespaces, $module_handler, 'Drupal\activity_creator\Plugin\ActivityEntityConditionInterface', 'Drupal\activity_creator\Annotation\ActivityEntityCondition');
+    parent::__construct('Plugin/ActivityEntityCondition', $namespaces, $module_handler, ActivityEntityConditionInterface::class, ActivityEntityCondition::class);
 
     $this->alterInfo('activity_creator_activity_entity_condition_info');
     $this->setCacheBackend($cache_backend, 'activity_creator_activity_entity_condition_plugins');
@@ -40,7 +41,7 @@ class ActivityEntityConditionManager extends DefaultPluginManager {
    *   An associative array mapping the IDs of all available tracker plugins to
    *   their labels.
    */
-  public function getOptionsList(array $entities = []) {
+  public function getOptionsList(array $entities = []): array {
     $options = [];
 
     foreach ($entities as $entity) {

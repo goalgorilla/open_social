@@ -2,6 +2,8 @@
 
 namespace Drupal\social_event_an_enroll\Form;
 
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\data_policy\DataPolicyConsentManagerInterface;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseDialogCommand;
@@ -29,14 +31,14 @@ class EventAnEnrollForm extends EnrollActionForm {
    *
    * @var \Drupal\data_policy\DataPolicyConsentManagerInterface
    */
-  protected \Drupal\data_policy\DataPolicyConsentManagerInterface $dataPolicyConsentManager;
+  protected DataPolicyConsentManagerInterface $dataPolicyConsentManager;
 
   /**
    * Drupal\Core\TempStore\PrivateTempStoreFactory definition.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected \Drupal\Core\TempStore\PrivateTempStoreFactory $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * {@inheritdoc}

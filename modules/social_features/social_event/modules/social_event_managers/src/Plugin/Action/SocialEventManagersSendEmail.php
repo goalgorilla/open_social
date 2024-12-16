@@ -4,7 +4,6 @@ namespace Drupal\social_event_managers\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
-use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -38,8 +37,10 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
 
   /**
    * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected EntityTypeManagerInterface $entityTypeManager;
+  protected $entityTypeManager;
 
   /**
    * The email broadcast service.
@@ -147,7 +148,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     }
 
     // Pass it back to our parent who handles the creation of queue items.
-    return parent::executeMultiple($users ?? []);
+    return parent::executeMultiple($users);
   }
 
   /**
@@ -171,7 +172,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
         $access = AccessResult::allowedIfHasPermission($account, 'manage everything enrollments');
       }
 
-      /** @var ContentEntityBase $object */
+      /** @var \Drupal\Core\Entity\ContentEntityBase $object */
       $event_id = $object->getFieldValue('field_event', 'target_id');
       $node = $this->entityTypeManager->getStorage('node')->load($event_id);
 

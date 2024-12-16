@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event\Plugin\GraphQL\DataProducer\Field;
 
-use Drupal\Core\TypedData\Type\DateTimeInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeFieldItemList;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItem;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
@@ -40,7 +39,7 @@ class DateToTimestamp extends DataProducerPluginBase {
       return NULL;
     }
 
-    /** @var DateTimeInterface $date_item */
+    /** @var \Drupal\Core\TypedData\Type\DateTimeInterface $date_item */
     $date_item = $field->get(DateTimeItem::DATETIME_TYPE_DATE);
 
     return $date_item->getDateTime()?->getTimestamp();

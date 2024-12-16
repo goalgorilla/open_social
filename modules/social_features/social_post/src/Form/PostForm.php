@@ -9,7 +9,6 @@ use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\dynamic_entity_reference\Plugin\DataType\DynamicEntityReference;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -191,7 +190,7 @@ class PostForm extends ContentEntityForm {
     // for user posts.
     else {
       if ($this->operation === 'edit' && $this->entity->hasField('field_recipient_group') && !$this->entity->get('field_recipient_group')->isEmpty()) {
-        /** @var DynamicEntityReference $field_recipient_group */
+        /** @var \Drupal\dynamic_entity_reference\Plugin\DataType\DynamicEntityReference $field_recipient_group */
         $field_recipient_group = $this->entity->get('field_recipient_group')->first()?->get('entity');
         $current_group = $field_recipient_group->getTarget()?->getValue();
       }

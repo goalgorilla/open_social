@@ -23,12 +23,12 @@ function social_post_post_update_remove_orphaned_posts(): void {
     ->fields('p', ['id'])
     ->condition('user_id', $user_query, 'NOT IN')
     ->execute();
-    if ($result) {
-      $result = $result->fetchAll();
-    }
+  if ($result) {
+    $result = $result->fetchAll();
+  }
 
   $pids = [];
-    /** @var array $result */
+  /** @var array $result */
   foreach ($result as $row) {
     $pids[] = $row->id;
   }

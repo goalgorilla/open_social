@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send\Plugin;
 
+use Drupal\Core\Database\StatementInterface;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 use Drupal\social_user\Entity\User;
@@ -58,7 +59,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $query->condition('uas.destination', $destination);
     $result = $query->execute();
 
-    if ($result instanceof \Drupal\Core\Database\StatementInterface) {
+    if ($result instanceof StatementInterface) {
       return $result->fetchAllKeyed();
     }
 
@@ -88,7 +89,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $query->condition('uas.message_template', $message_template_id);
     $result = $query->execute();
 
-    if ($result instanceof \Drupal\Core\Database\StatementInterface) {
+    if ($result instanceof StatementInterface) {
       return $result->fetchAllKeyed();
     }
 
@@ -122,7 +123,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $query->distinct();
     $result = $query->execute();
 
-    if ($result instanceof \Drupal\Core\Database\StatementInterface) {
+    if ($result instanceof StatementInterface) {
       return $result->fetchAllKeyed(0, 0);
     }
 
@@ -180,7 +181,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
       && !empty($activity->get('field_activity_recipient_user')->target_id)
     ) {
       $target_id = $activity->get('field_activity_recipient_user')->target_id;
-      /** @var User $target_account */
+      /** @var \Drupal\social_user\Entity\User $target_account */
       $target_account = \Drupal::entityTypeManager()
         ->getStorage('user')
         ->load($target_id);
@@ -237,7 +238,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $query->condition('s.uid', $account->id());
 
     $result = $query->execute();
-    $last_activity_time = $result instanceof \Drupal\Core\Database\StatementInterface ? $result->fetchField() : NULL;
+    $last_activity_time = $result instanceof StatementInterface ? $result->fetchField() : NULL;
 
     $offline_window = \Drupal::config('activity_send.settings')->get('activity_send_offline_window');
     $current_time = \Drupal::time()->getRequestTime() - $offline_window;

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
@@ -39,7 +40,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
     elseif ($accept_decline === '0') {
       $event_enrollment->get('field_request_or_invite_status')->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
       $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
-      if ($statusMessage !== null) {
+      if ($statusMessage !== NULL) {
         // Let's delete all messages to keep the messages clean.
         $this->messenger()->deleteAll();
         $this->messenger()->addStatus($statusMessage);
@@ -73,7 +74,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup|null
    *   The message.
    */
-  public function getMessage(EventEnrollmentInterface $event_enrollment, string $accept_decline): ?\Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getMessage(EventEnrollmentInterface $event_enrollment, string $accept_decline): ?TranslatableMarkup {
     $statusMessage = NULL;
     // Get the target event id.
     $target_event_id = $event_enrollment->get('field_event')->getValue();

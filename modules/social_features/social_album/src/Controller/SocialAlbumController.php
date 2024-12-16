@@ -2,6 +2,7 @@
 
 namespace Drupal\social_album\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -111,16 +112,16 @@ class SocialAlbumController extends ControllerBase {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   The title to page of the post.
    */
-  public function title(NodeInterface $node): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function title(NodeInterface $node): TranslatableMarkup {
     return $this->t('Add images to album @name', ['@name' => $node->label()]);
   }
 
   /**
    * Provides a page with images slider.
    *
-   * @param NodeInterface $node
+   * @param \Drupal\node\NodeInterface $node
    *   The node object.
-   * @param PostInterface $post
+   * @param \Drupal\social_post\Entity\PostInterface $post
    *   The post entity object.
    * @param int $fid
    *   The file entity ID.
@@ -152,7 +153,7 @@ class SocialAlbumController extends ControllerBase {
     $storage = $this->entityTypeManager()->getStorage('file');
 
     $result = $query->execute();
-    if ($result === NULL){
+    if ($result === NULL) {
       return [];
     }
 
@@ -239,10 +240,10 @@ class SocialAlbumController extends ControllerBase {
   /**
    * Checks access to the page for adding an image to an album.
    *
-   * @param NodeInterface $node
+   * @param \Drupal\node\NodeInterface $node
    *   The node entity object.
    *
-   * @return AccessResultInterface
+   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException

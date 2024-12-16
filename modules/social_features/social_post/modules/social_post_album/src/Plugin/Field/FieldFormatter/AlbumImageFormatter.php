@@ -2,7 +2,6 @@
 
 namespace Drupal\social_post_album\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 
@@ -32,7 +31,7 @@ class AlbumImageFormatter extends ImageFormatter {
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     // Grab all elements from the parent view.
-    /** @var EntityReferenceFieldItemListInterface $items */
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $items */
     $elements = parent::viewElements($items, $langcode);
     if (!$items->isEmpty()) {
       // If it's only one, we can safely return without updating image styles.

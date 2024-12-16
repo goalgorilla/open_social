@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send_email\Plugin\AdvancedQueue\JobType;
 
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\activity_creator\ActivityNotifications;
 use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
@@ -11,7 +12,6 @@ use Drupal\advancedqueue\JobResult;
 use Drupal\advancedqueue\Plugin\AdvancedQueue\JobType\JobTypeBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
@@ -62,7 +62,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected \Drupal\Core\Config\ImmutableConfig $socialMailerSettings;
+  protected ImmutableConfig $socialMailerSettings;
 
   /**
    * The entity type manager.
@@ -172,14 +172,13 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
               foreach ($this->languageManager->getLanguages() as $language) {
                 $langcode = $language->getId();
                 // Load all user by given language.
-                /** @var StatementInterface $result */
-                $result =  $this->database->select('users_field_data', 'ufd')
+                /** @var \Drupal\Core\Database\StatementInterface $result */
+                $result = $this->database->select('users_field_data', 'ufd')
                   ->fields('ufd', ['uid'])
                   ->condition('uid', $recipients, 'IN')
                   ->condition('preferred_langcode', $langcode)
                   ->execute();
                 $user_ids_per_language = $result->fetchAllKeyed(0, 0);
-
 
                 // Prepare the batch per language.
                 $this->prepareBatch($data, $user_ids_per_language, $langcode);

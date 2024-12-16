@@ -2,7 +2,6 @@
 
 namespace Drupal\social_follow_tag\Plugin\ActivityContext;
 
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\social_follow_taxonomy\Plugin\ActivityContext\FollowTaxonomyActivityContext;
 use Drupal\user\UserInterface;
 
@@ -18,12 +17,13 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
 
   /**
    * Returns recipients from followed taxonomies.
+   *
    * @throws \Exception
    */
   public function getRecipientsWhoFollowTaxonomy(array $related_entity, array $data): array {
     $recipients = [];
 
-    /** @var ContentEntityInterface $entity */
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = $this->entityTypeManager->getStorage($related_entity['target_type'])
       ->load($related_entity['target_id']);
 

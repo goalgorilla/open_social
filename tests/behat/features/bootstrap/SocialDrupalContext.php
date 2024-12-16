@@ -23,10 +23,10 @@ class SocialDrupalContext extends DrupalContext {
    * Add support for Bigpipe in Behat tests.
    *
    * @param \Behat\Behat\Hook\Scope\BeforeScenarioScope $scope
-   *  The scenario scope.
+   *   The scenario scope.
    *
-   * Original PR here:
-   * https://github.com/jhedstrom/drupalextension/pull/325
+   *   Original PR here:
+   *   https://github.com/jhedstrom/drupalextension/pull/325.
    *
    * @BeforeScenario @api
    */
@@ -60,7 +60,7 @@ class SocialDrupalContext extends DrupalContext {
    * Call this function before users are created.
    *
    * @param \Drupal\DrupalExtension\Hook\Scope\EntityScope $scope
-   *  The entity scope.
+   *   The entity scope.
    *
    * @beforeUserCreate
    */

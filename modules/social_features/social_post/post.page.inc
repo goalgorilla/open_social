@@ -7,6 +7,7 @@
  * Page callback for Post entities.
  */
 
+use Drupal\Core\Datetime\FormattedDateDiff;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Link;
 use Drupal\social_post\Entity\Post;
@@ -37,7 +38,7 @@ function template_preprocess_post(array &$variables): void {
         'granularity' => 1,
         'return_as_object' => TRUE,
       ]);
-    if ($created_time_ago instanceof \Drupal\Core\Datetime\FormattedDateDiff) {
+    if ($created_time_ago instanceof FormattedDateDiff) {
       $created_time_ago = $created_time_ago->getString();
     }
     $date = t('%time ago', ['%time' => $created_time_ago]);

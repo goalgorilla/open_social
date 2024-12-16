@@ -2,7 +2,6 @@
 
 namespace Drupal\activity_logger\Plugin\QueueWorker;
 
-use Drupal\activity_creator\Plugin\ActivityActionInterface;
 use Drupal\activity_creator\Plugin\ActivityActionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
@@ -84,7 +83,7 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
       else {
         // Trigger the creation action for entities.
         if ($this->actionManager->hasDefinition('create_entitiy_action')) {
-          /** @var ActivityActionInterface $create_action */
+          /** @var \Drupal\activity_creator\Plugin\ActivityActionInterface $create_action */
           $create_action = $this->actionManager->createInstance('create_entitiy_action');
           $create_action->createMessage($entity);
         }

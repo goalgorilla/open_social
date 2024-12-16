@@ -5,7 +5,6 @@ namespace Drupal\social_activity_filter\Plugin\views\filter;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\Condition;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
-use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -69,7 +68,7 @@ class ActivityFilterTags extends FilterPluginBase {
     $taxonomy_post_table = "post__field_{$taxonomy_field}";
     $activity_entity_table = 'activity__field_activity_entity';
 
-    /** @var Sql $query */
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
     $query = $this->query;
 
     // Filter Nodes by selected tags.

@@ -4,8 +4,6 @@ namespace Drupal\social_user\Plugin\Action;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\role_delegation\DelegatableRolesInterface;
 use Drupal\user\Plugin\Action\ChangeUserRoleBase;
@@ -64,7 +62,7 @@ class SocialRemoveRoleUser extends ChangeUserRoleBase {
   public function execute(AccountProxyInterface $account = NULL): void {
     $rid = $this->configuration['rid'];
     // Skip removing the role from the user if they already don't have it.
-    /** @var AccountProxy $account */
+    /** @var \Drupal\Core\Session\AccountProxy $account */
     if ($account !== NULL && $account->hasRole($rid)) {
       // For efficiency manually save the original account before applying
       // any changes.

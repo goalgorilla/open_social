@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\Action;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\views_bulk_operations\Plugin\Action\EntityDeleteAction;
 
 /**
@@ -19,7 +20,7 @@ class GroupContentEntityDeleteAction extends EntityDeleteAction {
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function execute($entity = NULL): TranslatableMarkup {
     parent::execute($entity);
     return $this->t('Remove members from a group');
   }

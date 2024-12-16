@@ -2,6 +2,7 @@
 
 namespace Drupal\social_queue_storage;
 
+use Symfony\Component\Routing\RouteCollection;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
 use Symfony\Component\Routing\Route;
@@ -18,7 +19,7 @@ class QueueStorageEntityHtmlRouteProvider extends AdminHtmlRouteProvider {
   /**
    * {@inheritdoc}
    */
-  public function getRoutes(EntityTypeInterface $entity_type): array|\Symfony\Component\Routing\RouteCollection {
+  public function getRoutes(EntityTypeInterface $entity_type): array|RouteCollection {
     $collection = parent::getRoutes($entity_type);
 
     $entity_type_id = $entity_type->id();
@@ -47,7 +48,7 @@ class QueueStorageEntityHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_form' => QueueStorageEntitySettingsForm::class,
           '_title' => "{$entity_type->getLabel()} settings",
         ])
-        ->setRequirement('_permission', (string)  $entity_type->getAdminPermission())
+        ->setRequirement('_permission', (string) $entity_type->getAdminPermission())
         ->setOption('_admin_route', TRUE);
 
       return $route;

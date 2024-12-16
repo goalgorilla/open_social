@@ -2,6 +2,9 @@
 
 namespace Drupal\social_event_an_enroll_enrolments_export\Plugin\Action;
 
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\social_user_export\Plugin\Action\ExportUser;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystem;
@@ -66,6 +69,8 @@ class ExportAllEnrolments extends ExportEnrolments {
    *   The file url generator service.
    * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
    *   The event an enroll manager.
+   * @param \Drupal\Core\File\FileSystem $file_system
+   *   The file system service.
    */
   public function __construct(
     array $configuration,
@@ -115,7 +120,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): \Drupal\social_user_export\Plugin\Action\ExportUser|\Drupal\Core\Plugin\ContainerFactoryPluginInterface|static {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): ExportUser|ContainerFactoryPluginInterface|static {
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('plugin.manager.user_export_plugin'),
       $container->get('logger.factory')->get('action'),
@@ -140,7 +145,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|\Drupal\Core\Access\AccessResultInterface {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|AccessResultInterface {
     if ($object instanceof EventEnrollmentInterface) {
       if ($this->socialEventAnEnrollManager->isGuest($object)) {
         $access = AccessResult::allowed();

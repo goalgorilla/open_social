@@ -2,6 +2,8 @@
 
 namespace Drupal\activity_creator\Plugin\QueueWorker;
 
+use Drupal\Core\State\StateInterface;
+
 /**
  * A report worker.
  *
@@ -22,7 +24,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
    *
    * @var \Drupal\Core\State\StateInterface
    */
-  protected \Drupal\Core\State\StateInterface $state;
+  protected StateInterface $state;
 
   /**
    * {@inheritdoc}

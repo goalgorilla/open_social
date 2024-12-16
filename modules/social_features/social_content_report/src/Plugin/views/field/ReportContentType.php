@@ -2,6 +2,7 @@
 
 namespace Drupal\social_content_report\Plugin\views\field;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 
@@ -22,7 +23,7 @@ class ReportContentType extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $row): \Drupal\Component\Render\MarkupInterface|string {
+  public function render(ResultRow $row): MarkupInterface|string {
     /** @var \Drupal\flag\FlaggingInterface $flagging */
     $flagging = $this
       ->getEntity($row);

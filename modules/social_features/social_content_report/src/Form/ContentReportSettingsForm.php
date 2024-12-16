@@ -6,8 +6,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\taxonomy\Entity\Term;
-use Drupal\taxonomy\TermInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -80,7 +78,7 @@ class ContentReportSettingsForm extends ConfigFormBase {
     // A list of reason terms to display the reason textfield for.
     $terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('report_reasons');
     $reason_terms = [];
-    /** @var TermInterface $term */
+    /** @var \Drupal\taxonomy\TermInterface $term */
     foreach ($terms as $term) {
       $reason_terms[$term->get('tid')->getValue()] = $term->getName();
     }

@@ -9,7 +9,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\views\Plugin\views\field\RenderedEntity;
-use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\Plugin\ViewsHandlerManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -43,7 +42,11 @@ class ProfileEntitySortable extends RenderedEntity {
    */
   protected AccountInterface $currentUser;
 
-  /** @var Sql */
+  /**
+   * The sql query object.
+   *
+   * @var \Drupal\views\Plugin\views\query\Sql
+   */
   public $query;
 
   /**

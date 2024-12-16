@@ -5,6 +5,7 @@
  * The Social landing page module.
  */
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -292,7 +293,7 @@ function social_landing_page_preprocess_field(array &$variables): void {
  *
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function _social_landing_page_get_hero_image(NodeInterface $node): \Drupal\Component\Render\MarkupInterface|array {
+function _social_landing_page_get_hero_image(NodeInterface $node): MarkupInterface|array {
   // Must be a valid node.
   if (
     $node->getType() !== 'landing_page' ||

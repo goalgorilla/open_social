@@ -2,6 +2,8 @@
 
 namespace Drupal\activity_creator\Entity;
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -11,11 +13,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\Core\Url;
 use Drupal\flag\Entity\Flagging;
-use Drupal\group\Entity\Storage\GroupRelationshipStorage;
 use Drupal\user\UserInterface;
 use Drupal\node\NodeInterface;
-use Drupal\votingapi\Entity\Vote;
-use Drupal\votingapi\VoteStorage;
 
 /**
  * Defines the Activity entity.
@@ -94,7 +93,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    * {@inheritdoc}
    */
   public function getOwner(): UserInterface {
-    /** @var UserInterface $user */
+    /** @var \Drupal\user\UserInterface $user */
     $user = $this->get('user_id')->entity;
     return $user;
   }
@@ -109,7 +108,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid): \Drupal\user\EntityOwnerInterface|Activity|static {
+  public function setOwnerId($uid): EntityOwnerInterface|Activity|static {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -117,7 +116,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account): \Drupal\user\EntityOwnerInterface|Activity|static {
+  public function setOwner(UserInterface $account): EntityOwnerInterface|Activity|static {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -207,7 +206,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    * @return \Drupal\Core\Entity\EntityInterface|null
    *   Returns NULL or Entity object.
    */
-  public function getRelatedEntity(): ?\Drupal\Core\Entity\EntityInterface {
+  public function getRelatedEntity(): ?EntityInterface {
     $related_object = $this->get('field_activity_entity')->getValue();
     if (!empty($related_object)) {
       $target_type = $related_object['0']['target_type'];
@@ -249,16 +248,16 @@ class Activity extends ContentEntityBase implements ActivityInterface {
 
       // Make an exception for Votes.
       if ($target_type === 'vote') {
-        /** @var VoteStorage $vote_storage */
+        /** @var \Drupal\votingapi\VoteStorage $vote_storage */
         $vote_storage = \Drupal::entityTypeManager()->getStorage($target_type);
         if ($vote = $vote_storage->load($target_id)) {
-          /** @var Vote $vote */
+          /** @var \Drupal\votingapi\Entity\Vote $vote */
           $target_type = $vote->getVotedEntityType();
           $target_id = $vote->getVotedEntityId();
         }
       }
       elseif ($target_type === 'group_content') {
-        /** @var GroupRelationshipStorage $group_content_storage */
+        /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorage $group_content_storage */
         $group_content_storage = \Drupal::service('entity_type.manager')->getStorage($target_type);
         if ($group_content = $group_content_storage->load($target_id)) {
           /** @var \Drupal\group\Entity\GroupRelationship $group_content */

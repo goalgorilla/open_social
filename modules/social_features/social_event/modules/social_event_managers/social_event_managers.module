@@ -365,7 +365,7 @@ function social_event_managers_node_grants(AccountInterface $account, string $op
  * we are in operation update and if gnode already returns forbidden we are able
  * to return an allowed if user is an event manager.
  */
-function social_event_managers_node_access(NodeInterface $node,string  $op, AccountInterface $account): AccessResult {
+function social_event_managers_node_access(NodeInterface $node, string $op, AccountInterface $account): AccessResult {
   return SocialEventManagersAccessHelper::getEntityAccessResult($node, $op, $account);
 }
 

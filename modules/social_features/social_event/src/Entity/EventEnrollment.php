@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Entity;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
@@ -111,7 +112,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function label(): string|\Drupal\Core\StringTranslation\TranslatableMarkup|null {
+  public function label(): string|TranslatableMarkup|null {
     // When a guest is allowed to join the name and account fields can be empty,
     // but the field for email will be provided.
     // The first and last name are not mandatory,
@@ -156,7 +157,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
    * {@inheritdoc}
    */
   public function getOwner(): UserInterface {
-    /** @var UserInterface $user */
+    /** @var \Drupal\user\UserInterface $user */
     $user = $this->get('user_id')->entity;
     return $user;
   }

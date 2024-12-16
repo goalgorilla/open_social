@@ -108,8 +108,8 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
       $element['#value'] === '_add' &&
       ($title = $form_state->getValue([$field, 'title']))
     ) {
-      $triggerred_element = $form_state->getTriggeringElement();
-      if (is_array($triggerred_element) && $triggerred_element['#name'] === 'op' && $has_images) {
+      $triggered_element = $form_state->getTriggeringElement();
+      if (is_array($triggered_element) && $triggered_element['#name'] === 'op' && $has_images) {
         // Add default content visibility based on post visibility.
         if ($form_state->hasValue('field_visibility')) {
           $post_visibility = $form_state->getValue(['field_visibility', 0]);

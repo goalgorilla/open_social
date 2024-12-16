@@ -6,8 +6,6 @@ use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\UserInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
-use Drupal\views\Plugin\views\join\JoinPluginBase;
-use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\Views;
 
 /**
@@ -44,7 +42,7 @@ class EventEnrolledOrCreated extends FilterPluginBase {
    * Query for the activity stream on the account pages.
    */
   public function query(): void {
-    /** @var Sql $query */
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
     $query = $this->query;
 
     $account_profile = \Drupal::routeMatch()->getParameter('user');
@@ -60,7 +58,7 @@ class EventEnrolledOrCreated extends FilterPluginBase {
       'left_field' => 'nid',
       'operator' => '=',
     ];
-    /** @var JoinPluginBase $join */
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $query->addRelationship('event_enrollment__field_event', $join, 'node_field_data');
 
@@ -71,7 +69,7 @@ class EventEnrolledOrCreated extends FilterPluginBase {
       'left_field' => 'entity_id',
       'operator' => '=',
     ];
-    /** @var JoinPluginBase $join */
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $query->addRelationship('event_enrollment_field_data', $join, 'node_field_data');
 
@@ -82,7 +80,7 @@ class EventEnrolledOrCreated extends FilterPluginBase {
       'left_field' => 'entity_id',
       'operator' => '=',
     ];
-    /** @var JoinPluginBase $join */
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $query->addRelationship('event_enrollment__field_enrollment_status', $join, 'node_field_data');
 
@@ -93,7 +91,7 @@ class EventEnrolledOrCreated extends FilterPluginBase {
       'left_field' => 'entity_id',
       'operator' => '=',
     ];
-    /** @var JoinPluginBase $join */
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $query->addRelationship('event_enrollment__field_account', $join, 'node_field_data');
 

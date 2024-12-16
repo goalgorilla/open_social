@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_an_enroll\Plugin\Action;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
@@ -140,7 +141,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
    *   The name of the guest enrolment.
    */
-  public function getDisplayName(EventEnrollmentInterface $entity): string|\Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getDisplayName(EventEnrollmentInterface $entity): string|TranslatableMarkup {
     $display_name = $this->socialEventAnEnrollManager->getGuestName($entity, FALSE);
 
     if (!$display_name) {

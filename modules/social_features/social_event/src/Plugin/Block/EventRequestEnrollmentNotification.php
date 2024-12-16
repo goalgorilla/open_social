@@ -7,7 +7,6 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
@@ -34,7 +33,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
   /**
    * Event entity.
    *
-   * @var \Drupal\Core\Entity\EntityInterface|NULL
+   * @var \Drupal\Core\Entity\EntityInterface|null
    */
   protected EntityInterface|NULL $event;
 
@@ -161,7 +160,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
         ],
       ];
     }
-    catch (InvalidPluginDefinitionException|PluginNotFoundException $e) {
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
       $this->loggerFactory->get('social_event')->error($e->getMessage());
     }
 

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_album\Plugin\views\field;
 
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Url;
 use Drupal\social_post\PostViewBuilder;
@@ -40,7 +41,7 @@ class SocialAlbumEntityOperations extends EntityOperations {
 
     $field_item = $entity->get('field_post_image')->get($value);
     $target_id = NULL;
-    if ($field_item instanceof \Drupal\Core\Field\FieldItemInterface && isset($field_item->target_id)) {
+    if ($field_item instanceof FieldItemInterface && isset($field_item->target_id)) {
       $target_id = $field_item->target_id;
     }
 

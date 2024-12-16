@@ -11,8 +11,6 @@ use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Utility\Token;
-use Drupal\social_queue_storage\Entity\QueueStorageEntity;
-use Drupal\social_user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsPreconfigurationInterface;
@@ -314,7 +312,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     $form_state->cleanValues();
     // Get the queue storage entity and create a new entry.
     $queue_storage = $this->entityTypeManager->getStorage('queue_storage_entity');
-    /** @var QueueStorageEntity $entity */
+    /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
     $entity = $queue_storage->create([
       'name' => 'user_email_queue',
       'type' => 'email',

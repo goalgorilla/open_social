@@ -5,6 +5,7 @@
  * Builds placeholder replacement tokens for Social Event module.
  */
 
+use Drupal\node\Entity\Node;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Link;
@@ -300,7 +301,7 @@ function _social_event_get_name_from_enrollment(int $id): mixed {
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _social_event_get_event_from_enrollment(int $event_enrollment_id): ?\Drupal\node\Entity\Node {
+function _social_event_get_event_from_enrollment(int $event_enrollment_id): ?Node {
   $entity_storage = \Drupal::entityTypeManager()
     ->getStorage('event_enrollment');
   if ($entity = $entity_storage->load($event_enrollment_id)) {

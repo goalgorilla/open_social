@@ -4,7 +4,6 @@ namespace Drupal\social_user\Plugin\GraphQL\SchemaExtension;
 
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
-use Drupal\social_graphql\GraphQL\DecoratableTypeResolver;
 use Drupal\social_graphql\Plugin\GraphQL\SchemaExtension\SchemaExtensionPluginBase;
 use Drupal\social_user\GraphQL\UserActorTypeResolver;
 
@@ -26,7 +25,7 @@ class UserSchemaExtension extends SchemaExtensionPluginBase {
   public function registerResolvers(ResolverRegistryInterface $registry): void {
     $builder = new ResolverBuilder();
 
-    /** @var DecoratableTypeResolver $actor */
+    /** @var \Drupal\social_graphql\GraphQL\DecoratableTypeResolver $actor */
     $actor = $registry->getTypeResolver('Actor');
     // Type resolvers.
     $registry->addTypeResolver('Actor', new UserActorTypeResolver($actor));

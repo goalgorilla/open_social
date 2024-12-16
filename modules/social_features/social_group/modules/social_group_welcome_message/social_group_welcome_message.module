@@ -11,7 +11,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\private_message\Entity\PrivateMessageInterface;
 
 /**
  * Implements hook_entity_base_field_info().
@@ -196,7 +195,7 @@ function social_group_welcome_message_group_content_insert(GroupRelationshipInte
     $private_message_body = $group->get('private_message_body')->first()?->getValue();
 
     // Create a single message with the pm body.
-    /** @var PrivateMessageInterface $private_message */
+    /** @var \Drupal\private_message\Entity\PrivateMessageInterface $private_message */
     $private_message = \Drupal::entityTypeManager()->getStorage('private_message')->create([
       'owner' => $owner,
       'message' => $private_message_body,

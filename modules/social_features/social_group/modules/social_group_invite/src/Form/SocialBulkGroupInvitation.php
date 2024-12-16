@@ -2,8 +2,8 @@
 
 namespace Drupal\social_group_invite\Form;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGenerator;
@@ -570,7 +570,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access results.
    */
-  public function inviteAccess(GroupInterface $group): \Drupal\Core\Access\AccessResultInterface {
+  public function inviteAccess(GroupInterface $group): AccessResultInterface {
     // Allow for Group admin/managers.
     if ($group->hasPermission('administer members', $this->currentUser())) {
       return AccessResult::allowed();

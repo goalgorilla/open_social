@@ -2,6 +2,7 @@
 
 namespace Drupal\social_lazy_loading;
 
+use Drupal\Core\Config\StorableConfigBase;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
@@ -95,7 +96,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
   /**
    * {@inheritdoc}
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?\Drupal\Core\Config\StorableConfigBase {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?StorableConfigBase {
     return NULL;
   }
 

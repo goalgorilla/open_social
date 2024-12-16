@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send_push_notification\Annotation;
 
+use Drupal\Core\Annotation\Translation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
@@ -25,7 +26,7 @@ class Push extends Plugin {
    *
    * @ingroup plugin_translatable
    */
-  public \Drupal\Core\Annotation\Translation $title;
+  public Translation $title;
 
   /**
    * The description of form elements set.
@@ -34,7 +35,7 @@ class Push extends Plugin {
    *
    * @ingroup plugin_translatable
    */
-  public ?\Drupal\Core\Annotation\Translation $description = NULL;
+  public ?Translation $description = NULL;
 
   /**
    * The plugin weight.

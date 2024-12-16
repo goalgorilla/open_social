@@ -4,7 +4,6 @@ namespace Drupal\activity_viewer\Plugin\views\argument;
 
 use Drupal\Core\Database\Query\Condition;
 use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
-use Drupal\views\Plugin\views\query\Sql;
 
 /**
  * Default implementation of the base argument plugin.
@@ -23,7 +22,7 @@ class ActivityProfileArgument extends ArgumentPluginBase {
   public function query($group_by = FALSE): void {
     $this->ensureMyTable();
 
-    /** @var Sql $query */
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
     $query = $this->query;
 
     $query->addTable('activity__field_activity_recipient_user');

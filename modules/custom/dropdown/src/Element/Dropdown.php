@@ -37,7 +37,7 @@ class Dropdown extends FormElementBase {
   /**
    * Prepare the render array for the template.
    */
-  public static function preRenderDropdown(array $element): array  {
+  public static function preRenderDropdown(array $element): array {
     // @todo Attach $element['#attached']['library'][] = 'dropdown';
     return $element;
   }

@@ -48,6 +48,6 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    * @param string|null $body_text
    *   The output text of message.
    */
-  public function processItem(Activity $activity, Message $message, User $target, ?string$body_text = NULL): void ;
+  public function processItem(Activity $activity, Message $message, User $target, ?string $body_text = NULL): void;
 
 }

@@ -4,7 +4,6 @@ namespace Drupal\social_group\Form;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -273,7 +272,7 @@ class SocialGroupSettings extends ConfigFormBase {
     foreach ($content_types as $bundle) {
       $plugin_id = 'group_node:' . $bundle;
       if (in_array($plugin_id, $group_content_types)) {
-        /** @var EntityInterface $node_type */
+        /** @var \Drupal\Core\Entity\EntityInterface $node_type */
         $node_type = $this->entityTypeManager->getStorage('node_type')->load($bundle);
         $options[$bundle] = $node_type->label();
       }

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post\Plugin\views\area;
 
+use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\area\AreaPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -128,7 +129,7 @@ class SocialPostPostForm extends AreaPluginBase {
   /**
    * {@inheritdoc}
    */
-  protected function getBlock(): ?\Drupal\Core\Block\BlockPluginInterface {
+  protected function getBlock(): ?BlockPluginInterface {
     if (empty($this->options['block_id'])) {
       return NULL;
     }

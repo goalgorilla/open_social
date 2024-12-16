@@ -4,7 +4,6 @@ namespace Drupal\mentions\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\system\Entity\Action;
 use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -60,7 +59,7 @@ class MentionsUpdate implements EventSubscriberInterface {
       return;
     }
     $entity_storage = $this->entityTypeManager->getStorage('action');
-    /** @var Action|NULL $action */
+    /** @var \Drupal\system\Entity\Action|NULL $action */
     $action = $entity_storage->load($action_id);
 
     if ($action === NULL) {

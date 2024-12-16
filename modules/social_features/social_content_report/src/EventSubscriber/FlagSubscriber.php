@@ -4,9 +4,6 @@ namespace Drupal\social_content_report\EventSubscriber;
 
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EditorialContentEntityBase;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -110,7 +107,7 @@ class FlagSubscriber implements EventSubscriberInterface {
     // Do nothing unless we need to unpublish the entity immediately.
     if ($this->unpublishImmediately) {
       try {
-        /** @var ContentEntityInterface $entity */
+        /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
         $entity->set('status', 0);
         $entity->save();
         $invalidated = TRUE;

@@ -2,13 +2,13 @@
 
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\activity_creator\ActivityNotifications;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
@@ -58,7 +58,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected \Drupal\Core\Config\ImmutableConfig $socialMailerSettings;
+  protected ImmutableConfig $socialMailerSettings;
 
   /**
    * The entity type manager.
@@ -163,7 +163,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
             foreach ($languages = $this->languageManager->getLanguages() as $language) {
               $langcode = $language->getId();
               // Load all user by given language.
-              /** @var StatementInterface $result */
+              /** @var \Drupal\Core\Database\StatementInterface $result */
               $result = $this->database->select('users_field_data', 'ufd')
                 ->fields('ufd', ['uid'])
                 ->condition('uid', $recipients, 'IN')

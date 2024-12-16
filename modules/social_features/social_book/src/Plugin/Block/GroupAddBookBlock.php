@@ -2,6 +2,9 @@
 
 namespace Drupal\social_book\Plugin\Block;
 
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Access\AccessResultAllowed;
+use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -81,7 +84,7 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * Custom access logic to display the block.
    */
-  public function blockAccess(AccountInterface $account): \Drupal\Core\Access\AccessResultForbidden|\Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultInterface {
+  public function blockAccess(AccountInterface $account): AccessResultForbidden|AccessResultAllowed|AccessResultInterface {
     if ($this->moduleHandler->moduleExists('social_group')) {
       $group = _social_group_get_current_group();
     }

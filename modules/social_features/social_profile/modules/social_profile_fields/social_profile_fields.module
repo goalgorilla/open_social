@@ -5,6 +5,7 @@
  * The social profile fields module file.
  */
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
@@ -23,7 +24,7 @@ use Drupal\profile\Entity\ProfileType;
 /**
  * Implements hook_entity_field_access().
  */
-function social_profile_fields_entity_field_access(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL): \Drupal\Core\Access\AccessResultInterface {
+function social_profile_fields_entity_field_access(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL): AccessResultInterface {
 
   // By default, we return Switzerland.
   $access_result = AccessResult::neutral();
@@ -109,7 +110,7 @@ function social_profile_fields_form_alter(array &$form, FormStateInterface $form
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_profile_fields_form_profile_profile_edit_form_alter(array&$form, FormStateInterface $form_state): void {
+function social_profile_fields_form_profile_profile_edit_form_alter(array &$form, FormStateInterface $form_state): void {
   /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
   $form_object = $form_state->getFormObject();
   /** @var \Drupal\profile\Entity\ProfileInterface $form_entity */

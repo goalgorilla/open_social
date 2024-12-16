@@ -88,7 +88,7 @@ function social_language_entity_operation_alter(array &$operations, EntityInterf
 /**
  * Implements hook_field_group_form_process_alter().
  */
-function social_language_field_group_form_process_alter(array &$element, mixed &$group, array  &$complete_form): void {
+function social_language_field_group_form_process_alter(array &$element, mixed &$group, array &$complete_form): void {
   // Prevent \Drupal\content_translation\ContentTranslationHandler::addTranslatabilityClue()
   // from adding an incorrect suffix to the field group title.
   $element['#multilingual'] = TRUE;

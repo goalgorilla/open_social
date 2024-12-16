@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite;
 
+use Drupal\Core\Config\StorableConfigBase;
 use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -214,7 +215,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * @return \Drupal\Core\Config\StorableConfigBase|null
    *   The configuration object for the provided name and collection.
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?\Drupal\Core\Config\StorableConfigBase {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?StorableConfigBase {
     return NULL;
   }
 

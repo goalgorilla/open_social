@@ -3,7 +3,6 @@
 namespace Drupal\social_group_invite\Plugin\Action;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\SharedTempStore;
@@ -95,7 +94,7 @@ class SocialGroupInviteResend extends ViewsBulkOperationsActionBase implements C
       return;
     }
 
-    /** @var AccountInterface $account */
+    /** @var \Drupal\Core\Session\AccountInterface $account */
     $account = $entity->getEntity();
     $is_member = $entity->getGroup()->getMember($account);
     if (is_object($is_member)) {

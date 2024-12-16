@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\social_graphql\GraphQL;
 
-use Drupal\Core\Entity\Query\QueryAggregateInterface;
 use Drupal\social_graphql\Wrappers\EdgeInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
@@ -211,7 +210,7 @@ class EntityConnection implements ConnectionInterface {
    *
    * Multiple calls to this function return the same promise.
    *
-   * @return \GraphQL\Executor\Promise\Adapter\SyncPromise|NULL
+   * @return \GraphQL\Executor\Promise\Adapter\SyncPromise|null
    *   The result for this connection's query.
    */
   protected function getResult() : ?SyncPromise {
@@ -281,7 +280,7 @@ class EntityConnection implements ConnectionInterface {
     $query->range(0, $limit + 1);
 
     if ($function = $this->queryHelper->getAggregateSortFunction()) {
-      /** @var QueryAggregateInterface $query */
+      /** @var \Drupal\Core\Entity\Query\QueryAggregateInterface $query */
       $query->sortAggregate(
         $sort_field,
         $function,

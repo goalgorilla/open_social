@@ -4,7 +4,6 @@ namespace Drupal\social_follow_content\Plugin\ActivityContext;
 
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\group\Entity\GroupInterface;
@@ -158,7 +157,6 @@ class FollowContentActivityContext extends ActivityContextBase {
           continue;
         }
       }
-
 
       if (
         $original_related_entity instanceof EntityOwnerInterface &&

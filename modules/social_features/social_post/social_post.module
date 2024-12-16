@@ -5,6 +5,9 @@
  * The Social post module.
  */
 
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Utility\Html;
@@ -78,7 +81,7 @@ function _social_post_comment_post_comment_form_submit(array $form, FormStateInt
  * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
  *   Post visibility detail.
  */
-function social_post_get_visibility_details(string $visibility, string $return_value = 'icon'): string|\Drupal\Core\StringTranslation\TranslatableMarkup {
+function social_post_get_visibility_details(string $visibility, string $return_value = 'icon'): string|TranslatableMarkup {
 
   $return = &drupal_static(__FUNCTION__ . $visibility);
 
@@ -240,7 +243,7 @@ function social_post_preprocess_field(array &$variables): void {
 /**
  * Implements hook_ENTITY_TYPE_create_access().
  */
-function social_post_comment_create_access(AccountInterface $account, array $context, string $entity_bundle): \Drupal\Core\Access\AccessResultInterface {
+function social_post_comment_create_access(AccountInterface $account, array $context, string $entity_bundle): AccessResultInterface {
   if ($entity_bundle === 'post_comment') {
     $group = \Drupal::routeMatch()->getParameter('group');
     if (is_numeric($group)) {
@@ -289,7 +292,7 @@ function social_post_user_cancel(array $edit, AccountInterface $account, string 
 /**
  * Implements hook_ENTITY_TYPE_predelete().
  */
-function social_post_user_predelete(\Drupal\Core\Session\AccountProxyInterface $account): void {
+function social_post_user_predelete(AccountProxyInterface $account): void {
   // Delete posts.
   if ($account instanceof UserInterface) {
     $pids = \Drupal::entityQuery('post')

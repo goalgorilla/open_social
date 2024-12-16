@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Controller;
 
+use Drupal\Core\Access\AccessResultAllowed;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -116,7 +117,7 @@ class EnrollRequestDialogController extends ControllerBase {
   /**
    * Determines if user has access to enroll form.
    */
-  public function enrollAccess(NodeInterface $node): \Drupal\Core\Access\AccessResultAllowed {
+  public function enrollAccess(NodeInterface $node): AccessResultAllowed {
     return AccessResult::allowed();
   }
 

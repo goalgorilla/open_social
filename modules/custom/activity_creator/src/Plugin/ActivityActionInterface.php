@@ -4,7 +4,6 @@ namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\system\Entity\Action;
 
 /**
  * Defines an interface for Activity action plugins.

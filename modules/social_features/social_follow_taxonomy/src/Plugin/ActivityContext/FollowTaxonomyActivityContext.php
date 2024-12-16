@@ -104,6 +104,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
 
   /**
    * {@inheritdoc}
+   *
    * @throws \Exception
    */
   public function getRecipients(array $data, int $last_id, int $limit): array {

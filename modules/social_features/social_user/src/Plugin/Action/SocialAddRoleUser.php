@@ -4,14 +4,10 @@ namespace Drupal\social_user\Plugin\Action;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\role_delegation\DelegatableRolesInterface;
-use Drupal\user\Entity\User;
 use Drupal\user\Plugin\Action\ChangeUserRoleBase;
 use Drupal\user\RoleInterface;
-use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -23,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   type = "social_user"
  * )
  */
-class SocialAddRoleUser extends ChangeUserRoleBase{
+class SocialAddRoleUser extends ChangeUserRoleBase {
 
   /**
    * The account proxy interface.
@@ -66,7 +62,7 @@ class SocialAddRoleUser extends ChangeUserRoleBase{
   public function execute(AccountProxyInterface $account = NULL): void {
     $rid = $this->configuration['rid'];
     // Skip adding the role to the user if they already have it.
-    /** @var User $account */
+    /** @var \Drupal\user\Entity\User $account */
     if ($account !== NULL && !$account->hasRole($rid)) {
       // For efficiency manually save the original account before applying
       // any changes.

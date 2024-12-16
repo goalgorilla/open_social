@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
@@ -42,7 +43,7 @@ class CrossPostingService {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected \Drupal\Core\Entity\EntityStorageInterface $groupStorage;
+  protected EntityStorageInterface $groupStorage;
 
   /**
    * Constructs a GroupRelationMultipleActivityEntityCondition object.

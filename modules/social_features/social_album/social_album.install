@@ -121,7 +121,7 @@ function _social_album_set_group_permissions(): void {
   if (!is_array($execute)) {
     return;
   }
-  foreach ($execute  as $type_id) {
+  foreach ($execute as $type_id) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $type */
     $type = $type_storage->load($type_id);
 

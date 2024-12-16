@@ -165,8 +165,7 @@ class ModeBlock extends Block {
     $block_configuration = $block->getConfiguration();
 
     if (isset($block_configuration['type'])) {
-      $type_filter = $this->view->filter['type'];
-      $type_filter->value = $block_configuration['type'];
+      $this->view->filter_type = $block_configuration['type'];
     }
   }
 

@@ -5,6 +5,7 @@
  * Contains template_suggestions_extra.module..
  */
 
+use Drupal\node\NodeInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -34,7 +35,7 @@ function template_suggestions_extra_theme_suggestions_page_alter(array &$suggest
     $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($node);
   }
 
-  if (isset($node) && $node instanceof \Drupal\node\NodeInterface) {
+  if (isset($node) && $node instanceof NodeInterface) {
     $altered_suggestions = [];
 
     foreach ($suggestions as $suggestion) {

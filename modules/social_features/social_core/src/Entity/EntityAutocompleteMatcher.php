@@ -5,7 +5,6 @@ namespace Drupal\social_core\Entity;
 use Drupal\Core\Entity\EntityAutocompleteMatcher as EntityAutocompleteMatcherBase;
 use Drupal\Component\Utility\Tags;
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface;
 
 /**
  * Class EntityAutocompleteMatcher.
@@ -24,7 +23,7 @@ class EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
       'target_type' => $target_type,
       'handler' => $selection_handler,
     ];
-    /** @var SelectionInterface $handler */
+    /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
     $handler = $this->selectionManager->getInstance($options);
 
     // Get an array of matching entities.

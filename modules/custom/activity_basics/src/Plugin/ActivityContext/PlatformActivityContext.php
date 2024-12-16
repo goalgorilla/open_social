@@ -3,7 +3,6 @@
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\user\EntityOwnerInterface;
 
 /**
  * Provides a 'OwnerActivityContext' activity context.
@@ -37,7 +36,7 @@ class PlatformActivityContext extends ActivityContextBase {
 
       // Add the owner of the related entity as a recipient.
       // No owner found set user 1.
-      /** @var EntityOwnerInterface $entity*/
+      /** @var \Drupal\user\EntityOwnerInterface $entity*/
       $recipients[] = [
         'target_type' => 'user',
         'target_id' => $entity->getOwnerId() ?? 1,
