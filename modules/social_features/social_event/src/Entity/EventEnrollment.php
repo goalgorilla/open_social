@@ -106,7 +106,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
    * {@inheritdoc}
    */
   public function getName(): string {
-    return $this->get('name')->value;
+    return $this->get('name')->value ?? '';
   }
 
   /**

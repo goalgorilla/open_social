@@ -285,8 +285,11 @@ class FilterBlock extends ModeBlock {
       $this->view->filter['vocabulary'] = $taxonomy_fields[$vid];
     }
     else {
-      $vocabulary_filter = $this->view->filter['vocabulary'];
-      $vocabulary_filter->value = '';
+      if (isset($this->view->filter['vocabulary'])) {
+        $vocabulary_filter = $this->view->filter['vocabulary'];
+        $vocabulary_filter->value = '';
+      }
+
     }
   }
 

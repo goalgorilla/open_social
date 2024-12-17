@@ -2077,8 +2077,11 @@ function social_group_get_allowed_visibility_options_per_group_type(string|NULL 
   $visibility_options = [];
 
   if ($group === NULL) {
-    /** @var \Drupal\group\Entity\GroupInterface $group */
     $group = _social_group_get_current_group($entity);
+  }
+
+  if ($group === NULL) {
+    return [];
   }
 
   if ($group->hasField('field_group_allowed_visibility')) {

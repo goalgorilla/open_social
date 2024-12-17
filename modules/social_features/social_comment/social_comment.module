@@ -312,7 +312,7 @@ function social_comment_comment_access(EntityInterface $entity, string $operatio
 /**
  * Implements hook_ENTITY_TYPE_view().
  */
-function social_comment_comment_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
+function social_comment_comment_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, mixed $view_mode): void {
   if ($view_mode === 'activity') {
     /** @var \Drupal\comment\CommentInterface $entity */
     $commented_entity = $entity->getCommentedEntity();

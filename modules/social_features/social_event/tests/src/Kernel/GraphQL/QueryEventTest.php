@@ -220,7 +220,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
   /**
    * Test that it respects the access events permission.
    */
-  public function testRequiresAccessEventsPermission() {
+  public function testRequiresAccessEventsPermission(): void {
     $topic = $this->createNode([
       'type' => 'event',
       'field_content_visibility' => 'public',

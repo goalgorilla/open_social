@@ -44,7 +44,8 @@ class EventAnEnrollForm extends EnrollActionForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): self {
-    $instance = new static();
+    /** @var static $instance */
+    $instance = parent::create($container);
     if ($instance->moduleHandler->moduleExists('data_policy')) {
       $instance->dataPolicyConsentManager = $container->get('data_policy.manager');
     }

@@ -428,7 +428,11 @@ function social_album_form_node_album_form_alter(array &$form, FormStateInterfac
 /**
  * Implements hook_field_group_form_process_alter().
  */
-function social_album_field_group_form_process_alter(array &$element, GroupInterface $group, array &$complete_form): void {
+function social_album_field_group_form_process_alter(array &$element, mixed $group, array &$complete_form): void {
+  if (!$group instanceof GroupInterface) {
+    return;
+  }
+
   if ($group->get('group_name')->getValue() === 'group_album_settings') {
     $element['#states'] = [
       'visible' => [

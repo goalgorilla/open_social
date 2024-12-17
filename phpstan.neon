@@ -75,9 +75,9 @@ parameters:
       - '#Access to an undefined property Drupal\\file\\FileInterface::\$download\.#'
       - '#Parameter \$item of static method Drupal\\social_eda\\Types\\Address::fromFieldItem\(\) expects Drupal\\address\\Plugin\\Field\\FieldType\\AddressItem\|null, Drupal\\Core\\Field\\FieldItemInterface\|null given.#'
       ## Extend things from OS product.
-#      - '#Class Drupal\\social_eda_dispatcher\\Dispatcher not found.#'
-      - '#.*CloudEvents\\V1\\CloudEvent.*#'
-      - '#.*CloudEvents\\CloudEventInterface.*#'
+      - '#Class Drupal\\social_eda_dispatcher\\Dispatcher not found.#'
+#      - '#.*CloudEvents\\V1\\CloudEvent.*#'
+#      - '#.*CloudEvents\\CloudEventInterface.*#'
       ## Need to create services for that.a
       - '#Not allowed to call private function _activity_basics_entity_action from module social_follow_tag#'
       - '#Not allowed to call private function _activity_send_email_default_template_items from module social_swiftmail#'
@@ -108,7 +108,7 @@ parameters:
       - '#Parameter \$group_membership_loader of method Drupal\\social_group_invite\\Form\\SocialBulkGroupInvitation::__construct\(\) has typehint with deprecated interface Drupal\\group\\GroupMembershipLoaderInterface.#'
       ## To review after Drupal 11
       - '#Access to an undefined property Drupal\\views\\ViewExecutable::\$filter_type.#'
-      - '#Access to an undefined property Drupal\\node\\NodeInterface::\$original\.#'
+      - '#Access to an undefined property Drupal\\node\\NodeInterface::\$original\.#' # https://www.drupal.org/node/3295826
       - '#Method Drupal\\Core\\Form\\FormBuilderInterface::getForm\(\) invoked with 2 parameters, 1 required#'
       - '#Method Drupal\\social_group\\Plugin\\views\\argument\\UserUid::query\(\) has parameter \$group_by with no type specified\.#'
       - '#Method Drupal\\activity_viewer\\Plugin\\views\\argument\\ActivityProfileArgument::query\(\) has parameter \$group_by with no type specified\.#'

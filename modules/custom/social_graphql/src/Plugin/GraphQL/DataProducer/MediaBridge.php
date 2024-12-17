@@ -169,7 +169,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
         return $file->get('alt')->getString();
 
       default:
-        throw new \RuntimeException("Unsupported field for FileItem: '${field}'.");
+        throw new \RuntimeException("Unsupported field for FileItem: '{$field}'.");
     }
   }
 
@@ -201,7 +201,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
         return $this->resolveFileItem($source_field, $field);
 
       default:
-        throw new \RuntimeException("Unsupported field for Media entity: '${field}'.");
+        throw new \RuntimeException("Unsupported field for Media entity: '{$field}'.");
     }
   }
 

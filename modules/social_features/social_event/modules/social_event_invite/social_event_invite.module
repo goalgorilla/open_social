@@ -9,7 +9,6 @@ use Drupal\social_event_invite\Form\EventInviteEnrollActionForm;
 use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -292,7 +291,7 @@ function social_event_invite_node_delete(NodeInterface $node): void {
 /**
  * Implements hook_entity_operation_alter().
  */
-function social_event_invite_entity_operation_alter(array &$operations, ContentEntityInterface $entity): void {
+function social_event_invite_entity_operation_alter(array &$operations, mixed $entity): void {
   // Get the node, so we can pass it as a parameter.
   $node = \Drupal::routeMatch()->getParameter('node');
   // Get the route name.

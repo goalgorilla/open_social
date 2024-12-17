@@ -215,18 +215,23 @@ function entity_access_by_field_field_formatter_info_alter(array &$info): void {
  * Implements hook_ENTITY_TYPE_presave().
  */
 function entity_access_by_field_node_presave(NodeInterface $node): void {
-  // $original = $node->original;
-  $original = \Drupal::entityTypeManager()
-    ->getStorage('node')
-    ->loadUnchanged($node->id());
+  $original = NULL;
+  if ($node->isNew() === FALSE) {
+    $original = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadUnchanged($node->id());
+  }
 
   // Get the field definitions of the node.
   $field_definitions = $node->getFieldDefinitions();
   /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
   foreach ($field_definitions as $field_name => $field_definition) {
-    // Lets add a node access realm if the field is implemented.
+    // Let's add a node access realm if the field is implemented.
     if ($field_definition->getType() === 'entity_access_field') {
-      if (isset($node->status) && isset($original->status) && $node->status->value != $original->status->value) {
+      if (
+        isset($node->status, $original->status)
+        && $node->status->value !== $original->status->value
+      ) {
         // Invalidate cache tags.
         Cache::invalidateTags(['activity_list']);
       }

@@ -12,13 +12,14 @@ use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\NodeInterface;
+use Drupal\social_activity\Plugin\views\display\ModeBlock;
 use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_views_plugins_display_alter().
  */
 function social_activity_views_plugins_display_alter(array &$plugins): void {
-  $plugins['block']['class'] = 'Drupal\social_activity\Plugin\views\display\ModeBlock';
+  $plugins['block']['class'] = ModeBlock::class;
 }
 
 /**
@@ -164,7 +165,7 @@ function social_activity_social_user_account_header_account_links(array $context
  * Adds an indicator to the user account menu on mobile.
  */
 function social_activity_social_user_account_header_items_alter(array &$menu_links, array $context): void {
-  // We require a logged in user for this indicator.
+  // We require a logged-in user for this indicator.
   if (empty($context['user']) || !$context['user']->isAuthenticated()) {
     return;
   }

@@ -118,7 +118,7 @@ class OptionalModuleManager implements ContainerInjectionInterface {
 
     $contents = file_get_contents($feature_list_file);
     if ($contents === FALSE) {
-      throw new IOException("Could not read '${feature_list_file}'.");
+      throw new IOException("Could not read '{$feature_list_file}'.");
     }
     $features = Yaml::decode($contents);
 

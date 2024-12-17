@@ -677,7 +677,7 @@ function social_private_message_private_message_create_access(AccountInterface $
 /**
  * Implements hook_private_message_view_alter().
  */
-function social_private_message_private_message_view_alter(array &$build, EntityInterface $privateMessage, string $viewMode): void {
+function social_private_message_private_message_view_alter(array &$build, EntityInterface $privateMessage, mixed $viewMode): void {
   // Inbox view mode.
   if ($viewMode === 'inbox') {
     // Remove wrapper from private message.

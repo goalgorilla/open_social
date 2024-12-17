@@ -49,7 +49,9 @@ class CommentPostFormatter extends CommentDefaultFormatter {
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
 
-    $status = $items->get('status')?->getValue();
+    /** @var \Drupal\comment\Plugin\Field\FieldType\CommentItem $first */
+    $first = $items->first();
+    $status = (int) $first->get('status')->getValue();
 
     $comments_per_page = $this->getSetting('num_comments');
 
@@ -60,7 +62,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       !in_array($this->viewMode, ['search_result', 'search_index'])) {
       $comment_settings = $this->getFieldSettings();
 
-      $comment_count = $entity->get($field_name)->get('comment_count');
+      $comment_count = $entity->get($field_name)->first()?->get('comment_count')->getValue() ?? 0;
 
       // Only attempt to render comments if the entity has visible comments.
       // Unpublished comments are not included in
@@ -110,7 +112,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       // display below the entity. Do not show the form for the print view mode.
       if (
         $status === CommentItemInterface::OPEN
-        && $comment_settings['form_location'] === CommentItemInterface::FORM_BELOW
+        && $comment_settings['form_location'] === (bool) CommentItemInterface::FORM_BELOW
         && $this->viewMode !== 'print'
       ) {
         // Only show the add comment form if the user has permission.

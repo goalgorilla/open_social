@@ -28,8 +28,8 @@ trait SocialEventTrait {
     // is closed.
     /** @var \Drupal\Core\Datetime\DrupalDateTime $check_end_date */
     $check_end_date = $node->get('field_event_date_end')->isEmpty()
-      ? $node->get('field_event_date')->first()?->get('date')
-      : $node->get('field_event_date_end')->first()?->get('date');
+      ? $node->get('field_event_date')->first()?->get('date')->getValue()
+      : $node->get('field_event_date_end')->first()?->get('date')->getValue();
 
     if (!$check_end_date instanceof DrupalDateTime) {
       // Not possible to detect end date.

@@ -24,6 +24,13 @@ class CommentContext extends RawMinkContext {
   private DrupalContext $drupalContext;
 
   /**
+   * The created comments.
+   *
+   * @var array
+   */
+  protected array $created;
+
+  /**
    * Make some contexts available here so we can delegate steps.
    *
    * @BeforeScenario

@@ -40,10 +40,10 @@ abstract class MessageQueueBase extends QueueWorkerBase {
    *
    * @param string $queue_name
    *   The queue name.
-   * @param object $data
+   * @param array $data
    *   The $data which should be stored in the queue item.
    */
-  protected function createQueueItem(string $queue_name, object $data): void {
+  protected function createQueueItem(string $queue_name, array $data): void {
     $queue = $this->queue->get($queue_name);
     $queue->createItem($data);
   }

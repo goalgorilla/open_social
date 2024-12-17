@@ -69,12 +69,13 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler implements
         $recipient_type = $recipient['0']['target_type'];
 
         if ($recipient_type === 'user') {
-          $recipient_id = $recipient['0']['target_id'];
-          // If it is personalised, lets check recipient id vs account id.
-          if ($this->checkIfPersonalNotification($entity) === TRUE) {
-            return AccessResult::allowedIf($account->id() === $recipient_id);
+          if (isset($recipient['0']['target_id'])) {
+            $recipient_id = $recipient['0']['target_id'];
+            // If it is personalised, lets check recipient id vs account id.
+            if ($this->checkIfPersonalNotification($entity) === TRUE) {
+              return AccessResult::allowedIf($account->id() === $recipient_id);
+            }
           }
-
           // Lets fallback to the related object access permission.
           return $this->returnAccessRelatedObject($entity, $operation, $account);
         }
@@ -94,7 +95,7 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler implements
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
+  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, 'add activity entities');
   }
 

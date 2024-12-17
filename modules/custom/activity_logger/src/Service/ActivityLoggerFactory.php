@@ -3,6 +3,7 @@
 namespace Drupal\activity_logger\Service;
 
 use Drupal\activity_creator\Plugin\ActivityContextManager;
+use Drupal\activity_creator\Plugin\ActivityEntityConditionInterface;
 use Drupal\activity_creator\Plugin\ActivityEntityConditionManager;
 use Drupal\activity_logger\Entity\NotificationConfigEntityInterface;
 use Drupal\Core\Entity\EntityBase;
@@ -172,13 +173,13 @@ class ActivityLoggerFactory {
     $message_storage = $this->entityTypeManager->getStorage('message_template');
 
     // Check all enabled messages.
+    /** @var \Drupal\message\MessageTemplateInterface $message_type */
     foreach ($message_storage->loadByProperties(['status' => '1']) as $key => $message_type) {
-      /** @var \Drupal\Core\Config\Entity\ConfigEntityBase $message_type */
       $mt_entity_bundles = $message_type->getThirdPartySetting('activity_logger', 'activity_bundle_entities', []);
       $mt_action = $message_type->getThirdPartySetting('activity_logger', 'activity_action', NULL);
       $mt_context = $message_type->getThirdPartySetting('activity_logger', 'activity_context', NULL);
       $mt_destinations = $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
-      $mt_entity_condition = (string) $message_type->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
+      $mt_entity_condition = $message_type->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
 
       if ($mt_action !== $action) {
         continue;
@@ -193,22 +194,26 @@ class ActivityLoggerFactory {
         continue;
       }
 
-      if (!empty($mt_entity_condition)) {
-        continue;
+      // Ensure $mt_entity_condition returns an instance of the
+      // required interface.
+      if (!empty($mt_entity_condition) && $this->activityEntityConditionManager->hasDefinition($mt_entity_condition)) {
+        $entity_condition_instance = $this->activityEntityConditionManager->createInstance($mt_entity_condition);
+
+        if (!$entity_condition_instance instanceof ActivityEntityConditionInterface) {
+          throw new \LogicException(sprintf(
+            'The plugin "%s" does not implement ActivityEntityConditionInterface.',
+            $mt_entity_condition
+          ));
+        }
+
+        /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+        if (!$entity_condition_instance->isValidEntityCondition($entity)) {
+          continue;
+        }
       }
 
-      if ($this->activityEntityConditionManager->hasDefinition($mt_entity_condition)) {
-        continue;
-      }
-
-      /** @var \Drupal\activity_creator\Plugin\ActivityEntityConditionInterface $context_plugin */
+      /** @var \Drupal\activity_basics\Plugin\ActivityContext\ContentInMyGroupActivityContext $context_plugin */
       $context_plugin = $this->activityContextManager->createInstance($mt_context);
-      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-      if (!$context_plugin->isValidEntityCondition($entity)) {
-        continue;
-      }
-
-      /** @var \Drupal\activity_creator\Plugin\ActivityContextInterface $context_plugin */
       if ($context_plugin->isValidEntity($entity)) {
         $message_types[$key] = [
           'messagetype' => $message_type,
@@ -374,6 +379,7 @@ class ActivityLoggerFactory {
     if (!empty($ids) && !in_array($message_type, $allowed_duplicates)) {
       $exists = TRUE;
     }
+
     return $exists;
   }
 

@@ -48,7 +48,10 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
-    $status = $items->get('status')?->getValue()[0]['value'];
+
+    /** @var \Drupal\comment\Plugin\Field\FieldType\CommentItem $first */
+    $first = $items->first();
+    $status = (int) $first->get('status')->getValue();
     $access_comments_in_group = FALSE;
 
     // Exclude entities without the set id.
@@ -81,9 +84,8 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       // comment_node_update_index() instead of by this formatter, so don't
       // return anything if the view mode is search_index or search_result.
       !in_array($this->viewMode, ['search_result', 'search_index'])) {
-      $comment_settings = $this->getFieldSettings();
 
-      $comment_count = (int) $entity->get($field_name)->get('comment_count')?->getValue();
+      $comment_count = $entity->get($field_name)->first()?->get('comment_count')->getValue() ?? 0;
 
       // Only attempt to render comments if the entity has visible comments.
       // Unpublished comments are not included in

@@ -159,10 +159,11 @@ class SocialDrupalContext extends DrupalContext {
    */
   public function createNodes($type, TableNode $nodesTable): void {
     foreach ($nodesTable->getHash() as $nodeHash) {
+      /** @var \stdClass $node */
       $node = (object) $nodeHash;
       $node->type = $type;
-      if ($node->get('field_event_date') !== NULL) {
-        $node->set('field_event_date', date('Y-m-d H:i:s', strtotime($node->get('field_event_date'))));
+      if (property_exists($node, 'field_event_date') && !empty($node->field_event_date)) {
+        $node->field_event_date = date('Y-m-d H:i:s', strtotime($node->field_event_date));
       }
       $entity = $this->nodeCreate($node);
       if (isset($node->alias)) {
