@@ -37,3 +37,14 @@ field.storage_settings.social_external_identifier:
       sequence:
         type: string
         label: 'Target entity type'
+
+social_core.address.settings:
+  type: config_object
+  label: "Address format to be rendered"
+  mapping:
+    format:
+      type: string
+      label: "Address format template"
+    regex_pattern:
+      type: string
+      label: "Regex pattern to clean empty address field-item"
