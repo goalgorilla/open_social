@@ -62,25 +62,9 @@ function template_preprocess_event_location_address(array &$variables): void {
       ? $node->get('field_event_location')->getString()
       : NULL;
 
-    $variables['address'] = NULL;
-    if (!$node->get('field_event_address')->isEmpty()) {
-      $country_list = \Drupal::service('address.country_repository')->getList();
-      $address_value = current($node->get('field_event_address')->getValue());
-      $address_sequence = ['address_line1', 'address_line2', 'address_line3', 'locality', 'country_code'];
-
-      $address = [];
-      foreach ($address_sequence as $address_key) {
-        $address[] = match ($address_key) {
-          'locality' => is_null($address_value['postal_code'])
-            ? $address_value[$address_key]
-            : sprintf('%s %s', $address_value['postal_code'], $address_value[$address_key]),
-          'country_code' => $country_list[$address_value[$address_key]],
-          default => $address_value[$address_key],
-        };
-      }
-
-      $variables['address'] = trim(implode(', ', array_filter($address)), ", ");
-    }
+    $variables['address'] = !$node->get('field_event_address')->isEmpty()
+      ? $node->get('field_event_address')->view('default')
+      : NULL;
   }
 
   // We want to use icon from the loaded file rather than embed it. Because
