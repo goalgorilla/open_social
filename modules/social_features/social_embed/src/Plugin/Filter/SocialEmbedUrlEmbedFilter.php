@@ -7,6 +7,7 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Render\Renderer;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Utility\Error;
@@ -87,6 +88,8 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
    *   The logger channel factory service.
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The route match service.
+   * @param \Drupal\Core\Render\Renderer $renderer
+   *   Renderer services.
    */
   public function __construct(
     array $configuration,
@@ -99,8 +102,10 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
     AccountProxyInterface $current_user,
     LoggerChannelFactoryInterface $loggerFactory,
     protected RouteMatchInterface $routeMatch,
+    Renderer $renderer,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $url_embed);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $url_embed, $renderer);
+
     $this->uuid = $uuid;
     $this->configFactory = $config_factory;
     $this->embedHelper = $embed_helper;
@@ -123,6 +128,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
       $container->get('current_user'),
       $container->get('logger.factory'),
       $container->get('current_route_match'),
+      $container->get('renderer'),
     );
   }
 
