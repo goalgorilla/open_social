@@ -109,7 +109,21 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     $query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
 
     if ($account->isAnonymous()) {
-      $configuration['table'] = 'node_field_data';
+
+      $configuration = [
+        'left_table' => 'activity__field_activity_entity',
+        'left_field' => 'field_activity_entity_target_id',
+        'table' => 'node_field_data',
+        'field' => 'nid',
+        'operator' => '=',
+        'extra' => [
+          0 => [
+            'left_field' => 'field_activity_entity_target_type',
+            'value' => 'node',
+          ],
+        ],
+      ];
+
       /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
       $join = Views::pluginManager('join')->createInstance('standard', $configuration);
       $query->addRelationship('node_field_data', $join, 'node_field_data');
