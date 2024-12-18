@@ -633,3 +633,17 @@ function social_core_update_130012() : void {
     }
   }
 }
+
+/**
+ * Configure address settings config.
+ */
+function social_core_update_130013(): void {
+  /** @var \Drupal\Core\Config\ConfigFactoryInterface $config_factory */
+  $config_factory = \Drupal::service('config.factory');
+
+  $address_config = $config_factory->getEditable('social_core.address.settings');
+  $address_config
+    ->set('address_format', '@address_line1%, @address_line2%, @address_line3%, @postal_code% @locality%, @country_code%')
+    ->set('regex_pattern', '/@[\s\S]+?%, |@[\s\S]+?% |@[\s\S]+?% - /')
+    ->save();
+}
