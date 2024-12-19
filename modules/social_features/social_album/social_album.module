@@ -356,33 +356,6 @@ function social_album_form_comment_form_alter(&$form, FormStateInterface $form_s
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_album_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (\Drupal::routeMatch()->getRouteName() === 'social_album.post') {
-    if (isset($form['current_user_image'])) {
-      unset($form['current_user_image']);
-    }
-  }
-  elseif (isset($form['field_album'])) {
-    // Hide album select field when feature is disabled on the image post form.
-    $status = \Drupal::config('social_album.settings')->get('status');
-    if (!$status) {
-      unset($form['field_album']);
-    }
-    else {
-      $form['field_album']['#states'] = [
-        'visible' => [
-          ':input[name="field_post_image[0][fids]"]' => [
-            'filled' => TRUE,
-          ],
-        ],
-      ];
-    }
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
 function social_album_form_social_post_entity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   /** @var \Drupal\social_post\Entity\PostInterface $post */
   $post = $form_state->getFormObject()->getEntity();
