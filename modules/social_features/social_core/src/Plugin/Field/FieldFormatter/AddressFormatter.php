@@ -106,8 +106,13 @@ class AddressFormatter extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $address_config = $this->configFactory->get('social_core.address.settings');
-    $address_string = $address_config->get('address_format');
+    $address_string = $address_config->get('format');
     $address_values = current($items->getValue());
+
+    // When the address field is empty, return early.
+    if (empty($address_values)) {
+      return [];
+    }
 
     foreach ($address_values as $key => $value) {
       if (empty($value)) {
