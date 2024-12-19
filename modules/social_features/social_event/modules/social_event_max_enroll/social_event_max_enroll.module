@@ -104,6 +104,12 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
           ],
         ];
 
+        // Hide all `Enrollment limit` wrapper
+        // if event enrollment is disabled for event.
+        if (!$form['field_event_max_enroll']['#access'] && !$form['field_event_max_enroll_num']['#access']) {
+          $form['field_event_max_enroll_wrapper']['#access'] = FALSE;
+        }
+
         $form['field_event_max_enroll_wrapper']['field_event_max_enroll'] = $form['field_event_max_enroll'];
         $form['field_event_max_enroll_wrapper']['field_event_max_enroll_num'] = $form['field_event_max_enroll_num'];
         unset($form['field_event_max_enroll'], $form['field_event_max_enroll_num']);
