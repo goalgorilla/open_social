@@ -13,6 +13,7 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupRole;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -757,6 +758,70 @@ class GroupContext extends RawMinkContext {
     }
     else {
       $this->assertSession()->pageTextNotContains('Access denied');
+    }
+  }
+
+  /**
+   * Add requests to specific group.
+   *
+   * Create membership requests to specific groups.
+   * Request status: 0 - pending request, 1 - accepted request
+   * 2 - rejected request.
+   * | group    | user      | created     | grequest_status | field_grequest_message |
+   * | My group | Jane Doe  | -10 minutes | 0               | message text           |
+   * | ...      | ...       | ...         | ...             | ...                    |
+   *
+   * @Given group membership requests:
+   */
+  public function createGroupMembershipRequests(TableNode $groupRequestTable) {
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $group_relationship_storage */
+    $group_relationship_storage = \Drupal::entityTypeManager()->getStorage('group_content_type');
+
+    foreach ($groupRequestTable->getHash() as $group_request_hash) {
+
+      // Get group, and set group_id into gid table.
+      $group_id = $this->getNewestGroupIdFromTitle($group_request_hash['group']);
+      if ($group_id === NULL) {
+        throw new \InvalidArgumentException("Group '{$group_request_hash['group']}' not found.");
+      }
+      $group = Group::load($group_id);
+      assert($group instanceof GroupInterface);
+
+      $group_request_hash['gid'] = $group->id();
+      unset($group_request_hash['group']);
+
+      // Check if current group has membership_request plugin.
+      $membership_request_enabled = $group->getGroupType()->hasPlugin('group_membership_request');
+      if (!$membership_request_enabled) {
+        throw new \InvalidArgumentException("Group '{$group_request_hash['group']}' doesn't have request system.");
+      }
+
+      // Get user, and set user id into entity_id table.
+      $user = user_load_by_name($group_request_hash['user']);
+      if (!$user instanceof UserInterface) {
+        throw new \InvalidArgumentException("User with name '{$group_request_hash['user']}' not found.");
+      }
+
+      $group_request_hash['entity_id'] = $user->id();
+      unset($group_request_hash['user']);
+
+      // Since relationship type id can be like this: group_content_type_HASH
+      // we should just get type id from group.
+      $relation_type_id = $group_relationship_storage
+        ->getRelationshipTypeId((string) $group->getGroupType()->id(), 'group_membership_request');
+      $group_request_hash['type'] = $relation_type_id;
+
+      $this->validateEntityFields("group_content", $group_request_hash);
+      $request_object = GroupRelationship::create($group_request_hash);
+
+      $violations = $request_object->validate();
+
+      if ($violations->count() !== 0) {
+        throw new \Exception("The group request you tried to create is invalid: $violations");
+      }
+
+      $request_object->save();
+
     }
   }
 
