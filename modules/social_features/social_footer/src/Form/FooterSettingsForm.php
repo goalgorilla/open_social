@@ -19,21 +19,21 @@ class FooterSettingsForm extends FormBase {
    *
    * @var \Drupal\file\FileStorageInterface
    */
-  protected $fileStorage;
+  protected FileStorageInterface $fileStorage;
 
   /**
    * The entity repository.
    *
    * @var \Drupal\Core\Entity\EntityRepositoryInterface
    */
-  protected $entityRepository;
+  protected EntityRepositoryInterface $entityRepository;
 
   /**
    * The file usage service.
    *
    * @var \Drupal\file\FileUsage\FileUsageInterface
    */
-  protected $fileUsage;
+  protected FileUsageInterface $fileUsage;
 
   /**
    * Creates a FooterSettingsForm instance.
@@ -54,7 +54,7 @@ class FooterSettingsForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('entity_type.manager')->getStorage('file'),
       $container->get('entity.repository'),
@@ -65,14 +65,14 @@ class FooterSettingsForm extends FormBase {
   /**
    * {@inheritDoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_footer_config_form';
   }
 
   /**
    * {@inheritDoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $block = $this->configFactory()->get('block.block.socialblue_footer_powered');
     $settings = $block->get('settings');
 
@@ -85,7 +85,7 @@ class FooterSettingsForm extends FormBase {
       '#upload_validators' => [
         'file_validate_is_image' => [],
       ],
-      '#default_value' => [$settings['logo']] ?? NULL,
+      '#default_value' => [$settings['logo']],
     ];
 
     $form['text'] = [
@@ -97,7 +97,7 @@ class FooterSettingsForm extends FormBase {
 
     $form['link'] = [
       '#type' => 'fieldset',
-      '#title' => $this->t('Link') ?? NULL,
+      '#title' => $this->t('Link'),
     ];
 
     $form['link']['url'] = [
@@ -125,7 +125,7 @@ class FooterSettingsForm extends FormBase {
   /**
    * {@inheritDoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $logo = '';
     $values = $form_state->getValues();
 
@@ -158,7 +158,7 @@ class FooterSettingsForm extends FormBase {
    * @param string $text
    *   Text editor value.
    */
-  public function setInlineImagesAsPermanent($text) : void {
+  public function setInlineImagesAsPermanent(string $text) : void {
     $uuids = _editor_parse_file_uuids($text);
     foreach ($uuids as $uuid) {
       /** @var \Drupal\file\FileInterface|NULL $file */

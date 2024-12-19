@@ -20,14 +20,14 @@ class SetGroupsForNodeService {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The Module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructor.
@@ -49,7 +49,7 @@ class SetGroupsForNodeService {
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], $is_new = FALSE) {
+  public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], bool $is_new = FALSE): NodeInterface {
     $moved = FALSE;
 
     // If we don't have to add or remove groups, we don't need to move anything.
@@ -60,7 +60,7 @@ class SetGroupsForNodeService {
 
     // Remove the notifications related to the node if a group is added or
     // moved.
-    if ((empty($original_groups) || $original_groups != $groups_to_add)) {
+    if ((empty($original_groups) || $original_groups !== $groups_to_add)) {
       $entity_query = $this->entityTypeManager->getStorage('activity')->getQuery();
       $entity_query->accessCheck();
       $entity_query->condition('field_activity_entity.target_id', $node->id(), '=');
@@ -85,9 +85,9 @@ class SetGroupsForNodeService {
       // 1. From Community -> GROUP
       // If there are no original groups, and there are groups we should add the
       // piece of content to it means content is placed from the community
-      // in to a group and we remove the "create_node-bundle_community
+      // in to a group, and we remove the "create_node-bundle_community"
       // message from the streams.
-      elseif (empty($original_groups) && !empty($groups_to_add)) {
+      elseif (!empty($groups_to_add)) {
         $template = 'create_' . $node->bundle() . '_community';
         $messages = $this->entityTypeManager->getStorage('message')
           ->loadByProperties(['template' => $template]);

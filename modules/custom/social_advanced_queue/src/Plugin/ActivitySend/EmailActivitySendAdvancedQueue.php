@@ -23,7 +23,7 @@ class EmailActivitySendAdvancedQueue extends EmailActivitySend {
     $job = Job::create('activity_send_email_worker', $data);
     if ($job instanceof Job) {
       $queue = Queue::load('default');
-      $queue->enqueueJob($job);
+      $queue?->enqueueJob($job);
     }
   }
 

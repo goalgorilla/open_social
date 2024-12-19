@@ -8,13 +8,15 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\entity_access_by_field\EntityAccessHelper;
 use Prophecy\Prophet;
 
+// phpstan:ignoreFile.
+
 /**
  * Unit test of entity_access_by_field hook_node_access implementation.
  */
 class EntityAccessTest extends UnitTestCase {
 
   /**
-   * The field type random machinename.
+   * The field type random machine name.
    *
    * @var string
    */

@@ -80,15 +80,17 @@ class PostGroupBlock extends PostBlock {
           if (
             $group->hasField('field_group_posts_enabled') &&
             !$group->get('field_group_posts_enabled')->isEmpty() &&
-            !(bool) $group->get('field_group_posts_enabled')->getString() &&
+            !$group->get('field_group_posts_enabled')->getString() &&
             !$group->hasPermission('edit group', $account)
           ) {
             return AccessResult::forbidden()->addCacheContexts($cache_contexts)->addCacheTags(['group:' . $group->id()]);
           }
         }
+        /** @var \Drupal\Core\Access\AccessResult $access */
         $access = $this->entityTypeManager
           ->getAccessControlHandler($this->entityType)
-          ->createAccess($this->bundle, $account, $context, TRUE)
+          ->createAccess($this->bundle, $account, $context, TRUE);
+        $access = $access
           ->addCacheContexts($cache_contexts)
           ->addCacheTags(['group:' . $group->id()]);
       }

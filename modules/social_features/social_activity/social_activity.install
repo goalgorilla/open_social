@@ -10,7 +10,7 @@ use Drupal\menu_link_content\Entity\MenuLinkContent;
 /**
  * Social activity install function.
  */
-function social_activity_install() {
+function social_activity_install(): void {
   // Add menu item.
   $parents = \Drupal::entityTypeManager()->getStorage('menu_link_content')
     ->loadByProperties(['menu_name' => 'main', 'title' => 'Explore', 'expanded' => TRUE]);

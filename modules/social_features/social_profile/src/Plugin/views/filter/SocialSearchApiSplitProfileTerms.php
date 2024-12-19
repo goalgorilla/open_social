@@ -26,7 +26,7 @@ class SocialSearchApiSplitProfileTerms extends SearchApiTerm {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     $filter = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     $filter->setSocialProfileTagService($container->get('social_profile.tag_service'));
     return $filter;
@@ -38,14 +38,14 @@ class SocialSearchApiSplitProfileTerms extends SearchApiTerm {
    * @param \Drupal\social_profile\SocialProfileTagServiceInterface $social_profile_tag_service
    *   The social profile tag service.
    */
-  protected function setSocialProfileTagService(SocialProfileTagServiceInterface $social_profile_tag_service) {
+  protected function setSocialProfileTagService(SocialProfileTagServiceInterface $social_profile_tag_service): void {
     $this->profileTagService = $social_profile_tag_service;
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function valueForm(&$form, FormStateInterface $form_state) {
+  protected function valueForm(&$form, FormStateInterface $form_state): void {
     parent::valueForm($form, $form_state);
 
     // Use only for profile tag field.
@@ -119,7 +119,7 @@ class SocialSearchApiSplitProfileTerms extends SearchApiTerm {
   /**
    * {@inheritdoc}
    */
-  public function validateExposed(&$form, FormStateInterface $form_state) {
+  public function validateExposed(&$form, FormStateInterface $form_state): void {
     if (
       $this->field !== 'field_profile_profile_tag' ||
       !$this->profileTagService->allowSplit()

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_invite;
 
+use Drupal\Core\Config\StorableConfigBase;
 use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -22,28 +23,28 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * Email validator.
    *
    * @var \Drupal\Component\Utility\EmailValidatorInterface
    */
-  protected $emailValidator;
+  protected EmailValidatorInterface $emailValidator;
 
   /**
    * The current active database's master connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs the configuration override.
@@ -90,8 +91,8 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
         $enabled_verify_mail === TRUE) {
         $request = $this->requestStack->getCurrentRequest();
 
-        $invitee_mail = $request->query->get('invitee_mail', '');
-        $destination = $request->query->get('destination', '');
+        $invitee_mail = $request?->query->get('invitee_mail', '');
+        $destination = $request?->query->get('destination', '');
         assert(is_string($invitee_mail) && is_string($destination));
         $is_valid = $this->validateInviteData($invitee_mail, $destination);
 
@@ -115,7 +116,7 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * @return bool
    *   TRUE if invited data is valid.
    */
-  public function validateInviteData($invitee_mail, $destination) {
+  public function validateInviteData(string $invitee_mail, string $destination): bool {
 
     if (empty($invitee_mail) || empty($destination)) {
       return FALSE;
@@ -147,27 +148,28 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
     $query->join('group_content__invitation_status', 'gcis', 'gcim.entity_id = gcis.entity_id');
     $query->condition('gcis.invitation_status_value', '0');
 
-    $invitations = $query->execute()->fetchField();
+    $result = $query->execute();
+    if ($result !== NULL) {
+      $invitations = $result->fetchField();
 
-    if (empty($invitations)) {
-      return FALSE;
+      if (empty($invitations)) {
+        return FALSE;
+      }
     }
-    else {
-      return TRUE;
-    }
+    return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialGroupInviteConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 
@@ -182,7 +184,7 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * @return \Drupal\Core\Config\StorableConfigBase|null
    *   The configuration object for the provided name and collection.
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?StorableConfigBase {
     return NULL;
   }
 

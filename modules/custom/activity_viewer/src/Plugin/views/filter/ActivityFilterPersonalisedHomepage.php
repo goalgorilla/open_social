@@ -75,7 +75,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration, $plugin_id, $plugin_definition,
       $container->get('social_group.helper_service'),
@@ -87,7 +87,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
   /**
    * Not exposable.
    */
-  public function canExpose() {
+  public function canExpose(): false {
     return FALSE;
   }
 
@@ -106,8 +106,10 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    * Probably want to extend this to entity access based on the node grant
    * system when this is implemented.
    * See https://www.drupal.org/node/777578
+   *
+   * @throws \Exception
    */
-  public function query() {
+  public function query(): void {
     $account = $this->view->getUser();
     $skip_roles = [
       'administrator',
@@ -230,7 +232,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
 
     $contexts[] = 'user';
@@ -248,8 +250,10 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    *
    * @return array
    *   List of node IDs.
+   *
+   * @throws \Exception
    */
-  protected function getAvailableNodeIds(AccountInterface $user, array $memberships) {
+  protected function getAvailableNodeIds(AccountInterface $user, array $memberships): array {
     $nids = &drupal_static(__FUNCTION__);
     if (!isset($nids)) {
       $query = $this->connection->select('node_field_data', 'nfd');
@@ -292,7 +296,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
         $node_status[] = '0';
       }
       $query->condition('nfd.status', $node_status, 'IN');
-      $nids = $query->execute()->fetchCol();
+      $nids = $query->execute()?->fetchCol();
     }
 
     return array_unique($nids);
@@ -308,8 +312,10 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    *
    * @return array
    *   List of post IDs.
+   *
+   * @throws \Exception
    */
-  protected function getAvailablePostIds(AccountInterface $user, array $memberships) {
+  protected function getAvailablePostIds(AccountInterface $user, array $memberships): array {
     $query = $this->connection->select('post_field_data', 'pfd');
     $query->fields('pfd', ['id']);
     $query->leftJoin('post__field_visibility', 'pfv', 'pfv.entity_id = pfd.id');
@@ -355,7 +361,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     }
     $query->condition('pfd.status', $post_status, 'IN');
 
-    $pids = $query->execute()->fetchCol();
+    $pids = $query->execute()?->fetchCol();
 
     return array_unique($pids);
   }
@@ -370,8 +376,10 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    *
    * @return array
    *   List of comment IDs.
+   *
+   * @throws \Exception
    */
-  protected function getAvailableCommentIds(array $node_ids, array $post_ids) {
+  protected function getAvailableCommentIds(array $node_ids, array $post_ids): array {
     $query = $this->connection->select('comment_field_data', 'cfd');
     $query->fields('cfd', ['cid']);
     $or = $query->orConditionGroup();
@@ -401,7 +409,10 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     }
     $query->condition('cfd.status', '1');
 
-    $cids = $query->execute()->fetchCol();
+    $cids = $query->execute()?->fetchCol();
+    if (empty($cids)) {
+      return [];
+    }
 
     return array_unique($cids);
   }

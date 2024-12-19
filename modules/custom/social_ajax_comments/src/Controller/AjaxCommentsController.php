@@ -22,21 +22,21 @@ class AjaxCommentsController extends ContribController {
    *
    * @var int|null
    */
-  protected $errors = NULL;
+  protected ?int $errors = NULL;
 
   /**
    * TRUE if temporary storage should be cleared.
    *
    * @var bool
    */
-  protected $clearTempStore = TRUE;
+  protected bool $clearTempStore = TRUE;
 
   /**
    * The parent comment's comment ID.
    *
    * @var int|null
    */
-  protected $pid;
+  protected ?int $pid;
 
   /**
    * Cancel handler for the cancel form.
@@ -49,7 +49,7 @@ class AjaxCommentsController extends ContribController {
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   The Ajax response.
    */
-  public function socialCancel(Request $request, $cid) {
+  public function socialCancel(Request $request, int $cid): AjaxResponse {
     // This is based on AjaxCommentsController::cancel.
     // the only change is we have some more wrappers we need to remove,
     // we can't tell this to ajax_comments because we render it in our template
@@ -196,7 +196,7 @@ class AjaxCommentsController extends ContribController {
       // If the new comment is not to be shown immediately, or if there are
       // errors, insert the message directly below the parent comment.
       elseif ($comment->hasParentComment()) {
-        $selector = static::getCommentSelectorPrefix() . $comment->getParentComment()->id();
+        $selector = static::getCommentSelectorPrefix() . $comment->getParentComment()?->id();
         $position = 'after';
       }
       else {
@@ -245,7 +245,7 @@ class AjaxCommentsController extends ContribController {
   /**
    * {@inheritdoc}
    */
-  protected function renderCommentField(EntityInterface $entity, $field_name) {
+  protected function renderCommentField(EntityInterface $entity, $field_name): array {
     $comment_display = parent::renderCommentField($entity, $field_name);
 
     $parameters = &$comment_display[0]['comments']['pager']['#route_parameters'];

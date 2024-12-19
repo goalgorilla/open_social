@@ -25,7 +25,7 @@ class EventInviteActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs a EventInviteAnonymousActivityContext object.
@@ -62,7 +62,7 @@ class EventInviteActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,

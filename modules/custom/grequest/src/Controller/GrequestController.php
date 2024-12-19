@@ -45,7 +45,7 @@ class GrequestController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('entity.form_builder'),
       $container->get('messenger')
@@ -55,7 +55,7 @@ class GrequestController extends ControllerBase {
   /**
    * Builds the form to create new membership on membership request approve.
    */
-  public function approveRequest(GroupInterface $group, GroupRelationshipInterface $group_content) {
+  public function approveRequest(GroupInterface $group, GroupRelationshipInterface $group_content): array {
     /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
     $storage = $this->entityTypeManager()->getStorage('group_content_type');
     $plugin = $group->getGroupType()->getPlugin('group_membership');

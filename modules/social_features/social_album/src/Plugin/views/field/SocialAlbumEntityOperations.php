@@ -2,7 +2,8 @@
 
 namespace Drupal\social_album\Plugin\views\field;
 
-use Drupal\Core\Security\TrustedCallbackInterface;
+use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Url;
 use Drupal\social_post\PostViewBuilder;
 use Drupal\views\Plugin\views\field\EntityOperations;
@@ -15,19 +16,34 @@ use Drupal\views\ResultRow;
  *
  * @ViewsField("social_album_post_operations")
  */
-class SocialAlbumEntityOperations extends EntityOperations implements TrustedCallbackInterface {
+class SocialAlbumEntityOperations extends EntityOperations {
 
   /**
    * {@inheritdoc}
+   *
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function render(ResultRow $values) {
-    foreach (get_object_vars($values) as $key => $value) {
-      if (preg_match('/_delta$/', $key)) {
+  public function render(ResultRow $values): MarkupInterface|array|string {
+    $value = NULL;
+    foreach (get_object_vars($values) as $key => $val) {
+      if (str_ends_with($key, '_delta')) {
+        $value = $val;
         break;
       }
     }
 
+    if ($value === NULL) {
+      return [];
+    }
+
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = $this->getEntity($values);
+
+    $field_item = $entity->get('field_post_image')->get($value);
+    $target_id = NULL;
+    if ($field_item instanceof FieldItemInterface && isset($field_item->target_id)) {
+      $target_id = $field_item->target_id;
+    }
 
     return [
       '#lazy_builder' => [
@@ -35,7 +51,7 @@ class SocialAlbumEntityOperations extends EntityOperations implements TrustedCal
         [
           $values->_entity->id(),
           $entity->id(),
-          $entity->field_post_image->get($value)->target_id,
+          $target_id,
         ],
       ],
     ];
@@ -53,6 +69,9 @@ class SocialAlbumEntityOperations extends EntityOperations implements TrustedCal
    *
    * @return array
    *   A renderable array representing the post links.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public static function renderLinks($node_id, $post_id, $file_id) {
     $entity = \Drupal::entityTypeManager()->getStorage('post')->load($post_id);

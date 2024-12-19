@@ -61,7 +61,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    *
    * @codeCoverageIgnore
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -169,7 +169,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
         return $file->get('alt')->getString();
 
       default:
-        throw new \RuntimeException("Unsupported field for FileItem: '${field}'.");
+        throw new \RuntimeException("Unsupported field for FileItem: '{$field}'.");
     }
   }
 
@@ -201,7 +201,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
         return $this->resolveFileItem($source_field, $field);
 
       default:
-        throw new \RuntimeException("Unsupported field for Media entity: '${field}'.");
+        throw new \RuntimeException("Unsupported field for Media entity: '{$field}'.");
     }
   }
 

@@ -22,14 +22,14 @@ class SocialAlbumUserAccess extends AccessPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account) {
+  public function access(AccountInterface $account): bool {
     return $account->isAuthenticated();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function alterRouteDefinition(Route $route) {
+  public function alterRouteDefinition(Route $route): void {
     $route
       ->setRequirement('_custom_access', SocialAlbumController::class . '::checkUserAlbumsAccess')
       ->setRequirement('_permission', 'access user profiles');

@@ -8,14 +8,14 @@
 /**
  * Implements hook_social_event_managers_action_ACTION_ID_finish().
  */
-function social_event_an_enroll_enrolments_export_social_event_managers_action_social_event_an_enroll_enrolments_export_action_finish($success) {
+function social_event_an_enroll_enrolments_export_social_event_managers_action_social_event_an_enroll_enrolments_export_action_finish(bool $success): array {
   return social_event_enrolments_export_social_event_managers_action_social_event_enrolments_export_enrollments_action_finish($success);
 }
 
 /**
  * Implements hook_social_user_export_plugin_info_alter().
  */
-function social_event_an_enroll_enrolments_export_social_user_export_plugin_info_alter(array &$plugins) {
+function social_event_an_enroll_enrolments_export_social_user_export_plugin_info_alter(array &$plugins): void {
   $plugins_overrides = [
     'enrolment_display_name' => 'display_name',
     'enrolment_user_email' => 'user_email',
@@ -34,7 +34,7 @@ function social_event_an_enroll_enrolments_export_social_user_export_plugin_info
 /**
  * Implements hook_profile_field_export_mapping_alter().
  */
-function social_event_an_enroll_enrolments_export_profile_field_export_mapping_alter(array &$mapping) {
+function social_event_an_enroll_enrolments_export_profile_field_export_mapping_alter(array &$mapping): void {
   // Replace the default plugins with our own.
   $mapping['enrolment_user_first_name'] = $mapping['user_first_name'];
   $mapping['enrolment_user_last_name'] = $mapping['user_last_name'];

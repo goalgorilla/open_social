@@ -79,8 +79,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    */
   public function __construct(
     array $configuration,
-    $plugin_id,
-    $plugin_definition,
+          $plugin_id,
+          $plugin_definition,
     ViewsBulkOperationsViewDataInterface $viewData,
     ViewsBulkOperationsActionManager $actionManager,
     ViewsBulkOperationsActionProcessorInterface $actionProcessor,
@@ -101,7 +101,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -168,7 +168,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    * {@inheritdoc}
    */
   public function viewsForm(array &$form, FormStateInterface $form_state): void {
-    $this->view->setExposedInput(['status' => TRUE]);
+    $this->view->setExposedInput(['status' => '1']);
 
     parent::viewsForm($form, $form_state);
 
@@ -183,7 +183,9 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
       foreach ($this->view->result as $row_index => $row) {
         $entity = $this->getEntity($row);
-        $list[$row_index]['#title'] = $this->getEntityLabel($entity);
+        if ($entity !== NULL) {
+          $list[$row_index]['#title'] = $this->getEntityLabel($entity);
+        }
       }
     }
 
@@ -334,7 +336,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  public function viewsFormValidate(&$form, FormStateInterface $form_state) {
+  public function viewsFormValidate(&$form, FormStateInterface $form_state): void {
     if ($this->view->id() === 'event_manage_enrollments') {
       $user_input = $form_state->getUserInput();
       $available_options = $this->getBulkOptions();
@@ -417,10 +419,11 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    * @return string
    *   The label text.
    */
-  public function getEntityLabel(EntityInterface $entity) {
+  public function getEntityLabel(EntityInterface $entity): string {
+    /** @var \Drupal\Core\Entity\ContentEntityBase $entity */
     $profiles = $this->entityTypeManager->getStorage('profile')
       ->loadByProperties([
-        'uid' => $entity->field_account->target_id,
+        'uid' => $entity->getFieldValue('field_account', 'target_id'),
       ]);
 
     $profile = reset($profiles);

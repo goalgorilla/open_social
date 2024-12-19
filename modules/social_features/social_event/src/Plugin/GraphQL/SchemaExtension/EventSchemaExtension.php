@@ -21,7 +21,7 @@ class EventSchemaExtension extends SdlSchemaExtensionPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function registerResolvers(ResolverRegistryInterface $registry) {
+  public function registerResolvers(ResolverRegistryInterface $registry): void {
     $builder = new ResolverBuilder();
 
     $this->addQueryFields($registry, $builder);
@@ -36,7 +36,7 @@ class EventSchemaExtension extends SdlSchemaExtensionPluginBase {
    * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
    *   The resolver builder.
    */
-  protected function addEventFields(ResolverRegistryInterface $registry, ResolverBuilder $builder) {
+  protected function addEventFields(ResolverRegistryInterface $registry, ResolverBuilder $builder): void {
     $registry->addFieldResolver('Event', 'id',
       $builder->produce('entity_uuid')
         ->map('entity', $builder->fromParent())
@@ -140,7 +140,7 @@ class EventSchemaExtension extends SdlSchemaExtensionPluginBase {
    * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
    *   The resolver builder.
    */
-  protected function addQueryFields(ResolverRegistryInterface $registry, ResolverBuilder $builder) {
+  protected function addQueryFields(ResolverRegistryInterface $registry, ResolverBuilder $builder): void {
     $registry->addFieldResolver('Query', 'events',
       $builder->produce('query_event')
         ->map('after', $builder->fromArgument('after'))

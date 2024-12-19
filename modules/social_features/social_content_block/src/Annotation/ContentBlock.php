@@ -18,27 +18,27 @@ class ContentBlock extends Plugin {
    *
    * @var string
    */
-  public $id;
+  public string $id;
 
   /**
    * The entity type ID.
    *
    * @var string
    */
-  public $entityTypeId;
+  public string $entityTypeId;
 
   /**
    * The bundle.
    *
-   * @var string
+   * @var string|null
    */
-  public $bundle = NULL;
+  public ?string $bundle = NULL;
 
   /**
    * An array of fields.
    *
    * @var array
    */
-  public $fields;
+  public array $fields;
 
 }

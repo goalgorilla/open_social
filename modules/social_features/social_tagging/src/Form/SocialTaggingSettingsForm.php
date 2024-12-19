@@ -4,7 +4,6 @@ namespace Drupal\social_tagging\Form;
 
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -20,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\social_tagging\Form
  */
-class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class SocialTaggingSettingsForm extends ConfigFormBase {
 
   /**
    * The module handler.
@@ -283,6 +282,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#collapsed' => TRUE,
     ];
 
+    /** @var \ArrayAccess $wrapper */
     $wrapper =& $form['categories_order_wrapper'];
 
     $wrapper['categories_order'] = [

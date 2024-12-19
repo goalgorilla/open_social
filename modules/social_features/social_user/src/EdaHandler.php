@@ -241,7 +241,7 @@ final class EdaHandler {
       $user_settings = $this->configFactory->get('user.settings');
 
       // If admin approval is required.
-      if ($user_settings->get('register') == 'visitors_admin_approval') {
+      if ($user_settings->get('register') === 'visitors_admin_approval') {
         $status = 'pending';
       }
       else {
@@ -354,6 +354,7 @@ final class EdaHandler {
     }
 
     // Build the event.
+    /** @var \CloudEvents\CloudEventInterface $event */
     $event = $this->fromEntity($user, $event_type);
 
     // Dispatch to message broker.

@@ -11,7 +11,7 @@ use Drupal\message\Entity\Message;
 /**
  * Implements hook_token_info().
  */
-function social_queue_storage_token_info() {
+function social_queue_storage_token_info(): array {
   $tokens['mail_task_subject'] = [
     'name' => t('Email task subject'),
     'description' => t('The subject of the email task that ran in the background.'),
@@ -33,7 +33,7 @@ function social_queue_storage_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_queue_storage_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_queue_storage_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
 
   if ($type === 'queue_storage_entity' && !empty($data['message'])) {
@@ -44,8 +44,8 @@ function social_queue_storage_tokens($type, $tokens, array $data, array $options
       foreach ($tokens as $name => $original) {
         if ($name === 'mail_task_subject' && $message->getFieldValue('field_message_related_object', 'target_type') === 'queue_storage_entity') {
           // Get the target storage entity and get the subject.
-          $target_type = $message->get('field_message_related_object')->target_type;
-          $target_id = $message->get('field_message_related_object')->target_id;
+          $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+          $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
           /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
           $entity = \Drupal::entityTypeManager()

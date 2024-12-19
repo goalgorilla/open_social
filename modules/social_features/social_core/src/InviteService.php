@@ -16,21 +16,21 @@ class InviteService {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * InviteService constructor.
@@ -57,7 +57,7 @@ class InviteService {
    * @return array|string
    *   Array containing the route name and or invite amount.
    */
-  public function getInviteData($specific = '') {
+  public function getInviteData(string $specific = ''): array|string {
     // Empty by default, we will decorate this in our custom extensions.
     // these can decide on priority what the baseRoute should be.
     $route = [
@@ -81,8 +81,8 @@ class InviteService {
       if (\Drupal::hasService('social_event.status_helper')) {
         /** @var \Drupal\social_event\EventEnrollmentStatusHelper $eventHelper */
         $eventHelper = \Drupal::service('social_event.status_helper');
-        $event_invites = $eventHelper->getAllUserEventEnrollments($this->currentUser->id());
-        if (NULL !== $event_invites && $event_invites > 0) {
+        $event_invites = $eventHelper->getAllUserEventEnrollments((string) $this->currentUser->id());
+        if (count($event_invites) > 0) {
           $route['amount'] += count($event_invites);
           // Override the route, because we have available invites!
           $route['name'] = 'view.user_event_invites.page_user_event_invites';

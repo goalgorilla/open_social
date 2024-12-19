@@ -111,7 +111,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -129,7 +129,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
   /**
    * {@inheritdoc}
    */
-  public function process($text, $langcode) {
+  public function process($text, $langcode): FilterProcessResult {
     $result = new FilterProcessResult($text);
 
     // Add settings in case we need to use _filter_url().

@@ -24,14 +24,14 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
   /**
    * The prefix to search for.
    */
-  const CONFIG_PREFIX = 'field.field.block_content.custom_content_list.';
+  public const CONFIG_PREFIX = 'field.field.block_content.custom_content_list.';
 
   /**
    * An array containing matching configuration object names.
    *
    * @var array
    */
-  protected $fieldConfigs;
+  protected array $fieldConfigs;
 
   /**
    * Constructs a ContentBlockPluginFieldWidget object.
@@ -92,7 +92,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
-    $selected_plugin_id = $items->getEntity()->field_plugin_id->value;
+    $selected_plugin_id = $items->getEntity()->get('field_plugin_id')->value;
     $selector = $this->contentBlockManager->getSelector('field_plugin_id', 'value', $element, TRUE);
 
     foreach ($this->contentBlockManager->getDefinitions() as $plugin_id => $plugin_definition) {
@@ -175,7 +175,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public static function validateElement(array $element, FormStateInterface $form_state) {
+  public static function validateElement(array $element, FormStateInterface $form_state): void {
     $value = $form_state->getValue([
       'field_plugin_field',
       0,

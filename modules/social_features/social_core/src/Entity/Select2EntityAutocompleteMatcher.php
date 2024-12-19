@@ -24,6 +24,7 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
       'target_type' => $target_type,
       'handler' => $selection_handler,
     ];
+    /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
     $handler = $this->selectionManager->getInstance($options);
 
     // Get an array of matching entities.

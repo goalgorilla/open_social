@@ -8,7 +8,7 @@
 /**
  * Implements hook_install().
  */
-function social_event_an_enroll_enrolments_export_install() {
+function social_event_an_enroll_enrolments_export_install(): void {
   // Set the enroll export pluginsExportUser access based on their counterpart
   // access.
   _enrolments_export_plugin_access();
@@ -20,7 +20,7 @@ function social_event_an_enroll_enrolments_export_install() {
 /**
  * Implements hook_uninstall().
  */
-function social_event_an_enroll_enrolments_export_uninstall() {
+function social_event_an_enroll_enrolments_export_uninstall(): void {
   // Set the export plugins access based on their enroll counterpart access.
   _enrolments_export_plugin_access(TRUE);
 }
@@ -31,7 +31,7 @@ function social_event_an_enroll_enrolments_export_uninstall() {
  * @param bool $reverse
  *   Flip the keys and value of the mapping plugins.
  */
-function _enrolments_export_plugin_access($reverse = FALSE) {
+function _enrolments_export_plugin_access(bool $reverse = FALSE): void {
   // Get the plugin mapping.
   $mapping = _enrolments_export_plugin_mapping($reverse);
 
@@ -61,7 +61,7 @@ function _enrolments_export_plugin_access($reverse = FALSE) {
  * @return array
  *   A mapped list of normal plugins and their counterpart enrollment plugins.
  */
-function _enrolments_export_plugin_mapping($reverse = FALSE) :array {
+function _enrolments_export_plugin_mapping(bool $reverse = FALSE) :array {
   $mapping = [
     'display_name' => 'enrolment_display_name',
     'user_email' => 'enrolment_user_email',

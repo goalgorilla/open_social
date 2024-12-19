@@ -13,8 +13,8 @@ use Drupal\user\Entity\Role;
  *
  * Perform actions related to the installation of social_group_quickjoin.
  */
-function social_group_quickjoin_install() {
-  // Fetch sitemananger role.
+function social_group_quickjoin_install(): void {
+  // Fetch site manager role.
   $role = Role::load('sitemanager');
   // Set permission for site manager.
   if ($role instanceof Role) {
@@ -35,8 +35,8 @@ function social_group_quickjoin_install() {
  *
  * Perform actions related to the de-installation of social_group_quickjoin.
  */
-function social_group_quickjoin_uninstall() {
-  // Fetch sitemananger role.
+function social_group_quickjoin_uninstall(): void {
+  // Fetch site manager role.
   $role = Role::load('sitemanager');
   // Set permission for site manager.
   if ($role instanceof Role) {

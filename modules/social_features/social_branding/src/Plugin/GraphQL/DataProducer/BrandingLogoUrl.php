@@ -38,7 +38,7 @@ class BrandingLogoUrl extends DataProducerPluginBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -76,6 +76,7 @@ class BrandingLogoUrl extends DataProducerPluginBase implements ContainerFactory
   public function resolve(ImmutableConfig $community_branding) : ?string {
     if ($community_branding->get('default') === 'socialblue') {
       if ($this->config->get('socialblue.settings')->get('logo.path')) {
+        /** @var \Drupal\Core\StreamWrapper\StreamWrapperInterface $wrapper */
         $wrapper = \Drupal::service('stream_wrapper_manager')
           ->getViaUri($this->config->get('socialblue.settings')->get('logo.path'));
         return $wrapper->getExternalUrl();

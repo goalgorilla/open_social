@@ -17,13 +17,14 @@ use Drupal\profile\Entity\ProfileInterface;
 /**
  * Implements hook_help().
  */
-function mentions_help(string $route_name, RouteMatchInterface $route_match) {
+function mentions_help(string $route_name, RouteMatchInterface $route_match): string {
   switch ($route_name) {
     case 'entity.mentions_type.list':
       $text_format_url = Url::fromRoute('filter.admin_overview');
       $text_format_link = Link::fromTextAndUrl(t('text formats'), $text_format_url)->toString();
       return t("You can enable 'Mentions Filter' for the mentions type below for the appropriate @text_format", ['@text_format' => $text_format_link]);
   }
+  return '';
 }
 
 /**

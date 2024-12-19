@@ -14,7 +14,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
     // Note that the second parameter of setRequirement() is a string.
     if ($route = $collection->get('flag.field_entry')) {
       $route->setRequirement('_custom_access', FlagAccessCheck::class . '::access');

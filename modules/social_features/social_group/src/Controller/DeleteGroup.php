@@ -17,7 +17,7 @@ class DeleteGroup {
   /**
    * Get the group and all of its content that needs to be deleted.
    */
-  public static function deleteGroupAndContent($nids, $posts, &$context) {
+  public static function deleteGroupAndContent(array $nids, array $posts, array &$context): void {
     $results = [];
     // Load all nodes and delete them.
     $nodes = Node::loadMultiple($nids);
@@ -27,6 +27,7 @@ class DeleteGroup {
     }
     // Load each post and delete it.
     $posts = Post::loadMultiple($posts);
+    $message = '';
     foreach ($posts as $post) {
       $message = t("Deleting @type's", ['@type' => $post->bundle()]);
       $results[] = $post->delete();
@@ -38,7 +39,7 @@ class DeleteGroup {
   /**
    * Callback when the batch for group and content deletion is done.
    */
-  public static function deleteGroupAndContentFinishedCallback($success, $results, $operations) {
+  public static function deleteGroupAndContentFinishedCallback(bool $success, array $results, array $operations): RedirectResponse {
     // The 'success' parameter means no fatal PHP errors were detected. All
     // other error management should be handled using 'results'.
     if ($success) {
@@ -46,7 +47,7 @@ class DeleteGroup {
         count($results),
         'One item deleted.', '@count items deleted.'
       );
-      // Provide some feedback when its a success.
+      // Provide some feedback when it's a success.
       \Drupal::messenger()->addStatus(t('Your group and all of its topics, events and posts have been deleted.'));
       // @todo log to the database.
     }

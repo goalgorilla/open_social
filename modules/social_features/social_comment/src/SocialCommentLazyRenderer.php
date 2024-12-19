@@ -20,12 +20,12 @@ class SocialCommentLazyRenderer implements TrustedCallbackInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  private $entityTypeManager;
+  private EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['renderComments'];
   }
 
@@ -34,14 +34,14 @@ class SocialCommentLazyRenderer implements TrustedCallbackInterface {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  private $routeMatch;
+  private RouteMatchInterface $routeMatch;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * SocialCommentLazyRenderer constructor.
@@ -66,7 +66,7 @@ class SocialCommentLazyRenderer implements TrustedCallbackInterface {
    *   The entity type.
    * @param string|int $entity_id
    *   The entity id.
-   * @param string $view_mode
+   * @param int $view_mode
    *   The view mode from field settings.
    * @param string $field_name
    *   The field name.
@@ -83,11 +83,11 @@ class SocialCommentLazyRenderer implements TrustedCallbackInterface {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function renderComments($entity_type, $entity_id, $view_mode, $field_name, $num_comments, $pager_id, $build_view_mode = 'default') {
+  public function renderComments(string $entity_type, string|int $entity_id, int $view_mode, string $field_name, string|int|null $num_comments, int $pager_id, string $build_view_mode = 'default'): mixed {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
     /** @var \Drupal\comment\CommentInterface[] $comments */
-    $comments = $this->entityTypeManager->getStorage('comment')->loadThread($entity, $field_name, $view_mode, $num_comments, $pager_id);
+    $comments = $this->entityTypeManager->getStorage('comment')->loadThread($entity, $field_name, $view_mode, (int) $num_comments, $pager_id);
 
     if (!$comments) {
       return [];

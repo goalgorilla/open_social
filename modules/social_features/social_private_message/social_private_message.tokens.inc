@@ -12,8 +12,8 @@ use Drupal\Core\Url;
 /**
  * Implements hook_tokens_alter().
  */
-function social_private_message_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
-  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+function social_private_message_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
+  if ($context['type'] === 'message' && !empty($context['data']['message'])) {
     // Translate hook_tokens options to the options for TranslatableMarkup.
     $translation_options = [
       'langcode' => $context['options']['langcode'] ?? NULL,

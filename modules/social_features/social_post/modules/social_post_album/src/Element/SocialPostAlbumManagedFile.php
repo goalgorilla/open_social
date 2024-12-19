@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post_album\Element;
 
+use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Element\ManagedFile;
@@ -17,12 +18,12 @@ class SocialPostAlbumManagedFile extends ManagedFile {
   /**
    * The CSS class which adding to wrapper when at least one image was loaded.
    */
-  const CLASS_NAME = 'post-images-loaded';
+  public const CLASS_NAME = 'post-images-loaded';
 
   /**
    * {@inheritdoc}
    */
-  public static function uploadAjaxCallback(&$form, FormStateInterface &$form_state, Request $request) {
+  public static function uploadAjaxCallback(&$form, &$form_state, Request $request): AjaxResponse {
     $response = parent::uploadAjaxCallback($form, $form_state, $request);
     $element_parents = \Drupal::request()->request->get('element_parents');
     // Either has a parent, or null if no parent, both are fine but can be

@@ -85,7 +85,7 @@ class EventQueryHelper extends ConnectionQueryHelperBase {
         return array_map(
           fn (Node $entity) => new Edge(
             $entity,
-            new Cursor('node', $entity->id(), $this->sortKey, $this->getSortValue($entity))
+            new Cursor('node', (int) $entity->id(), $this->sortKey, $this->getSortValue($entity))
           ),
           $callback()
         );

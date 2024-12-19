@@ -29,7 +29,7 @@ class Edge implements EdgeInterface {
    * @param string $cursor
    *   The cursor for this edge.
    */
-  public function __construct($node, string $cursor) {
+  public function __construct(mixed $node, string $cursor) {
     $this->node = $node;
     $this->cursor = $cursor;
   }
@@ -44,7 +44,7 @@ class Edge implements EdgeInterface {
   /**
    * {@inheritdoc}
    */
-  public function getNode() {
+  public function getNode(): mixed {
     return $this->node;
   }
 

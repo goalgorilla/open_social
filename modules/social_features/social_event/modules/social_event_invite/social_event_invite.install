@@ -11,7 +11,7 @@ use Drupal\group\Entity\GroupType;
 /**
  * Implements hook_install().
  */
-function social_event_invite_install() {
+function social_event_invite_install(): void {
   // Enable event invites for all group types by default by setting the settings
   // to group_type => group_type for each defined group bundle.
   // @todo https://www.drupal.org/project/social/issues/3421951.
@@ -26,7 +26,7 @@ function social_event_invite_install() {
 /**
  * Implements hook_uninstall().
  */
-function social_event_invite_uninstall() {
+function social_event_invite_uninstall(): void {
   $moduleHandler = \Drupal::service('module_handler');
   // Delete the email field if social_event_an_enroll is not enabled.
   // @todo is there a way to get field dependencies instead of manual?

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_album\Form;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_post\Form\PostDeleteForm;
 
@@ -15,7 +16,7 @@ class SocialAlbumImageForm extends PostDeleteForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
 
     unset($form['#title']);
@@ -26,7 +27,8 @@ class SocialAlbumImageForm extends PostDeleteForm {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $index = 0;
     $form_state->setRedirectUrl($this->getRedirectUrl());
 
     if (!$fid = $form_state->get('fid')) {
@@ -37,7 +39,7 @@ class SocialAlbumImageForm extends PostDeleteForm {
     $entity = $this->getEntity();
 
     /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $field */
-    $field = $entity->field_post_image;
+    $field = $entity->get('field_post_image');
 
     foreach ($field->getValue() as $index => $item) {
       if ($item['target_id'] === $fid) {
@@ -57,7 +59,7 @@ class SocialAlbumImageForm extends PostDeleteForm {
   /**
    * {@inheritdoc}
    */
-  public function getDescription() {
+  public function getDescription(): TranslatableMarkup {
     return $this->t('Deleting this image will also delete it from the post it belongs to.');
   }
 

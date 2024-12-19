@@ -22,14 +22,14 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
    *
    * @var \Drupal\social_event\EventEnrollmentStatusHelper
    */
-  protected $eventInviteStatus;
+  protected EventEnrollmentStatusHelper $eventInviteStatus;
 
   /**
    * Drupal\Core\TempStore\PrivateTempStoreFactory definition.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  private $tempStoreFactory;
+  private PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * {@inheritdoc}
@@ -43,7 +43,7 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('current_route_match'),
       $container->get('entity_type.manager'),
@@ -56,14 +56,14 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'enroll_invite_user_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
     $nid = $this->routeMatch->getRawParameter('node');
 
@@ -107,7 +107,7 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function cancelForm(array &$form, FormStateInterface $form_state) {
+  public function cancelForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setRedirect('view.event_manage_enrollments.page_manage_enrollments', [
       'node' => $this->routeMatch->getRawParameter('node'),
     ]);
@@ -116,7 +116,7 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     $params['recipients'] = $form_state->getValue('entity_id_new');

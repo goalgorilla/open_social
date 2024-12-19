@@ -10,6 +10,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,35 +23,35 @@ class GroupRequestMembershipRequestForm extends FormBase {
    *
    * @var \Drupal\group\Entity\GroupInterface
    */
-  protected $group;
+  protected GroupInterface $group;
 
   /**
    * Group membership request.
    *
    * @var \Drupal\group\Entity\GroupRelationshipInterface
    */
-  protected $groupContent;
+  protected GroupRelationshipInterface $groupContent;
 
   /**
    * The cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * Entity type manger.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * GroupRequestMembershipRejectForm constructor.
@@ -79,7 +80,7 @@ class GroupRequestMembershipRequestForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('cache_tags.invalidator'),
       $container->get('current_user'),
@@ -91,15 +92,17 @@ class GroupRequestMembershipRequestForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_group_request_membership_request';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL) {
-    $this->group = $group;
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL): array {
+    if ($group !== NULL) {
+      $this->group = $group;
+    }
 
     $form['description'] = [
       '#type' => 'html_tag',
@@ -124,7 +127,7 @@ class GroupRequestMembershipRequestForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): FormStateInterface {
     /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('group_content_type');
     $group_type_id = (string) $this->group->getGroupType()->id();

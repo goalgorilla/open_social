@@ -37,8 +37,8 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
     array $configuration,
     $plugin_id,
     $plugin_definition
-  ): self {
-    /** @var self $instance */
+  ): static {
+    /** @var static $instance */
     $instance = parent::create(
       $container,
       $configuration,
@@ -109,7 +109,7 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
       count($items = parent::actions($entity, $variables)) === 1 &&
       in_array($entity->bundle(), $this->types())
     ) {
-      if (!$items) {
+      if (!isset($items[0]['url'])) {
         $items[] = ['attributes' => ['class' => ['btn-accent']]];
       }
       else {

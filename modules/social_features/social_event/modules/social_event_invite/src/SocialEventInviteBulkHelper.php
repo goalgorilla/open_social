@@ -30,7 +30,7 @@ class SocialEventInviteBulkHelper {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteUsers(array $users, $nid, array &$context) {
+  public static function bulkInviteUsers(array $users, string $nid, array &$context): void {
     $results = [];
 
     foreach ($users as $uid => $target_id) {
@@ -62,7 +62,7 @@ class SocialEventInviteBulkHelper {
           EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
           EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
         ];
-        if (in_array($enrollment->field_request_or_invite_status->value, $status_checks)) {
+        if (in_array($enrollment->get('field_request_or_invite_status')->value, $status_checks, FALSE)) {
           $enrollment->delete();
           unset($existing_enrollment[$enrollment->id()]);
         }
@@ -101,7 +101,7 @@ class SocialEventInviteBulkHelper {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteEmails(array $emails, $nid, array &$context) {
+  public static function bulkInviteEmails(array $emails, string $nid, array &$context): void {
     $results = [];
 
     foreach ($emails as $email) {
@@ -155,9 +155,12 @@ class SocialEventInviteBulkHelper {
    * @param array $context
    *   The context.
    *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteUsersEmails(array $users, $nid, array &$context) {
+  public static function bulkInviteUsersEmails(array $users, string $nid, array &$context): void {
+    /** @var \ArrayAccess $results */
     $results = [];
 
     foreach ($users as $user) {
@@ -225,7 +228,7 @@ class SocialEventInviteBulkHelper {
             EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
             EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
           ];
-          if (in_array($enrollment->field_request_or_invite_status->value, $status_checks)) {
+          if (in_array($enrollment->get('field_request_or_invite_status')->value, $status_checks, FALSE)) {
             $enrollment->delete();
             unset($existing_enrollment[$enrollment->id()]);
           }
@@ -256,11 +259,11 @@ class SocialEventInviteBulkHelper {
   /**
    * Callback when the batch for inviting emails for an event has finished.
    */
-  public static function bulkInviteUserEmailsFinished($success, $results, $operations) {
+  public static function bulkInviteUserEmailsFinished(bool $success, array $results, array $operations): RedirectResponse {
     $nid = NULL;
 
     // We got the node event id in the results array so we will use that
-    // to provide the param in in redirect url.
+    // to provide the param in redirect url.
     if (!empty($results)) {
       // We don't care about resetting the array first.
       $nid = key($results);

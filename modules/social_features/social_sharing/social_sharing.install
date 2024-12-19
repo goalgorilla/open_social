@@ -8,7 +8,7 @@
 /**
  * Install social_sharing.
  */
-function social_sharing_install(bool $is_syncing) {
+function social_sharing_install(bool $is_syncing): void {
   if (!$is_syncing) {
     // Get the current array of enabled services.
     $services = \Drupal::configFactory()->getEditable('shariff.settings')->get('shariff_services');

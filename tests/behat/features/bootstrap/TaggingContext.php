@@ -3,9 +3,6 @@
 namespace Drupal\social\Behat;
 
 use Behat\MinkExtension\Context\RawMinkContext;
-use Drupal\Core\Database\Query\PagerSelectExtender;
-use Drupal\Core\Database\Query\TableSortExtender;
-use Drupal\Core\Database\StatementWrapper;
 use Drupal\taxonomy\TermInterface;
 
 /**

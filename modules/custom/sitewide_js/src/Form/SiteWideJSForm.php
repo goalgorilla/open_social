@@ -15,7 +15,7 @@ class SiteWideJSForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'sitewide_js.settings',
     ];
@@ -24,14 +24,14 @@ class SiteWideJSForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'sitewide_js_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('sitewide_js.settings');
 
     $form['warning']['#markup'] = $this->t('<h2>Warning</h2><p>Be careful, in this section you can make sitewide changes to the HTML template and therefore break both the front-end javascript applications and the layout for your website.</p>');
@@ -76,7 +76,7 @@ class SiteWideJSForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     $this->config('sitewide_js.settings')

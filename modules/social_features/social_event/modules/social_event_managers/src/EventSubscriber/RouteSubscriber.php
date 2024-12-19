@@ -6,6 +6,8 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use Drupal\social_event_managers\Form\SocialEventManagersViewsBulkOperationsConfirmAction;
+use Drupal\social_event_managers\Form\SocialEventManagementViewsBulkOperationsConfigureAction;
 
 /**
  * Builds up the routes of event management forms.
@@ -32,7 +34,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
   }
 
   /**
@@ -41,14 +43,14 @@ class RouteSubscriber extends RouteSubscriberBase {
    * @return \Symfony\Component\Routing\RouteCollection
    *   A route collection.
    */
-  public function routes() {
+  public function routes(): RouteCollection {
     $collection = new RouteCollection();
 
     if ($this->moduleHandler->moduleExists('views_bulk_operations')) {
       $route = new Route(
         '/node/{node}/all-enrollments/configure-action',
         [
-          '_form' => '\Drupal\social_event_managers\Form\SocialEventManagementViewsBulkOperationsConfigureAction',
+          '_form' => SocialEventManagementViewsBulkOperationsConfigureAction::class,
           '_title' => 'Configure action',
           'view_id' => 'event_manage_enrollments',
           'display_id' => 'page_manage_enrollments',
@@ -62,7 +64,7 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route = new Route(
         '/node/{node}/all-enrollments/confirm-action',
         [
-          '_form' => '\Drupal\social_event_managers\Form\SocialEventManagersViewsBulkOperationsConfirmAction',
+          '_form' => SocialEventManagersViewsBulkOperationsConfirmAction::class,
           '_title' => 'Confirm action',
           'view_id' => 'event_manage_enrollments',
           'display_id' => 'page_manage_enrollments',

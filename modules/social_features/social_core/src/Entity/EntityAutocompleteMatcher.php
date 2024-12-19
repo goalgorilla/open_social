@@ -16,13 +16,14 @@ class EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
   /**
    * {@inheritdoc}
    */
-  public function getMatches($target_type, $selection_handler, $selection_settings, $string = '') {
+  public function getMatches($target_type, $selection_handler, $selection_settings, $string = ''): array {
     $matches = [];
 
     $options = $selection_settings + [
       'target_type' => $target_type,
       'handler' => $selection_handler,
     ];
+    /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
     $handler = $this->selectionManager->getInstance($options);
 
     // Get an array of matching entities.
@@ -44,7 +45,7 @@ class EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
         // tags.
         $key = preg_replace('/\s\s+/', ' ', str_replace("\n", '', trim(Html::decodeEntities(strip_tags($key)))));
         // Names containing commas or quotes must be wrapped in quotes.
-        $key = Tags::encode($key);
+        $key = Tags::encode((string) $key);
         $matches[] = ['value' => $key, 'label' => $label];
       }
     }

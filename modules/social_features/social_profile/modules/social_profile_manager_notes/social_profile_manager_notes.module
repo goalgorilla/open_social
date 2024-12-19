@@ -18,7 +18,7 @@ use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 /**
  * Implements hook_form_alter().
  */
-function social_profile_manager_notes_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+function social_profile_manager_notes_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $profile_forms = [
     'comment_comment_profile_form',
   ];
@@ -46,7 +46,7 @@ function social_profile_manager_notes_form_alter(array &$form, FormStateInterfac
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state interface.
  */
-function _social_profile_manager_notes_form_submit(array $form, FormStateInterface $form_state) {
+function _social_profile_manager_notes_form_submit(array $form, FormStateInterface $form_state): void {
   /** @var \Drupal\profile\Entity\Profile $profile */
   $profile = _social_profile_get_profile_from_route();
   // Let's be on the safe side.
@@ -67,7 +67,7 @@ function _social_profile_manager_notes_form_submit(array $form, FormStateInterfa
 /**
  * Implements hook_ENTITY_TYPE_view_alter().
  */
-function social_profile_manager_notes_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display) {
+function social_profile_manager_notes_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display): void {
   if (!\Drupal::currentUser()->hasPermission('view field manager notes')) {
     unset($build['field_manager_notes']);
   }
@@ -76,7 +76,7 @@ function social_profile_manager_notes_profile_view_alter(array &$build, EntityIn
 /**
  * Implements hook_theme().
  */
-function social_profile_manager_notes_theme($existing, $type, $theme, $path) {
+function social_profile_manager_notes_theme(array $existing, string $type, string $theme, string $path): array {
   $items = [
     'field__profile__type__comment' => [
       'template' => 'field--profile--type--comment',

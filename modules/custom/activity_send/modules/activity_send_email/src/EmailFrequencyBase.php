@@ -18,28 +18,28 @@ class EmailFrequencyBase extends PluginBase implements EmailFrequencyInterface {
   /**
    * {@inheritdoc}
    */
-  public function getName() {
+  public function getName(): string {
     return $this->pluginDefinition['name'] ?? '';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getWeight() {
+  public function getWeight(): int {
     return $this->pluginDefinition['weight'] ?? 0;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getInterval() {
+  public function getInterval(): int {
     return $this->pluginDefinition['interval'] ?? 0;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL) {
+  public function processItem(Activity $activity, Message $message, User $target, ?string $body_text = NULL): void {
     $db = Database::getConnection();
 
     // Insert incoming activities in our digest table.

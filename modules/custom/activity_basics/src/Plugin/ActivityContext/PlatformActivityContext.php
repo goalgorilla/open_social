@@ -36,6 +36,7 @@ class PlatformActivityContext extends ActivityContextBase {
 
       // Add the owner of the related entity as a recipient.
       // No owner found set user 1.
+      /** @var \Drupal\user\EntityOwnerInterface $entity*/
       $recipients[] = [
         'target_type' => 'user',
         'target_id' => $entity->getOwnerId() ?? 1,

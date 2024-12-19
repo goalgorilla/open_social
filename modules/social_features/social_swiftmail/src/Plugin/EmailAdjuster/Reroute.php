@@ -222,6 +222,7 @@ class Reroute extends EmailAdjusterBase implements ContainerFactoryPluginInterfa
     $to = [];
 
     foreach ($addresses as $address) {
+      /** @var \Symfony\Component\Mime\Address $address */
       $to[] = $address->toString();
     }
 
@@ -248,8 +249,9 @@ class Reroute extends EmailAdjusterBase implements ContainerFactoryPluginInterfa
 
       // Add Cc/Bcc values to the message only if they are set.
       $headers = $email->getHeaders();
-
-      if ($header = $headers->get('X-Rerouted-Original-cc')) {
+      /** @var \Symfony\Component\Mime\Header\HeaderInterface $header */
+      $header = $headers->get('X-Rerouted-Original-cc');
+      if ($header !== NULL) {
         $message_lines[] = $this->t('Originally cc: @cc', [
           '@cc' => $header->toString(),
         ]);

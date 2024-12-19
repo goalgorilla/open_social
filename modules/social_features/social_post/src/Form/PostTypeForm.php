@@ -15,7 +15,7 @@ class PostTypeForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, FormStateInterface $form_state) {
+  public function form(array $form, FormStateInterface $form_state): array {
     $form = parent::form($form, $form_state);
 
     $post_type = $this->entity;
@@ -45,7 +45,7 @@ class PostTypeForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): int {
     $post_type = $this->entity;
     $status = $post_type->save();
 
@@ -62,6 +62,8 @@ class PostTypeForm extends EntityForm {
         ]));
     }
     $form_state->setRedirectUrl($post_type->toUrl('collection'));
+
+    return 0;
   }
 
 }

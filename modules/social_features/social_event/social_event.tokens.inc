@@ -5,6 +5,7 @@
  * Builds placeholder replacement tokens for Social Event module.
  */
 
+use Drupal\node\Entity\Node;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Link;
@@ -16,7 +17,7 @@ use Drupal\social_event\EventEnrollmentInterface;
 /**
  * Implements hook_token_info().
  */
-function social_event_token_info() {
+function social_event_token_info(): array {
 
   $type = [
     'name' => t('Social Event'),
@@ -54,7 +55,7 @@ function social_event_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_event_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_event_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
   if ($type === 'social_event') {
     foreach ($tokens as $name => $original) {
@@ -133,8 +134,8 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
 /**
  * Implements hook_tokens_alter().
  */
-function social_event_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
-  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+function social_event_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
+  if ($context['type'] === 'message' && !empty($context['data']['message'])) {
     // Translate hook_tokens options to the options for TranslatableMarkup.
     $translation_options = [
       'langcode' => $context['options']['langcode'] ?? NULL,
@@ -223,7 +224,7 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function _social_event_get_link_to_event_from_enrollment(int $event_enrollment_id, bool $as_link = FALSE) {
+function _social_event_get_link_to_event_from_enrollment(int $event_enrollment_id, bool $as_link = FALSE): ?string {
   // Check if the event still exists.
   $event = _social_event_get_event_from_enrollment($event_enrollment_id);
   if ($event && !is_null($event->getTitle())) {
@@ -252,7 +253,7 @@ function _social_event_get_link_to_event_from_enrollment(int $event_enrollment_i
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _social_event_get_name_from_enrollment($id) {
+function _social_event_get_name_from_enrollment(int $id): mixed {
   $entity_storage = \Drupal::entityTypeManager()
     ->getStorage('event_enrollment');
   /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
@@ -300,7 +301,7 @@ function _social_event_get_name_from_enrollment($id) {
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _social_event_get_event_from_enrollment(int $event_enrollment_id) {
+function _social_event_get_event_from_enrollment(int $event_enrollment_id): ?Node {
   $entity_storage = \Drupal::entityTypeManager()
     ->getStorage('event_enrollment');
   if ($entity = $entity_storage->load($event_enrollment_id)) {

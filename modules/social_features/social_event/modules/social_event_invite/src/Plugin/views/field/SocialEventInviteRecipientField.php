@@ -47,7 +47,7 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -60,14 +60,14 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function usesGroupBy() {
+  public function usesGroupBy(): bool {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function query() {
+  public function query(): void {
     // Do nothing -- to override the parent query.
   }
 
@@ -80,7 +80,12 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
     $build = [];
 
     // Check the database for the email and account.
-    $recipient = $this->checkEmailAndAccount($values->id, $values->users_field_data_event_enrollment__field_account_uid);
+    $id = $values->values['id'] ?? '';
+    $account_uid = $values->values['users_field_data_event_enrollment__field_account_uid'] ?? 0;
+
+    // Now you can use these values as needed.
+    $recipient = $this->checkEmailAndAccount($id, $account_uid);
+
     // Set the email already.
     if (!empty($recipient['email'])) {
       $build = $recipient['email'];
@@ -92,6 +97,7 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
       // Load the account profile.
       /** @var \Drupal\Core\Session\AccountInterface $account */
       $account = $recipient['account'];
+      /** @var  \Drupal\profile\ProfileStorageInterface $storage */
       $storage = $this->entityTypeManager->getStorage('profile');
       $profile = $storage->loadByUser($account, 'profile');
 
@@ -102,6 +108,7 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
         $entity = $this->getEntityTranslationByRelationship($entity, $values);
         $view_builder = $this->entityTypeManager->getViewBuilder('profile');
         $build += $view_builder->view($profile, 'table', $entity->language()->getId());
+        /** @var \Drupal\Component\Render\MarkupInterface $build */
         return $build;
       }
     }
@@ -120,12 +127,13 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
    * @return array
    *   Return the fetched values.
    */
-  private function checkEmailAndAccount($enrollment_id, $account_id) {
+  private function checkEmailAndAccount(string $enrollment_id, int $account_id): array {
     $email = NULL;
     $account = NULL;
 
     // If we already have a given profile, load the profile.
     if ($account_id) {
+      /** @var \Drupal\user\UserInterface $account */
       $account = $this->entityTypeManager->getStorage('user')->load($account_id);
       return [
         'email' => $account->getEmail(),
@@ -133,19 +141,27 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
       ];
     }
 
-    // Otherwise, see if we have an recipient email.
+    // Otherwise, see if we have a recipient email.
     $emailQuery = $this->database->select('event_enrollment__field_event', 'eefev');
     $emailQuery->join('event_enrollment__field_email', 'eefem', 'eefem.entity_id = ' . $enrollment_id);
     $emailQuery->addField('eefem', 'field_email_value');
-    $email = $emailQuery->execute()->fetchField();
+    $result = $emailQuery->execute();
+    $email = '';
+    if ($result) {
+      $email = $result->fetchField();
+    }
 
     // Check if there is an user registered with this email.
-    $userQuery = \Drupal::database()->select('users_field_data', 'ufd');
+    $userQuery = $this->database->select('users_field_data', 'ufd');
     $userQuery->condition('mail', $email);
     $userQuery->addField('ufd', 'uid');
-    $userId = $userQuery->execute()->fetchField();
+    $result = $userQuery->execute();
 
-    $account = NULL;
+    $userId = NULL;
+    if ($result) {
+      $userId = $result->fetchCol();
+    }
+
     if ($userId) {
       $account = $this->entityTypeManager->getStorage('user')->load($userId);
     }
@@ -159,21 +175,21 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getEntityTypeId() {
+  public function getEntityTypeId(): mixed {
     return $this->getEntityTypeId();
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getLanguageManager() {
+  protected function getLanguageManager(): mixed {
     return $this->getLanguageManager();
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getView() {
+  protected function getView(): mixed {
     return $this->getView();
   }
 

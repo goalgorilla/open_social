@@ -4,6 +4,7 @@ namespace Drupal\social_group\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -22,7 +23,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Send an email to group members.
+ * Email group members.
  *
  * @Action(
  *   id = "social_group_send_email_action",
@@ -48,15 +49,15 @@ class SocialSendEmail extends SocialSendEmailBase {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    string $plugin_id,
+    mixed $plugin_definition,
     Token $token,
     EntityTypeManagerInterface $entity_type_manager,
     LoggerInterface $logger,
     LanguageManagerInterface $language_manager,
     EmailValidator $email_validator,
     QueueFactory $queue_factory,
-    $allow_text_format,
+    bool $allow_text_format,
     ModuleHandlerInterface $module_handler,
     SocialEmailBroadcast $email_broadcast_service
   ) {
@@ -195,7 +196,10 @@ class SocialSendEmail extends SocialSendEmailBase {
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL) {
+  public function execute(ContentEntityInterface|NULL $entity = NULL): int|string|null {
+    if ($entity === NULL) {
+      return NULL;
+    }
     /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
     return $entity->getEntity()->id();
   }

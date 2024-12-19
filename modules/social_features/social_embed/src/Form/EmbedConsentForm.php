@@ -21,24 +21,24 @@ class EmbedConsentForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_embed_admin_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
-      static::SETTINGS,
+      self::SETTINGS,
     ];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config(static::SETTINGS);
+  public function buildForm(array $form, FormStateInterface $form_state): array {
+    $config = $this->config(self::SETTINGS);
 
     // Add an introduction text to explain what can be done here.
     $form['description'] = [
@@ -71,7 +71,7 @@ class EmbedConsentForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) :void {
     // Retrieve the configuration.
-    $config = $this->configFactory->getEditable(static::SETTINGS);
+    $config = $this->configFactory->getEditable(self::SETTINGS);
     $new_value_consent_settings_lu = $form_state->getValue('embed_consent_settings_lu');
     $new_value_consent_settings_an = $form_state->getValue('embed_consent_settings_an');
     if (($config->get('embed_consent_settings_lu') != $new_value_consent_settings_lu)

@@ -37,9 +37,14 @@ trait StandardisedMutationSchemaTrait {
    *   IDs of the used data producers.
    */
   protected function registerMutationResolver(ResolverRegistryInterface $registry, ResolverBuilder $builder, string $field_name) : void {
+    $preg_split_result = preg_split('/(?=[A-Z])/', $field_name, -1, PREG_SPLIT_NO_EMPTY);
+    if ($preg_split_result === FALSE) {
+      return;
+    }
+
     $words = array_map(
       'strtolower',
-      preg_split('/(?=[A-Z])/', $field_name, -1, PREG_SPLIT_NO_EMPTY)
+      $preg_split_result,
     );
     $data_producer = implode("_", $words);
 

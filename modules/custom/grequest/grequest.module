@@ -13,13 +13,13 @@ use Drupal\group\Entity\GroupRelationshipInterface;
  *
  * Implements hook_ENTITY_TYPE_insert().
  */
-function grequest_group_content_insert(GroupRelationshipInterface $group_content) {
+function grequest_group_content_insert(GroupRelationshipInterface $group_content): void {
   $type = $group_content->getPluginId();
   $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasPlugin('group_membership_request');
 
   // If new membership is created, check related membership request exists.
   // if so - mark request as accepted.
-  if ($type == 'group_membership' && $membership_request_enabled) {
+  if ($type === 'group_membership' && $membership_request_enabled) {
     $approver = \Drupal::currentUser();
     $storage = \Drupal::entityTypeManager()->getStorage('group_content');
     $properties = [

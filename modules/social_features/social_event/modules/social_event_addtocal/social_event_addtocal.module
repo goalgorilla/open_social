@@ -15,7 +15,7 @@ use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface;
 /**
  * Implements hook_entity_extra_field_info().
  */
-function social_event_addtocal_entity_extra_field_info() {
+function social_event_addtocal_entity_extra_field_info(): array {
   // Add the 'Add to Calendar' field.
   $extra['node']['event']['display']['field_event_addtocal'] = [
     'label' => t('Add to calendar'),
@@ -93,7 +93,7 @@ function social_event_addtocal_preprocess_event_enrollment_confirmation_add_to_c
  *
  * Uses for node entity type.
  */
-function social_event_addtocal_node_view(array &$build, NodeInterface $node, EntityViewDisplayInterface $display, $view_mode) {
+function social_event_addtocal_node_view(array &$build, NodeInterface $node, EntityViewDisplayInterface $display, string $view_mode): void {
   if ($node->bundle() !== 'event') {
     return;
   }

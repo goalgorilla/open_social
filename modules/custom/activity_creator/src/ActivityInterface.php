@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_creator;
 
+use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -19,7 +20,7 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return int
    *   Creation timestamp of the Activity.
    */
-  public function getCreatedTime();
+  public function getCreatedTime(): int;
 
   /**
    * Sets the Activity creation timestamp.
@@ -30,7 +31,7 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return \Drupal\activity_creator\ActivityInterface
    *   The called Activity entity.
    */
-  public function setCreatedTime($timestamp);
+  public function setCreatedTime(int $timestamp): ActivityInterface;
 
   /**
    * Returns the Activity published status indicator.
@@ -40,7 +41,7 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return bool
    *   TRUE if the Activity is published.
    */
-  public function isPublished();
+  public function isPublished(): bool;
 
   /**
    * Sets the published status of a Activity.
@@ -51,7 +52,7 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return \Drupal\activity_creator\ActivityInterface
    *   The called Activity entity.
    */
-  public function setPublished($published);
+  public function setPublished(bool $published): ActivityInterface;
 
   /**
    * Get related entity url.
@@ -59,7 +60,7 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return \Drupal\Core\Url|string
    *   Empty string if entity canonical url could not be found.
    */
-  public function getRelatedEntityUrl();
+  public function getRelatedEntityUrl(): string|Url;
 
   /**
    * Get destinations.
@@ -67,6 +68,6 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return array
    *   The list of destinations.
    */
-  public function getDestinations();
+  public function getDestinations(): array;
 
 }
