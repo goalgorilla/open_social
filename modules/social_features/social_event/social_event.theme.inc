@@ -61,8 +61,9 @@ function template_preprocess_event_location_address(array &$variables): void {
     $variables['location'] = !$node->get('field_event_location')->isEmpty()
       ? $node->get('field_event_location')->getString()
       : NULL;
+
     $variables['address'] = !$node->get('field_event_address')->isEmpty()
-      ? $node->get('field_event_address')->getString()
+      ? $node->get('field_event_address')->view('default')
       : NULL;
   }
 

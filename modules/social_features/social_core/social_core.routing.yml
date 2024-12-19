@@ -101,3 +101,19 @@ social_core.dashboard.appearance.active_homepage_configuration:
     _title: 'Customize home page'
   requirements:
     _permission: 'access social_core dashboard'
+
+social_core.address_settings.format:
+  path: '/admin/config/opensocial/address-settings/format'
+  defaults:
+    _form: 'Drupal\social_core\Form\AddressFormatForm'
+    _title: 'Address settings - Format'
+  requirements:
+    _permission: 'configure address format'
+
+social_core.address_settings.regex_pattern:
+  path: '/admin/config/opensocial/address-settings/regex-pattern'
+  defaults:
+    _form: 'Drupal\social_core\Form\AddressRegexPatternForm'
+    _title: 'Address settings - Regex pattern'
+  requirements:
+    _permission: 'configure regex pattern for address'
