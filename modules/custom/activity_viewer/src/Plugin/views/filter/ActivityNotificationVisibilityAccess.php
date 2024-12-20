@@ -3,7 +3,9 @@
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\social_group\SocialGroupHelperService;
+use Drupal\social_node\QueryAccess\NodeEntityQueryAlter;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
 use Drupal\Core\Database\Query\Condition;
@@ -29,12 +31,18 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
   public SocialGroupHelperService $groupHelper;
 
   /**
+   * The class resolver.
+   */
+  protected ClassResolverInterface $classResolver;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     $instance->groupHelper = $container->get('social_group.helper_service');
     $instance->database = $container->get('database');
+    $instance->classResolver = $container->get('class_resolver');
     return $instance;
   }
 
@@ -122,28 +130,21 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     $authenticated = $account->isAuthenticated();
 
     // Nodes: check if user has appropriate nodes access by realms.
-    $node_access_subquery = $this->database->select('node_access', 'node_access');
+    $node_access_subquery = $this->database->select('node_field_data', 'node_field_data');
     $node_access_subquery->addField('afae', 'entity_id');
-    $node_access_subquery->join('activity__field_activity_entity', 'afae', 'node_access.nid = afae.field_activity_entity_target_id');
+    $node_access_subquery->join('activity__field_activity_entity', 'afae', 'node.nid = afae.field_activity_entity_target_id');
     $node_access_subquery->condition('afae.field_activity_entity_target_type', 'node');
-    $grants = $node_access_subquery->orConditionGroup();
-
-    foreach (node_access_grants('view', $account) as $realm => $gids) {
-      if (!empty($gids)) {
-        $and = new Condition('AND');
-
-        if ($account->isAnonymous() && strpos($realm, 'field_content_visibility_community') !== FALSE) {
-          $and->condition('node_field_data.uid', 0, '!=');
-        }
-
-        $grants->condition($and
-          ->condition('node_access.gid', $gids, 'IN')
-          ->condition('node_access.realm', $realm)
-        );
-      }
+    if (!$account->hasPermission('bypass node access')) {
+      $node_access_subquery->condition('node_field_data.status', '1');
     }
 
-    $node_access_subquery->condition($grants);
+    // Alter a query with node access rules.
+    if (class_exists(NodeEntityQueryAlter::class)) {
+      $this->classResolver
+        ->getInstanceFromDefinition(NodeEntityQueryAlter::class)
+        ->alterQuery($node_access_subquery);
+    }
+
     $or->condition((new Condition('AND'))
       ->condition('activity_field_data.id', $node_access_subquery, 'IN')
     );
