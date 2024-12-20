@@ -24,7 +24,7 @@ class SocialPostAlbumManagedFile extends ManagedFile {
    */
   public static function uploadAjaxCallback(&$form, FormStateInterface &$form_state, Request $request) {
     $response = parent::uploadAjaxCallback($form, $form_state, $request);
-    $element_parents = \Drupal::request()->request->get('element_parents');
+    $element_parents = \Drupal::request()->query->get('element_parents');
     // Either has a parent, or null if no parent, both are fine but can be
     // bool|float|int|string.
     if (!is_string($element_parents)) {
