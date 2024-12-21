@@ -1,0 +1,586 @@
+views.view.group_pending_members:
+  expected_config:
+    display:
+      default:
+        display_options:
+          style:
+            options:
+              empty_table: false
+  update_actions:
+    add:
+      display:
+        default:
+          display_options:
+            style:
+              options:
+                columns:
+                  created: created
+                  dropbutton: dropbutton
+                  gid: gid
+                  id: id
+                  name: name
+                  nothing: nothing
+                  nothing_1: nothing_1
+                info:
+                  created:
+                    align: ''
+                    default_sort_order: asc
+                    empty_column: false
+                    responsive: ''
+                    separator: ''
+                    sortable: true
+                  dropbutton:
+                    align: ''
+                    default_sort_order: asc
+                    empty_column: false
+                    responsive: ''
+                    separator: ''
+                    sortable: false
+                  gid:
+                    align: ''
+                    default_sort_order: asc
+                    empty_column: false
+                    responsive: ''
+                    separator: ''
+                    sortable: false
+                  id:
+                    align: ''
+                    default_sort_order: asc
+                    empty_column: false
+                    responsive: ''
+                    separator: ''
+                    sortable: false
+                  name:
+                    align: ''
+                    default_sort_order: asc
+                    empty_column: false
+                    responsive: ''
+                    separator: ''
+                    sortable: false
+                  nothing:
+                    align: ''
+                    default_sort_order: asc
+                    empty_column: false
+                    responsive: ''
+                    separator: ''
+                    sortable: false
+                  nothing_1:
+                    align: ''
+                    default_sort_order: asc
+                    empty_column: false
+                    responsive: ''
+                    separator: ''
+                    sortable: false
+        membership_requests:
+          cache_metadata:
+            contexts:
+              - 'languages:language_content'
+              - 'languages:language_interface'
+              - url
+              - url.query_args
+              - user.roles
+              - user.group_permissions
+              - route.group
+            max-age: -1
+            tags: {  }
+          display_options:
+            access:
+              options:
+                role:
+                  authenticated: authenticated
+              type: role
+            defaults:
+              access: false
+              fields: false
+            display_extenders: {  }
+            fields:
+              created:
+                admin_label: ''
+                alter:
+                  absolute: false
+                  alt: ''
+                  alter_text: false
+                  ellipsis: true
+                  external: false
+                  html: false
+                  link_class: ''
+                  make_link: false
+                  max_length: 0
+                  more_link: false
+                  more_link_path: ''
+                  more_link_text: ''
+                  nl2br: false
+                  path: ''
+                  path_case: none
+                  prefix: ''
+                  preserve_tags: ''
+                  rel: ''
+                  replace_spaces: false
+                  strip_tags: false
+                  suffix: ''
+                  target: ''
+                  text: ''
+                  trim: false
+                  trim_whitespace: false
+                  word_boundary: true
+                click_sort_column: value
+                delta_first_last: false
+                delta_limit: 0
+                delta_offset: 0
+                delta_reversed: false
+                element_class: ''
+                element_default_classes: true
+                element_label_class: ''
+                element_label_colon: true
+                element_label_type: ''
+                element_type: ''
+                element_wrapper_class: ''
+                element_wrapper_type: ''
+                empty: ''
+                empty_zero: false
+                entity_field: created
+                entity_type: group_content
+                exclude: false
+                field: created
+                field_api_classes: false
+                group_column: value
+                group_columns: {  }
+                group_rows: true
+                group_type: group
+                hide_alter_empty: true
+                hide_empty: false
+                id: created
+                label: 'Request date'
+                multi_type: separator
+                plugin_id: field
+                relationship: none
+                separator: ', '
+                settings:
+                  custom_date_format: ''
+                  date_format: social_long_date
+                  timezone: ''
+                table: group_relationship_field_data
+                type: timestamp
+              dropbutton:
+                admin_label: ''
+                alter:
+                  absolute: false
+                  alt: ''
+                  alter_text: false
+                  ellipsis: true
+                  external: false
+                  html: false
+                  link_class: ''
+                  make_link: false
+                  max_length: 0
+                  more_link: false
+                  more_link_path: ''
+                  more_link_text: ''
+                  nl2br: false
+                  path: ''
+                  path_case: none
+                  prefix: ''
+                  preserve_tags: ''
+                  rel: ''
+                  replace_spaces: false
+                  strip_tags: false
+                  suffix: ''
+                  target: ''
+                  text: ''
+                  trim: false
+                  trim_whitespace: false
+                  word_boundary: true
+                destination: true
+                element_class: ''
+                element_default_classes: true
+                element_label_class: ''
+                element_label_colon: true
+                element_label_type: ''
+                element_type: ''
+                element_wrapper_class: ''
+                element_wrapper_type: ''
+                empty: ''
+                empty_zero: false
+                exclude: false
+                field: dropbutton
+                fields:
+                  created: '0'
+                  gid: '0'
+                  id: '0'
+                  name: '0'
+                  nothing: nothing
+                  nothing_1: nothing_1
+                group_type: group
+                hide_alter_empty: true
+                hide_empty: false
+                id: dropbutton
+                label: Action
+                plugin_id: dropbutton
+                relationship: none
+                table: views
+              field_grequest_message:
+                admin_label: ''
+                alter:
+                  absolute: false
+                  alt: ''
+                  alter_text: false
+                  ellipsis: true
+                  external: false
+                  html: false
+                  link_class: ''
+                  make_link: false
+                  max_length: 0
+                  more_link: false
+                  more_link_path: ''
+                  more_link_text: ''
+                  nl2br: false
+                  path: ''
+                  path_case: none
+                  prefix: ''
+                  preserve_tags: ''
+                  rel: ''
+                  replace_spaces: false
+                  strip_tags: false
+                  suffix: ''
+                  target: ''
+                  text: ''
+                  trim: false
+                  trim_whitespace: false
+                  word_boundary: true
+                click_sort_column: value
+                delta_first_last: false
+                delta_limit: 0
+                delta_offset: 0
+                delta_reversed: false
+                element_class: ''
+                element_default_classes: true
+                element_label_class: ''
+                element_label_colon: true
+                element_label_type: ''
+                element_type: ''
+                element_wrapper_class: ''
+                element_wrapper_type: ''
+                empty: ''
+                empty_zero: false
+                exclude: false
+                field: field_grequest_message
+                field_api_classes: false
+                group_column: value
+                group_columns: {  }
+                group_rows: true
+                group_type: group
+                hide_alter_empty: true
+                hide_empty: false
+                id: field_grequest_message
+                label: Message
+                multi_type: separator
+                plugin_id: field
+                relationship: none
+                separator: ', '
+                settings: {  }
+                table: group_content__field_grequest_message
+                type: basic_string
+              gid:
+                admin_label: ''
+                alter:
+                  absolute: false
+                  alt: ''
+                  alter_text: false
+                  ellipsis: true
+                  external: false
+                  html: false
+                  link_class: ''
+                  make_link: false
+                  max_length: 0
+                  more_link: false
+                  more_link_path: ''
+                  more_link_text: ''
+                  nl2br: false
+                  path: ''
+                  path_case: none
+                  prefix: ''
+                  preserve_tags: ''
+                  rel: ''
+                  replace_spaces: false
+                  strip_tags: false
+                  suffix: ''
+                  target: ''
+                  text: ''
+                  trim: false
+                  trim_whitespace: false
+                  word_boundary: true
+                click_sort_column: target_id
+                delta_first_last: false
+                delta_limit: 0
+                delta_offset: 0
+                delta_reversed: false
+                element_class: ''
+                element_default_classes: true
+                element_label_class: ''
+                element_label_colon: false
+                element_label_type: ''
+                element_type: ''
+                element_wrapper_class: ''
+                element_wrapper_type: ''
+                empty: ''
+                empty_zero: false
+                entity_field: gid
+                entity_type: group_content
+                exclude: true
+                field: gid
+                field_api_classes: false
+                group_column: target_id
+                group_columns: {  }
+                group_rows: true
+                group_type: group
+                hide_alter_empty: true
+                hide_empty: false
+                id: gid
+                label: 'Parent group'
+                multi_type: separator
+                plugin_id: field
+                relationship: none
+                separator: ', '
+                settings: {  }
+                table: group_relationship_field_data
+                type: entity_reference_entity_id
+              id:
+                admin_label: ''
+                alter:
+                  absolute: false
+                  alt: ''
+                  alter_text: false
+                  ellipsis: true
+                  external: false
+                  html: false
+                  link_class: ''
+                  make_link: false
+                  max_length: 0
+                  more_link: false
+                  more_link_path: ''
+                  more_link_text: ''
+                  nl2br: false
+                  path: ''
+                  path_case: none
+                  prefix: ''
+                  preserve_tags: ''
+                  rel: ''
+                  replace_spaces: false
+                  strip_tags: false
+                  suffix: ''
+                  target: ''
+                  text: ''
+                  trim: false
+                  trim_whitespace: false
+                  word_boundary: true
+                click_sort_column: value
+                delta_first_last: false
+                delta_limit: 0
+                delta_offset: 0
+                delta_reversed: false
+                element_class: ''
+                element_default_classes: true
+                element_label_class: ''
+                element_label_colon: false
+                element_label_type: ''
+                element_type: ''
+                element_wrapper_class: ''
+                element_wrapper_type: ''
+                empty: ''
+                empty_zero: false
+                entity_field: id
+                entity_type: group_content
+                exclude: true
+                field: id
+                field_api_classes: false
+                group_column: value
+                group_columns: {  }
+                group_rows: true
+                group_type: group
+                hide_alter_empty: true
+                hide_empty: false
+                id: id
+                label: ID
+                multi_type: separator
+                plugin_id: field
+                relationship: none
+                separator: ', '
+                settings:
+                  prefix_suffix: false
+                  thousand_separator: ''
+                table: group_relationship_field_data
+                type: number_integer
+              name:
+                admin_label: ''
+                alter:
+                  absolute: false
+                  alt: ''
+                  alter_text: false
+                  ellipsis: true
+                  external: false
+                  html: false
+                  link_class: ''
+                  make_link: false
+                  max_length: 0
+                  more_link: false
+                  more_link_path: ''
+                  more_link_text: ''
+                  nl2br: false
+                  path: ''
+                  path_case: none
+                  prefix: ''
+                  preserve_tags: ''
+                  rel: ''
+                  replace_spaces: false
+                  strip_tags: false
+                  suffix: ''
+                  target: ''
+                  text: ''
+                  trim: false
+                  trim_whitespace: false
+                  word_boundary: true
+                click_sort_column: value
+                delta_first_last: false
+                delta_limit: 0
+                delta_offset: 0
+                delta_reversed: false
+                element_class: ''
+                element_default_classes: true
+                element_label_class: ''
+                element_label_colon: true
+                element_label_type: ''
+                element_type: ''
+                element_wrapper_class: ''
+                element_wrapper_type: ''
+                empty: ''
+                empty_zero: false
+                entity_field: name
+                entity_type: user
+                exclude: false
+                field: name
+                field_api_classes: false
+                group_column: value
+                group_columns: {  }
+                group_rows: true
+                group_type: group
+                hide_alter_empty: true
+                hide_empty: false
+                id: name
+                label: Member
+                multi_type: separator
+                plugin_id: field
+                relationship: gc__user
+                separator: ', '
+                settings: {  }
+                table: users_field_data
+                type: user_name
+              nothing:
+                admin_label: ''
+                alter:
+                  absolute: false
+                  alt: 'Approve membership'
+                  alter_text: true
+                  ellipsis: true
+                  external: false
+                  html: false
+                  link_class: ''
+                  make_link: true
+                  max_length: 0
+                  more_link: false
+                  more_link_path: ''
+                  more_link_text: ''
+                  nl2br: false
+                  path: 'group/{{ gid }}/content/{{ id }}/approve-membership'
+                  path_case: none
+                  prefix: ''
+                  preserve_tags: ''
+                  rel: ''
+                  replace_spaces: false
+                  strip_tags: false
+                  suffix: ''
+                  target: ''
+                  text: 'Approve Membership'
+                  trim: false
+                  trim_whitespace: false
+                  word_boundary: true
+                element_class: ''
+                element_default_classes: true
+                element_label_class: ''
+                element_label_colon: false
+                element_label_type: ''
+                element_type: ''
+                element_wrapper_class: ''
+                element_wrapper_type: ''
+                empty: ''
+                empty_zero: false
+                exclude: true
+                field: nothing
+                group_type: group
+                hide_alter_empty: false
+                hide_empty: false
+                id: nothing
+                label: 'Approve membership'
+                plugin_id: custom
+                relationship: none
+                table: views
+              nothing_1:
+                admin_label: ''
+                alter:
+                  absolute: false
+                  alt: 'Reject Membership'
+                  alter_text: true
+                  ellipsis: true
+                  external: false
+                  html: false
+                  link_class: ''
+                  make_link: true
+                  max_length: 0
+                  more_link: false
+                  more_link_path: ''
+                  more_link_text: ''
+                  nl2br: false
+                  path: 'group/{{ gid }}/content/{{ id }}/reject-membership'
+                  path_case: none
+                  prefix: ''
+                  preserve_tags: ''
+                  rel: ''
+                  replace_spaces: false
+                  strip_tags: false
+                  suffix: ''
+                  target: ''
+                  text: 'Reject Membership'
+                  trim: false
+                  trim_whitespace: false
+                  word_boundary: true
+                element_class: ''
+                element_default_classes: true
+                element_label_class: ''
+                element_label_colon: false
+                element_label_type: ''
+                element_type: ''
+                element_wrapper_class: ''
+                element_wrapper_type: ''
+                empty: ''
+                empty_zero: false
+                exclude: true
+                field: nothing
+                group_type: group
+                hide_alter_empty: false
+                hide_empty: false
+                id: nothing_1
+                label: 'Reject Membership'
+                plugin_id: custom
+                relationship: none
+                table: views
+            path: group/%group/membership-requests
+          display_plugin: page
+          display_title: 'Membership requests'
+          id: membership_requests
+          position: 2
+    change:
+      display:
+        default:
+          display_options:
+            style:
+              options:
+                empty_table: true
