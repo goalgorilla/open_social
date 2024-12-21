@@ -53,3 +53,10 @@ services:
   Drupal\social_group\CurrentGroupService:
     social_group.current_group_service: '@Drupal\social_group\CurrentGroupService'
     autowire: true
+
+  Drupal\social_group\EventSubscriber\NodeQueryAccessAlterSubscriber:
+    arguments:
+      - '@entity_type.manager'
+      - '@group_relation_type.manager'
+    tags:
+      - { name: event_subscriber }
