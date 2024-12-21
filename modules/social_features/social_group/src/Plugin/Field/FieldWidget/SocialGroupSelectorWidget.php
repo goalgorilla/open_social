@@ -13,7 +13,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\group\Entity\GroupInterface;
@@ -39,7 +38,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   multiple_values = TRUE
  * )
  */
-class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements ContainerFactoryPluginInterface {
+class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
 
   use StringTranslationTrait;
 
@@ -314,6 +313,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
     /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
     $form_object = $form_state->getFormObject();
 
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = $form_object->getEntity();
 
     $selected_visibility = $form_state->getValue('field_content_visibility');
@@ -378,6 +378,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
     array $gids,
     EntityInterface $entity
   ): array {
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     /** @var \Drupal\group\Entity\GroupInterface[] $groups */
     $groups = \Drupal::entityTypeManager()->getStorage('group')
       ->loadMultiple($gids);

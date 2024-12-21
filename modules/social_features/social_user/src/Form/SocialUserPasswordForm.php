@@ -18,14 +18,14 @@ class SocialUserPasswordForm extends UserPasswordForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_user_password_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
 
     $form['forgot'] = [
@@ -37,10 +37,9 @@ class SocialUserPasswordForm extends UserPasswordForm {
     $form['forgot']['name'] = $form['name'];
     $form['forgot']['mail'] = $form['mail'];
 
-    unset($form['name']);
-    unset($form['mail']);
+    unset($form['name'], $form['mail']);
 
-    if (\Drupal::config('user.settings')->get('register') != 'admin_only') {
+    if (\Drupal::config('user.settings')->get('register') !== 'admin_only') {
       // Link to the login/register pages.
       $sign_up_link = Link::createFromRoute($this->t('Sign up'), 'user.register')->toString();
 
@@ -55,14 +54,14 @@ class SocialUserPasswordForm extends UserPasswordForm {
    * {@inheritdoc}
    */
   // phpcs:ignore
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $name = trim($form_state->getValue('name'));
     // Try to load by email.
     $users = $this->userStorage->loadByProperties(['mail' => $name]);

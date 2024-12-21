@@ -113,7 +113,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -132,7 +132,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
+  public function processItem($data): void {
     // Validate if the queue data is complete before processing.
     if (self::validateQueueItem($data)) {
       // Get the email content that needs to be sent.
@@ -253,10 +253,10 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    * @param string $mail_id
    *   The email ID that is in the batch.
    *
-   * @return int
+   * @return bool|int
    *   The remaining number.
    */
-  protected function lastItem($mail_id) {
+  protected function lastItem(string $mail_id): bool|int {
     // Escape the condition values.
     $item_type = $this->connection->escapeLike('mail');
     $item_id = $this->connection->escapeLike($mail_id);
@@ -271,7 +271,12 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
     // data that could contain the item id.
     $query->condition('q.data', '%' . $item_type . '%', 'LIKE');
     $query->condition('q.data', '%' . $item_id . '%', 'LIKE');
-    $results = (int) $query->countQuery()->execute()->fetchField();
+
+    $count = $query->countQuery()->execute();
+    $results = 0;
+    if ($count) {
+      $results = (int) $count->fetchField();
+    }
 
     // Return TRUE when last item.
     return !($results !== 1);
@@ -289,7 +294,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    * @return bool
    *   True if the item contains all the necessary data.
    */
-  private static function validateQueueItem(array $data) {
+  private static function validateQueueItem(array $data): bool {
     // The queue data must contain the 'mail' key and it should either
     // contain 'users' or 'user_mail_addresses'.
     return isset($data['mail'])

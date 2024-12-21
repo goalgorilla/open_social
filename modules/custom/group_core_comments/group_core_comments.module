@@ -5,12 +5,14 @@
  * Contains Drupal\group_core_comments\group_core_comments.module.
  */
 
+use Drupal\group_core_comments\GroupCommentAccessControlHandler;
+
 /**
  * Implements hook_entity_type_alter().
  */
-function group_core_comments_entity_type_alter(array &$entity_types) {
+function group_core_comments_entity_type_alter(array &$entity_types): void {
   if (isset($entity_types['comment'])) {
-    $class = 'Drupal\group_core_comments\GroupCommentAccessControlHandler';
+    $class = GroupCommentAccessControlHandler::class;
     $entity_types['comment']->setAccessClass($class);
   }
 }
@@ -18,7 +20,7 @@ function group_core_comments_entity_type_alter(array &$entity_types) {
 /**
  * Implements hook_theme().
  */
-function group_core_comments_theme($existing, $type, $theme, $path) {
+function group_core_comments_theme(array $existing, string $type, string $theme, string $path): array {
   return [
     'comments_join_group' => [
       'variables' => [

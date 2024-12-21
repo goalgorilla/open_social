@@ -15,10 +15,14 @@ class EventDate extends Date {
   /**
    * {@inheritdoc}
    */
-  public function query() {
+  public function query(): void {
     $this->ensureMyTable();
-    $order = ($this->view->exposed_data[$this->realField] == EventDateFilter::UPCOMING_EVENTS) ? 'ASC' : 'DESC';
-    $this->query->addOrderBy($this->tableAlias, $this->realField, $order);
+    $order = ($this->view->exposed_data[$this->realField] === EventDateFilter::UPCOMING_EVENTS) ? 'ASC' : 'DESC';
+
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    $query = $this->query;
+    $query->addOrderBy($this->tableAlias, $this->realField, $order);
+    $this->query = $query;
   }
 
 }

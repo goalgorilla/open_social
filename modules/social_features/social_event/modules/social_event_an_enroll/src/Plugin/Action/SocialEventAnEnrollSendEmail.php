@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_an_enroll\Plugin\Action;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
@@ -33,7 +34,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    *
    * @var \Drupal\social_event\EventEnrollmentInterface
    */
-  protected $entity;
+  protected EventEnrollmentInterface $entity;
 
   /**
    * The event an enroll manager.
@@ -94,12 +95,12 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $objects) {
+  public function executeMultiple(array $objects): array {
     $guests = [];
     foreach ($objects as $key => $entity) {
       if ($this->socialEventAnEnrollManager->isGuest($entity)) {
         $guests[$key] = [
-          'email_address' => $entity->field_email->value,
+          'email_address' => $entity->get('field_email')->value,
           'display_name' => $this->getDisplayName($entity),
         ];
       }
@@ -140,7 +141,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
    *   The name of the guest enrolment.
    */
-  public function getDisplayName(EventEnrollmentInterface $entity) {
+  public function getDisplayName(EventEnrollmentInterface $entity): string|TranslatableMarkup {
     $display_name = $this->socialEventAnEnrollManager->getGuestName($entity, FALSE);
 
     if (!$display_name) {

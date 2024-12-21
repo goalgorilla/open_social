@@ -15,21 +15,21 @@ class EventMaxEnrollSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'event_max_enroll_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_event_max_enroll.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $event_max_enroll_config = $this->config('social_event_max_enroll.settings');
 
     $form['max_enroll'] = [
@@ -56,7 +56,7 @@ class EventMaxEnrollSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config('social_event_max_enroll.settings')
       ->set('max_enroll', $form_state->getValue('max_enroll'))
       ->set('max_enroll_required', $form_state->getValue('max_enroll_required'))

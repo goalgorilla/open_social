@@ -23,7 +23,8 @@ class ActivityEntityReferenceFormatter extends DynamicEntityReferenceEntityForma
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
+    /** @var  \Drupal\Core\Field\EntityReferenceFieldItemListInterface $items */
     $view_mode = $this->getSetting('view_mode');
     $elements = [];
 

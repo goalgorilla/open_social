@@ -28,7 +28,7 @@ class VoteActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\social_group\GroupMuteNotify
    */
-  protected $groupMuteNotify;
+  protected GroupMuteNotify $groupMuteNotify;
 
   /**
    * Constructs a MentionActivityContext object.
@@ -65,7 +65,7 @@ class VoteActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -112,6 +112,7 @@ class VoteActivityContext extends ActivityContextBase {
             }
           }
 
+          /** @var \Drupal\activity_creator\Entity\Activity $entity */
           $uid = $entity->getOwnerId();
 
           // Don't send notifications to myself.

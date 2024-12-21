@@ -2,6 +2,7 @@
 
 namespace Drupal\social_font\Entity;
 
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -60,8 +61,8 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
-    parent::preCreate($storage_controller, $values);
+  public static function preCreate(EntityStorageInterface $storage, array &$values): void {
+    parent::preCreate($storage, $values);
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
     ];
@@ -70,14 +71,14 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function getName() {
+  public function getName(): string {
     return $this->get('name')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setName($name) {
+  public function setName($name): FontInterface|static {
     $this->set('name', $name);
     return $this;
   }
@@ -85,14 +86,14 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCreatedTime() {
+  public function getCreatedTime(): int {
     return $this->get('created')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setCreatedTime($timestamp) {
+  public function setCreatedTime($timestamp): FontInterface|static {
     $this->set('created', $timestamp);
     return $this;
   }
@@ -100,21 +101,21 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function getOwner() {
-    return $this->get('user_id')->entity;
+  public function getOwner(): UserInterface {
+    return $this->getFieldValue('user_id', 'entity');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getOwnerId() {
-    return $this->get('user_id')->target_id;
+  public function getOwnerId(): ?int {
+    return $this->getFieldValue('user_id', 'target_id');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public function setOwnerId($uid): EntityOwnerInterface|Font|static {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -122,7 +123,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(UserInterface $account): EntityOwnerInterface|Font|static {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -137,7 +138,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function setPublished($published) {
+  public function setPublished($published): FontInterface|static {
     $this->set('status', $published ? TRUE : FALSE);
     return $this;
   }
@@ -145,7 +146,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')

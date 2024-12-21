@@ -136,7 +136,7 @@ function social_embed_post_update_12001_remove_old_social_embed_button(): void {
     foreach ($filter_formats as $filter_format) {
       // Load the editor for the given filter format.
       // https://www.drupal.org/project/drupal/issues/3409040.
-      $editor = editor_load($filter_format);
+      $editor = editor_load((int) $filter_format);
       // Only check for the button on non ckeditor5 instances.
       if ($editor !== NULL && $editor->getEditor() !== 'ckeditor5') {
         $key = array_recursive_search_key_map($url_embed_button, $editor->getSettings()['toolbar']);

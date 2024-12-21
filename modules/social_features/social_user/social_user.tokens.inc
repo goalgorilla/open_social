@@ -10,7 +10,7 @@ use Drupal\Core\Render\BubbleableMetadata;
 /**
  * Implements hook_token_info().
  */
-function social_user_token_info() {
+function social_user_token_info(): array {
   $type = [
     'name' => t('Social User'),
     'description' => t('Tokens from the social user module.'),
@@ -32,17 +32,13 @@ function social_user_token_info() {
 /**
  * Implements hook_tokens().
  */
-function social_user_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+function social_user_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
   $replacements = [];
 
-  if ($type == 'social_user') {
+  if ($type === 'social_user') {
     foreach ($tokens as $name => $original) {
-      switch ($name) {
-        case 'recipient':
-          if (isset($data['display_name'])) {
-            $replacements[$original] = $data['display_name'];
-          }
-          break;
+      if (($name === 'recipient') && isset($data['display_name'])) {
+        $replacements[$original] = $data['display_name'];
       }
     }
   }

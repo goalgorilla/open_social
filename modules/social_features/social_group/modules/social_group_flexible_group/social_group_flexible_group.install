@@ -16,7 +16,7 @@ use Drupal\user\UserInterface;
 /**
  * Implements hook_install().
  */
-function social_group_flexible_group_install() {
+function social_group_flexible_group_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'verified',
@@ -157,7 +157,10 @@ function social_group_flexible_group_update_130003(array &$sandbox): string {
 
     $query->join('group_relationship_field_data', 'grfd', 'grfd.id = gcgr.entity_id');
 
-    $sandbox['ids'] = $query->execute()->fetchAllAssoc('entity_id');
+    $result = $query->execute();
+    if ($result !== NULL) {
+      $sandbox['ids'] = $result->fetchAllAssoc('entity_id');
+    }
 
     $sandbox['max'] = count($sandbox['ids']);
     $sandbox['progress'] = 0;
@@ -165,12 +168,13 @@ function social_group_flexible_group_update_130003(array &$sandbox): string {
   $items = array_slice($sandbox['ids'], $sandbox['progress'], 25);
   foreach ($items as $item) {
     $updated = FALSE;
+    /** @var \Drupal\Core\Session\AccountInterface $account */
     $account = User::load($item->uid);
     $group = Group::load($item->gid);
     $manager_role = 'flexible_group-group_manager';
 
     /** @var \Drupal\group\GroupMembership $membership */
-    $membership = $group->getMember($account);
+    $membership = $group?->getMember($account);
 
     if (
       $membership instanceof GroupMembership &&

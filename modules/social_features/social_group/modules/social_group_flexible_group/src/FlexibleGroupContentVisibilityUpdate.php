@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_flexible_group;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -25,14 +26,14 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The Module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructor.
@@ -56,20 +57,19 @@ class FlexibleGroupContentVisibilityUpdate {
    *   The Group's old visibility.
    * @param array $new_options
    *   The Group's new visibility options.
-   *
-   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function batchUpdateGroupContentVisibility(GroupInterface $group, array $changed_visibility, array $new_options) {
+  public static function batchUpdateGroupContentVisibility(GroupInterface $group, array $changed_visibility, array $new_options): void {
     // Set it up as a batch. We need to update visibility.
     // Load all the GroupContentEntities from Post to content.
     // Memberships don't need an update.
-    $entities = $posts = [];
+    $posts = [];
     $entities = $group->getRelatedEntities();
     $posts = self::getPostsFromGroup($group);
 
     // Add posts to the entities we need to update based on visibility.
     if (!empty($posts)) {
       foreach ($posts as $pid => $post) {
+        /** @var \Drupal\social_post\Entity\Post $post */
         if (in_array($post->getVisibility(), $changed_visibility, FALSE)) {
           $entities[] = $post;
         }
@@ -80,7 +80,7 @@ class FlexibleGroupContentVisibilityUpdate {
     $operations = [];
 
     // Update ContentVisibility.
-    // As per documentation each entity has it's own operation.
+    // As per documentation each entity has its own operation.
     for ($i = 0; $i < $num_operations; $i++) {
       $operations[] = [
         '\Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate::updateVisibility',
@@ -104,7 +104,7 @@ class FlexibleGroupContentVisibilityUpdate {
   /**
    * Update visibility for all Group Content based on a new group type.
    *
-   * @param \Drupal\node\Entity\Node|\Drupal\social_post\Entity\Post|\Drupal\group\Entity\GroupMembership|\Drupal\group\Entity\GroupRelationshipInterface $entity
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The content we are updating.
    * @param array $new_options
    *   The Group's new visibility options.
@@ -113,7 +113,7 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function updateVisibility($entity, array $new_options, array &$context) {
+  public static function updateVisibility(ContentEntityInterface $entity, array $new_options, array &$context): void {
     // Store some results for post-processing in the 'finished' callback.
     // The contents of 'results' will be available as $results in the
     // 'finished' function updateVisibilityFinishedCallback().
@@ -149,7 +149,7 @@ class FlexibleGroupContentVisibilityUpdate {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function updateVisibilityFinishedCallback($success, array $results, array $operations) {
+  public static function updateVisibilityFinishedCallback(bool $success, array $results, array $operations): void {
     $messenger = \Drupal::messenger();
     if ($success) {
       // Here we could do something meaningful with the results.
@@ -180,16 +180,23 @@ class FlexibleGroupContentVisibilityUpdate {
    * @return \Drupal\Core\Entity\EntityInterface[]|\Drupal\social_post\Entity\Post[]
    *   Returning the Posts that are part of a Group.
    */
-  public static function getPostsFromGroup(GroupInterface $group) {
+  public static function getPostsFromGroup(GroupInterface $group): array {
     $posts = &drupal_static(__FUNCTION__);
     if (!isset($posts)) {
       // Posts aren't marked as group content so we load them separately.
       $query = \Drupal::database()->select('post__field_recipient_group', 'pst');
       $query->addField('pst', 'entity_id');
       $query->condition('pst.field_recipient_group_target_id', $group->id());
-      $query->execute()->fetchAll();
+      $result = $query->execute();
+      if ($result !== NULL) {
+        $result->fetchAll();
+      }
 
-      $post_keys = $query->execute()->fetchAllAssoc('entity_id');
+      $post_result = $query->execute();
+      $post_keys = [];
+      if ($post_result !== NULL) {
+        $post_keys = $post_result->fetchAllAssoc('entity_id');
+      }
 
       // Store all the post entity ids.
       $post_ids = array_keys($post_keys);
@@ -211,7 +218,7 @@ class FlexibleGroupContentVisibilityUpdate {
    * @return string
    *   The new visibility.
    */
-  public static function calculateVisibility($current_visibility, array $new_options) {
+  public static function calculateVisibility(string $current_visibility, array $new_options): string {
     // If there is only one option just return that one.
     if (count($new_options) === 1) {
       return reset($new_options)['value'];

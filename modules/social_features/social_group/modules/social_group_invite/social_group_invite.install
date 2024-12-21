@@ -13,7 +13,7 @@ use Drupal\language\ConfigurableLanguageManagerInterface;
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function social_group_invite_install() {
+function social_group_invite_install(): void {
   // Assign permissions by default to all group types
   // that have group_invitation enabled.
   foreach (GroupType::loadMultiple() as $group_type) {

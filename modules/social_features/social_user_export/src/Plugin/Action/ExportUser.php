@@ -2,6 +2,9 @@
 
 namespace Drupal\social_user_export\Plugin\Action;
 
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\File\FileSystem;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileUrlGenerator;
@@ -44,35 +47,35 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *
    * @var \Drupal\social_user_export\Plugin\UserExportPluginManager
    */
-  protected $userExportPlugin;
+  protected UserExportPluginManager $userExportPlugin;
 
   /**
    * User export plugin definitions.
    *
    * @var array
    */
-  protected $pluginDefinitions;
+  protected array $pluginDefinitions;
 
   /**
    * A logger instance.
    *
    * @var \Psr\Log\LoggerInterface
    */
-  protected $logger;
+  protected LoggerInterface $logger;
 
   /**
    * The current user account.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The user export plugin config object.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $config;
+  protected ImmutableConfig $config;
 
   /**
    * File URL Generator services.
@@ -87,6 +90,13 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    * @var \Drupal\file\FileRepository
    */
   protected FileRepository $fileRepository;
+
+  /**
+   * File system services.
+   *
+   * @var \Drupal\Core\File\FileSystem
+   */
+  private FileSystem $fileSystem;
 
   /**
    * Constructs a ExportUser object.
@@ -109,6 +119,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *   The file url generator service.
    * @param \Drupal\file\FileRepository $file_repository
    *   The file repository service.
+   * @param \Drupal\Core\File\FileSystem $file_system
+   *   The file system service.
    */
   public function __construct(
     array $configuration,
@@ -119,7 +131,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     AccountProxyInterface $currentUser,
     ConfigFactoryInterface $configFactory,
     FileUrlGenerator $file_url_generator,
-    FileRepository $file_repository
+    FileRepository $file_repository,
+    FileSystem $file_system,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -134,32 +147,34 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     usort($this->pluginDefinitions, [$this, 'sortDefinitions']);
     $this->fileUrlGenerator = $file_url_generator;
     $this->fileRepository = $file_repository;
+    $this->fileSystem = $file_system;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): ExportUser|ContainerFactoryPluginInterface|static {
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('plugin.manager.user_export_plugin'),
       $container->get('logger.factory')->get('action'),
       $container->get('current_user'),
       $container->get('config.factory'),
       $container->get('file_url_generator'),
-      $container->get('file.repository')
+      $container->get('file.repository'),
+      $container->get('file_system'),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities) {
+  public function executeMultiple(array $entities): array {
 
     // Check if headers exists.
     if (empty($this->context['sandbox']['results']['headers'])) {
       $headers = [];
-      /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
       foreach ($this->pluginDefinitions as $plugin) {
+        /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
         $instance = $this->userExportPlugin->createInstance($plugin['id']);
         $headers[] = $instance->getHeader();
       }
@@ -193,9 +208,9 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     // Now add the entities to export.
     foreach ($entities as $entity_id => $entity) {
       $row = [];
-      /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
       foreach ($this->pluginDefinitions as $plugin) {
         $configuration = $this->getPluginConfiguration($plugin['id'], $entity_id);
+        /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
         $instance = $this->userExportPlugin->createInstance($plugin['id'], $configuration);
         $this->writeRow($row, $instance->getValue($entity));
       }
@@ -208,7 +223,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
         $name = basename($this->context['sandbox']['results']['file_path']);
         $path = 'private://csv';
 
-        if (\Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+        if ($this->fileSystem->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
           $this->fileRepository->writeData($data, $path . '/' . $name);
           $url = Url::fromUri($this->fileUrlGenerator->generateAbsoluteString($path . '/' . $name));
           $link = Link::fromTextAndUrl($this->t('Download file'), $url);
@@ -239,7 +254,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    */
   protected function writeRow(array &$row, string $value): void {
     // The single quote ' is recommended to prefix formulas.
-    if (\in_array(substr($value, 0, 1), self::FORMULAS_START_CHARACTERS, TRUE)) {
+    if (\in_array($value[0], self::FORMULAS_START_CHARACTERS, TRUE)) {
       $row[] = "'" . $value;
     }
     else {
@@ -250,14 +265,14 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   /**
    * {@inheritdoc}
    */
-  public function execute($object = NULL) {
+  public function execute(Object $object = NULL): void {
     $this->executeMultiple([$object]);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|AccessResultInterface {
     /** @var \Drupal\user\UserInterface $object */
     // @todo Check for export access instead.
     return $object->access('view', $account, $return_as_object);
@@ -281,7 +296,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *   The path to the Drupal directory that should be used for this export.
    */
   protected function getBaseOutputDirectory() : string {
-    return \Drupal::service('file_system')->getTempDirectory();
+    return $this->fileSystem->getTempDirectory();
   }
 
   /**
@@ -314,7 +329,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    * @return array
    *   An array of export plugin's configuration.
    */
-  public function getPluginConfiguration($plugin_id, $entity_id) {
+  public function getPluginConfiguration(int $plugin_id, int $entity_id): array {
     return [];
   }
 

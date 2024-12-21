@@ -15,17 +15,7 @@ class EventEnrollmentForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
-    $form = parent::buildForm($form, $form_state);
-
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): int {
     $entity = $this->entity;
     $status = parent::save($form, $form_state);
 
@@ -42,6 +32,8 @@ class EventEnrollmentForm extends ContentEntityForm {
         ]));
     }
     $form_state->setRedirect('entity.event_enrollment.canonical', ['event_enrollment' => $entity->id()]);
+
+    return 0;
   }
 
 }

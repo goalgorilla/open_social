@@ -10,7 +10,7 @@
  *
  * Perform actions related to the installation of social_activity_filter module.
  */
-function social_activity_filter_install() {
+function social_activity_filter_install(): void {
   user_role_grant_permissions('sitemanager', ['administer social_activity_filter']);
   _social_activity_filter_set_default_settings();
 }
@@ -18,7 +18,7 @@ function social_activity_filter_install() {
 /**
  * Helper function to set default tag filter settings.
  */
-function _social_activity_filter_set_default_settings() {
+function _social_activity_filter_set_default_settings(): void {
   $config_factory = \Drupal::service('config.factory');
   $config_names = [
     'activity_stream' => [

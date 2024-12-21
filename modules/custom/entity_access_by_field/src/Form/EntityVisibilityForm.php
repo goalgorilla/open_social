@@ -15,7 +15,7 @@ class EntityVisibilityForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'entity_access_by_field.settings',
     ];
@@ -24,14 +24,14 @@ class EntityVisibilityForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'entity_access_by_field_visibility_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     // Get config for this form.
     $config = $this->config('entity_access_by_field.settings');
 
@@ -58,7 +58,7 @@ class EntityVisibilityForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $form_state->cleanValues();
     $this
       ->config('entity_access_by_field.settings')

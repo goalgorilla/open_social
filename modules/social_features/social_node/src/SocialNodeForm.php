@@ -61,7 +61,7 @@ class SocialNodeForm extends NodeForm {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('entity.repository'),
       $container->get('tempstore.private'),
@@ -76,13 +76,15 @@ class SocialNodeForm extends NodeForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): int {
     /** @var \Drupal\node\NodeInterface $node */
     $node = clone $this->entity;
 
     $this->messenger()->setNode($node);
 
     parent::save($form, $form_state);
+
+    return 0;
   }
 
   /**
@@ -114,12 +116,10 @@ class SocialNodeForm extends NodeForm {
    * @return \Drupal\social_node\Service\SocialNodeMessengerInterface
    *   The messenger.
    */
-  public function messenger() {
-    if (!isset($this->messenger)) {
-      $this->messenger = \Drupal::service('social_node.messenger');
-    }
-
-    return $this->messenger;
+  public function messenger(): SocialNodeMessengerInterface {
+    /** @var \Drupal\social_node\Service\SocialNodeMessengerInterface $messenger */
+    $messenger = $this->messenger;
+    return $messenger;
   }
 
 }

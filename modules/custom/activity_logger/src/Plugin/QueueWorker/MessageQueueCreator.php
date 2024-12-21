@@ -26,7 +26,7 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
    *
    * @var \Drupal\activity_creator\Plugin\ActivityActionManager
    */
-  protected $actionManager;
+  protected ActivityActionManager $actionManager;
 
   /**
    * MessageQueueCreator constructor.
@@ -50,7 +50,7 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -63,7 +63,7 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
+  public function processItem($data): void {
 
     // First make sure it's an actual entity.
     if ($entity = Node::load($data['entity_id'])) {
@@ -81,8 +81,9 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
         $this->createQueueItem('activity_logger_message', $data);
       }
       else {
-        // Trigger the create action for entities.
+        // Trigger the creation action for entities.
         if ($this->actionManager->hasDefinition('create_entitiy_action')) {
+          /** @var \Drupal\activity_creator\Plugin\ActivityActionInterface $create_action */
           $create_action = $this->actionManager->createInstance('create_entitiy_action');
           $create_action->createMessage($entity);
         }

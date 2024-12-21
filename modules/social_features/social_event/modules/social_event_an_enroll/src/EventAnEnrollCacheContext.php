@@ -16,7 +16,7 @@ class EventAnEnrollCacheContext implements CacheContextInterface {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Constructs a new PreviewLinkCacheContext.
@@ -31,21 +31,21 @@ class EventAnEnrollCacheContext implements CacheContextInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getLabel() {
+  public static function getLabel(): string {
     return 'Is AN enrollment route';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getContext() {
+  public function getContext(): bool|string {
     return ($route = $this->routeMatch->getRouteObject()) && $route->getOption('_event_an_enroll_route') ?: FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata() {
+  public function getCacheableMetadata(): CacheableMetadata {
     return (new CacheableMetadata())->addCacheTags(['routes']);
   }
 

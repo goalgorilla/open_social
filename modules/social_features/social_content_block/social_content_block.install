@@ -24,7 +24,7 @@ function social_content_block_update_dependencies() : array {
 /**
  * Implements hook_modules_installed().
  */
-function social_content_block_modules_installed() {
+function social_content_block_modules_installed(): void {
   // When the set of installed modules change, reload the sorting optios.
   _social_content_block_update_sorting_options();
 }
@@ -32,7 +32,7 @@ function social_content_block_modules_installed() {
 /**
  * Update the allowed values in the sorting options field based on plugins.
  */
-function _social_content_block_update_sorting_options() {
+function _social_content_block_update_sorting_options(): void {
   /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
   $content_block_manager = \Drupal::service('plugin.manager.content_block');
 

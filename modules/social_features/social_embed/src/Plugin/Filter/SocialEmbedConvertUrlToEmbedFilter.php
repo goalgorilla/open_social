@@ -51,7 +51,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends FilterBase implements Container
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -127,13 +127,13 @@ class SocialEmbedConvertUrlToEmbedFilter extends FilterBase implements Container
           // Only process this tag if there are no unclosed $ignore_tags.
           if ($open_tag == '') {
             // Check whether this tag is contained in $ignore_tags.
-            if (preg_match("`<($ignore_tags)(?:\s|>)`i", $chunks[$i], $matches)) {
+            if (preg_match("`<($ignore_tags)(?:\s|>)`i", (string) $chunks[$i], $matches)) {
               $open_tag = $matches[1];
             }
           }
           // Otherwise, check whether this is the closing tag for $open_tag.
           else {
-            if (preg_match("`<\/$open_tag>`i", $chunks[$i], $matches)) {
+            if (preg_match("`<\/$open_tag>`i", (string) $chunks[$i], $matches)) {
               $open_tag = '';
             }
           }

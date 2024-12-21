@@ -8,7 +8,7 @@
 /**
  * Update message template settings based on configuration schema metadata.
  */
-function activity_logger_post_update_apply_schema_changes() {
+function activity_logger_post_update_apply_schema_changes(): void {
   /** @var \Drupal\message\MessageTemplateInterface[] $message_templates */
   $message_templates = \Drupal::entityTypeManager()->getStorage('message_template')->loadMultiple();
   // Resaving all the messages should be enough, the schema was built to fit

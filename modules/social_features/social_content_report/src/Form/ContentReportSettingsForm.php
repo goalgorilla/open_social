@@ -20,7 +20,7 @@ class ContentReportSettingsForm extends ConfigFormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Class constructor.
@@ -38,7 +38,7 @@ class ContentReportSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('entity_type.manager')
@@ -48,7 +48,7 @@ class ContentReportSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'social_content_report.settings',
     ];
@@ -57,14 +57,14 @@ class ContentReportSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_content_report_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->configFactory->get('social_content_report.settings');
 
     // Allow immediate unpublishing.
@@ -77,8 +77,10 @@ class ContentReportSettingsForm extends ConfigFormBase {
 
     // A list of reason terms to display the reason textfield for.
     $terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('report_reasons');
+    $reason_terms = [];
+    /** @var \Drupal\taxonomy\TermInterface $term */
     foreach ($terms as $term) {
-      $reason_terms[$term->tid] = $term->name;
+      $reason_terms[$term->get('tid')->getValue()] = $term->getName();
     }
 
     $form['reasons_with_text'] = [
@@ -103,7 +105,7 @@ class ContentReportSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     $term_ids = [];

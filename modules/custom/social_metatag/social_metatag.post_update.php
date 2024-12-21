@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Correctly import the default topic metatag configuration.
  */
-function social_metatag_post_update_0001_fix_node_topic_defaults() {
+function social_metatag_post_update_0001_fix_node_topic_defaults(): void {
   $config_yaml = <<<YAML
 langcode: en
 status: true

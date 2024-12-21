@@ -12,7 +12,7 @@ use Drupal\user\Entity\Role;
  *
  * Perform actions related to the installation of social_event_managers.
  */
-function social_event_managers_install() {
+function social_event_managers_install(): void {
   // Fetch site manager role.
   $role = Role::load('sitemanager');
   // Set permission for site manager.
@@ -28,8 +28,8 @@ function social_event_managers_install() {
     'contentmanager',
   ];
 
-  foreach ($roles as $rolename) {
-    $role = Role::load($rolename);
+  foreach ($roles as $role_name) {
+    $role = Role::load($role_name);
     // Set permission for site manager.
     if ($role instanceof Role) {
       // Set permission.

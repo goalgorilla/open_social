@@ -14,14 +14,14 @@ class SocialGroupJoinMethodCacheContext implements CacheContextInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getLabel() {
+  public static function getLabel(): void {
     \Drupal::messenger()->addMessage('Cache context for the join methods');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getContext() {
+  public function getContext(): string {
     // This will return the join method of the current group.
     $group = _social_group_get_current_group();
     if ($group instanceof Group && $group->hasField('field_group_allowed_join_method')) {
@@ -29,12 +29,13 @@ class SocialGroupJoinMethodCacheContext implements CacheContextInterface {
         return $group->getFieldValue('field_group_allowed_join_method', 'value');
       }
     }
+    return '';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata() {
+  public function getCacheableMetadata(): CacheableMetadata {
     return new CacheableMetadata();
   }
 

@@ -15,21 +15,21 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'event_an_enroll_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_event_an_enroll.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $event_an_enroll_config = $this->config('social_event_an_enroll.settings');
 
     $form['event_an_enroll'] = [
@@ -113,7 +113,7 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config('social_event_an_enroll.settings')
       ->set('event_an_enroll', $form_state->getValue('event_an_enroll'))
       ->set('event_an_enroll_default_value', $form_state->getValue('event_an_enroll_default_value'))

@@ -6,7 +6,6 @@ use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_managers\Plugin\views\field\SocialEventManagersViewsBulkOperationsBulkForm;
@@ -20,14 +19,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Defines the Views Bulk Operations field plugin.
  */
-class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagersViewsBulkOperationsBulkForm implements ContainerFactoryPluginInterface {
+class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagersViewsBulkOperationsBulkForm {
 
   /**
    * The event an enroll manager.
    *
    * @var \Drupal\social_event_an_enroll\EventAnEnrollManager
    */
-  protected $socialEventAnEnrollManager;
+  protected EventAnEnrollManager $socialEventAnEnrollManager;
 
   /**
    * Constructs a new SocialEventAnEnrollViewsBulkOperationsBulkForm object.
@@ -61,8 +60,8 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
    */
   public function __construct(
     array $configuration,
-    $plugin_id,
-    $plugin_definition,
+          $plugin_id,
+          $plugin_definition,
     ViewsBulkOperationsViewDataInterface $viewData,
     ViewsBulkOperationsActionManager $actionManager,
     ViewsBulkOperationsActionProcessorInterface $actionProcessor,
@@ -81,7 +80,7 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -94,6 +93,7 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
       $container->get('request_stack'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.action'),
+      $container->get('config.factory'),
       $container->get('social_event_an_enroll.manager')
     );
   }
@@ -101,7 +101,7 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
   /**
    * {@inheritdoc}
    */
-  public function getEntityLabel(EntityInterface $entity) {
+  public function getEntityLabel(EntityInterface $entity): string {
     /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
     if ($this->socialEventAnEnrollManager->isGuest($entity)) {
       return $this->socialEventAnEnrollManager->getGuestName($entity);

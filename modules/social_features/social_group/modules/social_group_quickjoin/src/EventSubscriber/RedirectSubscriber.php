@@ -24,31 +24,31 @@ class RedirectSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Routing\CurrentRouteMatch
    */
-  protected $currentRoute;
+  protected CurrentRouteMatch $currentRoute;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxy
    */
-  protected $currentUser;
+  protected AccountProxy $currentUser;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
-   * Redirectsubscriber construct.
+   * Redirect subscriber construct.
    *
    * @param \Drupal\Core\Routing\CurrentRouteMatch $route_match
    *   The current route.
    * @param \Drupal\Core\Session\AccountProxy $current_user
    *   The current user.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configfactory.
+   *   The config factory.
    */
   public function __construct(CurrentRouteMatch $route_match, AccountProxy $current_user, ConfigFactoryInterface $config_factory) {
     $this->currentRoute = $route_match;
@@ -59,10 +59,10 @@ class RedirectSubscriber implements EventSubscriberInterface {
   /**
    * Get the request events.
    *
-   * @return mixed
+   * @return array
    *   Returns request events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::REQUEST][] = ['groupQuickJoin'];
     return $events;
   }
@@ -73,12 +73,12 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function groupQuickJoin(RequestEvent $event) {
+  public function groupQuickJoin(RequestEvent $event): void {
 
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();
     // Not group canonical, then we leave.
-    if ($routeMatch != 'entity.group.join') {
+    if ($routeMatch !== 'entity.group.join') {
       return;
     }
 

@@ -19,12 +19,12 @@ class SocialGroupMembershipCount extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function query() {}
+  public function query(): void {}
 
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $row) {
+  public function render(ResultRow $row): string {
     $group_content = $this->getEntity($row);
     // Grab the group from the group_invite.
     if ($group_content instanceof GroupRelationship) {
@@ -33,9 +33,10 @@ class SocialGroupMembershipCount extends FieldPluginBase {
         /** @var \Drupal\social_group\GroupStatistics $group_statistics */
         $group_statistics = \Drupal::service('social_group.group_statistics');
         // Return the group member count.
-        return $group_statistics->getGroupMemberCount($group);
+        return (string) $group_statistics->getGroupMemberCount($group);
       }
     }
+    return '';
   }
 
 }

@@ -4,6 +4,7 @@ namespace Drupal\mentions\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -16,14 +17,14 @@ class MentionsDelete implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $configFactory;
+  protected ConfigFactory $configFactory;
 
   /**
    * MentionsDelete constructor.
@@ -41,7 +42,7 @@ class MentionsDelete implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events = [];
     $events['mentions.delete'][] = ['onMentionsDelete', 0];
     return $events;
@@ -50,7 +51,7 @@ class MentionsDelete implements EventSubscriberInterface {
   /**
    * Event handler.
    */
-  public function onMentionsDelete($event) {
+  public function onMentionsDelete(Event $event): void {
     $config = $this->configFactory->get('mentions.settings');
     $config_mentions_events = $config->get('mentions_events');
     $action_id = $config_mentions_events['delete'];
@@ -58,6 +59,7 @@ class MentionsDelete implements EventSubscriberInterface {
       return;
     }
     $entity_storage = $this->entityTypeManager->getStorage('action');
+    /** @var \Drupal\system\Entity\Action|NULL $action */
     $action = $entity_storage->load($action_id);
 
     if ($action === NULL) {
@@ -65,7 +67,7 @@ class MentionsDelete implements EventSubscriberInterface {
     }
 
     $action_plugin = $action->getPlugin();
-    $action_plugin->execute(FALSE);
+    $action_plugin->execute();
   }
 
 }

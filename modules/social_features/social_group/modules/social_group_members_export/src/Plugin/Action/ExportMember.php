@@ -3,6 +3,7 @@
 namespace Drupal\social_group_members_export\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_user_export\Plugin\Action\ExportUser;
@@ -22,7 +23,7 @@ class ExportMember extends ExportUser {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities) {
+  public function executeMultiple(array $entities): array {
     /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
     foreach ($entities as &$entity) {
       $entity = $entity->getEntity();
@@ -34,7 +35,7 @@ class ExportMember extends ExportUser {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|AccessResultInterface {
     if ($object instanceof GroupRelationshipInterface && $object->getPluginId() === 'group_membership') {
       $access = $object->getEntity()->access('view', $account, TRUE);
     }

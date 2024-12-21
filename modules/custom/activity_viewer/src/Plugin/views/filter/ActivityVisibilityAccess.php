@@ -16,7 +16,7 @@ class ActivityVisibilityAccess extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): false {
     return FALSE;
   }
 
@@ -27,7 +27,7 @@ class ActivityVisibilityAccess extends FilterPluginBase {
    * system when this is implemented.
    * See https://www.drupal.org/node/777578
    */
-  public function query() {
+  public function query(): void {
 
     // We have a few scenarios:
     // 1. There is a recipient user and destination is only notification,

@@ -24,14 +24,14 @@ class GroupRequestMembershipRejectForm extends FormBase {
    *
    * @var \Drupal\group\Entity\GroupInterface
    */
-  protected $group;
+  protected GroupInterface $group;
 
   /**
    * Group membership request.
    *
    * @var \Drupal\group\Entity\GroupRelationshipInterface
    */
-  protected $groupContent;
+  protected GroupRelationshipInterface $groupContent;
 
   /**
    * The redirect destination helper.
@@ -45,14 +45,14 @@ class GroupRequestMembershipRejectForm extends FormBase {
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * GroupRequestMembershipRejectForm constructor.
@@ -81,7 +81,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('redirect.destination'),
       $container->get('cache_tags.invalidator'),
@@ -93,31 +93,38 @@ class GroupRequestMembershipRejectForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'grequest_group_request_membership_reject';
   }
 
   /**
    * {@inheritdoc}
    */
-  private function getCancelUrl() {
+  private function getCancelUrl(): Url {
     return Url::fromUserInput($this->redirectDestination->get());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupRelationshipInterface $group_content = NULL) {
-    $this->group = $group;
-    $this->groupContent = $group_content;
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupRelationshipInterface $group_content = NULL): array {
+    if ($group !== NULL) {
+      $this->group = $group;
+    }
+    if ($group_content !== NULL) {
+      $this->groupContent = $group_content;
+    }
 
     $form['#attributes']['class'][] = 'form--default';
 
+    /** @var \Drupal\user\Entity\User $group_content_entity */
+    $group_content_entity = $group_content?->getEntity();
+    $display_name = $group_content_entity->getDisplayName();
     $form['question'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
       '#value' => $this->t('Are you sure you want to reject the membership request for @name?', [
-        '@name' => $group_content ? $group_content->getEntity()->getDisplayName() : '',
+        '@name' => $display_name,
       ]),
       '#weight' => 1,
       '#prefix' => '<div class="card"><div class="card__block">',
@@ -153,7 +160,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->groupContent
       ->set('grequest_status', GroupMembershipRequest::REQUEST_REJECTED)
       // Who created request will become an 'approver' for Membership request.

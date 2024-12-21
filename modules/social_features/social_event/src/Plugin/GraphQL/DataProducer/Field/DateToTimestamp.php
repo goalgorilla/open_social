@@ -34,12 +34,15 @@ class DateToTimestamp extends DataProducerPluginBase {
    * @return int|null
    *   An event start or end day timestamp.
    */
-  public function resolve(DateTimeFieldItemList $field) {
+  public function resolve(DateTimeFieldItemList $field): ?int {
     if ($field->isEmpty()) {
       return NULL;
     }
 
-    return $field->{DateTimeItem::DATETIME_TYPE_DATE}->getTimestamp();
+    /** @var \Drupal\Core\TypedData\Type\DateTimeInterface $date_item */
+    $date_item = $field->get(DateTimeItem::DATETIME_TYPE_DATE);
+
+    return $date_item->getDateTime()?->getTimestamp();
   }
 
 }

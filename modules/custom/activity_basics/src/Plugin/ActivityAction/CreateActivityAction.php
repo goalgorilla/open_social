@@ -3,6 +3,7 @@
 namespace Drupal\activity_basics\Plugin\ActivityAction;
 
 use Drupal\activity_creator\Plugin\ActivityActionBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -18,11 +19,11 @@ class CreateActivityAction extends ActivityActionBase {
   /**
    * {@inheritdoc}
    */
-  public function create($entity) {
+  public function create(EntityInterface $entity): void {
 
     if ($this->isValidEntity($entity)) {
 
-      // For nodes we make an exception, since they are potentially placed in
+      // For nodes, we make an exception, since they are potentially placed in
       // groups, which we cannot know here yet.
       if ($entity instanceof NodeInterface) {
         $data['entity_id'] = $entity->id();

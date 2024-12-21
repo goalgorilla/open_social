@@ -2,6 +2,7 @@
 
 namespace Drupal\social_content_report\Access;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
@@ -21,14 +22,14 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The content report service.
    *
    * @var \Drupal\social_content_report\ContentReportServiceInterface
    */
-  protected $socialContentReport;
+  protected ContentReportServiceInterface $socialContentReport;
 
   /**
    * FlagAccessCheck constructor.
@@ -49,7 +50,7 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('social_content_report.content_report_service')
@@ -69,7 +70,7 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
    * @return \Drupal\Core\Access\AccessResult
    *   Allowed if user may use the flag and hasn't reported it yet.
    */
-  public function access(AccountInterface $account, FlagInterface $flag, $entity_id) {
+  public function access(AccountInterface $account, FlagInterface $flag, $entity_id): AccessResultInterface {
     if (in_array($flag->id(), $this->socialContentReport->getReportFlagTypes())) {
       // Make sure user is allowed to use the flag.
       if (!$account->hasPermission('flag ' . $flag->id())) {
@@ -78,6 +79,10 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
 
       $entity = $this->entityTypeManager->getStorage($flag->getFlaggableEntityTypeId())
         ->load($entity_id);
+
+      if ($entity === NULL) {
+        return AccessResult::forbidden();
+      }
 
       $flagged = $flag->isFlagged($entity, $account);
 

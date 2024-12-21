@@ -8,7 +8,7 @@
 /**
  * Implements hook_theme().
  */
-function social_featured_content_theme() {
+function social_featured_content_theme(): array {
   // Paragraph.
   $theme_templates['paragraph__featured__default'] = [
     'base hook' => 'paragraph',
@@ -38,7 +38,7 @@ function social_featured_content_theme() {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_featured_content_preprocess_node(&$variables) {
+function social_featured_content_preprocess_node(array &$variables): void {
   if ($variables['view_mode'] === 'featured') {
     $variables['label'] = \Drupal::service('renderer')->render($variables['label']);
   }

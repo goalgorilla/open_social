@@ -10,7 +10,7 @@ use Drupal\social_font\Entity\Font;
 /**
  * Set font-fallback for Montserrat font to sans-serif.
  */
-function social_font_post_update_montserrat_fallback() {
+function social_font_post_update_montserrat_fallback(): void {
   // We assume that the number of fonts installed on a site will never be
   // massive but we can't be sure that Montserrat has id 0 or 1.
   $fonts = Font::loadMultiple();

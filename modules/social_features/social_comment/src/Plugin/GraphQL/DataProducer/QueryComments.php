@@ -2,6 +2,7 @@
 
 namespace Drupal\social_comment\Plugin\GraphQL\DataProducer;
 
+use Drupal\social_graphql\GraphQL\ConnectionInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\EntityConnection;
@@ -80,15 +81,19 @@ class QueryComments extends EntityDataProducerPluginBase {
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
+   * @return \Drupal\social_graphql\GraphQL\EntityConnection|ConnectionInterface
    *   An entity connection with results and data about the paginated results.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function resolve(?NodeInterface $parent, ?string $bundle, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(?NodeInterface $parent, ?string $bundle, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata): EntityConnection|ConnectionInterface {
     if ($parent) {
       $nodes = $this->entityTypeManager->getStorage('node')->loadByProperties(['uuid' => $parent->uuid()]);
       $parent = reset($nodes);
     }
 
+    /** @var \Drupal\node\NodeInterface $parent*/
     $query_helper = new CommentQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $parent, $bundle);
     $metadata->addCacheableDependency($query_helper);
 

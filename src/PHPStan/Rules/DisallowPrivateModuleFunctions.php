@@ -4,7 +4,6 @@ namespace Drupal\social\PHPStan\Rules;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
@@ -66,14 +65,14 @@ class DisallowPrivateModuleFunctions implements Rule {
     // we're allowing it. This might have a false positive on something like
     // calling `_social_profile_fields_secret()` from social_profile, but I
     // don't know how to fix that at the moment.
-    if (str_starts_with($function, "_${module}_")) {
+    if (str_starts_with($function, "_{$module}_")) {
       return [];
     }
 
     return [
       RuleErrorBuilder::message(
         "Not allowed to call private function $function from module $module."
-      )->build()
+      )->build(),
     ];
   }
 
@@ -82,7 +81,8 @@ class DisallowPrivateModuleFunctions implements Rule {
    *
    * @param string $file
    *   The file to determine the module for.
-   * @return string|NULL
+   *
+   * @return string|null
    *   The module name or NULL if the file wasn't in a Drupal module.
    */
   private function findModuleForFile(string $file) : ?string {

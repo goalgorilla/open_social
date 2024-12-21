@@ -22,11 +22,13 @@ class UserSchemaExtension extends SchemaExtensionPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function registerResolvers(ResolverRegistryInterface $registry) {
+  public function registerResolvers(ResolverRegistryInterface $registry): void {
     $builder = new ResolverBuilder();
 
+    /** @var \Drupal\social_graphql\GraphQL\DecoratableTypeResolver $actor */
+    $actor = $registry->getTypeResolver('Actor');
     // Type resolvers.
-    $registry->addTypeResolver('Actor', new UserActorTypeResolver($registry->getTypeResolver('Actor')));
+    $registry->addTypeResolver('Actor', new UserActorTypeResolver($actor));
 
     // Root Query fields.
     $registry->addFieldResolver('Query', 'viewer',

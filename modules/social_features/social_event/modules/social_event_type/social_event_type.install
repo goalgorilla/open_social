@@ -12,8 +12,8 @@ use Drupal\user\Entity\Role;
  *
  * Perform actions related to the installation of social_event_type.
  */
-function social_event_type_install() {
-  // Fetch sitemananger role.
+function social_event_type_install(): void {
+  // Fetch site manager role.
   $role = Role::load('sitemanager');
   // Set permission for site manager.
   if ($role instanceof Role) {
@@ -31,8 +31,8 @@ function social_event_type_install() {
  *
  * Perform actions related to the de-installation of social_event_type.
  */
-function social_event_type_uninstall() {
-  // Fetch sitemananger role.
+function social_event_type_uninstall(): void {
+  // Fetch site manager role.
   $role = Role::load('sitemanager');
   // Set permission for site manager.
   if ($role instanceof Role) {

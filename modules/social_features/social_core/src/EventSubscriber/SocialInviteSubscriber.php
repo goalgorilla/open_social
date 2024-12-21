@@ -2,6 +2,8 @@
 
 namespace Drupal\social_core\EventSubscriber;
 
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -27,42 +29,42 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\social_core\InviteService
    */
-  protected $inviteService;
+  protected InviteService $inviteService;
 
   /**
    * The current user's account object.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * The Messenger service.
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  protected $messenger;
+  protected MessengerInterface $messenger;
 
   /**
    * The current route.
    *
    * @var \Drupal\Core\Routing\CurrentRouteMatch
    */
-  protected $currentRoute;
+  protected CurrentRouteMatch $currentRoute;
 
   /**
-   * Protected var alternativeFrontpageSettings.
+   * The alternative frontpage settings.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
    */
-  protected $alternativeFrontpageSettings;
+  protected Config|ImmutableConfig $alternativeFrontpageSettings;
 
   /**
-   * Protected var siteSettings.
+   * The site settings.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
    */
-  protected $siteSettings;
+  protected Config|ImmutableConfig $siteSettings;
 
   /**
    * Constructs SocialInviteSubscriber.
@@ -93,10 +95,9 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The RequestEvent to process.
    */
-  public function notifyAboutPendingInvitations(RequestEvent $event) {
+  public function notifyAboutPendingInvitations(RequestEvent $event): void {
     // Only show this message when a user is logged in.
     if ($this->currentUser->isAuthenticated()) {
-      /** @var \Symfony\Component\HttpFoundation\Request $request */
       $request = $event->getRequest();
       $request_path = $request->getPathInfo();
       $route_name = $this->currentRoute->getRouteName();
@@ -139,7 +140,7 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::REQUEST][] = ['notifyAboutPendingInvitations'];
     return $events;
   }

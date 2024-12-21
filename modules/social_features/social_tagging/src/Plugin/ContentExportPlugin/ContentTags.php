@@ -63,7 +63,7 @@ class ContentTags extends ContentExportPluginBase {
    * @param mixed $plugin_definition
    *   The plugin definition.
    *
-   * @return \Drupal\social_content_export\Plugin\ContentExportPlugin\ContentTags
+   * @return ContentTags
    *   Returns the ContentTags plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {

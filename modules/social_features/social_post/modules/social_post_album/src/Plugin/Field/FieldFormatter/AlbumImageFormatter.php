@@ -24,13 +24,14 @@ class AlbumImageFormatter extends ImageFormatter {
   /**
    * The limit of images that displayed in the post.
    */
-  const LIMIT = 11;
+  public const LIMIT = 11;
 
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     // Grab all elements from the parent view.
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $items */
     $elements = parent::viewElements($items, $langcode);
     if (!$items->isEmpty()) {
       // If it's only one, we can safely return without updating image styles.

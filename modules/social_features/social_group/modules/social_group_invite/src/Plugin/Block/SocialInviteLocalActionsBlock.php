@@ -3,6 +3,7 @@
 namespace Drupal\social_group_invite\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -27,14 +28,14 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The route match.
    *
    * @var \Drupal\ginvite\GroupInvitationLoaderInterface
    */
-  protected $inviteService;
+  protected GroupInvitationLoaderInterface $inviteService;
 
   /**
    * EventAddBlock constructor.
@@ -59,7 +60,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
       $configuration,
       $plugin_id,
@@ -72,7 +73,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account): AccessResultInterface {
     $group = _social_group_get_current_group();
     if ($group instanceof GroupInterface) {
       // If group allows Group Invites by content plugin and user has access.
@@ -90,7 +91,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
     $cache_contexts[] = 'user.group_permissions';
     $cache_contexts[] = 'url.path';
@@ -100,7 +101,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $cache_tags = parent::getCacheTags();
 
     // Add cache tags only for group page.
@@ -120,7 +121,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $build = [];
 
     // Get current group so we can build correct links.

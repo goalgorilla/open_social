@@ -24,7 +24,7 @@ class EventEnrollmentEntityDeleteAction extends ViewsBulkOperationsActionBase {
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL) {
+  public function execute($entity = NULL): void {
     /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
     $entity->delete();
   }
@@ -38,6 +38,7 @@ class EventEnrollmentEntityDeleteAction extends ViewsBulkOperationsActionBase {
     if ($object instanceof EventEnrollmentInterface) {
       $access = $object->access('delete', $account, TRUE);
 
+      /** @var \Drupal\Core\Entity\ContentEntityBase $object */
       $event_id = $object->getFieldValue('field_event', 'target_id');
       $node = \Drupal::entityTypeManager()->getStorage('node')->load($event_id);
       // Also Event organizers can do this.

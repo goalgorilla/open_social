@@ -8,7 +8,7 @@
 /**
  * Install hook for Social Post Photo.
  */
-function social_post_photo_install() {
+function social_post_photo_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'verified',
@@ -36,7 +36,7 @@ function social_post_photo_install() {
 /**
  * Uninstall hook for Social Post Photo.
  */
-function social_post_photo_uninstall() {
+function social_post_photo_uninstall(): void {
 
   // Change photo to post.
   _social_post_photo_settype('photo', 'post');

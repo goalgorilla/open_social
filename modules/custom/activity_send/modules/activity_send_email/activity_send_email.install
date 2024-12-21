@@ -10,7 +10,7 @@
  *
  * Removes keys from the State API.
  */
-function activity_send_email_uninstall() {
+function activity_send_email_uninstall(): void {
   // Get plugins and their intervals.
   $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
   $plugins = $emailfrequencymanager->getDefinitions();
@@ -24,7 +24,7 @@ function activity_send_email_uninstall() {
 /**
  * Implements hook_schema().
  */
-function activity_send_email_schema() {
+function activity_send_email_schema(): array {
   $schema['user_activity_digest'] = [
     'fields' => [
       'uid' => [

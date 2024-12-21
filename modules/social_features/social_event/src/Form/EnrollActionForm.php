@@ -2,11 +2,18 @@
 
 namespace Drupal\social_event\Form;
 
+use Drupal\social_event\EventEnrollmentStatusHelper;
+use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\user\UserStorageInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -38,21 +45,21 @@ class EnrollActionForm extends FormBase {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $enrollmentStorage;
+  protected EntityStorageInterface $enrollmentStorage;
 
   /**
    * The user storage.
    *
    * @var \Drupal\user\UserStorageInterface
    */
-  protected $userStorage;
+  protected UserStorageInterface $userStorage;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The config factory.
@@ -66,33 +73,33 @@ class EnrollActionForm extends FormBase {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * The event invite status helper.
    *
    * @var \Drupal\social_event\EventEnrollmentStatusHelper
    */
-  protected $eventHelper;
+  protected EventEnrollmentStatusHelper $eventHelper;
 
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'enroll_action_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): EnrollActionForm {
     $instance = parent::create($container);
     $instance->routeMatch = $container->get('current_route_match');
     $instance->entityTypeManager = $container->get('entity_type.manager');
@@ -108,7 +115,8 @@ class EnrollActionForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
+    $enrollment = NULL;
     $node = $this->routeMatch->getParameter('node');
     $current_user = $this->currentUser();
 
@@ -140,7 +148,7 @@ class EnrollActionForm extends FormBase {
     // Check if groups are not empty, or that the outsiders are able to join.
     if (
       !empty($groups) &&
-      $node->field_event_enroll_outside_group->value !== '1'
+      $node->get('field_event_enroll_outside_group')->value !== '1'
       && empty($enrollments)
       && !social_event_manager_or_organizer()
     ) {
@@ -239,8 +247,9 @@ class EnrollActionForm extends FormBase {
     }
 
     if (!$current_user->isAnonymous()) {
+      /** @var \Drupal\social_event\EventEnrollmentInterface[] $enrollments */
       if ($enrollment = array_pop($enrollments)) {
-        $current_enrollment_status = $enrollment->field_enrollment_status->value;
+        $current_enrollment_status = $enrollment->get('field_enrollment_status')->value;
         if ($current_enrollment_status === '1') {
           $submit_text = $this->t('Enrolled');
           $to_enroll_status = '0';
@@ -251,7 +260,7 @@ class EnrollActionForm extends FormBase {
           !$isNodeOwner
         ) {
           $event_request_ajax = TRUE;
-          if ((int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING) {
+          if ((int) $enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::REQUEST_PENDING) {
             $submit_text = $this->t('Pending');
             $event_request_ajax = FALSE;
           }
@@ -323,9 +332,9 @@ class EnrollActionForm extends FormBase {
 
     $form['#attributes']['name'] = 'enroll_action_form';
 
-    if ((isset($enrollment->field_enrollment_status->value) && $enrollment->field_enrollment_status->value === '1')
-      || (isset($enrollment->field_request_or_invite_status->value)
-      && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING)) {
+    if ((isset($enrollment?->get('field_enrollment_status')->value) && $enrollment->get('field_enrollment_status')->value === '1')
+      || (isset($enrollment?->get('field_request_or_invite_status')->value)
+      && (int) $enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::REQUEST_PENDING)) {
       // Extra attributes needed for when a user is logged in. This will make
       // sure the button acts like a dropwdown.
       $form['enroll_wrapper']['enroll_for_this_event'] = [
@@ -428,7 +437,7 @@ class EnrollActionForm extends FormBase {
     Cache::invalidateTags($cache_tags);
 
     if ($enrollment = array_pop($enrollments)) {
-      $current_enrollment_status = $enrollment->field_enrollment_status->value;
+      $current_enrollment_status = $enrollment->get('field_enrollment_status')->value;
       // The user is enrolled, but cancels their enrollment.
       if ($to_enroll_status === '0' && $current_enrollment_status === '1') {
         // The user is enrolled by invited or request, but either the user or
@@ -439,9 +448,9 @@ class EnrollActionForm extends FormBase {
           // Mark this user's enrollment as declined.
           $enrollment->set('field_request_or_invite_status', EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED);
           // If the user is cancelling, un-enroll.
-          $current_enrollment_status = $enrollment->field_enrollment_status->value;
+          $current_enrollment_status = $enrollment->get('field_enrollment_status')->value;
           if ($current_enrollment_status === '1') {
-            $enrollment->field_enrollment_status->value = '0';
+            $enrollment->get('field_enrollment_status')->value = '0';
           }
           $enrollment->save();
         }
@@ -452,7 +461,7 @@ class EnrollActionForm extends FormBase {
         }
       }
       elseif ($to_enroll_status === '1' && $current_enrollment_status === '0') {
-        $enrollment->field_enrollment_status->value = '1';
+        $enrollment->get('field_enrollment_status')->value = '1';
 
         // If the user was invited to an event, and enrolls for this event
         // not from the /event-invites page, but from the event itself,
@@ -462,7 +471,7 @@ class EnrollActionForm extends FormBase {
         if ($this->moduleHandler->moduleExists('social_event_invite')) {
           $event_invites = $this->eventHelper->getAllUserEventEnrollments((string) $current_user->id());
 
-          if (NULL !== $event_invites && $event_invites > 0 && array_key_exists((int) $enrollment->id(), $event_invites)) {
+          if (count($event_invites) > 0 && array_key_exists((int) $enrollment->id(), $event_invites)) {
             $enrollment->set('field_request_or_invite_status', EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED);
           }
         }
@@ -470,7 +479,7 @@ class EnrollActionForm extends FormBase {
         $enrollment->save();
       }
       elseif ($to_enroll_status === '2' && $current_enrollment_status === '0') {
-        if ((int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING) {
+        if ((int) $enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::REQUEST_PENDING) {
           $enrollment->delete();
         }
       }
@@ -514,7 +523,7 @@ class EnrollActionForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
   }
 
@@ -526,7 +535,7 @@ class EnrollActionForm extends FormBase {
    * @return array
    *   Array of group entities.
    */
-  public function getGroups($node) {
+  public function getGroups(ContentEntityInterface $node): array {
     $group_relationships = GroupRelationship::loadByEntity($node);
 
     $groups = [];

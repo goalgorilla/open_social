@@ -13,7 +13,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRoutes(RouteCollection $collection) {
+  public function alterRoutes(RouteCollection $collection): void {
     // Replace "ajax_comments.cancel" with our implementation.
     // We need this custom implementation because we need to remove and invoke
     // additional ajax commands due to our theme.

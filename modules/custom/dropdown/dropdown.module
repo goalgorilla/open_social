@@ -11,7 +11,7 @@ use Drupal\Component\Utility\Html;
 /**
  * Implements hook_help().
  */
-function dropdown_help($route_name, RouteMatchInterface $route_match) {
+function dropdown_help(string $route_name, RouteMatchInterface $route_match): string {
   switch ($route_name) {
     // Main module help for the dropdown module.
     case 'help.page.dropdown':
@@ -22,18 +22,18 @@ function dropdown_help($route_name, RouteMatchInterface $route_match) {
 
     default:
   }
+  return '';
 }
 
 /**
  * Implements hook_theme().
  */
-function dropdown_theme() {
-  $items = [
+function dropdown_theme(): array {
+  return [
     'dropdown' => [
       'render element' => 'element',
     ],
   ];
-  return $items;
 }
 
 /**
@@ -47,7 +47,7 @@ function dropdown_theme() {
  *     Properties used: #title, #value, #options, #description, #required,
  *     #attributes, #children.
  */
-function template_preprocess_dropdown(array &$variables) {
+function template_preprocess_dropdown(array &$variables): void {
   $element = $variables['element'];
   $variables['attributes'] = [];
   if (isset($element['#id'])) {

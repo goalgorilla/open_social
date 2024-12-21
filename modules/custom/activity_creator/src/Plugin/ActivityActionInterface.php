@@ -13,12 +13,12 @@ interface ActivityActionInterface extends PluginInspectionInterface {
   /**
    * Creates a new message on the action with some logic behind it.
    */
-  public function create($entity);
+  public function create(EntityInterface $entity): void;
 
   /**
    * Dumb function that can be called to create the message.
    */
-  public function createMessage($entity);
+  public function createMessage(EntityInterface $entity): void;
 
   /**
    * Checks if this is a valid entity for the action.

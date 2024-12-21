@@ -12,7 +12,7 @@ use Drupal\Core\Render\Markup;
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function improved_theme_settings_form_system_theme_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+function improved_theme_settings_form_system_theme_settings_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
 
   if (isset($form['logo']['default_logo'])) {
     $form['logo']['default_logo']['#description'] = t('This logo is shown in the platform header and on emails sent to your users. It can be overriden in the above E-mail setting');
@@ -33,7 +33,7 @@ function improved_theme_settings_form_system_theme_settings_alter(&$form, FormSt
 
     // Unset all the settings that are part of the bootstrap group.
     foreach ($form as $setting => $settings) {
-      if (!empty($settings['#group']) && $settings['#group'] == "bootstrap") {
+      if (!empty($settings['#group']) && $settings['#group'] === "bootstrap") {
         $form[$setting]['#access'] = FALSE;
       }
     }
@@ -46,14 +46,14 @@ function improved_theme_settings_form_system_theme_settings_alter(&$form, FormSt
 /**
  * Implements hook_page_attachments().
  */
-function improved_theme_settings_page_attachments(array &$page) {
+function improved_theme_settings_page_attachments(array &$page): void {
 
   // Check for the current active theme.
   $active_theme = \Drupal::theme()->getActiveTheme()->getName();
   // Determine the admin theme from config.
   $config = \Drupal::config('system.theme');
   // If we're in the admin theme we need to add a library.
-  if ($active_theme == $config->get('admin')) {
+  if ($active_theme === $config->get('admin')) {
     $page['#attached']['library'][] = 'improved_theme_settings/color.admin';
   }
 
@@ -62,16 +62,16 @@ function improved_theme_settings_page_attachments(array &$page) {
 
   // We render our color & font settings in the head. Only if socialblue is
   // the default theme. And only if the current active theme is socialblue.
-  // Otherwise we also render it on all admin pages.
+  // Otherwise, we also render it on all admin pages.
   if (array_key_exists('socialbase', \Drupal::service('theme.manager')->getActiveTheme()->getBaseThemeExtensions())) {
-    if ($active_theme == $system_theme_settings) {
+    if ($active_theme === $system_theme_settings) {
       $style_to_add = '';
       if (\Drupal::moduleHandler()->moduleExists('social_font')) {
         // Render font value here.
         $style_to_add .= social_font_render();
       }
 
-      $card_radius = improved_theme_settings_get_setting('card_radius', $system_theme_settings);
+      $card_radius = (int) improved_theme_settings_get_setting('card_radius', $system_theme_settings);
 
       if ($card_radius >= 0) {
         $style_to_add .= '
@@ -250,10 +250,10 @@ function improved_theme_settings_page_attachments(array &$page) {
  * @return bool|string
  *   The value of the settings.
  */
-function improved_theme_settings_get_setting($setting, $themename) {
+function improved_theme_settings_get_setting(string $setting, string $themename): bool|string {
   // Fetch setting from the theme.
   $themevar = Xss::filter(theme_get_setting($setting, $themename) ?? "");
-  // In this case '' is something different than 0.
+  // In this case '' is something different from 0.
   if ($themevar !== trim((string) ((int) $themevar))) {
     return FALSE;
   }

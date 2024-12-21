@@ -21,7 +21,7 @@ class CommentSchemaExtension extends SchemaExtensionPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function registerResolvers(ResolverRegistryInterface $registry) {
+  public function registerResolvers(ResolverRegistryInterface $registry): void {
     $builder = new ResolverBuilder();
 
     $this->addQueryFields($registry, $builder);
@@ -36,7 +36,7 @@ class CommentSchemaExtension extends SchemaExtensionPluginBase {
    * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
    *   The resolver builder.
    */
-  protected function addCommentFields(ResolverRegistryInterface $registry, ResolverBuilder $builder) {
+  protected function addCommentFields(ResolverRegistryInterface $registry, ResolverBuilder $builder): void {
     $registry->addFieldResolver('Comment', 'id',
       $builder->produce('entity_uuid')
         ->map('entity', $builder->fromParent())
@@ -70,7 +70,7 @@ class CommentSchemaExtension extends SchemaExtensionPluginBase {
    * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
    *   The resolver builder.
    */
-  protected function addQueryFields(ResolverRegistryInterface $registry, ResolverBuilder $builder) {
+  protected function addQueryFields(ResolverRegistryInterface $registry, ResolverBuilder $builder): void {
     $registry->addFieldResolver('Query', 'comments',
       $builder->produce('query_comments')
         ->map('after', $builder->fromArgument('after'))
