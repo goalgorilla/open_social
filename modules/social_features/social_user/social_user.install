@@ -244,3 +244,16 @@ function social_user_update_13004(): void {
     ->clear('show_mail_in_messages')
     ->save();
 }
+
+/**
+ * LU should not have access to other users pages (except owns).
+ */
+function social_user_update_13005(): void {
+  user_role_revoke_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'access user profiles',
+      'view any profile profile',
+    ]
+  );
+}

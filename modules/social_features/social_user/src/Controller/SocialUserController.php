@@ -3,6 +3,7 @@
 namespace Drupal\social_user\Controller;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatch;
@@ -92,10 +93,19 @@ class SocialUserController extends ControllerBase {
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch) {
+  public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch): AccessResultInterface {
     $user = $routeMatch->getParameter('user');
     if ($user === NULL) {
+      // Parameter can exist in "views" pages.
+      $user = $routeMatch->getParameter('uid');
+    }
+
+    if ($user === NULL) {
+      // If user doesn't exist we can do anything.
       return AccessResult::neutral();
     }
 
@@ -105,16 +115,37 @@ class SocialUserController extends ControllerBase {
     }
 
     if (!$user instanceof UserInterface) {
+      // If user doesn't exist we can do anything.
       return AccessResult::neutral();
     }
 
+    // Make sure the current user has access to see blocked users.
     if ($user->isBlocked()) {
       if ($account->hasPermission('view blocked user')) {
         return AccessResult::allowed();
       }
+
       return AccessResult::forbidden();
     }
-    return AccessResult::allowed();
+
+    // If the current user has ony of these permissions, we allow the access.
+    if (
+      $account->hasPermission('view any profile profile') ||
+      $account->hasPermission('access user profiles')
+    ) {
+      return AccessResult::allowed();
+    }
+
+    // The current user should have access to own pages.
+    if (
+      $account->id() === $user->id() &&
+      $account->hasPermission('view own profile profile')
+    ) {
+      return AccessResult::allowed();
+    }
+
+    // Restrict the access to a user page.
+    return AccessResult::forbidden();
   }
 
   /**

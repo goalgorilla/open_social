@@ -3,6 +3,7 @@
 namespace Drupal\social_user\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\social_user\Controller\SocialUserController;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -45,18 +46,21 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route->setOption('_admin_route', FALSE);
     }
 
-    // Routes for which needs to disable access if the user is blocked.
-    $disable_access_for = [
-      'view.user_information.user_information',
-      'view.events.events_overview',
-      'view.topics.page_profile',
-    ];
-
-    // Add custom access to routes.
-    foreach ($disable_access_for as $route_name) {
-      if ($route = $collection->get($route_name)) {
-        $route->setRequirement('_custom_access', '\Drupal\social_user\Controller\SocialUserController::accessUsersPages');
+    // Restrict access for AN and AU to all views pages (except own).
+    $routes = $collection->all();
+    foreach ($routes as $route_name => $route) {
+      // Apply only for "views" routes.
+      if (!str_starts_with($route_name, 'view.')) {
+        continue;
       }
+
+      $path = $route->getPath();
+      // Make sure the route has a path to user page.
+      if (!str_starts_with($path, '/user/{user}') && !str_starts_with($path, '/user/{uid}')) {
+        continue;
+      }
+
+      $route->setRequirement('_custom_access', SocialUserController::class . '::accessUsersPages');
     }
   }
 
