@@ -111,6 +111,7 @@ function social_core_install() {
       'administer blocks',
       'administer block content',
       'access social_core dashboard',
+      'configure address format',
     ]
   );
   // Create AN Homepage block.
@@ -632,4 +633,25 @@ function social_core_update_130012() : void {
       $logger->info('Field storage already private: ' . $field_storage['entity_type'] . '.' . $field_storage['field_name']);
     }
   }
+}
+
+/**
+ * Configure address settings config.
+ */
+function social_core_update_130013(): void {
+  /** @var \Drupal\Core\Config\ConfigFactoryInterface $config_factory */
+  $config_factory = \Drupal::service('config.factory');
+
+  $address_config = $config_factory->getEditable('social_core.address.settings');
+  $address_config
+    ->set('format', '@address_line1%, @address_line2%, @address_line3%, @postal_code% @locality%, @country_code%')
+    ->set('regex_pattern', '/@[\s\S]+?%, |@[\s\S]+?% |@[\s\S]+?% - /')
+    ->save();
+}
+
+/**
+ * Grant permission to site-manager configure address format.
+ */
+function social_core_update_130014(): void {
+  user_role_grant_permissions('sitemanager', ['configure address format']);
 }
