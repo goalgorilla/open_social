@@ -1,0 +1,151 @@
+views.view.newest_users:
+  expected_config: { }
+  update_actions:
+    add:
+      display:
+        page_newest_users:
+          display_options:
+            filters:
+              type:
+                id: type
+                table: profile
+                field: type
+                entity_type: profile
+                entity_field: type
+                plugin_id: bundle
+                value:
+                  profile: profile
+                expose:
+                  operator_limit_selection: false
+                  operator_list: {  }
+              status:
+                id: status
+                table: users_field_data
+                field: status
+                relationship: uid
+                group_type: group
+                admin_label: ''
+                entity_type: user
+                entity_field: status
+                plugin_id: boolean
+                operator: '='
+                value: '1'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: {  }
+                  group_items: {  }
+              uid_raw:
+                id: uid_raw
+                table: users_field_data
+                field: uid_raw
+                relationship: uid
+                group_type: group
+                admin_label: filter_no_admin
+                entity_type: user
+                plugin_id: numeric
+                operator: '>'
+                value:
+                  min: ''
+                  max: ''
+                  value: '1'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: {  }
+                  group_items: {  }
+              roles_target_id:
+                id: roles_target_id
+                table: user__roles
+                field: roles_target_id
+                relationship: uid
+                group_type: group
+                admin_label: ''
+                entity_type: user
+                entity_field: roles
+                plugin_id: user_roles
+                operator: 'not empty'
+                value: {  }
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                  reduce: false
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: {  }
+                  group_items: {  }
+                reduce_duplicates: false
+            filter_groups:
+              operator: AND
+              groups:
+                1: AND
+          cache_metadata:
+            contexts:
+              - url

@@ -296,3 +296,19 @@ function _social_profile_hide_path_field_from_entity_form_display(string $taxono
       ->save();
   }
 }
+
+/**
+ * Re-update views /all-members.
+ *
+ * Hide blocked members and display organization filter.
+ */
+function social_profile_update_130004(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
