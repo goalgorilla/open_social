@@ -29,6 +29,10 @@ function social_comment_upload_form_comment_comment_form_alter(&$form, FormState
     // which is caused by alter in social_comment module.
     $form['field_comment_files']['#weight'] = 9;
     $form['actions']['#weight'] = 8;
+
+    // @todo Remove this once `SocialCommentUploadConfigOverride` is removed as
+    // part of https://getopensocial.atlassian.net/browse/PROD-22612.
+    $form['#fieldgroups']['group_add_attachment']->label = t('Add attachment');
   }
   else {
     // Turn it off.
