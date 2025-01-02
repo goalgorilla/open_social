@@ -1,0 +1,17 @@
+views.view.who_liked_this_entity:
+  expected_config:
+    display:
+      default:
+        display_options:
+          access:
+            type: perm
+            options:
+              perm: 'view any profile profile'
+  update_actions:
+    change:
+      display:
+        default:
+          display_options:
+            access:
+              type: who_liked_access
+              options: { }

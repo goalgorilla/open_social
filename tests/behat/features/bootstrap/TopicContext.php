@@ -94,6 +94,19 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
+   * View who liked a specific topic.
+   *
+   * @When I am viewing who liked the topic :topic
+   */
+  public function likeOverviewTopic(string $topic) : void {
+    $topic_id = $this->getTopicIdFromTitle($topic);
+    if ($topic_id === NULL) {
+      throw new \Exception("Topic '${topic}' does not exist.");
+    }
+    $this->visitPath("/wholiked/node/${topic_id}");
+  }
+
+  /**
    * Edit a specific topic.
    *
    * @When I am editing the topic :topic
