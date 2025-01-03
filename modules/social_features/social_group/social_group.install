@@ -1015,3 +1015,40 @@ function social_group_update_13013(): void {
       ->save();
   }
 }
+
+/**
+ * Delete legacy group configuration.
+ *
+ * During our move to flexible groups we still have some configs in the
+ * database that causes issues when trying to retrieve plugin definitions.
+ */
+function social_group_update_13014(): void {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get("social_group_group_type_migration_opt_out", FALSE)) {
+    \Drupal::logger("social_group")->info("Platform has opted out of group migration, you must clean up later manually.");
+    \Drupal::state()->delete("social_group_group_type_migration_opt_out");
+    return;
+  }
+
+  // Load all the active group types.
+  $group_types = GroupType::loadMultiple();
+  $old_group_types = [
+    'open_group',
+    'public_group',
+    'closed_group',
+  ];
+
+  foreach ($old_group_types as $group_type) {
+    // If the old group type is not in use anymore, delete outdated config.
+    if (!array_key_exists($group_type, $group_types)) {
+      $config = \Drupal::service('config.factory')
+        ->getEditable('core.entity_view_display.group_content.' . $group_type . '-group_node-topic.activity');
+      $config->delete();
+      $config = \Drupal::service('config.factory')
+        ->getEditable('core.entity_view_display.group_content.' . $group_type . '-group_node-event.activity');
+      $config->delete();
+    }
+  }
+}
