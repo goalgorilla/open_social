@@ -79,7 +79,11 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
       }
     }
 
-    $social_group_types = [];
+    $social_group_types = [
+      'flexible_group',
+      'sc',
+      'cc',
+    ];
 
     $this->moduleHandler->alter('social_group_types', $social_group_types);
 

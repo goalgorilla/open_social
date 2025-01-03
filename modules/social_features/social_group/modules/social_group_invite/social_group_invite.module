@@ -378,7 +378,11 @@ function social_group_invite_form_alter(&$form, FormStateInterface $form_state, 
   // has it's own routes, with no group context that loads the
   // join form. Decline is done differently. Due to the fact on joining
   // users need to fill in their membership fields.
-  $social_group_types = [];
+  $social_group_types = [
+    'flexible_group',
+    'sc',
+    'cc',
+  ];
 
   // Also include any added optional group types.
   \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
