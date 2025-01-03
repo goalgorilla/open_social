@@ -61,15 +61,30 @@ class UserSchemaExtension extends SchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('User', 'mail',
-      $builder->fromPath('entity:user', 'mail.value')
+      $builder->compose(
+        $builder->produce('field')
+          ->map('entity', $builder->fromParent())
+          ->map('field', $builder->fromValue('mail')),
+        $builder->fromPath('field:string', '0.value')
+      )
     );
 
     $registry->addFieldResolver('User', 'created',
-      $builder->fromPath('entity:user', 'created.value')
+      $builder->compose(
+        $builder->produce('field')
+          ->map('entity', $builder->fromParent())
+          ->map('field', $builder->fromValue('created')),
+        $builder->fromPath('field:created', '0.value')
+      )
     );
 
     $registry->addFieldResolver('User', 'updated',
-      $builder->fromPath('entity:user', 'changed.value')
+      $builder->compose(
+        $builder->produce('field')
+          ->map('entity', $builder->fromParent())
+          ->map('field', $builder->fromValue('changed')),
+        $builder->fromPath('field:changed', '0.value')
+      )
     );
 
     $registry->addFieldResolver('User', 'status',
