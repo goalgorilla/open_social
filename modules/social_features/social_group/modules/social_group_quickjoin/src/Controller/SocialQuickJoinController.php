@@ -69,14 +69,31 @@ class SocialQuickJoinController extends ControllerBase {
   public function quickJoin(SocialGroupInterface $group): RedirectResponse {
     // It's a group, so determine the path for redirection.
     $groupRedirect = $group->toUrl()->toString();
+    $settings = $this->configFactory->get('social_group_quickjoin.settings');
 
     // Check if the settings are active.
-    $active = $this->configFactory->get('social_group_quickjoin.settings')->get('social_group_quickjoin_enabled');
+    $active = $settings->get('social_group_quickjoin_enabled');
 
     // Not active, so back to group canonical.
     if (!$active) {
       // Redirect to the group.
       return new RedirectResponse($groupRedirect);
+    }
+
+    // Check if the current group type is enabled.
+    if (!$settings->get('social_group_quickjoin_' . $group->getGroupType()->id())) {
+      $this->messenger()->addMessage($this->t("You can't join this group directly."));
+      return new RedirectResponse($groupRedirect);
+    }
+
+    // With a join method, we need to be sure it allows for direct joining.
+    if ($group->hasField('field_group_allowed_join_method') &&
+      !empty($group->get('field_group_allowed_join_method')->value)) {
+      $method = $group->get('field_group_allowed_join_method')->value;
+      if ($method !== 'direct') {
+        $this->messenger()->addMessage($this->t("You can't join this group directly."));
+        return new RedirectResponse($groupRedirect);
+      }
     }
 
     // Already a member.

@@ -486,6 +486,21 @@ class GroupContext extends RawMinkContext {
   }
 
   /**
+   * Open the quick join link directly.
+   *
+   * @When I visit the group quick join link for :group
+   * @When am visiting the group quick join link for :group
+   */
+  public function visitGroupQuickJoin(string $group) : void {
+    $group_id = $this->getNewestGroupIdFromTitle($group);
+    if ($group_id === NULL) {
+      throw new \Exception("Group '${group}' does not exist.");
+    }
+
+    $this->visitPath("/group/${group_id}/quickjoin");
+  }
+
+  /**
    * Assert we're on the group page.
    *
    * Can be used to check that a redirect was implemented correctly.
