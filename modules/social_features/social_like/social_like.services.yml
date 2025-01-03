@@ -3,3 +3,7 @@ services:
     class: \Drupal\social_like\SocialLikeConfigOverride
     tags:
       - {name: config.factory.override, priority: 5}
+  social_like.route_subscriber:
+    class: Drupal\social_like\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
