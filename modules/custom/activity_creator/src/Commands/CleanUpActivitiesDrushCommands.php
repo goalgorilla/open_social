@@ -6,7 +6,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drush\Commands\DrushCommands;
 use Psr\Log\LoggerInterface;
@@ -57,7 +57,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
 
 
   /**
-   * The logger channel factory.
+   * Logger service.
    *
    * @var \Psr\Log\LoggerInterface
    */
@@ -83,7 +83,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
   public function __construct(
     Connection $database,
     EntityTypeManagerInterface $entityTypeManager,
-    LoggerChannelFactory $loggerChannelFactory,
+    LoggerChannelFactoryInterface $loggerChannelFactory
   ) {
     parent::__construct();
     $this->connection = $database;
