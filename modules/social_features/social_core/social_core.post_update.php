@@ -136,7 +136,6 @@ function social_core_post_update_move_file_locations(array &$sandbox): void {
         if ($file_system->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY)) {
           try {
             \Drupal::service('file.repository')->move($file, $directory . '/' . $file->getFilename());
-            $sandbox['num_processed']++;
           }
           catch (Exception $e) {
             \Drupal::logger('social_core')->error('Failed to move file with ID ' . $file->id() . ': ' . $e->getMessage());
@@ -145,6 +144,7 @@ function social_core_post_update_move_file_locations(array &$sandbox): void {
         else {
           \Drupal::logger('social_core')->error('Could not prepare directory: ' . $directory);
         }
+        $sandbox['num_processed']++;
       }
     }
   }
