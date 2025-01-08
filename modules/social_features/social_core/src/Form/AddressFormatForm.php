@@ -44,7 +44,7 @@ class AddressFormatForm extends ConfigFormBase {
       '#type' => 'textarea',
       '#description' => $this->t('You can set the format address to be rendered, check available tokens below.'),
       '#required' => TRUE,
-      '#default_value' => $address_config->get('address_format'),
+      '#default_value' => $address_config->get('format'),
     ];
 
     $form['address_format_fieldset']['available_tokens'] = [
@@ -115,7 +115,7 @@ class AddressFormatForm extends ConfigFormBase {
     $address_format = $form_state->getValue(['address_format_fieldset', 'address_format']);
     $address_config = $this->config('social_core.address.settings');
 
-    $address_config->set('address_format', $address_format)
+    $address_config->set('format', $address_format)
       ->save();
 
     $this->messenger()->addStatus($this->t('The address format has been updated.'));
