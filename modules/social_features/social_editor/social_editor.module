@@ -103,3 +103,13 @@ function social_editor_form_editor_link_dialog_alter(&$form, FormStateInterface 
     $form['attributes']['title']['#description'] = t('Give a title that will appear when hovering over this link.');
   }
 }
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function social_editor_library_info_alter(array &$libraries, string $extension): void {
+  // Load components styles for CKEditor5 styles.
+  if ($extension === 'ckeditor5' && isset($libraries['internal.drupal.ckeditor5.stylesheets'])) {
+    $libraries['internal.drupal.ckeditor5.stylesheets']['dependencies'][] = 'social_editor/ckeditor5_fullscreen';
+  }
+}
