@@ -105,8 +105,8 @@ class AddressFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
-    $address_config = $this->configFactory->get('social_core.address.settings')->get();
-    $address_string = $address_config['format'];
+    $address_config = $this->configFactory->get('social_core.address.settings');
+    $address_string = $address_config->get('format');
     $address_values = current($items->getValue());
 
     // When the address field is empty, return early.
@@ -127,7 +127,7 @@ class AddressFormatter extends FormatterBase {
       $address_string = str_replace("@" . $key . "%", $address_value, $address_string);
     }
 
-    return ['#markup' => preg_replace($address_config['regex_pattern'], '', $address_string)];
+    return ['#markup' => preg_replace($address_config->get('regex_pattern'), '', $address_string)];
   }
 
 }
