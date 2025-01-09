@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
@@ -60,6 +61,7 @@ use Drupal\user\UserInterface;
  */
 class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterface {
   use EntityChangedTrait;
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -120,8 +122,14 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
     }
 
     $label = $this->getName();
-    if (empty($label)) {
-      $label = $this->get('field_account')->entity->label();
+    if (empty($label) && $this->getAccountEntity() instanceof UserInterface) {
+      // We use the user account name.
+      $label = $this->getAccountEntity()->label();
+    }
+    else {
+      // If the account is not returned, it means the user was deleted,
+      // but somehow the event enrollment was not removed.
+      $label = 'Deleted user';
     }
 
     return $label;

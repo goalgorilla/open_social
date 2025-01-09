@@ -5,6 +5,9 @@
  * Post update functions for the Social event module.
  */
 
+use Drupal\Core\StringTranslation\PluralTranslatableMarkup;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
 /**
  * Empty post update hook.
  */
@@ -149,4 +152,98 @@ function social_event_post_update_replace_node_type_condition(): void {
       $block->save(TRUE);
     }
   }
+}
+
+/**
+ * Remove stale event enrollments that still link to deleted user accounts.
+ *
+ * Scenario 1:
+ *
+ * Logged in as Site Manager.
+ * Created an event.
+ * Add a user via Directly adding them to event.
+ *
+ * Result
+ * A new event enrollment has been created where userID is Site Manager’s UID
+ * and field_account is of the added user.
+ *
+ * Scenario 2:
+ *
+ * Logged in as Site Manager.
+ * Created an event.
+ * Invited a user via email adding them to event.
+ *
+ * Result
+ * A new event enrollment has been created where userID is Site Manager’s UID
+ * and field_account is of the invited user.
+ *
+ *
+ * Scenario 3:
+ *
+ * Logged in as a user.
+ * Joined an existing event.
+ *
+ * Result
+ * A new event enrollment has been created where userID and field_account is
+ * user’s own UID.
+ *
+ * Previously, in social_event_user_delete() didn’t delete event enrollments
+ * even if the user is removed from the system, as event enrollments were
+ * created due to Scenario 1 and 2.
+ *
+ * @see https://git.drupalcode.org/project/social/-/blob/12.3.10/modules/social_features/social_event/social_event.module?ref_type=tags#L546
+ */
+function social_event_post_update_10303_remove_stale_event_enrollment(array &$sandbox): TranslatableMarkup|PluralTranslatableMarkup {
+  $event_enrollment_storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+
+  if (!isset($sandbox['total'])) {
+    // Get all event enrollment ids.
+    $sandbox['ids'] = $event_enrollment_storage
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->execute();
+    // Write total of entities need to be processed to $sandbox.
+    $sandbox['total'] = count($sandbox['ids']);
+
+    // Initiate default value for current processing № of element.
+    $sandbox['current'] = 0;
+  }
+
+  // Do not continue if no entities are found.
+  if (empty($sandbox['total']) || empty($sandbox['ids'])) {
+    $sandbox['#finished'] = 1;
+    return new TranslatableMarkup('No event enrollments to be processed.');
+  }
+
+  // Try to update 25 events at a time.
+  $ids = array_slice($sandbox['ids'], $sandbox['current'], 25);
+
+  /** @var \Drupal\social_event\Entity\EventEnrollment $event_enrollment */
+  foreach ($event_enrollment_storage->loadMultiple($ids) as $event_enrollment) {
+    if ($event_enrollment->hasField('field_account')) {
+      $user = $event_enrollment->get('field_account')->getValue();
+      if (is_array($user) && array_key_exists('target_id', $user)) {
+        $user_id = $event_enrollment->get('field_account')->getValue()[0]['target_id'];
+
+        // If no user entity is found, then delete the enrollment.
+        if (empty($user_id) || !\Drupal::entityTypeManager()->getStorage('user')->load($user_id)) {
+          $event_enrollment->delete();
+        }
+      }
+    }
+    $sandbox['current']++;
+  }
+
+  // Try to update the percentage but avoid division by zero.
+  $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+
+  if ($sandbox['#finished'] === 1) {
+    return new TranslatableMarkup('Finished deleting stale event enrollments.');
+  }
+
+  return new PluralTranslatableMarkup($sandbox['current'],
+    'Processed @count entry of @total.',
+    'Processed @count entries of @total.',
+    ['@total' => $sandbox['total']],
+  );
 }

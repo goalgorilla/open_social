@@ -632,9 +632,14 @@ function social_event_flagging_insert(EntityInterface $entity) {
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function social_event_user_delete(EntityInterface $entity) {
+function social_event_user_delete(EntityInterface $entity): void {
+  // Fetch all event enrollments where user is enrolled.
+  // @see EventEnrollmentStatusHelper::getAllUserEventEnrollments().
+  $entities = \Drupal::service('social_event.social_event.status_helper')
+    ->getAllUserEventEnrollments($entity);
+
+  // Delete all event_enrollment objects related to that user.
   $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
-  $entities = $storage->loadByProperties(['user_id' => $entity->id()]);
   $storage->delete($entities);
 }
 
