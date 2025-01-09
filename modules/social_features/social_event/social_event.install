@@ -296,17 +296,3 @@ function social_event_update_130004(): void {
       ->save();
   }
 }
-
-/**
- * Set address field from event to use Address Formatted plugin.
- */
-function social_event_update_130005(): string {
-  /** @var \Drupal\update_helper\Updater $updater */
-  $updater = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updater->executeUpdate('social_event', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
-  return $updater->logger()->output();
-}
