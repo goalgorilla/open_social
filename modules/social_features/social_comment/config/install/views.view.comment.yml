@@ -11,6 +11,7 @@ dependencies:
     - profile
     - social_comment
     - user
+    - views_bulk_operations
 id: comment
 label: Comments
 module: social_comment
@@ -27,16 +28,15 @@ display:
     display_options:
       title: Comments
       fields:
-        comment_bulk_form:
-          id: comment_bulk_form
-          table: comment
-          field: comment_bulk_form
+        views_bulk_operations_bulk_form:
+          id: views_bulk_operations_bulk_form
+          table: views
+          field: views_bulk_operations_bulk_form
           relationship: none
           group_type: group
           admin_label: ''
-          entity_type: comment
-          plugin_id: comment_bulk_form
-          label: ''
+          plugin_id: views_bulk_operations_bulk_form
+          label: 'Views bulk operations'
           exclude: false
           alter:
             alter_text: false
@@ -69,7 +69,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -77,11 +77,21 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
+          batch: true
+          batch_size: 10
+          form_step: true
+          ajax_loader: false
+          buttons: false
           action_title: Action
-          include_exclude: include
+          clear_on_exposed: true
+          force_selection_info: false
           selected_actions:
-            - comment_delete_action
-            - comment_unpublish_action
+            -
+              action_id: views_bulk_operations_delete_entity
+            -
+              action_id: 'entity:unpublish_action:comment'
+              preconfiguration:
+                add_confirmation: false
         uid:
           id: uid
           table: comment_field_data
@@ -463,6 +473,15 @@ display:
             date_format: short
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: ''
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -719,6 +738,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 50
           total_pages: null
           id: 0
@@ -1264,16 +1284,15 @@ display:
     position: 2
     display_options:
       fields:
-        comment_bulk_form:
-          id: comment_bulk_form
-          table: comment
-          field: comment_bulk_form
+        views_bulk_operations_bulk_form:
+          id: views_bulk_operations_bulk_form
+          table: views
+          field: views_bulk_operations_bulk_form
           relationship: none
           group_type: group
           admin_label: ''
-          entity_type: comment
-          plugin_id: comment_bulk_form
-          label: ''
+          plugin_id: views_bulk_operations_bulk_form
+          label: 'Views bulk operations'
           exclude: false
           alter:
             alter_text: false
@@ -1306,7 +1325,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -1314,11 +1333,21 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
+          batch: true
+          batch_size: 10
+          form_step: true
+          ajax_loader: false
+          buttons: false
           action_title: Action
-          include_exclude: include
+          clear_on_exposed: true
+          force_selection_info: false
           selected_actions:
-            - comment_delete_action
-            - comment_publish_action
+            -
+              action_id: views_bulk_operations_delete_entity
+            -
+              action_id: 'entity:publish_action:comment'
+              preconfiguration:
+                add_confirmation: false
         uid:
           id: uid
           table: comment_field_data
@@ -1700,6 +1729,15 @@ display:
             date_format: short
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: ''
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
           group_column: value
           group_columns: {  }
           group_rows: true

@@ -90,3 +90,182 @@ function social_comment_update_13000() : string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Change the views.view.comment bulk operation field.
+ *
+ * Convert the bulk form field to the view bulk form field
+ * for better VBO support.
+ */
+function social_comment_update_13001() : void {
+  /** @var \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory */
+  $logger_factory = \Drupal::service('logger.factory');
+  $logger = $logger_factory->get('social_comment');
+
+  $content_view = \Drupal::configFactory()->getEditable('views.view.comment');
+  $view_pages = [
+    'default',
+    'page_unapproved',
+  ];
+  foreach ($view_pages as $view_page) {
+    $fields = $content_view->get('display.' . $view_page . '.display_options.fields');
+
+    // Replace the old field with the new one and porting the active actions.
+    if (isset($fields['comment_bulk_form']) && !isset($fields['views_bulk_operations_bulk_form'])) {
+      // Unset the old field.
+      unset($fields['comment_bulk_form']);
+
+      // Get all the actions related to comment.
+      $entity_type = 'comment';
+      $entity_type_manager = \Drupal::service('entity_type.manager');
+      $actionStorage = $entity_type_manager->getStorage('action');
+      $actions = array_filter($actionStorage->loadMultiple(), function ($action) use ($entity_type) {
+        return $action->getType() == $entity_type;
+      });
+
+      // Get the selected comment bulk actions for the view.
+      $select_options = $content_view->get('display.' . $view_page . '.display_options.fields.comment_bulk_form.selected_actions');
+      $include_exclude = $content_view->get('display.' . $view_page . '.display_options.fields.comment_bulk_form.include_exclude');
+      // If not set, use default.
+      if ($include_exclude === NULL) {
+        $include_exclude = 'exclude';
+      }
+
+      // Prepare the plugins that are available.
+      $available_plugins = [];
+      foreach ($actions as $action) {
+        $available_plugins[] = $action->id();
+      }
+
+      // Get the actions that we want migrated depending on the configuration.
+      $migrate_plugins = [];
+      if ($include_exclude === 'include') {
+        // If nothing has been selected, it should include all.
+        if (empty($select_options)) {
+          $migrate_plugins = $available_plugins;
+        }
+        else {
+          // For include we should look for similarities in the arrays.
+          $migrate_plugins = array_intersect($select_options, $available_plugins);
+        }
+      }
+      elseif ($include_exclude === 'exclude') {
+        // If nothing has been selected, it should exclude all.
+        if (empty($select_options)) {
+          $migrate_plugins = $available_plugins;
+        }
+        else {
+          // For exclude we should look for differences in the arrays.
+          $migrate_plugins = array_diff($available_plugins, $select_options);
+        }
+      }
+
+      // Now convert the migrate_plugins to the new field structure.
+      $migrate_plugins_converted = [];
+      // Get the operations from the VBO for comparing.
+      $vbo_action_manager = \Drupal::service('plugin.manager.views_bulk_operations_action');
+      $vboDefinitions = $vbo_action_manager->getDefinitions();
+      foreach ($migrate_plugins as $migrate_plugin) {
+        // For the node delete there is a difference in the new structure.
+        if ($migrate_plugin === 'comment_delete_action') {
+          $migrate_plugins_converted[] = [
+            'action_id' => 'views_bulk_operations_delete_entity',
+          ];
+        }
+        else {
+          $action = $actions[$migrate_plugin];
+          $plugin = $action->getPlugin();
+          $plugin_id = $plugin->getPluginId();
+          // If the action does not exist within the VBO definition we can't
+          // convert and log a message.
+          if (!isset($vboDefinitions[$plugin_id])) {
+            $logger->info('VBO field plugin could not be converted: ' . $plugin_id);
+            continue;
+          }
+          $migrate_plugins_converted[] = [
+            'action_id' => $plugin_id,
+            'preconfiguration' => [
+              'add_confirmation' => FALSE,
+            ],
+          ];
+        }
+      }
+
+      if (empty($migrate_plugins_converted)) {
+        $logger->error('No plugins could be found, aborting conversion');
+        return;
+      }
+
+      // Prepare the new field based on the migrate_plugins.
+      $new_field = [
+        'views_bulk_operations_bulk_form' => [
+          'id' => 'views_bulk_operations_bulk_form',
+          'table' => 'views',
+          'field' => 'views_bulk_operations_bulk_form',
+          'relationship' => 'none',
+          'group_type' => 'group',
+          'admin_label' => '',
+          'plugin_id' => 'views_bulk_operations_bulk_form',
+          'label' => 'Views bulk operations',
+          'exclude' => FALSE,
+          'alter' => [
+            'alter_text' => FALSE,
+            'text' => '',
+            'make_link' => FALSE,
+            'path' => '',
+            'absolute' => FALSE,
+            'external' => FALSE,
+            'replace_spaces' => FALSE,
+            'path_case' => 'none',
+            'trim_whitespace' => FALSE,
+            'alt' => '',
+            'rel' => '',
+            'link_class' => '',
+            'prefix' => '',
+            'suffix' => '',
+            'target' => '',
+            'nl2br' => FALSE,
+            'max_length' => 0,
+            'word_boundary' => TRUE,
+            'ellipsis' => TRUE,
+            'more_link' => FALSE,
+            'more_link_text' => '',
+            'more_link_path' => '',
+            'strip_tags' => FALSE,
+            'trim' => FALSE,
+            'preserve_tags' => '',
+            'html' => FALSE,
+          ],
+          'element_type' => '',
+          'element_class' => '',
+          'element_label_type' => '',
+          'element_label_class' => '',
+          'element_label_colon' => TRUE,
+          'element_wrapper_type' => '',
+          'element_wrapper_class' => '',
+          'element_default_classes' => TRUE,
+          'empty' => '',
+          'hide_empty' => FALSE,
+          'empty_zero' => FALSE,
+          'hide_alter_empty' => TRUE,
+          'batch' => TRUE,
+          'batch_size' => 10,
+          'form_step' => TRUE,
+          'ajax_loader' => FALSE,
+          'buttons' => FALSE,
+          'action_title' => 'Action',
+          'clear_on_exposed' => TRUE,
+          'force_selection_info' => FALSE,
+          'selected_actions' => $migrate_plugins_converted,
+        ],
+      ];
+
+      $fields = array_merge($new_field, $fields);
+
+      // Save fields values.
+      $content_view->set('display.' . $view_page . '.display_options.fields', $fields);
+    }
+  }
+  // Save the view.
+  $content_view->save();
+}
