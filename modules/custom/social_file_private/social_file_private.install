@@ -11,3 +11,10 @@
 function social_file_private_update_last_removed() : int {
   return 11001;
 }
+
+/**
+ * Uninstall Social File Private because it is deprecated.
+ */
+function social_file_private_update_130000(): void {
+  \Drupal::service('module_installer')->uninstall(['social_file_private']);
+}
