@@ -281,3 +281,13 @@ function social_topic_update_130003(): void {
     ->set('content', $content)
     ->save();
 }
+
+/**
+ * Update access rules to "user/{uid}/topics" page.
+ */
+function social_topic_update_130004() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_topic', __FUNCTION__);
+  return $updater->logger()->output();
+}

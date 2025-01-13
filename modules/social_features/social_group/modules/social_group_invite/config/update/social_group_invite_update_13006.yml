@@ -1,0 +1,24 @@
+views.view.social_group_user_invitations:
+  expected_config:
+    display:
+      default:
+        display_options:
+          access:
+            type: role
+            options:
+              role:
+                administrator: administrator
+                verified: verified
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            access: { }
+    change:
+      display:
+        default:
+          display_options:
+            access:
+              type: social_profile_pages_access
+              options: { }

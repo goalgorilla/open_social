@@ -225,3 +225,13 @@ function social_group_invite_update_13005() : void {
     $config->save();
   }
 }
+
+/**
+ * Update access rules to "user/{uid}/invites" page.
+ */
+function social_group_invite_update_13006() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group_invite', __FUNCTION__);
+  return $updater->logger()->output();
+}

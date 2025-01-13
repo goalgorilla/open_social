@@ -1,16 +1,34 @@
 views.view.user_information:
-  expected_config: {  }
+  expected_config:
+    display:
+      default:
+        display_options:
+          access:
+            type: perm
+            options:
+              perm: 'view any profile profile'
   update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            access: { }
     change:
       display:
         default:
           display_options:
             access:
-              options:
-                perm: 'view own profile profile'
+              type: social_profile_pages_access
+              options: { }
 
 views.view.newest_users:
-  expected_config: {  }
+  expected_config:
+    display:
+      default:
+        display_options:
+          access:
+            options:
+              perm: 'view any profile profile'
   update_actions:
     change:
       display:

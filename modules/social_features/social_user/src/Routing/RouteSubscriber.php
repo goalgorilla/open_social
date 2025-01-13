@@ -3,7 +3,6 @@
 namespace Drupal\social_user\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
-use Drupal\social_user\Controller\SocialUserController;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -44,23 +43,6 @@ class RouteSubscriber extends RouteSubscriberBase {
 
     if ($route = $collection->get('entity.user.edit_form')) {
       $route->setOption('_admin_route', FALSE);
-    }
-
-    // Restrict access for AN and AU to all views pages (except own).
-    $routes = $collection->all();
-    foreach ($routes as $route_name => $route) {
-      // Apply only for "views" routes.
-      if (!str_starts_with($route_name, 'view.')) {
-        continue;
-      }
-
-      $path = $route->getPath();
-      // Make sure the route has a path to user page.
-      if (!str_starts_with($path, '/user/{user}') && !str_starts_with($path, '/user/{uid}')) {
-        continue;
-      }
-
-      $route->setRequirement('_custom_access', SocialUserController::class . '::accessUsersPages');
     }
   }
 
