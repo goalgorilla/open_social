@@ -60,6 +60,21 @@ function social_search_alter_users_exposed_filter_block(&$form, FormStateInterfa
     // $form['settings']['#attributes']['class'] = ['indent_filter'];
     unset($form['created_wrapper']);
   }
+
+  // Check if field profile tag, expertise and/or interest are enabled.
+  $profile_fields_config = Drupal::config('social_profile_fields.settings');
+
+  if (empty($profile_fields_config->get('profile_profile_field_profile_interests'))) {
+    unset($form['interests']);
+  }
+
+  if (empty($profile_fields_config->get('profile_profile_field_profile_expertise'))) {
+    unset($form['expertise']);
+  }
+
+  if (empty($profile_fields_config->get('profile_profile_field_profile_profile_tag'))) {
+    unset($form['profile_tag']);
+  }
 }
 
 /**
