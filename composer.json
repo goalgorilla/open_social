@@ -36,6 +36,9 @@
             "drupal/ajax_comments": {
                 "Ajax not working when using non-default view mode": "https://www.drupal.org/files/issues/2023-01-30/ajax_comments-ajax_non_default_view_mode-2896916-beta5-60.patch"
             },
+            "drupal/bootstrap": {
+                "Dropdown toggle variable ignored when using links__dropbutton": "https://www.drupal.org/files/issues/2022-10-11/dropdown-without-default-button-3021413-3x-5.patch"
+            },
             "drupal/color" : {
                 "Issue #1236098: Notice: Undefined index: 'base' in _color_rewrite_stylesheet()": "https://www.drupal.org/files/issues/2023-10-30/undefined-index-in-_color_rewrite_stylesheet-1236098-59.patch"
             },
@@ -119,6 +122,7 @@
         "drupal/ajax_comments": "1.0.0-beta6",
         "drupal/better_exposed_filters": "6.0.6",
         "drupal/block_field": "1.0.0-rc5",
+        "drupal/bootstrap": "3.34",
         "drupal/ckeditor": "1.0.2",
         "drupal/ckeditor5_plugin_pack": "^1.2",
         "drupal/config_modify": "^1",
@@ -167,8 +171,6 @@
         "drupal/search_api_solr": "4.3.5",
         "drupal/select2": "1.15.0",
         "drupal/shariff": "2.0.0",
-        "drupal/socialbase": "2.6.9",
-        "drupal/socialblue": "2.6.6",
         "drupal/symfony_mailer": "^1.5",
         "drupal/token": "1.15.0",
         "drupal/ultimate_cron": "2.0.0-alpha8",
@@ -205,7 +207,9 @@
         "webonyx/graphql-php": ">=14.5.0"
     },
     "replace": {
-        "drupal/social": "self.version"
+        "drupal/social": "self.version",
+        "drupal/socialbase": "self.version",
+        "drupal/socialblue": "self.version"
     },
     "config": {
         "sort-packages": true
