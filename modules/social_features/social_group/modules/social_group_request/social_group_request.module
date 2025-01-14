@@ -342,7 +342,6 @@ function social_group_request_views_pre_view(ViewExecutable $view, $display_id, 
       'plugin_id' => 'text_custom',
     ];
     $view->setHandler('membership_requests', 'footer', 'area_text_custom', $options);
-    $view->element['#attached']['library'][] = 'social_group_request/social_group_table';
   }
 }
 
