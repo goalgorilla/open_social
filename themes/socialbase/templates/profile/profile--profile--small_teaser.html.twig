@@ -1,0 +1,51 @@
+{#
+/**
+ * @file
+ *
+ * Default theme implementation for profiles.
+ *
+ * Available variables:
+ * - content: Items for the content of the profile.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given child element:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ * - attributes: HTML attributes for the wrapper.
+ * - profile: The profile object.
+ * - url: The profile URL.
+ * - avatar_attributes: HTML attributes for the link with an avatar.
+ * - link_attributes: HTML attributes for the link with a username.
+ *
+ * @ingroup themeable
+ */
+#}
+
+<div class="teaser--small">
+  <div class="teaser--small__media teaser--small__media--profile">
+    <a href="{{ profile_home }}" {{ avatar_attributes }} title="{% trans %} profile avatar {% endtrans %}">
+      {{ content.field_profile_image }}
+    </a>
+  </div>
+
+  <div class="teaser--small__details small">
+    <div class="card__text teaser--small__title">
+      <a href="{{ profile_home }}" {{ link_attributes }} title="{% trans %} profile information {% endtrans %}">
+        {{ profile_name }}
+        {{ profile_name_extra }}
+      </a>
+    </div>
+
+    {% if content.field_profile_function|render or content.field_profile_organization|render %}
+      <div class="teaser--small__meta">
+        {% if content.field_profile_organization|render %}
+          {{ '@function @ @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
+        {% else %}
+          {{ content.field_profile_function }}
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+</div>

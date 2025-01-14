@@ -1,0 +1,176 @@
+<?php
+
+/**
+ * @file
+ * The primary PHP file for the Social base theme.
+ */
+
+use Drupal\Core\GeneratedLink;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Component\Utility\Html;
+
+// Include all files from the includes directory.
+$includes_path = dirname(__FILE__) . '/includes/*.inc';
+foreach (glob($includes_path) as $filename) {
+  require_once dirname(__FILE__) . '/includes/' . basename($filename);
+}
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function socialbase_library_info_alter(&$libraries, $extension): void {
+  // When the social_comment_upload module is enabled we want to load the
+  // photoswipe styling with the comment styling.
+  if ($extension === 'socialbase' && isset($libraries['comment']) && \Drupal::moduleHandler()->moduleExists('social_comment_upload')) {
+    $libraries['comment']['dependencies'][] = 'socialbase/photoswipe-gallery';
+    $libraries['comment']['dependencies'][] = 'socialbase/photoswipe.image';
+  }
+}
+
+/**
+ * Prepare group link when an event or topic belongs to one group.
+ *
+ * @param mixed $node
+ *   Node object.
+ *
+ * @return \Drupal\Core\GeneratedLink|null
+ *   The group links.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityMalformedException
+ */
+function socialbase_group_link($node) : ?GeneratedLink {
+  $group = _social_group_get_current_group($node);
+
+  // We can't load a group for previews yet because it's not associated yet.
+  if ($node->isNew() || $node->id() === 0) {
+    return NULL;
+  }
+
+  if ($group === NULL || !$group->access('view')) {
+    return NULL;
+  }
+
+  $group_content = \Drupal::entityTypeManager()
+    ->getStorage('group_content')
+    ->loadByProperties([
+      'entity_id' => $node->id(),
+    ]);
+
+  if (empty($group_content)) {
+    return NULL;
+  }
+
+  $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+  if ($group->isTranslatable() && $group->hasTranslation($curr_langcode)) {
+    $group = $group->getTranslation($curr_langcode);
+  }
+
+  return $group->toLink()->toString();
+}
+
+/**
+ * Helper function to retrieve the icon string for a visibility title.
+ *
+ * @param string $title
+ *   The title for the icon.
+ *
+ *   The icon connected to the title.*/
+function _socialbase_get_visibility_icon(string $title): string {
+  // Set the materialize icon.
+  switch ($title) {
+    case 'Community':
+      $icon = 'community';
+      break;
+
+    case 'Recipient':
+      $icon = 'community';
+      break;
+
+    case 'Group members':
+    case 'Group members only (secret)':
+      $icon = 'lock';
+      break;
+
+    default:
+      $icon = strtolower(Html::escape($title));
+  }
+
+  return $icon;
+}
+
+/**
+ * Provides the join method icon.
+ */
+function _socialbase_get_join_method_icon($title) {
+  // Set the materialize icon.
+  switch ($title) {
+    case 'Open to join':
+      $icon = 'join_open';
+      break;
+
+    case 'Request to join':
+      $icon = 'join_close';
+      break;
+
+    case 'Invite only':
+      $icon = 'invite';
+      break;
+
+    default:
+      $icon = strtolower(Html::escape($title));
+  }
+
+  return $icon;
+}
+
+/**
+ * Get like count for a node.
+ */
+function _socialbase_node_get_like_count($type, $id): int {
+  $count = 0;
+
+  // The result function service needs entity type and entity id in order
+  // to get proper results.
+  if (!empty($type) && !empty($id)) {
+    $manager = Drupal::service('plugin.manager.votingapi.resultfunction');
+    $results = $manager->getResults($type, $id);
+
+    // Let's see if our results carry the sum of all votes.
+    if (!empty($results['like']['vote_sum'])) {
+      $count = $results['like']['vote_sum'];
+    }
+  }
+
+  return $count;
+
+}
+
+/**
+ * Implements hook_theme().
+ */
+function socialbase_theme($existing, $type, $theme, $path) {
+  return [
+    'invite_email_preview' => [
+      'variables' => [
+        'title' => NULL,
+        'logo' => NULL,
+        'subject' => NULL,
+        'body' => NULL,
+        'helper' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_image_formatter_alter(array &$suggestions, array $variables): void {
+  // We wanted to add our classes to default template.
+  // @see image-formatter--node--field-files.html.twig
+  $entity = $variables['item']->getEntity();
+  $field_name = $variables['item']->getParent()->getName();
+  $suggestions[] = 'image_formatter__' . $entity->getEntityTypeId() . '__' . $field_name;
+}

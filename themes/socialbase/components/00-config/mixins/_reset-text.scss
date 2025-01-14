@@ -1,0 +1,26 @@
+// Reset text
+//
+// Allows an element to reset all text styles, for example in a popover <br />
+// `@mixin reset-text()`
+//
+// Weight: 5
+//
+// Style guide: sass.resettext
+
+@mixin reset-text() {
+  // We deliberately do NOT reset font-size.
+  font-style: normal;
+  font-weight: normal;
+  letter-spacing: normal;
+  line-break: auto;
+  line-height: $line-height-base;
+  text-align: left; // Fallback for where `start` is not supported
+  text-align: start;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  white-space: normal;
+  word-break: normal;
+  word-spacing: normal;
+  word-wrap: normal;
+}

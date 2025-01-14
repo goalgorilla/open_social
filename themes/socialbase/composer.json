@@ -1,0 +1,17 @@
+{
+    "name": "drupal/socialbase",
+    "description": "Base theme for Open social installations.",
+    "license": "GPL-2.0-or-later",
+    "type": "drupal-theme",
+    "minimum-stability": "dev",
+    "require": {
+        "drupal/bootstrap": "3.34"
+    },
+    "extra": {
+        "patches": {
+            "drupal/bootstrap": {
+                "Dropdown toggle variable ignored when using links__dropbutton": "https://www.drupal.org/files/issues/2022-10-11/dropdown-without-default-button-3021413-3x-5.patch"
+            }
+        }
+    }
+}

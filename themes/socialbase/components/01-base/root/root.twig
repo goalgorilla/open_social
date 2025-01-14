@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Component for an HTML document.
+ *
+ * Variables:
+ * - html_attributes: [string] Attributes for the HTML element.
+ * - title: [string] The page title.
+ * - attributes: [string] Attributes for the BODY element.
+ * - content: [string] The component contents.
+ */
+#}
+<!DOCTYPE html>
+<html {{ html_attributes }}>
+  <head>
+    {% block head %}
+      <title>{{ title }}</title>
+    {% endblock %}
+  </head>
+  <body {{ attributes }}>
+    {% block body %}
+      {{ content }}
+    {% endblock %}
+  </body>
+</html>

@@ -1,0 +1,28 @@
+{#
+/**
+ * @file data-policy-data-policy-revision.html.twig
+ *
+ * Default theme implementation to present Data policy revision teaser.
+ *
+ * This template is used when viewing Data policy revision teaser.
+ *
+ * Available variables:
+ * - date: Date and time when a revision was created.
+ * - username: Name of the user.
+ * - current: TRUE if it is current revision.
+ * - message: Revision log message teaser.
+ *
+ * @see template_preprocess_data_policy_data_policy_revision()
+ *
+ * @ingroup themeable
+ */
+#}
+<b>{{ date }}</b> by <b>{{ username }}</b>
+
+{% if current %}
+  <em>({% trans %}current revision{% endtrans %})</em>
+{% endif %}
+
+{% if message %}
+  <p class="revision-log">{{ message }}</p>
+{% endif %}

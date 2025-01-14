@@ -1,0 +1,370 @@
+// Input radio
+//
+// The input element should have a parent with class `radio`.
+// The label always comes after the input. The visual part of the
+// element is only the label. The user clicks on the label and the
+// `:before` pseudo-element changes in style. The input itself stays
+// hidden from the user as it iss not themable.
+//
+// The `for` attribute is necessary to bind the our custom radio
+// with the input. Add the input's `id` as the value of the `for` attribute of the label.
+//
+// markup: form-input-radio.twig
+//
+// Weight: 4
+//
+// Style guide: atoms.form-controls.input-radio
+
+// Input checkbox
+//
+// The input element should have a parent with class `checkbox`.
+// The label always comes after the input. The visual part of the
+// element is only the label. The user clicks on the label and the
+// `:before` pseudo-element changes in style. The input itself stays
+// hidden from the user as it iss not themable.
+//
+// The `for` attribute is necessary to bind the our custom checkbox
+// with the input. Add the input's `id` as the value of the `for` attribute of the label.
+//
+// markup: form-input-checkbox.twig
+//
+// Weight: 5
+//
+// Style guide: atoms.form-controls.input-checkbox
+
+// ***************
+// Radio Buttons & Checkboxes
+// ***************
+
+.radio,
+.checkbox {
+  position: relative;
+  display: block;
+  margin-bottom: 8px;
+
+  > .form-wrapper {
+    margin-bottom: 1.1rem;
+  }
+}
+
+.checkbox.form-item-event-all-day {
+  margin-bottom: 1.5rem;
+}
+
+.radio + .radio,
+.checkbox + .checkbox {
+  margin-top: -5px; // Move up sibling radios or checkboxes for tighter spacing
+}
+
+/* Remove default Radio Buttons */
+[type="radio"]:not(:checked),
+[type="radio"]:checked,
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.form-no-label.checkbox {
+  label {
+    font-size: 0;
+  }
+}
+
+.checkbox label,
+.radio label {
+  font-weight: 400;
+  position: relative;
+  padding-left: $radio-width;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 21px;
+  font-size: 0.875rem;
+  transition: .28s ease;
+  user-select: none;
+  margin-bottom: 0;
+
+  [dir='rtl'] & {
+    padding-left: 0;
+    padding-right: $radio-width;
+  }
+}
+
+
+.radio label:before,
+.radio label:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 2px;
+  width: 16px;
+  height: 16px;
+  z-index: 0;
+  transition: .28s ease;
+
+  [dir='rtl'] & {
+    left: auto;
+    right: 0;
+  }
+}
+
+/* Unchecked styles */
+[type="radio"]:not(:checked) + label:before {
+  border-radius: 50%;
+  border: 2px solid $radio-empty-color;
+}
+
+[type="radio"]:not(:checked) + label:after {
+  border-radius: 50%;
+  border: 2px solid $radio-empty-color;
+  z-index: -1;
+  transform: scale(0);
+}
+
+// Checked styles
+[type="radio"]:checked {
+  + label {
+    font-weight: 700;
+
+    &:before {
+      border-radius: 50%;
+    }
+
+    &:after {
+       border-radius: 50%;
+       z-index: 0;
+       transform: scale(.5);
+    }
+  }
+}
+
+/* Disabled style */
+
+[type="radio"]:disabled + label:before,
+[type="radio"]:disabled + label:before {
+  background-color: transparent;
+}
+
+[type="radio"]:disabled:checked + label:before {
+  border: 2px solid $input-disabled-color;
+}
+
+[type="radio"]:disabled + label {
+  color: $input-disabled-color;
+  cursor: $cursor-disabled;
+}
+
+[type="radio"]:disabled:not(:checked) + label:before {
+  border-color: $input-disabled-color;
+}
+
+[type="radio"]:disabled:checked + label:after {
+  background-color: $input-disabled-color;
+  border: none;
+  background-color: $input-disabled-color;
+}
+
+[type="checkbox"] {
+  // General
+  + label:after {
+    border-radius: 2px;
+  }
+  + label:before,
+  + label:after {
+    content: '';
+    left: 0;
+    position: absolute;
+    /* .1s delay is for check animation */
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    z-index: 1;
+
+    [dir='rtl'] & {
+      left: auto;
+      right: 0;
+    }
+  }
+
+  // Unchecked style
+  &:not(:checked) + label:before {
+    width: 0;
+    height: 0;
+    border: 3px solid transparent;
+    left: 6px;
+    top: 10px;
+    transform: rotateZ(37deg);
+    -webkit-transform-origin: 20% 40%;
+    transform-origin: 100% 100%;
+
+    [dir='rtl'] & {
+      right: 6px;
+    }
+  }
+
+  &:not(:checked) + label:after {
+    height: 20px;
+    width: 20px;
+    background-color: transparent;
+    border: 2px solid $radio-empty-color;
+    top: 0px;
+    z-index: 0;
+  }
+
+  // Checked style
+  &:checked {
+    + label {
+      font-weight: 700;
+
+      &:before {
+        top: 0;
+        left: 1px;
+        width: 8px;
+        height: 13px;
+        border-top: 2px solid transparent;
+        border-left: 2px solid transparent;
+        border-right: 2px solid $input-bg-color;
+        border-bottom: 2px solid $input-bg-color;
+        transform: rotateZ(37deg);
+        margin-top: 2px;
+        transition: .2s;
+        transform-origin: 100% 100%;
+
+        [dir='rtl'] & {
+          left: auto;
+          right: 10px;
+        }
+      }
+    }
+
+    + label:after {
+      top: 0px;
+      width: 20px;
+      height: 20px;
+      z-index: 0;
+    }
+  }
+
+  // Focused styles
+  &.tabbed:focus + label:after {
+    border-radius: 2px;
+    border-color: $radio-empty-color;
+    background-color: rgba(0,0,0,.1);
+  }
+  &.tabbed:checked:focus + label:after {
+    border-radius: 2px;
+  }
+
+  // Disabled style
+  &:disabled + label {
+    color: $input-disabled-color;
+    cursor: $cursor-disabled;
+  }
+
+  &:disabled:not(:checked) + label:before {
+    background-color: transparent;
+    border: 2px solid transparent;
+  }
+
+  &:disabled:not(:checked) + label:after {
+    border-color: transparent;
+    background-color: $input-disabled-solid-color;
+  }
+
+  &:disabled:checked + label:before {
+    background-color: transparent;
+  }
+
+  &:disabled:checked + label:after {
+    background-color: $input-disabled-solid-color;
+    border-color: $input-disabled-solid-color;
+  }
+}
+
+
+.form-inline {
+  margin-bottom: $form-group-margin-bottom;
+
+  @include for-tablet-portrait-up {
+
+    .radio input[type="radio"],
+    .checkbox input[type="checkbox"] {
+      position: absolute;
+    }
+
+    .radio label,
+    .checkbox label {
+      padding-left: ($radio-width - 3);
+      margin-right: $radio-width;
+    }
+
+  }
+
+}
+
+// Radio buttons for the group and node create pages.
+&.group-form,
+&.node-form {
+  .field--widget-options-buttons {
+    .fieldgroup {
+      .fieldset-wrapper {
+        margin: 5px -.75rem -8px;
+
+        > .radio {
+          padding: 0 .75rem;
+          margin-top: -5px;
+        }
+      }
+
+      &#edit-field-group-allowed-visibility--wrapper #edit-field-group-allowed-visibility,
+      &#edit-field-social-idea-phases--wrapper #edit-field-social-idea-phases,
+      &#edit-field-topic-type--wrapper #edit-field-topic-type {
+        margin: 5px -.75rem -8px;
+        padding: 0 .75rem;
+
+        > .checkbox {
+          padding: 0 .75rem;
+          margin-top: -5px;
+        }
+      }
+
+      &#edit-field-social-idea-phases--wrapper #edit-field-social-idea-phases {
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+// Webform.
+&.webform-submission-form {
+  .tableselect {
+    .checkbox {
+      width: 20px;
+      height: 20px;
+      margin-bottom: 0;
+
+      label {
+        top: -2px;
+        padding-left: 20px;
+        line-height: inherit;
+      }
+
+      input {
+        width: 20px;
+        height: 20px;
+        top: 0;
+        z-index: 10;
+      }
+    }
+  }
+
+  .checkbox label {
+    &.sr-only {
+      height: auto;
+      width: auto;
+      overflow: visible;
+      margin: 0;
+    }
+  }
+}

@@ -1,0 +1,75 @@
+// Lists
+//
+// Weight: 3
+//
+// Style guide: base.lists
+
+// Unordered list
+//
+// The `<ul>` element is a list of items in which the order does <em>not</em>
+// explicitly matter.
+//
+// Markup: ul.twig
+//
+// Style guide: base.lists.ul
+
+// Ordered list
+//
+// The `<ol>` element is a list of items in which the order <em>does</em>
+// explicitly matter.
+//
+// Markup: ol.twig
+//
+// Weight: 2
+//
+// Style guide: base.lists.ol
+
+// Description list
+//
+// The `<dl>` element is a list of terms with their associated descriptions.
+//
+// Markup: dl.twig
+//
+// Weight: 3
+//
+// Style guide: base.lists.dl
+
+dl,
+ul,
+ol {
+  margin-top: 0;
+  margin-bottom: 1rem;
+
+  dl,
+  ul,
+  ol {
+    margin-bottom: 0;
+  }
+}
+
+ol, ul {
+
+  .popover &:last-child {
+    margin-bottom: 0;
+  }
+
+}
+
+// List options
+
+// Description Lists
+dl {
+  margin-top: 0; // Remove browser default
+  margin-bottom: $line-height-computed;
+}
+dt,
+dd {
+  line-height: $line-height-base;
+}
+dt {
+  font-weight: bold;
+}
+dd {
+  margin-left: 0; // Undo browser default
+}
+

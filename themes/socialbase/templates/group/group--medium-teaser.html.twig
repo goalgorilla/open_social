@@ -1,0 +1,112 @@
+{#
+/**
+* @file
+* Default theme implementation to display a group.
+*
+* Available variables:
+* - group: The group entity with limited access to object properties and
+*   methods. Only "getter" methods (method names starting with "get", "has",
+*   or "is") and a few common methods such as "id" and "label" are available.
+*   Calling other methods (such as group.delete) will result in an exception.
+* - label: The title of the group.
+* - content: All group items. Use {{ content }} to print them all,
+*   or print a subset such as {{ content.field_example }}. Use
+*   {{ content|without('field_example') }} to temporarily suppress the
+*   printing of a given child element.
+* - url: Direct URL of the current group.
+* - attributes: HTML attributes for the containing element.
+*   The attributes.class element may contain one or more of the following
+*   classes:
+*   - group: The current template type (also known as a "theming hook").
+*   - group--[type]: The current group type. For example, if the group is a
+*     "Classroom" it would result in "group--classroom". Note that the machine
+*     name will often be in a short form of the human readable label.
+*   - group--[view_mode]: The View Mode of the group; for example, a
+*     teaser would result in: "group--teaser", and full: "group--full".
+* - title_attributes: Same as attributes, except applied to the main title
+*   tag that appears in the template.
+* - content_attributes: Same as attributes, except applied to the main
+*   content tag that appears in the template.
+* - title_prefix: Additional output populated by modules, intended to be
+*   displayed in front of the main title tag that appears in the template.
+* - title_suffix: Additional output populated by modules, intended to be
+*   displayed after the main title tag that appears in the template.
+* - view_mode: View mode; for example, "teaser" or "full".
+* - page: Flag for the full page state. Will be true if view_mode is 'full'.
+*
+* @see template_preprocess_group()
+*
+* @ingroup themeable
+*/
+#}
+
+{{ attach_library('socialbase/teaser')}}
+
+{%
+  set classes = [
+  'teaser--medium',
+]
+%}
+
+<div{{ attributes.addClass(classes) }}>
+  <div class="teaser--wrapper card">
+
+    {% block teaser_icons %}
+      <div class="teaser--medium__media">
+        {% block teaser_icon_type %}
+          <svg class="teaser--medium__type-icon">
+            <title>{% trans %}Group{% endtrans %}</title>
+            <use xlink:href="#icon-group"></use>
+          </svg>
+        {% endblock %}
+
+        {% block teaser_icon_member_type %}{% endblock %}
+      </div>
+    {% endblock %}
+
+    {% block teaser_logo %}
+      <div class="teaser_logo">
+        {% block teaser_logo_field %}
+          {% if content.logo|render|striptags('<img>') is not empty %}
+            {{ content.logo }}
+          {% else %}
+            <svg>
+              <title>{% trans %}Group{% endtrans %}</title>
+              <use xlink:href="#icon-group"></use>
+            </svg>
+          {% endif %}
+        {% endblock  %}
+      </div>
+    {% endblock  %}
+
+    {% block teaser_user_number %}
+      <div class="teaser--medium__user-number">
+        <div class="user-icon">
+          <div class="icon">
+            <svg>
+              <title>{% trans %}Count joined members{% endtrans %}</title>
+              <use xlink:href="#icon-members"></use>
+            </svg>
+          </div>
+          {% block members_count %}
+            {{ group_members }}
+          {% endblock %}
+        </div>
+      {% endblock %}
+
+      {% block teaser_member_joined %}
+        {% if joined %}
+          <svg class="member-joined">
+            <title>{% trans %}Member joined{% endtrans %}</title>
+            <use xlink:href="#icon-member_check"></use>
+          </svg>
+        {% endif %}
+      {% endblock %}
+    </div>
+    {% block teaser_title %}
+      <div{{ title_attributes }} class="card__text teaser--medium__title">
+        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+      </div>
+    {% endblock %}
+  </div>
+</div>

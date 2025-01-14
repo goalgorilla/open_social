@@ -1,0 +1,158 @@
+@import 'settings';
+
+.joyride-close-tip {
+  color: $tour-text-color;
+  font-weight: bold;
+  font-size: 2em;
+  line-height: 1;
+  right: 0px;
+  top: 0px;
+  padding: 7px 13px;
+  height: 45px;
+  width: 45px;
+  transition: .3s background-color ease;
+
+  &:focus,
+  &:hover {
+    background-color: black;
+  }
+}
+
+.joyride-modal-bg {
+  display: block !important; // We force the display of the backdrop until it is removed from the DOM.
+  pointer-events: none; // We disable clicking on the backdrop.
+  z-index: $zindex-tour-backdrop;
+  background: $tour-backdrop-color;
+}
+
+.joyride-tip-guide {
+  background: transparent;
+  z-index: $zindex-tour;
+
+  @include for-phone-only {
+    display: none !important; // We hide tooltips on mobile since edge detectiond and arrow placement is not working propertly.
+  }
+
+  @include for-tablet-portrait-up {
+    width: 450px;
+  }
+
+  .joyride-nub.top {
+    top: 0;
+    border-bottom: 28px solid $tour-background-color;
+    border-top: none;
+
+    & + .joyride-content-wrapper {
+      top: 28px;
+    }
+
+    @include for-tablet-portrait-up {
+      left: -25px;
+
+      & + .joyride-content-wrapper {
+        left: -40px;
+      }
+    }
+  }
+
+  .joyride-nub.bottom {
+    bottom: 0;
+    border-top: 28px solid $tour-background-color;
+    border-bottom: none;
+
+    & + .joyride-content-wrapper {
+      bottom: 28px;
+    }
+
+    @include for-tablet-portrait-up {
+      left: -25px;
+
+      & + .joyride-content-wrapper {
+        left: -40px;
+      }
+    }
+  }
+
+  .joyride-nub.left {
+    left: 0;
+    border-right: 28px solid $tour-background-color;
+    border-left: none;
+
+    & + .joyride-content-wrapper {
+      left: 28px;
+    }
+
+    @include for-tablet-portrait-up {
+      top: -25px;
+
+      & + .joyride-content-wrapper {
+        top: -45px;
+      }
+    }
+  }
+
+  .joyride-nub.right {
+    right: 0;
+    border-left: 28px solid $tour-background-color;
+    border-right: none;
+
+    & + .joyride-content-wrapper {
+      right: 28px;
+    }
+
+    @include for-tablet-portrait-up {
+      top: -25px;
+
+      & + .joyride-content-wrapper {
+        top: -45px;
+      }
+    }
+  }
+
+  .tour-progress {
+    position: absolute;
+    bottom: 25px;
+  }
+
+  .joyride-tip-remove {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 12px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+  }
+
+}
+
+.joyride-content-wrapper {
+  background: $tour-background-color;
+  color: $tour-text-color;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  padding: 20px 50px 35px 20px;
+
+  @include for-tablet-portrait-up {
+    padding: 35px 65px 35px 35px;
+  }
+
+}
+
+.tour-tip-body,
+.tour-tip-label {
+  text-align: left;
+}
+
+.tour-tip-label {
+  font-size: 1.5rem;
+}
+
+.joyride-nub {
+  z-index: 1;
+  border-left: 28px solid transparent;
+  border-right: 28px solid transparent;
+  border-top: 28px solid transparent;
+  border-bottom: 28px solid transparent;
+}

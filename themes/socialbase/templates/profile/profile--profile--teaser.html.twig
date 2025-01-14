@@ -1,0 +1,122 @@
+{#
+/**
+ * @file
+ *
+ * Default theme implementation for profiles.
+ *
+ * Available variables:
+ * - content: Items for the content of the profile.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given child element:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ * - attributes: HTML attributes for the wrapper.
+ * - profile: The profile object.
+ * - url: The profile URL.
+ *
+ * @ingroup themeable
+ */
+#}
+
+{{ attach_library('socialbase/teaser')}}
+
+<div class="card teaser">
+
+  {% block card_image %}
+    <div class="teaser__image" aria-hidden="true">
+      <a href="{{ profile_home }}">
+        {{ content.field_profile_image }}
+      </a>
+    </div>
+  {% endblock %}
+
+  {% block card_teaser_type %}
+    <a href="{{ profile_home }}" aria-hidden="true" title="{% trans %}Profile: &nbsp;{% endtrans %}{{- profile_name|render|striptags|trim -}} {{- profile_name_extra|render|striptags|trim -}}">
+      <div class="teaser__teaser-type">
+        <svg class="teaser__teaser-type-icon">
+          <title>{% trans %}Profile: &nbsp;{% endtrans %}{{- profile_name|render|striptags|trim -}} {{- profile_name_extra|render|striptags|trim -}}</title>
+          <use xlink:href="#icon-account_circle"></use>
+        </svg>
+      </div>
+    </a>
+  {% endblock %}
+
+  <div class="teaser__body">
+    <div class="teaser__content">
+
+      {% block card_title %}
+        <h4 class="teaser__title">
+         <a href="{{ profile_home }}">
+           {{ profile_name }} {{ profile_name_extra }}
+          </a>
+        </h4>
+      {% endblock %}
+
+      {% block card_body %}
+        {% if content.field_profile_function|render or content.field_profile_organization|render %}
+          <div class="teaser__content-line">
+            <svg class="teaser__content-type-icon">
+              <title>{% trans %}User function and organization{% endtrans %}</title>
+              <use xlink:href="#icon-business_center"></use>
+            </svg>
+            <span class="teaser__content-text">
+            {% if content.field_profile_organization|render %}
+              {{ '@function at @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
+            {% else %}
+              {{ content.field_profile_function }}
+            {% endif %}
+          </span>
+          </div>
+        {% endif %}
+
+        {% if content.field_profile_summary|render %}
+          {{ content.field_profile_summary }}
+        {% else %}
+          {{ content.field_profile_self_introduction }}
+        {% endif %}
+
+        {% if content.field_profile_profile_tag['#items'] or badges %}
+          <div class="teaser__content--badges" style="margin-bottom: 5px;">
+            {% for badge in badges %}
+              {% set badge_classes = badge.classes|merge(['badge']) %}
+              <div{{ attributes.addClass(badge_classes) }}>{{ badge.label }}</div>
+            {% endfor %}
+            {% for item in content.field_profile_profile_tag['#items'] %}
+              <div class="badge badge-default">{{ item.entity.label }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endblock %}
+    </div>
+
+    <div class="card__actionbar">
+      {% block card_actionbar %}
+        {% if content.flag_follow_user and following_enabled %}
+          {{ content.flag_follow_user }}
+        {% endif %}
+
+        {% set follow_user_attributes = create_attribute() %}
+        {% set follow_user_classes = [ content.flag_follow_user ? 'btn btn-default' : 'card__link' ] %}
+        <a href="{{ profile_contact_url }}" {{ follow_user_attributes.addClass(follow_user_classes) }}>
+          {% if profile_contact_label == 'private_message' %}
+            {% if content.flag_follow_user %}
+              {% trans %}Message{% endtrans %}
+            {% else %}
+              {% trans %}Private message{% endtrans %}
+            {% endif %}
+          {% else %}
+            {% trans %}View profile{% endtrans %}
+          {% endif %}
+        </a>
+
+        {% if not content.flag_follow_user %}
+          <a href="{{ profile_stream_url }}" class="card__link hidden-for-phone-only">
+            {% trans %}View activities{% endtrans %}
+          </a>
+        {% endif %}
+      {% endblock %}
+    </div>
+  </div>
+</div>

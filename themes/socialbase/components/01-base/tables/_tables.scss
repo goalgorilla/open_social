@@ -1,0 +1,573 @@
+@import "settings";
+
+// Tables
+//
+// The `<table>` element displays tabular data in rows, columns, and cells.
+// Add a class `.table` to each table for uniform styling. We do not provide styling on
+// HTML tag, so you are flexible to create other styles without having to override much css.
+//
+// markup: table.twig
+//
+// Weight: 3
+//
+// Style guide: base.tables
+
+table {
+  border-collapse: collapse;
+}
+
+caption {
+  padding-top: $table-cell-padding-y;
+  padding-bottom: $table-cell-padding-y;
+  color: $text-muted;
+  text-align: left;
+  caption-side: top;
+}
+
+// Matches default `<td>` alignment
+th {
+  text-align: left;
+
+  [dir='rtl'] & {
+    text-align: right;
+  }
+}
+
+
+// Baseline styles
+
+.table,
+.path-node .body-text table,
+.comment .comment__text table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: $spacer;
+  background-color: $table-bg;
+  font-size: 0.875rem;
+  border-color: $table-border-color;
+
+  th,
+  td {
+    padding: $table-cell-padding-y $table-cell-padding-x;
+    vertical-align: top;
+    word-wrap: break-word;
+    border: 1px solid $table-border-color;
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Bottom align for column headings
+  thead th {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-small;
+    vertical-align: bottom;
+
+    a {
+      font-weight: bold;
+    }
+  }
+
+  // Account for multiple tbody instances
+  tbody + tbody {
+    border-top: $table-border-width solid $table-border-color;
+  }
+
+  // allow columns to have their own alignment
+  .views-align-left {
+    text-align: left;
+  }
+  .views-align-right {
+    text-align: right;
+  }
+  .views-align-center {
+    text-align: center;
+  }
+
+}
+
+// Resent some table style for the create/edit pages.
+.page-node-edit,
+.path-group,
+.page-node {
+  form .table {
+    td,
+    th {
+      border: none;
+    }
+
+    thead {
+      th {
+        padding: 0.5rem 0;
+        font-weight: bold;
+        border: none;
+      }
+    }
+
+    tbody {
+      td {
+        vertical-align: middle;
+
+        &.field-multiple-drag {
+          width: 22px;
+          max-width: 100%;
+          padding-left: 1.75rem;
+          padding-right: .25rem;
+          text-align: center;
+
+          [dir='rtl'] & {
+            padding-right: 1.75rem;
+            padding-left: .25rem;
+          }
+
+          .tabledrag-handle {
+            position: static;
+            width: 22px;
+            padding: 0;
+            margin: 0 auto;
+
+            span:before {
+              top: auto;
+            }
+          }
+
+          + td {
+            padding-left: .25rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+// Condensed table w/ half padding
+
+.table-sm {
+  th,
+  td {
+    padding: $table-cell-padding-sm;
+  }
+}
+
+
+// Bordered version
+//
+// Add borders all around the table and between all the columns.
+
+.table-bordered {
+  border: 1px solid $table-border-color;
+
+  th,
+  td {
+    border: 1px solid $table-border-color;
+  }
+
+  thead {
+    th,
+    td {
+      border-bottom-width: 2px;
+    }
+  }
+}
+
+
+// Zebra-striping
+//
+// Default zebra-stripe styles (alternating gray and transparent backgrounds)
+
+.table-striped {
+  tbody tr:nth-of-type(odd) {
+    background-color: $table-accent-bg;
+  }
+}
+
+// Hover effect
+//
+// Placed here since it has to come after the potential zebra striping
+
+.table-hover {
+  tbody tr:hover {
+    background-color: $table-hover-bg;
+  }
+}
+
+.thead-default {
+  th {
+    color: $table-head-color;
+    background-color: $table-head-bg;
+  }
+}
+
+// Table sort
+.tablesort {
+  display: inline-block;
+  vertical-align: top;
+  line-height: 1;
+}
+
+.icon-tablesort {
+  width: 20px;
+  height: 20px;
+}
+
+// Table drag
+form:not(.layout-builder-add-block) {
+  .tabledrag-handle {
+    color: $gray-light;
+    cursor: move;
+    position: absolute;
+    line-height: 1;
+    margin: 0 0 0 -10px;
+    padding: 10px;
+
+    ~ .form-managed-file {
+      display: block;
+      margin-left: 24px;
+    }
+  }
+}
+
+// Responsive tables
+//
+// Add `.table-responsive` around table`s and we'll make them mobile friendly by enabling horizontal scrolling.
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+
+  &.card__block--table {
+    margin-bottom: .625rem;
+
+    @include for-phone-only {
+      margin-bottom: 0;
+    }
+  }
+
+  // Prevent double border on horizontal scroll due to use of `display: block;`
+  .table-bordered {
+    border: 0;
+  }
+
+}
+
+figure.responsive-figure-table {
+  display: block;
+}
+
+// For VBO manage members.
+.right-auto {
+  margin-right: auto;
+
+  [dir='rtl'] & {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  @include for-phone-only {
+    margin-left: .5rem;
+
+    [dir='rtl'] & {
+      margin-left: 0;
+      margin-right: .5rem;
+    }
+  }
+}
+
+.view-group-manage-members {
+  padding: 0 10px;
+
+  @include for-desktop-up {
+    padding: 0;
+  }
+
+  @include for-phone-only {
+    .form-group-inline--right {
+      display: block;
+    }
+    .card {
+      display: block;
+    }
+  }
+}
+
+.select-all.checkbox,
+// Specificity rule to make sure we override form-controls.scss
+form:not(.layout-builder-configure-block) .select-all.checkbox {
+  display: table-cell;
+}
+
+.vbo-table.table td {
+  vertical-align: inherit;
+}
+
+.vbo-table .btn-group--operations {
+  justify-content: left;
+
+  > .btn {
+    white-space: nowrap;
+  }
+
+  .dropdown-menu {
+    top: 100%;
+    left: 0;
+    right: auto;
+  }
+}
+
+.vbo-table .form-no-label.checkbox label {
+  font-size: 0;
+
+  &.sr-only {
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding-left: 0;
+    overflow: visible;
+  }
+}
+
+.vbo-table .views-table-row-vbo-select-all {
+  .form-submit {
+    color: #343434;
+    background-color: #fff;
+    border-radius: 10px;
+    fill: #4d4d4d;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #adadad;
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-transform: uppercase;
+    -webkit-transition: .3s ease-out;
+    transition: .3s ease-out;
+    outline: 0;
+    @include for-phone-only {
+      font-size: 0.7rem;
+    }
+  }
+  td div {
+    text-align: left;
+  }
+}
+
+#vbo-action-form-wrapper {
+  .btn-group.dropdown {
+    position: absolute;
+    right: 1rem;
+    padding: 10px 0;
+
+    [dir='rtl'] & {
+      right: auto;
+      left: 1rem;
+    }
+
+
+    @include for-phone-only {
+      position: static;
+      width: 100%;
+
+      button {
+        margin-right: .5rem;
+
+        [dir='rtl'] & {
+          margin-right: 0;
+          margin-left: .5rem;
+        }
+      }
+
+      .dropdown-menu.dropdown-menu-right {
+        width: 100%;
+      }
+    }
+  }
+
+  .form-type-checkbox {
+    left: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    [dir='rtl'] & {
+      label {
+        //padding-right: 50px;
+      }
+    }
+  }
+}
+
+#vbo-action-form-wrapper.card__block {
+  padding: 0;
+
+  .panel-heading {
+    padding: 1.25rem ;
+  }
+
+  .vbo-multipage-selector ul {
+    background-color: rgba(0, 0, 0, 0.05);
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .vbo-multipage-selector ul li,
+  .vbo-multipage-selector h3 {
+    padding-left: 1.25rem;
+    font-weight: 500;
+  }
+
+  .vbo-multipage-selector li:last-child {
+    padding-bottom: 0.5rem;
+  }
+  .vbo-multipage-selector li:first-child {
+    padding-top: 0.5rem;
+  }
+}
+
+// Cart table.
+.card__block--table {
+  table {
+    margin-bottom: 0;
+
+    th,
+    td {
+      border-color: $gray-lighter;
+      word-wrap: normal;
+    }
+
+    thead {
+      th {
+        border: none;
+      }
+    }
+
+    tbody {
+      tr {
+        &:nth-of-type(odd),
+        &:hover {
+          background-color: $gray-lightest;
+        }
+      }
+
+      td {
+        border-width: 1px 0 0;
+
+        @include for-tablet-landscape-up {
+          padding-top: 1.875rem;
+          padding-bottom: 1.875rem;
+        }
+
+        &.views-field-vote-source {
+          word-break: break-all;
+        }
+
+        &.views-field-created,
+        &.views-field-field-profile-organization,
+        &.views-field-group-roles {
+          @include for-tablet-landscape-down {
+            white-space: nowrap;
+          }
+        }
+
+        .media {
+          .media-left {
+            .avatar {
+              display: block;
+              width: 44px;
+              height: 44px;
+            }
+          }
+
+          .media-body {
+            .list-group-item-heading > a {
+              display: inline-block;
+              max-width: 100%;
+              padding-right: 16px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+
+              @include for-tablet-landscape-down {
+                position: relative;
+              }
+
+              .wrapper {
+                @include for-tablet-landscape-up {
+                  position: relative;
+                  padding: 0 8px;
+                }
+              }
+
+              .profile-organization-tag {
+                position: absolute;
+                top: 5px;
+                right: 0;
+
+                @include for-tablet-landscape-down {
+                  top: 8px;
+                }
+              }
+            }
+          }
+        }
+
+        a {
+          font-weight: bold;
+        }
+      }
+
+      td,
+      td a {
+        font-size: 1rem;
+        line-height: 1.625rem;
+      }
+    }
+
+    tr {
+      @include for-tablet-landscape-up {
+        th,
+        td {
+          &:first-child {
+            padding-left: 2.5rem;
+
+            [dir='rtl'] & {
+              padding-right: 2.5rem;
+              padding-left: 1.875rem;
+            }
+          }
+
+          &:last-child {
+            padding-right: 2.5rem;
+
+            [dir='rtl'] & {
+              padding-right: 1.875rem;
+              padding-left: 2.5rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Button group inside table
+table {
+  .btn-group {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}

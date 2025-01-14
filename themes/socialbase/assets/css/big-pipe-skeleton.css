@@ -1,0 +1,364 @@
+.no-overflow {
+  overflow: hidden;
+}
+
+.skeleton .card--stream {
+  padding:0 !important;
+}
+
+/* Activity stream block */
+.post-block-skeleton {
+  --card-padding: 1.25rem;
+  --card-height: calc(var(--card-padding) + 114px + var(--card-padding));
+  --card-skeleton: linear-gradient(white var(--card-height), transparent 0);
+  --avatar-size: 44px;
+  --avatar-position: var(--card-padding) var(--card-padding);
+  --avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+  --post-form-height: 80px;
+  --post-form-width: calc(100% - calc(var(--card-padding) + var(--avatar-size) + 31px));
+  --post-form-position: 75px var(--card-padding);
+  --post-form-skeleton: linear-gradient(rgb(239, 239, 239) var(--post-form-height), transparent 0);
+  --button-height: 24px;
+  --button-skeleton: linear-gradient(rgb(239, 239, 239) var(--button-height), transparent 0);
+  --button-1-height: 12px;
+  --button-1-width: 80px;
+  --button-1-position: left 75px top 108px;
+  --button-2-width: 80px;
+  --button-2-position: right 125px top 124px;
+  --button-3-width: 80px;
+  --button-3-position: right var(--card-padding) top 124px;
+  --blur-width: 200px;
+  --blur-size: var(--blur-width) calc(var(--card-height));
+  height: var(--card-height);
+}
+.post-block-skeleton:empty::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%), var(--post-form-skeleton), var(--button-skeleton), var(--button-skeleton), var(--button-skeleton), var(--avatar-skeleton), var(--card-skeleton);
+  background-size: var(--blur-size), var(--post-form-width) var(--post-form-height), var(--button-1-width) var(--button-1-height), var(--button-2-width) var(--button-height), var(--button-3-width) var(--button-height), var(--avatar-size) var(--avatar-size), 100% 100%;
+  background-position: -150% 0, var(--post-form-position), var(--button-1-position), var(--button-2-position), var(--button-3-position), var(--avatar-position), 0 0;
+  background-repeat: no-repeat;
+  animation: loading-post-block 4s infinite;
+}
+
+/* Top block showing author and name */
+.media-skeleton {
+  --avatar-size: 44px;
+  --avatar-position: var(--card-padding) var(--card-padding);
+  --avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+  --author-1-height: 12px;
+  --author-1-skeleton: linear-gradient(rgb(239, 239, 239) var(--author-1-height), transparent 0);
+  --author-1-width: 25%;
+  --author-1-position: left 75px top calc(var(--card-padding) + 6px);
+  --date-2-height: 12px;
+  --date-2-skeleton: linear-gradient(rgb(239, 239, 239) var(--date-2-height), transparent 0);
+  --date-2-width: 50%;
+  --date-2-position: left 75px top calc(var(--card-padding) + 24px);
+  --card-padding: 1.25rem;
+  --card-height: calc(var(--card-padding) + var(--avatar-size) + var(--card-padding));
+  --card-skeleton: linear-gradient(white var(--card-height), transparent 0);
+  --blur-width: 200px;
+  --blur-size: var(--blur-width) calc(var(--card-height));
+  height: var(--card-height);
+}
+.media-skeleton:empty::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%), var(--author-1-skeleton), var(--date-2-skeleton), var(--avatar-skeleton), var(--card-skeleton);
+  background-size: var(--blur-size), var(--author-1-width) var(--author-1-height), var(--date-2-width) var(--date-2-height), var(--avatar-size) var(--avatar-size), 100% 100%;
+  background-position: -150% 0, var(--author-1-position), var(--date-2-position), var(--avatar-position), 0 0;
+  background-repeat: no-repeat;
+  animation: loading-media 4s infinite;
+}
+
+/* Teaser block with big image left and description right */
+.teaser-skeleton {
+  --card-padding: 1.25rem;
+  --card-height: calc(var(--image-height) + var(--card-padding));
+  --card-skeleton: linear-gradient(white var(--card-height), transparent 0);
+  --line-skeleton: linear-gradient(rgb(239, 239, 239) 24px, transparent 0);
+  --line-2-skeleton: linear-gradient(rgb(239, 239, 239) 12px, transparent 0);
+  --type-line-width: 80px;
+  --type-line-position: left 208px top 20px;
+  --title-line-1-width: calc(100% - calc(var(--card-padding) + var(--image-width) + 56px));
+  --title-line-1-position: left 208px top 40px;
+  --title-line-2-width: calc(75% - calc(var(--card-padding) + var(--image-width)));
+  --title-line-2-position: left 208px top 68px;
+  --date-line-width: 80px;
+  --date-line-position: left 208px top 108px;
+  --author-line-width: 11%;
+  --author-line-position: left 304px top 108px;
+  --read-more-skeleton: linear-gradient(rgb(239, 239, 239) var(--read-more-height), transparent 0);
+  --read-more-height: 24px;
+  --read-more-width: 80px;
+  --read-more-position: right calc(var(--card-padding)) top 132px;
+  --image-height: 152px;
+  --image-width: 152px;
+  --image-position: left var(--card-padding) top 0px;
+  --image-skeleton: linear-gradient(rgb(239, 239, 239) var(--image-height), transparent 0);
+  --blur-width: 200px;
+  --blur-size: var(--blur-width) calc(var(--card-height));
+  height: var(--card-height);
+}
+.teaser-skeleton:empty::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%), var(--image-skeleton), var(--line-2-skeleton), var(--line-skeleton), var(--line-skeleton), var(--line-2-skeleton), var(--line-2-skeleton), var(--read-more-skeleton), var(--card-skeleton);
+  background-size: var(--blur-size), var(--image-width) var(--image-width), var(--type-line-width), var(--title-line-1-width), var(--title-line-2-width), var(--date-line-width), var(--author-line-width), var(--read-more-width), 100% 100%;
+  background-position: -150% 0, var(--image-position), var(--type-line-position), var(--title-line-1-position), var(--title-line-2-position), var(--date-line-position), var(--author-line-position), var(--read-more-position), 0 0;
+  background-repeat: no-repeat;
+  animation: loading-teaser 4s infinite;
+}
+
+/* Post block without avatar and just the post description */
+.post-skeleton {
+  --card-padding: 1.25rem;
+  --card-height: calc(80px + var(--card-padding));
+  --card-skeleton: linear-gradient(white var(--card-height), transparent 0);
+  --line-skeleton: linear-gradient(rgb(239, 239, 239) 24px, transparent 0);
+  --line-2-skeleton: linear-gradient(rgb(239, 239, 239) 12px, transparent 0);
+  --title-line-1-width: calc(100% - calc(var(--card-padding) * 2));
+  --title-line-1-position: left var(--card-padding) top 0px;
+  --title-line-2-width: 51%;
+  --title-line-2-position: left var(--card-padding) top 28px;
+  --media-line-width: 80px;
+  --media-line-position: left var(--card-padding) top 68px;
+  --blur-width: 200px;
+  --blur-size: var(--blur-width) calc(var(--card-height));
+  height: var(--card-height);
+}
+.post-skeleton:empty::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%), var(--line-skeleton), var(--line-skeleton), var(--line-2-skeleton), var(--card-skeleton);
+  background-size: var(--blur-size), var(--title-line-1-width), var(--title-line-2-width), var(--media-line-width), 100% 100%;
+  background-position: -150% 0, var(--title-line-1-position), var(--title-line-2-position), var(--media-line-position), 0 0;
+  background-repeat: no-repeat;
+  animation: loading-post 4s infinite;
+}
+
+/* Teaser block with big image on top and description on bottom */
+.big-teaser-skeleton {
+  --card-padding: 1.25rem;
+  --card-height: 320px;
+  --card-skeleton: linear-gradient(white var(--card-height), transparent 0);
+  --post-form-height: 200px;
+  --post-form-width: calc(100% - calc(var(--card-padding) + 21px));
+  --post-form-position: var(--card-padding) 0;
+  --post-form-skeleton: linear-gradient(rgb(239, 239, 239) var(--post-form-height), transparent 0);
+  --title-height: 24px;
+  --title-skeleton: linear-gradient(rgb(239, 239, 239) var(--title-height), transparent 0);
+  --title-1-width: calc(100% - calc(var(--card-padding) + 21px));
+  --title-1-position: left var(--card-padding) top 220px;
+  --title-2-width: 51%;
+  --title-2-position: left var(--card-padding) top 248px;
+  --read-more-height: 12px;
+  --read-more-width: 80px;
+  --read-more-position: left var(--card-padding) top 288px;
+  --read-more-skeleton: linear-gradient(rgb(239, 239, 239) var(--read-more-height), transparent 0);
+  --blur-width: 200px;
+  --blur-size: var(--blur-width) calc(var(--card-height));
+  /* End variables */
+  height: var(--card-height);
+}
+.big-teaser-skeleton:empty::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%), var(--post-form-skeleton), var(--title-skeleton), var(--title-skeleton), var(--read-more-skeleton), var(--card-skeleton);
+  background-size: var(--blur-size), var(--post-form-width) var(--post-form-height), var(--title-1-width) var(--title-height), var(--title-2-width) var(--title-height), var(--read-more-width) var(--read-more-height), 100% 100%;
+  background-position: -150% 0, var(--post-form-position), var(--title-1-position), var(--title-2-position), var(--read-more-position), 0 0;
+  background-repeat: no-repeat;
+  animation: loading-big-teaser 4s infinite;
+}
+
+/* Comment block with author left and big comment right */
+.comment-skeleton {
+  --card-padding: 1.25rem;
+  --card-height: calc(var(--post-form-height) + var(--card-padding));
+  --card-skeleton: linear-gradient(white var(--card-height), transparent 0);
+  --avatar-size: 44px;
+  --avatar-position: var(--card-padding) 0;
+  --avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+  --post-form-height: 64px;
+  --post-form-width: calc(100% - calc(var(--card-padding) + var(--avatar-size) + 130px));
+  --post-form-position: 75px 0;
+  --post-form-skeleton: linear-gradient(rgb(239, 239, 239) var(--post-form-height), transparent 0);
+  --button-height: 24px;
+  --button-skeleton: linear-gradient(rgb(239, 239, 239) var(--button-height), transparent 0);
+  --button-width: 80px;
+  --button-position: right var(--card-padding) top 0;
+  --blur-width: 200px;
+  --blur-size: var(--blur-width) calc(var(--card-height));
+  /* End variables */
+  height: var(--card-height);
+}
+.comment-skeleton:empty::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%), var(--post-form-skeleton), var(--button-skeleton), var(--avatar-skeleton), var(--card-skeleton);
+  background-size: var(--blur-size), var(--post-form-width) var(--post-form-height), var(--button-width) var(--button-height), var(--avatar-size) var(--avatar-size), 100% 100%;
+  background-position: -150% 0, var(--post-form-position), var(--button-position), var(--avatar-position), 0 0;
+  background-repeat: no-repeat;
+  animation: loading-comment 4s infinite;
+}
+
+/* Comment block with author left and small comment right - variation 1 */
+.comment-2-skeleton {
+  --avatar-size: 44px;
+  --avatar-position: var(--card-padding) 0;
+  --avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+  --author-1-height: 12px;
+  --author-1-skeleton: linear-gradient(rgb(239, 239, 239) var(--author-1-height), transparent 0);
+  --author-1-width: 80px;
+  --author-1-position: left 75px top 0;
+  --date-2-height: 12px;
+  --date-2-skeleton: linear-gradient(rgb(239, 239, 239) var(--date-2-height), transparent 0);
+  --date-2-width: calc(30% - calc(var(--card-padding) + var(--avatar-size) + 31px));
+  --date-2-position: left calc(var(--author-1-width) + 95px) top 0;
+  --comment-height: 12px;
+  --comment-skeleton: linear-gradient(rgb(239, 239, 239) var(--comment-height), transparent 0);
+  --comment-width: calc(65% - calc(var(--card-padding) + var(--avatar-size) + 31px));
+  --comment-position: left 75px top 16px;
+  --likes-height: 12px;
+  --likes-skeleton: linear-gradient(rgb(239, 239, 239) var(--likes-height), transparent 0);
+  --likes-width: 80px;
+  --likes-position: left 75px top 44px;
+  --card-padding: 1.25rem;
+  --card-height: 80px ;
+  --card-skeleton: linear-gradient(white var(--card-height), transparent 0);
+  --blur-width: 200px;
+  --blur-size: var(--blur-width) calc(var(--card-height));
+  height: var(--card-height);
+}
+.comment-2-skeleton:empty::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%), var(--author-1-skeleton), var(--date-2-skeleton), var(--comment-skeleton), var(--likes-skeleton), var(--avatar-skeleton), var(--card-skeleton);
+  background-size: var(--blur-size), var(--author-1-width) var(--author-1-height), var(--date-2-width) var(--date-2-height), var(--comment-width) var(--comment-height), var(--likes-width) var(--likes-height), var(--avatar-size) var(--avatar-size), 100% 100%;
+  background-position: -150% 0, var(--author-1-position), var(--date-2-position), var(--comment-position), var(--likes-position), var(--avatar-position), 0 0;
+  background-repeat: no-repeat;
+  animation: loading-comment-2 4s infinite;
+}
+
+/* Comment block with author left and small comment right - variation 2 */
+.comment-3-skeleton {
+  --avatar-size: 44px;
+  --avatar-position: var(--card-padding) 0;
+  --avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+  --author-1-height: 12px;
+  --author-1-skeleton: linear-gradient(rgb(239, 239, 239) var(--author-1-height), transparent 0);
+  --author-1-width: 120px;
+  --author-1-position: left 75px top 0;
+  --date-2-height: 12px;
+  --date-2-skeleton: linear-gradient(rgb(239, 239, 239) var(--date-2-height), transparent 0);
+  --date-2-width: calc(30% - calc(var(--card-padding) + var(--avatar-size) + 31px));
+  --date-2-position: left calc(var(--author-1-width) + 95px) top 0;
+  --comment-height: 12px;
+  --comment-skeleton: linear-gradient(rgb(239, 239, 239) var(--comment-height), transparent 0);
+  --comment-width: calc(75% - calc(var(--card-padding) + var(--avatar-size) + 31px));
+  --comment-position: left 75px top 16px;
+  --likes-height: 12px;
+  --likes-skeleton: linear-gradient(rgb(239, 239, 239) var(--likes-height), transparent 0);
+  --likes-width: 80px;
+  --likes-position: left 75px top 44px;
+  --card-padding: 1.25rem;
+  --card-height: 80px ;
+  --card-skeleton: linear-gradient(white var(--card-height), transparent 0);
+  --blur-width: 200px;
+  --blur-size: var(--blur-width) calc(var(--card-height));
+  height: var(--card-height);
+}
+.comment-3-skeleton:empty::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%), var(--author-1-skeleton), var(--date-2-skeleton), var(--comment-skeleton), var(--likes-skeleton), var(--avatar-skeleton), var(--card-skeleton);
+  background-size: var(--blur-size), var(--author-1-width) var(--author-1-height), var(--date-2-width) var(--date-2-height), var(--comment-width) var(--comment-height), var(--likes-width) var(--likes-height), var(--avatar-size) var(--avatar-size), 100% 100%;
+  background-position: -150% 0, var(--author-1-position), var(--date-2-position), var(--comment-position), var(--likes-position), var(--avatar-position), 0 0;
+  background-repeat: no-repeat;
+  animation: loading-comment-2 4s infinite;
+}
+
+/* Comment block with 'see more' bottom aligned in the center */
+.comment-more-skeleton {
+  --read-more-height: 24px;
+  --read-more-skeleton: linear-gradient(rgb(239, 239, 239) var(--read-more-height), transparent 0);
+  --read-more-width: 80px;
+  --read-more-position: left 50% top 16px;
+  --card-padding: 1.25rem;
+  --card-height: 55px;
+  --card-skeleton: linear-gradient(white var(--card-height), transparent 0);
+  --blur-width: 200px;
+  --blur-size: var(--blur-width) calc(var(--card-height));
+  height: var(--card-height);
+}
+.comment-more-skeleton:empty::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%), var(--read-more-skeleton), var(--card-skeleton);
+  background-size: var(--blur-size), var(--read-more-width) var(--read-more-height), 100% 100%;
+  background-position: -150% 0, var(--read-more-position), 0 0;
+  background-repeat: no-repeat;
+  animation: loading-comment-more 4s infinite;
+}
+
+/* Animations */
+@keyframes loading-post-block {
+  to {
+    background-position: 350% 0, var(--post-form-position), var(--button-1-position), var(--button-2-position), var(--button-3-position), var(--avatar-position), 0 0;
+  }
+}
+@keyframes loading-media {
+  to {
+    background-position: 350% 0, var(--author-1-position), var(--date-2-position), var(--avatar-position), 0 0;
+  }
+}
+@keyframes loading-teaser {
+  to {
+    background-position: 350% 0, var(--image-position), var(--type-line-position), var(--title-line-1-position), var(--title-line-2-position), var(--date-line-position), var(--author-line-position), var(--read-more-position), 0 0;
+  }
+}
+@keyframes loading-post {
+  to {
+    background-position: 350% 0, var(--title-line-1-position), var(--title-line-2-position), var(--media-line-position), 0 0;
+  }
+}
+@keyframes loading-big-teaser {
+  to {
+    background-position: 350% 0, var(--post-form-position), var(--title-1-position), var(--title-2-position), var(--read-more-position), 0 0;
+  }
+}
+@keyframes loading-comment {
+  to {
+    background-position: 350% 0, var(--post-form-position), var(--button-position), var(--avatar-position), 0 0;
+  }
+}
+@keyframes loading-comment-2 {
+  to {
+    background-position: 350% 0, var(--author-1-position), var(--date-2-position), var(--comment-position), var(--likes-position), var(--avatar-position), 0 0;
+  }
+}
+@keyframes loading-comment-more {
+  to {
+    background-position: 350% 0, var(--read-more-position), 0 0;
+  }
+}
+
+/*# sourceMappingURL=big-pipe-skeleton.css.map */

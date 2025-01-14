@@ -1,0 +1,147 @@
+@import 'settings';
+
+svg[class^="icon-"] {
+  vertical-align: middle;
+}
+
+.icon-white {
+  fill: white;
+}
+
+.icon-black {
+  fill: $default-color;
+}
+
+.icon-gray {
+  fill: $gray;
+}
+
+.icon-gray-light {
+  fill: $gray-light;
+}
+
+.icon-medium {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  vertical-align: text-bottom;
+}
+
+.icon-small {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.icon-hero {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.icon-visibility {
+  width: 15px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: text-bottom;
+  fill: #4d4d4d;
+}
+
+// covers the parent box
+.icon-responsive {
+  width: 100%;
+  height: 100%;
+}
+
+.glyphicon:before {
+  position: relative;
+  top: 3px;
+  width: 20px;
+  height: 20px;
+  content: '';
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  background-position: center;
+}
+
+.glyphicon-refresh:before {
+  background-image: url(../images/icons/icon-autorenew.svg);
+}
+
+.glyphicon-question-sign:before {
+  background-image: url(../images/icons/icon-help.svg);
+  width: 15px;
+  height: 15px;
+}
+
+.glyphicon-info-sign:before {
+  background-image: url(../images/icons/icon-info-light.svg);
+  width: 15px;
+  height: 15px;
+}
+#hero .glyphicon-info-sign:before {
+  background-image: url(../images/icons/icon-info-white.svg);
+}
+
+.glyphicon-picture:before {
+  background-image: url(../images/icons/icon-photo.svg);
+}
+
+.glyphicon-file:before {
+  background-image: url(../images/icons/icon-insert_drive_file.svg);
+}
+
+.glyphicon-move:before {
+  background-image: url(../images/icons/icon-open_with.svg);
+  top: 0;
+}
+
+.glyphicon-warning-sign:before {
+  background-image: url(../images/icons/icon-warning.svg);
+}
+
+
+a {
+  &.icon-before .glyphicon {
+    margin-right: .25em;
+  }
+  &.icon-after .glyphicon {
+    margin-left: .25em;
+  }
+}
+
+.btn {
+  &.icon-before .glyphicon,
+  &.icon-before .btn-icon {
+    margin-left: -.25em;
+    margin-right: .25em;
+  }
+  &.icon-after .glyphicon,
+  &.icon-after .btn-icon {
+    margin-left: .25em;
+    margin-right: -.25em;
+  }
+}
+
+// display the label of url embed in
+// the ckeditor. Double classes needed for
+// specificity. Otheriwse override in editor.css
+// from vendor folder
+.cke_button_label.cke_button__social_embed_label {
+  display: inline;
+}
+
+.icon-desktop {
+  background-image: url(../images/icons/icon-desktop.svg);
+}
+
+.icon-tablet {
+  background-image: url(../images/icons/icon-tablet.svg);
+}
+
+.icon-phone {
+  background-image: url(../images/icons/icon-phone.svg);
+}

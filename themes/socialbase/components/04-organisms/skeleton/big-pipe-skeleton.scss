@@ -1,0 +1,801 @@
+.no-overflow {
+  overflow:hidden;
+}
+
+.skeleton .card--stream {
+  padding:0 !important;
+  container: card/inline-size;
+}
+
+/* Activity stream block */
+.post-block-skeleton {
+  $card-padding: 1.25rem;
+  $card-height: calc(#{$card-padding} + 130px + #{$card-padding});
+  $card-skeleton: linear-gradient(white #{$card-height}, transparent 0);
+
+  $avatar-size: 44px;
+  $avatar-position: #{$card-padding} #{$card-padding};
+  $avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+
+  $post-form-height: 80px;
+  $post-form-width: calc(100% - calc(#{$card-padding} + #{$avatar-size} + 31px));
+  $post-form-position: 75px #{$card-padding};
+  $post-form-skeleton: linear-gradient(rgb(239, 239, 239) #{$post-form-height}, transparent 0);
+
+  $button-height: 24px;
+  $button-skeleton: linear-gradient(rgb(239, 239, 239) #{$button-height}, transparent 0);
+
+  $button-1-height: 12px;
+  $button-1-width: 80px;
+  $button-1-position: left 75px top 108px;
+
+  $button-2-width: 80px;
+  $button-2-position: right 125px top 128px;
+
+  $button-3-width: 80px;
+  $button-3-position: right #{$card-padding} top 128px;
+
+  $blur-width: 200px;
+  $blur-size: #{$blur-width} calc(#{$card-height});
+
+  height: $card-height;
+  &:empty::after {
+    clear: both;
+    content:"";
+    display:block;
+    height: 100%;
+
+    background-image:
+      linear-gradient(
+          90deg,
+          rgba(white, 0) 0,
+          rgba(white, .8) 50%,
+          rgba(white, 0) 100%
+      ),
+      #{$post-form-skeleton},
+      #{$button-skeleton},
+      #{$button-skeleton},
+      #{$button-skeleton},
+      #{$avatar-skeleton},
+      #{$card-skeleton};
+
+    background-size:
+      #{$blur-size},
+      #{$post-form-width} #{$post-form-height},
+      #{$button-1-width} #{$button-1-height},
+      #{$button-2-width} #{$button-height},
+      #{$button-3-width} #{$button-height},
+      #{$avatar-size} #{$avatar-size},
+      100% 100%;
+
+    background-position:
+      -150% 0,
+      #{$post-form-position},
+      #{$button-1-position},
+      #{$button-2-position},
+      #{$button-3-position},
+      #{$avatar-position},
+      0 0;
+
+    background-repeat: no-repeat;
+    animation: loading-post-block 4s infinite;
+  }
+
+  @keyframes loading-post-block {
+    to {
+      background-position:
+        350% 0,
+        #{$post-form-position},
+        #{$button-1-position},
+        #{$button-2-position},
+        #{$button-3-position},
+        #{$avatar-position},
+        0 0;
+    }
+  }
+}
+
+/* Top block showing author and name */
+.media-skeleton {
+  $card-padding: 1.25rem;
+
+  $avatar-size: 100px;
+  $avatar-size: 44px;
+  $avatar-position: #{$card-padding} #{$card-padding};
+  $avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+
+  $author-1-height: 12px;
+  $author-1-skeleton: linear-gradient(rgb(239, 239, 239) #{$author-1-height}, transparent 0);
+  $author-1-width: 25%;
+  $author-1-position: left 75px top calc(#{$card-padding} + 6px);
+
+  $date-2-height: 12px;
+  $date-2-skeleton: linear-gradient(rgb(239, 239, 239) #{$date-2-height}, transparent 0);
+  $date-2-width: 50%;
+  $date-2-position: left 75px top calc(#{$card-padding} + 24px);
+
+  $card-height: calc(#{$card-padding} + #{$avatar-size} + #{$card-padding});
+  $card-skeleton: linear-gradient(white #{$card-height}, transparent 0);
+
+  $blur-width: 200px;
+  $blur-size: #{$blur-width} calc(#{$card-height});
+
+  height: #{$card-height};
+
+  &:empty::after {
+    clear: both;
+    content:"";
+    display:block;
+    height: 100%;
+
+    background-image:
+      linear-gradient(
+          90deg,
+          rgba(white, 0) 0,
+          rgba(white, .8) 50%,
+          rgba(white, 0) 100%
+      ),
+      #{$author-1-skeleton},
+      #{$date-2-skeleton},
+      #{$avatar-skeleton},
+      #{$card-skeleton};
+
+    background-size:
+      #{$blur-size},
+      #{$author-1-width} #{$author-1-height},
+      #{$date-2-width} #{$date-2-height},
+      #{$avatar-size} #{$avatar-size},
+      100% 100%;
+
+    background-position:
+      -150% 0,
+      #{$author-1-position},
+      #{$date-2-position},
+      #{$avatar-position},
+      0 0;
+
+    background-repeat: no-repeat;
+    animation: loading-media 4s infinite;
+  }
+
+  @keyframes loading-media {
+    to {
+      background-position:
+        350% 0,
+        #{$author-1-position},
+        #{$date-2-position},
+        #{$avatar-position},
+        0 0;
+    }
+  }
+}
+
+/* Teaser block with big image left and description right */
+.teaser-skeleton {
+  $card-padding: 1.25rem;
+  $image-height: 152px;
+  $image-width: 152px;
+  $image-position: left #{$card-padding} top 0px;
+  $image-skeleton: linear-gradient(rgb(239, 239, 239) #{$image-height}, transparent 0);
+
+  $card-height: calc(#{$image-height} + #{$card-padding});
+  $card-skeleton: linear-gradient(white #{$card-height}, transparent 0);
+
+  $line-skeleton: linear-gradient(rgb(239, 239, 239) 24px, transparent 0);
+  $line-2-skeleton: linear-gradient(rgb(239, 239, 239) 12px, transparent 0);
+
+  $type-line-width: 80px;
+  $type-line-position: left 208px top 20px;
+
+  $title-line-1-width: calc(100% - calc(#{$card-padding} + #{$image-width} + 56px));
+  $title-line-1-position: left 208px top 40px;
+
+  $title-line-2-width: calc(75% - calc(#{$card-padding} + #{$image-width}));
+  $title-line-2-position: left 208px top 68px;
+
+  $date-line-width: 80px;
+  $date-line-position: left 208px top 108px;
+
+  $author-line-width: 11%;
+  $author-line-position: left 304px top 108px;
+
+  $read-more-height: 24px;
+  $read-more-width: 80px;
+  $read-more-position: right calc(#{$card-padding}) top 132px;
+  $read-more-skeleton: linear-gradient(rgb(239, 239, 239) #{$read-more-height}, transparent 0);
+
+  $blur-width: 200px;
+  $blur-size: #{$blur-width} calc(#{$card-height});
+
+  height: $card-height;
+
+  &:empty::after {
+    clear: both;
+    content:"";
+    display:block;
+    height: 100%;
+
+    background-image:
+      linear-gradient(
+          90deg,
+          rgba(white, 0) 0,
+          rgba(white, .8) 50%,
+          rgba(white, 0) 100%
+      ),
+      #{$image-skeleton},
+      #{$line-2-skeleton},
+      #{$line-skeleton},
+      #{$line-skeleton},
+      #{$line-2-skeleton},
+      #{$line-2-skeleton},
+      #{$read-more-skeleton},
+      #{$card-skeleton};
+
+    background-size:
+      #{$blur-size},
+      #{$image-width} #{$image-width},
+      #{$type-line-width},
+      #{$title-line-1-width},
+      #{$title-line-2-width},
+      #{$date-line-width},
+      #{$author-line-width},
+      #{$read-more-width},
+      100% 100%;
+
+    background-position:
+      -150% 0,
+      #{$image-position},
+      #{$type-line-position},
+      #{$title-line-1-position},
+      #{$title-line-2-position},
+      #{$date-line-position},
+      #{$author-line-position},
+      #{$read-more-position},
+      0 0;
+
+    background-repeat: no-repeat;
+    animation: loading-teaser 4s infinite;
+  }
+
+  @keyframes loading-teaser {
+    to {
+      background-position:
+        350% 0,
+        #{$image-position},
+        #{$type-line-position},
+        #{$title-line-1-position},
+        #{$title-line-2-position},
+        #{$date-line-position},
+        #{$author-line-position},
+        #{$read-more-position},
+        0 0;
+    }
+  }
+
+  // When the container is smaller then 350 pixel hide the author-line
+  // because it overflows.
+  @container card (max-width: 350px) {
+    &:empty::after {
+      background-image:
+        linear-gradient(
+            90deg,
+            rgba(white, 0) 0,
+            rgba(white, .8) 50%,
+            rgba(white, 0) 100%
+        ),
+        #{$image-skeleton},
+        #{$line-2-skeleton},
+        #{$line-skeleton},
+        #{$line-skeleton},
+        #{$line-2-skeleton},
+        #{$read-more-skeleton},
+        #{$card-skeleton};
+
+      background-size:
+        #{$blur-size},
+        #{$image-width} #{$image-width},
+        #{$type-line-width},
+        #{$title-line-1-width},
+        #{$title-line-2-width},
+        #{$date-line-width},
+        #{$read-more-width},
+        100% 100%;
+
+      background-position:
+        -150% 0,
+        #{$image-position},
+        #{$type-line-position},
+        #{$title-line-1-position},
+        #{$title-line-2-position},
+        #{$date-line-position},
+        #{$read-more-position},
+        0 0;
+
+      background-repeat: no-repeat;
+      animation: loading-teaser-mob 4s infinite;
+    }
+
+    @keyframes loading-teaser-mob {
+      to {
+        background-position:
+          350% 0,
+          #{$image-position},
+          #{$type-line-position},
+          #{$title-line-1-position},
+          #{$title-line-2-position},
+          #{$date-line-position},
+          #{$read-more-position},
+          0 0;
+      }
+    }
+  }
+}
+
+/* Post block without avatar and just the post description */
+.post-skeleton {
+  $card-padding: 1.25rem;
+  $card-height: calc(80px + #{$card-padding});
+  $card-skeleton: linear-gradient(white #{$card-height}, transparent 0);
+
+  $line-skeleton: linear-gradient(rgb(239, 239, 239) 24px, transparent 0);
+  $line-2-skeleton: linear-gradient(rgb(239, 239, 239) 12px, transparent 0);
+
+  $title-line-1-width: calc(100% - calc(#{$card-padding} * 2));
+  $title-line-1-position: left #{$card-padding} top 0px;
+
+  $title-line-2-width: 51%;
+  $title-line-2-position: left #{$card-padding} top 28px;
+
+  $media-line-width: 80px;
+  $media-line-position: left #{$card-padding} top 68px;
+
+  $blur-width: 200px;
+  $blur-size: #{$blur-width} calc(#{$card-height});
+
+  height: #{$card-height};
+
+  &:empty::after {
+    clear: both;
+    content:"";
+    display:block;
+    height: 100%;
+
+    background-image:
+      linear-gradient(
+          90deg,
+          rgba(white, 0) 0,
+          rgba(white, .8) 50%,
+          rgba(white, 0) 100%
+      ),
+      #{$line-skeleton},
+      #{$line-skeleton},
+      #{$line-2-skeleton},
+      #{$card-skeleton};
+
+    background-size:
+      #{$blur-size},
+      #{$title-line-1-width},
+      #{$title-line-2-width},
+      #{$media-line-width},
+      100% 100%;
+
+    background-position:
+      -150% 0,
+      #{$title-line-1-position},
+      #{$title-line-2-position},
+      #{$media-line-position},
+      0 0;
+
+    background-repeat: no-repeat;
+    animation: loading-post 4s infinite;
+  }
+
+  @keyframes loading-post {
+    to {
+      background-position:
+        350% 0,
+        #{$title-line-1-position},
+        #{$title-line-2-position},
+        #{$media-line-position},
+        0 0;
+    }
+  }
+}
+
+/* Teaser block with big image on top and description on bottom */
+.big-teaser-skeleton {
+  $card-padding: 1.25rem;
+  $card-height: 320px;
+  $card-skeleton: linear-gradient(white #{$card-height}, transparent 0);
+
+  $post-form-height: 200px;
+  $post-form-width: calc(100% - calc(#{$card-padding} + 21px));
+  $post-form-position: #{$card-padding} 0;
+  $post-form-skeleton: linear-gradient(rgb(239, 239, 239) #{$post-form-height}, transparent 0);
+
+  $title-height: 24px;
+  $title-skeleton: linear-gradient(rgb(239, 239, 239) #{$title-height}, transparent 0);
+
+  $title-1-width: calc(100% - calc(#{$card-padding} + 21px));
+  $title-1-position: left #{$card-padding} top 220px;
+
+  $title-2-width: 51%;
+  $title-2-position: left #{$card-padding} top 248px;
+
+  $read-more-height: 12px;
+  $read-more-width: 80px;
+  $read-more-position: left #{$card-padding} top 288px;
+  $read-more-skeleton: linear-gradient(rgb(239, 239, 239) #{$read-more-height}, transparent 0);
+
+  $blur-width: 200px;
+  $blur-size: #{$blur-width} calc(#{$card-height});
+  /* End variables */
+
+  height: $card-height;
+
+  &:empty::after {
+    clear: both;
+    content:"";
+    display:block;
+    height: 100%;
+
+    background-image:
+      linear-gradient(
+          90deg,
+          rgba(white, 0) 0,
+          rgba(white, .8) 50%,
+          rgba(white, 0) 100%
+      ),
+      #{$post-form-skeleton},
+      #{$title-skeleton},
+      #{$title-skeleton},
+      #{$read-more-skeleton},
+      #{$card-skeleton};
+
+    background-size:
+      #{$blur-size},
+      #{$post-form-width} #{$post-form-height},
+      #{$title-1-width} #{$title-height},
+      #{$title-2-width} #{$title-height},
+      #{$read-more-width} #{$read-more-height},
+      100% 100%;
+
+    background-position:
+      -150% 0,
+      #{$post-form-position},
+      #{$title-1-position},
+      #{$title-2-position},
+      #{$read-more-position},
+      0 0;
+
+    background-repeat: no-repeat;
+    animation: loading-big-teaser 4s infinite;
+  }
+
+  @keyframes loading-big-teaser {
+    to {
+      background-position:
+        350% 0,
+        #{$post-form-position},
+        #{$title-1-position},
+        #{$title-2-position},
+        #{$read-more-position},
+        0 0;
+    }
+  }
+}
+
+/* Comment block with author left and big comment right */
+.comment-skeleton {
+  $card-padding: 1.25rem;
+
+  $avatar-size: 44px;
+  $avatar-position: #{$card-padding} 0;
+  $avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+
+  $post-form-height: 64px;
+  $post-form-width: calc(100% - calc(#{$card-padding} + #{$avatar-size} + 130px));
+  $post-form-position: 75px 0;
+  $post-form-skeleton: linear-gradient(rgb(239, 239, 239) #{$post-form-height}, transparent 0);
+
+  $card-height: calc(#{$post-form-height} + #{$card-padding});
+  $card-skeleton: linear-gradient(white #{$card-height}, transparent 0);
+
+  $button-height: 24px;
+  $button-skeleton: linear-gradient(rgb(239, 239, 239) #{$button-height}, transparent 0);
+  $button-width: 80px;
+  $button-position: right #{$card-padding} top 0;
+
+  $blur-width: 200px;
+  $blur-size: #{$blur-width} calc(#{$card-height});
+  /* End variables */
+
+  height: $card-height;
+
+  &:empty::after {
+    clear: both;
+    content:"";
+    display:block;
+    height: 100%;
+
+    background-image:
+      linear-gradient(
+          90deg,
+          rgba(white, 0) 0,
+          rgba(white, .8) 50%,
+          rgba(white, 0) 100%
+      ),
+      #{$post-form-skeleton},
+      #{$button-skeleton},
+      #{$avatar-skeleton},
+      #{$card-skeleton};
+
+    background-size:
+      #{$blur-size},
+      #{$post-form-width} #{$post-form-height},
+      #{$button-width} #{$button-height},
+      #{$avatar-size} #{$avatar-size},
+      100% 100%;
+
+    background-position:
+      -150% 0,
+      #{$post-form-position},
+      #{$button-position},
+      #{$avatar-position},
+      0 0;
+
+    background-repeat: no-repeat;
+    animation: loading-comment 4s infinite;
+  }
+
+  @keyframes loading-comment {
+    to {
+      background-position:
+        350% 0,
+        #{$post-form-position},
+        #{$button-position},
+        #{$avatar-position},
+        0 0;
+    }
+  }
+}
+
+/* Comment block with author left and small comment right - variation 1 */
+.comment-2-skeleton {
+  $card-padding: 1.25rem;
+
+  $avatar-size: 44px;
+  $avatar-position: #{$card-padding} 0;
+  $avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+
+  $author-1-height: 12px;
+  $author-1-skeleton: linear-gradient(rgb(239, 239, 239) #{$author-1-height}, transparent 0);
+  $author-1-width: 80px;
+  $author-1-position: left 75px top 0;
+
+  $date-2-height: 12px;
+  $date-2-skeleton: linear-gradient(rgb(239, 239, 239) #{$date-2-height}, transparent 0);
+  $date-2-width: calc(30% - calc(#{$card-padding} + #{$avatar-size} + 31px));
+  $date-2-position: left calc(#{$author-1-width} + 95px) top 0;
+
+  $comment-height: 12px;
+  $comment-skeleton: linear-gradient(rgb(239, 239, 239) #{$comment-height}, transparent 0);
+  $comment-width: calc(65% - calc(#{$card-padding} + #{$avatar-size} + 31px));
+  $comment-position: left 75px top 16px;
+
+  $likes-height: 12px;
+  $likes-skeleton: linear-gradient(rgb(239, 239, 239) #{$likes-height}, transparent 0);
+  $likes-width: 80px;
+  $likes-position: left 75px top 44px;
+
+  $card-height: 80px ;
+  $card-skeleton: linear-gradient(white #{$card-height}, transparent 0);
+
+  $blur-width: 200px;
+  $blur-size: #{$blur-width} calc(#{$card-height});
+
+  height: $card-height;
+
+  &:empty::after {
+    clear: both;
+    content:"";
+    display:block;
+    height: 100%;
+
+    background-image:
+      linear-gradient(
+          90deg,
+          rgba(white, 0) 0,
+          rgba(white, .8) 50%,
+          rgba(white, 0) 100%
+      ),
+      #{$author-1-skeleton},
+      #{$date-2-skeleton},
+      #{$comment-skeleton},
+      #{$likes-skeleton},
+      #{$avatar-skeleton},
+      #{$card-skeleton};
+
+    background-size:
+      #{$blur-size},
+      #{$author-1-width} #{$author-1-height},
+      #{$date-2-width} #{$date-2-height},
+      #{$comment-width} #{$comment-height},
+      #{$likes-width} #{$likes-height},
+      #{$avatar-size} #{$avatar-size},
+      100% 100%;
+
+    background-position:
+      -150% 0,
+      #{$author-1-position},
+      #{$date-2-position},
+      #{$comment-position},
+      #{$likes-position},
+      #{$avatar-position},
+      0 0;
+
+    background-repeat: no-repeat;
+    animation: loading-comment-2 4s infinite;
+  }
+
+  @keyframes loading-comment-2 {
+    to {
+      background-position:
+        350% 0,
+        #{$author-1-position},
+        #{$date-2-position},
+        #{$comment-position},
+        #{$likes-position},
+        #{$avatar-position},
+        0 0;
+    }
+  }
+}
+
+/* Comment block with author left and small comment right - variation 2 */
+.comment-3-skeleton {
+  $card-padding: 1.25rem;
+
+  $avatar-size: 44px;
+  $avatar-position: #{$card-padding} 0;
+  $avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+
+  $author-1-height: 12px;
+  $author-1-skeleton: linear-gradient(rgb(239, 239, 239) #{$author-1-height}, transparent 0);
+  $author-1-width: 120px;
+  $author-1-position: left 75px top 0;
+
+  $date-2-height: 12px;
+  $date-2-skeleton: linear-gradient(rgb(239, 239, 239) #{$date-2-height}, transparent 0);
+  $date-2-width: calc(30% - calc(#{$card-padding} + #{$avatar-size} + 31px));
+  $date-2-position: left calc(#{$author-1-width} + 95px) top 0;
+
+  $comment-height: 12px;
+  $comment-skeleton: linear-gradient(rgb(239, 239, 239) #{$comment-height}, transparent 0);
+  $comment-width: calc(75% - calc(#{$card-padding} + #{$avatar-size} + 31px));
+  $comment-position: left 75px top 16px;
+
+  $likes-height: 12px;
+  $likes-skeleton: linear-gradient(rgb(239, 239, 239) #{$likes-height}, transparent 0);
+  $likes-width: 80px;
+  $likes-position: left 75px top 44px;
+
+  $card-height: 80px ;
+  $card-skeleton: linear-gradient(white #{$card-height}, transparent 0);
+
+  $blur-width: 200px;
+  $blur-size: #{$blur-width} calc(#{$card-height});
+
+  height: #{$card-height};
+
+  &:empty::after {
+    clear: both;
+    content:"";
+    display:block;
+    height: 100%;
+
+    background-image:
+      linear-gradient(
+          90deg,
+          rgba(white, 0) 0,
+          rgba(white, .8) 50%,
+          rgba(white, 0) 100%
+      ),
+      #{$author-1-skeleton},
+      #{$date-2-skeleton},
+      #{$comment-skeleton},
+      #{$likes-skeleton},
+      #{$avatar-skeleton},
+      #{$card-skeleton};
+
+    background-size:
+      #{$blur-size},
+      #{$author-1-width} #{$author-1-height},
+      #{$date-2-width} #{$date-2-height},
+      #{$comment-width} #{$comment-height},
+      #{$likes-width} #{$likes-height},
+      #{$avatar-size} #{$avatar-size},
+      100% 100%;
+
+    background-position:
+      -150% 0,
+      #{$author-1-position},
+      #{$date-2-position},
+      #{$comment-position},
+      #{$likes-position},
+      #{$avatar-position},
+      0 0;
+
+    background-repeat: no-repeat;
+    animation: loading-comment-3 4s infinite;
+  }
+
+  @keyframes loading-comment-3 {
+    to {
+      background-position:
+        350% 0,
+        #{$author-1-position},
+        #{$date-2-position},
+        #{$comment-position},
+        #{$likes-position},
+        #{$avatar-position},
+        0 0;
+    }
+  }
+}
+
+/* Comment block with 'see more' bottom aligned in the center */
+.comment-more-skeleton {
+  $read-more-height: 24px;
+  $read-more-skeleton: linear-gradient(rgb(239, 239, 239) #{$read-more-height}, transparent 0);
+  $read-more-width: 80px;
+  $read-more-position: left 50% top 16px;
+
+  $card-padding: 1.25rem;
+  $card-height: 55px;
+  $card-skeleton: linear-gradient(white #{$card-height}, transparent 0);
+
+  $blur-width: 200px;
+  $blur-size: #{$blur-width} calc(#{$card-height});
+
+  height: $card-height;
+
+  &:empty::after {
+    clear: both;
+    content:"";
+    display:block;
+    height: 100%;
+
+    background-image:
+      linear-gradient(
+          90deg,
+          rgba(white, 0) 0,
+          rgba(white, .8) 50%,
+          rgba(white, 0) 100%
+      ),
+      #{$read-more-skeleton},
+      #{$card-skeleton};
+
+    background-size:
+      #{$blur-size},
+      #{$read-more-width} #{$read-more-height},
+      100% 100%;
+
+    background-position:
+      -150% 0,
+      #{$read-more-position},
+      0 0;
+
+    background-repeat: no-repeat;
+    animation: loading-comment-more 4s infinite;
+  }
+
+  @keyframes loading-comment-more {
+    to {
+      background-position:
+        350% 0,
+        #{$read-more-position},
+        0 0;
+    }
+  }
+}

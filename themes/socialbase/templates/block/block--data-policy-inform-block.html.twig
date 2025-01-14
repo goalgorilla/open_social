@@ -1,0 +1,28 @@
+{#
+/**
+ * @file
+ * Theme implementation to display a Data Policy Inform block.
+ *
+ * @ingroup templates
+ *
+ * @see bootstrap_preprocess_block()
+ * @see template_preprocess()
+ * @see template_preprocess_block()
+ * @see bootstrap_process_block()
+ * @see template_process()
+ */
+#}
+{% extends 'block.html.twig' %}
+
+{% block content %}
+    {{ attach_library('socialbase/block--informblock') }}
+    <div class="card__block">
+        {{ content|without('link') }}
+    </div>
+
+    {% if content.link|render %}
+    <footer class="card__actionbar">
+        {{ content.link }}
+    </footer>
+    {% endif %}
+{% endblock %}

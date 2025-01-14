@@ -1,0 +1,9 @@
+<div class="teaser__content-line">
+  <svg class="teaser__content-type-icon" aria-hidden="true">
+    {% block svg_title %} {% endblock %}
+    <use xlink:href="#icon-{% block field_icon %}label{% endblock %}"></use>
+  </svg>
+  <div class="teaser__content-text">
+    {% block field_value %} {% endblock %}
+  </div>
+</div>

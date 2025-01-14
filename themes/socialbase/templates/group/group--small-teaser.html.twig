@@ -1,0 +1,38 @@
+{% extends "node--small-teaser.html.twig" %}
+
+{# Display a location field of a group in the popup on the map on the "/all-group" page. #}
+{% block location %}
+  {% if location %}
+    <div class="teaser--small__location"> {{ location }} </div>
+  {% endif %}
+{% endblock %}
+
+{% block teaser_image %}
+  <div class="teaser--small__media">
+    {% if content['field_group_image'] | render | striptags('<img>') is not empty %}
+      {{ content['field_group_image'] }}
+    {% else %}
+      <svg class="teaser--small__type-icon">
+        <title>{% trans %}Group{% endtrans %}</title>
+        <use xlink:href="#icon-group"></use>
+      </svg>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extra_text %}
+  <div class="teaser--small__meta">
+    {% if closed_group_lock %}
+      <svg class="icon-gray icon-small" aria-hidden="true">
+        <title>{% trans %}Closed group{% endtrans %}</title>
+        <use xlink:href="#icon-lock"></use>
+      </svg>
+    {% elseif secret_group_shield %}
+      <svg class="icon-gray icon-small" aria-hidden="true">
+        <title>{% trans %}Secret group{% endtrans %}</title>
+        <use xlink:href="#icon-shield"></use>
+      </svg>
+    {% endif %}
+    {{ group_type }} &middot; {% trans %}1 member{% plural group_members %}@count members{% endtrans %}
+  </div>
+{% endblock %}

@@ -1,0 +1,71 @@
+@import 'settings';
+
+.view-group-manage-members,
+.view-event-manage-enrollments {
+  .row {
+    @include for-tablet-portrait-up {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+  }
+
+  .right-auto {
+    h4 {
+      margin-top: 0;
+    }
+  }
+
+  .form-group-inline--right {
+    @include for-tablet-portrait-up {
+      justify-content: flex-end;
+    }
+  }
+
+  .filter-block {
+    margin-bottom: 8px;
+
+    @include for-tablet-portrait-up {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    > .list-inline,
+    > ul {
+      &,
+      > li {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .infinity-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 12px;
+
+    @include for-tablet-portrait-up {
+      justify-content: end;
+      margin: 0 24px;
+    }
+
+    .views-exposed-form {
+      .control-label {
+        display: none;
+      }
+
+      .form-item {
+        margin-bottom: 0;
+
+        &.form-item-items-per-page {
+          padding: 0 12px;
+        }
+      }
+    }
+
+    .separate-text {
+      padding-right: 8px;
+    }
+  }
+}

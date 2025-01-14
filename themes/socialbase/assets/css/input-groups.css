@@ -1,0 +1,103 @@
+.input-group {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  max-width: 23rem;
+}
+
+.input-group[class*="col-"] {
+  float: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.input-group .form-control {
+  position: relative;
+  z-index: 2;
+  float: left;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.input-group .form-control:focus {
+  z-index: 3;
+}
+
+.input-group .form-control:focus ~ .input-group-addon {
+  outline: 0;
+}
+
+.input-group-addon:not(:first-child):not(:last-child),
+.input-group-btn:not(:first-child):not(:last-child),
+.input-group .form-control:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+
+.input-group-addon,
+.input-group-btn {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.input-group-addon {
+  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+  padding: 6px 12px;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 1;
+  text-align: center;
+}
+
+.input-group.input-group-expanded .input-group-addon {
+  padding: .75rem .5rem .75rem 1.25rem;
+  font-size: .875rem;
+  line-height: 21px;
+}
+
+.input-group.input-group-expanded .input-group-addon + .form-control {
+  max-width: 240px;
+  height: 48px;
+}
+
+.input-group-addon:first-child {
+  border-right-width: 0;
+}
+
+[dir='rtl'] .input-group-addon:first-child {
+  border-right-width: 1px;
+  border-left-width: 0;
+}
+
+.input-group-addon:last-child {
+  border-left-width: 0;
+}
+
+[dir='rtl'] .input-group-addon:last-child {
+  border-left-width: 1px;
+  border-right-width: 0;
+}
+
+.input-group .form-control:first-child,
+.input-group-addon:first-child {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.input-group .form-control:last-child,
+.input-group-addon:last-child {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.input-group-expanded {
+  max-width: none;
+}
+
+.form-disabled .input-group.input-group-expanded,
+.form-disabled .input-group.input-group-expanded + .help-block {
+  opacity: .5;
+}

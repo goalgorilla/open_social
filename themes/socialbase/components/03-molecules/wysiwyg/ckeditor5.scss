@@ -1,0 +1,108 @@
+.ck.ck-content {
+
+  // Strong
+  strong {
+    font-weight: 500;
+  }
+
+  // Bulleted list
+  ul {
+    list-style-type: disc;
+  }
+
+  // Horizontal rule
+  hr {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    border: 0;
+    border-top: 1px solid #e6e6e6;
+    height: initial;
+  }
+
+  // Blockquote
+  // Override: assets/vendor/ckeditor5/block-quote/block-quote.js
+  blockquote {
+    border-left: 3px solid #29abe2;
+    font-style: normal;
+    overflow: initial;
+    padding: 12px 24px;
+  }
+
+  // Image caption
+  // Override: assets/vendor/ckeditor5/image/image.js
+  .image>figcaption {
+    font-size: 90%;
+    color: #777777;
+    background-color: transparent;
+    display: table-caption;
+    caption-side: bottom;
+    word-break: break-word;
+    padding: 0;
+  }
+
+  // Table caption
+  // Override: assets/vendor/ckeditor5/table/table.js
+  .table {
+
+    &>figcaption {
+      font-size: 100%;
+      caption-side: bottom;
+      margin-top: 0;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+      padding-left: 0;
+      padding-right: 0;
+      color: #555555;
+      text-align: left;
+      background-color: transparent;
+    }
+
+    td {
+      padding: 0.75rem 1.25rem;
+      vertical-align: top;
+      word-wrap: break-word;
+      border: 1px solid #CCCCCC;
+    }
+  }
+
+  // Formatted style
+  // Override: assets/vendor/ckeditor5/code-block/code-block.js
+  pre {
+    color: #333333;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+  }
+
+  // Improve url_embed
+  figure.drupal-url {
+    display: inherit;
+  }
+}
+
+// CKEditor toolbar
+.ck.ck-toolbar.ck-toolbar_grouping {
+  > .ck-toolbar__items {
+    flex-wrap: wrap !important;
+  }
+}
+// Improve text break if the user adds the text ot url link without empty spaces
+.ck-source-editing-area {
+  &:after {
+    word-break: break-word;
+  }
+}
+
+// CKEditor toolbar sticky behavior
+.ck.ck-sticky-panel .ck-sticky-panel__content_sticky {
+  top: 50px !important;
+}
+
+// Reset height/width styles in the parent of the image
+.ck-content {
+  .image,
+  .image-inline {
+    height: auto;
+    width: auto;
+  }
+}

@@ -1,0 +1,558 @@
+// Teaser
+//
+// A teaser is a concept in  Drupal.
+//
+// > A teaser is a short piece of text, usually the first paragraph
+// > or two of an article. This text is then displayed in most lists,
+// > including the default home page (/node). Many modules (including Views)
+// > are designed to work with node teasers, and the concept of a "teaser"
+// > vs the node "body" is integral to the workings of Drupal core and the Drupal UI.
+//
+// The teaser can have image but it is not mandatory.
+// Teasers can have one or two buttons (of type flat) which are in the actionbar.
+// Content hierarchy is achieved by the order of fields and the use of typography.
+// Try to limit the amount of information and actions in a teaser.
+// On mobile the image field is not displayed. On tablet and wider
+// the maximum height of the teaser should match the heigth of the `image_style`.
+//
+// markup: teaser.twig
+//
+// Weight: 3
+//
+// Style guide: molecules.teaser
+// Teaser unpublished
+//
+// markup: teaser-unpublished.twig
+//
+// Weight: 1
+//
+// Style guide: molecules.teaser.unpublished
+@import 'settings';
+
+// teaser item in an overview
+.teaser {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  overflow: hidden; // makes sure content doesn't continue outside of teaser
+
+  @include for-tablet-portrait-up {
+    flex-direction: row;
+    height: 220px; // matches width of image
+  }
+
+}
+
+// parent of the <img> element
+.teaser__image {
+  width: 100%;
+  display: none;
+
+  @include for-tablet-portrait-up {
+    display: block;
+    height: 220px;
+    flex: 0 0 220px;
+    position: relative;
+    width: auto;
+    padding-top: 0;
+  }
+
+  + a .teaser__teaser-type {
+    @include for-phone-only {
+      width: 100%;
+      display: none;
+    }
+  }
+}
+
+// Icon parent to recognise type of teaser in for example the search results
+.teaser__teaser-type {
+  top: 0;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  left: 20px;
+  position: relative;
+  margin-bottom: -10px;
+
+  [dir='rtl'] & {
+    left: auto;
+    right: 20px;
+  }
+
+  @include for-tablet-portrait-up {
+    position: absolute;
+    margin-bottom: 0;
+    left: 0;
+    width: 44px;
+    height: 44px;
+    padding: 12px;
+
+    [dir='rtl'] & {
+      left: auto;
+      right: 0;
+    }
+  }
+  .no-image & {
+    background: none;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+}
+
+// Icon to recognise type of teaser in for example the search results
+.teaser__teaser-type-icon {
+  width: 18px;
+  height: 18px;
+  display: table;
+  .no-image & {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto;
+    fill: #4d4d4d;
+  }
+}
+
+// Title of the teaser
+.teaser__title {
+  margin-top: 0;
+  margin-bottom: 20px;
+  max-height: 2.4em;
+  line-height: 1.2;
+  overflow: hidden;
+}
+
+// Body of the teaser, contains the content and the actionbar. Shown on the right side next to the image
+.teaser__body {
+  display: flex;
+  flex: 0 0 100%;
+  max-width: 100%;
+  flex-direction: column;
+
+  @include for-tablet-portrait-up {
+    flex: 1;
+  }
+
+  .teaser:not(.teaser--tile) & {
+    @include for-tablet-portrait-up {
+      flex: 0 0 calc(100% - 220px);
+      max-width: calc(100% - 220px);
+    }
+  }
+}
+
+// Content of the teaser
+.teaser__content {
+  flex: 1;
+  padding: 20px;
+  position: relative;
+
+  // Margin styles for introduction and summary field on the profile teaser.
+  .field--name-field-profile-self-introduction,
+  .field--name-field-profile-summary {
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+
+    &,
+    > p {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    > * {
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    + .teaser__content--badges {
+      margin-top: -.75rem;
+    }
+  }
+
+  .teaser__content--badges {
+    display: block;
+    display: -webkit-box;
+    max-width: 100%;
+    height: 44px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// A line of content giving information about the content.
+.teaser__content-line {
+  display: flex;
+  max-width: 100%;
+  font-size: 0.875rem;
+
+  [dir='rtl'] & {
+    justify-content: flex-start;
+  }
+}
+
+// Describes the type of content such as a blog, news, group or user icon.
+.teaser__content-type-icon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  line-height: 21px;
+  margin-top: 3px; // vertical alignment
+  fill: $gray;
+  margin-right: 12px;
+
+  [dir='rtl'] & {
+    margin-right: 0;
+    margin-left: 12px;
+  }
+}
+
+// Will always be cut off after one line
+.teaser__content-text {
+  line-height: 21px;
+  flex-grow: 1;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  white-space: normal;
+
+  [dir='rtl'] & {
+    flex-grow: initial;
+  }
+}
+
+// Custom styling for publication info of a node, because it needs to be combined at one line next to the content type icon
+.teaser__published {
+  display: flex;
+  min-width: 0; // critical to prevent children from growing
+
+  [dir='rtl'] & {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+  }
+}
+
+// The author name should be able to truncate when the space is limited
+.teaser__published-author {
+  flex-grow: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+
+  [dir='rtl'] & {
+    flex-grow: initial;
+  }
+}
+
+// The published date should be shown completely when the space is limited
+.teaser__published-date {
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+// Reset margin so the items in the actionbar are vertically aligned.
+.teaser__badge {
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+// Unpublished teaser states
+@include for-tablet-portrait-up {
+
+  .teaser--unpublished .status {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: white;
+    top: 0;
+    padding-top: 185px;
+    left: 0;
+    z-index: 2;
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+
+    &:before {
+      display: block;
+      position: absolute;
+      content: '';
+      background-image: linear-gradient(rgba(0, 0, 0, 0.00) 40%, rgba(0, 0, 0, 0.1) 70%, rgba(34, 34, 34, 0.5) 100%);
+      height: 100%;
+      width: 100%;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: -1;
+    }
+  }
+
+}
+
+.teaser--unpublished {
+  .teaser__title {
+    padding-right: 110px;
+    @include for-tablet-portrait-up {
+      padding-right: 130px;
+    }
+  }
+}
+
+// Profile teaser
+.teaser--tile.teaser-profile {
+  padding: 0;
+  text-align: center;
+  overflow: hidden;
+
+  .teaser__image {
+    flex: 0 0 100px;
+    height: 100px;
+    margin-bottom: 70px;
+    border-radius: 0;
+    text-align: center;
+    overflow: visible;
+    display: block;
+
+    img {
+      display: block;
+      margin: 0 auto;
+      width: 128px;
+      height: 128px;
+      border: 9px solid white;
+      position: relative;
+      top: 36px;
+      left: auto;
+      background-color: #fff;
+    }
+  }
+}
+
+// Small teasers, used in blocks for example.
+.teaser--small {
+  display: flex;
+  min-height: 74px;
+  padding: 1.5rem $card-spacer-x 0;
+
+  .teaser--small__media {
+    flex: none;
+
+    img {
+      // This is not controllable by theme settings on purpose.
+      border-radius: 5px;
+    }
+
+    &.teaser--small__media--profile {
+
+      img {
+        // This is not controllable by theme settings on purpose.
+        border-radius: 50%;
+      }
+    }
+
+    .teaser--small__type-icon {
+      // Matches the image style for the images.
+      width: 44px;
+      height: 44px;
+
+      fill: $text-color;
+      background-color: $gray-lighter;
+      border-radius: 5px;
+      padding: .75rem;
+    }
+  }
+
+
+  .teaser--small__title {
+    font-size: 1rem;
+    line-height: 24px;
+  }
+
+  .teaser--small__details {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 calc(100% - 60px);
+    max-width: calc(100% - 60px);
+    margin-left: 1rem;
+
+    [dir='rtl'] & {
+      margin-left: 0;
+      margin-right: 1rem;
+    }
+
+    .small {
+      font-size: .875rem;
+      line-height: 20px;
+    }
+  }
+
+  .teaser--small__meta {
+    display: flex;
+    color: $text-muted;
+
+    a {
+      // Matches .light
+      font-weight: 300;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .teaser__content-text {
+
+  }
+
+  &:last-child {
+    padding-bottom: 1.5rem;
+  }
+
+  // In case a teaser is a direct sibling to an actionbar card then there's some
+  // issue with spacing that needs to be resolved.
+  & + .card__actionbar {
+    margin-top: 0;
+  }
+}
+
+// Teaser medium.
+.teaser--medium {
+  width: 100%;
+  min-height: 254px;
+
+  .teaser--wrapper {
+    position: relative;
+    height: 100%;
+    align-items: center;
+    margin-bottom: 0;
+    padding: 20px;
+    border: 1px solid #cecece;
+
+    &.card {
+      box-shadow: none;
+    }
+  }
+
+  .teaser--medium__media {
+    > svg {
+      position: absolute;
+    }
+
+    .teaser--medium__type-icon {
+      width: 18px;
+      height: 18px;
+      top: 15px;
+      left: 15px;
+      fill: #343434;
+    }
+  }
+
+  .teaser_logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 20px;
+    background-color: #f5f5f5;
+
+    &,
+    img {
+      width: 108px;
+      height: 108px;
+      border-radius: 50%;
+    }
+
+    img {
+      object-fit: cover;
+    }
+
+    svg {
+      width: 42px;
+      height: 42px;
+      fill: #cecece;
+    }
+  }
+
+  .teaser--medium__user-number {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .user-icon {
+      display: flex;
+      align-items: center;
+      padding: 1px 8px 1px 1px;
+      border: 1px solid #cecece;
+      border-radius: 16px;
+
+      font-size: .875rem;
+      font-weight: 600;
+      line-height: 20px;
+
+      .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        margin-right: 4px;
+        border-radius: 50%;
+        background-color: #cecece;
+
+        svg {
+          width: 12px;
+          height: 12px;
+        }
+      }
+    }
+
+    .member-joined {
+      margin-left: 12px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .teaser--medium__title {
+    width: 100%;
+    text-align: center;
+
+    a {
+      font-weight: 600;
+      line-height: 24px;
+      color: #343434;
+
+      word-wrap: break-word;
+      hyphens: auto;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+
+      &:hover,
+      &:focus {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Share button.
+.share-button {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}

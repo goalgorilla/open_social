@@ -1,0 +1,102 @@
+# Schema for the configuration files of the Social Base theme.
+socialbase.settings:
+  type: theme_settings
+  label: 'socialbase settings'
+  mapping:
+    favicon:
+      type: mapping
+      label: 'Favicon settings'
+      mapping:
+        mimetype:
+          type: string
+          label: 'Favicon mimetype'
+        path:
+          type: string
+          label: 'Path to custom favicon'
+        url:
+          type: string
+          label: 'Url to custom favicon'
+        use_default:
+          type: boolean
+          label: 'Use the favicon supplied by the theme'
+    schema:
+      type: string
+      label: 'Schema'
+    features:
+      type: mapping
+      label: 'Features settings'
+      mapping:
+        comment_user_picture:
+          type: boolean
+          label: 'User pictures in comments'
+        comment_user_verification:
+          type: boolean
+          label: 'User verification status in comments'
+        favicon:
+          type: boolean
+          label: 'Favicon'
+        node_user_picture:
+          type: boolean
+          label: 'User pictures in posts'
+    logo:
+      type: mapping
+      label: 'Logo settings'
+      mapping:
+        path:
+          type: string
+          label: 'Path to custom logo'
+        url:
+          type: string
+          label: 'Url to custom logo'
+        use_default:
+          type: boolean
+          label: 'Use the logo supplied by the theme'
+    region_wells:
+      type: mapping
+      label: 'Region wells settings'
+      mapping:
+        header:
+          type: string
+          label: 'Header'
+        breadcrumb:
+          type: string
+          label: 'Breadcrumb'
+        hero:
+          type: string
+          label: 'Hero'
+        primary_action:
+          type: string
+          label: 'Primary action'
+        secondary_navigation:
+          type: string
+          label: 'Secondary navigation'
+        content:
+          type: string
+          label: 'Content'
+        complementary:
+          type: string
+          label: 'Complementary'
+        footer:
+          type: string
+          label: 'Footer'
+    forms_smart_descriptions:
+      type: boolean
+      label: 'Smart form descriptions (via Tooltips)'
+    cdn_provider:
+      type: string
+      label: 'CDN Provider'
+    popover_trigger:
+      type: string
+      label: 'Popover trigger'
+    tooltip_enabled:
+      type: boolean
+      label: 'Enable Bootstrap Tooltips'
+    button_colorize:
+      type: boolean
+      label: 'Colorize Buttons'
+    button_iconize:
+      type: boolean
+      label: 'Iconize Buttons'
+    modal_enabled:
+      type: boolean
+      label: 'Enable Bootstrap Modals'

@@ -1,0 +1,83 @@
+{#
+/**
+* @file post.html.twig
+* Default theme implementation to present Post data.
+*
+* This template is used when viewing Post pages.
+*
+*
+* Available variables:
+* - content: A list of content items. Use 'content' to print all content, or
+* - attributes: HTML attributes for the container element.
+*
+* @see template_preprocess_post()
+*
+* @ingroup themeable
+*/
+#}
+
+{{ attach_library('socialbase/comment') }}
+{{ attach_library('socialbase/page-node')}}
+
+{%
+  set classes = [
+    'margin-top-m',
+    'iframe-container',
+    logged_in ? 'margin-bottom-m',
+  ]
+%}
+
+{% if content.links %}
+  {{ content.links }}
+{% endif %}
+
+<div{{ attributes.addClass(classes) }}>
+
+  {# body-text is necessary for theme colors to be applied #}
+  <div class="body-text">
+    {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id', 'field_album') }}
+  </div>
+
+  {{ content.field_post_image }}
+
+  <div class="clearfix"></div>
+
+  <div class="footer-post">
+    {% if dashboard and comment_count > 0 %}
+      <a href="{{ comment_url }}" class="badge badge--pill badge--post" title="{% trans %}Total amount of comments {% endtrans %}">
+            <span class="badge__container">
+              <svg class="badge__icon" aria-hidden="true">
+                <title>{% trans %}Total amount of comments {% endtrans %}</title>
+                <use xlink:href="#icon-comment"></use>
+              </svg>
+              <span class="badge__label">
+                {{ comment_count }}
+              </span>
+            </span>
+      </a>
+    {% endif %}
+
+    {{ content.like_and_dislike }}
+
+    {% if dashboard %}
+      <div class="card__link">
+        {{ more_link }}
+      </div>
+    {% endif %}
+
+    <div class="album-name">
+      {{ content.field_album }}
+    </div>
+
+    {% if share_post %}
+      <div class="share-button">
+        {{ share_post }}
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+{% if content.field_post_comments %}
+  {{ content.field_post_comments }}
+{% endif %}

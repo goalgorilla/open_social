@@ -1,0 +1,22 @@
+@import "settings";
+
+
+// this removes overflow:hidden from main container
+// the page scrolls so entire user list is accessible
+@include for-phone-only {
+
+  .mentions-input .ui-autocomplete {
+    max-height: 125px;
+    overflow-y: auto;
+  }
+
+  .main-container {
+    overflow: auto;
+  }
+
+  .ui-autocomplete.ui-widget-content {
+    margin-bottom: 1rem;
+  }
+
+}
+
