@@ -1,0 +1,23 @@
+{% extends "node--featured--sky.html.twig" %}
+
+{% block card_body %}{% endblock %}
+
+{% block card_actionbar %}
+
+  {% if images_count %}
+    <div class="badge teaser__badge">
+      <span class="badge__container">
+        <svg class="badge__icon">
+          <title>{{ 'Total amount of images'| t }}</title>
+          <use xlink:href="#icon-image"></use>
+        </svg>
+        <span class="badge__label">
+          {{ images_count }}
+        </span>
+      </span>
+    </div>
+  {% endif %}
+
+  {{ parent() }}
+
+{% endblock %}

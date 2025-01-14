@@ -1,0 +1,15 @@
+{%
+  set classes = [
+  'navbar',
+  'navbar-default',
+  header_style ? 'navbar-second-line' : 'navbar-fixed-top',
+  ]
+%}
+
+{% if content %}
+  <nav {{ attributes.addClass(classes) }} role="banner">
+    <div class="container container--navbar">
+      {{ content }}
+    </div>
+  </nav>
+{% endif %}

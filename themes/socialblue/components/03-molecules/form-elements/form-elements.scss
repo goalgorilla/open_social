@@ -1,0 +1,383 @@
+@import 'settings';
+
+// Indication on labels for required fields
+span.form-required {
+  color: $brand-danger;
+}
+
+html.js .input-group-addon .glyphicon.glyphicon-spin {
+  color: $brand-primary;
+}
+
+// When a dropdown-toggle in a button group gets an extra class it should be ignored
+.form-actions .btn-group--primary .dropdown-toggle {
+  border-color: $btn-primary-border;
+}
+
+// inline form error
+.has-error {
+
+  .form-control {
+    border-color: $state-danger-text;
+
+    &:focus {
+      box-shadow: 0 2px 0 0 $state-danger-text;
+      border-color: $state-danger-text;
+    }
+  }
+
+}
+
+form {
+  table {
+    .field-label,
+    .paragraph-type-label {
+      font-weight: 700;
+    }
+  }
+}
+
+.panel,
+fieldset {
+  .panel-heading,
+  > legend,
+  > .card__title {
+    font-weight: 700;
+  }
+}
+
+fieldset {
+  > legend,
+  > .card__title {
+    margin-bottom: 8px;
+  }
+
+  strong {
+    font-weight: 700;
+  }
+}
+
+.panel {
+  .panel-heading {
+    margin-bottom: 8px;
+  }
+}
+
+.form-item--error-message.alert-danger {
+
+  border-radius: $input-border-radius;
+
+  &:before {
+    color: $state-danger-bg;
+
+  }
+}
+
+.control-label {
+  font-weight: 700;
+}
+
+.form-wrapper__label {
+  font-weight: 500;
+}
+
+.form-wrapper {
+  border-radius: ($border-radius-base - 1);
+}
+
+.form-item-data-policy {
+  .card__block & {
+    label {
+      a {
+        color: $link-color;
+      }
+    }
+  }
+}
+
+.field--name-field-social-collaboration-editors,
+.field--name-field-event-managers,
+.field--name-field-social-idea-coauthors,
+.field--name-field-discussion-moderator,
+.field--name-field-course-related-courses {
+  max-width: 445px;
+
+  .help-block {
+    display: none;
+  }
+
+  table {
+    margin-bottom: 0;
+
+    tbody {
+      tr {
+        background: #f3f3f3;
+
+        &:hover {
+          background: #f3f3f3;
+        }
+      }
+
+      td {
+        padding-top: 1.75rem;
+        padding-bottom: 0;
+
+        .form-group {
+          margin-bottom: 0;
+        }
+
+        > .form-group {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          margin: 0 -.25rem;
+
+          > * {
+            padding-left: .25rem;
+            padding-right: .25rem;
+          }
+
+          label {
+            display: none;
+          }
+        }
+
+        .form-type-select {
+          flex: 0 0 104px;
+          max-width: 104px;
+
+          @include for-phone-only {
+            flex: 0 0 100%;
+            max-width: 100%;
+            margin-bottom: 1rem;
+
+            + .form-item {
+              flex: 0 0 100%;
+              max-width: 100%;
+            }
+          }
+        }
+
+        .input-group {
+          max-width: 240px;
+
+          @include for-phone-only {
+            flex: 0 0 100%;
+            max-width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  .clearfix {
+    padding: .625rem 1rem;
+    background: #f3f3f3;
+
+    .btn {
+      font-weight: bold;
+    }
+  }
+}
+
+.field--name-field-event-managers,
+.field--name-field-social-idea-coauthors,
+.field--name-field-discussion-moderator,
+.field--name-field-course-related-courses {
+  table {
+    tbody {
+      tr {
+        td {
+          .input-group {
+            max-width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+#edit-author-info,
+#edit-tab-settings,
+#edit-menu,
+#edit-content-translation,
+.field--name-field-event-date,
+.field--name-field-event-date-end,
+.field--type-address,
+.enrollment-methods,
+.field--name-field-discussion-date {
+  max-width: 500px;
+  margin-bottom: 1.5rem;
+
+  fieldset.card {
+    margin-top: -1.5rem;
+
+    legend.card__title {
+      padding: 0 0 .5rem;
+      font-size: .875rem;
+      line-height: 21px;
+    }
+  }
+
+  .card,
+  .card__block {
+    box-shadow: none;
+    border-radius: 0 !important;
+    background: transparent;
+  }
+
+  .panel-body,
+  .card__block,
+  fieldset:not(.card) {
+    background: #f3f3f3;
+    padding: 1.25rem 1.25rem .25rem;
+  }
+
+  fieldset:not(.card) {
+    margin-top: -24px;
+  }
+
+  legend:not(.card__title) {
+    position: relative;
+    top: 22px;
+    margin: 0;
+    padding-top: 1.25rem;
+    padding-bottom: .5rem;
+    font-weight: 400;
+  }
+
+  label {
+    font-weight: 400;
+    margin-bottom: .5rem;
+  }
+
+  .field--name-uid {
+    max-width: 260px;
+  }
+
+  .form-inline {
+    display: flex;
+    margin: 0 -.5rem;
+    flex-wrap: wrap;
+
+    @include for-phone-only {
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: .5rem;
+    }
+
+    > * {
+      flex: 1;
+      padding: 0 .5rem;
+
+      @include for-phone-only {
+        flex: 0 0 auto;
+        max-width: 276px;
+      }
+
+      &:nth-child(1) {
+        flex: 0 0 240px;
+        max-width: 240px;
+
+        @include for-phone-only {
+          flex: 0 0 auto;
+          max-width: 276px;
+        }
+      }
+    }
+
+    input[type='text'].form-date {
+      min-width: auto;
+    }
+  }
+
+  [id*='address-ajax-wrapper'] {
+    flex: 0 0 375px;
+    max-width: 375px;
+  }
+}
+
+.field--type-address {
+  fieldset.card {
+    margin-top: 0;
+  }
+}
+
+.field--name-field-enroll-method {
+  width: auto;
+  max-width: none;
+}
+
+#edit-menu {
+  .panel-body {
+    padding: 0;
+    background: transparent;
+
+    .form-wrapper {
+      background: #f3f3f3;
+      padding: 1.25rem 1.25rem .25rem;
+    }
+
+    > .form-type-checkbox {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.field--name-field-discussion-date {
+  .card__block {
+    display: flex;
+    margin: 0 -.5rem;
+
+    @include for-phone-only {
+      flex-wrap: wrap;
+    }
+
+    > * {
+      flex: 0 0 50%;
+      max-width: 50%;
+      padding: 0 .5rem;
+
+      @include for-phone-only {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+
+      .form-inline {
+        @include for-phone-only {
+          margin-bottom: 0;
+        }
+
+        > * {
+          flex: 1;
+          max-width: 100%;
+        }
+      }
+    }
+
+    input[type='text'].form-date {
+      min-width: auto;
+    }
+  }
+}
+
+.enrollment-methods {
+  .panel-body {
+    fieldset,
+    .panel-body {
+      padding: 0;
+    }
+
+    legend {
+      top: 0;
+    }
+
+    .panel-heading {
+      header {
+        font-weight: 400;
+      }
+    }
+  }
+}

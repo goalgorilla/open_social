@@ -1,0 +1,163 @@
+{% extends "node--hero--sky.html.twig" %}
+
+{% block hero_action %}
+  {% set clone_is = content.links.cloning ? '#' : node_edit_url  %}
+
+  {#Create attribute and set classes to the edit button#}
+  {% set edit_button_attr = create_attribute() %}
+  {% set edit_button_classes = [
+    'btn',
+    'btn-raised',
+    'btn-default',
+    'btn-floating',
+    content.links.cloning ? 'dropdown-toggle' : '',
+  ]
+  %}
+
+  <div class="hero-action-button">
+    <a
+      href="{{ clone_is }}"
+      title="{% trans %}Edit content{% endtrans %}"
+      {{ edit_button_attr.addClass(edit_button_classes) }}
+      {{ content.links.cloning ? 'data-toggle="dropdown"' : '' }}
+    >
+      <svg class="icon-gray icon-medium" aria-hidden="true">
+        <title>{% trans %}Edit content{% endtrans %}</title>
+        <use xlink:href="#icon-edit"></use>
+      </svg>
+    </a>
+
+    {#Dropdown menu#}
+    {% if content.links.cloning %}
+      <ul class="dropdown-menu">
+        {%- for key, item in content.links.cloning['#links']|reverse -%}
+          <li{{ item.attributes.addClass(key|clean_class) }}>
+            {%- if item.url -%}
+              <a href="{{ item.url }}">{{ item.title }}</a>
+            {%- elseif item.text_attributes -%}
+              <span{{ item.text_attributes }}>{{ item.title }}</span>
+            {%- elseif item.disabled -%}
+              <span>{{ item.title }}</span>
+            {%- else -%}
+              {{ item.title }}
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block metainfo %}
+  <header class="metainfo">
+
+    <div class="metainfo__avatar">
+      {{ author_picture }}
+    </div>
+
+    <div class="metainfo__content">
+      {{ author }}
+
+      {% if visibility_icon and visibility_label %}
+        &bullet;
+        <div class="badge badge--large">
+            <span class="badge__container">
+              <svg class="badge__icon">
+                <title>{% trans %}Visibility: {% endtrans %}</title>
+                <use xlink:href="#icon-{{ visibility_icon }}"></use>
+              </svg>
+              <span class="badge__label">&nbsp;</span>
+              <span class="badge__label badge__label--description">{{ visibility_label|capitalize }}</span>
+            </span>
+        </div>
+      {% endif %}
+
+      <div>
+        {% if group_link %}
+          {% trans %} in group {{ group_link }}{% endtrans %}
+        {% endif %}
+      </div>
+    </div>
+
+  </header>
+{% endblock %}
+
+{% block card_prefix %}
+  {% if node_image %}
+    <div class="hero-image">
+      {{ node_image }}
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block card_suffix %}
+{% endblock %}
+
+{% block nodefull_specialfields %}
+  <div class="hero-footer__header">
+    <div class="hero-footer__text">
+
+      <div class="article__special-fields">
+        {#
+        @todo: Leave only the event_date_advanced variable for
+          Open Social 11.4.x and above.
+          @see https://github.com/goalgorilla/open_social/pull/2853
+        #}
+        {% if event_date_advanced is defined %}
+          {{ event_date_advanced }}
+        {% else %}
+          <div class="article__special-field">
+            <svg class="article__special-fields-icon" aria-hidden="true">
+              <title>{% trans %}Event date{% endtrans %}</title>
+              <use xlink:href="#icon-schedule"></use>
+            </svg>
+            <span class="sr-only">{% trans %}Event date{% endtrans %}</span>
+            <span class="inline-center">{{ event_date }}</span>
+          </div>
+        {% endif %}
+
+        {% if content.field_event_addtocal|render is not empty and logged_in %}
+          <div class="article__special-field">
+            <div class="hero_btn-group">
+              <div class="meta-addtocal">
+                {{ content.field_event_addtocal }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if content.field_event_address|render or content.field_event_location|render %}
+          {#
+            @todo: Leave only the event_location_address variable for
+              Open Social 11.4.x and above.
+              @see https://github.com/goalgorilla/open_social/pull/2853
+          #}
+          {% if event_location_address is defined %}
+            {{ event_location_address }}
+          {% else %}
+            <div class="article__special-field">
+              <svg class="article__special-fields-icon">
+                <title>{% trans %}Event location{% endtrans %}</title>
+                <use xlink:href="#icon-location"></use>
+              </svg>
+              <span class="sr-only">{% trans %}Event location{% endtrans %}</span>
+              <span class="inline-center">
+                {{ content.field_event_location }}
+                {% if content.field_event_address|render is not empty and content.field_event_location|render is not empty %} &bullet; {% endif %}
+                {{ content.field_event_address }}
+              </span>
+            </div>
+          {% endif %}
+        {% endif %}
+
+      </div>
+    </div>
+
+    <div class="hero-footer__cta">
+      <div class="btn-group">
+        {{ event_enrollment }}
+      </div>
+    </div>
+
+  </div>
+{% endblock %}

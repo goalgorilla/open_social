@@ -1,0 +1,41 @@
+@import "settings";
+
+.socialblue--sky {
+  &.path-node {
+    .region--complementary {
+      .block-shariff {
+        display: none;
+      }
+    }
+  }
+
+  &.path-group--membership-actions {
+    form:not(.layout-builder-configure-block) fieldset {
+      margin-top: 0;
+    }
+    .layout--with-complementary {
+      .region--title {
+        order: 1;
+      }
+
+      .region--secondary-navigation {
+        width: 100%;
+        max-width: 100%;
+        margin-top: 0;
+        padding-left: 1rem;
+        justify-content: flex-start;
+        order: 0;
+
+        @include for-tablet-landscape-down {
+          padding-left: 0;
+        }
+
+        .navbar-secondary {
+          flex: 0 0 100%;
+          max-width: 100%;
+          border-radius: 0;
+        }
+      }
+    }
+  }
+}

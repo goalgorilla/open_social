@@ -1,0 +1,194 @@
+@import "settings";
+
+.tooltip-inner {
+  border-radius: $border-radius-base;
+  color: $tooltip-color;
+  background-color: $tooltip-bg;
+}
+
+.tooltip {
+  &.top .tooltip-arrow {
+    border-top-color: $tooltip-arrow-color;
+  }
+  &.right .tooltip-arrow {
+    border-right-color: $tooltip-arrow-color;
+  }
+  &.left .tooltip-arrow {
+    border-left-color: $tooltip-arrow-color;
+  }
+  &.bottom .tooltip-arrow {
+    border-bottom-color: $tooltip-arrow-color;
+  }
+}
+
+.popover {
+  border-radius: $border-radius-extrasmall;
+  background-color: $popover-bg;
+  box-shadow: 0 4px 4px rgba($gray-base, .25);
+}
+
+.popover-title {
+  background-color: $gray-lightest;
+  border-radius: $border-radius-extrasmall $border-radius-extrasmall 0 0;
+}
+
+.popover {
+  &.top > .arrow {
+    border-top-color: $gray-lightest; // IE8 fallback
+    border-top-color: $gray-lightest;
+    &:after {
+      border-top-color: $gray-lightest;
+    }
+  }
+  &.right > .arrow {
+    border-right-color: $gray-lightest; // IE8 fallback
+    border-right-color: $gray-lightest;
+    &:after {
+      border-right-color: $gray-lightest;
+    }
+  }
+  &.bottom > .arrow {
+    border-bottom-color: $gray-lightest; // IE8 fallback
+    border-bottom-color: $gray-lightest;
+    &:after {
+      border-bottom-color: $gray-lightest;
+    }
+  }
+
+  &.left > .arrow {
+    border-left-color: $gray-lightest; // IE8 fallback
+    border-left-color: $gray-lightest;
+    &:after {
+      border-left-color: $gray-lightest;
+    }
+  }
+
+  &.bottom {
+    max-width: 380px !important;
+    width: 100%;
+
+    .popover-content {
+      [id*='visibility'],
+      [id*='enroll-method'] {
+        margin-top: .625rem;
+        margin-bottom: .75rem;
+
+        svg {
+          margin-right: 10px;
+        }
+
+        strong {
+          font-weight: 700;
+        }
+
+        p {
+          margin-bottom: 1rem;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 21px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Styles for the popover on the group/course pages.
+.path-group {
+  .popover {
+    max-width: 378px !important;
+    width: 100%;
+
+    .arrow:after {
+      [dir='rtl'] & {
+        left: 0;
+      }
+    }
+
+    .popover-title {
+      padding: .75rem 1.25rem .75rem 52px;
+      font-weight: bold;
+      font-size: 1rem;
+      line-height: 1.625rem;
+      border: none;
+      background: #f3f3f3 url('../../components/03-molecules/popover/icon-cog.svg') no-repeat 20px center/24px 24px;
+
+      [dir='rtl'] & {
+        padding-right: 52px;
+        padding-left: 1.25rem;
+        background-position: calc(100% - 20px) center;
+      }
+    }
+
+    .popover-content {
+      padding: 1.25rem;
+
+      .form-group {
+        margin: 0;
+      }
+
+      .title {
+        display: block;
+        margin-bottom: .5rem;
+        font-size: 14px;
+        line-height: 21px;
+        font-weight: 400;
+        color: #343434;
+      }
+
+      .group-visibility-details,
+      .course-visibility-details {
+        padding: .75rem;
+        border-radius: 5px;
+        background: #f3f3f3;
+        margin-bottom: 1.5rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        > *:empty {
+          display: none;
+        }
+      }
+
+      p {
+        position: relative;
+        padding-left: 33px;
+        font-size: 14px;
+        line-height: 21px;
+        margin-bottom: .75rem;
+
+        [dir='rtl'] & {
+          padding-left: 0;
+          padding-right: 33px;
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        strong {
+          font-weight: bold;
+        }
+      }
+
+      svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 21px;
+        height: 21px;
+        fill: #000;
+
+        [dir='rtl'] & {
+          left: auto;
+          right: 0;
+        }
+      }
+    }
+  }
+}

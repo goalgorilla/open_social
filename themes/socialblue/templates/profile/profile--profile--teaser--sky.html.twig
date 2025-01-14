@@ -1,0 +1,28 @@
+{% extends "profile--profile--teaser.html.twig" %}
+
+{% block card_title %}
+  <div class="teaser__header">
+    <div class="teaser__tag">
+      {% if followers %}
+        {% trans %}Follower{% endtrans %}
+      {% elseif following %}
+        {% trans %}Following{% endtrans %}
+      {% else %}
+        {% trans %}Member{% endtrans %}
+      {% endif %}
+    </div>
+
+    {% if content.followers or content.following %}
+      <div class="follow-user--counter">
+        {{ content.followers }}
+        {{ content.following }}
+      </div>
+    {% endif %}
+  </div>
+
+  <h4 class="teaser__title">
+    <a href="{{ profile_home }}">
+      {{ profile_name }} {{ profile_name_extra }}
+    </a>
+  </h4>
+{% endblock %}

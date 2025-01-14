@@ -1,0 +1,18 @@
+@import 'settings';
+
+.node-file {
+  border-radius: $border-radius-extrasmall;
+}
+
+.file {
+
+  > .tabledrag-changed {
+    &, &:last-child {
+      border: 1px solid darken($alert-warning-border, 5%);
+    }
+    background: $alert-warning-bg;
+    border-radius: 0;
+    color: $alert-warning-text;
+  }
+
+}

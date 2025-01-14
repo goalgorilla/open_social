@@ -1,0 +1,103 @@
+<?php
+
+/**
+ * @file
+ * The primary PHP file for the Social Blue theme.
+ */
+
+/**
+ * Implements theme_preprocess().
+ */
+function socialblue_preprocess(&$variables, $hook, $info): void {
+  // Add style variable to be able to attach new libraries and change templates.
+  $style = theme_get_setting('style');
+  if (!empty($style)) {
+    $variables['style'] = $style;
+  }
+
+  // Add header style variable for region and other templates.
+  $header_style = theme_get_setting('header_style');
+
+  if ($header_style == 'two_lines') {
+    $variables['header_style'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function socialblue_library_info_alter(&$libraries, $extension): void {
+  // Add extra CSS files if specific style is chosen.
+  $style = theme_get_setting('style');
+  if (!empty($style) && $extension === 'socialblue') {
+    $theme_path = \Drupal::service('extension.list.theme')->getPath($extension);
+    $base_path = 'assets/css/';
+    foreach ($libraries as $key => $library) {
+      $style_css = $base_path . $key . '--' . $style . '.css';
+      if (file_exists($theme_path . '/' . $style_css)) {
+        $libraries[$key]['css']['theme'][$style_css] = [];
+        $libraries[$key]['css']['theme'][$style_css]['weight'] = 600;
+      }
+    }
+  }
+}
+
+/**
+ * Prepares variables for group templates.
+ */
+function socialblue_preprocess_group(array &$variables): void {
+  $view_modes = ['teaser', 'featured'];
+  $social_group_types = [
+    'flexible_group',
+  ];
+  if (theme_get_setting('style') === 'sky'
+    && in_array($variables['view_mode'], $view_modes)
+    && in_array($variables['group_type_id'], $social_group_types)) {
+    $variables['title_prefix']['teaser_tag'] = [
+      '#type' => 'inline_template',
+      '#template' => '<div class="teaser__tag">{{ teaser_tag }}</div>',
+      '#context' => ['teaser_tag' => $variables['group_type']],
+    ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_file_upload_help().
+ */
+function socialblue_preprocess_file_upload_help(array &$variables): void {
+  if (!empty($variables['description']) &&
+    !empty($variables['popover']) &&
+    theme_get_setting('content_entity_form_style') === 'open_social' &&
+    strpos($variables['description'], 'Crop your image to select') !== FALSE) {
+    $variables['description'] = '';
+  }
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function socialblue_preprocess_html(array &$variables): void {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  $routes = [
+    'entity.group_content.edit_form',
+    'entity.group_content.delete_form',
+    'entity.group_content.canonical',
+    'entity.group.content_translation_overview',
+  ];
+
+  if (in_array($route_name, $routes)) {
+    $variables['attributes']['class'][] = 'path-group--membership-actions';
+    $variables['#attached']['library'][] = 'socialblue/page-node';
+  }
+
+  // Add class to the edit/add group pages.
+  $group_routes = [
+    'entity.group.add_form',
+    'entity.group.edit_form',
+  ];
+
+  if (in_array($route_name, $group_routes)) {
+    $variables['attributes']['class'][] = 'page-group-edit';
+  }
+}

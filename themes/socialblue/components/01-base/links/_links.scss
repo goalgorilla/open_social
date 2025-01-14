@@ -1,0 +1,33 @@
+@import 'settings';
+
+.field--name-field-introduction-text,
+.field--name-field-featured-items-description,
+.field--name-field-featured-description,
+.field--name-field-accord-description,
+.field--name-field-accord-item-description,
+.field--name-field-phase-description,
+.paragraph--type--image-text .field--name-field-text,
+.paragraph--type--text-image .field--name-field-text,
+.paragraph--type--text .field--name-field-text,
+.scorm-form--body,
+.quiz-form__text,
+.course-full .card__body,
+.teaser--course,
+.body-text,
+.block--intro-text .block--intro-text__content,
+.block-inline-blockkpi-analytics  .field--name-body,
+.basic-block .field--name-field-text-block,
+.hero--dashboard .field--name-field-text-block,
+.certificate-footer .bottom,
+.certificate-header .description {
+  *:not(.badge):not(.section__title) > a:not(.btn) {
+    @include link-default();
+  }
+}
+
+
+.comment__text p {
+  a:not(.btn) {
+    @include link-default();
+  }
+}

@@ -1,0 +1,109 @@
+// Font
+//
+// The standard font Open social uses is Montserrat. We have included the font files with our theme.
+// We bundle our theme with 3 different font weights you can use: 300, 400, 500 and 700
+//
+// ### Setting a custom font
+// __Option 1__
+//
+// Use the social_font module to upload custom fonts and select you new font in the theme settings.
+//
+// __Option 2__
+//
+// Upload your font to the assets folder of your theme. Update the base component text/fonts and update the `$font-family-webfont` variable. Don't forget to compile the CSS again.
+//
+// Weight: 1
+//
+// Style guide: base.type.font
+
+@font-face {
+  font-family: 'montserrat';
+  src: url('../font/montserrat/montserrat-light.eot');
+  src: url('../font/montserrat/montserrat-light.eot') format('embedded-opentype'),
+       url('../font/montserrat/montserrat-light.woff2') format('woff2'),
+       url('../font/montserrat/montserrat-light.woff') format('woff'),
+       url('../font/montserrat/montserrat-light.ttf') format('truetype'),
+       url('../font/montserrat/montserrat-light.svg#montserrat-light') format('svg');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'montserrat';
+  src: url('../font/montserrat/montserrat-normal.eot');
+  src: url('../font/montserrat/montserrat-normal.eot') format('embedded-opentype'),
+       url('../font/montserrat/montserrat-normal.woff2') format('woff2'),
+       url('../font/montserrat/montserrat-normal.woff') format('woff'),
+       url('../font/montserrat/montserrat-normal.ttf') format('truetype'),
+       url('../font/montserrat/montserrat-normal.svg#montserrat-normal') format('svg');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'montserrat';
+  src: url('../font/montserrat/montserrat-medium.eot');
+  src: url('../font/montserrat/montserrat-medium.eot') format('embedded-opentype'),
+       url('../font/montserrat/montserrat-medium.woff2') format('woff2'),
+       url('../font/montserrat/montserrat-medium.woff') format('woff'),
+       url('../font/montserrat/montserrat-medium.ttf') format('truetype'),
+       url('../font/montserrat/montserrat-medium.svg#montserrat-medium') format('svg');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'montserrat';
+  src: url('../font/montserrat/montserrat-semibold.eot');
+  src: url('../font/montserrat/montserrat-semibold.eot') format('embedded-opentype'),
+  url('../font/montserrat/montserrat-semibold.woff2') format('woff2'),
+  url('../font/montserrat/montserrat-semibold.woff') format('woff'),
+  url('../font/montserrat/montserrat-semibold.ttf') format('truetype'),
+  url('../font/montserrat/montserrat-semibold.svg#montserrat-semibold') format('svg');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'montserrat';
+  src: url('../font/montserrat/montserrat-bold.eot');
+  src: url('../font/montserrat/montserrat-bold.eot') format('embedded-opentype'),
+       url('../font/montserrat/montserrat-bold.woff2') format('woff2'),
+       url('../font/montserrat/montserrat-bold.woff') format('woff'),
+       url('../font/montserrat/montserrat-bold.ttf') format('truetype'),
+       url('../font/montserrat/montserrat-bold.svg#montserrat-bold') format('svg');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Almarai';
+  src: url("../font/Almarai/Almarai-Light.ttf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  unicode-range: U+0600-06FF; /* We do this to only download the font when arabic characters are available on the page.*/
+}
+
+@font-face {
+  font-family: 'Almarai';
+  src: url("../font/Almarai/Almarai-Regular.ttf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  unicode-range: U+0600-06FF;
+}
+
+@font-face {
+  font-family: 'Almarai';
+  src: url("../font/Almarai/Almarai-Bold.ttf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  unicode-range: U+0600-06FF;
+}
+
+@font-face {
+  font-family: 'Almarai';
+  src: url("../font/Almarai/Almarai-ExtraBold.ttf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  unicode-range: U+0600-06FF;
+}
