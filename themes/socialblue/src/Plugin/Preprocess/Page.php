@@ -27,6 +27,7 @@ class Page extends PageBase {
       'entity.group.edit_form',
       'social_album.add',
       'entity.group.content_translation_add',
+      'entity.group_content.create_form',
     ],
   ];
 
