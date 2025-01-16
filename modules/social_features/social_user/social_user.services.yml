@@ -22,3 +22,7 @@ services:
     class: Drupal\social_user\EdaHandler
     tags:
       - { name: social.eda.handler }
+  Drupal\social_user\Access\UserPagesViewAccess:
+    arguments: ['@class_resolver']
+    tags:
+      - { name: access_check, applies_to: _user_pages_access_checker }

@@ -6,7 +6,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Routing\RouteMatch;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -88,7 +88,7 @@ class SocialUserController extends ControllerBase {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The current user.
-   * @param \Drupal\Core\Routing\RouteMatch $routeMatch
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The matched route.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
@@ -97,7 +97,7 @@ class SocialUserController extends ControllerBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch): AccessResultInterface {
+  public function accessUsersPages(AccountInterface $account, RouteMatchInterface $routeMatch): AccessResultInterface {
     $user = $routeMatch->getParameter('user');
     if ($user === NULL) {
       // Parameter can exist in "views" pages.

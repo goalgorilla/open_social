@@ -1052,13 +1052,3 @@ function social_group_update_13014(): void {
     }
   }
 }
-
-/**
- * Update access rules to "user/{uid}/groups" page.
- */
-function social_group_update_13015() : string {
-  /** @var \Drupal\update_helper\Updater $updater */
-  $updater = \Drupal::service('update_helper.updater');
-  $updater->executeUpdate('social_group', __FUNCTION__);
-  return $updater->logger()->output();
-}
