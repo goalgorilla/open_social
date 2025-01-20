@@ -39,6 +39,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
     'filter',
     // Required modules.
     'views',
+    'views_bulk_operations',
     'group',
     'variationcache',
     'flexible_permissions',

@@ -44,6 +44,7 @@ class QueryCommentTest extends SocialGraphQLTestBase {
     'filter',
     // Required modules.
     'views',
+    'views_bulk_operations',
     'group',
     'variationcache',
     'flexible_permissions',
