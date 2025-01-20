@@ -4,13 +4,17 @@ namespace Drupal\social_group\Controller;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\social_group\Form\SocialGroupJoinAnonymousForm;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
@@ -235,6 +239,29 @@ class SocialGroupController extends ControllerBase {
    */
   public function otherGroupPage(int $group): RedirectResponse {
     return $this->redirect('entity.group.canonical', ['group' => $group]);
+  }
+
+  /**
+   * Callback to request a Join form for anonymous.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group entity object.
+   */
+  public function anonymousRequestMembership(GroupInterface $group): AjaxResponse {
+    return (new AjaxResponse())
+      ->addCommand(new OpenModalDialogCommand(
+        $this->t(
+          'Join a "@group_title" group',
+          ['@group_title' => $group->label()],
+        ),
+        // Pass the current group object to the join form.
+        $this->formBuilder()->getForm(SocialGroupJoinAnonymousForm::class, $group),
+        [
+          'width' => '337px',
+          'dialogClass' => 'social_group-popup social_group-popup--anonymous',
+        ],
+      ),
+    );
   }
 
 }

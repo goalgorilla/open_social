@@ -6,6 +6,17 @@ social_group.page_redirect:
   requirements:
     _user_is_logged_in: 'TRUE'
 
+social_group.anonymous_join:
+  path: '/group/{group}/anonymous-join'
+  defaults:
+    _controller: '\Drupal\social_group\Controller\SocialGroupController::anonymousRequestMembership'
+  requirements:
+    _user_is_logged_in: 'FALSE'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
+
 social_group.settings:
   path: '/admin/config/opensocial/social-group'
   defaults:
