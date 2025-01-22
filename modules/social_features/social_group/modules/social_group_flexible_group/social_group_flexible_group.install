@@ -11,6 +11,7 @@ use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\GroupMembership;
 use Drupal\social_group\Entity\Group;
 use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -19,20 +20,41 @@ use Drupal\user\UserInterface;
 function social_group_flexible_group_install() {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view public flexible_group group',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'view public flexible_group group',
+    ]
+  );
+  user_role_grant_permissions(
     'verified',
     [
       'create flexible_group group',
+      'view public flexible_group group',
+      'view community flexible_group group',
+      'view members flexible_group group',
     ]
   );
   user_role_grant_permissions(
     'contentmanager',
     [
       'create flexible_group group',
+      'view public flexible_group group',
+      'view community flexible_group group',
+      'view members flexible_group group',
     ]
   );
   user_role_grant_permissions(
     'sitemanager',
     [
+      'view public flexible_group group',
+      'view community flexible_group group',
+      'view members flexible_group group',
       'create flexible_group group',
       'create terms in group_type',
       'edit terms in group_type',
@@ -366,4 +388,25 @@ function social_group_flexible_group_update_130010(): void {
     ])->save();
   }
 
+}
+
+/**
+ * Grant new permissions to access to Flexible groups.
+ */
+function social_group_flexible_group_update_130011(): void {
+  $permissions[RoleInterface::ANONYMOUS_ID] =
+  $permissions[RoleInterface::AUTHENTICATED_ID] = ['view public flexible_group group'];
+
+  $permissions['verified'] = [
+    ...$permissions[RoleInterface::AUTHENTICATED_ID],
+    ...[
+      'view community flexible_group group',
+      'view members flexible_group group',
+    ],
+  ];
+  $permissions['contentmanager'] = $permissions['sitemanager'] = $permissions['verified'];
+
+  foreach ($permissions as $rid => $new_permissions) {
+    user_role_grant_permissions($rid, $new_permissions);
+  }
 }

@@ -12,6 +12,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupRelationshipType;
@@ -399,6 +400,61 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
    */
   public static function getSplitGroups(): array {
     return static::getGroups(TRUE);
+  }
+
+  /**
+   * Retrieves the available visibility options for the group visibility field.
+   *
+   *   The method loads the field storage configuration for the
+   *   'field_flexible_group_visibility' field of the 'group'
+   *   entity and determines its allowed values.
+   *   If an allowed values function is defined, it is invoked
+   *   to retrieve the values; otherwise, the allowed values are directly
+   *   fetched from the field settings.
+   *
+   * @return array
+   *   An array of keys representing the available visibility options.
+   */
+  public static function getAvailableVisibilities(): array {
+    /** @var \Drupal\field\Entity\FieldConfig $field_storage */
+    $field_storage = FieldStorageConfig::loadByName('group', 'field_flexible_group_visibility');
+
+    if (!$field_storage) {
+      return [];
+    }
+
+    // Gets allowed values from function if exists.
+    $function = $field_storage->getSetting('allowed_values_function');
+    if (!empty($function)) {
+      $allowed_values = $function($field_storage);
+    }
+    else {
+      $allowed_values = $field_storage->getSetting('allowed_values');
+    }
+
+    return array_keys($allowed_values);
+  }
+
+  /**
+   * Retrieves the group bundles with a specific field visibility.
+   *
+   *   This method fetches all the bundles for the 'group' entity type and
+   *   filters them to include only those that have the
+   *   'field_flexible_group_visibility' field defined.
+   *
+   * @return array
+   *   An array of group bundle identifiers that have the
+   *   'field_flexible_group_visibility' field defined.
+   */
+  public static function getGroupBundlesWithVisibility(): array {
+    $group_bundles = \Drupal::service('entity_type.bundle.info')
+      ->getBundleInfo('group');
+
+    return array_filter(
+      array: array_keys($group_bundles),
+      callback: fn ($bundle) => isset(\Drupal::service('entity_field.manager')
+        ->getFieldDefinitions('group', $bundle)['field_flexible_group_visibility'])
+    );
   }
 
 }

@@ -15,12 +15,14 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\block\Entity\Block;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate;
 use Drupal\social_user\VerifyableUserInterface;
@@ -304,28 +306,25 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
     return $result;
   }
 
-  // If group visibility value doesn't exist we can skip.
-  if ($entity->field_flexible_group_visibility->isEmpty()) {
+  // If group visibility value doesn't exist, we can skip.
+  if ($entity->get('field_flexible_group_visibility')->isEmpty()) {
     return $result;
   }
 
-  switch ($entity->field_flexible_group_visibility->value) {
-    // If group visibility exists and public is selected, we can skip.
+  $visibility = $entity->get('field_flexible_group_visibility')->getString();
+  switch ($visibility) {
+    // Check if a user has appropriate permission.
     case 'public':
-      return $result;
-
-    // If group visibility exists and community or members is selected, check
-    // if user is logged.
     case 'community':
-      return AccessResult::forbiddenIf($account->isAnonymous())
+      return AccessResult::forbiddenIf(!$account->hasPermission("view $visibility {$entity->bundle()} group"))
+        ->cachePerPermissions()
         ->cachePerUser()
         ->addCacheableDependency($entity);
 
     // If group visibility exists and members only is selected, we need to check
-    // if user is logged in and is a member of the group.
+    // if a user is logged in and is a member of the group.
     case 'members':
-      $not_a_member = !$entity->hasMember($account) || $account->isAnonymous();
-
+      $not_a_member = !$entity->hasMember($account) || !$account->hasPermission("view members {$entity->bundle()} group");
       return AccessResult::forbiddenIf($not_a_member)
         ->cachePerPermissions()
         ->cachePerUser()
@@ -730,7 +729,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   ];
 
   $alias = 'groups_field_flexible_group_visibility';
-
+  // @todo Probably, this join is redundant, could be removed.
   /** @var \Drupal\views\Plugin\views\query\Sql $query */
   $join = Views::pluginManager('join')->createInstance('standard', $configuration);
   $rel = $query->addRelationship($alias, $join, 'groups_field_data');
@@ -743,41 +742,95 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   $new_where = $current_where + 1;
 
   // We need to add our group by using a query tag.
-  // Otherwise views doesn't accept it.
+  // Otherwise, views doesn't accept it.
   $query->addTag('flexible_group_by');
 
-  // Get all LU groups.
-  $my_groups = \Drupal::service('social_group.helper_service')
-    ->getAllGroupsForUser($account_id);
-
-  // Get all hidden groups.
-  $hidden_groups = \Drupal::entityTypeManager()->getStorage('group')->loadByProperties([
-    'field_flexible_group_visibility' => 'members',
-  ]);
-
-  // Get all hidden groups that the current user is not a member of
-  // and remove them from showing in the view.
-  $ids = array_diff(array_keys($hidden_groups), $my_groups);
-
-  // Anonymous or unverified users should only see 'public' groups.
-  if ($account->isAnonymous() || !$account->isVerified()) {
-    $community_groups = \Drupal::entityTypeManager()->getStorage('group')->loadByProperties([
-      'field_flexible_group_visibility' => 'community',
-    ]);
-    $ids = array_merge($ids, array_keys($community_groups));
-
-    // Add context so for AN it will have a different cache.
-    $view->element['#cache']['contexts'][] = 'user.roles:anonymous';
-  }
-
-  if ($ids) {
-    $query->addWhere($new_where, 'groups_field_data.id', $ids, 'NOT IN');
-  }
-
+  $view->element['#cache']['contexts'][] = 'user.permissions';
+  $view->element['#cache']['contexts'][] = 'user';
   // Make sure this block gets refreshed for a user if the group membership
   // changed for this user.
-  $view->element['#cache']['contexts'][] = 'user';
   $view->element['#cache']['tags'][] = 'group_content_list:plugin:group_membership:entity:' . $account->id();
+
+  $group_bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo('group');
+
+  // Build a sub-query allows to control the access to groups regarding user
+  // permissions.
+  foreach (array_keys($group_bundles) as $group_bundle) {
+    if (isset(\Drupal::service('entity_field.manager')->getFieldDefinitions('group', $group_bundle)['field_flexible_group_visibility'])) {
+      // Group bundles that have "field_flexible_group_visibility" field inside.
+      $with_visibility[] = $group_bundle;
+    }
+    else {
+      // Group bungles without "field_flexible_group_visibility" field.
+      // Could be some third party groups, not a part of Open Social.
+      $without_visibility[] = $group_bundle;
+    }
+  }
+
+  if (empty($with_visibility)) {
+    return;
+  }
+
+  // Get all visibilities for groups.
+  $allowed_visibilities = SocialGroupHelperService::getAvailableVisibilities();
+
+  $sub_query = $query->getConnection()
+    ->select('group__field_flexible_group_visibility', 'group_visibility');
+  $sub_query->addField('group_visibility', 'entity_id', 'id');
+
+  // Make possible to alter this query by other modules.
+  $sub_query->addTag('group_visibility');
+
+  $or = $sub_query->orConditionGroup();
+  foreach ($allowed_visibilities as $visibility) {
+    foreach ($with_visibility as $group_bundle) {
+      if (!$account->hasPermission("view $visibility $group_bundle group")) {
+        continue;
+      }
+
+      $visibility_condition = $sub_query->andConditionGroup()
+        ->condition('group_visibility.bundle', $group_bundle)
+        ->condition('group_visibility.field_flexible_group_visibility_value', $visibility);
+
+      // For "members" visibility, we should additionally check user
+      // membership for each group type.
+      if ($visibility === 'members') {
+        $memberships = $query->getConnection()->select('group_relationship_field_data', 'gm');
+        $memberships->addField('gm', 'gid', 'entity_id');
+        $memberships->condition('gm.entity_id', $account->id());
+        $memberships->condition('gm.group_type', $group_bundle);
+        $memberships->condition('gm.plugin_id', 'group_membership');
+
+        $visibility_condition->condition('group_visibility.entity_id', $memberships, 'IN');
+      }
+
+      $or->condition($visibility_condition);
+    }
+  }
+
+  // If the user doesn't have required permissions, we should restrict
+  // the access to groups with visibility.
+  $conditions = $or->conditions();
+  if (!$conditions || !Element::children($conditions)) {
+    $or->alwaysFalse();
+  }
+
+  // Add our condition to "visibility" query.
+  $sub_query->condition($or);
+
+  // If there are group types without visibility, we need to create another
+  // sub-query to return value for these types or with visibility.
+  if (isset($without_visibility)) {
+    $sub_query = $query->getConnection()->select('groups_field_data', 'gfd')
+      ->fields('groups_field_data', ['id'])
+      ->condition(
+        $sub_query->orConditionGroup()
+          ->condition('gfd.id', $sub_query, 'IN')
+          ->condition('gfd.type', $without_visibility, 'IN')
+      );
+  }
+
+  $query->addWhere($new_where, 'groups_field_data.id', $sub_query, 'IN');
 }
 
 /**

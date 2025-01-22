@@ -55,21 +55,25 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
 
     $is_member = $group->hasMember($account);
 
-    // Handling the visibility of a group.
-    if ($group->hasField('field_flexible_group_visibility')) {
-      switch ($group->field_flexible_group_visibility->value) {
-        case 'members':
-          if (!$is_member) {
-            return AccessResult::forbidden();
-          }
-          break;
+    if (!$group->hasField('field_flexible_group_visibility')) {
+      // Group must have a visibility field.
+      return AccessResult::allowed();
+    }
 
-        case 'community':
-          if ($account->isAnonymous()) {
-            return AccessResult::forbidden();
-          }
-          break;
-      }
+    $visibility = $group->get('field_flexible_group_visibility')->getString();
+
+    switch ($visibility) {
+      case 'members':
+        if (!$is_member || !$account->hasPermission("view members {$group->bundle()} group")) {
+          return AccessResult::forbidden();
+        }
+        break;
+
+      case 'community':
+        if (!$account->hasPermission("view community {$group->bundle()} group")) {
+          return AccessResult::forbidden();
+        }
+        break;
     }
 
     $type = $group->getGroupType();
@@ -88,10 +92,11 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
       return AccessResult::allowed()->addCacheableDependency($group);
     }
 
-    // It's a non member but Community isn't enabled.
+    // It's a non-member but "community" isn't enabled.
     // No access for you only for the about page.
-    if ($account->isAuthenticated() && !social_group_flexible_group_community_enabled($group)
-      && !social_group_flexible_group_public_enabled($group)
+    if (
+      $visibility !== 'public' &&
+      !$account->hasPermission("view $visibility {$group->bundle()} group")
       && $route_match->getRouteName() !== 'view.group_information.page_group_about'
       && $route_match->getRouteName() !== 'entity.group.canonical'
       && $route_match->getRouteName() !== 'view.group_members.page_group_members') {

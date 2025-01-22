@@ -544,8 +544,7 @@ function social_group_invite_preprocess_join(array &$variables): void {
   // share link functionality.
   if (
     $entity->hasField('field_flexible_group_visibility') &&
-    !$entity->field_flexible_group_visibility->isEmpty() &&
-    $entity->field_flexible_group_visibility->value === 'members'
+    $entity->get('field_flexible_group_visibility')->getString() === 'members'
   ) {
     $group_url = NULL;
   }
