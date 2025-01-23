@@ -337,6 +337,12 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
             return;
           }
+          // Only verified users should be able to be group members.
+          /** @var \Drupal\social_user\VerifyableUserInterface $account */
+          if (!$account->isVerified()) {
+            $not_verified[] = $email;
+            continue;
+          }
         }
         else {
           /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface $group_content_storage */
@@ -384,6 +390,12 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       }
     }
 
+    if (!empty($not_verified)) {
+      $message_singular = "There is already a user with the email @error_message on the platform. This user is not yet verified and can not be invited.";
+      $message_plural = "There are already users with the following email addresses and they are not yet verified. Not verified users can not be invited: @error_message";
+
+      $this->displayErrorMessage($not_verified, $message_singular, $message_plural, $form_state, with_lines: FALSE);
+    }
   }
 
   /**
@@ -430,14 +442,20 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *   Error message for multiple invalid emails.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
+   * @param bool $with_lines
+   *   Flag if need to include the position of value in the form element.
    */
-  public function displayErrorMessage(array $invalid_emails, $message_singular, $message_plural, FormStateInterface $form_state) : void {
+  public function displayErrorMessage(array $invalid_emails, string $message_singular, string $message_plural, FormStateInterface $form_state, bool $with_lines = TRUE) : void {
     $count = count($invalid_emails);
 
     if ($count > 1) {
       $error_message = '<ul>';
       foreach ($invalid_emails as $line => $invalid_email) {
-        $error_message .= "<li>{$invalid_email} on line {$line}</li>";
+        $join = $with_lines
+          ? "<li>{$invalid_email} on line {$line}</li>"
+          : "<li>{$invalid_email}</li>";
+
+        $error_message .= $join;
       }
       $error_message .= '</ul>';
       $form_state->setErrorByName('email_address', $this->formatPlural($count, $message_singular, $message_plural, ['@error_message' => new FormattableMarkup($error_message, [])]));
