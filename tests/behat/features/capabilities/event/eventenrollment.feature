@@ -39,19 +39,15 @@ Feature: Enroll for an event
       | name            | pass            | mail                        | status | roles    |
       | eventenrollment | eventenrollment | eventenrollment@example.com | 1      | verified |
     And I am logged in as an "verified"
-    And I am on "node/add/event"
+    And I am viewing my event:
+      | title                    | Enrollment redirect test event |
+      | field_event_date         | +1 day                         |
+      | field_event_date_end     | +1 day                         |
+      | status                   | 1                              |
+      | field_content_visibility | public                         |
+      | body                     | Body description text.         |
 
-    When I fill in the following:
-      | Title                                  | Enrollment redirect test event |
-      | edit-field-event-date-0-value-date     | 2025-01-01                     |
-      | edit-field-event-date-end-0-value-date | 2025-01-01                     |
-      | edit-field-event-date-0-value-time     | 11:00:00                       |
-      | edit-field-event-date-end-0-value-time | 11:00:00                       |
-      | Location name                          | GG HQ                          |
-    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click the xth "0" element with the css "[for=edit-field-content-visibility-public]"
-    And I press "Create event"
-    And I logout
+    And I am an anonymous user
     And I open the "event" node with title "Enrollment redirect test event"
     And I should see "Enrollment redirect test event"
     And I press the "Enroll" button
