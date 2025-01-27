@@ -14,8 +14,8 @@ Feature: Validate accessibility of flexible group pages for different users
       | label           | type           | author      | field_flexible_group_visibility |
       | Test Flexible   | flexible_group | Behat Owner | public                          |
     And group members with values:
-      | group          | user   | group_roles           |
-      | Test Flexible  | Member | flexible_group-member |
+      | group          | user   |
+      | Test Flexible  | Member |
 
   Scenario: Anonymous user should be redirected to the About page from "Members" and "Stream" pages.
     Given I am an anonymous user
