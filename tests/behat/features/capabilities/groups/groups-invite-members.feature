@@ -9,11 +9,14 @@ Feature: Send invite group email notifications
 
     Given I set the configuration item "system.site" with key "name" to "Open Social"
     And I enable the module "social_group_flexible_group"
+    # Disable users automatic verification.
+    And I set the configuration item "social_user.settings" with key "verified_immediately" to 0
+
     And users:
-      | name            | mail                        | status | roles       |
-      | site_manager_1 | site_manager_1@example.com | 1      | sitemanager   |
-      | verified       | verified@example.com       | 1      | verified      |
-      | authenticated  | authenticated@example.com  | 1      | authenticated |
+      | name           | mail                       | status | roles       |
+      | site_manager_1 | site_manager_1@example.com | 1      | sitemanager |
+      | verified       | verified@example.com       | 1      | verified    |
+      | authenticated  | authenticated@example.com  | 1      |             |
     And groups:
       | label             | field_group_description        | author          | type           | langcode | field_flexible_group_visibility |
       | Test-invite-group | Something that wanted share..  | site_manager_1  | flexible_group | en       | public                          |
@@ -53,6 +56,9 @@ Feature: Send invite group email notifications
 
     # Register as new user and accept invitation.
     And I logout
+    # Enable back users automatic verification.
+    And I set the configuration item "social_user.settings" with key "verified_immediately" to 1
+
     And I intend to create a user named "new_test_user"
     And I open register page with prefilled "new_test_user@example.com" and destination to invited group "Test-invite-group"
 
