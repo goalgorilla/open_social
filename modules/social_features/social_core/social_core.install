@@ -817,3 +817,28 @@ function social_core_update_130014(): void {
     \Drupal::service('module_installer')->install(['data_policy_export']);
   }
 }
+
+/**
+ * Uninstall all deprecated social modules.
+ */
+function social_core_update_130015(): void {
+  $deprecatedModules = [
+    'social_lets_connect_contact',
+    'social_usercentrics',
+    'social_saas_analytics',
+    'social_onboarding',
+    'social_ethnicity',
+    'social_disability',
+    'social_avatar',
+    'hubspot_analytics',
+    'social_group_migration_test',
+    'social_secret_group_featured',
+    'social_group_secret',
+    'social_lazy_loading',
+    'social_lazy_loading_images',
+  ];
+
+  \Drupal::service('module_installer')->uninstall($deprecatedModules, FALSE);
+
+  \Drupal::logger("social_core")->info('Deprecated modules uninstalled.');
+}
