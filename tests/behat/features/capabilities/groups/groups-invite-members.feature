@@ -16,7 +16,8 @@ Feature: Send invite group email notifications
       | name           | mail                       | status | roles       |
       | site_manager_1 | site_manager_1@example.com | 1      | sitemanager |
       | verified       | verified@example.com       | 1      | verified    |
-      | authenticated  | authenticated@example.com  | 1      |             |
+      | Dude (English) | event_user_1@example.com   | 1      |             |
+      | authenticated_u | authenticated@example.com | 1      |             |
     And groups:
       | label             | field_group_description        | author          | type           | langcode | field_flexible_group_visibility |
       | Test-invite-group | Something that wanted share..  | site_manager_1  | flexible_group | en       | public                          |
