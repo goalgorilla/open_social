@@ -96,11 +96,21 @@ class SocialNodeForm extends NodeForm {
     // Get visibility options.
     $visibilities = $form['field_content_visibility']['widget']['#options'];
 
+    // Get the form input.
+    $input = $form_state->getUserInput();
+
     // Check if the values are being altered while it's disabled.
+    // We disable the values during translations.
     foreach ($visibilities as $visibility => $value) {
       if (isset($form['field_content_visibility']['widget'][$visibility]['#disabled'])
         && $form['field_content_visibility']['widget'][$visibility]['#disabled'] === TRUE
-        && $form_state->getValue('field_content_visibility')[0]['value'] === $visibility) {
+        // At this time $form_state->getUserInput()['field_content_visibility']
+        // is NULL.
+        // So, we fetch the values of existing role visibility option and
+        // changed form.
+        // If they both match, this means that value has been manipulated.
+        && $input['field_content_visibility'] === $visibility
+      ) {
         $form_state->setErrorByName('field_content_visibility', t('@visibility visibility is not allowed', ['@visibility' => $visibility]));
       }
     }
