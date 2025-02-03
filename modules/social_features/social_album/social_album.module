@@ -584,3 +584,16 @@ function social_album_preprocess_node_add_list(array &$variables): void {
     $variables['#cache']['tags'][] = 'node_add_list';
   }
 }
+
+/**
+ * Implements hook_social_core_add_form_title_override().
+ *
+ * Override page title for the given routes.
+ */
+function social_album_social_core_add_form_title_override(): array {
+  return [
+    'social_album.add' => [
+      'label' => 'Album',
+    ],
+  ];
+}

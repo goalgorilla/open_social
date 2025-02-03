@@ -25,6 +25,9 @@ function hook_social_filter_format_default_alter(&$filter_format) {
 /**
  * Provide a method to insert an article in the page title.
  *
+ * @deprecated in social:13.0.0 and is removed from social:14.0.0. Use
+ * hook_social_core_add_form_title_override instead.
+ *
  * @return array
  *   An associative array of titles configuration. The keys are entity types.
  *   The values are associative arrays that may contain the following elements:
@@ -56,6 +59,9 @@ function hook_social_core_title() {
  * @param array $titles
  *   An associative array of titles configuration returned by
  *   hook_social_core_title().
+ *
+ * @deprecated in social:13.0.0 and is removed from social:14.0.0. Use
+ * hook_social_core_add_form_title_override instead.
  *
  * @see \Drupal\social_core\Routing\RouteSubscriber::alterRoutes()
  * @see \Drupal\social_core\Controller\SocialCoreController::addPageTitle()
@@ -215,4 +221,48 @@ function hook_social_core_ENTITY_TYPE_published(\Drupal\Core\Entity\EntityInterf
  * @ingroup hooks
  */
 function hook_social_core_ENTITY_TYPE_unpublished(\Drupal\Core\Entity\EntityInterface $entity) {
+}
+
+/**
+ * Provides a mechanism to override form titles for specific routes dynamically.
+ *
+ * This hook allows modules to define custom logic for overriding form titles
+ * based on the route name and its parameters. The hook implementations should
+ * return an array keyed by the route name, with each value containing:
+ * - `label`: A string representing the entity type label or a callable function
+ *   to dynamically generate the page title. If a callable is provided, it will
+ *   receive the route parameters as arguments and must return a string for the
+ *   entity type label.
+ *
+ * Example usage:
+ *
+ * @code
+ * function my_module_social_core_add_form_title_override() {
+ *   return [
+ *     'entity.node.edit_form' => [
+ *       'label' => function ($parameters) {
+ *         // Custom logic to generate the label dynamically.
+ *         return 'Custom Label for Node';
+ *       },
+ *     ],
+ *     'entity.user.edit_form' => [
+ *       'label' => 'User', // Static label.
+ *     ],
+ *   ];
+ * }
+ * @endcode
+ *
+ * @return array
+ *   An associative array of overrides keyed by route name. Each key-value pair
+ *   includes:
+ *   - `label` (string|callable): The label as a string or a callable function
+ *     to dynamically generate the label.
+ *
+ * @see \Drupal\social_core\Routing\RouteSubscriber::alterRoutes()
+ * @see \Drupal\social_core\Controller\SocialCoreController::addPageTitle()
+ *
+ * @ingroup social_core_api
+ */
+function hook_social_core_add_form_title_override(): array {
+  return [];
 }

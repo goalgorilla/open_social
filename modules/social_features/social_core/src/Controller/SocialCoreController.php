@@ -6,6 +6,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\social_core\InviteService;
@@ -44,6 +45,13 @@ class SocialCoreController extends ControllerBase {
   private InviteService $invite;
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
    * SocialGroupController constructor.
    *
    * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
@@ -56,19 +64,23 @@ class SocialCoreController extends ControllerBase {
    *   The currently active route match object.
    * @param \Drupal\social_core\InviteService $invite
    *   The invite service.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    */
   public function __construct(
     PrivateTempStoreFactory $temp_store_factory,
     ViewsBulkOperationsActionProcessorInterface $action_processor,
     ModuleHandlerInterface $module_handler,
     RouteMatchInterface $route_match,
-    InviteService $invite
+    InviteService $invite,
+    LanguageManagerInterface $language_manager,
   ) {
     $this->tempStoreFactory = $temp_store_factory;
     $this->actionProcessor = $action_processor;
     $this->moduleHandler = $module_handler;
     $this->routeMatch = $route_match;
     $this->invite = $invite;
+    $this->languageManager = $language_manager;
   }
 
   /**
@@ -81,6 +93,7 @@ class SocialCoreController extends ControllerBase {
       $container->get('module_handler'),
       $container->get('current_route_match'),
       $container->get('social_core.invite'),
+      $container->get('language_manager'),
     );
   }
 
@@ -279,6 +292,41 @@ class SocialCoreController extends ControllerBase {
     }
 
     return '';
+  }
+
+  /**
+   * Generate entity add form titles.
+   *
+   * @see \Drupal\social_core\Routing\RouteSubscriber::alterRoutes()
+   */
+  public function generateAddFormTitle(): string {
+    $route_name = $this->routeMatch->getRouteName();
+    $titles = $this->moduleHandler->invokeAll('social_core_add_form_title_override');
+
+    // Set language to English.
+    $original_language = $this->languageManager->getConfigOverrideLanguage();
+    $language = $this->languageManager->getLanguage('en');
+    $this->languageManager->setConfigOverrideLanguage($language);
+
+    // Get label.
+    $label = is_callable($titles[$route_name]['label']) ? $titles[$route_name]['label']() : $titles[$route_name]['label'];
+    $label = mb_strtolower($label);
+
+    // Transliterate the label.
+    $transliterated_label = transliterator_transliterate(
+      'Any-Latin; Latin-ASCII',
+      $label
+    );
+
+    // Determine the article to be used according to the bundle label.
+    $article = preg_match('/^[aeiou]/i', (string) $transliterated_label) ? 'an' : 'a';
+
+    // Revert back to the original default language.
+    $this->languageManager->setConfigOverrideLanguage($original_language);
+
+    // phpcs:disable
+    return $this->t("Create $article $label")->render();
+    // phpcs:enable
   }
 
 }

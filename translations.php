@@ -189,3 +189,24 @@ new TranslatableMarkup('You can enter or paste multiple entries separated by com
 // String added because original one was changed due to #3470967 issue.
 new TranslatableMarkup('Registered users are verified immediately');
 new TranslatableMarkup('New users will be required to validate their email address prior to logging into the site, and will be assigned a system-generated password. With this setting disabled, users will be logged in immediately upon registering, and may select their own passwords during registration.');
+
+// Strings added to replace the old form add titles due to #PROD-30735 issue.
+new TranslatableMarkup('Create an album');
+new TranslatableMarkup('Create a book page');
+new TranslatableMarkup('Create an event');
+new TranslatableMarkup('Create a landing page');
+new TranslatableMarkup('Create a page');
+new TranslatableMarkup('Create an idea');
+new TranslatableMarkup('Create a topic');
+new TranslatableMarkup('Create a challenge');
+new TranslatableMarkup('Create a group');
+new TranslatableMarkup('Create a flexible group');
+new TranslatableMarkup('Create a course');
+new TranslatableMarkup('Create a basic course');
+new TranslatableMarkup('Create an advanced course');
+new TranslatableMarkup('Create a post');
+new TranslatableMarkup('Create a photo');
+new TranslatableMarkup('Create a file');
+new TranslatableMarkup('Create a link');
+new TranslatableMarkup('Create a folder');
+new TranslatableMarkup('Create an organization');

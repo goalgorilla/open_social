@@ -2791,37 +2791,6 @@ function social_group_social_core_default_main_menu_links_alter(array &$links) {
 }
 
 /**
- * Implements hook_social_core_title().
- */
-function social_group_social_core_title(): array {
-  return [
-    'group_content' => [
-      'route_name' => 'entity.group_content.create_form',
-      'callback' => function () {
-        /** @var \Drupal\social_group\SocialGroupInterface $group */
-        $group = \Drupal::routeMatch()->getParameter('group');
-
-        $plugin_id = \Drupal::routeMatch()->getParameter('plugin_id');
-
-        $group_relation_type = $group->getGroupType()->getPlugin($plugin_id)->getRelationType();
-
-        $definition = \Drupal::entityTypeManager()->getDefinition($group_relation_type->getEntityTypeId());
-
-        if (
-          $definition !== NULL &&
-          ($entity_type_id = $definition->getBundleEntityType()) !== NULL
-        ) {
-          return \Drupal::entityTypeManager()->getStorage($entity_type_id)
-            ->load($group_relation_type->getEntityBundle());
-        }
-
-        return NULL;
-      },
-    ],
-  ];
-}
-
-/**
  * Implements hook_social_tagging_type().
  */
 function social_group_social_tagging_type(): string {
@@ -2933,4 +2902,51 @@ function _social_group_system_regional_settings_submit(array &$form, FormStateIn
     $group_address_field->setDefaultValue($default_values)
       ->save();
   }
+}
+
+/**
+ * Implements hook_social_core_add_form_title_override().
+ *
+ * Override page title for the given routes.
+ */
+function social_group_social_core_add_form_title_override(): array {
+  return [
+    'entity.group.add_page' => [
+      'label' => 'Group',
+    ],
+    'entity.group.add_form' => [
+      'label' => function () {
+        if ($group_type_param = \Drupal::routeMatch()->getParameter('group_type')) {
+          if ($group_type = \Drupal::entityTypeManager()->getStorage('group_type')->load($group_type_param->id())) {
+            return $group_type->label();
+          }
+        }
+
+        return 'Group';
+      },
+    ],
+    'entity.group_content.create_form' => [
+      'label' => function () {
+        if ($group = \Drupal::routeMatch()->getParameter('group')) {
+          $plugin_id = \Drupal::routeMatch()->getParameter('plugin_id');
+          $group_relation_type = $group->getGroupType()->getPlugin($plugin_id)->getRelationType();
+
+          // Load the entity type definition to get the bundle entity type.
+          $entity_type_definition = \Drupal::entityTypeManager()
+            ->getDefinition($group_relation_type->getEntityTypeId());
+
+          if ($entity_type_definition) {
+            $entity_type = $entity_type_definition->getBundleEntityType();
+            $bundle_name = $group_relation_type->getEntityBundle();
+
+            if ($bundle = \Drupal::entityTypeManager()->getStorage((string) $entity_type)->load($bundle_name)) {
+              return $bundle->label();
+            }
+          }
+        }
+
+        return 'Group';
+      },
+    ],
+  ];
 }

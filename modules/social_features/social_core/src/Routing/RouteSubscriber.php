@@ -45,8 +45,21 @@ class RouteSubscriber extends RouteSubscriberBase {
       }
     }
 
-    $titles = $this->moduleHandler->invokeAll('social_core_title');
-    $this->moduleHandler->alter('social_core_title', $titles);
+    $titles = [];
+
+    // Deprecate and replace the invocation of 'social_core_title'.
+    $titles = $this->moduleHandler->invokeAllDeprecated(
+      'Deprecated in social:13.0.0 and is removed from social:14.0.0. Use hook_social_core_add_form_title_override instead.',
+      'social_core_title',
+      $titles
+    );
+
+    // Deprecate and replace the invocation of 'social_core_title_alter'.
+    $this->moduleHandler->alterDeprecated(
+      'Deprecated in social:13.0.0 and is removed from social:14.0.0. Use hook_social_core_add_form_title_override instead.',
+      'social_core_title_alter',
+      $titles
+    );
 
     if (!empty($titles['node'])) {
       if (!isset($titles['node']['bundles'])) {
@@ -61,6 +74,16 @@ class RouteSubscriber extends RouteSubscriberBase {
           '_title_callback',
           SocialCoreController::class . '::addPageTitle',
         );
+      }
+    }
+
+    // New approach for overriding add_form page titles.
+    $titles = $this->moduleHandler->invokeAll('social_core_add_form_title_override');
+    foreach ($titles as $route_name => $data) {
+      if ($route = $collection->get($route_name)) {
+        if (isset($data['label'])) {
+          $route->setDefault('_title_callback', SocialCoreController::class . '::generateAddFormTitle');
+        }
       }
     }
   }

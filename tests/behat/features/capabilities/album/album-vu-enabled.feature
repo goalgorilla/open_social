@@ -21,7 +21,7 @@ Feature: Enabled Album for VU
     And I should see the album I just created
 
     And I am on "node/add/album"
-    And I should see "Create a album"
+    And I should see "Create an album"
 
     And I am editing the album "My album"
     And I should see "My album"

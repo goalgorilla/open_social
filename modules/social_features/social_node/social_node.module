@@ -26,17 +26,6 @@ function social_node_entity_type_alter(array &$entity_types) {
 }
 
 /**
- * Implements hook_social_core_title().
- */
-function social_node_social_core_title(): array {
-  return [
-    'node' => [
-      'route_name' => 'node.add',
-    ],
-  ];
-}
-
-/**
  * Implements hook_social_tagging_type().
  */
 function social_node_social_tagging_type(): string {
@@ -64,4 +53,33 @@ function social_node_node_access_records_alter(array &$grants, NodeInterface $no
       }
     }
   }
+}
+
+/**
+ * Implements hook_social_core_add_form_title_override().
+ *
+ * Override page title for the given routes.
+ */
+function social_node_social_core_add_form_title_override(): array {
+  $callback = function () {
+    if ($node_type_param = \Drupal::routeMatch()->getParameter('node_type')) {
+      if ($node_type = \Drupal::entityTypeManager()->getStorage('node_type')->load($node_type_param->id())) {
+        return $node_type->label();
+      }
+    }
+
+    return 'Content';
+  };
+
+  return [
+    'node.add' => [
+      'label' => $callback,
+    ],
+    'node.add_page' => [
+      'label' => 'Content',
+    ],
+    'entity.node.add_form' => [
+      'label' => $callback,
+    ],
+  ];
 }
