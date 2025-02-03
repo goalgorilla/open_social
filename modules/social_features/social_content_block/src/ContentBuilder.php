@@ -690,7 +690,7 @@ class ContentBuilder implements ContentBuilderInterface {
       $query->groupBy($key);
     }
 
-    if (in_array($sort_by, ['created', 'changed'])) {
+    if (in_array($sort_by, ['created', 'changed', 'event_date', 'event_date_desc'])) {
       $query->groupBy($sorting_field);
     }
 
