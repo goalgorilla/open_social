@@ -34,7 +34,6 @@ class SocialCoreServiceProvider extends ServiceProviderBase {
     // Replaces all EDA Handlers with dummies if there is no Publisher.
     // In this case we expect the class not to be found because it exists
     // outside the Open Social distribution.
-    // @phpstan-ignore class.notFound
     if (!$container->hasDefinition(Dispatcher::class)) {
       foreach ($container->findTaggedServiceIds('social.eda.handler') as $id => $attributes) {
         $definition = $container->getDefinition($id);
