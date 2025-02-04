@@ -188,7 +188,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
       $tree[$parent->id()]['title'] = $parent_label;
       $tree[$parent->id()]['tags'][$term->id()] = [
         'url' => $url,
-        'name' => $parent->hasTranslation($current_lang) ? $term->getTranslation($current_lang)->getName() : $term->getName(),
+        'name' => $term->hasTranslation($current_lang) ? $term->getTranslation($current_lang)->getName() : $term->getName(),
       ];
     }
     return $tree;
