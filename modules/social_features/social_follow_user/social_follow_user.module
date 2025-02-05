@@ -224,6 +224,11 @@ function social_follow_user_preprocess_flag(array &$variables): void {
  * @see \Drupal\user\AccountForm
  */
 function social_follow_user_form_user_form_alter(array &$form, FormStateInterface $form_state) : void {
+  // When the "follow user" feature disabled hide it in "Privacy" settings.
+  if (!\Drupal::config('social_follow_user.settings')->get('status')) {
+    $form['field_allow_following']['#access'] = FALSE;
+    return;
+  }
   // Show the setting as a switch in the settings form.
   if (isset($form['field_allow_following']['widget']['value'])) {
     $form['field_allow_following']['widget']['value']['#attributes']['data-switch'] = TRUE;
