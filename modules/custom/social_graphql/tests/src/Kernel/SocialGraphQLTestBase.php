@@ -149,15 +149,15 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
     $count = count($first_page);
     // Construct the filter as a string. We do this instead of variables since
     // it makes our function signature a bit easier.
-    $filter = "${side}: ${count}";
+    $filter = "$side: $count";
     if ($reverse) {
       $filter .= ", reverse: true";
     }
     if ($cursor) {
-      $filter .= ", ${cursor}";
+      $filter .= ", $cursor";
     }
     if ($sortKey) {
-      $filter .= ", sortKey: ${sortKey}";
+      $filter .= ", sortKey: $sortKey";
     }
 
     // Create a query for the filter under test. Include some data that allow
@@ -166,8 +166,8 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
     $close_path = empty($parents) ? "" : " } " . implode("}", array_map(static fn () => "", $parents));
     $query = "
         query {
-          ${open_path}
-          ${field}(${filter}) {
+          $open_path
+          $field($filter) {
             pageInfo {
               hasPreviousPage
               hasNextPage
@@ -184,7 +184,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
               }
             }
           }
-          ${close_path}
+          $close_path
         }
 
       ";
@@ -209,12 +209,12 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
 
     // Matching to an empty array causes a diff to show more information to
     // developers than simply an assertEmpty check.
-    self::assertEquals([], $executionResult->errors, "Errors for ${open_path}${field}(${filter})${close_path}");
-    self::assertNotNull($executionResult->data, "No data for ${open_path}${field}(${filter})${close_path}");
+    self::assertEquals([], $executionResult->errors, "Errors for {$open_path}{$field}($filter)$close_path");
+    self::assertNotNull($executionResult->data, "No data for {$open_path}{$field}($filter)$close_path");
 
     $parent_fields = array_map(static fn ($f) => explode('(', $f)[0], $parents);
     $data = NestedArray::getValue($executionResult->data, [...$parent_fields, $field]);
-    self::assertNotNull($data, "No data for ${open_path}${field}(${filter})${close_path}");
+    self::assertNotNull($data, "No data for {$open_path}{$field}($filter)$close_path");
 
     $startCursor = $data['edges'][0]['cursor'];
     $endCursor = $data['edges'][count($first_page) - 1]['cursor'];
@@ -226,16 +226,16 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
       'endCursor' => $endCursor,
     ];
 
-    self::assertNotEquals(NULL, $data['pageInfo']['startCursor'], "Missing startCursor for ${field}(${filter})");
-    self::assertNotEquals(NULL, $data['pageInfo']['endCursor'], "Missing endCursor for ${field}(${filter})");
-    self::assertEquals($expected_page_info, $data['pageInfo'], "Incorrect pageInfo for ${field}(${filter})");
+    self::assertNotEquals(NULL, $data['pageInfo']['startCursor'], "Missing startCursor for $field($filter)");
+    self::assertNotEquals(NULL, $data['pageInfo']['endCursor'], "Missing endCursor for $field($filter)");
+    self::assertEquals($expected_page_info, $data['pageInfo'], "Incorrect pageInfo for $field($filter)");
 
     $expected_nodes = array_map(
       static fn ($uuid) => ['id' => $uuid],
       $first_page
     );
 
-    self::assertEquals($expected_nodes, $data['nodes'], "Incorrect nodes for ${field}(${filter})");
+    self::assertEquals($expected_nodes, $data['nodes'], "Incorrect nodes for $field($filter)");
 
     // The cursor is ignored as it's an implementation detail and we have no
     // good way of predicting its value for comparison. It's usefulness is
@@ -255,11 +255,11 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
       $data['edges']
     );
 
-    self::assertEquals($expected_edge_data, $actual_edge_data, "Incorrect edges for ${field}(${filter}) (cursors omitted from check)");
+    self::assertEquals($expected_edge_data, $actual_edge_data, "Incorrect edges for $field($filter) (cursors omitted from check)");
 
     // If we've been given a second page then we can test with a cursor.
     if (!empty($second_page)) {
-      $cursor = $side === 'first' ? "after: \"${endCursor}\"" : "before: \"${startCursor}\"";
+      $cursor = $side === 'first' ? "after: \"$endCursor\"" : "before: \"$startCursor\"";
       $this->assertPaginationPage(
         $field,
         $side,

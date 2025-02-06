@@ -9,11 +9,13 @@ Feature: Notification that account is blocked
       | name      | status | pass       | role     |
       | User Case |      0 | UseCase123 | verified |
     And I am on the homepage
+
     When I click "Log in"
     And I fill in the following:
       | Username or email address | User Case |
       | Password | UseCase123 |
     And I press "Log in"
+
     Then I should see the error message "The username User Case has not been activated or is blocked."
     And I should not see the error message "This could happen for one of for the following reasons"
 
@@ -22,10 +24,12 @@ Feature: Notification that account is blocked
       | name      | status | pass          | role     |
       | User Case |      0 | wrongpassword | verified |
     And I am on the homepage
+
     When I click "Log in"
     And I fill in the following:
       | Username or email address | User Case |
       | Password | UseCase123 |
     And I press "Log in"
+
     Then I should not see the error message "The username User Case has not been activated or is blocked."
     And I should see "This may have happened for the following reasons"
