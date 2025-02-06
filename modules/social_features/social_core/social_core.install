@@ -808,3 +808,12 @@ function social_core_update_130013(): void {
   $content_view->set('display.default.display_options.fields', $fields);
   $content_view->save();
 }
+
+/**
+ * Enable data_policy_export module if data_policy module is enabled.
+ */
+function social_core_update_130014(): void {
+  if (\Drupal::moduleHandler()->moduleExists('data_policy')) {
+    \Drupal::service('module_installer')->install(['data_policy_export']);
+  }
+}
