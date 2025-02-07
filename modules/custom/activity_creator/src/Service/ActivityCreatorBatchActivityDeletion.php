@@ -4,6 +4,7 @@ namespace Drupal\activity_creator\Service;
 
 use Drupal\Core\Batch\BatchBuilder;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -109,7 +110,7 @@ class ActivityCreatorBatchActivityDeletion {
     \Drupal::logger('activity_creator')->info($message);
 
     $batch = &batch_get();
-    if (isset($batch) && !empty($batch['batch_redirect'])) {
+    if (isset($batch['batch_redirect']) && $batch['batch_redirect'] instanceof Url) {
       return new RedirectResponse($batch['batch_redirect']->toString());
     }
 
