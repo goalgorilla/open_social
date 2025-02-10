@@ -1,4 +1,4 @@
-@api @melikey
+@api
 Feature: View likes
   Benefit: In order to view who liked content
   Role: As a Verified

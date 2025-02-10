@@ -1,4 +1,4 @@
-@api @search @stability @DS-700 @stability-3 @search-users
+@api
   Feature: Search people
   Benefit: In order to find user on the platform (to find information about someone, find content of someone, or contact the user).
   Role: As a Verified

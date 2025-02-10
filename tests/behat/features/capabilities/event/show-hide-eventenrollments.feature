@@ -1,4 +1,4 @@
-@api @event @eventenrollment @stability @perfect @PROD-22857 @stability-2
+@api
 Feature: Show/hide enrollments on Event
   Benefit: Ability to manage enrollments displaying on event
   Role: As a Verified

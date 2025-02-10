@@ -1,4 +1,4 @@
-@api @profile @user @members @stability @YANG-5091 @stability-4 @profile-tag
+@api
 Feature: Add profile tags to the user profiles
   Benefit: In order to add profile tags
   Role: CM

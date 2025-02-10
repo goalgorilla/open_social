@@ -1,4 +1,4 @@
-@api @embed @stability @perfect @critical @DS-3666 @DS-5350 @stability-4
+@api
 Feature: Embed
   Benefit: More dynamic look and feel in the platform
   Role: As a Verified

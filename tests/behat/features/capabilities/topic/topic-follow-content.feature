@@ -1,4 +1,4 @@
-@api @topic @stability @perfect @critical @DS-2311 @DS-7612 @stability-3 @topic-follow-content
+@api
 Feature: Follow Content
   Benefit: In order receive (email) notification  when a new comments or reply has been placed
   Role: As a Verified

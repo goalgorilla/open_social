@@ -1,4 +1,4 @@
-@api @javascript @flexible-groups @TB-6072 @DS-4211 @ECI-632
+@api @javascript
 Feature: Create flexible groups
   # @todo Rewrite in Jobs to be done format
   Benefit: So I can work together with others in a relative small circle

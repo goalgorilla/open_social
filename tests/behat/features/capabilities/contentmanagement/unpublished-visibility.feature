@@ -1,4 +1,4 @@
-@api @topic @stability @perfect @critical @YANG-5682 @stability-3 @unpublished
+@api
 Feature: Un/publish a node
   Benefit: Visibility do not have an impact on default permission
   Role: as AN/Verified

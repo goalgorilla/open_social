@@ -1,4 +1,4 @@
-@api @like @stability @javascript @DS-2968 @stability-4 @like-create-event
+@api
 Feature: Create event like
   Benefit: In order to like an event
   Role: As a Verified

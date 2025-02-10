@@ -1,4 +1,4 @@
-@api @notifications @stability @javascript @stability-3 @YANG-4199 @event-invite-members @no-update
+@api @javascript
 Feature: Send invite event email notifications
   Benefit: Email notifications attract users to the platform
   Role: As a SM

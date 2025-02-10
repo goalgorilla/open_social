@@ -1,4 +1,4 @@
-@api @book @perfect @critical @DS-1766 @book-create
+@api
 Feature: Create Book page
   Goal: I want to create a book so I can share information with my community
 

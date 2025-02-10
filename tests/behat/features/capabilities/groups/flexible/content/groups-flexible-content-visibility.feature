@@ -1,4 +1,4 @@
-@api @javascript @flexible-groups @flexible-groups-content-visibility
+@api @javascript
 Feature: Verify that selected group content visibility applies correctly for content in flexible groups
 
   Background:

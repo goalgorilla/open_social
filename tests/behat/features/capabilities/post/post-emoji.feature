@@ -1,4 +1,4 @@
-@api @post @javascript @stability @perfect @critical @database @post-emoji
+@api @javascript
 Feature: Post and Comment with Emoji
   Benefit: Add an emoji in a post and/or comment
   Role: As a Verified

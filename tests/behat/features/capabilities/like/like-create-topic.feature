@@ -1,4 +1,4 @@
-@api @like @stability @javascript @DS-2969 @stability-4 @like-create-topic
+@api
 Feature: Create topic like
   Benefit: In order to like a topic
   Role: As a Verified

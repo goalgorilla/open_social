@@ -1,4 +1,4 @@
-@api @comment @stability @YANG-4950 @YANG-5030 @stability-2 @comment-ajax
+@api
 Feature: See Comments
   Benefit: In order to interact with people on the platform
   Role: As a Verified

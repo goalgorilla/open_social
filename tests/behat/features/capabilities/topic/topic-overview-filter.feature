@@ -1,4 +1,4 @@
-@api @topic @stability @overview @DS-357 @DS-358 @stability-2 @topic-overview-filter
+@api
 Feature: Topic Overview Filter
   Benefit: In order to find a Topic
   Role: As a Verified

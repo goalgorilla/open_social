@@ -1,4 +1,4 @@
-@api @javascript @flexible-groups @flexible-groups-content
+@api @javascript
 Feature: Create content in flexible groups
 
   Background:

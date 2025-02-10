@@ -1,4 +1,4 @@
-@api @profile @user @members @stability @perfect @community @newest @overview @block @verified @critical @stability-4 @newest-members
+@api
 Feature: See newest users in the community
   Benefit: In order to discover new people
   Role: As a Verified

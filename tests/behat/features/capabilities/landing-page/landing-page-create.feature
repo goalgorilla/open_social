@@ -1,4 +1,4 @@
-@api @landing-page @stability @javascript @perfect @critical @DS-4130 @stability-4 @landing-page-create
+@api @javascript
 Feature: Create Landing Page
   Benefit: In order to share useful information with users
   Role: AN

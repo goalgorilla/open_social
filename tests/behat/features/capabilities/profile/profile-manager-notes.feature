@@ -1,4 +1,4 @@
-@account @profile @stability @AN @perfect @api @DS-6941 @stability-3 @profile-manager-notes
+@api
 Feature: Profile manager notes
   Benefit: In order to create remarks about Users
   Role: SM

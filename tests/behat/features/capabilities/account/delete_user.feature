@@ -1,4 +1,4 @@
-@api @account @delete @stability @big-data @PROD-24912
+@api
 Feature: Deleting a user with activities related to it
   Benefit: That we adhere to the privacy laws
   Role: LU, SM

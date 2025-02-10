@@ -1,4 +1,4 @@
-@api @follow-taxonomy @stability @YANG-5609 @stability-4 @follow-tags
+@api
 Feature: Follow Tags
   Benefit: Provide follow tag
   Role: As LU

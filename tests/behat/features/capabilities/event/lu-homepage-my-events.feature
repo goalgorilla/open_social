@@ -1,4 +1,4 @@
-@api @event @stability @perfect @my @upcoming @profile @block @verified @critical @DS-1053 @stability-3 @lu-homepage-my-events
+@api
 Feature: See my upcoming events
   Benefit: In order to know which events I signed up for
   Role: As a Verified

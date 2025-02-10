@@ -1,4 +1,4 @@
-@api @event @stability @javascript @stability-1 @event-all-day-timezone
+@api @javascript
 Feature: All day event for different timezones
   Benefit: Correct handling of non GMT timezones
   Role: As a Verified

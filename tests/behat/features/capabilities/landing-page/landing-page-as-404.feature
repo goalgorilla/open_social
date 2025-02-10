@@ -1,4 +1,4 @@
-@api @landing-page @stability @perfect @critical @stability-4 @landing-page-as-404
+@api
 Feature: Use a landing page as 404 page
   Benefit: Provide a customisable visually pleasing 404 page
   Role: LU

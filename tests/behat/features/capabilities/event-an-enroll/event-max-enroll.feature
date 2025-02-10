@@ -1,4 +1,4 @@
-@api @javascript @event @eventenrollment @stability @perfect @TB-1764 @profile @stability-3 @event-max-enroll
+@api @javascript
 Feature: Limitation event enrollments
   Benefit: In order to attend an Event
   Role: As a Verified

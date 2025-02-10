@@ -1,4 +1,4 @@
-@account @profile @api @gdpr @DS-4895 @stability @stability-1 @hide-profile-fields
+@api
 Feature: I want to be able to hide profile fields
   Benefit: In order to have better privacy for my users
   Role: SM

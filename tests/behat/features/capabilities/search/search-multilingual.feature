@@ -1,4 +1,4 @@
-@api @enterprise @search @stability @DS-498 @DS-673 @stability-3 @search-multilingual
+@api
 Feature: Search
   Benefit: In order to find specific multilingual content
   Role: As a LU

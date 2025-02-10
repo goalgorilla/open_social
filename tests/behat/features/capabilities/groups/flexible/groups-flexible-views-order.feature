@@ -1,4 +1,4 @@
-@api @javascript @flexible-groups @flexible-groups-order
+@api @javascript
 Feature: Flexible groups are correctly ordered on views pages.
   Background:
     Given I enable the module "social_group_flexible_group"

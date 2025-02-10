@@ -1,4 +1,4 @@
-@administration @api @notifications @javascript @stability @bulk-mails @no-update
+@api @javascript
 Feature: Send bulk email
   Benefit: Be able to notify community members
   Role: As a SM

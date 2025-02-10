@@ -1,4 +1,4 @@
-@api @post @stability @PROD-25398 @database @stability-3 @album @post-album
+@api
 Feature: Create Post with Photo and add it to an existing Album
   Benefit: In order to share knowledge with people
   Role: As a Verified

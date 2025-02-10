@@ -1,4 +1,4 @@
-@api @comment @stability @stability-2 @comment-reply-thread
+@api
 Feature: See Comment
   Benefit: In order to interact with people on the platform
   Role: As a Verified

@@ -1,4 +1,4 @@
-@api @comment @stability @DS-642 @comment-redirect @stability-3
+@api
 Feature: Redirect comment page
   Benefit: See the full scope of the comment thread
   Role: As a Verified

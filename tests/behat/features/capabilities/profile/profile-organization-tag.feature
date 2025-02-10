@@ -1,4 +1,4 @@
-@api @profile @user
+@api
 Feature: Check that profile organization tags are correctly displayed
   Check that profile organization tags are corectly displayed also with special characters like & or '.
 

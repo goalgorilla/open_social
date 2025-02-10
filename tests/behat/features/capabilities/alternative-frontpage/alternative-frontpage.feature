@@ -1,4 +1,4 @@
-@api @alternative-frontpage @stability @perfect @critical @DS-4638 @stability-4
+@api
 Feature: Set alternative frontpage
   Benefit: In order to improve the Look and Feel for LU
   Role: AN

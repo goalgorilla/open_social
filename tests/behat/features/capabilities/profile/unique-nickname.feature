@@ -1,4 +1,4 @@
-@account @profile @api @gdpr @GPDE-114 @stability @stability-1 @unique-nicknames
+@api
 Feature: I want to be able to make nick names unique
   Benefit: Increased distinguishability
   Role: SM

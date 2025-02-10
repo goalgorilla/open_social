@@ -1,4 +1,4 @@
-@api @follow-users @stability @YANG-7603 @stability-4
+@api
 Feature: Follow Users
   Benefit: Provide follow users
   Role: As LU

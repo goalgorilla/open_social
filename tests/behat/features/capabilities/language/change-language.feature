@@ -1,4 +1,4 @@
-@api @account @language @stability @verified @DS-1382 @stability-2 @change-language
+@api
 Feature: Multilingual Open Social
   Benefit: Deliver site in users own language
   Role: As a Verified
