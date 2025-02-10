@@ -4,6 +4,8 @@ namespace Drupal\social\Behat;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
+
+use Behat\Testwork\Environment\Environment;
 use Drupal\Driver\DrushDriver;
 use Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend;
 
@@ -25,8 +27,8 @@ class SearchContext extends RawMinkContext {
    * @BeforeScenario
    */
   public function getDrushDriver(BeforeScenarioScope $scope) : void {
-    $this->environment= $scope->getEnvironment();
-    $drupal_context = $this->environment->getContext(SocialDrupalContext::class);
+    $environment = $scope->getEnvironment();
+    $drupal_context = $environment->getContext(SocialDrupalContext::class);
     if (!$drupal_context instanceof SocialDrupalContext) {
       throw new \RuntimeException("Expected " . SocialDrupalContext::class . " to be configured for Behat.");
     }

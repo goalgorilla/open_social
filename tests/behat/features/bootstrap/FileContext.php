@@ -21,6 +21,20 @@ class FileContext extends RawMinkContext {
   private DrupalContext $drupalContext;
 
   /**
+   * I try to download file status code.
+   *
+   * @var int|mixed|null
+   */
+  private mixed $iTryToDownloadFileStatusCode;
+
+  /**
+   * I try to download file response.
+   *
+   * @var \Psr\Http\Message\ResponseInterface|null
+   */
+  private ?ResponseInterface $iTryToDownloadFileResponse;
+
+  /**
    * Make some contexts available here so we can delegate steps.
    *
    * @BeforeScenario

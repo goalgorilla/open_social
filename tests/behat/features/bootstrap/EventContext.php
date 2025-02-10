@@ -258,7 +258,7 @@ class EventContext extends RawMinkContext {
   public function whenIEditEventUsingTheForm(string $title, TableNode $fields) : void {
     $event_id = $this->getEventIdFromTitle($title);
     if ($event_id === NULL) {
-      throw new \RuntimeException("Event with title '${title}' does not exist. Did you create it in the test?");
+      throw new \RuntimeException("Event with title '$title' does not exist. Did you create it in the test?");
     }
     $this->visitPath("/node/$event_id/edit");
 

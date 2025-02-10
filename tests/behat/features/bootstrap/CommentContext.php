@@ -24,6 +24,13 @@ class CommentContext extends RawMinkContext {
   private DrupalContext $drupalContext;
 
   /**
+   * The IDs of the comments created during the test.
+   *
+   * @var int[]
+   */
+  private array $created = [];
+
+  /**
    * Make some contexts available here so we can delegate steps.
    *
    * @BeforeScenario
