@@ -152,7 +152,7 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
     $form['actions']['reset']['#access'] = TRUE;
     // @todo make sure exposed form filtering redirects to the proper view
     // page, when views is updated.
-    $form['#action'] = '/user/' . $account_uid . '/events';
+    $form['#action'] = base_path() . 'user/' . $account_uid . '/events';
   }
   if ($form['#id'] === 'views-exposed-form-group-events-page-group-events') {
     $group_from_route = _social_group_get_current_group();
@@ -165,7 +165,7 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
     $form['actions']['reset']['#access'] = TRUE;
 
     // Make sure we redirect to the current group page.
-    $form['#action'] = '/group/' . $group_id . '/events';
+    $form['#action'] = base_path() . 'group/' . $group_id . '/events';
   }
   // Only on the community or explore events overview.
   if ($form['#id'] === 'views-exposed-form-upcoming-events-page-community-events') {

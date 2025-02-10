@@ -105,7 +105,7 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
     $form['actions']['reset']['#access'] = TRUE;
     // @todo make sure exposed form filtering redirects to the proper view
     // page, when views is updated.
-    $form['#action'] = '/user/' . $account_uid . '/topics';
+    $form['#action'] =  base_path() . 'user/' . $account_uid . '/topics';
   }
   // On group topics overview.
   if ($form['#id'] === 'views-exposed-form-group-topics-page-group-topics') {
@@ -143,7 +143,7 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
     $form['actions']['reset']['#access'] = TRUE;
 
     // Make sure we redirect to the current group page.
-    $form['#action'] = '/group/' . $group_id . '/topics';
+    $form['#action'] = base_path() . 'group/' . $group_id . '/topics';
   }
 }
 
