@@ -92,7 +92,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
       ? '/assets/icons/default-calendar.svg'
       : '/assets/icons/' . $this->pluginDefinition['id'] . '.svg';
 
-    return '/' . $module_path . $plugin_icon;
+    return base_path() . $module_path . $plugin_icon;
   }
 
   /**
