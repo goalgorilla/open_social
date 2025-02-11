@@ -12,8 +12,6 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -47,13 +45,6 @@ class ContentBuilder implements ContentBuilderInterface {
   protected Connection $connection;
 
   /**
-   * Language manager.
-   *
-   * @var \Drupal\Core\Language\LanguageManagerInterface
-   */
-  protected $languageManager;
-
-  /**
    * The content block manager.
    */
   protected ContentBlockManagerInterface $contentBlockManager;
@@ -79,8 +70,6 @@ class ContentBuilder implements ContentBuilderInterface {
    *   The current active database's master connection.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager.
    * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
    *   The content block manager.
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
@@ -93,7 +82,6 @@ class ContentBuilder implements ContentBuilderInterface {
     EntityTypeManagerInterface $entity_type_manager,
     Connection $connection,
     TranslationInterface $string_translation,
-    LanguageManagerInterface $language_manager,
     ContentBlockManagerInterface $content_block_manager,
     EntityRepositoryInterface $entity_repository,
     TimeInterface $time
@@ -102,7 +90,6 @@ class ContentBuilder implements ContentBuilderInterface {
     $this->entityTypeManager = $entity_type_manager;
     $this->connection = $connection;
     $this->setStringTranslation($string_translation);
-    $this->languageManager = $language_manager;
     $this->contentBlockManager = $content_block_manager;
     $this->entityRepository = $entity_repository;
     $this->time = $time;
@@ -163,8 +150,6 @@ class ContentBuilder implements ContentBuilderInterface {
       /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
       $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
-      $langcode = $this->languageManager->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-
       $table = $entity_type->getDataTable();
       if (!empty($table) && is_string($table)) {
         $query = $this->connection->select($table, 'base_table')
@@ -172,7 +157,7 @@ class ContentBuilder implements ContentBuilderInterface {
           ->addTag($entity_type->id() . '_access')
           ->addMetaData('block_content', $block_content)
           ->fields('base_table', [$entity_type->getKey('id')])
-          ->condition('base_table.langcode', $langcode);
+          ->condition('default_langcode', '1');
 
         if (isset($definition['bundle'])) {
           $query->condition(
