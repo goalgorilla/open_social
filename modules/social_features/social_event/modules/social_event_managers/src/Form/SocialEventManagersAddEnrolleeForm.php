@@ -2,14 +2,17 @@
 
 namespace Drupal\social_event_managers\Form;
 
+use Drupal\node\Entity\Node;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\social_activity\EmailTokenServices;
 use Drupal\social_event_max_enroll\Service\EventMaxEnrollService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
@@ -37,6 +40,13 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    * @var \Drupal\Core\Utility\Token
    */
   protected Token $token;
+
+  /**
+   * The token service.
+   *
+   * @var \Drupal\social_activity\EmailTokenServices
+   */
+  protected EmailTokenServices $emailTokenServices;
 
   /**
    * The entity type manager.
@@ -82,6 +92,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     $instance->renderer = $container->get('renderer');
     $instance->configFactory = $container->get('config.factory');
     $instance->token = $container->get('token');
+    $instance->emailTokenServices = $container->get('social_activity.email_token_services');
     $instance->moduleHandler = $container->get('module_handler');
     if ($instance->moduleHandler->moduleExists('social_event_max_enroll')) {
       $instance->eventMaxEnrollService = $container->get('social_event_max_enroll.service');
@@ -215,31 +226,42 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     ];
 
     // Add the params that the email preview needs.
-    $params = [
-      'user' => $this->currentUser(),
-      'node' => $this->entityTypeManager->getStorage('node')->load($nid),
-    ];
+    $node = $this->entityTypeManager->getStorage('node')->load($nid);
+    $body = '';
+
+    if ($node instanceof Node) {
+      $params = [
+        'user' => $this->currentUser(),
+        'node' => $node,
+      ];
+      $content_preview = $this->emailTokenServices->getContentPreview($node);
+      $button = $this->emailTokenServices->getCtaButton($node->toUrl('canonical'), new TranslatableMarkup('See the event', [], [$this->currentUser()->getPreferredLangcode()]));
+
+      // Load event invite configuration.
+      $add_directly_config = $this->configFactory->get('message.template.member_added_by_event_organiser')->getRawData();
+      $invite_config = $this->configFactory->get('social_event_invite.settings');
+
+      // Replace the tokens with similar ones since these rely
+      // on the message object which we don't have in the preview.
+      $add_directly_config['text'][2]['value'] = str_replace('[message:author:display-name]', '[user:display-name]', $add_directly_config['text'][2]['value']);
+      $add_directly_config['text'][2]['value'] = str_replace('[social_event:event_iam_organizing]', '[node:title]', $add_directly_config['text'][2]['value']);
+
+      // As we are on the email preview page, there is no message object
+      // created.
+      // And the message token replacement needs a message object.
+      // So, we are replacing the tokens directly here.
+      $add_directly_config['text'][2]['value'] = str_replace('[message:preview]', $this->renderer->renderInIsolation($content_preview), $add_directly_config['text'][2]['value']);
+      $value = str_replace('[message:cta_button]', $this->renderer->renderInIsolation($button), $add_directly_config['text'][2]['value']);
+
+      // Cleanup message body and replace any links on invite preview page.
+      if (is_string($value)) {
+        $body = $this->token->replace($value, $params);
+      }
+    }
 
     $variables = [
       '@site_name' => \Drupal::config('system.site')->get('name'),
     ];
-
-    // Load event invite configuration.
-    $add_directly_config = $this->configFactory->get('message.template.member_added_by_event_organiser')->getRawData();
-    $invite_config = $this->configFactory->get('social_event_invite.settings');
-
-    // Replace the tokens with similar ones since these rely
-    // on the message object which we don't have in the preview.
-    $add_directly_config['text'][2]['value'] = str_replace('[message:author:display-name]', '[user:display-name]', $add_directly_config['text'][2]['value']);
-    $add_directly_config['text'][2]['value'] = str_replace('[social_event:event_iam_organizing]', '[node:title]', $add_directly_config['text'][2]['value']);
-    $value = $add_directly_config['text'][2]['value'];
-
-    // Cleanup message body and replace any links on invite preview page.
-    $body = '';
-    if (is_string($value)) {
-      $body = $this->token->replace($value, $params);
-      $body = preg_replace('/href="([^"]*)"/', 'href="#"', $body);
-    }
 
     // Get default logo image and replace if it has overridden with
     // email settings.
@@ -318,8 +340,8 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
         $node instanceof NodeInterface &&
         $event_max_enroll_service->isEnabled($node)
       ) {
-        // If there are no spots left, disable button and add the button title
-        // with appropriate notice.
+        // If there are no spots left, disable the button and add the button
+        // title with the appropriate notice.
         if ($event_max_enroll_service->getEnrollmentsLeft($node) === 0) {
           $form['actions']['submit']['#attributes'] = [
             'disabled' => 'disabled',
