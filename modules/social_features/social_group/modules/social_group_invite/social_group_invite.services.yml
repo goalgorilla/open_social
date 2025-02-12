@@ -1,4 +1,10 @@
 services:
+  social_group_invite.access:
+    class: Drupal\social_group_invite\Access\SocialGroupInvitesAccess
+    arguments: [ '@social_group_invite.access_helper' ]
+  social_group_invite.access_helper:
+    class: Drupal\social_group_invite\SocialGroupInviteAccessHelper
+    arguments: [ '@current_route_match', '@config.factory', '@current_user' ]
   social_group_invite.event_subscriber:
     class: Drupal\social_group_invite\EventSubscriber\EventSubscribers
     arguments: ['@current_route_match', '@current_user']
