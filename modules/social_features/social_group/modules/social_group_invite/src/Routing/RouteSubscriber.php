@@ -35,6 +35,12 @@ class RouteSubscriber extends RouteSubscriberBase {
         SocialGroupInvitationController::class . '::checkAccess',
       );
     }
+
+    if ($route = $collection->get('view.social_group_user_invitations.page_1')) {
+      $requirements = $route->getRequirements();
+      $requirements['_custom_access'] = 'social_group_invite.access::userInviteAccess';
+      $route->setRequirements($requirements);
+    }
   }
 
 }

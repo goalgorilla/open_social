@@ -162,3 +162,82 @@ function social_group_invite_update_13004(): string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Update user group invitations view configuration.
+ */
+function social_group_invite_update_13005() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('views.view.social_group_user_invitations');
+
+  // Let's check if this configuration object does exist in storage before
+  // updating it.
+  if (!$config->isNew()) {
+    $config->set('display.default.display_options.filters.uid_current', [
+      'admin_label' => '',
+      'entity_type' => 'user',
+      'expose' => [
+        'description' => '',
+        'identifier' => '',
+        'label' => '',
+        'multiple' => FALSE,
+        'operator' => '',
+        'operator_id' => '',
+        'operator_limit_selection' => FALSE,
+        'operator_list' => [],
+        'remember' => FALSE,
+        'remember_roles' => [
+          'authenticated' => 'authenticated',
+        ],
+        'required' => FALSE,
+        'use_operator' => FALSE,
+      ],
+      'exposed' => FALSE,
+      'field' => 'uid_current',
+      'group' => 1,
+      'group_info' => [
+        'default_group' => 'All',
+        'default_group_multiple' => [],
+        'description' => '',
+        'group_items' => [],
+        'identifier' => '',
+        'label' => '',
+        'multiple' => FALSE,
+        'optional' => TRUE,
+        'remember' => FALSE,
+        'widget' => 'select',
+      ],
+      'group_type' => 'group',
+      'id' => 'uid_current',
+      'is_grouped' => FALSE,
+      'operator' => '=',
+      'plugin_id' => 'user_current',
+      'relationship' => 'gc__user',
+      'table' => 'users',
+      'value' => '1',
+    ]);
+
+    $config->set('display.default.display_options.access.options.role', [
+      'administrator' => 'administrator',
+      'verified' => 'verified',
+    ]);
+
+    $config->save();
+  }
+}
+
+/**
+ * Remove redundant blocks with pending notifications.
+ */
+function social_group_invite_update_13006(): void {
+  $deprecated_blocks = [
+    'block.block.membershipinvitenotification_3',
+    'block.block.membershipinvitenotification_4',
+  ];
+
+  foreach ($deprecated_blocks as $name) {
+    \Drupal::configFactory()
+      ->getEditable($name)
+      ->delete();
+  }
+}
