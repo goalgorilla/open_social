@@ -227,9 +227,25 @@ function social_group_invite_update_13005() : void {
 }
 
 /**
+ * Remove redundant blocks with pending notifications.
+ */
+function social_group_invite_update_13006(): void {
+  $deprecated_blocks = [
+    'block.block.membershipinvitenotification_3',
+    'block.block.membershipinvitenotification_4',
+  ];
+
+  foreach ($deprecated_blocks as $name) {
+    \Drupal::configFactory()
+      ->getEditable($name)
+      ->delete();
+  }
+}
+
+/**
  * Update access rules to "user/{uid}/invites" page.
  */
-function social_group_invite_update_13006() : string {
+function social_group_invite_update_13007() : string {
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_group_invite', __FUNCTION__);
