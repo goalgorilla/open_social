@@ -88,9 +88,9 @@ class TopicContext extends RawMinkContext {
   public function viewingTopic(string $topic) : void {
     $topic_id = $this->getTopicIdFromTitle($topic);
     if ($topic_id === NULL) {
-      throw new \Exception("Topic '${topic}' does not exist.");
+      throw new \RuntimeException("Topic '$topic' does not exist.");
     }
-    $this->visitPath("/node/${topic_id}");
+    $this->visitPath("/node/$topic_id");
   }
 
   /**
@@ -101,9 +101,9 @@ class TopicContext extends RawMinkContext {
   public function likeOverviewTopic(string $topic) : void {
     $topic_id = $this->getTopicIdFromTitle($topic);
     if ($topic_id === NULL) {
-      throw new \Exception("Topic '${topic}' does not exist.");
+      throw new \RuntimeException("Topic '$topic' does not exist.");
     }
-    $this->visitPath("/wholiked/node/${topic_id}");
+    $this->visitPath("/wholiked/node/$topic_id");
   }
 
   /**
@@ -115,9 +115,9 @@ class TopicContext extends RawMinkContext {
   public function editingTopic(string $topic) : void {
     $topic_id = $this->getTopicIdFromTitle($topic);
     if ($topic_id === NULL) {
-      throw new \Exception("Topic '${topic}' does not exist.");
+      throw new \RuntimeException("Topic '$topic' does not exist.");
     }
-    $this->visitPath("/node/${topic_id}/edit");
+    $this->visitPath("/node/$topic_id/edit");
   }
 
   /**
@@ -161,7 +161,7 @@ class TopicContext extends RawMinkContext {
 
     foreach ($topicsTable->getHash() as $topicHash) {
       if (isset($topicHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'topics with non-anonymous owner:' step, use 'topics:' instead.");
+        throw new \RuntimeException("Can not specify an author when using the 'topics with non-anonymous owner:' step, use 'topics:' instead.");
       }
 
       $topicHash['author'] = $user->name;
@@ -185,7 +185,7 @@ class TopicContext extends RawMinkContext {
     $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
     foreach ($topicsTable->getHash() as $topicHash) {
       if (isset($topicHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'topics authored by current user:' step, use 'topics:' instead.");
+        throw new \RuntimeException("Can not specify an author when using the 'topics authored by current user:' step, use 'topics:' instead.");
       }
 
       $topicHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
@@ -235,9 +235,9 @@ class TopicContext extends RawMinkContext {
   public function whenIEditTopicUsingTheForm(string $title, TableNode $fields) : void {
     $topic_id = $this->getTopicIdFromTitle($title);
     if ($topic_id === NULL) {
-      throw new \Exception("Topic with title '${title}' does not exist. Did you create it in the test?");
+      throw new \RuntimeException("Topic with title '$title' does not exist. Did you create it in the test?");
     }
-    $this->visitPath("/node/${topic_id}/edit");
+    $this->visitPath("/node/$topic_id/edit");
 
     $this->minkContext->saveScreenshot("edit-topic.png", "/var/www/html/profiles/contrib/social/tests/behat/logs");
 
@@ -298,15 +298,15 @@ class TopicContext extends RawMinkContext {
           do {
             $element = $element->getParent();
             if ($element->getTagName() === "body") {
-              throw new \Exception("${field} was not visible but could not find a parent 'details' element to expand.");
+              throw new \RuntimeException("$field was not visible but could not find a parent 'details' element to expand.");
             }
           } while ($element->getTagName() !== "details");
           if ($element->hasAttribute("open")) {
-            throw new \Exception("${field} was in an open details element but was still not visible.");
+            throw new \RuntimeException("$field was in an open details element but was still not visible.");
           }
           $summary = $element->find('named', 'summary');
           if ($summary === NULL) {
-            throw new \Exception("${field} was in a closed details element but the details element did not contain a summary to expand it.");
+            throw new \RuntimeException("$field was in a closed details element but the details element did not contain a summary to expand it.");
           }
           // This should expand the details so that we can check the field.
           $summary->click();
@@ -371,7 +371,7 @@ class TopicContext extends RawMinkContext {
   public function shouldBeOnTopicCreationForm() : void {
     $status_code = $this->getSession()->getStatusCode();
     if ($status_code !== 200) {
-      throw new \Exception("The page status code {$status_code} dis not match 200 Ok.");
+      throw new \RuntimeException("The page status code {$status_code} dis not match 200 Ok.");
     }
 
     $this->minkContext->assertPageContainsText("Create a topic");
@@ -385,12 +385,12 @@ class TopicContext extends RawMinkContext {
    */
   private function topicCreate($topic) : Node {
     if (!isset($topic['author'])) {
-      throw new \Exception("You must specify an `author` when creating a topic. Specify the `author` field if using `@Given topics:` or use one of `@Given topics with non-anonymous author:` or `@Given topics authored by current user:` instead.");
+      throw new \RuntimeException("You must specify an `author` when creating a topic. Specify the `author` field if using `@Given topics:` or use one of `@Given topics with non-anonymous author:` or `@Given topics authored by current user:` instead.");
     }
 
     $account = user_load_by_name($topic['author']);
     if ($account === FALSE) {
-      throw new \Exception(sprintf("User with username '%s' does not exist.", $topic['author']));
+      throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $topic['author']));
     }
     $topic['uid'] = $account->id();
     unset($topic['author']);
@@ -398,7 +398,7 @@ class TopicContext extends RawMinkContext {
     if (isset($topic['group'])) {
       $group_id = $this->getNewestGroupIdFromTitle($topic['group']);
       if ($group_id === NULL) {
-        throw new \Exception("Group '{$topic['group']}' does not exist.");
+        throw new \RuntimeException("Group '{$topic['group']}' does not exist.");
       }
       unset($topic['group']);
     }
@@ -409,7 +409,7 @@ class TopicContext extends RawMinkContext {
     $topic_object = Node::create($topic);
     $violations = $topic_object->validate();
     if ($violations->count() !== 0) {
-      throw new \Exception("The topic you tried to create is invalid: $violations");
+      throw new \RuntimeException("The topic you tried to create is invalid: $violations");
     }
     if (!$topic_object->body->format) {
       $topic_object->body->format = 'basic_html';
@@ -423,7 +423,7 @@ class TopicContext extends RawMinkContext {
         Group::load($group_id)?->addRelationship($topic_object, "group_node:topic");
       }
       catch (PluginNotFoundException $_) {
-        throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
+        throw new \RuntimeException("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
       }
     }
 

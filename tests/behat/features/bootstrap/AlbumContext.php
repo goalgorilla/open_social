@@ -85,7 +85,7 @@ class AlbumContext extends RawMinkContext {
       elseif ($key === "group") {
         $group_id = $this->getNewestGroupIdFromTitle($value);
         if ($group_id === NULL) {
-          throw new \Exception("Group '{$value}' does not exist.");
+          throw new \RuntimeException("Group '$value' does not exist.");
         }
         $page->selectFieldOption($field, $group_id);
         // Changing the group of an album updates the visibility settings so we
@@ -134,9 +134,9 @@ class AlbumContext extends RawMinkContext {
   public function viewingAlbum(string $album): void {
     $album_id = $this->getAlbumIdFromTitle($album);
     if ($album_id === NULL) {
-      throw new \Exception("Album '${album}' does not exist.");
+      throw new \RuntimeException("Album '$album' does not exist.");
     }
-    $this->visitPath("/node/${album_id}");
+    $this->visitPath("/node/$album_id");
   }
 
   /**
@@ -148,9 +148,9 @@ class AlbumContext extends RawMinkContext {
   public function editingAlbum(string $album): void {
     $album_id = $this->getAlbumIdFromTitle($album);
     if ($album_id === NULL) {
-      throw new \Exception("Album '${album}' does not exist.");
+      throw new \RuntimeException("Album '$album' does not exist.");
     }
-    $this->visitPath("/node/${album_id}/edit");
+    $this->visitPath("/node/$album_id/edit");
   }
 
 }

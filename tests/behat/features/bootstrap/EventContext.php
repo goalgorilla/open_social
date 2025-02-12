@@ -93,9 +93,9 @@ class EventContext extends RawMinkContext {
   public function viewingEvent(string $event) : void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${event}' does not exist.");
+      throw new \RuntimeException("Event '$event' does not exist.");
     }
-    $this->visitPath("/node/${event_id}");
+    $this->visitPath("/node/$event_id");
   }
 
   /**
@@ -109,10 +109,10 @@ class EventContext extends RawMinkContext {
   public function shouldBeViewingEvent(string $event) : void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${event}' does not exist.");
+      throw new \RuntimeException("Event '$event' does not exist.");
     }
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->addressEquals("/node/${event_id}");
+    $this->assertSession()->addressEquals("/node/$event_id");
   }
 
   /**
@@ -124,9 +124,9 @@ class EventContext extends RawMinkContext {
   public function editingEvent(string $event) : void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${event}' does not exist.");
+      throw new \RuntimeException("Event '$event' does not exist.");
     }
-    $this->visitPath("/node/${event_id}/edit");
+    $this->visitPath("/node/$event_id/edit");
   }
 
   /**
@@ -138,9 +138,9 @@ class EventContext extends RawMinkContext {
   public function viewEventManagerPage(string $event) : void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${event}' does not exist.");
+      throw new \RuntimeException("Event '$event' does not exist.");
     }
-    $this->visitPath("/node/${event_id}/all-enrollments");
+    $this->visitPath("/node/$event_id/all-enrollments");
   }
 
   /**
@@ -184,7 +184,7 @@ class EventContext extends RawMinkContext {
 
     foreach ($eventsTable->getHash() as $eventHash) {
       if (isset($groupHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'events with non-anonymous owner:' step, use 'events:' instead.");
+        throw new \RuntimeException("Can not specify an author when using the 'events with non-anonymous owner:' step, use 'events:' instead.");
       }
 
       $eventHash['author'] = $user->name;
@@ -208,7 +208,7 @@ class EventContext extends RawMinkContext {
     $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
     foreach ($eventsTable->getHash() as $eventHash) {
       if (isset($eventHash['author'])) {
-        throw new \Exception("Can not specify an author when using the 'events authored by current user:' step, use 'events:' instead.");
+        throw new \RuntimeException("Can not specify an author when using the 'events authored by current user:' step, use 'events:' instead.");
       }
 
       $eventHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
@@ -258,9 +258,9 @@ class EventContext extends RawMinkContext {
   public function whenIEditEventUsingTheForm(string $title, TableNode $fields) : void {
     $event_id = $this->getEventIdFromTitle($title);
     if ($event_id === NULL) {
-      throw new \Exception("Event with title '${title}' does not exist. Did you create it in the test?");
+      throw new \RuntimeException("Event with title '${title}' does not exist. Did you create it in the test?");
     }
-    $this->visitPath("/node/${event_id}/edit");
+    $this->visitPath("/node/$event_id/edit");
 
     $this->minkContext->saveScreenshot("edit-event.png", "/var/www/html/profiles/contrib/social/tests/behat/logs");
 
@@ -321,15 +321,15 @@ class EventContext extends RawMinkContext {
           do {
             $element = $element->getParent();
             if ($element->getTagName() === "body") {
-              throw new \Exception("${field} was not visible but could not find a parent 'details' element to expand.");
+              throw new \RuntimeException("$field was not visible but could not find a parent 'details' element to expand.");
             }
           } while ($element->getTagName() !== "details");
           if ($element->hasAttribute("open")) {
-            throw new \Exception("${field} was in an open details element but was still not visible.");
+            throw new \RuntimeException("$field was in an open details element but was still not visible.");
           }
           $summary = $element->find('named', 'summary');
           if ($summary === NULL) {
-            throw new \Exception("${field} was in a closed details element but the details element did not contain a summary to expand it.");
+            throw new \RuntimeException("$field was in a closed details element but the details element did not contain a summary to expand it.");
           }
           // This should expand the details so that we can check the field.
           $summary->click();
@@ -394,7 +394,7 @@ class EventContext extends RawMinkContext {
   public function shouldBeOnEventCreationForm() : void {
     $status_code = $this->getSession()->getStatusCode();
     if ($status_code !== 200) {
-      throw new \Exception("The page status code {$status_code} dis not match 200 Ok.");
+      throw new \RuntimeException("The page status code {$status_code} dis not match 200 Ok.");
     }
 
     $this->minkContext->assertPageContainsText("Create an event");
@@ -415,7 +415,7 @@ class EventContext extends RawMinkContext {
 
     $event_id = $this->getEventIdFromTitle($title);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${title}' does not exist.");
+      throw new \RuntimeException("Event '$title' does not exist.");
     }
 
     $event = Node::load($event_id);
@@ -441,7 +441,7 @@ class EventContext extends RawMinkContext {
 
     $event_id = $this->getEventIdFromTitle($title);
     if ($event_id === NULL) {
-      throw new \Exception("Event '${title}' does not exist.");
+      throw new \RuntimeException("Event '$title' does not exist.");
     }
 
     for ($i = 0; $i<$count; $i++) {
@@ -482,7 +482,7 @@ class EventContext extends RawMinkContext {
       $event_title = $eventEnrolleesHash['event'];
       $event_id = $this->getEventIdFromTitle($event_title);
       if ($event_id === NULL) {
-        throw new \Exception("Event '${event_title}' does not exist.");
+        throw new \RuntimeException("Event '$event_title' does not exist.");
       }
 
       $event = Event::load($event_id);
@@ -516,14 +516,14 @@ class EventContext extends RawMinkContext {
       $event_title = $eventEnrolleesHash['event'];
       $event_id = $this->getEventIdFromTitle($event_title);
       if ($event_id === NULL) {
-        throw new \Exception("Event '${event_title}' does not exist.");
+        throw new \RuntimeException("Event '$event_title' does not exist.");
       }
 
       $event = Event::load($event_id);
       assert($event instanceof Node);
 
       if ($event->field_event_an_enroll->value !== '1') {
-        throw new \Exception("Event '${event_title}' is not suitable to enroll anonymous users.");
+        throw new \RuntimeException("Event '$event_title' is not suitable to enroll anonymous users.");
       }
 
       $token = Crypt::randomBytesBase64();
@@ -548,7 +548,7 @@ class EventContext extends RawMinkContext {
    */
   public function enableCalendarOption(string $calendar) {
     if (!\Drupal::service('module_handler')->moduleExists('social_event_addtocal')) {
-      throw new \Exception("Could not enable calendar button because the Social Event Add To Calendar module is disabled.");
+      throw new \RuntimeException("Could not enable calendar button because the Social Event Add To Calendar module is disabled.");
     }
 
     $calendar = strtolower($calendar);
@@ -574,12 +574,12 @@ class EventContext extends RawMinkContext {
    */
   private function eventCreate($event) : Node {
     if (!isset($event['author'])) {
-      throw new \Exception("You must specify an `author` when creating an event. Specify the `author` field if using `@Given events:` or use one of `@Given events with non-anonymous author:` or `@Given events authored by current user:` instead.");
+      throw new \RuntimeException("You must specify an `author` when creating an event. Specify the `author` field if using `@Given events:` or use one of `@Given events with non-anonymous author:` or `@Given events authored by current user:` instead.");
     }
 
     $account = user_load_by_name($event['author']);
     if ($account === FALSE) {
-      throw new \Exception(sprintf("User with username '%s' does not exist.", $event['author']));
+      throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $event['author']));
     }
     $event['uid'] = $account->id();
     unset($event['author']);
@@ -587,7 +587,7 @@ class EventContext extends RawMinkContext {
     if (isset($event['group'])) {
       $group_id = $this->getNewestGroupIdFromTitle($event['group']);
       if ($group_id === NULL) {
-        throw new \Exception("Group '{$event['group']}' does not exist.");
+        throw new \RuntimeException("Group '{$event['group']}' does not exist.");
       }
       unset($event['group']);
     }
@@ -597,7 +597,7 @@ class EventContext extends RawMinkContext {
     if (isset($event['field_event_type'])) {
       $type_id = $this->getEventTypeIdFromLabel($event['field_event_type']);
       if ($type_id === NULL) {
-        throw new \Exception("Event Type with label '{$event['field_event_type']}' does not exist.");
+        throw new \RuntimeException("Event Type with label '{$event['field_event_type']}' does not exist.");
       }
       $event['field_event_type'] = $type_id;
     }
@@ -606,7 +606,7 @@ class EventContext extends RawMinkContext {
     $event_object = Node::create($event);
     $violations = $event_object->validate();
     if ($violations->count() !== 0) {
-      throw new \Exception("The event you tried to create is invalid: $violations");
+      throw new \RuntimeException("The event you tried to create is invalid: $violations");
     }
     $event_object->save();
 
@@ -617,7 +617,7 @@ class EventContext extends RawMinkContext {
         Group::load($group_id)?->addRelationship($event_object, "group_node:event");
       }
       catch (PluginNotFoundException $_) {
-        throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
+        throw new \RuntimeException("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
       }
     }
 
