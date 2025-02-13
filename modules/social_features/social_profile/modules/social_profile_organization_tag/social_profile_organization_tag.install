@@ -33,6 +33,24 @@ function social_profile_organization_tag_install() {
   // Set the weight of this module to 1 so it is loaded after
   // the social_profile module.
   module_set_weight('social_profile_organization_tag', 1);
+
+  // Update token-replacement from create message template.
+  _social_profile_organization_tag_replace_token();
+}
+
+/**
+ * Helper callback to replace token for create message template.
+ */
+function _social_profile_organization_tag_replace_token(): void {
+  $config = \Drupal::configFactory()->getEditable('message.template.create_post_group');
+
+  $texts = array_map(function ($text) {
+    $text['value'] = str_replace('[message:author:display-name]', '[message:author:display-name][message:author:organization-tag]', $text['value']);
+    return $text;
+  }, $config->get('text'));
+
+  $config->set('text', $texts)
+    ->save();
 }
 
 /**
@@ -199,4 +217,11 @@ function social_profile_organization_tag_update_130002(): void {
       ->set('content', $content)
       ->save();
   }
+}
+
+/**
+ * Add token-replacement for create_post_group message template.
+ */
+function social_profile_organization_tag_update_240001(): void {
+  _social_profile_organization_tag_replace_token();
 }
