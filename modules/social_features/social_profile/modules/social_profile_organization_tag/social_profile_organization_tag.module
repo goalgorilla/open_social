@@ -5,13 +5,13 @@
  * The Social profile organization tag module.
  */
 
-use Drupal\activity_creator\Entity\Activity;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_post\Entity\Post;
 use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_page_attachments().
@@ -94,39 +94,28 @@ function social_profile_organization_tag_preprocess_post(array &$variables): voi
 }
 
 /**
- * Implements hook_preprocess_activity().
- */
-function social_profile_organization_tag_preprocess_activity(array &$variables): void {
-  // Fetch Activity Entity Object.
-  $post = $variables['elements']['#activity'];
-  if (!$post instanceof Activity) {
-    return;
-  }
-  // Fetch User Entity Object.
-  $account = $post->getOwner();
-
-  // Replace organization token and display verified flag.
-  if ($account instanceof User) {
-    /** @var \Drupal\profile\ProfileStorageInterface $storage */
-    $storage = \Drupal::entityTypeManager()->getStorage('profile');
-
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-    $profile = $storage->loadByUser($account, 'profile');
-    if ($profile instanceof ProfileInterface) {
-      $org_tag = social_profile_organization_tag_fetch($profile, FALSE);
-      $token = '[message:author:organization-tag]';
-      $text = &$variables['content']['field_activity_output_text'][0]['#text'];
-      if ($text && str_contains($text, $token)) {
-        $text = strtr($text, [$token => ' ' . $org_tag->__toString()]);
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_tokens_alter().
  */
 function social_profile_organization_tag_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+  if (isset($replacements['[message:author:display-name]'])) {
+    $account = &$context['data']['user'];
+    if ($account instanceof UserInterface) {
+      $storage = \Drupal::entityTypeManager()->getStorage('profile');
+      if ($storage !== NULL) {
+        if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+          $organization = social_profile_organization_tag_fetch($user_profile, FALSE);
+          if ($organization->count() !== 0) {
+            $replacements['[message:author:display-name]']
+              = new FormattableMarkup('@displayName @organization', [
+                '@displayName' => $replacements['[message:author:display-name]'],
+                '@organization' => $organization,
+              ]);
+          }
+        }
+      }
+    }
+  }
+
   if ($context['type'] === 'social_mentions' && array_key_exists('user_name', $context['tokens']) && count($replacements) > 0) {
     $profile = $context['data']['profile'];
     $displayname = \Drupal::entityTypeManager()->getViewBuilder('profile')->view($profile, 'name_raw');

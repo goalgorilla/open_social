@@ -35,17 +35,36 @@ function social_profile_organization_tag_install() {
   module_set_weight('social_profile_organization_tag', 1);
 
   // Update token-replacement from create message template.
-  _social_profile_organization_tag_replace_token();
+  _social_profile_organization_tag_replace_token(
+    '[message:author:display-name]',
+    '[message:author:display-name][message:author:organization-tag]'
+  );
 }
 
 /**
- * Helper callback to replace token for create message template.
+ * Implements hook_uninstall().
  */
-function _social_profile_organization_tag_replace_token(): void {
+function social_profile_organization_tag_uninstall(): void {
+  // Remove organization-tag from message template.
+  _social_profile_organization_tag_replace_token(
+    '[message:author:display-name][message:author:organization-tag]',
+    '[message:author:display-name]'
+  );
+}
+
+/**
+ * Helper callback to replace token for create-message template.
+ *
+ * @param string $search
+ *   The search string or pattern.
+ * @param string $replace
+ *   The replacement string.
+ */
+function _social_profile_organization_tag_replace_token(string $search, string $replace): void {
   $config = \Drupal::configFactory()->getEditable('message.template.create_post_group');
 
-  $texts = array_map(function ($text) {
-    $text['value'] = str_replace('[message:author:display-name]', '[message:author:display-name][message:author:organization-tag]', $text['value']);
+  $texts = array_map(function ($text) use ($search, $replace) {
+    $text['value'] = str_replace($search, $replace, $text['value']);
     return $text;
   }, $config->get('text'));
 
@@ -223,5 +242,8 @@ function social_profile_organization_tag_update_130002(): void {
  * Add token-replacement for create_post_group message template.
  */
 function social_profile_organization_tag_update_240001(): void {
-  _social_profile_organization_tag_replace_token();
+  _social_profile_organization_tag_replace_token(
+    '[message:author:display-name]',
+    '[message:author:display-name][message:author:organization-tag]'
+  );
 }
