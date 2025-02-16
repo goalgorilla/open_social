@@ -1,4 +1,4 @@
-@disabled @api @topic @stability @perfect @critical @DS-341 @stability-2 @topic-create
+@api @javascript
 Feature: Create Topic
   Benefit: In order to share knowledge with people
   Role: As a Verified
