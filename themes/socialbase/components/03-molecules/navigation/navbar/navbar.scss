@@ -148,6 +148,11 @@ body {
     }
   }
 
+  // If we use the mobile app.
+  .is-mobile-app & {
+    display: flex;
+    align-items: center;
+  }
 }
 
 
@@ -458,6 +463,11 @@ body {
   @include for-tablet-landscape-up {
     display: none;
   }
+
+  // If we use the mobile app.
+  .is-mobile-app & {
+    display: none;
+  }
 }
 
 
@@ -607,6 +617,13 @@ body {
   transform-origin: 50%;
   transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
+
+  // If we use the mobile app.
+  &--is-mobile-app {
+    display: block;
+    height: 50px;
+    padding: 13px 10px 8px;
+  }
 }
 
 .navbar-nav__icon--search {
@@ -615,6 +632,11 @@ body {
   left: 13px;
   transition: 0.2s ease-in-out;
   pointer-events: none;
+
+  // If we use the mobile app.
+  &--is-mobile-app {
+    position: static;
+  }
 }
 
 // Navbar form

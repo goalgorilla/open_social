@@ -40,6 +40,19 @@
   <h2{{ title_attributes}}>{{ configuration.label }}</h2>
   {{ title_suffix }}
 
+  {% if social_is_mobile_app %}
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="{{ path('view.search_all.page_no_value') }}" class="navbar__open-search-block--is-mobile-app" rel="search" title="{{ 'Go to the search page'|t }}">
+          <svg class="navbar-nav__icon navbar-nav__icon--search--is-mobile-app" aria-hidden="true">
+            <title>{{ 'Search'|t }}</title>
+            <use xlink:href="#icon-search"></use>
+          </svg>
+        </a>
+      </li>
+    </ul>
+  {% endif %}
+
   {# Menu. #}
   {% block content %}
     {{ content }}

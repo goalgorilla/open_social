@@ -31,8 +31,21 @@
   {% import _self as menus %}
   {% if items %}
 
+  {% if social_is_mobile_app %}
+    <ul class="nav navbar-nav">
+    </ul>
+  {% endif %}
 
   <ul{{ attributes.addClass('nav navbar-nav navbar-user') }} role="navigation">
+
+    <li>
+      <a href="{{ path('view.search_all.page_no_value') }}" class="navbar__open-search-block--is-mobile-app" rel="search" title="{{ 'Go to the search page'|t }}">
+        <svg class="navbar-nav__icon navbar-nav__icon--search--is-mobile-app" aria-hidden="true">
+          <title>{{ 'Search'|t }}</title>
+          <use xlink:href="#icon-search"></use>
+        </svg>
+      </a>
+    </li>
 
     <li class="dropdown profile not-logged-in">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" aria-haspopup="true" role="button" title="{% trans %} User menu {% endtrans %}">
