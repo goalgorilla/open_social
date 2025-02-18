@@ -89,8 +89,8 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
       ->getPath('social_event_addtocal');
 
     $plugin_icon = empty($this->pluginDefinition['id'])
-      ? '/assets/icons/default-calendar.svg'
-      : '/assets/icons/' . $this->pluginDefinition['id'] . '.svg';
+      ? '/assets/icons/default-calendar.webp'
+      : '/assets/icons/' . $this->pluginDefinition['id'] . '.webp';
 
     return base_path() . $module_path . $plugin_icon;
   }
