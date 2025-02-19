@@ -144,3 +144,13 @@ function social_flexible_group_book_update_13003(): void {
   $config->set('text', $texts)
     ->save();
 }
+
+/**
+ * Remove redundant "node_access" views filter.
+ */
+function social_flexible_group_book_update_13004(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_flexible_group_book', __FUNCTION__);
+  return $updater->logger()->output();
+}
