@@ -97,6 +97,19 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
       ),
     ];
 
+    $node = $this->routeMatch->getParameter('node');
+
+    if ($node) {
+      $build['title'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'h1',
+        '#attributes' => [
+          'class' => ['sr-only'],
+        ],
+        '#value' => $node->getTitle(),
+      ];
+    }
+
     $url = Url::fromRoute(
       $properties['link']['route']['name'],
       $properties['link']['route']['parameters'],
