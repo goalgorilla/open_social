@@ -5,8 +5,10 @@
  * The social node module alterations.
  */
 
-use Drupal\node\NodeInterface;
+use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\social_node\Entity\Node;
+use Drupal\social_node\QueryAccess\NodeEntityQueryAlter;
 use Drupal\social_node\SocialNodeForm;
 use Drupal\social_node\NodeViewBuilder;
 
@@ -30,29 +32,6 @@ function social_node_entity_type_alter(array &$entity_types) {
  */
 function social_node_social_tagging_type(): string {
   return 'node';
-}
-
-/**
- * Implements hook_node_access_records_alter().
- */
-function social_node_node_access_records_alter(array &$grants, NodeInterface $node): void {
-  if (
-    !$node->hasField('field_content_visibility') ||
-    $node->get('field_content_visibility')->isEmpty()
-  ) {
-    return;
-  }
-
-  $visibility = $node->get('field_content_visibility')->getString();
-
-  if ($visibility !== 'public') {
-    // Remove "view" realm for all visibility options except "public".
-    foreach ($grants as &$grant) {
-      if ($grant['realm'] === 'gnode_anonymous') {
-        $grant['grant_view'] = 0;
-      }
-    }
-  }
 }
 
 /**
@@ -82,4 +61,32 @@ function social_node_social_core_add_form_title_override(): array {
       'label' => $callback,
     ],
   ];
+}
+
+/**
+ * Implements hook_query_TAG_alter() for "node_access".
+ */
+function social_node_query_node_access_alter(AlterableInterface $query): void {
+  if (!$query instanceof SelectInterface) {
+    return;
+  }
+
+  \Drupal::service('class_resolver')
+    ->getInstanceFromDefinition(NodeEntityQueryAlter::class)
+    ->alterQuery($query);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_node_query_views_entity_query_alter(AlterableInterface $query): void {
+  if (!$query instanceof SelectInterface) {
+    return;
+  }
+
+  if ($query->getMetaData('entity_type') !== 'node') {
+    return;
+  }
+
+  social_node_query_node_access_alter($query);
 }
