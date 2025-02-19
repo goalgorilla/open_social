@@ -24,6 +24,9 @@ function social_node_entity_type_alter(array &$entity_types) {
     foreach (['default', 'edit'] as $operation) {
       $entity_types['node']->setFormClass($operation, SocialNodeForm::class);
     }
+
+    // Remove node grants context cache.
+    $entity_types['node']->set('list_cache_contexts', []);
   }
 }
 

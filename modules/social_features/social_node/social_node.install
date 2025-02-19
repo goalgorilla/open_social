@@ -73,3 +73,39 @@ function social_node_update_13000(): void {
   // Truncate "node_access" table as we won't use it anymore.
   \Drupal::database()->truncate('node_access')->execute();
 }
+
+/**
+ * Replace "user.node_grants:view" with "user" cache context in views.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_node_update_13001(): void {
+  /** @var \Drupal\views\ViewEntityInterface[] $views */
+  $views = \Drupal::entityTypeManager()
+    ->getStorage('view')
+    ->loadMultiple();
+
+  foreach ($views as $view) {
+    $displays = $view->get('display');
+
+    foreach ($displays as $id => $display) {
+      if (empty($display['cache_metadata']['contexts'])) {
+        continue;
+      }
+
+      if (in_array('user.node_grants:view', $display['cache_metadata']['contexts'])) {
+        $display['cache_metadata']['contexts'][] = 'user';
+        $display['cache_metadata']['contexts'] = array_diff($display['cache_metadata']['contexts'], ['user.node_grants:view']);
+      }
+
+      $displays[$id] = $display;
+    }
+
+    if ($displays != $view->get('display')) {
+      $view->set('display', $displays);
+      $view->save();
+    }
+  }
+}

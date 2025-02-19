@@ -11,6 +11,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldStorageConfigInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\social_group\Hooks\SocialGroupEntityAlter;
 
 /**
  * Implements hook_install().
@@ -95,6 +96,24 @@ function social_group_install(): void {
   if (!is_null($view)) {
     $view->setStatus(FALSE);
     $view->save();
+  }
+
+  // Add "user.social_group_membership" cache context in all related views.
+  /** @var \Drupal\views\ViewEntityInterface[] $views */
+  $views = \Drupal::entityTypeManager()
+    ->getStorage('view')
+    ->loadMultiple();
+
+  /** @var \Drupal\social_group\Hooks\SocialGroupEntityAlter $hux_handler */
+  $hux_handler = \Drupal::classResolver(SocialGroupEntityAlter::class);
+  foreach ($views as $view) {
+    $displays = $view->get('display');
+    // Alter the view.
+    $hux_handler->viewPresave($view);
+    // Save the view in case if displays were changed.
+    if ($displays != $view->get('display')) {
+      $view->save();
+    }
   }
 
   // Set module weight.
@@ -1061,4 +1080,30 @@ function social_group_update_13015(): string {
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_group', __FUNCTION__);
   return $updater->logger()->output();
+}
+
+/**
+ * Add "user.social_group_membership" cache context in all related views.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_group_update_13016(): void {
+  /** @var \Drupal\views\ViewEntityInterface[] $views */
+  $views = \Drupal::entityTypeManager()
+    ->getStorage('view')
+    ->loadMultiple();
+
+  /** @var \Drupal\social_group\Hooks\SocialGroupEntityAlter $hux_handler */
+  $hux_handler = \Drupal::classResolver(SocialGroupEntityAlter::class);
+  foreach ($views as $view) {
+    $displays = $view->get('display');
+    // Alter the view.
+    $hux_handler->viewPresave($view);
+    // Save the view in case if displays were changed.
+    if ($displays != $view->get('display')) {
+      $view->save();
+    }
+  }
 }

@@ -11,6 +11,7 @@ use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -99,6 +100,12 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
     if ($account_uid !== $current_uid) {
       $form['status']['#access'] = FALSE;
     }
+
+    // Cache the form per user.
+    $form['#cache']['contexts'] = Cache::mergeContexts(
+      $form['#cache']['contexts'] ?? [],
+      ['user']
+    );
 
     // Enable the reset button.
     // @todo make sure the block content refreshes on submit as well (AJAX).
