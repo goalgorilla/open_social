@@ -56,3 +56,10 @@ services:
 
   Drupal\social_group\SocialGroupPermissions:
     autowire: true
+
+  Drupal\social_group\EventSubscriber\NodeQueryAccessAlterSubscriber:
+    arguments:
+      - '@entity_type.manager'
+      - '@group_relation_type.manager'
+    tags:
+      - { name: event_subscriber }
