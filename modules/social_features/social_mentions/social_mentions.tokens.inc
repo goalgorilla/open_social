@@ -209,6 +209,11 @@ function social_mentions_tokens_alter(array &$replacements, array $context, Bubb
                 $entity = $mentioned_entity;
               }
             }
+            // Related object can be already a comment entity.
+            if ($mention instanceof CommentInterface) {
+              /** @var Drupal\comment\Entity\Comment $entity */
+              $entity = $mention;
+            }
             if (isset($entity)) {
               // Prepare comment field name.
               $comment_field_name = '';
@@ -237,6 +242,11 @@ function social_mentions_tokens_alter(array &$replacements, array $context, Bubb
                   /** @var Drupal\comment\Entity\Comment $comment */
                   $comment = \Drupal::entityTypeManager()->getStorage('comment')
                     ->load($comment_id);
+                }
+                // Check if the current entity already is a comment.
+                if (!$comment && $entity instanceof CommentInterface) {
+                  /** @var Drupal\comment\Entity\Comment $comment */
+                  $comment = $entity;
                 }
               }
 
