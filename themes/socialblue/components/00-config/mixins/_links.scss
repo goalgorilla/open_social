@@ -1,11 +1,7 @@
 @mixin link-default() {
-    text-decoration: underline;
-
-    &:hover,
-    &:focus {
-      text-decoration: none;
-    }
-
-    @content
+  font-weight: 400;
+  text-decoration: underline;
+  text-decoration-color: var(--link-color);
+  @content
 }
 

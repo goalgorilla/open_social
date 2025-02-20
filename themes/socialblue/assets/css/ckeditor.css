@@ -258,26 +258,29 @@ fieldset[disabled] .btn--linkedin.focus {
   border-color: #0077b5;
 }
 
-.btn--google {
-  color: #fff;
-  background-color: #d34836;
-  border-color: #d34836;
-  fill: #fff;
+.btn.btn--google {
+  -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+          box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+  color: rgba(0, 0, 0, 0.54);
+  background: url("../../components/02-atoms/button/icons/google_signin_buttons/google-sign-in.svg") no-repeat 9px center;
 }
 
-.btn--google:focus, .btn--google.focus, .btn--google:hover, .btn--google:active, .btn--google.active,
-.open > .btn--google.dropdown-toggle {
-  background-color: #b03626;
-  border-color: #a73425;
-  color: #fff;
+.btn.btn--google:hover, .btn.btn--google:focus {
+  outline: 4px solid rgba(66, 133, 244, 0.3);
 }
 
-.btn--google.disabled:hover, .btn--google.disabled:focus, .btn--google.disabled.focus, .btn--google[disabled]:hover, .btn--google[disabled]:focus, .btn--google[disabled].focus,
-fieldset[disabled] .btn--google:hover,
-fieldset[disabled] .btn--google:focus,
-fieldset[disabled] .btn--google.focus {
-  background-color: #d34836;
-  border-color: #d34836;
+.btn.btn--google:active {
+  background-color: #eee;
+}
+
+.btn.btn--google:disabled, .btn.btn--google[disabled] {
+  color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.08);
+  background-image: url("../../components/02-atoms/button/icons/google_signin_buttons/google-sign-in-disabled.svg");
+}
+
+.btn.btn--google:disabled:hover, .btn.btn--google:disabled:focus, .btn.btn--google[disabled]:hover, .btn.btn--google[disabled]:focus, .btn.btn--google:active:hover, .btn.btn--google:active:focus {
+  outline: none;
 }
 
 .btn--twitter {
@@ -314,15 +317,6 @@ fieldset[disabled] .btn--twitter.focus {
   border-radius: 10px;
 }
 
-.meta-addtocal .btn {
-  margin-right: 5px;
-  margin-bottom: 3px;
-  padding: 5px 10px;
-  border-radius: 5px !important;
-  font-size: 0.75rem;
-  line-height: 1.5;
-}
-
 body {
   font-family: "montserrat", sans-serif;
   font-weight: 400;
@@ -330,14 +324,40 @@ body {
 }
 
 a:not(.btn) {
+  font-weight: 400;
   text-decoration: underline;
-  color: #33b5e5;
+  -webkit-text-decoration-color: var(--link-color);
+          text-decoration-color: var(--link-color);
+  color: #343434;
 }
 
-a:not(.btn):hover {
-  color: #178ab4;
+a:not(.btn):hover, a:not(.btn):focus {
+  cursor: pointer;
+  color: var(--link-color);
 }
 
 :lang(ar) {
   font-family: "Almarai", "montserrat", sans-serif;
+}
+
+@media (max-width: 599px) {
+  .social-auth-buttons > .card__block {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .social-auth-buttons > .card__block .btn {
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
+  }
+  .social-auth-buttons > .card__block .btn.btn--google {
+    -webkit-box-ordinal-group: 1;
+        -ms-flex-order: 0;
+            order: 0;
+  }
 }

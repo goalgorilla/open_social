@@ -119,57 +119,17 @@ pre {
 .hero--dashboard .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn),
 .certificate-footer .bottom *:not(.badge):not(.section__title) > a:not(.btn),
 .certificate-header .description *:not(.badge):not(.section__title) > a:not(.btn) {
+  font-weight: 400;
   text-decoration: underline;
-}
-
-.field--name-field-introduction-text *:not(.badge):not(.section__title) > a:not(.btn):hover, .field--name-field-introduction-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.field--name-field-featured-items-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.field--name-field-featured-items-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.field--name-field-featured-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.field--name-field-featured-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.field--name-field-accord-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.field--name-field-accord-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.field--name-field-accord-item-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.field--name-field-accord-item-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.field--name-field-phase-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.field--name-field-phase-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.paragraph--type--image-text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.paragraph--type--image-text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.paragraph--type--text-image .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.paragraph--type--text-image .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.paragraph--type--text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.paragraph--type--text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.scorm-form--body *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.scorm-form--body *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.quiz-form__text *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.quiz-form__text *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.course-full .card__body *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.course-full .card__body *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.teaser--course *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.teaser--course *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.body-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.body-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.block--intro-text .block--intro-text__content *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.block--intro-text .block--intro-text__content *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.block-inline-blockkpi-analytics .field--name-body *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.block-inline-blockkpi-analytics .field--name-body *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.basic-block .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.basic-block .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.hero--dashboard .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.hero--dashboard .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.certificate-footer .bottom *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.certificate-footer .bottom *:not(.badge):not(.section__title) > a:not(.btn):focus,
-.certificate-header .description *:not(.badge):not(.section__title) > a:not(.btn):hover,
-.certificate-header .description *:not(.badge):not(.section__title) > a:not(.btn):focus {
-  text-decoration: none;
+  -webkit-text-decoration-color: var(--link-color);
+          text-decoration-color: var(--link-color);
 }
 
 .comment__text p a:not(.btn) {
+  font-weight: 400;
   text-decoration: underline;
-}
-
-.comment__text p a:not(.btn):hover, .comment__text p a:not(.btn):focus {
-  text-decoration: none;
+  -webkit-text-decoration-color: var(--link-color);
+          text-decoration-color: var(--link-color);
 }
 
 blockquote {
@@ -177,7 +137,7 @@ blockquote {
 }
 
 strong {
-  font-weight: 500;
+  font-weight: 600;
 }
 
 :lang(ar) {
@@ -1084,26 +1044,29 @@ fieldset[disabled] .btn--linkedin.focus {
   border-color: #0077b5;
 }
 
-.btn--google {
-  color: #fff;
-  background-color: #d34836;
-  border-color: #d34836;
-  fill: #fff;
+.btn.btn--google {
+  -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+          box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+  color: rgba(0, 0, 0, 0.54);
+  background: url("../../components/02-atoms/button/icons/google_signin_buttons/google-sign-in.svg") no-repeat 9px center;
 }
 
-.btn--google:focus, .btn--google.focus, .btn--google:hover, .btn--google:active, .btn--google.active,
-.open > .btn--google.dropdown-toggle {
-  background-color: #b03626;
-  border-color: #a73425;
-  color: #fff;
+.btn.btn--google:hover, .btn.btn--google:focus {
+  outline: 4px solid rgba(66, 133, 244, 0.3);
 }
 
-.btn--google.disabled:hover, .btn--google.disabled:focus, .btn--google.disabled.focus, .btn--google[disabled]:hover, .btn--google[disabled]:focus, .btn--google[disabled].focus,
-fieldset[disabled] .btn--google:hover,
-fieldset[disabled] .btn--google:focus,
-fieldset[disabled] .btn--google.focus {
-  background-color: #d34836;
-  border-color: #d34836;
+.btn.btn--google:active {
+  background-color: #eee;
+}
+
+.btn.btn--google:disabled, .btn.btn--google[disabled] {
+  color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.08);
+  background-image: url("../../components/02-atoms/button/icons/google_signin_buttons/google-sign-in-disabled.svg");
+}
+
+.btn.btn--google:disabled:hover, .btn.btn--google:disabled:focus, .btn.btn--google[disabled]:hover, .btn.btn--google[disabled]:focus, .btn.btn--google:active:hover, .btn.btn--google:active:focus {
+  outline: none;
 }
 
 .btn--twitter {
@@ -1140,15 +1103,6 @@ fieldset[disabled] .btn--twitter.focus {
   border-radius: 10px;
 }
 
-.meta-addtocal .btn {
-  margin-right: 5px;
-  margin-bottom: 3px;
-  padding: 5px 10px;
-  border-radius: 5px !important;
-  font-size: 0.75rem;
-  line-height: 1.5;
-}
-
 .card {
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
@@ -1168,20 +1122,6 @@ fieldset[disabled] .btn--twitter.focus {
   width: 19px;
   height: 19px;
   margin-right: 7px;
-}
-
-.block--custom-content-list .card__title .content-list__type {
-  display: none;
-  /* temporary style */
-  width: 14px;
-  height: 14px;
-  margin-right: 1rem;
-  fill: #555;
-  /* $$gray */
-}
-
-.block--custom-content-list .card__actionbar {
-  text-align: center;
 }
 
 .region--complementary .card__title,
@@ -1789,6 +1729,10 @@ fieldset strong {
   max-width: 375px;
 }
 
+.field--type-address fieldset.card {
+  margin-top: 0;
+}
+
 .field--name-field-enroll-method {
   width: auto;
   max-width: none;
@@ -2099,6 +2043,20 @@ fieldset strong {
   color: #343434;
 }
 
+.teaser .flag-follow-user {
+  position: relative;
+}
+
+.teaser .flag-follow-user .js-flag-message {
+  display: none;
+}
+
+.teaser .flag-follow-user .ajax-throbber {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+}
+
 .comments {
   background: #f3f3f3;
   border-radius: 10px;
@@ -2120,7 +2078,7 @@ fieldset strong {
 }
 
 .photoswipe-gallery-custom .field--item .file-link a {
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .cover {
@@ -2162,8 +2120,30 @@ fieldset strong {
 }
 
 .cover .hero-form[role='search'] .search-icon {
-  fill: #29abe2;
+  fill: var(--primary-color);
   background: white;
+}
+
+.hero-action-button .dropdown-menu {
+  left: auto;
+  right: 0;
+  margin: 12px 0 0;
+  padding: 12px 0;
+  border-radius: 12px;
+  -webkit-box-shadow: 2px 4px 12px 0 rgba(0, 0, 0, 0.08);
+          box-shadow: 2px 4px 12px 0 rgba(0, 0, 0, 0.08);
+}
+
+.hero-action-button .dropdown-menu li:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.hero-action-button .dropdown-menu li a {
+  padding: 0 28px;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 24px;
+  color: #343434;
 }
 
 .stream-icon-new {
@@ -2210,6 +2190,14 @@ fieldset strong {
   padding: 0 1rem;
 }
 
+:root {
+  --primary-color: #29abe2;
+  --secondary-color: #1f80aa;
+  --accent-color: #ffc142;
+  --accent-color--text: #343434;
+  --link-color: #33b5e5;
+}
+
 [type="radio"]:checked + label:before {
   border-color: #29abe2;
 }
@@ -2242,6 +2230,7 @@ fieldset strong {
 }
 
 .cover,
+.cover.search-grid--hero,
 .read-indicator,
 .select2-container--social .select2-results__option--highlighted[aria-selected],
 .select2-container--social .select2-results__option[aria-selected=true],
@@ -2263,6 +2252,19 @@ fieldset strong {
 
 .hero-form[role='search'] .search-icon {
   fill: #29abe2;
+}
+
+.search-grid--hero .form-wrapper .btn-group:before {
+  background: #29abe2;
+}
+
+.search-grid--hero .form-wrapper .btn-group .dropdown-toggle .caret {
+  border-bottom-color: #29abe2;
+  border-top-color: #29abe2;
+}
+
+.search-grid--hero .form-wrapper .btn-group .form-submit {
+  color: #29abe2;
 }
 
 .form-control:focus {
@@ -2418,30 +2420,49 @@ fieldset[disabled] .btn-accent.focus {
   border-color: #1f80aa;
 }
 
-.field--name-field-introduction-text *:not(.badge):not(.section__title) > a:not(.btn),
-.field--name-field-featured-items-description *:not(.badge):not(.section__title) > a:not(.btn),
-.field--name-field-featured-description *:not(.badge):not(.section__title) > a:not(.btn),
-.field--name-field-accord-description *:not(.badge):not(.section__title) > a:not(.btn),
-.field--name-field-accord-item-description *:not(.badge):not(.section__title) > a:not(.btn),
-.field--name-field-phase-description *:not(.badge):not(.section__title) > a:not(.btn),
-.quiz-form__text *:not(.badge):not(.section__title) > a:not(.btn),
-.scorm-form--body *:not(.badge):not(.section__title) > a:not(.btn),
-.body-text *:not(.badge):not(.section__title) > a:not(.btn),
-.paragraph--type--image-text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn),
-.paragraph--type--text-image .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn),
-.paragraph--type--text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn),
-.course-full .card__body *:not(.badge):not(.section__title) > a:not(.btn),
-.teaser--course *:not(.badge):not(.section__title) > a:not(.btn),
-.block--intro-text .block--intro-text__content *:not(.badge):not(.section__title) > a:not(.btn),
-.block-inline-blockkpi-analytics .field--name-body *:not(.badge):not(.section__title) > a:not(.btn),
-.basic-block .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn),
-.hero--dashboard .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn),
-.certificate-footer .bottom *:not(.badge):not(.section__title) > a:not(.btn),
-.certificate-header .description *:not(.badge):not(.section__title) > a:not(.btn) {
+.field--name-field-introduction-text *:not(.badge):not(.section__title) > a:not(.btn):hover, .field--name-field-introduction-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.field--name-field-featured-items-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.field--name-field-featured-items-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.field--name-field-featured-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.field--name-field-featured-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.field--name-field-accord-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.field--name-field-accord-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.field--name-field-accord-item-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.field--name-field-accord-item-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.field--name-field-phase-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.field--name-field-phase-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.quiz-form__text *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.quiz-form__text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.scorm-form--body *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.scorm-form--body *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.body-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.body-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.paragraph--type--image-text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.paragraph--type--image-text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.paragraph--type--text-image .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.paragraph--type--text-image .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.paragraph--type--text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.paragraph--type--text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.course-full .card__body *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.course-full .card__body *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.teaser--course *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.teaser--course *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.block--intro-text .block--intro-text__content *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.block--intro-text .block--intro-text__content *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.block-inline-blockkpi-analytics .field--name-body *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.block-inline-blockkpi-analytics .field--name-body *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.basic-block .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.basic-block .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.hero--dashboard .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.hero--dashboard .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.certificate-footer .bottom *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.certificate-footer .bottom *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.certificate-header .description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.certificate-header .description *:not(.badge):not(.section__title) > a:not(.btn):focus {
   color: #33b5e5;
 }
 
-.comment__text p a:not(.btn) {
+.comment__text p a:not(.btn):hover, .comment__text p a:not(.btn):focus {
   color: #33b5e5;
 }
 
@@ -2732,13 +2753,23 @@ html:not(.js) .navbar-default .dropdown:hover > button .navbar-nav__icon {
   background-color: #ffc142;
 }
 
-.social-gtranslate-list--desktop > a {
-  color: #ffffff;
+.social-gtranslate-list--mobile {
+  background-color: #333333;
+  fill: #ffffff;
+}
+
+.social-gtranslate-list--mobile:hover, .social-gtranslate-list--mobile:focus, .social-gtranslate-list--mobile.open {
+  fill: #f3f3f3;
+  background-color: #1f1f1f;
+}
+
+.social-gtranslate-list--desktop {
   background-color: #333333;
 }
 
-.social-gtranslate-list--desktop > a:after {
+.social-gtranslate-list--desktop > a {
   color: #ffffff;
+  background-color: #333333;
 }
 
 .social-gtranslate-list--desktop > a .select-icon {
@@ -2751,10 +2782,6 @@ html:not(.js) .navbar-default .dropdown:hover > button .navbar-nav__icon {
   background-color: #1f1f1f;
 }
 
-.social-gtranslate-list--desktop > a:focus:after, .social-gtranslate-list--desktop > a:hover:after {
-  color: #f3f3f3;
-}
-
 .social-gtranslate-list--desktop > a:focus .select-icon, .social-gtranslate-list--desktop > a:hover .select-icon {
   fill: #f3f3f3;
 }
@@ -2765,10 +2792,6 @@ html:not(.js) .navbar-default .dropdown:hover > button .navbar-nav__icon {
   background-color: #1f1f1f;
 }
 
-.social-gtranslate-list--desktop.open > a:after {
-  color: #f3f3f3;
-}
-
 .social-gtranslate-list--desktop.open > a .select-icon {
   fill: #f3f3f3;
 }
@@ -2777,10 +2800,6 @@ html:not(.js) .navbar-default .dropdown:hover > button .navbar-nav__icon {
   color: #f3f3f3;
   fill: #f3f3f3;
   background-color: #1f1f1f;
-}
-
-.social-gtranslate-list--desktop.open > a:focus:after, .social-gtranslate-list--desktop.open > a:hover:after {
-  color: #f3f3f3;
 }
 
 .social-gtranslate-list--desktop.open > a:focus .select-icon, .social-gtranslate-list--desktop.open > a:hover .select-icon {
@@ -2812,10 +2831,6 @@ html:not(.js) .navbar-default .dropdown:hover > button .navbar-nav__icon {
 
 .navbar-second-line .social-gtranslate-list--desktop > a:focus .select-icon, .navbar-second-line .social-gtranslate-list--desktop > a:hover .select-icon {
   fill: #002f67;
-}
-
-#sliding-popup {
-  background-color: #1f7ea7 !important;
 }
 
 .marker-cluster:after,
@@ -2876,7 +2891,8 @@ html:not(.js) .navbar-default .dropdown:hover > button .navbar-nav__icon {
   fill: #ffc142;
 }
 
-.badge.badge-primary {
+.badge.badge-primary,
+.node--unpublished__label {
   background-color: #29abe2;
 }
 
@@ -2980,6 +2996,43 @@ html:not(.js) .navbar-default .dropdown:hover > button .navbar-nav__icon {
   background: #29abe2;
 }
 
+.addtocal-list li .calendar-link a {
+  color: #29abe2;
+}
+
+.profile-preview-link:hover:before {
+  border-color: #29abe2;
+}
+
+body.media-directory .dropzone .dz-message,
+body.media-directory .dropzone .dz-preview:not(.dz-error) {
+  border-color: #29abe2;
+}
+
+body.media-directory .dz-preview .dz-progress .dz-upload {
+  background: #29abe2;
+}
+
+.ck.ck-content a:not(.btn) {
+  font-weight: 400;
+  text-decoration: underline;
+  -webkit-text-decoration-color: #33b5e5;
+          text-decoration-color: #33b5e5;
+}
+
+.ck.ck-content a:not(.btn):hover, .ck.ck-content a:not(.btn):focus {
+  color: #33b5e5;
+  cursor: pointer;
+}
+
+.ck.ck-content blockquote {
+  border-left-color: #29abe2;
+}
+
+.files-list .active-highlighted:before {
+  border-color: #29abe2;
+}
+
 @media (min-width: 600px) {
   .teaser__image {
     border-top-left-radius: inherit;
@@ -3026,6 +3079,25 @@ html:not(.js) .navbar-default .dropdown:hover > button .navbar-nav__icon {
 }
 
 @media (max-width: 599px) {
+  .social-auth-buttons > .card__block {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .social-auth-buttons > .card__block .btn {
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
+  }
+  .social-auth-buttons > .card__block .btn.btn--google {
+    -webkit-box-ordinal-group: 1;
+        -ms-flex-order: 0;
+            order: 0;
+  }
   .field--name-field-social-collaboration-editors table tbody td .form-type-select,
   .field--name-field-event-managers table tbody td .form-type-select,
   .field--name-field-social-idea-coauthors table tbody td .form-type-select,

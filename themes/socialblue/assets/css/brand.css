@@ -3,6 +3,7 @@
   --secondary-color: #1f80aa;
   --accent-color: #ffc142;
   --accent-color--text: #343434;
+  --link-color: #33b5e5;
 }
 
 [type="radio"]:checked + label:before {
@@ -227,30 +228,49 @@ fieldset[disabled] .btn-accent.focus {
   border-color: #1f80aa;
 }
 
-.field--name-field-introduction-text *:not(.badge):not(.section__title) > a:not(.btn),
-.field--name-field-featured-items-description *:not(.badge):not(.section__title) > a:not(.btn),
-.field--name-field-featured-description *:not(.badge):not(.section__title) > a:not(.btn),
-.field--name-field-accord-description *:not(.badge):not(.section__title) > a:not(.btn),
-.field--name-field-accord-item-description *:not(.badge):not(.section__title) > a:not(.btn),
-.field--name-field-phase-description *:not(.badge):not(.section__title) > a:not(.btn),
-.quiz-form__text *:not(.badge):not(.section__title) > a:not(.btn),
-.scorm-form--body *:not(.badge):not(.section__title) > a:not(.btn),
-.body-text *:not(.badge):not(.section__title) > a:not(.btn),
-.paragraph--type--image-text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn),
-.paragraph--type--text-image .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn),
-.paragraph--type--text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn),
-.course-full .card__body *:not(.badge):not(.section__title) > a:not(.btn),
-.teaser--course *:not(.badge):not(.section__title) > a:not(.btn),
-.block--intro-text .block--intro-text__content *:not(.badge):not(.section__title) > a:not(.btn),
-.block-inline-blockkpi-analytics .field--name-body *:not(.badge):not(.section__title) > a:not(.btn),
-.basic-block .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn),
-.hero--dashboard .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn),
-.certificate-footer .bottom *:not(.badge):not(.section__title) > a:not(.btn),
-.certificate-header .description *:not(.badge):not(.section__title) > a:not(.btn) {
+.field--name-field-introduction-text *:not(.badge):not(.section__title) > a:not(.btn):hover, .field--name-field-introduction-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.field--name-field-featured-items-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.field--name-field-featured-items-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.field--name-field-featured-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.field--name-field-featured-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.field--name-field-accord-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.field--name-field-accord-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.field--name-field-accord-item-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.field--name-field-accord-item-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.field--name-field-phase-description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.field--name-field-phase-description *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.quiz-form__text *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.quiz-form__text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.scorm-form--body *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.scorm-form--body *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.body-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.body-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.paragraph--type--image-text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.paragraph--type--image-text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.paragraph--type--text-image .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.paragraph--type--text-image .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.paragraph--type--text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.paragraph--type--text .field--name-field-text *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.course-full .card__body *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.course-full .card__body *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.teaser--course *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.teaser--course *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.block--intro-text .block--intro-text__content *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.block--intro-text .block--intro-text__content *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.block-inline-blockkpi-analytics .field--name-body *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.block-inline-blockkpi-analytics .field--name-body *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.basic-block .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.basic-block .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.hero--dashboard .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.hero--dashboard .field--name-field-text-block *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.certificate-footer .bottom *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.certificate-footer .bottom *:not(.badge):not(.section__title) > a:not(.btn):focus,
+.certificate-header .description *:not(.badge):not(.section__title) > a:not(.btn):hover,
+.certificate-header .description *:not(.badge):not(.section__title) > a:not(.btn):focus {
   color: #33b5e5;
 }
 
-.comment__text p a:not(.btn) {
+.comment__text p a:not(.btn):hover, .comment__text p a:not(.btn):focus {
   color: #33b5e5;
 }
 
@@ -802,8 +822,15 @@ body.media-directory .dz-preview .dz-progress .dz-upload {
 }
 
 .ck.ck-content a:not(.btn) {
+  font-weight: 400;
   text-decoration: underline;
+  -webkit-text-decoration-color: #33b5e5;
+          text-decoration-color: #33b5e5;
+}
+
+.ck.ck-content a:not(.btn):hover, .ck.ck-content a:not(.btn):focus {
   color: #33b5e5;
+  cursor: pointer;
 }
 
 .ck.ck-content blockquote {

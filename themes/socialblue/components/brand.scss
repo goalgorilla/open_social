@@ -8,7 +8,8 @@
   --accent-color: #{$brand-accent};
   --accent-color--text: #{$brand-accent-text};
 
-  //--link-color: #{$brand-link};
+  --link-color: #{$brand-link};
+
   //--navbar-default-link-color: #{$navbar-default-link-color};
   //--navbar-default-link-active-color: #{$navbar-default-link-active-color};
   //--navbar-default-link-active-bg: #{$navbar-default-link-active-bg};
@@ -269,13 +270,19 @@
 .certificate-footer .bottom,
 .certificate-header .description {
   *:not(.badge):not(.section__title) > a:not(.btn) {
-    color: $brand-link;
+    &:hover,
+    &:focus {
+      color: $brand-link;
+    }
   }
 }
 
 .comment__text p {
   a:not(.btn) {
-    color: $brand-link;
+    &:hover,
+    &:focus {
+      color: $brand-link;
+    }
   }
 }
 
@@ -980,8 +987,15 @@ body.media-directory {
 
   // Link style
   a:not(.btn) {
+    font-weight: 400;
     text-decoration: underline;
-    color: $link-color;
+    text-decoration-color: $brand-link;
+
+    &:hover,
+    &:focus {
+      color: $brand-link;
+      cursor: pointer;
+    }
   }
 
   // Blockquote

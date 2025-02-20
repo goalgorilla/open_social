@@ -75,10 +75,17 @@
       $colorPreview.find('.color-preview-hero .btn-accent').css('border-color', $colorPalette.find('input[name="palette[brand-accent]"]').val());
 
       // Brand accent text color.
-      $colorPreview.find('.btn-accent, .badge-accent').css('color', $colorPalette.find('input[name="palette[brand-accent-text]"]').val());
+      $colorPreview.find('.btn-accent, .badge-accent').css({'color': $colorPalette.find('input[name="palette[brand-accent-text]"]').val()});
 
       // Brand link color.
-      $colorPreview.find('.body-text a:not(.btn)').css('color', $colorPalette.find('input[name="palette[brand-link]"]').val());
+      $colorPreview.find('.body-text a:not(.btn)').css('text-decoration-color', $colorPalette.find('input[name="palette[brand-link]').val());
+
+      $colorPreview.find('.body-text a:not(.btn)')
+        .hover(function () {
+          $(this).css('color', $colorPalette.find('input[name="palette[brand-link]').val());
+        }).mouseout(function () {
+        $(this).css('color', 'inherit');
+      });
 
       // Hero toggle background.
       var localStorage =  window.localStorage;

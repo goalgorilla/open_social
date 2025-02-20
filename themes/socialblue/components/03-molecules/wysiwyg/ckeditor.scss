@@ -10,11 +10,15 @@ body {
 }
 
 a:not(.btn) {
+  font-weight: 400;
   text-decoration: underline;
-  color: $link-color;
+  text-decoration-color: var(--link-color);
+  color: #343434;
 
-  &:hover {
-    color: $link-hover-color;
+  &:hover,
+  &:focus {
+    cursor: pointer;
+    color: var(--link-color);
   }
 }
 
