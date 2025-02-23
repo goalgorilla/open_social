@@ -228,6 +228,11 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     // Add the params that the email preview needs.
     $node = $this->entityTypeManager->getStorage('node')->load($nid);
     $body = '';
+    $params = [];
+
+    // Load event invite configuration.
+    $add_directly_config = $this->configFactory->get('message.template.member_added_by_event_organiser')->getRawData();
+    $invite_config = $this->configFactory->get('social_event_invite.settings');
 
     if ($node instanceof Node) {
       $params = [
@@ -236,10 +241,6 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       ];
       $content_preview = $this->emailTokenServices->getContentPreview($node);
       $button = $this->emailTokenServices->getCtaButton($node->toUrl('canonical'), new TranslatableMarkup('See the event', [], [$this->currentUser()->getPreferredLangcode()]));
-
-      // Load event invite configuration.
-      $add_directly_config = $this->configFactory->get('message.template.member_added_by_event_organiser')->getRawData();
-      $invite_config = $this->configFactory->get('social_event_invite.settings');
 
       // Replace the tokens with similar ones since these rely
       // on the message object which we don't have in the preview.
@@ -256,6 +257,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       // Cleanup message body and replace any links on invite preview page.
       if (is_string($value)) {
         $body = $this->token->replace($value, $params);
+        $body = preg_replace('/href="([^"]*)"/', 'href="#"', $body);
       }
     }
 
@@ -263,7 +265,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       '@site_name' => \Drupal::config('system.site')->get('name'),
     ];
 
-    // Get default logo image and replace if it has overridden with
+    // Get the default logo image and replace if it has overridden with
     // email settings.
     $theme_id = $this->configFactory->get('system.theme')->get('default');
     $logo = $this->getRequest()->getBaseUrl() . theme_get_setting('logo.url', $theme_id);
