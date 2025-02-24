@@ -38,7 +38,7 @@
     <nav role="navigation" class="navigation-book" aria-labelledby="book-label-{{ book_id }}">
         {{ tree }}
         {% if has_links %}
-            <h2 class="sr-only">{{ 'Book traversal links for'|t }} {{ book_title }}</h2>
+            <h2 class="sr-only" id="book-label-{{ book_id }}">{{ 'Book traversal links for'|t }} {{ book_title }}</h2>
             <div class="page-links clearfix">
                 {% if prev_url %}
                     <a class="pager__item pager__item--previous btn btn-flat btn-iconized" href="{{ prev_url }}" rel="prev" title="{{ 'Go to previous page'|t }}" role="button">
