@@ -46,12 +46,14 @@ class Field extends PreprocessBase {
           'attributes' => ['class' => ['btn btn-primary']],
         ];
         if (isset($element[0])) {
+          $url_options += $element[0]['#url']->getOptions();
           $element[0]['#url']->setOptions($url_options);
         }
         $url_options_1 = [
           'attributes' => ['class' => ['btn btn-default']],
         ];
         if (isset($element[1])) {
+          $url_options_1 += $element[1]['#url']->getOptions();
           $element[1]['#url']->setOptions($url_options_1);
         }
         break;
