@@ -1467,6 +1467,12 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   if (isset($data['tabs'][0]['views_view:view.group_nodes.page_1'])) {
     unset($data['tabs'][0]['views_view:view.group_nodes.page_1']);
   }
+
+  // We have two pages with a list of group members. One of them is provided
+  // by the grequest module and is not correct. So we removed it from tabs.
+  if (isset($data['tabs'][0]['views_view:view.group_pending_members.page_1'])) {
+    unset($data['tabs'][0]['views_view:view.group_pending_members.page_1']);
+  }
 }
 
 /**
