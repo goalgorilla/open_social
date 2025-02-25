@@ -14,7 +14,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
@@ -61,7 +61,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   /**
    * The current user.
    */
-  protected AccountProxyInterface $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * The plugin manager.
@@ -85,7 +85,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
     array $settings,
     array $third_party_settings,
     ConfigFactoryInterface $configFactory,
-    AccountProxyInterface $currentUser,
+    AccountInterface $currentUser,
     ModuleHandlerInterface $moduleHandler,
     GroupRelationTypeManagerInterface $pluginManager,
     EntityTypeManagerInterface $entity_type_manager
@@ -127,7 +127,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   /**
    * {@inheritdoc}
    */
-  protected function getOptions(FieldableEntityInterface $entity) {
+  protected function getOptions(FieldableEntityInterface $entity): array {
     if (!in_array($type = $entity->getEntityTypeId(), $this->types())) {
       return parent::getOptions($entity);
     }
