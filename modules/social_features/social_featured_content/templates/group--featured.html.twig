@@ -17,10 +17,10 @@
 {% endblock %}
 
 {% block card_teaser_type %}
-  <a href="{{ url }}" aria-hidden="true" title="{% trans %}Group: &nbsp;{% endtrans %}{{- label|render|striptags|trim -}}">
+  <a href="{{ url }}" aria-hidden="true" title="{% trans %}Group:&nbsp;{% endtrans %}{{- label|render|striptags|trim -}}">
     <div class="teaser__teaser-type">
       <svg class="teaser__teaser-type-icon">
-        <title>{% trans %}Group: &nbsp;{% endtrans %}{{- label|render|striptags|trim -}}</title>
+        <title>{% trans %}Group:&nbsp;{% endtrans %}{{- label|render|striptags|trim -}}</title>
         {% if group_type_icon %}
           <use xlink:href="#{{- group_type_icon -}}"></use>
         {% else %}

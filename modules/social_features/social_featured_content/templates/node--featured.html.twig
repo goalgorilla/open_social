@@ -90,10 +90,10 @@
       {% endblock %}
 
       {% block card_teaser_type %}
-        <a href="{{ url }}" aria-hidden="true" title="{{- node.type.0.entity.label() -}}: &nbsp;{{- label|render|striptags|trim -}}">
+        <a href="{{ url }}" aria-hidden="true" title="{{- node.type.0.entity.label() -}}:&nbsp;{{- label|render|striptags|trim -}}">
           <div class="teaser__teaser-type">
-            <svg class="teaser__teaser-type-icon" aria-labelledby="{{- node.type.0.entity.label() -}}-{{ node.id }}">
-              <title id="{{- node.type.0.entity.label() -}}-{{ node.id }}">{{- node.type.0.entity.label() -}}: &nbsp;{{- label|render|striptags|trim -}}</title>
+            <svg class="teaser__teaser-type-icon">
+              <title>{{- node.type.0.entity.label() -}}:&nbsp;{{- label|render|striptags|trim -}}</title>
               {% if topic_type_icon %}
                 <use xlink:href="#{{- topic_type_icon -}}"></use>
               {% elseif event_type_icon %}
