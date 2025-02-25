@@ -8,7 +8,7 @@ Feature: Search
     Given I enable the module "social_language"
     And I enable the module "social_content_translation"
 
-    Given the following languages are available:
+    And the following languages are available:
       | languages |
       | fr       |
       | de       |
@@ -29,25 +29,27 @@ Feature: Search
     And Search indexes are up to date
 
     # Check search results for user with "France" default language.
-    Given I am logged in as "user-fr"
+    And I am logged in as "user-fr"
+
     When I am on "fr/search/content"
+
     Then I should see "Topic-fr"
 
-    When I am on "fr/search/all"
-    Then I should see "Topic-fr"
+    And I am on "fr/search/all"
+    And I should see "Topic-fr"
 
     # Check search results for user with "German" default language.
-    Given I am logged in as "user-de"
-    When I am on "de/search/content"
-    Then I should see "Topic-de"
+    And I am logged in as "user-de"
+    And I am on "de/search/content"
+    And I should see "Topic-de"
 
-    When I am on "de/search/all"
-    Then I should see "Topic-de"
+    And I am on "de/search/all"
+    And I should see "Topic-de"
 
     # Check search results for user with "Italy" default language.
-    Given I am logged in as "user-it"
-    When I am on "it/search/content"
-    Then I should see "Topic-it"
+    And I am logged in as "user-it"
+    And I am on "it/search/content"
+    And I should see "Topic-it"
 
-    When I am on "it/search/all"
-    Then I should see "Topic-it"
+    And I am on "it/search/all"
+    And I should see "Topic-it"

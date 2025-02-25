@@ -7,7 +7,7 @@ Feature: Flexible groups are correctly ordered on views pages.
     Given users:
       | name   | status | pass    | roles    |
       | John   | 1      | secret  | verified |
-    Given groups:
+    And groups:
       | label      | field_group_description | field_flexible_group_visibility | author | type            | created  |
       | Group AAA  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
       | Group BBB  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
@@ -22,13 +22,15 @@ Feature: Flexible groups are correctly ordered on views pages.
 
     When I am logged in as John
     And I click "My groups"
+
     Then I should see "Group AAA"
     And I should see "Group FFF"
     And I should not see "Group GGG"
     And I should not see "Group JJJ"
 
-    When I click "Older items"
-    Then I should see "Group GGG"
+    And I click "Older items"
+
+    And I should see "Group GGG"
     And I should see "Group JJJ"
     And I should not see "Group AAA"
     And I should not see "Group FFF"

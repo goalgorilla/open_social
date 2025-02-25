@@ -10,7 +10,8 @@ Feature: Overview
       | name     | mail               | status | roles    |
       | User One | user_1@example.com | 1      | verified |
       | User Two | user_2@example.com | 1      | verified |
-    When I am logged in as "User One"
+
+    And I am logged in as "User One"
     And I am on "/user"
     And I click "Events"
     And I should see "Filter" in the "Sidebar second"
@@ -19,8 +20,10 @@ Feature: Overview
     And I should see text matching "Publish status"
 
     # Scenario: Successfully see the topic overview of another user
-    Given I am on the profile of "User Two"
+    And I am on the profile of "User Two"
+
     When I click "Events"
+
     Then I should see "Filter" in the "Sidebar second"
     And I should not see text matching "Publish status"
 

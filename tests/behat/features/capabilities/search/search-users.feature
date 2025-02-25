@@ -12,9 +12,11 @@
     And Search indexes are up to date
     And I am logged in as an "verified"
     And I am on "search/users"
+
     When I fill in the following:
       | search_input | user_1 |
     And I press "Search"
-    And I should see the heading "Search" in the "Hero block" region
+
+    Then I should see the heading "Search" in the "Hero block" region
     And I should see "User one" in the "Main content"
     And I should not see "User two" in the "Main content"

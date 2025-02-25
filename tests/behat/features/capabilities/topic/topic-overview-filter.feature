@@ -13,9 +13,9 @@ Feature: Topic Overview Filter
 
     When I am on "/all-topics"
 
-    Then I should see "All topics"
+    And I should see "All topics"
 
-    When I select "News" from "is the type of"
+    And I select "News" from "is the type of"
     And I press the "Filter" button
 
     Then I should see "Topics of type News"

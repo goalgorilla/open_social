@@ -7,19 +7,23 @@ Feature: Redirect AN user from 403 after login
   Scenario: Successfully redirected to the login page
     Given I am an anonymous user
     And I am on the homepage
+
     When I go to "node/add/topic"
+
     Then I should be on "user/login?destination=/node/add/topic"
-     And I should see the error message "Access denied. You must log in to view this page."
+    And I should see the error message "Access denied. You must log in to view this page."
 
   Scenario: Successfully redirected after login via 403 page
     Given users:
       | name       | status | pass       | roles    |
       | r4032login |      1 | r4032login | verified |
-      And I am an anonymous user
-      And I go to "node/add/topic"
-      And I should be on "user/login?destination=/node/add/topic"
-     When I fill in the following:
-        | Username or email address | r4032login |
-        | Password                  | r4032login |
-     And I press "Log in"
+    And I am an anonymous user
+    And I go to "node/add/topic"
+    And I should be on "user/login?destination=/node/add/topic"
+
+    When I fill in the following:
+      | Username or email address | r4032login |
+      | Password                  | r4032login |
+    And I press "Log in"
+
     Then I should be on "node/add/topic"

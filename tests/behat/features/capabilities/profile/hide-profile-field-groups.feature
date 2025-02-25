@@ -19,6 +19,7 @@ Feature: I want to be able to hide certain profile information
 
     And I select "UA" from "Country"
     And I wait for AJAX to finish
+
     Then I should see "City"
     And I fill in the following:
       | City | Lviv |
@@ -28,22 +29,22 @@ Feature: I want to be able to hide certain profile information
     And I press "Save"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    Then I should see "Address" in the "#edit-profile-privacy" element
+    And I should see "Address" in the "#edit-profile-privacy" element
     And I should see "Phone number" in the "#edit-profile-privacy" element
 
-    Given I am logged in as "user_2"
+    And I am logged in as "user_2"
     And I am on the profile of "user_1"
-    When I click "Information"
-    Then I should see "+1-202-555-0150"
+    And I click "Information"
+    And I should see "+1-202-555-0150"
     And I should see "Fedkovycha 60a"
     And I should see "79000"
     And I should see "Lviv"
     And I should see "Lvivska oblast"
 
-    Given I am logged in as "user_1"
+    And I am logged in as "user_1"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    Then I should see "Address" in the "#edit-profile-privacy" element
+    And I should see "Address" in the "#edit-profile-privacy" element
     And I should see "Phone number" in the "#edit-profile-privacy" element
     And I show hidden checkboxes
     # This means other users can not view this information.
@@ -51,22 +52,22 @@ Feature: I want to be able to hide certain profile information
     And I click radio button "Hide" with the id "edit-profile-privacy-fields-field-profile-phone-number-0"
     And I press "Save"
 
-    Given I am logged in as "user_2"
+    And I am logged in as "user_2"
     And the cache has been cleared
     And I am on the profile of "user_1"
-    Then I should see "user_1"
-    When I click "Information"
-    Then I should not see "+1-202-555-0150"
+    And I should see "user_1"
+    And I click "Information"
+    And I should not see "+1-202-555-0150"
     And I should not see "Fedkovycha 60a"
     And I should not see "79000"
     And I should not see "Lviv"
     And I should not see "Lvivska oblast"
 
     # Enable the privacy setting.
-    Given I am logged in as an "administrator"
+    And I am logged in as an "administrator"
     And I am on the profile of "user_1"
-    When I click "Information"
-    Then I should see "+1-202-555-0150"
+    And I click "Information"
+    And I should see "+1-202-555-0150"
     And I should see "Fedkovycha 60a"
     And I should see "79000"
     And I should see "Lviv"

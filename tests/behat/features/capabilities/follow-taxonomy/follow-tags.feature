@@ -25,12 +25,12 @@ Feature: Follow Tags
       | content_creator | content.creator@test.user | 1      | contentmanager | Mike                     | Tyson                   |
 
     # Save tag config to clear form cache.
-    Given I am logged in as an "sitemanager"
+    And I am logged in as an "sitemanager"
     And I go to "admin/config/opensocial/tagging-settings"
     And I press "Save configuration"
 
     # Create topic to work with it later.
-    Given I am logged in as "content_creator"
+    And I am logged in as "content_creator"
     And I go to "node/add/topic"
     And I check the box "News"
     And I fill in "Title" with "Simple topic"
@@ -40,11 +40,11 @@ Feature: Follow Tags
     And I set alias as "simple-topic"
     And I press "Create topic"
 
-    Then I should see "Simple topic" in the "Hero block" region
+    And I should see "Simple topic" in the "Hero block" region
     And I should see "This is a topic to check update activity" in the "Main content"
 
     # Create topic with tag than user car follow tags.
-    Then I go to "node/add/topic"
+    And I go to "node/add/topic"
     And I check the box "News"
     And I fill in "Title" with "Topic with tags"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "This is a topic for follow tag feature"
@@ -57,7 +57,7 @@ Feature: Follow Tags
     And I set alias as "topic-with-tags"
     And I press "Create topic"
 
-    Then I should see "Topic with tags" in the "Hero block" region
+    And I should see "Topic with tags" in the "Hero block" region
     And I should see "This is a topic for follow tag feature" in the "Main content"
     And I should see the link "Category 1" in the "Sidebar second"
     And I should see the link "Category 1.1" in the "Sidebar second"
@@ -65,7 +65,7 @@ Feature: Follow Tags
     And I should see the link "Category 2.2" in the "Sidebar second"
 
     # Check if user see topic and all added tags.
-    Given I am logged in as "follower"
+    And I am logged in as "follower"
     And I go to "topic-with-tags"
     And I should see "This is a topic for follow tag feature" in the "Main content"
     And I should see the link "Category 1" in the "Sidebar second"
@@ -75,7 +75,7 @@ Feature: Follow Tags
     And I wait for the queue to be empty
 
     # Follow tags
-    When I click "Category 1"
+    And I click "Category 1"
     And I click the element with css selector ".popup-info.open a.follow-term-link"
     And I wait for AJAX to finish
     And I click "Category 2.2"
@@ -85,12 +85,12 @@ Feature: Follow Tags
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Following tags"
 
-    Then I should see "Category 1"
+    And I should see "Category 1"
     And I should see "Category 2.2"
     And I logout
 
     # Create topic with tag to trigger activity
-    Given I am logged in as "content_creator"
+    And I am logged in as "content_creator"
     And I go to "node/add/topic"
     And I check the box "News"
     And I fill in "Title" with "Topic with tags second"
@@ -102,24 +102,24 @@ Feature: Follow Tags
     And I press "Create topic"
 
     # Add tags to the existing topic to trigger activity.
-    Then I go to "simple-topic"
+    And I go to "simple-topic"
     And I click "Edit content"
     And I select "Category 2.2" from "Category 2"
     And I press "Save"
 
-    Then I should see "Simple topic" in the "Hero block" region
+    And I should see "Simple topic" in the "Hero block" region
     And I should see "This is a topic to check update activity" in the "Main content"
     And I should see the link "Category 2.2" in the "Sidebar second"
 
-    Then the cache has been cleared
+    And the cache has been cleared
     And I wait for the queue to be empty
 
     # Check notifications/stream/emails.
-    Given I am logged in as "follower"
+    And I am logged in as "follower"
     And I am at "notifications"
-    Then I should see "Mike Tyson created a topic Topic with tags second with the tag(s) that you follow."
-    Then I should see "Mike Tyson added tag(s) you follow to a topic."
-    Then I should have an email with subject "Someone added content you might be interested in" and in the content:
+    And I should see "Mike Tyson created a topic Topic with tags second with the tag(s) that you follow."
+    And I should see "Mike Tyson added tag(s) you follow to a topic."
+    And I should have an email with subject "Someone added content you might be interested in" and in the content:
       | content                                                                            |
       | Hi Jack Richer                                                                     |
       | Mike Tyson created a topic Topic with tags second with the tag(s) that you follow. |
@@ -130,5 +130,5 @@ Feature: Follow Tags
       | Mike Tyson added tag(s) you follow to a topic Simple topic. |
       | the notification above is sent to you Immediately           |
     And I am on the homepage
-    Then I should see "Mike Tyson added tag(s) you follow to a topic."
+    And I should see "Mike Tyson added tag(s) you follow to a topic."
     And I should see "Simple topic"

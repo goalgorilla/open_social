@@ -12,8 +12,9 @@ Feature: Embed
     And I am logged in as "embed_1"
 
     # Create a topic with one attachment.
-    Given I am on "node/add/topic"
+    And I am on "node/add/topic"
     And I check the box "News"
+
     When I fill in the following:
       | Title | Embed WYSIWYG |
     And I click on the embed icon in the WYSIWYG editor
@@ -27,5 +28,6 @@ Feature: Embed
     # And I wait for AJAX to finish
     And I wait for "3" seconds
     And I press "Create topic"
+
     Then I should see "Topic Embed WYSIWYG has been created."
     And The iframe in the body description should have the src "https://www.youtube.com/embed/ojafuCcUZzU"

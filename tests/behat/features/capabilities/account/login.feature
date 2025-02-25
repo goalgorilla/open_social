@@ -10,12 +10,14 @@ Feature: Login
       | name             | status | pass             | mail                         | role     |
       | test_email_login |      1 | test_email_login | test_email_login@example.com | verified |
     And I am on the homepage
+
     When I click "Log in"
     And I fill in the following:
       | Username or email address | test_email_login@example.com |
       | Password | test_email_login |
     And I press "Log in"
     And I click "Profile of test_email_login"
+
     Then I should see "My profile"
     And I should see "test_email_login"
 
@@ -23,11 +25,13 @@ Feature: Login
   Scenario: Unsuccessful login without leaking data
     Given I am an anonymous user
     And I am on the homepage
+
     When I click "Log in"
     And I fill in the following:
       | Username or email address | test@test.com |
       | Password                  | test          |
     And I press "Log in"
+
     Then I should not see the following error messages:
       | error messages                                                                                |
       | Unrecognized username or password                                                             |

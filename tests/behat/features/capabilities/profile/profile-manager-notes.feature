@@ -19,9 +19,9 @@ Feature: Profile manager notes
     And I press "Leave remark"
     And I should see "New remark created"
 
-    Given I am logged in as an "verified"
+    And I am logged in as an "verified"
 
-    When I am on the profile of "test_user"
+    And I am on the profile of "test_user"
     And I click "Information"
 
-    Then I should not see "Site manager remarks"
+    And I should not see "Site manager remarks"

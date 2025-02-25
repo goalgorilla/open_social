@@ -7,9 +7,12 @@ Feature: See newest users in the community
   Scenario: Do not show users that do not exists
 #    TODO: Test visibility settings (Public, Community)
     Given I am logged in as an "verified"
-    Then I should not see "Behat User 1"
+
+    And I should not see "Behat User 1"
     And I should not see "Behat User 2"
+
     When I am on "all-members"
+
     Then I should not see "Behat User 1"
     And I should not see "Behat User 2"
 
@@ -19,13 +22,14 @@ Feature: See newest users in the community
       | Behat User 1 | test | behatuser1@example.com | 1      | 1893456000 | verified |
       | Behat User 2 | test | behatuser2@example.com | 1      | 1893456000 | verified |
 
-    Given I am logged in as an "verified"
+    When I am logged in as an "verified"
 
     Then I should see "All members"
     And I should see "Behat User 1"
     And I should see "Behat User 2"
 
-    When I am on "all-members"
-    Then I should see "Behat User 1"
+    And I am on "all-members"
+    
+    And I should see "Behat User 1"
     And I should see "Behat User 2"
     And I should see "All members"

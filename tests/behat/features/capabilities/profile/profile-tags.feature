@@ -8,11 +8,13 @@ Feature: Add profile tags to the user profiles
     Given users:
       | name   | status | uid | roles    |
       | Member | 1      | 999 | verified |
-    Then I am logged in as an "sitemanager"
+
+    When I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
     And I uncheck the box "Allow profile tagging for content managers"
     And I press "Save configuration"
     And I go to "/user/999/profile"
+
     Then I should not see the text "Profile tag"
 
   Scenario: Enable profile tags without split
@@ -20,23 +22,26 @@ Feature: Add profile tags to the user profiles
       | name                | parent |
       | Behat Profile tag 1 |        |
       | Behat Profile tag 2 |        |
-    Given users:
+    And users:
       | name   | status | uid | roles    |
       | Member | 1      | 999 | verified |
-    Then I am logged in as an "sitemanager"
+
+    When I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
     And I check the box "Allow profile tagging for content managers"
     And I uncheck the box "Allow category split"
     And I press "Save configuration"
-    Then I am logged in as an "contentmanager"
+
+    And I am logged in as an "contentmanager"
     And I go to "/user/999/profile"
     And I select "Behat Profile tag 1" from "Profile tag"
     And I additionally select "Behat Profile tag 2" from "Profile tag"
     And I press "Save"
     And I go to "/user/999/information"
+
     Then I should see "Profile tags"
-    Then I should see "Behat Profile tag 1"
-    Then I should see "Behat Profile tag 2"
+    And I should see "Behat Profile tag 1"
+    And I should see "Behat Profile tag 2"
 
   Scenario: Enable profile tag split
     Given "profile_tag" terms:
@@ -47,15 +52,16 @@ Feature: Add profile tags to the user profiles
       | Behat Profile tag 2   |                     |
       | Behat Profile tag 2.1 | Behat Profile tag 2 |
       | Behat Profile tag 2.2 | Behat Profile tag 2 |
-    Given users:
+    And users:
       | name   | status | uid | roles    |
       | Member | 1      | 999 | verified |
-    Then I am logged in as an "sitemanager"
+
+    And I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
     And I check the box "Allow profile tagging for content managers"
     And I check the box "Allow category split"
     And I press "Save configuration"
-    Then I am logged in as an "contentmanager"
+    And I am logged in as an "contentmanager"
     And I go to "/user/999/profile"
     And I select "Behat Profile tag 1.1" from "Behat Profile tag 1"
     And I additionally select "Behat Profile tag 1.2" from "Behat Profile tag 1"
@@ -63,12 +69,13 @@ Feature: Add profile tags to the user profiles
     And I additionally select "Behat Profile tag 2.2" from "Behat Profile tag 2"
     And I press "Save"
     And I go to "/user/999/information"
-    Then I should see "Behat Profile tag 1"
-    Then I should see "Behat Profile tag 1.1"
-    Then I should see "Behat Profile tag 1.2"
-    Then I should see "Behat Profile tag 2"
-    Then I should see "Behat Profile tag 2.1"
-    Then I should see "Behat Profile tag 2.2"
+
+    And I should see "Behat Profile tag 1"
+    And I should see "Behat Profile tag 1.1"
+    And I should see "Behat Profile tag 1.2"
+    And I should see "Behat Profile tag 2"
+    And I should see "Behat Profile tag 2.1"
+    And I should see "Behat Profile tag 2.2"
 
   Scenario: Allow to select parents
     Given "profile_tag" terms:
@@ -77,16 +84,18 @@ Feature: Add profile tags to the user profiles
       | Behat Profile tag 1.1 | Behat Profile tag 1 |
       | Behat Profile tag 2   |                     |
       | Behat Profile tag 2.1 | Behat Profile tag 2 |
-    Given users:
+    And users:
       | name   | status | uid | roles    |
       | Member | 1      | 999 | verified |
-    Then I am logged in as an "sitemanager"
+
+    And I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
     And I check the box "Allow profile tagging for content managers"
     And I check the box "Allow category split"
     And I check the box "Allow parents to be used as tag"
     And I press "Save configuration"
-    Then I am logged in as an "contentmanager"
+
+    And I am logged in as an "contentmanager"
     And I go to "/user/999/profile"
     And I select "Behat Profile tag 1" from "Behat Profile tag 1"
     And I additionally select "Behat Profile tag 1.1" from "Behat Profile tag 1"
@@ -94,7 +103,8 @@ Feature: Add profile tags to the user profiles
     And I additionally select "Behat Profile tag 2.1" from "Behat Profile tag 2"
     And I press "Save"
     And I go to "/user/999/information"
-    Then I should see "Behat Profile tag 1"
-    Then I should see "Behat Profile tag 1.1"
-    Then I should see "Behat Profile tag 2"
-    Then I should see "Behat Profile tag 2.1"
+
+    And I should see "Behat Profile tag 1"
+    And I should see "Behat Profile tag 1.1"
+    And I should see "Behat Profile tag 2"
+    And I should see "Behat Profile tag 2.1"

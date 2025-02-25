@@ -1,9 +1,9 @@
 @api @javascript
 Feature: Create flexible groups
-  # @todo Rewrite in Jobs to be done format
-  Benefit: So I can work together with others in a relative small circle
-  Role: As a Verified
-  Goal/desire: I want to create flexible Groups
+   Benefit: So I can work together with others in a relative small circle
+   Role: As a Verified
+   Goal/desire: I want to create flexible Groups
+   # @todo Rewrite in Jobs to be done format
 
   Background:
     Given I enable the module "social_group_flexible_group"

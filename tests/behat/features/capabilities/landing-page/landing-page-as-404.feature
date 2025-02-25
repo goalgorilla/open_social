@@ -8,8 +8,8 @@ Feature: Use a landing page as 404 page
 
     Given I enable the module "social_landing_page"
     # Create Landing Page Hero
-    Given I am logged in as an "contentmanager"
-    When I am on "node/add/landing_page"
+    And I am logged in as an "contentmanager"
+    And I am on "node/add/landing_page"
     And I fill in the following:
       | Title | Page not found |
     And I click radio button "Public" with the id "edit-field-content-visibility-public"
@@ -25,8 +25,8 @@ Feature: Use a landing page as 404 page
     And I set alias as "page-not-found"
     And I press "Create landing page"
     # See as LU
-    Then I should see "Landing page Page not found has been created."
-    Given I set the configuration item "system.site" with key "page.404" to "/page-not-found"
+    And I should see "Landing page Page not found has been created."
+    And I set the configuration item "system.site" with key "page.404" to "/page-not-found"
     And I am on "this-is-a-page-that-should-never-exist-thats-why-its-so-long-if-this-does-exist-then-this-test-breaks"
-    Then I should see "Hero title"
+    And I should see "Hero title"
     And I should not see an ".block-social-page-title-block" element

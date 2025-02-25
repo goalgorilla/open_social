@@ -1,8 +1,8 @@
 @api
 Feature: Check that profile organization tags are correctly displayed
-  Check that profile organization tags are corectly displayed also with special characters like & or '.
+  Check that profile organization tags are correctly displayed also with special characters like & or '.
 
-  Scenario: Successfuly show profile organization tag on profile and stream card
+  Scenario: Successfully show profile organization tag on profile and stream card
     Given I enable the module "social_profile_organization_tag"
     And "profile_organization_tag" terms:
       | tid | name  |
@@ -13,7 +13,9 @@ Feature: Check that profile organization tags are correctly displayed
     And I am logged in as "behat_sitemanager"
     And "1" topics with title "Behat Topic [id]" by "behat_sitemanager"
     And "1" comments with text "Behat Comment [id]" for "Behat Topic 1"
-    # This should automaticly redirect to \user\[id]\stream
+
+      # This should automaticly redirect to \user\[id]\stream
     When I am on "\user"
+
     Then I should see the text "Behat Sitemanager from A&B's commented on Behat Sitemanager's topic"
     And I should see "A&B's" in the ".profile-organization-tag .text" element

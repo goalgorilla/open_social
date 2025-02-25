@@ -7,20 +7,20 @@ Feature: Create Landing Page
   Scenario: Successfully create Landing Page
 
     Given I enable the module "social_landing_page"
-    Given event content:
+    And event content:
       | title          | field_event_date | status | field_content_visibility |
       | Featured Event | +10 minutes      | 1      | public                   |
-    Given "topic_types" terms:
+    And "topic_types" terms:
       | name                  |
       | News                  |
       | Blog                  |
-    Given topic content:
+    And topic content:
       | title            | field_topic_type | status | field_content_visibility |
       | Featured Topic 1 | News             | 1      | public                   |
       | Featured Topic 2 | Blog             | 1      | public                   |
     # Create Landing Page Hero
-    Given I am logged in as an "contentmanager"
-    When I am on "node/add/landing_page"
+    And I am logged in as an "contentmanager"
+    And I am on "node/add/landing_page"
     And I fill in the following:
       | Title | This is a dynamic page |
     And I click radio button "Public" with the id "edit-field-content-visibility-public"
@@ -83,7 +83,7 @@ Feature: Create Landing Page
     And I set alias as "landingpage"
     And I press "Create landing page"
     # Ses as LU
-    Then I should see "Landing page This is a dynamic page has been created."
+    And I should see "Landing page This is a dynamic page has been created."
     And I should see "Hero title"
     And I should see "Hero subtitle"
     And I should see the link "Hero Link LU"
@@ -99,8 +99,8 @@ Feature: Create Landing Page
     And I should see the link "Featured Topic 2"
     And I should see "Community activities"
     # Quick edit
-    Given I click "Edit content"
-    Then I should see "Hero title"
+    And I click "Edit content"
+    And I should see "Hero title"
     And I should see "Hero subtitle"
     And I should see the link "Hero Link LU"
     And I should see "Introduction title"
@@ -111,16 +111,16 @@ Feature: Create Landing Page
     And I should see the link "Featured Topic 1"
     And I should see the link "Featured Topic 2"
     And I should see "Community activities"
-    When I press "field_landing_page_section_0_edit"
+    And I press "field_landing_page_section_0_edit"
     And I wait for AJAX to finish
     And I fill in the following:
       | field_landing_page_section[0][subform][field_section_paragraph][0][subform][field_hero_title][0][value] | Hero title edited |
     And I press "Save"
-    Then I should see "Landing page This is a dynamic page has been updated."
+    And I should see "Landing page This is a dynamic page has been updated."
     # See as AN
-    Given I logout
+    And I logout
     And I go to "landingpage"
-    Then I should see "Hero title" in the "Main content"
+    And I should see "Hero title" in the "Main content"
     And I should see "Hero subtitle" in the "Main content"
     And I should not see the link "Hero Link LU"
     And I should see the link "Hero Link AN"
