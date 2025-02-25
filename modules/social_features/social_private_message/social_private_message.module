@@ -34,14 +34,43 @@ function social_private_message_element_info_alter(array &$info) {
 
 /**
  * Remove ability of selecting format on private message (use plain_text only).
+ *
+ * @param array $element
+ *   The form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The state of the form.
+ * @param array $complete_form
+ *   The form structure.
+ *
+ * @return array
+ *   The element data.
  */
-function social_private_message_filter_process_format($element) {
+function social_private_message_filter_process_format(array &$element, FormStateInterface $form_state, array &$complete_form) {
   // Fields listed here will have plain_text format only.
   $plain_text_fields = [
     'edit-message-0',
   ];
 
   if ($element['#type'] == 'text_format' && in_array($element['#id'], $plain_text_fields)) {
+    // Check if callbacks of collabora ckeditor5 sub-module already attached
+    // and remove them, because bellow text format is overriding to plain_text
+    // and any attached html will be displayed for end user.
+    // see: rtcPreSaveSubmit().
+    $module = 'ckeditor5_premium_features_realtime_collaboration';
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      $submits = &$complete_form['actions']['submit']['#submit'];
+      foreach ($submits as $key => $submit) {
+        if (!is_array($submit)) {
+          continue;
+        }
+
+        $submit = reset($submit);
+        if (str_contains($submit, $module)) {
+          unset($submits[$key]);
+        }
+      }
+    }
+
     $element['#format'] = 'plain_text';
     $element['format']['format']['#access'] = FALSE;
     $element['format']['format']['#value'] = 'plain_text';

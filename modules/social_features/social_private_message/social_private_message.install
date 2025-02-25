@@ -194,3 +194,17 @@ function _social_private_message_set_private_message_thread_default_view_setting
 function social_private_message_update_last_removed() : int {
   return 11402;
 }
+
+/**
+ * Change a weight of ckeditor5_premium_features_realtime_collaboration.
+ *
+ * It should be loaded after overriding text format to pass a check.
+ *
+ * @see: hasCollaborationFeaturesEnabled().
+ */
+function social_private_message_update_130001(): void {
+  $module = 'ckeditor5_premium_features_realtime_collaboration';
+  if (\Drupal::moduleHandler()->moduleExists($module)) {
+    module_set_weight($module, 2);
+  }
+}
