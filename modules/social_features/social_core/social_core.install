@@ -844,3 +844,11 @@ function social_core_update_130015(): void {
 
   \Drupal::logger("social_core")->info('Deprecated modules uninstalled.');
 }
+
+/**
+ * Uninstall Social Saas Analytics module.
+ */
+function social_core_update_130017(): void {
+  // Uninstall Social Saas Analytics module without module dependencies.
+  \Drupal::service('module_installer')->uninstall(['social_saas_analytics'], FALSE);
+}
