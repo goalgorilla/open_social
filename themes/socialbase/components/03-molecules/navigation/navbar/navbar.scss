@@ -695,16 +695,17 @@ body {
 
   .search-take-over {
     display: none;
-    height: 50px;
+    height: 100%;
     position: fixed;
-    top: 20%;
+    top: 0;
     left: 0;
+    padding-top: 19vh;
     width: 100%;
     z-index: $zindex-modal;
     pointer-events: none;
     transition: all 0.3s ease-in-out;
 
-    .form-group {
+    .form-group:not(.form-actions) {
       margin: auto;
       width: 80%;
       max-width: 600px;
@@ -742,6 +743,11 @@ body {
       cursor: pointer;
       flex: 0 0 60px;
 
+      &:focus,
+      &:focus-visible {
+        outline: -webkit-focus-ring-color auto 1px;
+      }
+
       svg {
         width: 50px;
         height: 50px;
@@ -765,9 +771,17 @@ body {
     top: 80px;
     right: 80px;
     opacity: 0;
-    transform: translate(10px, 0) rotate(90deg);
-    transition: all 0.5s ease-in-out 0.5s;
-    outline: 0;
+    transform: scale(1);
+    transition: transform 0.2s linear;
+
+    &:focus,
+    &:focus-visible {
+      outline: -webkit-focus-ring-color auto 1px;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
 
     svg {
       height: 48px;
@@ -786,6 +800,7 @@ body {
     .navbar__open-search-block {
       transform: scale(70);
       -moz-transform: scale(70) rotate(0.02deg);
+      pointer-events: none;
       @include z-depth-3;
     }
 
@@ -799,7 +814,6 @@ body {
     }
 
     .btn--close-search-take-over {
-      transform: none;
       opacity: 1;
       pointer-events: all;
     }

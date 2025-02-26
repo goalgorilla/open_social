@@ -231,11 +231,9 @@ class Block extends PreprocessBase implements ContainerFactoryPluginInterface {
     if (isset($variables['content']['search_form'])) {
       $variables['content']['search_form']['#attributes']['role'] = 'search';
       $variables['content']['search_form']['actions']['submit']['#is_button'] = FALSE;
-      $variables['content']['search_form']['actions']['#addsearchicon'] = TRUE;
       if ($region == 'hero') {
         $variables['content']['search_form']['#attributes']['class'][] = 'hero-form';
         $variables['content']['search_form']['#region'] = 'hero';
-        $variables['content']['search_form']['actions']['submit']['#addsearchicon'] = TRUE;
       }
       elseif ($region == 'content_top') {
         $variables['content']['search_form']['#region'] = 'content-top';

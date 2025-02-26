@@ -41,10 +41,6 @@ function socialbase_preprocess_input(&$variables): void {
     $variables['button_type'] = 'flat';
   }
 
-  if (isset($variables['element']['#addsearchicon'])) {
-    $variables['addsearchicon'] = TRUE;
-  }
-
   // Button types are determined in the hook_form_alter and set to be
   // forced here again so the twig fill can use the variable params:
   // ['#button_type']

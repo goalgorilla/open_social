@@ -440,17 +440,18 @@
   }
   .search-take-over {
     display: none;
-    height: 50px;
+    height: 100%;
     position: fixed;
-    top: 20%;
+    top: 0;
     left: 0;
+    padding-top: 19vh;
     width: 100%;
     z-index: 1050;
     pointer-events: none;
     -webkit-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
   }
-  .search-take-over .form-group {
+  .search-take-over .form-group:not(.form-actions) {
     margin: auto;
     width: 80%;
     max-width: 600px;
@@ -499,6 +500,9 @@
         -ms-flex: 0 0 60px;
             flex: 0 0 60px;
   }
+  .search-take-over .form-submit:focus, .search-take-over .form-submit:focus-visible {
+    outline: -webkit-focus-ring-color auto 1px;
+  }
   .search-take-over .form-submit svg {
     width: 50px;
     height: 50px;
@@ -517,11 +521,19 @@
     top: 80px;
     right: 80px;
     opacity: 0;
-    -webkit-transform: translate(10px, 0) rotate(90deg);
-            transform: translate(10px, 0) rotate(90deg);
-    -webkit-transition: all 0.5s ease-in-out 0.5s;
-    transition: all 0.5s ease-in-out 0.5s;
-    outline: 0;
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-transition: -webkit-transform 0.2s linear;
+    transition: -webkit-transform 0.2s linear;
+    transition: transform 0.2s linear;
+    transition: transform 0.2s linear, -webkit-transform 0.2s linear;
+  }
+  .btn--close-search-take-over:focus, .btn--close-search-take-over:focus-visible {
+    outline: -webkit-focus-ring-color auto 1px;
+  }
+  .btn--close-search-take-over:hover {
+    -webkit-transform: scale(1.1);
+            transform: scale(1.1);
   }
   .btn--close-search-take-over svg {
     height: 48px;
@@ -538,6 +550,7 @@
     -webkit-transform: scale(70);
             transform: scale(70);
     -moz-transform: scale(70) rotate(0.02deg);
+    pointer-events: none;
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
             box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   }
@@ -549,8 +562,6 @@
     pointer-events: none;
   }
   .mode-search .btn--close-search-take-over {
-    -webkit-transform: none;
-            transform: none;
     opacity: 1;
     pointer-events: all;
   }
