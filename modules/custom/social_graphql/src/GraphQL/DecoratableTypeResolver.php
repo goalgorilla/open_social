@@ -88,8 +88,8 @@ abstract class DecoratableTypeResolver {
       }
     }
 
-    $klass = get_class($object);
-    throw new \RuntimeException("Can not map instance of '${klass}' to concrete GraphQL Type.");
+    $class = get_class($object);
+    throw new \RuntimeException("Can not map instance of '$class' to concrete GraphQL Type.");
   }
 
 }
