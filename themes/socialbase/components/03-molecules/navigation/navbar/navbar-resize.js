@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, debounce) {
 
   Drupal.behaviors.navbarProfileDropdown = {
     attach: function (context, settings) {
@@ -26,4 +26,34 @@
     }
   }
 
-})(jQuery);
+  Drupal.behaviors.navbarFlexibleHeight = {
+    attach: function (context, settings) {
+
+      function headerFlexibleHeight() {
+        var $navbarHeight = $('.navbar-fixed-top').height();
+        var $mainContent = $('.main-container ');
+
+        if (window.matchMedia('(min-width: 976px)').matches) {
+          $mainContent.css({
+            'padding-top': $navbarHeight,
+            'min-height': `calc(100% - ${$navbarHeight}px)`
+          })
+        } else {
+          $mainContent.css({
+            'padding-top': '0',
+            'min-height': '100%'
+          })
+        }
+      }
+
+      headerFlexibleHeight();
+
+      var headerFlexibleHeightBehaviour = debounce(function () {
+        headerFlexibleHeight();
+      }, 250);
+      window.addEventListener('resize', headerFlexibleHeightBehaviour);
+
+    }
+  }
+
+})(jQuery, Drupal.debounce);
