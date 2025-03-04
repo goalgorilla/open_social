@@ -189,7 +189,14 @@ class SecretFileTest extends KernelTestBase {
     $subscriber = new SecretResponseCacheSubscriber($time);
     $subscriber->onResponse($event);
 
-    $this->assertEquals(42, $response->getMaxAge());
+    // The SecretResponseCacheSubscriber will set the `max_age` based on the
+    // current time. This is done so that even if the request is slow, the
+    // browser gets a max age that's correct, rather than a few seconds
+    // outdated. In our test set-up, if the test takes a second or 2 then this
+    // means the max_age we get back is slightly smaller than the max age we set
+    // in the response. That's why we check more flexibly below.
+    $this->assertGreaterThanOrEqual(40, $response->getMaxAge());
+    $this->assertLessThanOrEqual(42, $response->getMaxAge());
   }
 
   /**
