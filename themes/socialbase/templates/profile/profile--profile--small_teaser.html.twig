@@ -42,7 +42,7 @@
     {% if content.field_profile_function|render or content.field_profile_organization|render %}
       <div class="teaser--small__meta">
         {% if content.field_profile_organization|render %}
-          {{ '@function @ @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
+          {{ '@function @ <span class="notranslate">@organization</span>'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
         {% else %}
           {{ content.field_profile_function }}
         {% endif %}
