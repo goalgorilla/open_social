@@ -60,6 +60,7 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
         $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
         /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
         $event_enrollment = $storage->load($data['event_enrollment']);
+        $route_name = 'user.register';
 
         $mail = $event_enrollment->get('field_email')->getString();
         if (!$event_enrollment->get('field_account')->isEmpty()) {
@@ -67,6 +68,7 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
           $user = \Drupal::entityTypeManager()->getStorage('user')
             ->load($event_enrollment->get('field_account')->getString());
           $mail = $user->getEmail();
+          $route_name = 'user.login';
         }
         $mail_encoded = str_replace(['+', '/', '='], [
           '-',
@@ -81,9 +83,9 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
           'destination' => $destination,
         ];
 
-        $register_link = Url::fromRoute('user.register', $options, ['absolute' => TRUE])
-          ->toString();
-        $replacements[$original] = $register_link;
+        $replacements[$original] = Url::fromRoute(
+          $route_name, $options, ['absolute' => TRUE]
+        )->toString();
       }
       if ($name == 'user_login_event_destination') {
         /** @var \Drupal\message\Entity\Message $message */
