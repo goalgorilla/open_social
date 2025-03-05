@@ -852,3 +852,49 @@ function social_core_update_130017(): void {
   // Uninstall Social Saas Analytics module without module dependencies.
   \Drupal::service('module_installer')->uninstall(['social_saas_analytics'], FALSE);
 }
+
+/**
+ * Uninstall Social Lazy Loading module.
+ */
+function social_core_update_130018(): void {
+  // Nothing to do if the module is not installed.
+  if (!\Drupal::moduleHandler()->moduleExists('social_lazy_loading')) {
+    return;
+  }
+
+  // Uninstall the module (nothing should depend on it but let the module
+  // uninstaller double-check just in case).
+  \Drupal::service('module_installer')->uninstall(['social_lazy_loading'], FALSE);
+}
+
+/**
+ * Uninstall Lazy module.
+ */
+function social_core_update_130019(): void {
+  // Nothing to do if the module is not installed.
+  if (!\Drupal::moduleHandler()->moduleExists('lazy')) {
+    return;
+  }
+
+  // If there are modules depending on lazy, and it is enabled
+  // we can't uninstall it.
+  $module_dependencies = \Drupal::service('extension.list.module')->get('lazy')->required_by ?? [];
+  $has_dependency_enabled = FALSE;
+  foreach ($module_dependencies as $module_name => $module_dependency) {
+    if (\Drupal::moduleHandler()->moduleExists($module_name)) {
+      $has_dependency_enabled = TRUE;
+      break;
+    }
+  }
+  if ($has_dependency_enabled) {
+    return;
+  }
+
+  // Uninstall the module (nothing should depend on it but let the module
+  // uninstaller double-check just in case).
+  \Drupal::service('module_installer')->uninstall(['lazy'], FALSE);
+
+  // Remove configuration.
+  $config = \Drupal::service('config.factory')->getEditable('lazy.settings');
+  $config->delete()->save();
+}
