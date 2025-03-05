@@ -12,7 +12,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 /**
  * Class SocialGroupSecretConfigOverride.
  *
- * @package Drupal\social_group_secret
+ * @package Drupal\social_group_flexible_group
  */
 class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInterface {
 
