@@ -762,7 +762,7 @@ function social_group_update_13001() : void {
 
   // Uninstall the secret group module if enabled.
   // This should take care of removing everything from a secret group.
-  \Drupal::service("module_installer")->uninstall(["social_secret_group_featured", "social_group_secret"]);
+  \Drupal::service("module_installer")->uninstall(["social_group_secret"]);
 
   // Delete our old group types.
   $group_type_storage = \Drupal::entityTypeManager()
