@@ -200,9 +200,11 @@ final class EdaHandler {
    * User locale information update handler.
    */
   public function userLocaleInformationUpdate(UserInterface $user): void {
-    $event_type = 'com.getopensocial.cms.user.settings.locale';
-    $topic_name = 'com.getopensocial.cms.user.settings.locale';
-    $this->dispatch($topic_name, $event_type, $user);
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.user.settings.locale",
+      user: $user,
+    );
   }
 
   /**
