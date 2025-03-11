@@ -540,7 +540,7 @@ body {
 }
 
 .table th a {
-  color: #1d789e;
+  color: var(--primary-color);
 }
 
 .table th.is-active > a {
@@ -2116,12 +2116,7 @@ fieldset strong {
 
 .cover .hero-form[role='search'] .form-submit,
 .cover .hero-form[role='search'] .search-icon {
-  border-radius: 0 5px 5px 0;
-}
-
-.cover .hero-form[role='search'] .search-icon {
-  fill: var(--primary-color);
-  background: white;
+  border-radius: 0 5px 5px 0 !important;
 }
 
 .hero-action-button .dropdown-menu {
@@ -2248,10 +2243,6 @@ fieldset strong {
 .hero-form[role='search'] .form-control:active ~ .search-icon {
   -webkit-box-shadow: 0 2px 0 0 #1f80aa;
           box-shadow: 0 2px 0 0 #1f80aa;
-}
-
-.hero-form[role='search'] .search-icon {
-  fill: #29abe2;
 }
 
 .search-grid--hero .form-wrapper .btn-group:before {
