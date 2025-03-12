@@ -251,6 +251,15 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       '#value' => $default_visibility,
     ];
 
+    // Verify if sub-element of option list can include multiple items So,
+    // then multiple selection should be available for such cases.
+    if (
+      $this->multiple &&
+      ((is_countable(reset($this->options)) ? count(reset($this->options)) : 0) > 1)
+    ) {
+      $element['#multiple'] = TRUE;
+    }
+
     // Disable multi-selection if cross-posting is disabled or current entity
     // type isn't in the allowed list.
     $sg_settings = $this->configFactory->get('social_group.settings');
