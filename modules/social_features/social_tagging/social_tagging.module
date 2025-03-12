@@ -99,7 +99,6 @@ function _social_tagging_form_taxonomy_term_social_tagging_submit(array $form, F
  * Implements hook_form_FORM_ID_alter().
  */
 function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state, $form_id) {
-
   if (Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
     $storage = $form_state->getStorage();
     /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
@@ -120,6 +119,12 @@ function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInte
       // Remove Weight column.
       unset($form['terms']['#header'][1]);
     }
+  }
+
+  // Include the core tabledrag library to the taxonomy list terms
+  // if the reorder taxonomy term user permission is disabled.
+  if (empty($form['terms']['#tabledrag'])) {
+    $form['#attached']['library'][] = 'core/drupal.tabledrag';
   }
 }
 
