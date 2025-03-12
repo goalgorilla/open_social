@@ -219,6 +219,7 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $userMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $userMock->id()->willReturn(10);
     $userMock->getDisplayName()->willReturn('User name');
+    $userMock->getEmail()->willReturn('user@example.com');
     $userMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
     $this->userInterface = $userMock->reveal();
 

@@ -166,7 +166,7 @@ final class EdaEventEnrollmentHandler {
       $enrollee_data = [
         'id' => (string) $enrollee->uuid(),
         'displayName' => (string) $enrollee->getDisplayName(),
-        'email' => "",
+        'email' => (string) $enrollee->getEmail(),
         'href' => Href::fromEntity($enrollee),
       ];
     }
@@ -223,7 +223,7 @@ final class EdaEventEnrollmentHandler {
         ],
         'actor' => [
           'application' => $actor_application ? Application::fromId($actor_application) : NULL,
-          'user' => $enrollee_data,
+          'user' => User::fromEntity($enrollee),
         ],
       ],
       dataContentType: 'application/json',
