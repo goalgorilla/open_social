@@ -147,6 +147,7 @@ function social_follow_content_comment_insert(EntityInterface $entity) {
       $url = Url::fromRoute('flag.action_link_unflag', [
         'flag' => $flag->id(),
         'entity_id' => $entity->id(),
+        'view_mode' => 'default',
       ]);
       // Set the real CSRF token.
       $url->setOptions([

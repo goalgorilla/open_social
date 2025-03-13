@@ -268,18 +268,16 @@ function social_follow_taxonomy_term_followers_count(TermInterface $term) {
  * @param \Drupal\taxonomy\TermInterface $term
  *   Term entity.
  *
- * @return string
- *   Link button to flag/unflag current term.
+ * @return array
+ *   Link button to flag/un-flag the current term.
  */
-function social_follow_taxonomy_flag_link(TermInterface $term) {
-  $flag_link = '';
-
+function social_follow_taxonomy_flag_link(TermInterface $term): array {
   if (!\Drupal::currentUser()->isAnonymous()) {
-    $flag_link_service = \Drupal::service('flag.link_builder');
-    $flag_link = $flag_link_service->build($term->getEntityTypeId(), $term->id(), 'follow_term');
+    return \Drupal::service('flag.link_builder')
+      ->build($term->getEntityTypeId(), $term->id(), 'follow_term', 'default');
   }
 
-  return $flag_link;
+  return [];
 }
 
 /**
