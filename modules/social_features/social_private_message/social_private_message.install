@@ -208,3 +208,13 @@ function social_private_message_update_130001(): void {
     module_set_weight($module, 2);
   }
 }
+
+/**
+ * Revert a default weight of ckeditor5_premium_features_realtime_collaboration.
+ */
+function social_private_message_update_130002(): void {
+  $module = 'ckeditor5_premium_features_realtime_collaboration';
+  if (\Drupal::moduleHandler()->moduleExists($module)) {
+    module_set_weight($module, 0);
+  }
+}
