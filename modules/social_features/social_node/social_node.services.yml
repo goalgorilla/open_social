@@ -10,3 +10,7 @@ services:
     arguments: ['@entity_field.manager']
     tags:
       - { name: event_subscriber }
+
+  Drupal\social_node\EventSubscriber\SocialNodeSearchApiSubscriber:
+    tags:
+      - { name: event_subscriber }

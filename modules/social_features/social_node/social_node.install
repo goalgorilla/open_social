@@ -5,10 +5,15 @@
  * Install, update and uninstall functions for the social_node module.
  */
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\search_api\SearchApiException;
+
 /**
  * Implements hook_install().
  */
-function social_node_install() {
+function social_node_install(): void {
   // Set the view mode to use when shown in activities.
   activity_creator_set_entity_view_mode('node', 'activity');
   // Grant CM+ to bypass node access check.
@@ -21,6 +26,31 @@ function social_node_install() {
     'sitemanager',
     ['bypass node access']
   );
+
+  // We need to reindex all search api indexes with nodes as a data source
+  // to make sure the new search processor "social_node_query_alter"
+  // is applied.
+  try {
+    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
+      /** @var \Drupal\search_api\IndexInterface[] $indexes */
+      $indexes = \Drupal::entityTypeManager()
+        ->getStorage('search_api_index')
+        ->loadMultiple();
+
+      foreach ($indexes as $index) {
+        if (in_array('node', $index->getEntityTypes())) {
+          $needs_reindex[] = $index->id();
+        }
+      }
+
+      if (!empty($needs_reindex)) {
+        social_search_resave_search_indexes($needs_reindex);
+      }
+    }
+  }
+  catch (InvalidPluginDefinitionException | PluginNotFoundException | EntityStorageException $e) {
+    \Drupal::logger('social_node')->error($e->getMessage());
+  }
 }
 
 /**
@@ -72,6 +102,35 @@ function social_node_update_13000(): void {
 
   // Truncate "node_access" table as we won't use it anymore.
   \Drupal::database()->truncate('node_access')->execute();
+
+  // Add new processors to search api indexes with node types.
+  try {
+    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
+      /** @var \Drupal\search_api\IndexInterface[] $indexes */
+      $indexes = \Drupal::entityTypeManager()
+        ->getStorage('search_api_index')
+        ->loadMultiple();
+
+      foreach ($indexes as $index) {
+        if (in_array('node', $index->getEntityTypes())) {
+          // Remove deprecated processors.
+          $index->removeProcessor('content_access');
+          $index->removeProcessor('entity_access_by_field');
+
+          // Remove "node_grants" indexed field.
+          $field_settings = $index->get('field_settings');
+          unset($field_settings['node_grants']);
+          $index->set('field_settings', $field_settings);
+
+          // Save and rebuild index.
+          $index->save();
+        }
+      }
+    }
+  }
+  catch (SearchApiException | InvalidPluginDefinitionException | PluginNotFoundException | EntityStorageException $e) {
+    \Drupal::logger('social_node')->info($e->getMessage());
+  }
 }
 
 /**

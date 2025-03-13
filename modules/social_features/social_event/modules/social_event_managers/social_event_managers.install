@@ -5,6 +5,9 @@
  * Install, update and uninstall functions for the social_event_managers module.
  */
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\user\Entity\Role;
 
 /**
@@ -36,6 +39,31 @@ function social_event_managers_install() {
       $role->grantPermission('manage everything enrollments');
       $role->trustData()->save();
     }
+  }
+
+  // We need to reindex all search api indexes with nodes as a data source
+  // to make sure the new search processor "social_event_managers_query_alter"
+  // is applied.
+  try {
+    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
+      /** @var \Drupal\search_api\IndexInterface[] $indexes */
+      $indexes = \Drupal::entityTypeManager()
+        ->getStorage('search_api_index')
+        ->loadMultiple();
+
+      foreach ($indexes as $index) {
+        if (in_array('node', $index->getEntityTypes())) {
+          $needs_reindex[] = $index->id();
+        }
+      }
+
+      if (!empty($needs_reindex)) {
+        social_search_resave_search_indexes($needs_reindex);
+      }
+    }
+  }
+  catch (InvalidPluginDefinitionException | PluginNotFoundException | EntityStorageException $e) {
+    \Drupal::logger('social_event_managers')->info($e->getMessage());
   }
 }
 

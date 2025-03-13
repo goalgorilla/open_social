@@ -7,6 +7,7 @@
 
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\social_node\Entity\Node;
 use Drupal\social_node\QueryAccess\NodeEntityQueryAlter;
 use Drupal\social_node\SocialNodeForm;
@@ -92,4 +93,19 @@ function social_node_query_views_entity_query_alter(AlterableInterface $query): 
   }
 
   social_node_query_node_access_alter($query);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for "search_api_index".
+ */
+function social_node_search_api_index_presave(EntityInterface $index): void {
+  /** @var \Drupal\search_api\IndexInterface $index */
+  $processors = $index->getProcessors();
+  if (!isset($processors['content_access'])) {
+    return;
+  }
+
+  $index->removeProcessor('content_access');
+  \Drupal::messenger()
+    ->addWarning(t('"Content Access" processor is not allowed for using (replaced by query alters).'));
 }

@@ -43,13 +43,6 @@ field_settings:
     label: 'Language (with fallback)'
     property_path: language_with_fallback
     type: string
-  node_grants:
-    label: 'Node access information'
-    property_path: search_api_node_grants
-    type: string
-    indexed_locked: true
-    type_locked: true
-    hidden: true
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
@@ -111,9 +104,6 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  entity_access_by_field:
-    weights:
-      preprocess_query: -30
   ignorecase:
     plugin_id: ignorecase
     all_fields: true
@@ -125,12 +115,10 @@ processor_settings:
     weights:
       preprocess_index: -10
       preprocess_query: -10
-  content_access:
-    plugin_id: content_access
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
   language_with_fallback: {  }
+  social_search_tagging_query:
+    weights:
+      preprocess_query: -100
   stopwords:
     plugin_id: stopwords
     all_fields: false
