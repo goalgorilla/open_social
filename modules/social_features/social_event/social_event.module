@@ -646,13 +646,16 @@ function social_event_user_delete(EntityInterface $entity): void {
   }
 
   // Fetch all event enrollments where user is enrolled.
-  // @see EventEnrollmentStatusHelper::getAllUserEventEnrollments().
-  $entities = \Drupal::service('social_event.status_helper')
-    ->getAllUserEventEnrollments((string) $entity->id());
+  $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+  $query = $storage->getQuery();
+  $query->accessCheck(FALSE);
+  $entity_ids = $query->condition('field_account', $entity->id())->execute();
 
   // Delete all event_enrollment objects related to that user.
-  $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
-  $storage->delete($entities);
+  if (!empty($entity_ids)) {
+    $entities = $storage->loadMultiple($entity_ids);
+    $storage->delete($entities);
+  }
 }
 
 /**
