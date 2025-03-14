@@ -45,6 +45,7 @@ function social_private_message_install() {
     ->getEditable('private_message.settings')
     ->set('enable_notifications', FALSE)
     ->set('notify_by_default', FALSE)
+    ->set('keys_send', '')
     ->save();
 
   // Set module weight.
@@ -217,4 +218,13 @@ function social_private_message_update_130002(): void {
   if (\Drupal::moduleHandler()->moduleExists($module)) {
     module_set_weight($module, 0);
   }
+}
+
+/**
+ * Remove the default key setting.
+ */
+function social_private_message_update_130003(): void {
+  \Drupal::configFactory()->getEditable('private_message.settings')
+    ->set('keys_send', '')
+    ->save();
 }
