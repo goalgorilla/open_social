@@ -21,3 +21,10 @@ function social_graphql_install() {
 function social_graphql_update_last_removed() : int {
   return 10101;
 }
+
+/**
+ * Enable the graphql_oauth module.
+ */
+function social_graphql_update_25001(): void {
+  \Drupal::service('module_installer')->install(['graphql_oauth']);
+}
