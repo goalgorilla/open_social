@@ -36,12 +36,12 @@
         if (window.matchMedia('(min-width: 976px)').matches) {
           $mainContent.css({
             'padding-top': $navbarHeight,
-            'min-height': `calc(100% - ${$navbarHeight}px)`
+            'min-height': `calc(100vh - ${$navbarHeight}px)`
           })
         } else {
           $mainContent.css({
             'padding-top': '0',
-            'min-height': '100%'
+            'min-height': '100vh'
           })
         }
       }
