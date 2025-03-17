@@ -109,7 +109,7 @@
 
   {% block extra_text %}
     <div class="teaser--small__meta">
-      {{ author_name }} &middot; {{ date }}
+      <span class="notranslate">{{ author_name }}</span> &middot; {{ date }}
 
       {{ content|without('field_' ~ node.bundle ~ '_image') }}
     </div>
