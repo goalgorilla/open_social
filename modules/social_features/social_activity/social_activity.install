@@ -5,6 +5,7 @@
  * The Social activity install.
  */
 
+use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 
 /**
@@ -127,5 +128,41 @@ function social_activity_update_13002(): void {
 
     $config->set('text', $texts)
       ->save();
+  }
+}
+
+/**
+ * Update token from message configuration translation .
+ */
+function social_activity_update_13003(): void {
+  $message_templates = [
+    'message.template.create_topic_community',
+    'message.template.create_topic_gc',
+    'message.template.create_topic_group',
+    'message.template.create_event_group',
+    'message.template.create_event_gc',
+    'message.template.create_event_community',
+    'message.template.create_content_in_joined_group',
+  ];
+
+  $language_manager = \Drupal::languageManager();
+  if (!$language_manager instanceof ConfigurableLanguageManagerInterface) {
+    return;
+  }
+
+  $enabled_languages = $language_manager->getLanguages();
+
+  foreach ($enabled_languages as $language) {
+    foreach ($message_templates as $message_template) {
+      $config_translation = $language_manager->getLanguageConfigOverride($language->getId(), $message_template);
+
+      $messages = $config_translation->get('text');
+      foreach ($messages as $key => $message) {
+        $messages[$key]['value'] = str_replace('message:author', 'message:revision_author', $message['value']);
+      }
+
+      $config_translation->set('text', $messages)
+        ->save();
+    }
   }
 }
