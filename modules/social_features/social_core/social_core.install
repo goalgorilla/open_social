@@ -107,10 +107,10 @@ function social_core_install() {
       'administer site configuration',
       'administer users',
       'administer account settings',
-      'administer themes',
       'administer blocks',
       'administer block content',
       'access social_core dashboard',
+      'access social theme settings',
     ]
   );
   // Create AN Homepage block.
@@ -897,4 +897,21 @@ function social_core_update_130019(): void {
   // Remove configuration.
   $config = \Drupal::service('config.factory')->getEditable('lazy.settings');
   $config->delete()->save();
+}
+
+/**
+ * Add permission for SM to change theme settings for Open Social themes.
+ */
+function social_core_update_130020(): void {
+  user_role_grant_permissions('sitemanager', ['access social theme settings']);
+}
+
+/**
+ * Revoke permission for sitemanager to administer themes.
+ *
+ * So they don't see unnecessary themes, admins can do this in the
+ * Distribution.
+ */
+function social_core_update_130021(): void {
+  user_role_revoke_permissions('sitemanager', ['administer themes']);
 }

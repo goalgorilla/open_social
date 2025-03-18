@@ -86,6 +86,18 @@ class RouteSubscriber extends RouteSubscriberBase {
         }
       }
     }
+
+    if ($route = $collection->get('system.theme_settings_theme')) {
+      $route->setDefaults([
+        '_title' => 'Change colors and styling',
+        '_controller' => '\Drupal\social_core\Controller\ThemeController::getTheme',
+      ]);
+      $route->setRequirements([
+        '_access' => 'TRUE',
+        '_permission' => 'access social theme settings',
+      ]);
+    }
+
   }
 
 }
