@@ -269,6 +269,8 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     $or->isNull('nfcv.entity_id');
     $query->condition($or);
     $query->condition('nfd.nid', $nid);
+    // Node should be published.
+    $query->condition('nfd.status', 1);
     $query->groupBy('nfd.nid');
     $query->addExpression('COUNT(*)');
     $nids = $query->execute()->fetchField();
