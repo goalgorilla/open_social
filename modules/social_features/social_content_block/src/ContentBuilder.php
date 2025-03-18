@@ -157,7 +157,7 @@ class ContentBuilder implements ContentBuilderInterface {
           ->addTag($entity_type->id() . '_access')
           ->addMetaData('block_content', $block_content)
           ->fields('base_table', [$entity_type->getKey('id')])
-          ->condition('default_langcode', '1');
+          ->condition('base_table.default_langcode', '1');
 
         if (isset($definition['bundle'])) {
           $query->condition(
