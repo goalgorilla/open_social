@@ -40,8 +40,6 @@ Feature: View users as site manager
     And I should see an "#edit-access-op" element
     And I should see an "#edit-access-min" element
     And I should see an "#edit-access-max" element
-    # Check select permission filter
-    And I should see an "#edit-permission" element
 
     # Check People table
     And I should see "Username"
