@@ -1173,17 +1173,6 @@ function social_core_form_alter(
     }
   }
 
-  // Hide other GA settings for now. Revise upon feature request.
-  if ($form_id == 'google_analytics_admin_settings' && !in_array('administrator', $account->getRoles())) {
-    $form['tracking_scope']['#access'] = FALSE;
-    $form['tracking']['#access'] = FALSE;
-    // Check administrator checkbox so the GA won't track the admin.
-    $form['tracking']['role_visibility_settings']['google_analytics_visibility_user_role_roles']['#default_value'] = ['administrator'];
-    $form['google_analytics_custom_dimension']['#access'] = FALSE;
-    $form['google_analytics_custom_metric']['#access'] = FALSE;
-    $form['advanced']['#access'] = FALSE;
-  }
-
   // Make sure the Bootstrap theme settings are not visible for anyone except
   // the admin user.
   if ($form_id == 'system_theme_settings' && !$account->hasPermission('administer themes')) {
