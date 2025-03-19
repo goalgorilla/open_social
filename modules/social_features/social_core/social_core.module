@@ -7,6 +7,8 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Field\FieldItemList;
@@ -27,6 +29,7 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
+use Drupal\system\Entity\Menu;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -301,6 +304,14 @@ function _social_core_find_image_field(FieldItemList $field) {
  * For Site information Site details form.
  */
 function social_core_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $account = Drupal::currentUser();
+
+  // Only for SM.
+  if (in_array('sitemanager', $account->getRoles())) {
+    $form['front_page']['#access'] = FALSE;
+    $form['error_page']['#access'] = FALSE;
+  }
+
   // Hide site slogan field and make it disabled as well whenever the user
   // is able to fill out the textfield.
   if (!empty($form['site_information']['site_slogan'])) {
@@ -884,6 +895,9 @@ function social_core_form_alter(
     'node_page_edit_form',
   ];
 
+  // Get the current user.
+  $account = Drupal::currentUser();
+
   // Create new alter hook which allows extensions to add nodes
   // to this list once they have added the group_settings.
   \Drupal::moduleHandler()->alter('social_core_compatible_content_forms', $compatible_content_type_forms);
@@ -1122,6 +1136,67 @@ function social_core_form_alter(
       }
     }
   }
+
+  // If the user is not superuser.
+  if ($form_id == 'views_exposed_form' && !in_array('administrator', $account->getRoles())) {
+    // Unset administrator role from filter,
+    // and the permissions filter to avoid confusion.
+    if (!empty($form['role'])) {
+      unset($form['role']['#options']['administrator']);
+    }
+    if (isset($form['permission'])) {
+      hide($form['permission']);
+    }
+  }
+
+  // If the user is not administrator.
+  if ($form_id == 'views_form_user_admin_people_page_1' && !in_array('administrator', $account->getRoles())) {
+    // The user should not be able to set any other user with the
+    // administration role.
+    unset($form['header']['user_bulk_form']['action']['#options']['user_add_role_action.administrator']);
+    // Which makes this option obsolete as well.
+    unset($form['header']['user_bulk_form']['action']['#options']['user_remove_role_action.administrator']);
+  }
+
+  // At the menu link edit form the parent can be selected by the user. However
+  // here we make sure the user can only select menu links of the menu they are
+  // editing.
+  if ($form_id == 'menu_link_content_menu_link_content_form' && !in_array('administrator', $account->getRoles())) {
+    // Extract the menu key from the default_value.
+    $menu_key = strtok($form['menu_parent']['#default_value'], ':');
+
+    // Loop through the options, remove any that are not part of this menu.
+    foreach ($form['menu_parent']['#options'] as $link_key => $title) {
+      if (strpos($link_key, (string) $menu_key) !== 0) {
+        unset($form['menu_parent']['#options'][$link_key]);
+      }
+    }
+  }
+
+  // Hide other GA settings for now. Revise upon feature request.
+  if ($form_id == 'google_analytics_admin_settings' && !in_array('administrator', $account->getRoles())) {
+    $form['tracking_scope']['#access'] = FALSE;
+    $form['tracking']['#access'] = FALSE;
+    // Check administrator checkbox so the GA won't track the admin.
+    $form['tracking']['role_visibility_settings']['google_analytics_visibility_user_role_roles']['#default_value'] = ['administrator'];
+    $form['google_analytics_custom_dimension']['#access'] = FALSE;
+    $form['google_analytics_custom_metric']['#access'] = FALSE;
+    $form['advanced']['#access'] = FALSE;
+  }
+
+  // Make sure the Bootstrap theme settings are not visible for anyone except
+  // the admin user.
+  if ($form_id == 'system_theme_settings' && !$account->hasPermission('administer themes')) {
+    $form['bootstrap']['#access'] = FALSE;
+    $form['general']['#access'] = FALSE;
+    $form['cdn']['#access'] = FALSE;
+    $form['components']['#access'] = FALSE;
+    $form['javascript']['#access'] = FALSE;
+    $form['advanced']['#access'] = FALSE;
+    // Also move the 'update' group.
+    $form['update']['#access'] = FALSE;
+  }
+
 }
 
 /**
@@ -1546,4 +1621,145 @@ function social_core_preprocess_page(array &$variables): void {
     // Unset links to other theme settings.
     unset($variables['page']['pre_content']);
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_core_form_block_content_hero_call_to_action_block_edit_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  // Get the current user.
+  $account = Drupal::currentUser();
+
+  // If a user with the 'sitemanager' role edits a block.
+  if (in_array('sitemanager', $account->getRoles())) {
+    $route_match = \Drupal::service('current_route_match');
+    $block = $route_match->getParameter('block_content');
+    if ($block) {
+      $links = $block->get('field_call_to_action_link')->getValue();
+
+      foreach ($links as &$link) {
+        if (!empty($link['uri'])) {
+          $real_link = Url::fromUri($link['uri']);
+          if ($real_link->isExternal()) {
+            $link['value'] = $real_link->getUri();
+          }
+          elseif ($real_link->isRouted()) {
+            $link['value'] = '/' . $real_link->getInternalPath();
+          }
+          else {
+            $link['value'] = $real_link->setUrlGenerator()->toString();
+          }
+        }
+      }
+
+      $form['field_call_to_action_link']['widget'][0]['uri']['#default_value'] = $links[0]['value'];
+      $form['field_call_to_action_link']['widget'][1]['uri']['#default_value'] = $links[1]['value'];
+    }
+
+    // Call to a function where the sitemanager is being redirected to the
+    // dashboard upon saving.
+    $form['actions']['submit']['#submit'][] = '_social_core_hero_call_to_action_block_edit_redirect';
+  }
+}
+
+/**
+ * Redirect the user to the dashboard.
+ */
+function _social_core_hero_call_to_action_block_edit_redirect(array &$form, FormStateInterface $form_state): void {
+  $form_state->setRedirect('social_core.dashboard');
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for "user_admin_settings".
+ */
+function social_core_form_user_admin_settings_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  $account = Drupal::currentUser();
+
+  // For the SM.
+  if (in_array('sitemanager', $account->getRoles())) {
+    unset($form['admin_role']);
+    // Rename these options for the sitemanager.
+    $form['registration_cancellation']['user_register']['#options']['admin_only'] = t('Site managers only');
+    $form['registration_cancellation']['user_register']['#options']['visitors_admin_approval'] = t('Visitors, but Site manager approval is required');
+    $form['registration_cancellation']['user_cancel_method']['#description'] = '';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_core_preprocess_system_admin_index(array &$variables): void {
+  // Unset the 'Hide descriptions' link since it gives a 'Access denied' to the
+  // SM.
+  unset($variables['system_compact_link']);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access() for "menu".
+ */
+function social_core_menu_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
+  // Override only apply to the sitemanager. We make sure the sitemanager
+  // can add menu to the footer and main menu.
+  // And can also update them.
+  // We override the "operation add" in RouteSubscriber for all the menu's. So
+  // we have to override the permissions to forbidden for the others again.
+  if ($entity instanceof Menu) {
+    // Override only apply to the sitemanager.
+    if (in_array('sitemanager', $account->getRoles())) {
+      if ($entity->id() == 'main' || $entity->id() == 'footer') {
+        // Site managers may update the main and footer menu. This means
+        // they can see the overview and change the weight. They can't delete
+        // though.
+        if ($operation === 'update') {
+          return AccessResult::allowed();
+        }
+      }
+    }
+  }
+
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access() for "menu_link_content".
+ */
+function social_core_menu_link_content_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
+  // Override only apply to the sitemanager. We make sure the sitemanager
+  // can add menu items to the footer and main menu.
+  // And can also update them.
+  // We override the "operation add" in RouteSubscriber for all the menu's. So
+  // we have to override the permissions to forbidden for the others again.
+  if (in_array('sitemanager', $account->getRoles())) {
+    /** @var Drupal\Core\Entity\ContentEntityInterface $entity */
+    if ($entity->get('menu_name')->value != 'main' && $entity->get('menu_name')->value != 'footer') {
+      // Funny enough delete is the operation for adding menu links.
+      if ($operation === 'delete') {
+        return AccessResult::forbidden();
+      }
+    }
+    else {
+      // Funny enough delete is the operation for adding menu links.
+      if ($operation === 'update') {
+        return AccessResult::allowed();
+      }
+    }
+  }
+
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access() for "date_format".
+ */
+function social_core_date_format_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
+  // Exception for DateFormat, since it's an entity.
+  if ($entity instanceof DateFormat) {
+    // Also, it must be SM.
+    if (in_array('sitemanager', $account->getRoles())) {
+      // Allow access.
+      return AccessResult::allowed();
+    }
+  }
+
+  return AccessResult::neutral();
 }
