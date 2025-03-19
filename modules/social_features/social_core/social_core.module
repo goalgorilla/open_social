@@ -1534,3 +1534,16 @@ function social_core_entity_update(EntityInterface $entity): void {
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_core_preprocess_page(array &$variables): void {
+  // Remove pages from the theme settings.
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $account = \Drupal::currentUser();
+  if ($route_name === 'system.theme_settings_theme' && $account->hasPermission('administer themes')) {
+    // Unset links to other theme settings.
+    unset($variables['page']['pre_content']);
+  }
+}
