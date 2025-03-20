@@ -1,0 +1,15 @@
+dependencies:
+  module:
+    - taxonomy_access_fix
+  config:
+    - user.role.anonymous
+items:
+  user.role.anonymous:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'view terms in event_types'
+          - 'view term names in event_types'
+          - 'select terms in event_types'
