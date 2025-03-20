@@ -1,0 +1,15 @@
+dependencies:
+  module:
+    - taxonomy_access_fix
+  config:
+    - user.role.sitemanager
+items:
+  user.role.sitemanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'view terms in report_reasons'
+          - 'view term names in report_reasons'
+          - 'select terms in report_reasons'
