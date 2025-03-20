@@ -19,18 +19,21 @@ function social_user_install() {
     [
       'cancel account',
       'change own username',
+      'select account cancellation method',
     ]
   );
   user_role_grant_permissions(
     'verified',
     [
       'access user profiles',
+      'select account cancellation method',
     ]
   );
   user_role_grant_permissions(
     'contentmanager',
     [
       'access user profiles',
+      'select account cancellation method',
     ]
   );
   user_role_grant_permissions(
@@ -45,6 +48,7 @@ function social_user_install() {
       'assign sitemanager role',
       'assign verified role',
       'view blocked user',
+      'select account cancellation method',
     ]
   );
 }
