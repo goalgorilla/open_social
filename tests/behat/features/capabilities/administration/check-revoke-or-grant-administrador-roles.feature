@@ -23,9 +23,7 @@ Feature: Revoking or granting roles by permission
     And I am on "admin/people"
 
     # Filter the users list to show only administrators
-    When I select "Administrator" from "role"
-    And I press "Filter"
-    And I check the box "edit-views-bulk-operations-bulk-form-0"
+    When I check the box "edit-views-bulk-operations-bulk-form-0"
     And I wait for "1" seconds
     And I select "Remove a role from the selected users" from "Action"
     And I press the "Apply to selected items" button
