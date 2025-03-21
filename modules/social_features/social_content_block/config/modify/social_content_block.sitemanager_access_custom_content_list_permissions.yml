@@ -1,0 +1,17 @@
+dependencies:
+  module:
+    - block_content
+  config:
+    - user.role.sitemanager
+    - block_content.type.custom_content_list
+items:
+  user.role.sitemanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'delete any custom_content_list block content'
+          - 'create custom_content_list block content'
+          - 'edit any custom_content_list block content'
+          - 'access block library'

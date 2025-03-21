@@ -1,0 +1,14 @@
+dependencies:
+  module:
+    - block_content
+  config:
+    - user.role.sitemanager
+    - block_content.type.hero_call_to_action_block
+items:
+  user.role.sitemanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'edit any hero_call_to_action_block block content'
