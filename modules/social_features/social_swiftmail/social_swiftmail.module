@@ -130,6 +130,13 @@ function social_swiftmail_preprocess_email(array &$variables): void {
     $context = $email->getParam('legacy_message');
     $context = $context['params']['context'] ?? NULL;
   }
+  /** @var \Drupal\social_swiftmail\Service\SocialSwiftmailHelper $helper_service */
+  $helper_service = \Drupal::service('social_swiftmail.helper');
+
+  // Check if custom e-mail setting for user greeting is enabled.
+  if ($helper_service->disabledGreeting($email->getSubType())) {
+    return;
+  }
 
   // In our Symfony Mailer we have the EmailAdjuster reroute plugin.
   // If this is being applied to the emails we need a different way of getting

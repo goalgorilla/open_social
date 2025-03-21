@@ -64,6 +64,9 @@ function social_swiftmail_install() {
       $config->delete();
     }
   }
+
+  // Set a default the disabled user greetings keys.
+  \Drupal::service('social_swiftmail.helper')->setDefaultDisabledGreetingKeys();
 }
 
 /**
@@ -71,4 +74,11 @@ function social_swiftmail_install() {
  */
 function social_swiftmail_update_last_removed() : int {
   return 11004;
+}
+
+/**
+ * Update the disabled user greetings key to set a default.
+ */
+function social_swiftmail_update_13001(): void {
+  \Drupal::service('social_swiftmail.helper')->setDefaultDisabledGreetingKeys();
 }

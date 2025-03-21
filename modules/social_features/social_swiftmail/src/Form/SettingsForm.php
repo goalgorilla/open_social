@@ -179,6 +179,13 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('do_not_send_emails_new_users'),
     ];
 
+    $form['disabled_user_greeting_keys'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Disabled email message keys with user greeting'),
+      '#description' => $this->t("Each email comes with a user greeting on top, in some cases we don't want that, so any message key listed here(one per line) will not include the greeting."),
+      '#default_value' => $config->get('disabled_user_greeting_keys'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -192,6 +199,7 @@ class SettingsForm extends ConfigFormBase {
     $config
       ->set('remove_open_social_branding', $form_state->getValue('remove_open_social_branding'))
       ->set('do_not_send_emails_new_users', $form_state->getValue('do_not_send_emails_new_users'))
+      ->set('disabled_user_greeting_keys', $form_state->getValue('disabled_user_greeting_keys'))
       ->set('template_header', $form_state->getValue('template_header'))
       ->set('template_footer', $form_state->getValue('template_footer'));
 
