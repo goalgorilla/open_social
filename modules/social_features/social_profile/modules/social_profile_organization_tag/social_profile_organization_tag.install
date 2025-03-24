@@ -222,9 +222,18 @@ function social_profile_organization_tag_update_130002(): void {
 /**
  * Add token-replacement for create_post_group message template.
  */
-function social_profile_organization_tag_update_240001(): void {
+function social_profile_organization_tag_update_130003(): void {
   _social_profile_organization_tag_replace_token(
     '[message:author:display-name]',
     '[message:author:display-name][message:author:organization-tag]'
   );
+}
+
+/**
+ * Clean up empty token for create_post_group message template.
+ */
+function social_profile_organization_tag_update_130004(): void {
+  \Drupal::configFactory()->getEditable('message.template.create_post_group')
+    ->set('settings.token options.clear', TRUE)
+    ->save();
 }
