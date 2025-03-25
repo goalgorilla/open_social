@@ -361,6 +361,8 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
   // and not only on the mentioned routes.
   if (!$can_show_enrollments_link) {
     unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
+    // We also want to hide 'Manage Enrollment' page to avoid any confusion.
+    unset($data['tabs'][0]['views_view:view.event_manage_enrollments.page_manage_enrollments']);
   }
 }
 
