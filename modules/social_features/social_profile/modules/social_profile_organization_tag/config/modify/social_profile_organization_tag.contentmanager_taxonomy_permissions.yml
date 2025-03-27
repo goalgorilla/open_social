@@ -1,0 +1,16 @@
+dependencies:
+  module:
+    - taxonomy_access_fix
+  config:
+    - user.role.contentmanager
+items:
+  user.role.contentmanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'delete terms in profile_organization_tag'
+          - 'edit terms in profile_organization_tag'
+          - 'create terms in profile_organization_tag'
+          - 'edit profile organization tags'
