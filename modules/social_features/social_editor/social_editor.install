@@ -47,3 +47,29 @@ function social_editor_update_13002(): string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Enable heading1 for full & basic html formats.
+ */
+function social_editor_update_13003(): string {
+  // Load & update the current configuration to make sure that we won't rewrite
+  // existing allowed tags list.
+  $config = \Drupal::configFactory()->getEditable('filter.format.basic_html');
+  $allowed_tags = $config->get('filters.filter_html.settings.allowed_html');
+  if ($allowed_tags) {
+    if (strpos($allowed_tags, '<h1>') === FALSE) {
+      $allowed_tags .= ' <h1>';
+    }
+    $config->set('filters.filter_html.settings.allowed_html', trim($allowed_tags));
+    $config->save();
+  }
+
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_editor', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
