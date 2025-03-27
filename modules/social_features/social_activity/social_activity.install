@@ -157,12 +157,15 @@ function social_activity_update_13003(): void {
       $config_translation = $language_manager->getLanguageConfigOverride($language->getId(), $message_template);
 
       $messages = $config_translation->get('text');
-      foreach ($messages as $key => $message) {
-        $messages[$key]['value'] = str_replace('message:author', 'message:revision_author', $message['value']);
-      }
 
-      $config_translation->set('text', $messages)
-        ->save();
+      if ($messages) {
+        foreach ($messages as $key => $message) {
+          $messages[$key]['value'] = str_replace('message:author', 'message:revision_author', $message['value']);
+        }
+
+        $config_translation->set('text', $messages)
+          ->save();
+      }
     }
   }
 }
