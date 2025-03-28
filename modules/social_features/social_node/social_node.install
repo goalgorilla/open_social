@@ -30,26 +30,8 @@ function social_node_install(): void {
   // We need to reindex all search api indexes with nodes as a data source
   // to make sure the new search processor "social_node_query_alter"
   // is applied.
-  try {
-    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
-      /** @var \Drupal\search_api\IndexInterface[] $indexes */
-      $indexes = \Drupal::entityTypeManager()
-        ->getStorage('search_api_index')
-        ->loadMultiple();
-
-      foreach ($indexes as $index) {
-        if (in_array('node', $index->getEntityTypes())) {
-          $needs_reindex[] = $index->id();
-        }
-      }
-
-      if (!empty($needs_reindex)) {
-        social_search_resave_search_indexes($needs_reindex);
-      }
-    }
-  }
-  catch (InvalidPluginDefinitionException | PluginNotFoundException | EntityStorageException $e) {
-    \Drupal::logger('social_node')->error($e->getMessage());
+  if (function_exists('social_search_resave_data_source_search_indexes')) {
+    social_search_resave_data_source_search_indexes(['node']);
   }
 }
 

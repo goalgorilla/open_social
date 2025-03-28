@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\social_search\Plugin\search_api\processor;
 
 use Drupal\Core\Session\AccountInterface;
-use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\user\Entity\User;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -23,8 +25,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class TaggingQuery extends ProcessorPluginBase {
 
-  use LoggerTrait;
-
   /**
    * Constructs an "TaggingQuery" object.
    *
@@ -34,17 +34,17 @@ class TaggingQuery extends ProcessorPluginBase {
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   The logging channel.
    * @param \Drupal\Core\Session\AccountInterface $currentUser
    *   The current user account.
-   * @param \Psr\Log\LoggerInterface|null $logger
-   *   The logging channel.
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
+    protected LoggerInterface $logger,
     protected AccountInterface $currentUser,
-    protected $logger,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -57,8 +57,8 @@ class TaggingQuery extends ProcessorPluginBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('current_user'),
       $container->get('logger.channel.social_search'),
+      $container->get('current_user'),
     );
   }
 
@@ -78,7 +78,7 @@ class TaggingQuery extends ProcessorPluginBase {
    *   We call it "access" conditions as it allows you to combine different
    *   access rules under one condition with OR clause.
    *
-   *   The filter structure will looks like this:
+   *   The filter structure will look like this:
    *    [any other search conditions]
    *    AND
    *    (
@@ -123,10 +123,9 @@ class TaggingQuery extends ProcessorPluginBase {
 
     if (!$account instanceof AccountInterface) {
       $account = $query->getOption('search_api_access_account');
-      $this->logger
-        ?->warning('An illegal user UID was given for node access: @uid.', [
-          '@uid' => is_scalar($account) ? $account : var_export($account, TRUE),
-        ]);
+      $this->logger->warning('An illegal user UID was given for node access: @uid.', [
+        '@uid' => is_scalar($account) ? $account : var_export($account, TRUE),
+      ]);
 
       return;
     }
@@ -140,21 +139,19 @@ class TaggingQuery extends ProcessorPluginBase {
       /** @var \Drupal\search_api\Plugin\search_api\datasource\ContentEntity $datasource */
       // This condition group will be applied to each entity type.
       $entity_type_id = $datasource->getEntityTypeId();
-      $by_datasource = $query->createConditionGroup('AND', [$entity_type_tag = "social_entity_type_$entity_type_id"]);
+
+      // Search API doesn't allow altering tagged condition groups with hooks or
+      // event subscribers.
+      // Use "SocialSearchApi::findTaggedQueryConditionsGroup()" to find the
+      // desired tagged condition group.
+      /* @see \Drupal\social_search\Utility\SocialSearchApi::findTaggedQueryConditionsGroup() */
+      $by_datasource = $query->createConditionGroup('AND', ["social_entity_type_$entity_type_id"]);
       $by_datasource->addCondition('search_api_datasource', $datasource_id);
-
-      // Add tag to allow altering the query.
-      $query->addTag($entity_type_tag);
-
-      $entity_access_tag = "social_entity_type_{$entity_type_id}_access";
-      // This condition group will be applied to each entity type access.
-      $access = $query->createConditionGroup('OR', [$entity_access_tag]);
-      $by_datasource->addConditionGroup($access);
-
-      // Add tag to allow altering the query.
-      $query->addTag($entity_access_tag);
-
       $main_condition_group->addConditionGroup($by_datasource);
+
+      // This condition group will be applied to each entity type access.
+      $access = $query->createConditionGroup('OR', ["social_entity_type_{$entity_type_id}_access"]);
+      $by_datasource->addConditionGroup($access);
     }
   }
 

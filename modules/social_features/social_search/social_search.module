@@ -5,7 +5,10 @@
  * The Social search module.
  */
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\search_api\Entity\Index;
@@ -216,6 +219,50 @@ function social_search_views_data_alter(array &$data) {
  */
 function social_search_block_view_search_hero_block_alter(array &$build, BlockPluginInterface $block) {
   $build['#configuration']['label'] = t('Search');
+}
+
+/**
+ * Resaves specific search indexes based on the given entity type IDs.
+ *
+ *   This function checks if any search API indexes are associated
+ *   with the specified entity type IDs.
+ *   If matches are found, those indexes are scheduled for reindexing.
+ *   If no entity type IDs are provided, the function does nothing;
+ *   in such cases, "social_search_resave_search_indexes()"
+ *   should be used instead.
+ *
+ * @param array $entity_type_ids
+ *   An array of entity type IDs to filter the search indexes.
+ *   If empty, the function will exit without performing any actions.
+ */
+function social_search_resave_data_source_search_indexes(array $entity_type_ids = []): void {
+  if (empty($entity_type_ids)) {
+    // If no entity types specified, we don't want do anything.
+    // In this case, use "social_search_resave_search_indexes()" instead.
+    return;
+  }
+
+  try {
+    /** @var \Drupal\search_api\IndexInterface[] $indexes */
+    $indexes = \Drupal::entityTypeManager()
+      ->getStorage('search_api_index')
+      ->loadMultiple();
+
+    foreach ($indexes as $index) {
+      if (array_intersect($entity_type_ids, $index->getEntityTypes())) {
+        $needs_reindex[] = $index->id();
+      }
+    }
+
+    if (empty($needs_reindex)) {
+      return;
+    }
+
+    social_search_resave_search_indexes($needs_reindex);
+  }
+  catch (InvalidPluginDefinitionException | PluginNotFoundException | EntityStorageException $e) {
+    \Drupal::logger('social_search')->error($e->getMessage());
+  }
 }
 
 /**

@@ -14,6 +14,9 @@ class SocialSearchApi {
   /**
    * Helps to find a tagged query condition group in a search api query.
    *
+   *   If a query has multiple groups with the same tag, the method returns
+   *   a group with the first entry of a desired tag.
+   *
    * @param string $tag
    *   The target query conditions group tag.
    * @param \Drupal\search_api\Query\ConditionGroupInterface $conditions
