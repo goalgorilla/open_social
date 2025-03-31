@@ -94,6 +94,9 @@ processor_settings:
       preprocess_index: -10
       preprocess_query: -10
   language_with_fallback: {  }
+  social_search_tagging_query:
+    weights:
+      preprocess_query: -100
   stopwords:
     plugin_id: stopwords
     all_fields: false
@@ -165,7 +168,6 @@ processor_settings:
       - field_group_description
       - label
       - name
-      - type
     ignorable: '[''¿¡!?,.:;]'
     strip:
       character_sets:

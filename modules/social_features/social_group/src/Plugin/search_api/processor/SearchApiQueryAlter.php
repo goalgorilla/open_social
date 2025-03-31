@@ -101,10 +101,8 @@ class SearchApiQueryAlter extends ProcessorPluginBase {
       return;
     }
 
-    $account = $query->getOption('social_search_access_account');
-
-    // Don't do anything if the user can access all content.
-    if ($account->hasPermission('bypass node access')) {
+    // Check if we can skip access check for this condition.
+    if (SocialSearchApi::skipAccessCheck($or)) {
       return;
     }
 
@@ -115,6 +113,7 @@ class SearchApiQueryAlter extends ProcessorPluginBase {
       return;
     }
 
+    $account = $query->getOption('social_search_access_account');
     $user_groups = $this->groupHelper->getAllGroupsForUser((int) $account->id());
 
     $groups_with_membership = $query->createConditionGroup()

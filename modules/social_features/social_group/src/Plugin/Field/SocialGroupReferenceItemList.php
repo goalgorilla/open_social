@@ -48,12 +48,16 @@ class SocialGroupReferenceItemList extends EntityReferenceFieldItemList {
    * {@inheritdoc}
    */
   public function computeValue(): void {
+    // @todo "$plugin_id" should be counted dynamically.
     // We only support nodes and users.
     if ($this->getEntity()->getEntityTypeId() === 'node') {
       $plugin_id = 'group_node:' . $this->getEntity()->bundle();
     }
     elseif ($this->getEntity()->getEntityTypeId() === 'user') {
       $plugin_id = 'group_membership';
+    }
+    elseif ($this->getEntity()->getEntityTypeId() === 'media') {
+      $plugin_id = 'group_media:' . $this->getEntity()->bundle();
     }
     else {
       return;

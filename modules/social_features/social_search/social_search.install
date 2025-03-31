@@ -175,3 +175,13 @@ function social_search_update_13003(): string {
   $updateHelper->executeUpdate('social_search', __FUNCTION__);
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Enable a new search api processor "social_search_tagging_query" to indexes.
+ */
+function social_search_update_13004(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_search', __FUNCTION__);
+  return $updateHelper->logger()->output();
+}

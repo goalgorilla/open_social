@@ -128,10 +128,9 @@ function social_group_install(): void {
   _social_group_alter_admin_people_view();
 
   // We need to reindex all search api indexes with nodes as a data source
-  // to make sure the new search processor "social_group_query_alter"
-  // is applied.
+  // to make sure the new search processors are applied.
   if (function_exists('social_search_resave_data_source_search_indexes')) {
-    social_search_resave_data_source_search_indexes(['node']);
+    social_search_resave_data_source_search_indexes(['node', 'group']);
   }
 }
 
@@ -1185,4 +1184,16 @@ function social_group_update_13022(): string {
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_group', __FUNCTION__);
   return $updater->logger()->output();
+}
+
+/**
+ * Add a "social_group_group_access" search api processor to search indexes.
+ */
+function social_group_update_13023() : void {
+  // We need to reindex all search api indexes with groups as a data source
+  // to make sure the new search processor "social_group_group_access"
+  // is applied.
+  if (function_exists('social_search_resave_data_source_search_indexes')) {
+    social_search_resave_data_source_search_indexes(['group']);
+  }
 }

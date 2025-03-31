@@ -163,10 +163,8 @@ class SearchApiQueryAlter extends ProcessorPluginBase {
       return;
     }
 
-    $account = $query->getOption('social_search_access_account');
-
-    // Don't do anything if the user can access all content.
-    if ($account->hasPermission('bypass node access')) {
+    // Check if we can skip access check for this condition.
+    if (SocialSearchApi::skipAccessCheck($or)) {
       return;
     }
 
@@ -174,6 +172,19 @@ class SearchApiQueryAlter extends ProcessorPluginBase {
     $visibility_field = $this->findField('entity:node', 'field_content_visibility');
     if (!$type instanceof FieldInterface || !$visibility_field instanceof FieldInterface) {
       // The required fields don't exist in the index.
+      return;
+    }
+
+    $account = $query->getOption('social_search_access_account');
+    // Allow access to all content if user has appropriate permission.
+    if ($account->hasPermission('bypass node access')) {
+      // We need explicitly to allow access to any content otherwise
+      // other modules can add their own sub-conditions,
+      // and our specific bypass check will be ignored.
+      $or->addCondition($visibility_field->getFieldIdentifier(), (string) SocialSearchApi::BYPASS_VALUE, '<>');
+      // Add bypass tag to allow other modules check and skip conditions
+      // building for grand users.
+      SocialSearchApi::applyBypassAccessTag($or);
       return;
     }
 
