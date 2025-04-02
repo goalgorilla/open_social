@@ -632,33 +632,6 @@ function social_event_flagging_insert(EntityInterface $entity) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_delete().
- */
-function social_event_user_delete(EntityInterface $entity): void {
-  // getAllUserEventEnrollments's requirements are that we expect id to always
-  // be a string or string-typed number until Drupal core gets its
-  // act together.
-  // @see https://github.com/goalgorilla/cablecar/pull/2750#discussion_r1942414712
-  if ((string) $entity->id() === "0") {
-    // Also, we don't expect the anonymous user to be passed to
-    // hook_user_delete.
-    throw new RuntimeException("Anonymous user should not be passed to hook_user_delete.");
-  }
-
-  // Fetch all event enrollments where user is enrolled.
-  $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
-  $query = $storage->getQuery();
-  $query->accessCheck(FALSE);
-  $entity_ids = $query->condition('field_account', $entity->id())->execute();
-
-  // Delete all event_enrollment objects related to that user.
-  if (!empty($entity_ids)) {
-    $entities = $storage->loadMultiple($entity_ids);
-    $storage->delete($entities);
-  }
-}
-
-/**
  * Formats the event start end date.
  *
  * @param \Drupal\node\NodeInterface $event
