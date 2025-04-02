@@ -99,9 +99,10 @@ function social_core_install() {
       'create terms in topic_types',
       'delete terms in topic_types',
       'edit terms in topic_types',
-      'administer site configuration',
       'administer users',
       'administer account settings',
+      'administer social site configuration',
+      'administer social menu links',
       'access social_core dashboard',
       'access social theme settings',
     ]
@@ -907,4 +908,24 @@ function social_core_update_130020(): void {
  */
 function social_core_update_130021(): void {
   user_role_revoke_permissions('sitemanager', ['administer themes']);
+}
+
+/**
+ * Change permission for SM.
+ *
+ * So they can administer site information, menu links for the main
+ * and footer menu, and account settings.
+ */
+function social_core_update_130022(): void {
+  $permissions = [
+    'administer account settings',
+    'administer social site configuration',
+    'administer social menu links',
+  ];
+  user_role_grant_permissions('sitemanager', $permissions);
+
+  // Revoke administer site configuration as we use our own
+  // permission administer social site configuration for this.
+  // This is to prevent SM to get access to a lot of additional items.
+  user_role_revoke_permissions('sitemanager', ['administer site configuration']);
 }

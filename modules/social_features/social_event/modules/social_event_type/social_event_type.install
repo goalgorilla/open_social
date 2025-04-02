@@ -93,3 +93,10 @@ function social_event_type_update_130002(): void {
     ->set('content', $content)
     ->save();
 }
+
+/**
+ * Grant permissions for SM to set social event type settings.
+ */
+function social_event_type_update_130003(): void {
+  user_role_grant_permissions('sitemanager', ['set social event type settings']);
+}

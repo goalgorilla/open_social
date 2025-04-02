@@ -98,6 +98,22 @@ class RouteSubscriber extends RouteSubscriberBase {
       ]);
     }
 
+    // Override the permission for the site settings route.
+    // Which uses administer site configuration as permission, which
+    // is used in too many places and we don't want to give that out.
+    if ($route = $collection->get('system.site_information_settings')) {
+      $route->setRequirements([
+        '_permission' => 'administer social site configuration',
+      ]);
+    }
+
+    // Override the permission for the menu link route.
+    // Also see social_core_menu_link_content_access().
+    if ($route = $collection->get('entity.menu.add_link_form')) {
+      $route->setRequirements([
+        '_permission' => 'administer social menu links',
+      ]);
+    }
   }
 
 }
