@@ -194,16 +194,17 @@ class ThemeSuggestions extends BaseThemeSuggestions implements ContainerFactoryP
         if (is_array($context1['arguments'])) {
           $arguments = preg_replace('/[^a-zA-Z0-9]/', '_', $context1['arguments']);
           foreach ($arguments as $argument) {
-            // These stream blocks can be added on landing pages.
-            if (str_contains($argument, 'block_stream_landing_with_post') || str_contains($argument, 'block_stream_landing') || str_contains($argument, 'block_stream_homepage_without_post') || str_contains($argument, 'block_stream_homepage') || str_contains($argument, 'block_stream_explore')) {
-              $suggestions[] = 'big_pipe_interface_preview' . '__' . $argument;
-            }
             // This is the main stream activity block.
             if (str_contains($argument, 'views_block__activity_stream')) {
               $suggestions[] = 'big_pipe_interface_preview__views_block__activity_stream';
             }
+            // Generic theme suggestion for big-pipe.
+            else if (!empty($argument) && $argument != 'full') {
+              $suggestions[] = 'big_pipe_interface_preview' . '__' . str_replace('socialblue_', '', $argument);
+            }
           }
         }
+
         break;
 
       case 'confirm_form':
