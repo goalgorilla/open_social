@@ -983,7 +983,7 @@ function _social_group_flexible_group_type_change_topic_icon_ajax(array $form, F
  * differently.
  */
 function social_group_flexible_group_form_group_content_group_content_type_7fcb76fdf61a9_group_request_membership_form_alter(&$form, FormStateInterface $form_state, $form_id) : void {
-  // Slightly tweak the text shown depending on whether a message can be added to the form.
+  // Slightly tweak the text shown depending on whether a message can be added.
   $form_description = isset($form['field_grequest_message']) && ($form['field_grequest_message']['#access'] ?? TRUE)
     ? t("You can leave a message in your request. Only when your request is approved, you will receive a notification via email and notification center.")
     : t("Only when your request is approved, you will receive a notification via email and notification center.");

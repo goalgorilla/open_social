@@ -113,8 +113,6 @@ function social_group_request_group_content_insert(GroupRelationshipInterface $g
  */
 function _social_group_request_approve_request_for_joined_member(GroupMembershipInterface $membership) : void {
   $requestManager = \Drupal::service("grequest.membership_request_manager");
-  assert($requestManager instanceof MembershipRequestManager);
-
   $approver_id = \Drupal::currentUser()->id();
 
   $user = $membership->getEntity();

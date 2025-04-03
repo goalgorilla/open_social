@@ -159,7 +159,7 @@ class SocialGroupRequestJoin extends JoinBase {
           'data-dialog-type' => 'modal',
           'data-dialog-options' => json_encode([
             'width' => '582px',
-            'dialogClass' => 'social_group-popup'
+            'dialogClass' => 'social_group-popup',
           ]),
         ],
       ];

@@ -5,6 +5,7 @@
  * Install/Uninstall/Update hooks for social_group_request module.
  */
 
+use Drupal\Core\Entity\Sql\SqlEntityStorageInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 
@@ -140,7 +141,7 @@ function social_group_request_update_13004(): void {
 /**
  * Update group request status field type.
  */
-function social_group_request_update_13005() {
+function social_group_request_update_13005(): void {
   // This function uses raw SQL magic to create a new column for the updated
   // values so that simple update statements can be used to convert the current
   // value to the new `grequest` module value.
@@ -151,7 +152,7 @@ function social_group_request_update_13005() {
   // matches what we'd have on a new installation.
   $logger = \Drupal::logger("social_group_request");
   $storage = \Drupal::entityTypeManager()->getStorage("group_content");
-  if (!$storage instanceof \Drupal\Core\Entity\Sql\SqlEntityStorageInterface) {
+  if (!$storage instanceof SqlEntityStorageInterface) {
     $logger->error("Can not update table mapping for non-SQL storage backends.");
     return;
   }
