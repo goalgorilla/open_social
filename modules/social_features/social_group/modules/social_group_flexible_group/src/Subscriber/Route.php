@@ -55,6 +55,8 @@ class Route extends RouteSubscriberBase {
         $current = $route->getRequirements();
         $requirements = array_merge($current, ['_flexible_group_content_visibility' => 'public']);
         $route->addRequirements($requirements);
+        // For custom access we need the setRequirement.
+        $route->setRequirement('_custom_access', '\Drupal\social_group_flexible_group\Controller\FlexibleGroupController::access');
       }
     }
 
