@@ -7,7 +7,7 @@ use Drupal\group\Plugin\Group\RelationHandler\EntityReferenceInterface;
 use Drupal\group\Plugin\Group\RelationHandler\EntityReferenceTrait;
 
 /**
- * Configures entity reference for the group_membership_request relation plugin.
+ * Configures the entity reference for the group_membership_request relation plugin.
  */
 class GroupMembershipRequestEntityReference implements EntityReferenceInterface {
 
@@ -26,7 +26,7 @@ class GroupMembershipRequestEntityReference implements EntityReferenceInterface 
   /**
    * {@inheritdoc}
    */
-  public function configureField(BaseFieldDefinition $entity_reference): void {
+  public function configureField(BaseFieldDefinition $entity_reference) {
     if (!isset($this->parent)) {
       throw new \LogicException('Using EntityReferenceTrait without assigning a parent or overwriting the methods.');
     }

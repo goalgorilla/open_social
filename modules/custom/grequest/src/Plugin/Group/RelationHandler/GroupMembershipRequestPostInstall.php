@@ -11,7 +11,7 @@ use Drupal\group\Plugin\Group\RelationHandler\PostInstallInterface;
 use Drupal\group\Plugin\Group\RelationHandler\PostInstallTrait;
 
 /**
- * Provides post install tasks for the grequest relation plugin.
+ * Provides post install tasks for the group_membership_request relation plugin.
  */
 class GroupMembershipRequestPostInstall implements PostInstallInterface {
 
@@ -43,7 +43,7 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
     }
 
     $tasks = $this->parent->getInstallTasks();
-    $tasks['install-group-membership-request-fields'] = [$this, 'installGroupMembershipRequestFields'];
+    $tasks['install-group-request-membership-fields'] = [$this, 'installGroupRequestsMembershipFields'];
 
     return $tasks;
   }
@@ -53,10 +53,11 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
    *
    * @param \Drupal\group\Entity\GroupRelationshipTypeInterface $relationship_type
    *   The GroupRelationshipType created by installing the plugin.
-   * @param bool $is_syncing
+   * @param $is_syncing
    *   Whether config is syncing.
    */
-  public function installGroupMembershipRequestFields(GroupRelationshipTypeInterface $relationship_type, $is_syncing): void {
+  public function installGroupRequestsMembershipFields(GroupRelationshipTypeInterface $relationship_type, $is_syncing) {
+
     // Only create config objects while config import is not in progress.
     if ($is_syncing === TRUE) {
       return;
@@ -64,6 +65,8 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
 
     $field_config_storage = $this->entityTypeManager->getStorage('field_config');
     $field_storage_config_storage = $this->entityTypeManager->getStorage('field_storage_config');
+    $entity_view_display_storage = $this->entityTypeManager->getStorage('entity_view_display');
+
     $relationship_type_id = $relationship_type->id();
 
     // Add Status field.
@@ -72,11 +75,6 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
       'bundle' => $relationship_type_id,
       'label' => $this->t('Request status'),
       'required' => TRUE,
-      'default_value' => [
-          [
-            'value' => GroupMembershipRequest::REQUEST_PENDING,
-          ],
-      ],
       'settings' => [
         'workflow' => 'request',
         'workflow_callback' => '',
@@ -97,8 +95,6 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
 
     // Build the 'default' display ID for both the entity form and view mode.
     $default_display_id = "group_content.$relationship_type_id.default";
-    $entity_view_display_storage = $this->entityTypeManager->getStorage('entity_view_display');
-
     // Build or retrieve the 'default' view mode.
     if (!$view_display = $entity_view_display_storage->load($default_display_id)) {
       $view_display = $entity_view_display_storage->create([
@@ -112,7 +108,7 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
     // Assign display settings for the 'default' view mode.
     $view_display
       ->setComponent('grequest_status', [
-        'type' => 'number_integer',
+        'type' => 'list_default',
       ])
       ->setComponent('grequest_updated_by', [
         'label' => 'above',
@@ -122,6 +118,7 @@ class GroupMembershipRequestPostInstall implements PostInstallInterface {
         ],
       ])
       ->save();
+
   }
 
 }

@@ -3,7 +3,10 @@
 namespace Drupal\grequest\Plugin\Group\Relation;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Access\GroupAccessResult;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Provides a group relation for users as group membership request.
@@ -22,19 +25,19 @@ use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
 class GroupMembershipRequest extends GroupRelationBase {
 
   /**
-   * Invitation created and waiting for user's response.
+   * Transition id for approval.
    */
-  const REQUEST_PENDING = 0;
+  const TRANSITION_APPROVE = 'approve';
 
   /**
-   * Invitation accepted by user.
+   * Transition id for approval.
    */
-  const REQUEST_ACCEPTED = 1;
+  const TRANSITION_REJECT = 'reject';
 
   /**
-   * Invitation rejected by user.
+   * Transition id for creation.
    */
-  const REQUEST_REJECTED = 2;
+  const TRANSITION_CREATE = 'create';
 
   /**
    * Status field.
@@ -42,13 +45,33 @@ class GroupMembershipRequest extends GroupRelationBase {
   const STATUS_FIELD = 'grequest_status';
 
   /**
+   * Request created by default with new status.
+   */
+  const REQUEST_NEW = 'new';
+
+  /**
+   * Request created and waiting for administrator's response.
+   */
+  const REQUEST_PENDING = 'pending';
+
+  /**
+   * Request is approved by administrator.
+   */
+  const REQUEST_APPROVED = 'approved';
+
+  /**
+   * Request is rejected by administrator.
+   */
+  const REQUEST_REJECTED = 'rejected';
+
+  /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    $configuration = parent::defaultConfiguration();
-    $configuration['entity_cardinality'] = 1;
-
-    return $configuration;
+    $config = parent::defaultConfiguration();
+    $config['entity_cardinality'] = 1;
+    $config['remove_group_membership_request'] = FALSE;
+    return $config;
   }
 
   /**
@@ -57,9 +80,15 @@ class GroupMembershipRequest extends GroupRelationBase {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
 
+    $form['remove_group_membership_request'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Remove a group membership request, when user join the group.'),
+      '#default_value' => $this->getConfiguration()['remove_group_membership_request'] ?? FALSE,
+    ];
+
     // Disable the entity cardinality field as the functionality of this module
     // relies on a cardinality of 1. We don't just hide it, though, to keep a UI
-    // that's consistent with other content enabler plugins.
+    // that's consistent with other group relations.
     $info = $this->t("This field has been disabled by the plugin to guarantee the functionality that's expected of it.");
     $form['entity_cardinality']['#disabled'] = TRUE;
     $form['entity_cardinality']['#description'] .= '<br /><em>' . $info . '</em>';

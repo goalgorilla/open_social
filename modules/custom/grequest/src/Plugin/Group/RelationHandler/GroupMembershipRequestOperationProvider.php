@@ -4,13 +4,12 @@ namespace Drupal\grequest\Plugin\Group\RelationHandler;
 
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Plugin\Group\RelationHandler\OperationProviderInterface;
 use Drupal\group\Plugin\Group\RelationHandler\OperationProviderTrait;
 
 /**
- * Provides operations for the grequest relation plugin.
+ * Provides operations for the group_membership_request relation plugin.
  */
 class GroupMembershipRequestOperationProvider implements OperationProviderInterface {
 
@@ -44,20 +43,43 @@ class GroupMembershipRequestOperationProvider implements OperationProviderInterf
       throw new \LogicException('Using OperationProviderTrait without assigning a parent or overwriting the methods.');
     }
     $operations = $this->parent->getGroupOperations($group);
-
-    if (!$group->getMember($this->currentUser) && $group->hasPermission('request group membership', $this->currentUser)) {
-      $operations['group-request-membership'] = [
-        'title' => $this->t('Request group membership'),
-        'url' => new Url(
-          'grequest.request_membership',
-          ['group' => $group->id()],
-          ['query' => ['destination' => Url::fromRoute('<current>')->toString()]]
-        ),
-        'weight' => 0,
-      ];
+    $url = $group->toUrl('group-request-membership');
+    if ($url->access($this->currentUser())) {
+      $entity_instances = $this->getRelationships($group);
+      if (count($entity_instances) == 0) {
+        $operations['group-request-membership'] = [
+          'title' => $this->t('Request group membership'),
+          'url' => $url,
+          'weight' => 99,
+        ];
+      }
     }
+
+    // @todo With the new VariationCache, we can use the above context.
+    $operations['#cache']['contexts'] = ['user'];
 
     return $operations;
   }
+
+  /**
+   * Get relationship for the current plugin in the given group.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *  Group.
+   *
+   * @return array|\Drupal\group\Entity\GroupRelationshipInterface[]
+   *   List of group relationships.
+   */
+  protected function getRelationships(GroupInterface $group) {
+    // We can use loadByEntityAndGroup, but for this we need load user entity.
+    // @see https://www.drupal.org/project/group/issues/3310605
+    $properties = [
+      'entity_id' => $this->currentUser()->id(),
+      'plugin_id' => $this->pluginId,
+      'gid' => $group->id(),
+    ];
+    return $this->entityTypeManager()->getStorage('group_content')->loadByProperties($properties);
+  }
+
 
 }

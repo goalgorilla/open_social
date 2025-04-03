@@ -1,0 +1,26 @@
+request:
+  id: request
+  label: 'Group membership request'
+  group: group_membership_request
+  states:
+    new:
+      label: New
+    pending:
+      label: Pending
+    approved:
+      label: Approved
+    rejected:
+      label: Rejected
+  transitions:
+    create:
+      label: Create
+      from: [new]
+      to: pending
+    approve:
+      label: Approve
+      from: [pending]
+      to: approved
+    reject:
+      label: Reject
+      from: [pending]
+      to: rejected

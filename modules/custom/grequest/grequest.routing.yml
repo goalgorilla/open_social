@@ -1,19 +1,26 @@
-grequest.request_membership:
+entity.group.group_request_membership:
   path: '/group/{group}/request-membership'
   defaults:
-    _form: '\Drupal\grequest\Form\GroupRequestMembershipForm'
-    _title: 'Request membership'
+    _controller: '\Drupal\grequest\Controller\GroupMembershipRequestController::requestMembership'
+    _title_callback: '\Drupal\grequest\Controller\GroupMembershipRequestController::requestMembershipTitle'
   requirements:
     _group_permission: 'request group membership'
+    _group_installed_content: 'group_membership_request'
     _group_member: 'FALSE'
+    _group_membership_request: 'TRUE'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
 
-grequest.group_request_membership_approve:
+entity.group_content.group_approve_membership:
   path: '/group/{group}/content/{group_content}/approve-membership'
   defaults:
-    _title: 'Approve membership request'
-    _controller: 'Drupal\grequest\Controller\GrequestController::approveRequest'
+    _controller: '\Drupal\grequest\Controller\GroupMembershipRequestController::approveMembership'
   requirements:
-    _group_permission: 'administer members'
+    _group_installed_content: 'group_membership_request'
+    _group_permission: 'administer membership requests'
+    _pending_group_membership_request: 'TRUE'
   options:
     parameters:
       group:
@@ -21,13 +28,14 @@ grequest.group_request_membership_approve:
       group_content:
         type: 'entity:group_content'
 
-grequest.group_request_membership_reject:
+entity.group_content.group_reject_membership:
   path: '/group/{group}/content/{group_content}/reject-membership'
   defaults:
-    _title: 'Approve membership request'
-    _form: 'Drupal\grequest\Form\GroupRequestMembershipRejectForm'
+    _controller: '\Drupal\grequest\Controller\GroupMembershipRequestController::rejectMembership'
   requirements:
-    _group_permission: 'administer members'
+    _group_installed_content: 'group_membership_request'
+    _group_permission: 'administer membership requests'
+    _pending_group_membership_request: 'TRUE'
   options:
     parameters:
       group:
