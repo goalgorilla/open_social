@@ -183,17 +183,16 @@ class GroupContext extends RawMinkContext {
     $plugin_id = 'group_membership_request';
     $relationship_type_storage = \Drupal::entityTypeManager()->getStorage('group_content_type');
 
-    // These are currently numbers but will be switched to states when adopting
-    // the contrib version of grequest.
+    // The allowed statuses.
     $statuses = [
-      'pending' => 0,
-      'approved' => 1,
-      'rejected' => 2,
+      'pending',
+      'approved',
+      'rejected',
     ];
 
     foreach ($groupMembershipRequestsTable->getHash() as $groupMemberHash) {
       $status = ($groupMemberHash['status'] ?? NULL) ?: "pending";
-      assert(isset($statuses[$status]), "status must be one of " . implode(", ", array_keys($statuses)) . " got '$status'.");
+      assert(in_array($status, $statuses, TRUE), "status must be one of " . implode(", ", $statuses) . " got '$status'.");
       $group_id = $this->getNewestGroupIdFromTitle($groupMemberHash['group']);
       if ($group_id === NULL) {
         throw new \InvalidArgumentException("Group '{$groupMemberHash['group']}' not found.");
@@ -209,7 +208,7 @@ class GroupContext extends RawMinkContext {
         'type' => $relationship_type_storage->getRelationshipTypeId($group_type_id, $plugin_id),
         'gid' => $group->id(),
         'entity_id' => $user->id(),
-        'grequest_status' => $statuses[$status],
+        'grequest_status' => $status,
       ]);
       $group_content->save();
     }

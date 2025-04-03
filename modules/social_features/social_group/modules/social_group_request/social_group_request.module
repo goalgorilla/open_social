@@ -16,9 +16,12 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\grequest\MembershipRequestManager;
 use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
+use Drupal\group\Entity\GroupMembershipInterface;
 use Drupal\group\Entity\GroupRelationshipTypeInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\user\UserInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\message\Entity\Message;
 
@@ -91,38 +94,55 @@ function social_group_request_social_group_join_method_info(): array {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_group_request_group_content_insert(GroupRelationshipInterface $group_content) {
-  $type = $group_content->getPluginId();
-  $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasPlugin('group_membership_request');
+  if ($group_content instanceof GroupMembershipInterface) {
+    _social_group_request_approve_request_for_joined_member($group_content);
+  }
+}
 
-  // If new membership is created, check related membership request exists.
-  if ($type === 'group_membership' && $membership_request_enabled) {
-    $approver = \Drupal::currentUser()->id();
-    $storage = \Drupal::entityTypeManager()->getStorage('group_content');
-    $properties = [
-      'gid' => $group_content->getGroup()->id(),
-      'plugin_id' => 'group_membership_request',
-      'entity_id' => $group_content->getEntity()->id(),
-      'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
-    ];
-    // loadByGroup() doesn't support filters param anymore,
-    // so, lets use loadByProperties() instead.
-    $requests = $storage->loadByProperties($properties);
+/**
+ * Approve the membership request for a user that joined a group.
+ *
+ * This ensures that if a user had an open membership request, but they became a
+ * member of the group through other means than group request approval, the
+ * request still reflects the user was allowed in. This can happen for example
+ * if a user has an open group request but is then added directly by a group
+ * manager.
+ *
+ * @param \Drupal\group\Entity\GroupMembershipInterface $membership
+ *   The membership of the user that was created.
+ */
+function _social_group_request_approve_request_for_joined_member(GroupMembershipInterface $membership) : void {
+  $requestManager = \Drupal::service("grequest.membership_request_manager");
+  assert($requestManager instanceof MembershipRequestManager);
 
-    /** @var \Drupal\group\Entity\GroupRelationshipInterface $request */
-    foreach ($requests as $request) {
-      try {
-        $request
-          ->set('grequest_status', GroupMembershipRequest::REQUEST_ACCEPTED)
-          ->set('grequest_updated_by', $approver)
-          ->save();
+  $approver_id = \Drupal::currentUser()->id();
 
-        \Drupal::messenger()->addStatus(t('Membership request approved'));
-      }
-      catch (EntityStorageException $exception) {
-        \Drupal::logger('social_group_request')->critical("Exception trying to save a group membership request: @message", ['@message' => $exception->getMessage()]);
-        \Drupal::messenger()->addError(t('Error updating Request'));
-      }
-    }
+  $user = $membership->getEntity();
+  assert($user instanceof UserInterface, "GroupMembership::getEntity() should return a UserInterface instance.");
+  $request = $requestManager->getMembershipRequest($user, $membership->getGroup());
+
+  // If not request exists then there's nothing for us to approve.
+  if ($request === NULL) {
+    return;
+  }
+
+  // If there was a request but it's not actually pending there's nothing to do
+  // (e.g. because a user got added after an approved request).
+  if ($request->get('grequest_status')->value !== GroupMembershipRequest::REQUEST_PENDING) {
+    return;
+  }
+
+  // We use `updateStatus` instead of `approve` because the approve method would
+  // try to add the user to the group again but that has already happened as it
+  // was our trigger.
+  $request->set('grequest_updated_by', $approver_id);
+  $requestManager->updateStatus($request, GroupMembershipRequest::REQUEST_APPROVED);
+
+  try {
+    $request->save();
+  }
+  catch (EntityStorageException $exception) {
+    \Drupal::logger('social_group_request')->error("Exception trying to save a group membership request: @message", ['@message' => $exception->getMessage()]);
   }
 }
 
@@ -131,7 +151,10 @@ function social_group_request_group_content_insert(GroupRelationshipInterface $g
  */
 function social_group_request_module_implements_alter(&$implementations, $hook) {
   if ($hook == 'group_content_insert') {
-    // Remove the grequest implementation, we have a fallback in our hook.
+    // Remove the grequest implementation. The implementation in the grequest
+    // module will delete the request but we want to mark it as approved
+    // instead.
+    // See _social_group_request_approve_request_for_joined_member().
     if (isset($implementations['grequest'])) {
       unset($implementations['grequest']);
     }
