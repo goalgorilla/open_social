@@ -12,11 +12,13 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\Entity\Group;
+use Drupal\social_group\GroupMembershipRequestableInterface;
 use Drupal\social_group_request\Form\GroupRequestMembershipRequestAnonymousForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -80,6 +82,33 @@ class GroupRequestController extends ControllerBase {
       $container->get('string_translation'),
       $container->get('entity_type.manager'),
       $container->get('current_user')
+    );
+  }
+
+  /**
+   * Get the title for the membership request page/dialog.
+   *
+   * This requests the membership request title from the group's bundle class if
+   * the group type supports it. Otherwise, it'll provide a default title.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group to get the title for.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The page title.
+   */
+  public function requestMembershipTitle(GroupInterface $group) : TranslatableMarkup {
+    if ($group instanceof GroupMembershipRequestableInterface) {
+      $title = $group->requestMembershipTitle($group);
+      if ($title !== NULL) {
+        return $title;
+      }
+    }
+
+    return $this->t(
+      "Request to join: %group_label",
+      ['%group_label' => $group->label()],
+      ['context' => 'page title'],
     );
   }
 
