@@ -209,11 +209,11 @@ function social_group_request_update_13005(): void {
   $group_relationship_type_storage = \Drupal::entityTypeManager()->getStorage('group_content_type');
   assert($group_relationship_type_storage instanceof GroupRelationshipTypeStorageInterface);
 
-  $logger->warning("Updating field instances.");
+  $logger->debug("Updating field instances.");
   foreach (GroupType::loadMultiple() as $groupType) {
     if ($groupType->hasPlugin("group_membership_request")) {
       $relationship_id = $group_relationship_type_storage->getRelationshipTypeId($groupType->id(), "group_membership_request");
-      $logger->warning("Updating field instance for {$groupType->id()} ({$relationship_id}).");
+      $logger->debug("Updating field instance for {$groupType->id()} ({$relationship_id}).");
       $field_config = \Drupal::configFactory()->getEditable("field.field.group_content.$relationship_id.grequest_status");
       $field_config
         ->set('settings', [
