@@ -100,9 +100,8 @@ Feature: Export users
     # Execute the Export users to CSV action with the 3 users selected
     And I select "Export the selected users to CSV" from "Action"
     And I press the "Apply to selected items" button
-    And I should see the text "Items selected:"
-    And I press the "Apply" button
     And I should see the text "Are you sure you wish to perform"
+    And I should see the text "Items selected:"
     And I press the "Execute action" button
     And I wait for the batch job to finish
 
@@ -132,9 +131,8 @@ Feature: Export users
     # Execute the Export users to CSV action with the 3 users selected
     And I select "Export the selected users to CSV" from "Action"
     And I press the "Apply to selected items" button
-    And I should see the text "Items selected:"
-    And I press the "Apply" button
     And I should see the text "Are you sure you wish to perform"
+    And I should see the text "Items selected:"
     And I press the "Execute action" button
     And I wait for the batch job to finish
 
@@ -178,9 +176,8 @@ Feature: Export users
     # Execute the Export users to CSV action with the 3 users selected
     And I select "Export the selected users to CSV" from "Action"
     And I press the "Apply to selected items" button
-    And I should see the text "Items selected:"
-    And I press the "Apply" button
     And I should see the text "Are you sure you wish to perform"
+    And I should see the text "Items selected:"
     And I press the "Execute action" button
     And I wait for the batch job to finish
 
@@ -223,9 +220,8 @@ Feature: Export users
     # Execute the Export users to CSV action with the 3 users selected
     And I select "Export the selected users to CSV" from "Action"
     And I press the "Apply to selected items" button
-    And I should see the text "Items selected:"
-    And I press the "Apply" button
     And I should see the text "Are you sure you wish to perform"
+    And I should see the text "Items selected:"
     And I press the "Execute action" button
     And I wait for the batch job to finish
 

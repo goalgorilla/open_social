@@ -15,8 +15,6 @@ use Drupal\file\FileRepository;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Plugin\PluginFormInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Psr\Log\LoggerInterface;
 use Drupal\Core\Url;
 use Drupal\csv_serialization\Encoder\CsvEncoder;
@@ -30,9 +28,10 @@ use Drupal\social_user_export\Plugin\UserExportPluginManager;
 #[Action(
   id: 'social_user_export_user_action',
   label: new TranslatableMarkup('Export the selected users to CSV'),
+  confirm_form_route_name: 'views_bulk_operations.confirm',
   type: 'user',
 )]
-class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, PluginFormInterface {
+class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface {
   use MessengerTrait;
 
   /**
@@ -262,29 +261,6 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     /** @var \Drupal\user\UserInterface $object */
     // @todo Check for export access instead.
     return $object->access('view', $account, $return_as_object);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
-    // Following the update of vbo to 4.3.4, we need to override this title
-    // because confirm_form_route_name from Action annotation does not work.
-    $count = count($form['list']['#items']);
-
-    $label = is_array($this->getPluginDefinition()) ? $this->getPluginDefinition()['label'] : '';
-
-    $form['#title'] = $this->formatPlural(
-      $count,
-      'Are you sure you wish to perform "%action" action on 1 entity?',
-      'Are you sure you wish to perform "%action" action on %count entities?',
-      [
-        '%action' => $label,
-        '%count' => $count,
-      ]
-    );
-
-    return $form;
   }
 
   /**
