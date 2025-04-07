@@ -302,7 +302,7 @@ function social_event_managers_views_pre_view(ViewExecutable $view, $display_id,
  * We will still keep this in place for the events which may be inside any
  * group.
  */
-function social_event_managers_node_access(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
+function social_event_managers_node_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult {
   if ($entity instanceof NodeInterface
     && $entity->getType() === 'event'
     && !$entity->get('field_event_managers')->isEmpty()) {
