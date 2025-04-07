@@ -1,0 +1,94 @@
+__global_actions:
+  import_configs:
+    - paragraphs.paragraphs_type.other_affiliations
+    - field.storage.paragraph.field_affiliation_org_function
+    - field.storage.paragraph.field_affiliation_org_name
+    - field.storage.profile.field_enable_other_affiliations
+    - field.storage.profile.field_group_affiliation
+    - field.storage.profile.field_other_affiliations
+    - field.field.paragraph.other_affiliations.field_affiliation_org_function
+    - field.field.paragraph.other_affiliations.field_affiliation_org_name
+    - field.field.profile.profile.field_enable_other_affiliations
+    - field.field.profile.profile.field_group_affiliation
+    - field.field.profile.profile.field_other_affiliations
+    - core.entity_form_mode.group_content.affiliation
+    - core.entity_view_display.paragraph.other_affiliations.default
+    - core.entity_form_display.paragraph.other_affiliations.default
+
+core.entity_form_display.profile.profile.default:
+  expected_config: {  }
+  update_actions:
+    add:
+      dependencies:
+        config:
+          - field.field.profile.profile.field_enable_other_affiliations
+          - field.field.profile.profile.field_group_affiliation
+          - field.field.profile.profile.field_other_affiliations
+        module:
+          - social_profile
+      third_party_settings:
+        field_group:
+          group_affiliation_representation:
+            children:
+              - field_group_affiliation
+              - field_enable_other_affiliations
+              - field_other_affiliations
+            label: 'Affiliation representation'
+            parent_name: ''
+            weight: 4
+            format_type: fieldset
+            format_settings:
+              label: 'Self introduction, expertise and interests'
+              required_fields: true
+              id: details
+              classes: scrollspy
+      content:
+        field_enable_other_affiliations:
+          type: boolean_checkbox
+          weight: 14
+          region: content
+          settings:
+            display_label: true
+          third_party_settings: { }
+        field_group_affiliation:
+          type: group_affiliation_widget
+          weight: 13
+          region: content
+          settings: { }
+          third_party_settings: { }
+        field_other_affiliations:
+          type: paragraphs
+          weight: 15
+          region: content
+          settings:
+            title: Paragraph
+            title_plural: Paragraphs
+            edit_mode: open
+            closed_mode: summary
+            autocollapse: none
+            closed_mode_threshold: 0
+            add_mode: dropdown
+            form_display_mode: default
+            default_paragraph_type: other_affiliations
+            features:
+              add_above: '0'
+              collapse_edit_all: collapse_edit_all
+              convert: '0'
+              duplicate: duplicate
+          third_party_settings: { }
+
+core.entity_view_display.profile.profile.default:
+  expected_config: {  }
+  update_actions:
+    add:
+      dependencies:
+        config:
+          - field.field.profile.profile.field_enable_other_affiliations
+          - field.field.profile.profile.field_group_affiliation
+          - field.field.profile.profile.field_other_affiliations
+      module:
+        - entity_reference_revisions
+      hidden:
+        field_enable_other_affiliations: true
+        field_group_affiliation: true
+        field_other_affiliations: true

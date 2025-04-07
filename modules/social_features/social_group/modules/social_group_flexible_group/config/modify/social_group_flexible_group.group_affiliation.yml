@@ -1,0 +1,27 @@
+dependencies:
+  module:
+    - social_profile
+items:
+  field.field.profile.profile.field_group_affiliation:
+    expected_config: {  }
+    update_actions:
+      add:
+        dependencies:
+          config:
+            - group.type.flexible_group
+        settings:
+          handler_settings:
+            target_bundles:
+              flexible_group: flexible_group
+
+  field.storage.profile.field_group_affiliation:
+    expected_config: { }
+    update_actions:
+      add:
+        dependencies:
+          module:
+            - social_group
+        settings:
+          handler_settings:
+            target_bundles:
+              flexible_group: flexible_group

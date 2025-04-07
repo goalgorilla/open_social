@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_other_affiliations
+    - paragraphs.paragraphs_type.other_affiliations
+    - profile.type.profile
+  module:
+    - entity_reference_revisions
+id: profile.profile.field_other_affiliations
+field_name: field_other_affiliations
+entity_type: profile
+bundle: profile
+label: "Non-platform affiliations"
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      other_affiliations: other_affiliations
+    negate: 0
+    target_bundles_drag_drop:
+      other_affiliations:
+        weight: 1
+        enabled: true
+field_type: entity_reference_revisions

@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.other_affiliations.field_affiliation_org_function
+    - field.field.paragraph.other_affiliations.field_affiliation_org_name
+    - paragraphs.paragraphs_type.other_affiliations
+id: paragraph.other_affiliations.default
+targetEntityType: paragraph
+bundle: other_affiliations
+mode: default
+content:
+  field_affiliation_org_function:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: Function
+    third_party_settings: {  }
+  field_affiliation_org_name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: 'Organization name'
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

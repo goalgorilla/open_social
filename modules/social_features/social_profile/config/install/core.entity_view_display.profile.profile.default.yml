@@ -2,6 +2,9 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.profile.profile.field_enable_other_affiliations
+    - field.field.profile.profile.field_group_affiliation
+    - field.field.profile.profile.field_other_affiliations
     - field.field.profile.profile.field_profile_address
     - field.field.profile.profile.field_profile_banner_image
     - field.field.profile.profile.field_profile_expertise
@@ -19,6 +22,7 @@ dependencies:
     - profile.type.profile
   module:
     - address
+    - entity_reference_revisions
     - text
 id: profile.profile.default
 targetEntityType: profile
@@ -72,6 +76,9 @@ content:
     type: text_default
     region: content
 hidden:
+  field_enable_other_affiliations: true
+  field_group_affiliation: true
+  field_other_affiliations: true
   field_profile_banner_image: true
   field_profile_first_name: true
   field_profile_function: true

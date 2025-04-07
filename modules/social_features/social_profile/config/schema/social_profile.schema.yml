@@ -32,6 +32,9 @@ social_profile.settings:
     allow_tagging_for_lu:
       type: boolean
       label: 'Whether to allow profile tagging for LU'
+    group_affiliation_status:
+      type: boolean
+      label: 'Whether affiliation feature is enabled'
 
 views.field.profile_entity_sortable:
   type: views_field
@@ -40,3 +43,52 @@ views.field.profile_entity_sortable:
     view_mode:
       type: string
       label: 'View mode'
+
+group.type.*.third_party.social_profile:
+  type: mapping
+  label: 'Group affiliation settings'
+  mapping:
+    affiliation_candidate:
+      type: boolean
+      label: 'Affiliation candidate status'
+      description: 'Affiliation candidate status indicates if given group type is eligible for user affiliation'
+    affiliation_enabled:
+      type: boolean
+      label: 'Affiliation status'
+      description: 'Affiliation status for given group type indicates whether affiliation is enabled or not'
+
+# Inspired by field.storage_settings.entity_reference,
+# because group_affiliation extends entity_reference.
+field.storage_settings.group_affiliation:
+  type: mapping
+  label: 'Entity reference field storage settings'
+  mapping:
+    target_type:
+      type: string
+      label: 'Type of item to reference'
+    handler_settings:
+      type: mapping
+      mapping:
+        target_bundles:
+          type: entity_reference_selection.[%parent.handler]
+          label: 'Entity reference selection plugin settings'
+
+# Copied from field.field_settings.entity_reference schema,
+# because group_affiliation extends entity_reference.
+field.field_settings.group_affiliation:
+  type: mapping
+  label: 'Entity reference field settings'
+  mapping:
+    handler:
+      type: string
+      label: 'Reference method'
+      constraints:
+        PluginExists:
+          manager: plugin.manager.entity_reference_selection
+          interface: 'Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface'
+          # @todo Remove this line and explicitly require valid entity reference
+          # selection plugin IDs in https://drupal.org/i/3420198.
+          allowFallback: true
+    handler_settings:
+      type: entity_reference_selection.[%parent.handler]
+      label: 'Entity reference selection plugin settings'

@@ -322,3 +322,21 @@ function social_profile_update_130005() : string {
   $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Enable paragraphs module as it became social_profile dependency.
+ */
+function social_profile_update_130006(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('paragraphs')) {
+    \Drupal::service('module_installer')->install(['paragraphs']);
+  }
+}
+
+/**
+ * Introduce user affiliation feature.
+ */
+function social_profile_update_130007(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+  return $updater->logger()->output();
+}

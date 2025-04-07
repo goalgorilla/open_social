@@ -10,6 +10,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\social_profile\GroupAffiliation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -32,6 +34,13 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   protected $languageMananger;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
    * SocialProfileSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -40,11 +49,14 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
    *   The database.
    * @param \Drupal\Core\Language\LanguageManager $language_manager
    *   The language manager.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, Connection $database, LanguageManager $language_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, Connection $database, LanguageManager $language_manager, AccountInterface $current_user) {
     parent::__construct($config_factory);
     $this->database = $database;
     $this->languageMananger = $language_manager;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -54,7 +66,8 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     return new static(
       $container->get('config.factory'),
       $container->get('database'),
-      $container->get('language_manager')
+      $container->get('language_manager'),
+      $container->get('current_user'),
     );
   }
 
@@ -153,6 +166,24 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       ],
     ];
 
+    // @todo Until affiliation feature is not completed, this settings should
+    //   be available only for administrator role.
+    if (in_array('administrator', $this->currentUser->getRoles())) {
+      $form['group_affiliation'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Affiliation settings'),
+        '#open' => TRUE,
+      ];
+
+      $form['group_affiliation']['group_affiliation_status'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Enable affiliations'),
+        '#default_value' => $config->get('group_affiliation_status') ?? FALSE,
+        '#required' => FALSE,
+        '#description' => $this->t("Allow members to determine which organization they represent in your community. This can be made through the profile settings."),
+      ];
+    }
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -167,6 +198,11 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     $config->set('allow_category_split', $form_state->getValue('allow_category_split'));
     $config->set('use_category_parent', $form_state->getValue('use_category_parent'));
     $config->set('allow_tagging_for_lu', $form_state->getValue('allow_tagging_for_lu'));
+
+    if (in_array('administrator', $this->currentUser->getRoles())) {
+      $config->set('group_affiliation_status', $form_state->getValue('group_affiliation_status'));
+    }
+
     $config->save();
 
     // Check if the website is multilingual.
@@ -189,6 +225,11 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       }
       Cache::invalidateTags($cache_tags);
     }
+
+    // Invalidate affiliation cache tag.
+    Cache::invalidateTags([
+      GroupAffiliation::GENERAL_CACHE_TAG,
+    ]);
 
     parent::submitForm($form, $form_state);
   }
