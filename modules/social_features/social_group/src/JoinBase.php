@@ -30,7 +30,7 @@ abstract class JoinBase extends PluginBase implements JoinPluginInterface {
     string $plugin_id,
     $plugin_definition,
     TranslationInterface $translation,
-    AccountProxyInterface $current_user
+    AccountProxyInterface $current_user,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -45,7 +45,7 @@ abstract class JoinBase extends PluginBase implements JoinPluginInterface {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition
+    $plugin_definition,
   ): self {
     return new static(
       $configuration,

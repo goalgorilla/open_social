@@ -54,7 +54,7 @@ abstract class PushBase extends PluginBase implements PushInterface {
     $plugin_definition,
     TranslationInterface $string_translation,
     ConfigFactoryInterface $config_factory,
-    $current_user_id
+    $current_user_id,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -71,7 +71,7 @@ abstract class PushBase extends PluginBase implements PushInterface {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition
+    $plugin_definition,
   ) {
     return new static(
       $configuration,

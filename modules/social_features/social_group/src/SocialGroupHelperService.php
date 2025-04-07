@@ -70,7 +70,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
     ModuleHandlerInterface $module_handler,
     TranslationInterface $translation,
     EntityTypeManagerInterface $entity_type_manager,
-    RendererInterface $renderer
+    RendererInterface $renderer,
   ) {
     $this->database = $connection;
     $this->moduleHandler = $module_handler;

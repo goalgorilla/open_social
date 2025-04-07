@@ -392,7 +392,7 @@ class ExternalIdFieldTypeTest extends KernelTestBase {
     int $expected_number_of_violations,
     string $expected_violation_message,
     string $new_entity_type,
-    array $new_entity_data
+    array $new_entity_data,
   ): void {
 
     // Create entities to which all other scenarios will be validated against.
@@ -716,7 +716,7 @@ class ExternalIdFieldTypeTest extends KernelTestBase {
     string $bundle,
     string $field_machine_name,
     array $allowed_target_types,
-    string $label
+    string $label,
   ): void {
 
     if (!FieldStorageConfig::load($entity_type . '.' . $field_machine_name)) {

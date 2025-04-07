@@ -14,7 +14,7 @@ class SocialCommentFieldItemList extends CommentFieldItemList {
   /**
    * {@inheritdoc}
    */
-  public function access($operation = 'view', AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($operation = 'view', ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     if ($operation === 'edit') {
       // Only users with administer own comment settings permission can edit
       // the comment status field.

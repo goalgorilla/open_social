@@ -36,6 +36,6 @@ interface SocialProfilePrivacyHelperInterface {
    * @return array
    *   The array of field labels and accesses, keyed by field name.
    */
-  public function getFieldOptions(AccountInterface $account = NULL);
+  public function getFieldOptions(?AccountInterface $account = NULL);
 
 }

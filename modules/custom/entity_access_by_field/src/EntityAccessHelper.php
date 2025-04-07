@@ -63,7 +63,7 @@ class EntityAccessHelper {
     EntityInterface $entity,
     string $operation,
     AccountInterface $account,
-    string $permission = NULL
+    ?string $permission = NULL,
   ): int {
     if ($operation !== 'view' || !$entity instanceof EntityOwnerInterface) {
       return self::NEUTRAL;
@@ -186,7 +186,7 @@ class EntityAccessHelper {
     EntityInterface $entity,
     string $operation,
     AccountInterface $account,
-    string $permission = NULL
+    ?string $permission = NULL,
   ): AccessResultInterface {
     $access = self::entityAccessCheck(
       $entity,

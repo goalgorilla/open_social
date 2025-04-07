@@ -36,7 +36,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
     array &$element,
     FormStateInterface $form_state,
     array &$complete_form,
-    bool $select2 = FALSE
+    bool $select2 = FALSE,
   ): void {
     /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
     $form_object = $form_state->getFormObject();
@@ -155,7 +155,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
   public static function validateEntityAutocompleteSelect2(
     array &$element,
     FormStateInterface $form_state,
-    array &$complete_form
+    array &$complete_form,
   ): void {
     static::validateEntityAutocomplete($element, $form_state, $complete_form, TRUE);
   }

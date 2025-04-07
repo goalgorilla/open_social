@@ -66,7 +66,7 @@ class FieldRenderer extends DataProducerPluginBase implements ContainerFactoryPl
     array $configuration,
     $pluginId,
     array $pluginDefinition,
-    RendererInterface $renderer
+    RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $pluginId, $pluginDefinition);
     $this->renderer = $renderer;

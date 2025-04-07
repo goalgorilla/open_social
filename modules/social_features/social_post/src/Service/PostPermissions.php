@@ -30,7 +30,7 @@ class PostPermissions implements PostPermissionsInterface {
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
-    TranslationInterface $translation
+    TranslationInterface $translation,
   ) {
     $this->storage = $entity_type_manager->getStorage('post_type');
     $this->setStringTranslation($translation);

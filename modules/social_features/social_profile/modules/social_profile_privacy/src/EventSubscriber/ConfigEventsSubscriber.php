@@ -50,7 +50,7 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
   public function __construct(
     ModuleHandlerInterface $module_handler,
     EntityTypeManagerInterface $entity_type_manager,
-    LoggerChannelFactoryInterface $logger_channel_factory
+    LoggerChannelFactoryInterface $logger_channel_factory,
   ) {
     $this->moduleHandler = $module_handler;
     $this->entityTypeManager = $entity_type_manager;

@@ -36,7 +36,7 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
   public function __construct(
     ConfigFactoryInterface $config_factory,
     ThemeManagerInterface $theme_manager,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     $this->configFactory = $config_factory;
     $this->themeManager = $theme_manager;
@@ -51,8 +51,8 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
     array &$variables,
     $path = 'attributes',
     bool $return_as_object = FALSE,
-    string $base_field = NULL,
-    string $extra_field = NULL
+    ?string $base_field = NULL,
+    ?string $extra_field = NULL,
   ): void {
     if (
       $profile->access('view') &&

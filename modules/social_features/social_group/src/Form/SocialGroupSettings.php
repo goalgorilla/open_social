@@ -73,7 +73,7 @@ class SocialGroupSettings extends ConfigFormBase {
     EntityTypeManagerInterface $entity_type_manager,
     ModuleHandlerInterface $module_handler,
     GroupRelationTypeManagerInterface $group_content_plugin_manager,
-    RendererInterface $renderer
+    RendererInterface $renderer,
   ) {
     parent::__construct($config_factory);
     $this->entityTypeManager = $entity_type_manager;

@@ -40,7 +40,8 @@ class RedirectSubscriber implements EventSubscriberInterface {
      *
      * @var \Drupal\Core\Config\ConfigFactoryInterface
      */
-    protected ConfigFactoryInterface $configFactory) {
+    protected ConfigFactoryInterface $configFactory,
+  ) {
   }
 
   /**

@@ -30,7 +30,7 @@ class SocialGroupPermissions implements ContainerInjectionInterface {
    */
   public function __construct(
     protected EntityTypeManagerInterface $entityTypeManager,
-    protected EntityFieldManagerInterface $entityFieldManager
+    protected EntityFieldManagerInterface $entityFieldManager,
   ) {}
 
   /**

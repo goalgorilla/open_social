@@ -58,7 +58,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
     $plugin_id,
     $plugin_definition,
     EntityTypeManagerInterface $entity_type_manager,
-    RouteMatchInterface $route_match
+    RouteMatchInterface $route_match,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -148,7 +148,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     if ($object instanceof GroupRelationshipInterface && $object->getPluginId() === 'group_membership') {
       $access = $object->access('update', $account, TRUE);
     }

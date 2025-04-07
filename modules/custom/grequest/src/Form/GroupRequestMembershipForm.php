@@ -73,7 +73,7 @@ class GroupRequestMembershipForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $group = NULL) {
     $this->group = $group;
 
     return parent::buildForm($form, $form_state);

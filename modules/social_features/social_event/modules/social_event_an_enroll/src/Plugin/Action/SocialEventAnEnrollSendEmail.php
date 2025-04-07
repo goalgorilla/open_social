@@ -45,8 +45,8 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     Token $token,
     EntityTypeManagerInterface $entity_type_manager,
     LoggerInterface $logger,
@@ -55,7 +55,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
     QueueFactory $queue_factory,
     $allow_text_format,
     SocialEmailBroadcast $email_broadcast_service,
-    EventAnEnrollManager $event_an_enroll_manager
+    EventAnEnrollManager $event_an_enroll_manager,
   ) {
     parent::__construct(
       $configuration,

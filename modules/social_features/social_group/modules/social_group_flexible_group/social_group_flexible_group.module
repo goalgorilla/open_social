@@ -669,7 +669,7 @@ function social_group_flexible_group_menu_local_actions_alter(array &$local_acti
  */
 function social_group_flexible_group_can_view_flexible_groups(
   SocialGroupInterface $group,
-  AccountInterface $account
+  AccountInterface $account,
 ): bool {
   // Users who can manage all can manage everything.
   if ($account->hasPermission('manage all groups')) {
@@ -892,7 +892,7 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
 /**
  * Sets dynamic allowed values for the group type icon field.
  */
-function social_group_flexible_group_type_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+function social_group_flexible_group_type_allowed_values_function(FieldStorageConfig $definition, ?ContentEntityInterface $entity = NULL, $cacheable) {
   $theme_path = \Drupal::service('extension.list.theme')->getPath('socialbase');
   $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
 

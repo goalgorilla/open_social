@@ -118,7 +118,7 @@ class ExternalIdentifierUniqueExternalIdConstraintValidator extends ConstraintVa
    */
   public function __construct(
     protected EntityTypeManagerInterface $entityTypeManager,
-    protected EntityFieldManagerInterface $entityFieldManager
+    protected EntityFieldManagerInterface $entityFieldManager,
   ) {
 
   }

@@ -119,7 +119,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     AccountProxyInterface $currentUser,
     ConfigFactoryInterface $configFactory,
     FileUrlGenerator $file_url_generator,
-    FileRepository $file_repository
+    FileRepository $file_repository,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -257,7 +257,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     /** @var \Drupal\user\UserInterface $object */
     // @todo Check for export access instead.
     return $object->access('view', $account, $return_as_object);

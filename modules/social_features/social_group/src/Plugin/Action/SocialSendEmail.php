@@ -48,8 +48,8 @@ class SocialSendEmail extends SocialSendEmailBase {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     Token $token,
     EntityTypeManagerInterface $entity_type_manager,
     LoggerInterface $logger,
@@ -58,7 +58,7 @@ class SocialSendEmail extends SocialSendEmailBase {
     QueueFactory $queue_factory,
     $allow_text_format,
     ModuleHandlerInterface $module_handler,
-    SocialEmailBroadcast $email_broadcast_service
+    SocialEmailBroadcast $email_broadcast_service,
   ) {
     parent::__construct(
       $configuration,
@@ -163,7 +163,7 @@ class SocialSendEmail extends SocialSendEmailBase {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool|AccessResultInterface {
+  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE): bool|AccessResultInterface {
     if ($object instanceof GroupRelationshipInterface) {
       return $object->access('view', $account, $return_as_object);
     }

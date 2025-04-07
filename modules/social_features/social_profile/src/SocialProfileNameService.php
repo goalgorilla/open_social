@@ -37,7 +37,7 @@ class SocialProfileNameService {
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->moduleHandler = $module_handler;
@@ -108,7 +108,7 @@ class SocialProfileNameService {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getProfileName(ProfileInterface $profile = NULL) {
+  public function getProfileName(?ProfileInterface $profile = NULL) {
     // Do nothing if no profile.
     if ($profile === NULL) {
       return '';

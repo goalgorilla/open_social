@@ -74,7 +74,7 @@ class SocialAlbumController extends ControllerBase {
     AccountInterface $current_user,
     ConfigFactoryInterface $config_factory,
     GroupRelationTypeManagerInterface $group_relation_type_manager,
-    FileUrlGeneratorInterface $file_url_generator
+    FileUrlGeneratorInterface $file_url_generator,
   ) {
     $this->setStringTranslation($translation);
     $this->database = $database;

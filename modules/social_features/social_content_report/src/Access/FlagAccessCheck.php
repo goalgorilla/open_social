@@ -40,7 +40,7 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
-    ContentReportServiceInterface $social_content_report
+    ContentReportServiceInterface $social_content_report,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->socialContentReport = $social_content_report;

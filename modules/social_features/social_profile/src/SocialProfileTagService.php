@@ -49,7 +49,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $config_factory,
-    LanguageManagerInterface $language_manager
+    LanguageManagerInterface $language_manager,
   ) {
     $this->taxonomyStorage = $entity_type_manager->getStorage('taxonomy_term');
     $this->profileConfig = $config_factory->get('social_profile.settings');

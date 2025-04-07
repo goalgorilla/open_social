@@ -269,7 +269,7 @@ added/invited by @entity_type_id managers.'),
  */
 function hook_social_group_join_method_info_alter(
   array &$items,
-  ?FieldableEntityInterface $entity
+  ?FieldableEntityInterface $entity,
 ) {
   if (
     isset($items['added']) &&

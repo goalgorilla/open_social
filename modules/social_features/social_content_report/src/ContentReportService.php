@@ -63,7 +63,7 @@ class ContentReportService implements ContentReportServiceInterface {
     FlagServiceInterface $flag_service,
     AccountProxyInterface $current_user,
     ModuleHandlerInterface $module_handler,
-    RequestStack $requestStack
+    RequestStack $requestStack,
   ) {
     $this->flagService = $flag_service;
     $this->currentUser = $current_user;

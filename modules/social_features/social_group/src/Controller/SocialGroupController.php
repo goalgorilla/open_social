@@ -69,7 +69,7 @@ class SocialGroupController extends ControllerBase {
     PrivateTempStoreFactory $temp_store_factory,
     ViewsBulkOperationsActionProcessorInterface $action_processor,
     RouteMatchInterface $route_match,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
   ) {
     $this->requestStack = $request_stack;
     $this->tempStoreFactory = $temp_store_factory;

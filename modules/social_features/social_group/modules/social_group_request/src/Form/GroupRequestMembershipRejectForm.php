@@ -70,7 +70,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
     RedirectDestinationInterface $redirect_destination,
     CacheTagsInvalidatorInterface $cache_tags_invalidator,
     AccountInterface $current_user,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->redirectDestination = $redirect_destination;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
@@ -107,7 +107,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupRelationshipInterface $group_content = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $group = NULL, ?GroupRelationshipInterface $group_content = NULL) {
     $this->group = $group;
     $this->groupContent = $group_content;
 

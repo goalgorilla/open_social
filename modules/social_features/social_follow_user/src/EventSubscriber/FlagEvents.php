@@ -25,7 +25,7 @@ class FlagEvents implements EventSubscriberInterface {
    *   The cache tags invalidator.
    */
   public function __construct(
-    CacheTagsInvalidatorInterface $cache_tags_invalidator
+    CacheTagsInvalidatorInterface $cache_tags_invalidator,
   ) {
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
   }

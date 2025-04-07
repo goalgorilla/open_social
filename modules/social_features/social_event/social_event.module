@@ -195,7 +195,7 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
  * @return bool
  *   If the user is actually a manager or organizer.
  */
-function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_trusted_roles = FALSE) {
+function social_event_manager_or_organizer(?NodeInterface $node = NULL, $skip_trusted_roles = FALSE) {
   $social_event_manager_or_organizer = &drupal_static(__FUNCTION__);
 
   if (!isset($social_event_manager_or_organizer)) {
@@ -639,7 +639,7 @@ function social_event_flagging_insert(EntityInterface $entity) {
  * @param string|null $view_mode
  *   The view mode.
  */
-function _social_event_format_date(NodeInterface $event, string $view_mode = NULL): string {
+function _social_event_format_date(NodeInterface $event, ?string $view_mode = NULL): string {
   $event_date = '';
   $event_config = \Drupal::config('social_event.settings');
   $add_timezone = $event_config->get('show_user_timezone');

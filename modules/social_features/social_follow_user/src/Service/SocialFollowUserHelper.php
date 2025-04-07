@@ -26,7 +26,7 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
    */
   public function __construct(
     AccountProxyInterface $current_user,
-    FlagServiceInterface $flag
+    FlagServiceInterface $flag,
   ) {
     $this->currentUser = $current_user;
     $this->flagService = $flag;

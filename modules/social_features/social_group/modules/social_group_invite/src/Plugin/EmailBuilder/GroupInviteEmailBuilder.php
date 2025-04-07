@@ -112,7 +112,7 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
     LanguageManagerInterface $language_manager,
     SharedTempStoreFactory $temp_store_factory,
     AccountInterface $current_user,
-    UserStorageInterface $user_storage
+    UserStorageInterface $user_storage,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;

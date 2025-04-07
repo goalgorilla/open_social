@@ -21,7 +21,7 @@ class SocialPrivateMessageEntityAutocomplete extends EntityAutocomplete {
   public static function validateEntityAutocomplete(
     array &$element,
     FormStateInterface $form_state,
-    array &$complete_form
+    array &$complete_form,
   ): void {
     parent::validateEntityAutocomplete($element, $form_state, $complete_form);
 

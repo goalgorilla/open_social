@@ -50,7 +50,7 @@ class RestrictedNameProcessor extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getPropertyDefinitions(DatasourceInterface $datasource = NULL) {
+  public function getPropertyDefinitions(?DatasourceInterface $datasource = NULL) {
     $properties = parent::getPropertyDefinitions($datasource);
 
     if ($datasource && $this->supportsDataSource($datasource)) {

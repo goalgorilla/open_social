@@ -83,7 +83,7 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
   public function __construct(
     Connection $database,
     EntityTypeManagerInterface $entityTypeManager,
-    LoggerChannelFactoryInterface $loggerChannelFactory
+    LoggerChannelFactoryInterface $loggerChannelFactory,
   ) {
     parent::__construct();
     $this->connection = $database;

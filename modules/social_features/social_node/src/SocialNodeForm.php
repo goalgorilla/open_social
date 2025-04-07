@@ -44,7 +44,7 @@ class SocialNodeForm extends NodeForm {
     TimeInterface $time,
     AccountInterface $current_user,
     DateFormatterInterface $date_formatter,
-    SocialNodeMessengerInterface $messenger
+    SocialNodeMessengerInterface $messenger,
   ) {
     parent::__construct(
       $entity_repository,

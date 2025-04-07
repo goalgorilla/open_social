@@ -63,7 +63,7 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
     EntityTypeManagerInterface $entity_type_manager,
     ActivityFactory $activity_factory,
     AccountProxyInterface $current_user,
-    GroupMuteNotify $group_mute_notify
+    GroupMuteNotify $group_mute_notify,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 

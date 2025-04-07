@@ -73,8 +73,8 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     ConfigLanguageManager $config_language_manager,
     MailManagerInterface $mail_manager,
     RendererInterface $renderer,

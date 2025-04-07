@@ -191,7 +191,7 @@ function social_profile_preview_preprocess_username(array &$variables): void {
 function social_profile_preview_profile_view_alter(
   array &$build,
   EntityInterface $entity,
-  EntityViewDisplayInterface $display
+  EntityViewDisplayInterface $display,
 ): void {
   if (
     $build['#view_mode'] === 'preview' &&

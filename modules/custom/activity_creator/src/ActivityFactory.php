@@ -88,7 +88,7 @@ class ActivityFactory extends ControllerBase {
     Connection $database,
     LanguageManagerInterface $language_manager,
     Token $token,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     $this->activityDestinationManager = $activityDestinationManager;
     $this->entityTypeManager = $entity_type_manager;

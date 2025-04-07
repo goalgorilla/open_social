@@ -51,9 +51,11 @@ class EventAnEnrollController extends ControllerBase {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory.
    */
-  public function __construct(RouteMatchInterface $routeMatch,
-                              EntityTypeManagerInterface $entityTypeManager,
-                              ConfigFactoryInterface $configFactory) {
+  public function __construct(
+    RouteMatchInterface $routeMatch,
+    EntityTypeManagerInterface $entityTypeManager,
+    ConfigFactoryInterface $configFactory,
+  ) {
     $this->routeMatch = $routeMatch;
     $this->entityTypeManager = $entityTypeManager;
     $this->configFactory = $configFactory;

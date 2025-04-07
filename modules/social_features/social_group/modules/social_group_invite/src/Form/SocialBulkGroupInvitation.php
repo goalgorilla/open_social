@@ -153,7 +153,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     GroupRelationTypeManagerInterface $group_relation_type_manager,
     ConfigFactoryInterface $config_factory,
     Token $token,
-    FileUrlGenerator $file_url_generator
+    FileUrlGenerator $file_url_generator,
   ) {
     parent::__construct($route_match, $entity_type_manager, $temp_store_factory, $logger_factory, $messenger, $group_membership_loader, $invitation_loader);
     $this->group = $this->routeMatch->getParameter('group');

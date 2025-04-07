@@ -334,7 +334,7 @@ function social_topic_social_follow_content_types_alter(array &$types) {
 /**
  * Sets dynamic allowed values for the topic type icon field.
  */
-function social_topic_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+function social_topic_allowed_values_function(FieldStorageConfig $definition, ?ContentEntityInterface $entity = NULL, $cacheable) {
   $theme_path = \Drupal::service('extension.list.theme')->getPath('socialbase');
   $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
 

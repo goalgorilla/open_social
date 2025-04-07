@@ -81,7 +81,7 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
     FlagServiceInterface $flag_service,
     RendererInterface $renderer,
     FlagLinkBuilderInterface $flag_link_builder,
-    AccountInterface $current_user
+    AccountInterface $current_user,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->formBuilder = $formBuilder;

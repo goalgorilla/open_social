@@ -46,9 +46,9 @@ class ContentBlockManager extends DefaultPluginManager implements ContentBlockMa
    */
   public function getParents(
     string $field_name,
-    string $column = NULL,
-    array $element = NULL,
-    bool $is_field = FALSE
+    ?string $column = NULL,
+    ?array $element = NULL,
+    bool $is_field = FALSE,
   ) {
     if ($element !== NULL) {
       $parents = ['#field_parents'];
@@ -74,9 +74,9 @@ class ContentBlockManager extends DefaultPluginManager implements ContentBlockMa
    */
   public function getSelector(
     string $field_name,
-    string $column = NULL,
-    array $element = NULL,
-    bool $is_field = FALSE
+    ?string $column = NULL,
+    ?array $element = NULL,
+    bool $is_field = FALSE,
   ) {
     $parents = $this->getParents($field_name, $column, $element, $is_field);
 

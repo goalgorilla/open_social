@@ -123,7 +123,7 @@ class SocialGroupInviteResend extends ViewsBulkOperationsActionBase implements C
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     $access = $object->access('delete', $account, TRUE);
     return $return_as_object ? $access : $access->isAllowed();
   }

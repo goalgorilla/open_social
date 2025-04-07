@@ -57,7 +57,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $plugin_definition,
     SocialGroupHelperService $group_helper,
     RouteMatchInterface $route_match,
-    protected ClassResolverInterface $classResolver
+    protected ClassResolverInterface $classResolver,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 

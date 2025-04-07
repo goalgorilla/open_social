@@ -26,7 +26,7 @@ use Drupal\social_post\Entity\PostInterface;
 function entity_access_by_field_node_access(
   EntityInterface $entity,
   string $operation,
-  AccountInterface $account
+  AccountInterface $account,
 ): AccessResultInterface {
   return EntityAccessHelper::getEntityAccessResult(
     $entity,

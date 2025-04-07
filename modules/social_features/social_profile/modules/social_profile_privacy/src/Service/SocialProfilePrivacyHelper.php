@@ -43,7 +43,7 @@ class SocialProfilePrivacyHelper implements SocialProfilePrivacyHelperInterface 
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     EntityFieldManagerInterface $entity_field_manager,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->entityFieldManager = $entity_field_manager;
@@ -53,7 +53,7 @@ class SocialProfilePrivacyHelper implements SocialProfilePrivacyHelperInterface 
   /**
    * {@inheritdoc}
    */
-  public function getFieldOptions(AccountInterface $account = NULL) {
+  public function getFieldOptions(?AccountInterface $account = NULL) {
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
     $display = $this->entityTypeManager->getStorage('entity_form_display')
       ->load('profile.profile.default');

@@ -99,7 +99,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
     EntityRepositoryInterface $entity_repository,
     TitleResolverInterface $title_resolver,
     EntityTypeManagerInterface $entity_type_manager,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $route_match;

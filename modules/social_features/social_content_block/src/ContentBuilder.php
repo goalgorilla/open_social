@@ -84,7 +84,7 @@ class ContentBuilder implements ContentBuilderInterface {
     TranslationInterface $string_translation,
     ContentBlockManagerInterface $content_block_manager,
     EntityRepositoryInterface $entity_repository,
-    TimeInterface $time
+    TimeInterface $time,
   ) {
     $this->account = $account;
     $this->entityTypeManager = $entity_type_manager;
@@ -488,7 +488,7 @@ class ContentBuilder implements ContentBuilderInterface {
     SelectInterface $query,
     EntityTypeInterface $entity_type,
     BlockContentInterface $block_content,
-    array $options
+    array $options,
   ): void {
     // Define a lower limit for popular content so that content with a large
     // amount of comments/votes is not popular forever.

@@ -29,7 +29,7 @@ class GroupMembershipRequestOperationProvider implements OperationProviderInterf
   public function __construct(
     OperationProviderInterface $parent,
     AccountProxyInterface $current_user,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->parent = $parent;
     $this->currentUser = $current_user;

@@ -52,7 +52,7 @@ interface UserExportPluginInterface extends PluginInspectionInterface {
    * @return string
    *   Returns value of the field.
    */
-  public function profileGetFieldValue($field_name, ProfileInterface $user_profile = NULL);
+  public function profileGetFieldValue($field_name, ?ProfileInterface $user_profile = NULL);
 
   /**
    * Returns the value for the address field and element within address.
@@ -67,7 +67,7 @@ interface UserExportPluginInterface extends PluginInspectionInterface {
    * @return string
    *   Returns the value of the address element for the profile.
    */
-  public function profileGetAddressFieldValue($field_name, $address_element, ProfileInterface $user_profile = NULL);
+  public function profileGetAddressFieldValue($field_name, $address_element, ?ProfileInterface $user_profile = NULL);
 
   /**
    * Returns the values of a taxonomy reference field.
@@ -80,6 +80,6 @@ interface UserExportPluginInterface extends PluginInspectionInterface {
    * @return string
    *   Returns comma separated string of taxonomy terms of the field.
    */
-  public function profileGetTaxonomyFieldValue($field_name, ProfileInterface $user_profile = NULL);
+  public function profileGetTaxonomyFieldValue($field_name, ?ProfileInterface $user_profile = NULL);
 
 }

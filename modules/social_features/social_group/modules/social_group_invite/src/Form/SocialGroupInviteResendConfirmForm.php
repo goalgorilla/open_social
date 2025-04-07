@@ -74,7 +74,7 @@ class SocialGroupInviteResendConfirmForm extends ConfirmFormBase implements Cont
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupRelationshipInterface $group_content = NULL): array {
+  public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $group = NULL, ?GroupRelationshipInterface $group_content = NULL): array {
     $this->invite = $group_content;
 
     $form = parent::buildForm($form, $form_state);

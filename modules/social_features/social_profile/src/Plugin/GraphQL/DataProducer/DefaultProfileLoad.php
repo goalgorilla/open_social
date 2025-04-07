@@ -96,7 +96,7 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
     array $pluginDefinition,
     EntityTypeManagerInterface $entityTypeManager,
     EntityBuffer $entityBuffer,
-    RendererInterface $renderer
+    RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $pluginId, $pluginDefinition);
     $this->entityTypeManager = $entityTypeManager;

@@ -58,7 +58,7 @@ class GroupRequestController extends ControllerBase {
     CacheTagsInvalidatorInterface $cache_tags_invalidator,
     TranslationInterface $string_translation,
     EntityTypeManagerInterface $entity_type_manager,
-    AccountInterface $current_user
+    AccountInterface $current_user,
   ) {
     $this->formBuilder = $form_builder;
     $this->entityFormBuilder = $entity_form_builder;

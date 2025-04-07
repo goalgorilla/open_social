@@ -58,7 +58,7 @@ class SocialGroupListBuilder extends EntityListBuilder {
     EntityStorageInterface $storage,
     RedirectDestinationInterface $redirect_destination,
     DateFormatterInterface $date_time,
-    GroupStatistics $group_statistics
+    GroupStatistics $group_statistics,
   ) {
     parent::__construct($entity_type, $storage);
     $this->redirectDestination = $redirect_destination;

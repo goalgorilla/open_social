@@ -58,7 +58,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
     array $settings,
     array $third_party_settings,
     ContentBlockManagerInterface $content_block_manager,
-    array $field_configs
+    array $field_configs,
   ) {
     parent::__construct(
       $plugin_id,

@@ -89,7 +89,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     RequestStack $requestStack,
     EntityTypeManagerInterface $entity_type_manager,
     ActionManager $pluginActionManager,
-    ConfigFactoryInterface $config_factory
+    ConfigFactoryInterface $config_factory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack);
 

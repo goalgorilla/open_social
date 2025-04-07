@@ -67,7 +67,7 @@ class GroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
     PrivateTempStoreFactory $tempStoreFactory,
     AccountInterface $currentUser,
     RequestStack $requestStack,
-    RouteMatchInterface $routeMatch
+    RouteMatchInterface $routeMatch,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack);
 

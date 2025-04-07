@@ -150,7 +150,7 @@ abstract class UserExportPluginBase extends PluginBase implements UserExportPlug
    * @return string
    *   Returns value of the field.
    */
-  public function profileGetFieldValue($field_name, ProfileInterface $user_profile = NULL) {
+  public function profileGetFieldValue($field_name, ?ProfileInterface $user_profile = NULL) {
     if ($user_profile === NULL) {
       return '';
     }
@@ -177,7 +177,7 @@ abstract class UserExportPluginBase extends PluginBase implements UserExportPlug
    * @return string
    *   Returns the value of the address element for the profile.
    */
-  public function profileGetAddressFieldValue($field_name, $address_element, ProfileInterface $user_profile = NULL) {
+  public function profileGetAddressFieldValue($field_name, $address_element, ?ProfileInterface $user_profile = NULL) {
     if ($user_profile === NULL) {
       return '';
     }
@@ -206,7 +206,7 @@ abstract class UserExportPluginBase extends PluginBase implements UserExportPlug
    * @return string
    *   Returns comma separated string of taxonomy terms of the field.
    */
-  public function profileGetTaxonomyFieldValue($field_name, ProfileInterface $user_profile = NULL) {
+  public function profileGetTaxonomyFieldValue($field_name, ?ProfileInterface $user_profile = NULL) {
     if ($user_profile === NULL) {
       return '';
     }

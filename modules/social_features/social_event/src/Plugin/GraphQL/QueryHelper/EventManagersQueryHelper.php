@@ -42,7 +42,7 @@ class EventManagersQueryHelper extends ConnectionQueryHelperBase {
     string $sort_key,
     EntityTypeManagerInterface $entity_type_manager,
     EntityBuffer $graphql_entity_buffer,
-    NodeInterface $event
+    NodeInterface $event,
   ) {
     parent::__construct($sort_key, $entity_type_manager, $graphql_entity_buffer);
 

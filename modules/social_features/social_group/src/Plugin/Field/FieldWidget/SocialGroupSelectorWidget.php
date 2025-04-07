@@ -88,7 +88,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
     AccountInterface $currentUser,
     ModuleHandlerInterface $moduleHandler,
     GroupRelationTypeManagerInterface $pluginManager,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->configFactory = $configFactory;
@@ -385,7 +385,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    */
   private static function getVisibilityOptionsforMultipleGroups(
     array $gids,
-    EntityInterface $entity
+    EntityInterface $entity,
   ): array {
     /** @var \Drupal\group\Entity\GroupInterface[] $groups */
     $groups = \Drupal::entityTypeManager()->getStorage('group')
@@ -431,7 +431,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   private function removeGroupsWithoutCreateAccess(
     array $options,
     UserInterface $account,
-    EntityInterface $entity
+    EntityInterface $entity,
   ): array {
     foreach ($options as $option_category_key => $groups_in_category) {
       if (is_array($groups_in_category)) {
@@ -474,7 +474,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   private function checkGroupContentCreateAccess(
     int $gid,
     UserInterface $account,
-    EntityInterface $entity
+    EntityInterface $entity,
   ): bool {
     $group = $this->entityTypeManager->getStorage('group')->load($gid);
 

@@ -30,7 +30,7 @@ interface JoinPluginInterface extends ContainerFactoryPluginInterface {
     string $plugin_id,
     $plugin_definition,
     TranslationInterface $translation,
-    AccountProxyInterface $current_user
+    AccountProxyInterface $current_user,
   );
 
   /**

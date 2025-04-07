@@ -40,7 +40,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     $this->configFactory = $config_factory;
     $this->moduleHandler = $module_handler;

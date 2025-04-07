@@ -49,8 +49,8 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     Token $token,
     EntityTypeManagerInterface $entity_type_manager,
     LoggerInterface $logger,
@@ -58,7 +58,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     EmailValidator $email_validator,
     QueueFactory $queue_factory,
     $allow_text_format,
-    SocialEmailBroadcast $email_broadcast_service
+    SocialEmailBroadcast $email_broadcast_service,
   ) {
     parent::__construct(
       $configuration,
@@ -159,7 +159,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
 
     if ($object instanceof EventEnrollmentInterface) {

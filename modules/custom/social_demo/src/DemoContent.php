@@ -90,14 +90,14 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     DemoContentParserInterface $parser,
     UserStorageInterface $user_storage,
     EntityStorageInterface $group_storage,
     FileStorageInterface $file_storage,
     TermStorageInterface $term_storage,
-    LoggerChannelFactoryInterface $logger_channel_factory
+    LoggerChannelFactoryInterface $logger_channel_factory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->parser = $parser;

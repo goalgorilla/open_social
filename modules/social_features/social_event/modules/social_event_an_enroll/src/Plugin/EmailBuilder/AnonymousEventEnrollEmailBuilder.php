@@ -64,10 +64,10 @@ class AnonymousEventEnrollEmailBuilder extends EmailBuilderBase implements Conta
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     ConfigFactoryInterface $config_factory,
-    Token $token
+    Token $token,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;

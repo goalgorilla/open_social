@@ -53,7 +53,7 @@ class EnrolmentUserDisplayName extends UserDisplayName {
     EntityTypeManagerInterface $entity_type_manager,
     DateFormatterInterface $date_formatter,
     Connection $database,
-    EventAnEnrollManager $social_event_an_enroll_manager
+    EventAnEnrollManager $social_event_an_enroll_manager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $date_formatter, $database);
 

@@ -68,7 +68,8 @@ class AutocompleteController extends ControllerBase {
     ConfigFactoryInterface $configFactory,
     Connection $database,
     EntityTypeManagerInterface $entityTypeManager,
-    Renderer $renderer) {
+    Renderer $renderer,
+  ) {
     $this->configFactory = $configFactory;
     $this->database = $database;
     $this->entityTypeManager = $entityTypeManager;

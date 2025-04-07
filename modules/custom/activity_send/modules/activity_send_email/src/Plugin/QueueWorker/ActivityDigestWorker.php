@@ -69,7 +69,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
     EntityTypeManagerInterface $entity_type_manager,
     EmailFrequencyManager $email_frequency_manager,
     MailManagerInterface $mail_manager,
-    RendererInterface $renderer
+    RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;

@@ -87,7 +87,7 @@ class Reroute extends EmailAdjusterBase implements ContainerFactoryPluginInterfa
     ConfigFactoryInterface $config_factory,
     RoleStorageInterface $role_storage,
     EmailValidatorInterface $email_validator,
-    LoggerInterface $logger
+    LoggerInterface $logger,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;

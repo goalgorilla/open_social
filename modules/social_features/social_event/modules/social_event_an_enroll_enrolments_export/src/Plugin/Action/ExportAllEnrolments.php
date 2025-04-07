@@ -76,7 +76,7 @@ class ExportAllEnrolments extends ExportEnrolments {
     ConfigFactoryInterface $configFactory,
     FileRepository $file_repository,
     FileUrlGenerator $file_url_generator,
-    EventAnEnrollManager $social_event_an_enroll_manager
+    EventAnEnrollManager $social_event_an_enroll_manager,
   ) {
     parent::__construct(
       $configuration,
@@ -136,7 +136,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     if ($object instanceof EventEnrollmentInterface) {
       if ($this->socialEventAnEnrollManager->isGuest($object)) {
         $access = AccessResult::allowed();

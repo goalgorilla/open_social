@@ -79,7 +79,7 @@ class EventInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
     $plugin_definition,
     ConfigFactoryInterface $config_factory,
     Token $token,
-    LanguageManagerInterface $language_manager
+    LanguageManagerInterface $language_manager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;

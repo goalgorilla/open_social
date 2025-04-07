@@ -100,7 +100,7 @@ class SocialCommentAttachments extends EntityDataProducerPluginBase {
     $pluginId,
     array $pluginDefinition,
     EntityTypeManagerInterface $entityTypeManager,
-    Connection $database
+    Connection $database,
   ) {
     parent::__construct($configuration, $pluginId, $pluginDefinition, $entityTypeManager);
     $this->database = $database;

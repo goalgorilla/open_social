@@ -63,7 +63,7 @@ class ModeBlock extends Block {
     $plugin_definition,
     EntityTypeManagerInterface $entity_type_manager,
     BlockManagerInterface $block_manager,
-    ConfigFactory $configFactory
+    ConfigFactory $configFactory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $block_manager);
     $this->configFactory = $configFactory;

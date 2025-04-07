@@ -71,7 +71,7 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
     $plugin_definition,
     AccountInterface $account,
     GroupInvitationLoaderInterface $inviteLoader,
-    TranslationManager $translation
+    TranslationManager $translation,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->account = $account;

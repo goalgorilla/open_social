@@ -61,7 +61,7 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
     RequestStack $request_stack,
     EmailValidatorInterface $email_validator,
     Connection $database,
-    ConfigFactoryInterface $config_factory
+    ConfigFactoryInterface $config_factory,
   ) {
     $this->requestStack = $request_stack;
     $this->emailValidator = $email_validator;

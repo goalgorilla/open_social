@@ -88,8 +88,8 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     MailManagerInterface $mail_manager,
     EntityTypeManagerInterface $entity_type_manager,
     TranslationInterface $string_translation,
@@ -200,7 +200,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
    * @param bool $include_mail_footer
    *   TRUE if need to include the email footer.
    */
-  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, string $display_name = NULL, bool $include_mail_footer = FALSE): void {
+  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, ?string $display_name = NULL, bool $include_mail_footer = FALSE): void {
     $subject = $mail_params->get('field_subject')->value;
     $body = $mail_params->get('field_message')->value;
     $reply_to = $mail_params->get('field_reply_to')->getString();

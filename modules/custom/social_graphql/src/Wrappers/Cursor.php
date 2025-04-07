@@ -118,7 +118,7 @@ class Cursor {
    * @return bool
    *   Whether this cursor is valid for the provided arguments.
    */
-  public function isValidFor(string $sort_key, string $backing_type = NULL) : bool {
+  public function isValidFor(string $sort_key, ?string $backing_type = NULL) : bool {
     return $this->sortKey === $sort_key && (is_null($backing_type) || $this->backingType === $backing_type);
   }
 

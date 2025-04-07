@@ -46,7 +46,7 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    ContentBlockManagerInterface $content_block_manager
+    ContentBlockManagerInterface $content_block_manager,
   ) {
     parent::__construct(
       $plugin_id,

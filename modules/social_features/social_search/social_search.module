@@ -276,7 +276,7 @@ function social_search_resave_data_source_search_indexes(array $entity_type_ids 
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function social_search_resave_search_indexes(array $index_ids = NULL) {
+function social_search_resave_search_indexes(?array $index_ids = NULL) {
   // We load all indexes, we assume there will never be hundreds of search
   // indexes which would create its own problems for a site.
   $indexes = Index::loadMultiple($index_ids);

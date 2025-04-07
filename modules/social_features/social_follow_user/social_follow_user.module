@@ -87,7 +87,7 @@ function social_follow_user_flag_action_access(
   string $action,
   FlagInterface $flag,
   AccountInterface $account,
-  EntityInterface $flaggable = NULL
+  ?EntityInterface $flaggable = NULL,
 ): AccessResultInterface {
   if (!$flaggable instanceof Profile) {
     return AccessResult::neutral();
@@ -109,7 +109,7 @@ function social_follow_user_profile_view(
   array &$build,
   EntityInterface $entity,
   EntityViewDisplayInterface $display,
-  string $view_mode
+  string $view_mode,
 ): void {
   if ($entity->bundle() === 'profile') {
     // Add cacheable dependency on social_follow_user settings for user profile.

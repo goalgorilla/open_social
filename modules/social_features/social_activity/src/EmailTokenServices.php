@@ -98,7 +98,7 @@ class EmailTokenServices {
     ModuleHandlerInterface $module_handler,
     StreamWrapperManagerInterface $stream_wrapper_manager,
     ConfigFactory $config,
-    FilterPluginManager $filter_plugin_manager
+    FilterPluginManager $filter_plugin_manager,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->dateFormatter = $date_formatter;

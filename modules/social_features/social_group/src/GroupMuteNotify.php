@@ -46,7 +46,7 @@ class GroupMuteNotify {
    */
   public function __construct(
     FlagServiceInterface $flag_service,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
   ) {
     $this->flagService = $flag_service;
     $this->entityTypeManager = $entity_type_manager;
@@ -92,7 +92,7 @@ class GroupMuteNotify {
    * @return \Drupal\group\Entity\GroupInterface|null
    *   Returns the group object.
    */
-  public function getGroupByContent(EntityInterface $entity = NULL): ?GroupInterface {
+  public function getGroupByContent(?EntityInterface $entity = NULL): ?GroupInterface {
     // Ensure the $entity is not NULL.
     if ($entity == NULL) {
       return NULL;

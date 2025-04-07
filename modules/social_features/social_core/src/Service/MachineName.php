@@ -46,7 +46,7 @@ class MachineName implements MachineNameInterface {
    */
   public function transform(
     string $value,
-    string $pattern = '/[^a-z0-9_]+/'
+    string $pattern = '/[^a-z0-9_]+/',
   ): string {
     $value = $this->transliteration->transliterate(
       $value,

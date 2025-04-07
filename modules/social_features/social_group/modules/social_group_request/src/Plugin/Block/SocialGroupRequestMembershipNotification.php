@@ -75,7 +75,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
     AccountInterface $account,
     EntityTypeManagerInterface $entity_type_manager,
     TranslationManager $translation,
-    JoinManagerInterface $join_manager
+    JoinManagerInterface $join_manager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->account = $account;

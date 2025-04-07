@@ -26,7 +26,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, Node $node = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?Node $node = NULL) {
     $form = parent::buildForm($form, $form_state);
     $nid = $this->routeMatch->getRawParameter('node');
     $current_user = $this->currentUser();

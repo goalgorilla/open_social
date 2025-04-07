@@ -31,7 +31,7 @@ class UserEnrollInviteControllerAlter extends UserEnrollInviteController {
   public function __construct(
     RequestStack $requestStack,
     AccountProxyInterface $currentUser,
-    EventMaxEnrollService $eventMaxEnrollService
+    EventMaxEnrollService $eventMaxEnrollService,
   ) {
     parent::__construct($requestStack, $currentUser);
 

@@ -64,7 +64,7 @@ class FlagSubscriber implements EventSubscriberInterface {
     ConfigFactoryInterface $config_factory,
     MessengerInterface $messenger,
     CacheTagsInvalidatorInterface $cache_invalidator,
-    ContentReportServiceInterface $social_content_report
+    ContentReportServiceInterface $social_content_report,
   ) {
     $this->unpublishImmediately = $config_factory->get('social_content_report.settings')->get('unpublish_threshold');
     $this->messenger = $messenger;

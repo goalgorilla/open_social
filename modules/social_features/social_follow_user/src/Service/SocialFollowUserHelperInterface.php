@@ -21,7 +21,7 @@ interface SocialFollowUserHelperInterface {
    */
   public function __construct(
     AccountProxyInterface $current_user,
-    FlagServiceInterface $flag
+    FlagServiceInterface $flag,
   );
 
   /**

@@ -148,17 +148,20 @@ function _social_album_set_group_permissions() {
  * @param array $items
  *   (optional) Paths of blocks. Defaults to NULL.
  */
-function _social_album_blocks(callable $function = NULL, array $items = [
-  'socialblue_profile_hero_block' => '/user/*/albums',
-  'socialblue_pagetitleblock_content' => [
-    '/user/*/albums',
-    '/group/*/albums',
-    '/group/*/albums/add',
+function _social_album_blocks(
+  ?callable $function = NULL,
+  array $items = [
+    'socialblue_profile_hero_block' => '/user/*/albums',
+    'socialblue_pagetitleblock_content' => [
+      '/user/*/albums',
+      '/group/*/albums',
+      '/group/*/albums/add',
+    ],
+    'socialblue_profile_statistic_block' => '/user/*/albums',
+    'socialblue_groupheroblock' => '/group/*/albums',
+    'socialblue_group_statistic_block' => '/group/*/albums',
   ],
-  'socialblue_profile_statistic_block' => '/user/*/albums',
-  'socialblue_groupheroblock' => '/group/*/albums',
-  'socialblue_group_statistic_block' => '/group/*/albums',
-]): void {
+): void {
   _social_core_install_blocks($items, $function);
 }
 

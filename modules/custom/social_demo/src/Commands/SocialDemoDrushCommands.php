@@ -47,7 +47,7 @@ class SocialDemoDrushCommands extends DrushCommands {
    */
   public function __construct(
     AccountProxyInterface $accountProxy,
-    DemoContentManager $demoContentManager
+    DemoContentManager $demoContentManager,
   ) {
     $this->currentUser = $accountProxy;
     $this->demoContentManager = $demoContentManager;

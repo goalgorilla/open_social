@@ -53,7 +53,7 @@ class GroupActivityContext extends ActivityContextBase {
     QueryFactory $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
     ActivityFactory $activity_factory,
-    SocialGroupHelperService $grouphelper_service
+    SocialGroupHelperService $grouphelper_service,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 

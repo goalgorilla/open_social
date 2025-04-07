@@ -57,8 +57,8 @@ abstract class DemoSystem extends DemoContent {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     DemoContentParserInterface $parser,
     UserStorageInterface $user_storage,
     EntityStorageInterface $group_storage,
@@ -67,7 +67,7 @@ abstract class DemoSystem extends DemoContent {
     LoggerChannelFactoryInterface $logger_channel_factory,
     EntityStorageInterface $block_storage,
     ConfigFactory $config_factory,
-    FileSystem $file_system
+    FileSystem $file_system,
   ) {
     parent::__construct(
       $configuration,

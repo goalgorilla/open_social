@@ -64,7 +64,8 @@ class ActivityLoggerFactory {
     EntityTypeManagerInterface $entityTypeManager,
     ActivityEntityConditionManager $activityEntityConditionManager,
     ActivityContextManager $activityContextManager,
-    ModuleHandlerInterface $moduleHandler) {
+    ModuleHandlerInterface $moduleHandler,
+  ) {
     $this->entityTypeManager = $entityTypeManager;
     $this->activityEntityConditionManager = $activityEntityConditionManager;
     $this->activityContextManager = $activityContextManager;

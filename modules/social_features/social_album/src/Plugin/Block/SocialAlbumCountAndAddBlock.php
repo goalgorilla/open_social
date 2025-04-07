@@ -56,7 +56,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    RouteMatchInterface $route_match
+    RouteMatchInterface $route_match,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 

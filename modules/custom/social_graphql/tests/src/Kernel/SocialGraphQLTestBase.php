@@ -60,7 +60,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    *   The parent fields from the query root to the pagination field. Can
    *   contain filters (e.g. `['user(id: "0000-001")', 'friend']`).
    */
-  protected function assertEndpointSupportsPagination(string $endpoint, array $uuids, string $sortKey = NULL, array $parents = []): void {
+  protected function assertEndpointSupportsPagination(string $endpoint, array $uuids, ?string $sortKey = NULL, array $parents = []): void {
     assert(count($uuids) >= 10, "The array of uuids provided to " . __FUNCTION__ . " must have at least 10 entries to perform pagination testing.");
 
     $last = count($uuids) - 1;
@@ -146,7 +146,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    *   will use a cursor based on $side to assert a second request with this
    *   array as $result_nodes.
    */
-  protected function assertPaginationPage(string $field, string $side, ?bool $reverse, ?string $cursor, ?string $sortKey, bool $hasNextPage, bool $hasPreviousPage, array $parents, array $first_page, array $second_page = NULL): void {
+  protected function assertPaginationPage(string $field, string $side, ?bool $reverse, ?string $cursor, ?string $sortKey, bool $hasNextPage, bool $hasPreviousPage, array $parents, array $first_page, ?array $second_page = NULL): void {
     $count = count($first_page);
     // Construct the filter as a string. We do this instead of variables since
     // it makes our function signature a bit easier.

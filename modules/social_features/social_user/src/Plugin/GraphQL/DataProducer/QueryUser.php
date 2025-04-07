@@ -112,7 +112,7 @@ class QueryUser extends EntityDataProducerPluginBase implements ContainerFactory
     EntityBuffer $graphqlEntityBuffer,
     EntityUuidBuffer $graphqlEntityUuidBuffer,
     EntityRevisionBuffer $graphqlEntityRevisionBuffer,
-    AccountInterface $current_user
+    AccountInterface $current_user,
   ) {
     parent::__construct($configuration, $pluginId, $pluginDefinition, $entityTypeManager, $graphqlEntityBuffer, $graphqlEntityUuidBuffer, $graphqlEntityRevisionBuffer);
     $this->currentUser = $current_user;

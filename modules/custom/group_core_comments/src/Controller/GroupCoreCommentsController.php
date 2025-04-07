@@ -44,7 +44,7 @@ class GroupCoreCommentsController extends ControllerBase {
     AccountInterface $current_user,
     RequestStack $request_stack,
     MessengerInterface $messenger,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->currentUser = $current_user;

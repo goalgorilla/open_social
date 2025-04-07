@@ -101,7 +101,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     EntityTypeManagerInterface $entity_type_manager,
     QueueFactory $queue_factory,
     LanguageManager $language_manager,
-    GroupMuteNotify $group_mute_notify
+    GroupMuteNotify $group_mute_notify,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->frequencyManager = $frequency_manager;

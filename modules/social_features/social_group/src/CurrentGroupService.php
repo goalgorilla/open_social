@@ -26,8 +26,8 @@ class CurrentGroupService {
    *   The context repository.
    */
   public function __construct(
-      ContextRepositoryInterface $context_repository,
-    ) {
+    ContextRepositoryInterface $context_repository,
+  ) {
     $this->contextRepository = $context_repository;
   }
 

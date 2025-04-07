@@ -41,7 +41,7 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    EventAnEnrollOverride $social_event_an_enroll_overrider = NULL
+    ?EventAnEnrollOverride $social_event_an_enroll_overrider = NULL,
   ) {
     $this->configFactory = $config_factory;
     $this->socialEventAnEnrollOverrider = $social_event_an_enroll_overrider;

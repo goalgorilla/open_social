@@ -40,7 +40,7 @@ class SocialNodeMessenger extends Messenger implements SocialNodeMessengerInterf
   public function __construct(
     FlashBagInterface $flash_bag,
     KillSwitch $killSwitch,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     parent::__construct($flash_bag, $killSwitch);
 

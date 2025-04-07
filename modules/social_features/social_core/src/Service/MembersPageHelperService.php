@@ -22,7 +22,7 @@ class MembersPageHelperService {
    */
   public function __construct(
     protected UserData $userData,
-    protected AccountProxyInterface $currentUser
+    protected AccountProxyInterface $currentUser,
   ) {}
 
   /**

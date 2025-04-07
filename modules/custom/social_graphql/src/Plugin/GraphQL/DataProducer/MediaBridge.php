@@ -88,7 +88,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
     array $configuration,
     $pluginId,
     array $pluginDefinition,
-    EntityBuffer $entityBuffer
+    EntityBuffer $entityBuffer,
   ) {
     parent::__construct($configuration, $pluginId, $pluginDefinition);
     $this->entityBuffer = $entityBuffer;

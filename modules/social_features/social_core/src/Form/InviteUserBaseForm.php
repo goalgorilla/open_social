@@ -47,7 +47,7 @@ class InviteUserBaseForm extends FormBase {
   public function __construct(
     RouteMatchInterface $route_match,
     EntityTypeManagerInterface $entity_type_manager,
-    LoggerChannelFactoryInterface $logger_factory
+    LoggerChannelFactoryInterface $logger_factory,
   ) {
     $this->routeMatch = $route_match;
     $this->entityTypeManager = $entity_type_manager;

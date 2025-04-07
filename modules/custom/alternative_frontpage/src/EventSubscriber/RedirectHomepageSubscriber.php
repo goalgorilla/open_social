@@ -108,7 +108,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     StateInterface $state,
     EntityTypeManagerInterface $entity_type_manager,
     LanguageManagerInterface $language_manager,
-    AliasRepositoryInterface $path_alias_repository
+    AliasRepositoryInterface $path_alias_repository,
   ) {
     // We need it.
     $this->userData = $user_data;

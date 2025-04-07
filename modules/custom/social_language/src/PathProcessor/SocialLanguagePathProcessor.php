@@ -84,7 +84,7 @@ class SocialLanguagePathProcessor extends AliasPathProcessor {
   /**
    * {@inheritdoc}
    */
-  public function processOutbound($path, &$options = [], Request $request = NULL, BubbleableMetadata $bubbleable_metadata = NULL) {
+  public function processOutbound($path, &$options = [], ?Request $request = NULL, ?BubbleableMetadata $bubbleable_metadata = NULL) {
     $alias = parent::processOutbound($path, $options, $request, $bubbleable_metadata);
     if ($path !== $alias) {
       return $alias;

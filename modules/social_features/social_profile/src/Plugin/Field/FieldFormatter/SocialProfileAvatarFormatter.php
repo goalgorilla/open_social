@@ -34,7 +34,7 @@ class SocialProfileAvatarFormatter extends ImageFormatter {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition
+    $plugin_definition,
   ) {
     $instance = parent::create(
       $container,

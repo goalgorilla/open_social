@@ -26,7 +26,7 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
     array &$element,
     FormStateInterface $form_state,
     array &$complete_form,
-    bool $select2 = FALSE
+    bool $select2 = FALSE,
   ): void {
     $duplicated_values = $value = [];
 

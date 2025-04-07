@@ -81,7 +81,7 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL) {
     if ($node === NULL || is_null($node->getTitle())) {
       return [];
     }

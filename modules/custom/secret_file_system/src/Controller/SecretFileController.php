@@ -67,7 +67,7 @@ class SecretFileController extends ControllerBase {
     StreamWrapperManagerInterface $stream_wrapper_manager,
     TimeInterface $time,
     LockBackendInterface $lock,
-    ImageFactory $image_factory
+    ImageFactory $image_factory,
   ) {
     $this->streamWrapperManager = $stream_wrapper_manager;
     $this->time = $time;

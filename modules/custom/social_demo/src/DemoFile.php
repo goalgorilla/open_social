@@ -40,8 +40,8 @@ abstract class DemoFile extends DemoContent {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     DemoContentParserInterface $parser,
     UserStorageInterface $user_storage,
     EntityStorageInterface $group_storage,
@@ -49,7 +49,7 @@ abstract class DemoFile extends DemoContent {
     TermStorageInterface $term_storage,
     LoggerChannelFactoryInterface $logger_channel_factory,
     ImageWidgetCropManager $image_widget_crop_manager,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
   ) {
     parent::__construct(
     $configuration,

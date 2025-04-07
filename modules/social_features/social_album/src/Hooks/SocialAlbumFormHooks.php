@@ -34,7 +34,7 @@ final class SocialAlbumFormHooks {
    */
   public function __construct(
     RouteMatchInterface $route_match,
-    ConfigFactoryInterface $config_factory
+    ConfigFactoryInterface $config_factory,
   ) {
     $this->routeMatch = $route_match;
     $this->configFactory = $config_factory;

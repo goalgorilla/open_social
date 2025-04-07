@@ -35,7 +35,7 @@ class ExportEnrolments extends ExportUser {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     if ($object instanceof EventEnrollmentInterface) {
       $access = $this->getAccount($object)->access('view', $account, TRUE);
     }

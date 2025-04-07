@@ -20,7 +20,7 @@ class ExternalIdentifierExternalOwnerTargetTypeConstraintValidator extends Const
    *   The entity type manager service.
    */
   public function __construct(
-    protected EntityTypeManagerInterface $entityTypeManager
+    protected EntityTypeManagerInterface $entityTypeManager,
   ) {
 
   }

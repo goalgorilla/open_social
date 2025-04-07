@@ -76,7 +76,7 @@ class ProfileEntitySortable extends RenderedEntity {
     EntityDisplayRepositoryInterface $entity_display_repository,
     ViewsHandlerManager $join_manager,
     ModuleHandlerInterface $module_handler,
-    AccountInterface $current_user
+    AccountInterface $current_user,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $language_manager, $entity_repository, $entity_display_repository);
     $this->joinManager = $join_manager;

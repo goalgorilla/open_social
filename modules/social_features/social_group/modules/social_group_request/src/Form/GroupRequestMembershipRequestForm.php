@@ -68,7 +68,7 @@ class GroupRequestMembershipRequestForm extends FormBase {
     CacheTagsInvalidatorInterface $cache_tags_invalidator,
     AccountInterface $current_user,
     TranslationInterface $string_translation,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
   ) {
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
     $this->currentUser = $current_user;
@@ -98,7 +98,7 @@ class GroupRequestMembershipRequestForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $group = NULL) {
     $this->group = $group;
 
     $form['description'] = [

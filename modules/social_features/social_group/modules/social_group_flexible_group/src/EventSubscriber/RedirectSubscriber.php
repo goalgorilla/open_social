@@ -46,7 +46,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    */
   public function __construct(
     AccountProxyInterface $current_user,
-    RouteMatchInterface $route_match
+    RouteMatchInterface $route_match,
   ) {
     $this->currentUser = $current_user;
     $this->routeMatch = $route_match;

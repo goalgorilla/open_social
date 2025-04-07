@@ -76,7 +76,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     ActivityFactory $activity_factory,
     ModuleHandlerInterface $module_handler,
     Connection $connection,
-    SocialGroupHelperService $group_helper_service
+    SocialGroupHelperService $group_helper_service,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 

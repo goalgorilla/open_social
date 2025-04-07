@@ -35,7 +35,7 @@ interface SocialGroupHelperServiceInterface {
     ModuleHandlerInterface $module_handler,
     TranslationInterface $translation,
     EntityTypeManagerInterface $entity_type_manager,
-    RendererInterface $renderer
+    RendererInterface $renderer,
   );
 
   /**

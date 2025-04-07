@@ -87,7 +87,7 @@ class EntityDataProducerPluginBase extends DataProducerPluginBase implements Con
     EntityTypeManagerInterface $entityTypeManager,
     EntityBuffer $graphqlEntityBuffer,
     EntityUuidBuffer $graphqlEntityUuidBuffer,
-    EntityRevisionBuffer $graphqlEntityRevisionBuffer
+    EntityRevisionBuffer $graphqlEntityRevisionBuffer,
   ) {
     parent::__construct($configuration, $pluginId, $pluginDefinition);
     $this->entityTypeManager = $entityTypeManager;

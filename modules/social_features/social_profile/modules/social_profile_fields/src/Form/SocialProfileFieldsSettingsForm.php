@@ -87,7 +87,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     CacheTagsInvalidator $cache_tags_invalidator,
     ModuleHandlerInterface $module_handler,
     EntityTypeManagerInterface $entity_type_manager,
-    EntityFieldManagerInterface $entity_field_manager
+    EntityFieldManagerInterface $entity_field_manager,
   ) {
     parent::__construct($config_factory);
     $this->profileFieldsHelper = $profile_fields_helper;

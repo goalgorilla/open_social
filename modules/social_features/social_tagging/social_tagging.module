@@ -135,7 +135,7 @@ function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInte
  */
 function social_tagging_inline_entity_form_entity_form_alter(
   array &$entity_form,
-  FormStateInterface &$form_state
+  FormStateInterface &$form_state,
 ): void {
   // "Inline entity form" module has an entity object in the "form" variable.
   social_tagging_social_tagging_field_form_alter(
@@ -151,7 +151,7 @@ function social_tagging_inline_entity_form_entity_form_alter(
 function social_tagging_form_alter(
   array &$form,
   FormStateInterface $form_state,
-  string $form_id
+  string $form_id,
 ): void {
   $form_object = $form_state->getFormObject();
 
@@ -177,7 +177,7 @@ function social_tagging_form_alter(
 function social_tagging_social_tagging_field_form_alter(
   array &$form,
   FormStateInterface $form_state,
-  EntityInterface $entity
+  EntityInterface $entity,
 ): void {
   /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $tag_service */
   $tag_service = \Drupal::service('social_tagging.tag_service');
@@ -330,7 +330,7 @@ function social_tagging_social_tagging_field_form_alter(
  */
 function _social_tagging_entity_validate(
   array $form,
-  FormStateInterface $form_state
+  FormStateInterface $form_state,
 ): void {
   // Get the tagging service.
   /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $tag_service */
@@ -373,7 +373,7 @@ function _social_tagging_entity_validate(
  */
 function _social_tagging_node_form_defaults_values(
   EntityInterface $entity,
-  string $field = NULL
+  ?string $field = NULL,
 ): array {
   if ($entity->id() === NULL) {
     return [];

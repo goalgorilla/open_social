@@ -41,7 +41,7 @@ class EventMaxEnrollService implements EventMaxEnrollServiceInterface {
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
-    ConfigFactoryInterface $configFactory
+    ConfigFactoryInterface $configFactory,
   ) {
     $this->storage = $entity_type_manager->getStorage('event_enrollment');
     $this->configFactory = $configFactory;

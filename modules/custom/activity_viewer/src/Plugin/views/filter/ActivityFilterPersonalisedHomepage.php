@@ -63,7 +63,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     $plugin_definition,
     SocialGroupHelperService $group_helper,
     Connection $connection,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 

@@ -45,7 +45,7 @@ interface SocialTaggingServiceInterface {
     ConfigFactoryInterface $configFactory,
     LanguageManagerInterface $language_manager,
     ModuleHandlerInterface $module_handler,
-    MachineNameInterface $machine_name
+    MachineNameInterface $machine_name,
   );
 
   /**
@@ -81,11 +81,11 @@ interface SocialTaggingServiceInterface {
     array &$form,
     FormStateInterface $form_state,
     string $name,
-    TranslatableMarkup $title = NULL,
-    TranslatableMarkup $description = NULL,
+    ?TranslatableMarkup $title = NULL,
+    ?TranslatableMarkup $description = NULL,
     string $wrapper = self::WRAPPER,
-    array $default_value = NULL,
-    string $parent = NULL
+    ?array $default_value = NULL,
+    ?string $parent = NULL,
   ): bool;
 
   /**
@@ -97,7 +97,7 @@ interface SocialTaggingServiceInterface {
    * @return bool
    *   TRUE if the feature is turned, otherwise FALSE.
    */
-  public function groupTypeActive(Group $group = NULL): bool;
+  public function groupTypeActive(?Group $group = NULL): bool;
 
   /**
    * Returns whether the feature is turned on for groups.

@@ -49,7 +49,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -94,7 +94,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     // There is no permission to check if a user is able to be "added" to a
     // group. Joining doesn't cover it since we also want people to be able
     // to be added to a Secret/Closed group.

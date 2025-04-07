@@ -62,7 +62,7 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     ConfigFactoryInterface $configFactory,
     LanguageManagerInterface $language_manager,
     ModuleHandlerInterface $module_handler,
-    MachineNameInterface $machine_name
+    MachineNameInterface $machine_name,
   ) {
     $this->entityTypeManager = $entityTypeManager;
     $this->configFactory = $configFactory;
@@ -86,11 +86,11 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     array &$form,
     FormStateInterface $form_state,
     string $name,
-    TranslatableMarkup $title = NULL,
-    TranslatableMarkup $description = NULL,
+    ?TranslatableMarkup $title = NULL,
+    ?TranslatableMarkup $description = NULL,
     string $wrapper = self::WRAPPER,
-    array $default_value = NULL,
-    string $parent = NULL
+    ?array $default_value = NULL,
+    ?string $parent = NULL,
   ): bool {
     if ($parent !== NULL) {
       $element = &NestedArray::getValue($form, [$parent]);
@@ -202,7 +202,7 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function groupTypeActive(Group $group = NULL): bool {
+  public function groupTypeActive(?Group $group = NULL): bool {
     if ($group) {
       return (bool) $this->configFactory->get('social_tagging.settings')
         ->get('tag_group_type_' . $group->bundle());

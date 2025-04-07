@@ -40,7 +40,7 @@ class SocialGroupJoinAnonymousForm extends FormBase {
   public function __construct(
     TranslationInterface $string_translation,
     RequestStack $request_stack,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     $this
       ->setStringTranslation($string_translation)
@@ -73,7 +73,7 @@ class SocialGroupJoinAnonymousForm extends FormBase {
   public function buildForm(
     array $form,
     FormStateInterface $form_state,
-    GroupInterface $group = NULL
+    ?GroupInterface $group = NULL,
   ) {
     $form['description'] = [
       '#type' => 'html_tag',

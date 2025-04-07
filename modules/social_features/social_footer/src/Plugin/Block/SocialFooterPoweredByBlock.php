@@ -68,7 +68,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
     $plugin_definition,
     ConfigFactoryInterface $config_factory,
     FileStorageInterface $storage,
-    ExtensionList $extension_list
+    ExtensionList $extension_list,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 

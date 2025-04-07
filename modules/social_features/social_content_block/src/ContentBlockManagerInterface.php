@@ -44,9 +44,9 @@ interface ContentBlockManagerInterface extends ContextAwarePluginManagerInterfac
    */
   public function getParents(
     string $field_name,
-    string $column = NULL,
-    array $element = NULL,
-    bool $is_field = FALSE
+    ?string $column = NULL,
+    ?array $element = NULL,
+    bool $is_field = FALSE,
   );
 
   /**
@@ -66,9 +66,9 @@ interface ContentBlockManagerInterface extends ContextAwarePluginManagerInterfac
    */
   public function getSelector(
     string $field_name,
-    string $column = NULL,
-    array $element = NULL,
-    bool $is_field = FALSE
+    ?string $column = NULL,
+    ?array $element = NULL,
+    bool $is_field = FALSE,
   );
 
 }

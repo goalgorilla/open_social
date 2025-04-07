@@ -881,7 +881,7 @@ function social_core_path_validate(array &$element, FormStateInterface $form_sta
 function social_core_form_alter(
   array &$form,
   FormStateInterface $form_state,
-  string $form_id
+  string $form_id,
 ): void {
   // Array of node types, which have the new group_settings fieldset,
   // these nodes can use the new content style, and have $form['advanced']
@@ -1545,7 +1545,7 @@ function _social_core_blocks_unset_paths(string $pages, array $paths): string {
  * @param callable|null $function
  *   (optional) The function which updates the pages set. Defaults to NULL.
  */
-function _social_core_install_blocks(array $items, callable $function = NULL): void {
+function _social_core_install_blocks(array $items, ?callable $function = NULL): void {
   if (!is_callable($function)) {
     $function = '_social_core_blocks_paths';
   }

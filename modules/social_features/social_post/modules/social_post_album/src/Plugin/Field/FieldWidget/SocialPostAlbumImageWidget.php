@@ -58,8 +58,8 @@ class SocialPostAlbumImageWidget extends ImageWidget {
     array $settings,
     array $third_party_settings,
     ElementInfoManagerInterface $element_info,
-    ImageFactory $image_factory = NULL,
-    RouteMatchInterface $route_match = NULL
+    ?ImageFactory $image_factory = NULL,
+    ?RouteMatchInterface $route_match = NULL,
   ) {
     parent::__construct(
       $plugin_id,
@@ -81,7 +81,7 @@ class SocialPostAlbumImageWidget extends ImageWidget {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition
+    $plugin_definition,
   ) {
     return new static(
       $plugin_id,

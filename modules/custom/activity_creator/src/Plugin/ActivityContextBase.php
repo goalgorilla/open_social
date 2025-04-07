@@ -64,7 +64,7 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
     $plugin_definition,
     QueryFactory $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
-    ActivityFactory $activity_factory
+    ActivityFactory $activity_factory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 

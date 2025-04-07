@@ -69,7 +69,8 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
     $plugin_definition,
     AccountProxyInterface $current_user,
     SocialGroupHelperService $social_group_helper,
-    RouteMatchInterface $route_match) {
+    RouteMatchInterface $route_match,
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->currentUser = $current_user;

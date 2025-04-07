@@ -40,7 +40,7 @@ class SocialGroupRequestJoin extends JoinBase {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition
+    $plugin_definition,
   ): self {
     /** @var self $instance */
     $instance = parent::create(

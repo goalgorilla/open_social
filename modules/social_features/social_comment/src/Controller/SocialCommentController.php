@@ -48,7 +48,7 @@ class SocialCommentController extends CommentController {
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Returns the Redirect Response.
    */
-  public function redirectToOriginalEntity(Url $url, CommentInterface $comment = NULL, EntityBase $entity = NULL) {
+  public function redirectToOriginalEntity(Url $url, ?CommentInterface $comment = NULL, ?EntityBase $entity = NULL) {
     $options = [];
     if (isset($comment)) {
       $options = ['fragment' => 'comment-' . $comment->id()];

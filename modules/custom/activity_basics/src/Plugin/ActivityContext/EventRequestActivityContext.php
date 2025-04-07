@@ -53,7 +53,7 @@ class EventRequestActivityContext extends ActivityContextBase {
     QueryFactory $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
     ActivityFactory $activity_factory,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 

@@ -31,7 +31,7 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Connection $connection
+    Connection $connection,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->connection = $connection;

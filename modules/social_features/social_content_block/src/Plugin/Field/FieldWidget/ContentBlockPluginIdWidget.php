@@ -54,7 +54,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
     array $settings,
     array $third_party_settings,
     ContentBlockManagerInterface $content_block_manager,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
   ) {
     parent::__construct(
       $plugin_id,

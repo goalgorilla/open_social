@@ -36,7 +36,7 @@ class SocialPostHelper implements SocialPostHelperInterface {
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
-    AccountProxyInterface $current_user
+    AccountProxyInterface $current_user,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->currentUser = $current_user;

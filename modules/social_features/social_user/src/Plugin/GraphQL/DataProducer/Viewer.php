@@ -85,7 +85,7 @@ class Viewer extends DataProducerPluginBase implements ContainerFactoryPluginInt
     array $plugin_definition,
     AccountInterface $current_user,
     EntityTypeManagerInterface $entityTypeManager,
-    EntityBuffer $entityBuffer
+    EntityBuffer $entityBuffer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->currentUser = $current_user;

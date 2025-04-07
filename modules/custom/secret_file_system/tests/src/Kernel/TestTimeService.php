@@ -20,7 +20,7 @@ class TestTimeService extends Time {
   /**
    * {@inheritdoc}
    */
-  public function __construct(RequestStack $requestStack = NULL) {
+  public function __construct(?RequestStack $requestStack = NULL) {
     parent::__construct($requestStack);
     $this->requestTime = time();
   }

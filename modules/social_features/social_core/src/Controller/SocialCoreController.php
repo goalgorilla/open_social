@@ -139,7 +139,7 @@ class SocialCoreController extends ControllerBase {
   public function updateSelection(
     string $view_id,
     string $display_id,
-    Request $request
+    Request $request,
   ): AjaxResponse {
     $view_data = $this->getTempstoreData($view_id, $display_id);
     if (empty($view_data)) {

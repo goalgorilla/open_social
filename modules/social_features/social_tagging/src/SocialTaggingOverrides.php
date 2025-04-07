@@ -37,7 +37,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    MachineNameInterface $machine_name
+    MachineNameInterface $machine_name,
   ) {
     $this->configFactory = $config_factory;
     $this->machineName = $machine_name;

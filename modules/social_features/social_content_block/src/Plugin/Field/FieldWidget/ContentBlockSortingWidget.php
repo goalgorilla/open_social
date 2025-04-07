@@ -52,7 +52,7 @@ class ContentBlockSortingWidget extends OptionsSelectWidget {
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    ContentBlockManagerInterface $manager
+    ContentBlockManagerInterface $manager,
   ) {
     parent::__construct(
       $plugin_id,

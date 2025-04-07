@@ -68,7 +68,7 @@ class GroupInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getTitle(Request $request = NULL) {
+  public function getTitle(?Request $request = NULL) {
     if ($this->invitationLoader->loadByUser()) {
       // We don't need plural because users will be redirected
       // if there is no invite.

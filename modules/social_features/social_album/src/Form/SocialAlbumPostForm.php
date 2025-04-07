@@ -48,7 +48,7 @@ class SocialAlbumPostForm extends PostForm {
    * @return array
    *   The form structure.
    */
-  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL) {
     $this->node = $node;
 
     $form = parent::buildForm($form, $form_state);

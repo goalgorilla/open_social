@@ -112,7 +112,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
     RouteMatchInterface $route_match,
     EntityDisplayRepositoryInterface $entity_display_repository,
     RendererInterface $renderer,
-    $is_xml_http_request
+    $is_xml_http_request,
   ) {
     parent::__construct(
       $plugin_id,

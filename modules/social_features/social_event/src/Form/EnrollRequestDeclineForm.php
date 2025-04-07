@@ -90,7 +90,7 @@ class EnrollRequestDeclineForm extends FormBase {
     AccountInterface $current_user,
     EventEnrollmentStatusHelper $enrollmentStatusHelper,
     EntityTypeManagerInterface $entity_type_manager,
-    SocialProfileNameService $social_profile_name_service
+    SocialProfileNameService $social_profile_name_service,
   ) {
     $this->redirectDestination = $redirect_destination;
     $this->currentUser = $current_user;
