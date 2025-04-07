@@ -15,3 +15,8 @@ services:
   Drupal\social_event_managers\EventSubscriber\NodeQueryAccessAlterSubscriber:
     tags:
       - { name: event_subscriber }
+  # Specific group relation handlers.
+  group.relation_handler.access_control.group_node:
+    class: Drupal\social_event_managers\Plugin\Group\RelationHandler\EventsGroupContentAccessControl
+    arguments: [ '@group.relation_handler.access_control']
+    shared: false
