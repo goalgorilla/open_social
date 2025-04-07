@@ -2,12 +2,15 @@
 
 namespace Drupal\social_user_export\Plugin\Action;
 
+use Drupal\Core\Action\Attribute\Action;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\file\FileRepository;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\Core\Session\AccountInterface;
@@ -23,14 +26,12 @@ use Drupal\social_user_export\Plugin\UserExportPluginManager;
 
 /**
  * Exports a user accounts to CSV.
- *
- * @Action(
- *   id = "social_user_export_user_action",
- *   label = @Translation("Export the selected users to CSV"),
- *   type = "user",
- *   confirm = TRUE
- * )
  */
+#[Action(
+  id: 'social_user_export_user_action',
+  label: new TranslatableMarkup('Export the selected users to CSV'),
+  type: 'user',
+)]
 class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, PluginFormInterface {
   use MessengerTrait;
 
@@ -44,35 +45,35 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *
    * @var \Drupal\social_user_export\Plugin\UserExportPluginManager
    */
-  protected $userExportPlugin;
+  protected UserExportPluginManager $userExportPlugin;
 
   /**
    * User export plugin definitions.
    *
    * @var array
    */
-  protected $pluginDefinitions;
+  protected array $pluginDefinitions;
 
   /**
    * A logger instance.
    *
    * @var \Psr\Log\LoggerInterface
    */
-  protected $logger;
+  protected LoggerInterface $logger;
 
   /**
    * The current user account.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The user export plugin config object.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $config;
+  protected ImmutableConfig $config;
 
   /**
    * File URL Generator services.
@@ -266,7 +267,23 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
+    // Following the update of vbo to 4.3.4, we need to override this title
+    // because confirm_form_route_name from Action annotation does not work.
+    $count = count($form['list']['#items']);
+
+    $label = is_array($this->getPluginDefinition()) ? $this->getPluginDefinition()['label'] : '';
+
+    $form['#title'] = $this->formatPlural(
+      $count,
+      'Are you sure you wish to perform "%action" action on 1 entity?',
+      'Are you sure you wish to perform "%action" action on %count entities?',
+      [
+        '%action' => $label,
+        '%count' => $count,
+      ]
+    );
+
     return $form;
   }
 
