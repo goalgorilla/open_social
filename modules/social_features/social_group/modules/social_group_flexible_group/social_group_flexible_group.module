@@ -12,14 +12,15 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\block\Entity\Block;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\SocialGroupHelperService;
@@ -891,8 +892,14 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
 
 /**
  * Sets dynamic allowed values for the group type icon field.
+ *
+ * @see options_allowed_values()
  */
-function social_group_flexible_group_type_allowed_values_function(FieldStorageConfig $definition, ?ContentEntityInterface $entity = NULL, $cacheable) {
+function social_group_flexible_group_type_allowed_values_function(
+  FieldStorageDefinitionInterface $definition,
+  ?FieldableEntityInterface $entity = NULL,
+  bool &$cacheable = TRUE,
+): array {
   $theme_path = \Drupal::service('extension.list.theme')->getPath('socialbase');
   $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
 
