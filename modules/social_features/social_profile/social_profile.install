@@ -659,3 +659,13 @@ function social_profile_update_250011(): void {
     \Drupal::logger('social_profile')->error('Failed to import profile preview configurations: @configs', ['@configs' => implode(', ', $configs_failed)]);
   }
 }
+
+/**
+ * Add "Summary" field to statistic block on the profile information page.
+ */
+function social_profile_update_250012() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+  return $updater->logger()->output();
+}

@@ -1,0 +1,17 @@
+core.entity_view_display.profile.profile.statistic:
+  expected_config:
+    hidden:
+      field_profile_summary: true
+  update_actions:
+    delete:
+      field_profile_summary: true
+    add:
+      content:
+        field_profile_summary:
+          type: string
+          label: hidden
+          settings:
+            link_to_entity: false
+          third_party_settings: { }
+          weight: 5
+          region: content
