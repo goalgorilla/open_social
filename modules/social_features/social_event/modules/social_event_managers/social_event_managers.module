@@ -292,23 +292,24 @@ function social_event_managers_views_pre_view(ViewExecutable $view, $display_id,
 }
 
 /**
- * Implements hook_node_access().
+ * Implements hook_ENTITY_TYPE_access().
  *
  * Remember: if any module returns forbidden and denies access to certain node
- * and operation it will not allow the user to do the operation on the node.
+ * and operation, it will not allow the user to do the operation on the node.
  *
- * We need this implementation because we also want to give edit access to event
- * manager regardless these scenarios thought of in gnode_node_access:
- * - is a member in the group and:
- * - has edit own or edit any permission in the group
- *
- * The gnode module specifically returns allowed if any of the above scenarios
- * are met, but forbidden in all the other scenarios. Our code ensures that if
- * we are in operation update and if gnode already returns forbidden we are able
- * to return an allowed if user is an event manager.
+ * Initially, this hook was written for providing access in groups.
+ * But the group has moved to RelationShipHandler access control plugins.
+ * We will still keep this in place for the events which may be inside any
+ * group.
  */
-function social_event_managers_node_access(NodeInterface $node, $op, AccountInterface $account) {
-  return SocialEventManagersAccessHelper::getEntityAccessResult($node, $op, $account);
+function social_event_managers_node_access(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
+  if ($entity instanceof NodeInterface
+    && $entity->getType() === 'event'
+    && !$entity->get('field_event_managers')->isEmpty()) {
+    return SocialEventManagersAccessHelper::getEntityAccessResult($entity, $operation, $account);
+  }
+  // No opinion.
+  return AccessResult::neutral();
 }
 
 /**
