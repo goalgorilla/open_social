@@ -2,10 +2,12 @@
 
 namespace Drupal\social_event_an_enroll\Plugin\Action;
 
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Utility\Token;
 use Drupal\social_email_broadcast\SocialEmailBroadcast;
 use Drupal\social_event\EventEnrollmentInterface;
@@ -17,15 +19,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Send email to event enrollment users.
- *
- * @Action(
- *   id = "social_event_an_enroll_send_email_action",
- *   label = @Translation("Email"),
- *   type = "event_enrollment",
- *   confirm = TRUE,
- *   confirm_form_route_name = "social_event_managers.vbo.confirm",
- * )
  */
+#[Action(
+  id: 'social_event_an_enroll_send_email_action',
+  label: new TranslatableMarkup('Email'),
+  confirm_form_route_name: 'social_event_managers.vbo.confirm',
+  type: 'event_enrollment',
+)]
 class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
 
   /**

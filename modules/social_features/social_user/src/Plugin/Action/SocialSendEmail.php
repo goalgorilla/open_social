@@ -3,6 +3,7 @@
 namespace Drupal\social_user\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -10,6 +11,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Utility\Token;
 use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
@@ -20,14 +22,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * An example action covering most of the possible options.
- *
- * @Action(
- *   id = "social_user_send_email",
- *   label = @Translation("Send email"),
- *   type = "user",
- *   confirm = TRUE,
- * )
  */
+#[Action(
+  id: 'social_user_send_email',
+  label: new TranslatableMarkup('Send email'),
+  type: 'user',
+)]
 class SocialSendEmail extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, ViewsBulkOperationsPreconfigurationInterface {
 
   /**

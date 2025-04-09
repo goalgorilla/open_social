@@ -3,26 +3,26 @@
 namespace Drupal\social_group\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Change group membership role.
- *
- * @Action(
- *   id = "social_group_change_member_role_action",
- *   label = @Translation("Change group membership role"),
- *   type = "group_content",
- *   confirm = TRUE,
- * )
  */
+#[Action(
+  id: 'social_group_change_member_role_action',
+  label: new TranslatableMarkup('Change group membership role'),
+  type: 'group_content',
+)]
 class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, PluginFormInterface {
 
   /**

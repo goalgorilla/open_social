@@ -3,11 +3,14 @@
 namespace Drupal\social_event_managers\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Utility\Token;
 use Drupal\node\NodeInterface;
 use Drupal\social_email_broadcast\SocialEmailBroadcast;
@@ -21,17 +24,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Send email to event enrollment users.
- *
- * @Action(
- *   id = "social_event_managers_send_email_action",
- *   label = @Translation("Send email to event enrollment users"),
- *   type = "event_enrollment",
- *   view_id = "event_manage_enrollments",
- *   display_id = "page_manage_enrollments",
- *   confirm = TRUE,
- *   confirm_form_route_name = "social_event_managers.vbo.confirm",
- * )
  */
+#[Action(
+  id: 'social_event_managers_send_email_action',
+  label: new TranslatableMarkup('Send email to event enrollment users'),
+  confirm_form_route_name: 'social_event_managers.vbo.confirm',
+  type: 'event_enrollment',
+)]
 class SocialEventManagersSendEmail extends SocialSendEmail {
 
   /**
@@ -159,7 +158,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE): bool|AccessResultInterface {
     $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
 
     if ($object instanceof EventEnrollmentInterface) {
@@ -171,7 +170,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
 
       // Also Event organizers can do this.
       if ($node instanceof NodeInterface && social_event_manager_or_organizer($node)) {
-        $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
+        $access = AccessResult::allowed();
       }
     }
 

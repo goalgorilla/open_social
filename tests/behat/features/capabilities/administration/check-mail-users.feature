@@ -28,13 +28,11 @@ Feature: Send bulk email
     And I fill in "Subject" with "This is the e-mail subject"
     And I fill in the "edit-message-value" WYSIWYG editor with "The body for the e-mail to send"
     And I press the "Send email" button
-    And I should see the text "Are you sure you wish to perform"
-    And I press the "Execute action" button
     And I wait for the batch job to finish
 
     #Check the success messages
     Then I should see the text "The email(s) will be send in the background. You will be notified upon completion."
-    And I should see "Send email (3)."
+    And I should see "Send email (3)"
     And I wait for the queue to be empty
     #Check the details of the email received
     And I am at "notifications"

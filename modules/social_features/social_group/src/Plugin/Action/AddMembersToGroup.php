@@ -3,11 +3,13 @@
 namespace Drupal\social_group\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\Group;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
@@ -16,14 +18,12 @@ use Drupal\user\Entity\User;
 
 /**
  * Change group membership role.
- *
- * @Action(
- *   id = "social_group_add_members_to_group_action",
- *   label = @Translation("Add members to group"),
- *   type = "user",
- *   confirm = TRUE,
- * )
  */
+#[Action(
+  id: 'social_group_add_members_to_group_action',
+  label: new TranslatableMarkup('Add members to group'),
+  type: 'user',
+)]
 class AddMembersToGroup extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, PluginFormInterface {
 
   /**

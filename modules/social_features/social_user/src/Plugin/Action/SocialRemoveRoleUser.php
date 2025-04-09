@@ -2,10 +2,11 @@
 
 namespace Drupal\social_user\Plugin\Action;
 
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\role_delegation\DelegatableRolesInterface;
 use Drupal\user\Plugin\Action\ChangeUserRoleBase;
 use Drupal\user\RoleInterface;
@@ -13,14 +14,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Removes a role from a user but restricted by role.
- *
- * @Action(
- *   id = "social_user_remove_role_action",
- *   label = @Translation("Remove a role from the selected users"),
- *   type = "social_user"
- * )
  */
-class SocialRemoveRoleUser extends ChangeUserRoleBase implements ContainerFactoryPluginInterface {
+#[Action(
+  id: 'social_user_remove_role_action',
+  label: new TranslatableMarkup('Remove a role from the selected users'),
+  type: 'social_user',
+)]
+class SocialRemoveRoleUser extends ChangeUserRoleBase {
 
   /**
    * The account proxy interface.

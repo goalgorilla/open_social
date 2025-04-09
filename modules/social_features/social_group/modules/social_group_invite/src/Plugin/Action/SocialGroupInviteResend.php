@@ -3,8 +3,10 @@
 namespace Drupal\social_group_invite\Plugin\Action;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,14 +19,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *  invitation (a group content entity) triggers email sending with appropriate
  *  text. Site manager is able to change this text in global group settings
  *  page.
- *
- * @Action(
- *   id = "social_group_invite_resend_action",
- *   label = @Translation("Send reminders"),
- *   type = "group_content",
- *   confirm = TRUE,
- * )
  */
+#[Action(
+  id: 'social_group_invite_resend_action',
+  label: new TranslatableMarkup('Send reminders'),
+  confirm_form_route_name: 'views_bulk_operations.confirm',
+  type: 'group_content',
+)]
 class SocialGroupInviteResend extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface {
 
   /**

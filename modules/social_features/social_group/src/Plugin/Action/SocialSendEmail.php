@@ -4,12 +4,14 @@ namespace Drupal\social_group\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Utility\Token;
 use Drupal\group\Entity\GroupMembershipInterface;
 use Drupal\group\Entity\GroupRelationship;
@@ -23,14 +25,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Send an email to group members.
- *
- * @Action(
- *   id = "social_group_send_email_action",
- *   label = @Translation("Send email to group members"),
- *   type = "group_content",
- *   confirm = TRUE,
- * )
  */
+#[Action(
+  id: 'social_group_send_email_action',
+  label: new TranslatableMarkup('Send email to group members'),
+  type: 'group_content',
+)]
 class SocialSendEmail extends SocialSendEmailBase {
 
   /**

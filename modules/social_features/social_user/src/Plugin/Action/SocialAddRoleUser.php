@@ -2,10 +2,11 @@
 
 namespace Drupal\social_user\Plugin\Action;
 
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\role_delegation\DelegatableRolesInterface;
 use Drupal\user\Plugin\Action\ChangeUserRoleBase;
 use Drupal\user\RoleInterface;
@@ -13,14 +14,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Adds a role to a user but restricted by role.
- *
- * @Action(
- *   id = "social_user_add_role_action",
- *   label = @Translation("Add a role to the selected users"),
- *   type = "social_user"
- * )
  */
-class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPluginInterface {
+#[Action(
+  id: 'social_user_add_role_action',
+  label: new TranslatableMarkup('Add a role to the selected users'),
+  type: 'social_user',
+)]
+class SocialAddRoleUser extends ChangeUserRoleBase {
 
   /**
    * The account proxy interface.
