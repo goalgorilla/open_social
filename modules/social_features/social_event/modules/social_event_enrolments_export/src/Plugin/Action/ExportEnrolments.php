@@ -3,21 +3,21 @@
 namespace Drupal\social_event_enrolments_export\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_user_export\Plugin\Action\ExportUser;
 
 /**
  * Exports a event enrollment accounts to CSV.
- *
- * @Action(
- *   id = "social_event_enrolments_export_enrollments_action",
- *   label = @Translation("Export the selected enrollments to CSV"),
- *   type = "event_enrollment",
- *   confirm = TRUE,
- *   confirm_form_route_name = "social_event_managers.vbo.confirm",
- * )
  */
+#[Action(
+  id: 'social_event_enrolments_export_enrollments_action',
+  label: new TranslatableMarkup('Export the selected enrollments to CSV'),
+  confirm_form_route_name: 'social_event_managers.vbo.confirm',
+  type: 'event_enrollment',
+)]
 class ExportEnrolments extends ExportUser {
 
   /**

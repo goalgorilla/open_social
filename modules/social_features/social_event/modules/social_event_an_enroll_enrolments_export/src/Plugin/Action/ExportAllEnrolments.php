@@ -3,10 +3,12 @@
 namespace Drupal\social_event_an_enroll_enrolments_export\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\file\FileRepository;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
@@ -17,15 +19,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Exports a event enrollment accounts to CSV.
- *
- * @Action(
- *   id = "social_event_an_enroll_enrolments_export_action",
- *   label = @Translation("Export the selected enrollments to CSV including anonymous"),
- *   type = "event_enrollment",
- *   confirm = TRUE,
- *   confirm_form_route_name = "social_event_managers.vbo.confirm",
- * )
  */
+#[Action(
+  id: 'social_event_an_enroll_enrolments_export_action',
+  label: new TranslatableMarkup('Export the selected enrollments to CSV including anonymous'),
+  confirm_form_route_name: 'social_event_managers.vbo.confirm',
+  type: 'event_enrollment',
+)]
 class ExportAllEnrolments extends ExportEnrolments {
 
   /**

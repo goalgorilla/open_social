@@ -3,20 +3,21 @@
 namespace Drupal\social_group_members_export\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_user_export\Plugin\Action\ExportUser;
 
 /**
  * Exports a group member accounts to CSV.
- *
- * @Action(
- *   id = "social_group_members_export_member_action",
- *   label = @Translation("Export the selected members to CSV"),
- *   type = "group_content",
- *   confirm = TRUE,
- * )
  */
+#[Action(
+  id: 'social_group_members_export_member_action',
+  label: new TranslatableMarkup('Export the selected members to CSV'),
+  confirm_form_route_name: 'views_bulk_operations.confirm',
+  type: 'group_content',
+)]
 class ExportMember extends ExportUser {
 
   /**
