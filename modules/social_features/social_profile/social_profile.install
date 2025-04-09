@@ -340,3 +340,12 @@ function social_profile_update_130007(): string {
   $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Introduce affiliation "Function" field storage for group content entity.
+ */
+function social_profile_update_130008(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+  return $updater->logger()->output();
+}
