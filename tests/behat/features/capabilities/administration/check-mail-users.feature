@@ -34,7 +34,7 @@ Feature: Send bulk email
 
     #Check the success messages
     Then I should see the text "The email(s) will be send in the background. You will be notified upon completion."
-    And I should see "Action processing results: Send email (3)."
+    And I should see "Send email (3)."
     And I wait for the queue to be empty
     #Check the details of the email received
     And I am at "notifications"

@@ -77,7 +77,7 @@ Feature: Export users
     # Check the success messages and a downloadable file with 3 users should be available
     Then I should see the text "Export is complete."
     And I should see the text "Download file"
-    And I should see the text "Action processing results: Export the selected users to CSV (3)."
+    And I should see the text "Export the selected users to CSV (3)."
     And the file downloaded from "Download file" should have contents:
       """
      "User ID",UUID,"First name","Last name",Username,"Display name",Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,Organization,Function,Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
@@ -108,7 +108,7 @@ Feature: Export users
     # Check the success messages and a downloadable file with 3 users should be available
     Then I should see the text "Export is complete."
     And I should see the text "Download file"
-    And I should see the text "Action processing results: Export the selected users to CSV (3)."
+    And I should see the text "Export the selected users to CSV (3)."
     And the file downloaded from "Download file" should have contents:
       """
       "User ID",UUID,"First name","Last name",Username,"Display name",Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,Organization,Function,"Organization Tag",Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
@@ -139,7 +139,7 @@ Feature: Export users
     # Check the success messages and a downloadable file with 3 users should be available
     Then I should see the text "Export is complete."
     And I should see the text "Download file"
-    And I should see the text "Action processing results: Export the selected users to CSV (3)."
+    And I should see the text "Export the selected users to CSV (3)."
     And the file downloaded from "Download file" should have contents:
       """
       "User ID",UUID,"First name","Last name",Username,"Display name",Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,Organization,Function,Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes","Number of Private messages"
@@ -184,7 +184,7 @@ Feature: Export users
     # Check the success messages and a downloadable file with 3 users should be available
     Then I should see the text "Export is complete."
     And I should see the text "Download file"
-    And I should see the text "Action processing results: Export the selected users to CSV (3)."
+    And I should see the text "Export the selected users to CSV (3)."
     And the file downloaded from "Download file" should have contents:
         """
         "User ID",UUID,"First name","Last name",Username,"Display name",Nickname,Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,Organization,Function,Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
@@ -228,7 +228,7 @@ Feature: Export users
     # Check the success messages and a downloadable file with 3 users should be available
     Then I should see the text "Export is complete."
     And I should see the text "Download file"
-    And I should see the text "Action processing results: Export the selected users to CSV (3)."
+    And I should see the text "Export the selected users to CSV (3)."
     And the file downloaded from "Download file" should have contents:
       """
       "User ID",UUID,Username,"Display name",Email,"Last login","Last activity","Registration date",Status,Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
