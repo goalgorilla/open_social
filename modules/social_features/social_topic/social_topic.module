@@ -5,6 +5,8 @@
  * The Social topic module.
  */
 
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
@@ -25,6 +27,7 @@ use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\NodeInterface;
+use Drupal\social_node\Entity\Node;
 use Drupal\social_topic\Controller\SocialTopicController;
 use Drupal\taxonomy\TermInterface;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
@@ -424,4 +427,34 @@ function social_topic_social_core_default_main_menu_links_alter(array &$links) {
   if ($link instanceof MenuLinkContentInterface) {
     $links[] = $link;
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ */
+function social_topic_node_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
+  $current_user = \Drupal::currentUser();
+  if ($current_user->isAnonymous() || !$entity instanceof Node) {
+    return;
+  }
+
+  $uid = $current_user->id();
+  $nid = $entity->id();
+
+  // Create our custom topic tag so we can also invalidate f.e. teasers.
+  $topic_tag = 'topic:' . $nid . '-' . $uid;
+  $build['#cache']['tags'][] = $topic_tag;
+  $build['#cache']['contexts'][] = 'user';
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_topic_theme(): array {
+  return [
+    'big_pipe_interface_preview__views_block__latest_topics_default' => [
+      'template' => 'big-pipe-interface-preview--views-block--latest-topics-default',
+      'base hook' => 'big_pipe_interface_preview',
+    ],
+  ];
 }

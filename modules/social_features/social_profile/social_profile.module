@@ -324,6 +324,10 @@ function social_profile_theme(): array {
       'render element' => 'elements',
       'base hook' => 'profile',
     ],
+    'big_pipe_interface_preview__views_block__newest_users_block_newest_users' => [
+      'template' => 'big-pipe-interface-preview--views_block--newest-users-block-newest-users',
+      'base hook' => 'big_pipe_interface_preview',
+    ],
   ];
 }
 
@@ -1064,4 +1068,22 @@ function social_profile_social_core_default_main_menu_links_alter(array &$links)
  */
 function social_profile_social_tagging_type(): string {
   return 'profile';
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function social_user_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
+  $current_user = \Drupal::currentUser();
+  if ($current_user->isAnonymous() || !$entity instanceof Profile) {
+    return;
+  }
+
+  $uid = $current_user->id();
+  $pid = $entity->id();
+
+  // Create our custom profile tag so we can also invalidate f.e. teasers.
+  $profile_tag = 'profile:' . $pid . '-' . $uid;
+  $build['#cache']['tags'][] = $profile_tag;
+  $build['#cache']['contexts'][] = 'user';
 }

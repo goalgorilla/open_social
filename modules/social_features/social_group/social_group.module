@@ -85,6 +85,10 @@ function social_group_theme() {
         'description' => NULL,
       ],
     ],
+    'big_pipe_interface_preview__views_block__newest_groups_block_newest_groups' => [
+      'template' => 'big-pipe-interface-preview--views_block--newest-groups-block-newest-groups',
+      'base hook' => 'big_pipe_interface_preview',
+    ],
   ];
 }
 
@@ -2955,4 +2959,22 @@ function social_group_social_core_add_form_title_override(): array {
       },
     ],
   ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ */
+function social_group_group_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
+  $current_user = \Drupal::currentUser();
+  if ($current_user->isAnonymous() || !$entity instanceof Group) {
+    return;
+  }
+
+  $uid = $current_user->id();
+  $gid = $entity->id();
+
+  // Create our custom group tag so we can also invalidate f.e. teasers.
+  $group_tag = 'group:' . $gid . '-' . $uid;
+  $build['#cache']['tags'][] = $group_tag;
+  $build['#cache']['contexts'][] = 'user';
 }
