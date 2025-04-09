@@ -18,6 +18,7 @@ use Drupal\social_core\Service\MembersPageHelperService;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
+use Drupal\user\UserInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
 
@@ -97,8 +98,9 @@ function social_event_managers_event_enrollment_access(EventEnrollment $event_en
     return AccessResult::neutral();
   }
 
+  /** @var \Drupal\user\UserInterface|null $owner */
   $owner = $event_enrollment->getOwner();
-  if (!$owner->hasPermission('view published event enrollment entities')) {
+  if ($owner instanceof UserInterface && !$owner->hasPermission('view published event enrollment entities')) {
     // Return neutral and let other access checks acts on this.
     return AccessResult::neutral();
   }
