@@ -242,6 +242,32 @@ class GroupContext extends RawMinkContext {
   }
 
   /**
+   * Remove members from a group.
+   *
+   * Remove users from a specific group
+   * | group    | user      |
+   * | My group | Jane Doe  |
+   * | ...      | ...       |
+   *
+   * @Given I remove group members:
+   */
+  public function removeGroupMembers(TableNode $groupMembersTable) {
+    foreach ($groupMembersTable->getHash() as $groupMemberHash) {
+      $group_id = $this->getNewestGroupIdFromTitle($groupMemberHash['group']);
+      if ($group_id === NULL) {
+        throw new \InvalidArgumentException("Group '{$groupMemberHash['group']}' not found.");
+      }
+      $group = Group::load($group_id);
+      assert($group instanceof GroupInterface);
+
+      $user = User::load($this->drupalContext->getUserManager()->getUser($groupMemberHash['user'])->uid);
+      assert($user instanceof UserInterface);
+
+      $group->removeMember($user);
+    }
+  }
+
+  /**
    * Fill out the group creation form and submit.
    *
    * The order of the fields may matter since some fields depend on other
