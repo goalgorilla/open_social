@@ -157,6 +157,8 @@ class LogContext implements Context {
       || ($row->type === 'php' && (int) $row->severity === RfcLogLevel::WARNING && (str_contains($row->variables, 'Undefined array key "#comment_display_mode"') || str_contains($row->variables, 'Undefined array key "#comment_type"')))
       // Ignore update notices.
       || ($row->type === 'update' && (int) $row->severity === RfcLogLevel::NOTICE)
+      // Ignore group type created notice.
+      || ($row->type === 'group' ) && (int)  $row->severity === RfcLogLevel::NOTICE && (str_contains($row->message, 'Added group type %label.'))
       ;
   }
 
