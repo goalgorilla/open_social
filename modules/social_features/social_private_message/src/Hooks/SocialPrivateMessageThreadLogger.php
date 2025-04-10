@@ -5,6 +5,7 @@ namespace Drupal\social_private_message\Hooks;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\hux\Attribute\Hook;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -18,7 +19,7 @@ class SocialPrivateMessageThreadLogger implements ContainerInjectionInterface {
    *
    * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
-  protected $loggerFactory;
+  protected LoggerChannelInterface $loggerFactory;
 
   /**
    * Social private message thread logger constructor.
@@ -57,7 +58,7 @@ class SocialPrivateMessageThreadLogger implements ContainerInjectionInterface {
     // Get usernames from members of thread.
     $usernames = [];
     foreach ($entity->getMembers() as $member) {
-      $usernames[] = $member->getAccountName();
+      $usernames[] = $member->getId();
     }
 
     // Logger message for new threads.
