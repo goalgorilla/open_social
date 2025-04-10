@@ -37,6 +37,9 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     "lazy",
     "image_widget_crop",
     "crop",
+    "group",
+    "paragraphs",
+    "entity_reference_revisions",
     // The actual module under test.
     "social_profile",
   ];
