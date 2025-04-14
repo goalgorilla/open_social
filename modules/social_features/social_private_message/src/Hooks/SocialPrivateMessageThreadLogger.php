@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\hux\Attribute\Hook;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -58,7 +59,8 @@ class SocialPrivateMessageThreadLogger implements ContainerInjectionInterface {
     // Get usernames from members of thread.
     $usernames = [];
     foreach ($entity->getMembers() as $member) {
-      $usernames[] = $member->getId();
+      assert($member instanceof User);
+      $usernames[] = $member->id();
     }
 
     // Logger message for new threads.
