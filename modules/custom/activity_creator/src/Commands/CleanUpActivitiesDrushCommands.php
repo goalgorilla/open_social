@@ -6,10 +6,9 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drush\Commands\DrushCommands;
-use Psr\Log\LoggerInterface;
+use Drush\Log\DrushLoggerManager;
 
 /**
  * A Drush command file.
@@ -55,14 +54,6 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
    */
   private EntityTypeManagerInterface $entityTypeManager;
 
-
-  /**
-   * Logger service.
-   *
-   * @var \Psr\Log\LoggerInterface
-   */
-  protected ?LoggerInterface $logger;
-
   /**
    * The output interface.
    *
@@ -77,18 +68,15 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
    *   The database connection service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager service.
-   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerChannelFactory
-   *   The logger channel factory.
    */
   public function __construct(
     Connection $database,
     EntityTypeManagerInterface $entityTypeManager,
-    LoggerChannelFactoryInterface $loggerChannelFactory,
   ) {
     parent::__construct();
+
     $this->connection = $database;
     $this->entityTypeManager = $entityTypeManager;
-    $this->logger = $loggerChannelFactory->get('activity_creator');
   }
 
   /**
@@ -106,7 +94,9 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
 
     foreach (self::ACTIVITIES_TARGET_TYPE as [$target_type, $column_id]) {
       if ($this->tableExist($target_type) === FALSE) {
-        $this->logger?->info($this->t('Table :table does not exist in the database', [
+        assert($this->logger() instanceof DrushLoggerManager);
+
+        $this->logger()->info($this->t('Table :table does not exist in the database', [
           ':table' => $target_type,
         ]));
         continue;
@@ -118,7 +108,8 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
           $activity_storage->delete([$activity_storage->loadUnchanged($activity_id)]);
         }
 
-        $this->logger?->info($this->t(':count orphaned activities with target_type ":type" have been removed', [
+        assert($this->logger() instanceof DrushLoggerManager);
+        $this->logger()->info($this->t(':count orphaned activities with target_type ":type" have been removed', [
           ':count' => count($activity_ids),
           ':type' => $target_type,
         ]));
@@ -126,7 +117,8 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
 
       }
       catch (EntityStorageException | \Exception $e) {
-        $this->logger?->error($e->getMessage());
+        assert($this->logger() instanceof DrushLoggerManager);
+        $this->logger()->error($e->getMessage());
         $this->output->write('An error occurred, check your logs.');
       }
     }
@@ -172,7 +164,8 @@ class CleanUpActivitiesDrushCommands extends DrushCommands {
       return [];
     }
     catch (\Exception $e) {
-      $this->logger?->error($e->getMessage());
+      assert($this->logger() instanceof DrushLoggerManager);
+      $this->logger()->error($e->getMessage());
       return [];
     }
   }
