@@ -261,3 +261,10 @@ function social_user_update_13005(): void {
     ]
   );
 }
+
+/**
+ * Add the permission 'assign verified role' to SM, and if not present.
+ */
+function social_user_update_13006(): void {
+  user_role_grant_permissions('sitemanager', ['assign verified role']);
+}
