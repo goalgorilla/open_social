@@ -332,7 +332,12 @@ function social_group_preprocess_group(array &$variables) {
       /** @var \Drupal\Core\Entity\EntityInterface $entity */
       $entity = \Drupal::service('entity.repository')->getTranslationFromContext($term);
       $variables['group_type'] = $entity->label();
-      $variables['group_type_icon'] = $term->get('field_group_type_icon')->getString();
+      if (
+        $term->hasField('field_group_type_icon') &&
+        !$term->get('field_group_type_icon')->isEmpty()
+      ) {
+        $variables['group_type_icon'] = $term->get('field_group_type_icon')->getString();
+      }
     }
   }
 }
@@ -497,6 +502,10 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
  *   Returns allowed visibility of a group.
  */
 function _social_group_get_allowed_visibility(GroupInterface $group) {
+  if (!$group->hasField('field_group_allowed_visibility')) {
+    return [];
+  }
+
   $group_type = $group->getGroupType();
   $group_type_id = $group_type->id();
   $allowed_visibility = [];
