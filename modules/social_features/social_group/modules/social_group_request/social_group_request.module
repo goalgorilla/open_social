@@ -134,7 +134,8 @@ function _social_group_request_approve_request_for_joined_member(GroupMembership
   // try to add the user to the group again but that has already happened as it
   // was our trigger.
   $request->set('grequest_updated_by', $approver_id);
-  $requestManager->updateStatus($request, GroupMembershipRequest::REQUEST_APPROVED);
+  $requestManager->updateStatus($request, GroupMembershipRequest::TRANSITION_APPROVE);
+  \Drupal::messenger()->addStatus(t('Membership request approved'));
 
   try {
     $request->save();
