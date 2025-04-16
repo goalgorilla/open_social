@@ -12,6 +12,7 @@ use Drupal\field\FieldStorageConfigInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\social_group\Hooks\SocialGroupEntityAlter;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -1113,4 +1114,23 @@ function social_group_update_13016(): void {
       $view->save();
     }
   }
+}
+
+/**
+ * Create Hubs master view.
+ */
+function social_group__update_130017(): void {
+  // Get hubs view file.
+  $config_file = \Drupal::service('extension.list.module')
+      ->getPath('social_group_flexible_group') . '/config/install/views.view.group_per_course_type.yml';
+  if (file_exists($config_file) === FALSE) {
+    \Drupal::logger('social_task')->error('Configuration file for "hubs" view not found.');
+    return;
+  }
+
+  // Apply the configuration to create hubs view.
+  $view_config = Yaml::parseFile($config_file);
+  \Drupal::configFactory()->getEditable('views.view.hubs')
+    ->setData($view_config)
+    ->save();
 }
