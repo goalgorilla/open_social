@@ -60,7 +60,6 @@ class MenuLinksDiscoveredAlterTest extends TestCase {
       ],
     ];
 
-
     $menuLinksAlter->overrideGroupsLabelWithHubsLabel($menuLinks);
 
     $this->assertEquals($this->t('Hubs'), $menuLinks['system.admin_group']['title'], 'The menu item title for system.admin_group should be updated to Hubs.');
