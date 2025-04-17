@@ -544,24 +544,30 @@ html:not(.js) .navbar-default {
 @include for-tablet-landscape-down {
 
   .navbar-collapse .dropdown-menu {
-    li a {
-      color: $navbar-default-link-color;
+    li {
+      a,
+      span:not(.caret) {
+        color: $navbar-default-link-color;
 
-      &:hover,
-      &:focus {
-        color: $navbar-default-link-active-color;
-        background-color: $navbar-default-link-active-bg;
+        &:hover,
+        &:focus {
+          color: $navbar-default-link-active-color;
+          background-color: $navbar-default-link-active-bg;
+        }
       }
     }
 
     &.navbar-second-line {
       background-color: $second-line-navbar-bg;
 
-      li a {
-        &:hover,
-        &:focus {
-          color: $second-line-navbar-active-text;
-          background-color: $second-line-navbar-active-bg;
+      li {
+        a,
+        span:not(.caret) {
+          &:hover,
+          &:focus {
+            color: $second-line-navbar-active-text;
+            background-color: $second-line-navbar-active-bg;
+          }
         }
       }
     }

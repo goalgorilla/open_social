@@ -44,13 +44,21 @@
           'expanded',
           'dropdown',
           item.in_active_trail ? 'active',
+          item.url.routeName == '<nolink>' ? 'no-link'
         ]
       %}
-      {% if (menu_level == 0 and item.is_expanded) or (menu_level == 1 and item.is_expanded) %}
+      {% if item.is_expanded %}
         <li{{ item.attributes.addClass(item_classes) }}>
-        <a href="{{ item.url }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-          {{ item.title }} <span class="caret"></span>
-        </a>
+          {% if item.url.routeName == '<nolink>' %}
+            <span class="dropdown-toggle" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">
+              {{ item.title }}
+              <span class="caret"></span>
+            </span>
+          {% else %}
+            <a href="{{ item.url }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              {{ item.title }} <span class="caret"></span>
+            </a>
+          {% endif %}
       {% else %}
         <li>
         {{ link(item.title, item.url) }}

@@ -837,6 +837,12 @@ body.media-directory .dz-preview .dz-progress .dz-upload {
   border-color: #29abe2;
 }
 
+.ai-deepchat--header,
+.ai-deepchat--header:hover,
+.ai-deepchat--header.active {
+  background-color: #333333;
+}
+
 @media (min-width: 900px) {
   .search-take-over .form-text {
     color: #ffffff;
@@ -869,17 +875,22 @@ body.media-directory .dz-preview .dz-progress .dz-upload {
   .header-top .navbar-nav li > ul > li.expanded > .dropdown-menu > li.active {
     background: #333333;
   }
-  .navbar-collapse .dropdown-menu li a {
+  .navbar-collapse .dropdown-menu li a,
+  .navbar-collapse .dropdown-menu li span:not(.caret) {
     color: #ffffff;
   }
-  .navbar-collapse .dropdown-menu li a:hover, .navbar-collapse .dropdown-menu li a:focus {
+  .navbar-collapse .dropdown-menu li a:hover, .navbar-collapse .dropdown-menu li a:focus,
+  .navbar-collapse .dropdown-menu li span:not(.caret):hover,
+  .navbar-collapse .dropdown-menu li span:not(.caret):focus {
     color: #f3f3f3;
     background-color: #1f1f1f;
   }
   .navbar-collapse .dropdown-menu.navbar-second-line {
     background-color: #004494;
   }
-  .navbar-collapse .dropdown-menu.navbar-second-line li a:hover, .navbar-collapse .dropdown-menu.navbar-second-line li a:focus {
+  .navbar-collapse .dropdown-menu.navbar-second-line li a:hover, .navbar-collapse .dropdown-menu.navbar-second-line li a:focus,
+  .navbar-collapse .dropdown-menu.navbar-second-line li span:not(.caret):hover,
+  .navbar-collapse .dropdown-menu.navbar-second-line li span:not(.caret):focus {
     color: #002f67;
     background-color: #f2f5f9;
   }
@@ -890,10 +901,4 @@ body.media-directory .dz-preview .dz-progress .dz-upload {
     color: #343434;
     background-color: #ffc142;
   }
-}
-
-.ai-deepchat--header,
-.ai-deepchat--header:hover,
-.ai-deepchat--header.active {
-  background-color: #333333;
 }

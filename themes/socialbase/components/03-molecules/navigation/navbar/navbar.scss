@@ -31,7 +31,8 @@ body {
   > li {
 
     > a,
-    > button {
+    > button,
+    > span {
       position: relative;
       display: block;
       padding: $nav-link-padding;
@@ -49,7 +50,8 @@ body {
 
     // Disabled state sets text to gray and nukes hover/tab effects
     &.disabled > a,
-    &.disabled > button {
+    &.disabled > button,
+    &.disabled > span {
 
       &:hover,
       &:focus {
@@ -194,7 +196,9 @@ body {
   display: flex;
   flex-wrap: wrap;
 
-  > li > a, > li > button {
+  > li > a,
+  > li > button,
+  > li > span {
     padding-top: 10px;
     padding-bottom: 10px;
     line-height: $line-height-computed;
@@ -203,7 +207,9 @@ body {
   // Uncollapse the nav
   @include for-tablet-landscape-up {
 
-    > li > a, > li > button {
+    > li > a,
+    > li > button,
+    > li > span {
       padding-top: $navbar-padding-vertical;
       padding-bottom: $navbar-padding-vertical;
     }
@@ -234,7 +240,8 @@ body {
       position: relative;
 
       @media(min-width: 1025px) {
-        > a {
+        > a,
+        > span {
           padding-right: 25px;
 
           &:hover:not(.is-active)  {
@@ -285,7 +292,9 @@ body {
 
         @include dropdown-Ipad;
 
-        > li > a, > li > button {
+        > li > a,
+        > li > button,
+        > li > span {
           @media(min-width: 768px) and (max-width: 1024px) {
             @include dropdown-el;
           }
@@ -319,8 +328,10 @@ body {
 
 .navbar-user > li > a,
 .navbar-user > li > button,
+.navbar-user > li > span,
 .navbar-user .navbar-nav > li > a,
-.navbar-user .navbar-nav > li > button {
+.navbar-user .navbar-nav > li > button,
+.navbar-user .navbar-nav > li > span {
   padding: 13px 10px 8px;
   height: 50px;
 }
@@ -565,7 +576,8 @@ body {
       box-shadow: none;
 
       li a,
-      li button {
+      li button,
+      li span:not(.caret) {
         padding: 5px 15px;
 
         [dir='ltr'] & {
@@ -584,7 +596,7 @@ body {
 }
 
 .navbar-default .navbar-nav > .open {
-  > a, > button {
+  > a, > button, > span {
     &, &:focus, &:hover {
       transition: color .2s ease, background-color .2s ease;
     }
@@ -853,26 +865,27 @@ body {
     font-size: $font-size-base;
     line-height: 1.625rem;
 
-    a, button {
+    a, button, span:not(.caret) {
       transition: all 0.3s;
       white-space: nowrap;
       opacity: 0.75;
       border-bottom: 2px solid transparent;
     }
 
-    li.active a, li.active button {
-      border-bottom: 2px solid transparent;
-      opacity: 1;
+    li.active {
+      a,
+      button,
+      span:not(.caret) {
+        border-bottom: 2px solid transparent;
+        opacity: 1;
 
-      &:hover,
-      &:focus {
-        cursor: default;
+        &:hover,
+        &:focus {
+          cursor: default;
+        }
       }
-
     }
-
   }
-
 }
 
 

@@ -1,14 +1,18 @@
-.nav > li > a:hover,
-.nav > li > a:focus {
+.nav > li > a:hover, .nav > li > a:focus,
+.nav > li > span:hover,
+.nav > li > span:focus {
   background-color: transparent;
 }
 
 .nav > li.disabled > a,
+.nav > li.disabled > span,
 .nav > li.disabled > button {
   color: #777;
 }
 
 .nav > li.disabled > a:hover, .nav > li.disabled > a:focus,
+.nav > li.disabled > span:hover,
+.nav > li.disabled > span:focus,
 .nav > li.disabled > button:hover,
 .nav > li.disabled > button:focus {
   color: #777;
@@ -19,14 +23,17 @@
 }
 
 .navbar-default .navbar-nav > li > a,
-.navbar-default .navbar-nav > li > button {
+.navbar-default .navbar-nav > li > button,
+.navbar-default .navbar-nav > li > span {
   color: #ffffff;
   fill: #ffffff;
 }
 
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus,
 .navbar-default .navbar-nav > li > button:hover,
-.navbar-default .navbar-nav > li > button:focus {
+.navbar-default .navbar-nav > li > button:focus,
+.navbar-default .navbar-nav > li > span:hover,
+.navbar-default .navbar-nav > li > span:focus {
   color: #e6e6e6;
   fill: #e6e6e6;
   background-color: #1a8dbe;
@@ -36,12 +43,18 @@
 .navbar-default .navbar-nav > .active > button,
 .navbar-default .navbar-nav > .active > button:hover,
 .navbar-default .navbar-nav > .active > button:focus,
+.navbar-default .navbar-nav > .active > span,
+.navbar-default .navbar-nav > .active > span:hover,
+.navbar-default .navbar-nav > .active > span:focus,
 .navbar-default .navbar-nav > li > a.is-active,
 .navbar-default .navbar-nav > li > a.is-active:hover,
 .navbar-default .navbar-nav > li > a.is-active:focus,
 .navbar-default .navbar-nav > li > button.is-active,
 .navbar-default .navbar-nav > li > button.is-active:hover,
-.navbar-default .navbar-nav > li > button.is-active:focus {
+.navbar-default .navbar-nav > li > button.is-active:focus,
+.navbar-default .navbar-nav > li > span.is-active,
+.navbar-default .navbar-nav > li > span.is-active:hover,
+.navbar-default .navbar-nav > li > span.is-active:focus {
   color: #f3f3f3;
   fill: #f3f3f3;
   background-color: #1f1f1f;
@@ -50,7 +63,10 @@
 .navbar-default .navbar-nav > .disabled > a, .navbar-default .navbar-nav > .disabled > a:hover, .navbar-default .navbar-nav > .disabled > a:focus,
 .navbar-default .navbar-nav > .disabled > button,
 .navbar-default .navbar-nav > .disabled > button:hover,
-.navbar-default .navbar-nav > .disabled > button:focus {
+.navbar-default .navbar-nav > .disabled > button:focus,
+.navbar-default .navbar-nav > .disabled > span,
+.navbar-default .navbar-nav > .disabled > span:hover,
+.navbar-default .navbar-nav > .disabled > span:focus {
   color: #ccc;
   fill: #ccc;
   background-color: transparent;
@@ -67,12 +83,15 @@
 
 .navbar-default .dropdown-menu > li > a:hover, .navbar-default .dropdown-menu > li > a:focus,
 .navbar-default .dropdown-menu > li > button:hover,
-.navbar-default .dropdown-menu > li > button:focus {
+.navbar-default .dropdown-menu > li > button:focus,
+.navbar-default .dropdown-menu > li > span:hover,
+.navbar-default .dropdown-menu > li > span:focus {
   background-color: #f5f5f5;
 }
 
 .navbar-default .dropdown-menu > li > a.is-active,
-.navbar-default .dropdown-menu > li > button.is-active {
+.navbar-default .dropdown-menu > li > button.is-active,
+.navbar-default .dropdown-menu > li > span.is-active {
   background-color: #e6e6e6;
   color: #343434;
   font-weight: 500;
@@ -80,7 +99,9 @@
 
 .navbar-default .dropdown-menu > li > a.is-active:hover, .navbar-default .dropdown-menu > li > a.is-active:focus,
 .navbar-default .dropdown-menu > li > button.is-active:hover,
-.navbar-default .dropdown-menu > li > button.is-active:focus {
+.navbar-default .dropdown-menu > li > button.is-active:focus,
+.navbar-default .dropdown-menu > li > span.is-active:hover,
+.navbar-default .dropdown-menu > li > span.is-active:focus {
   cursor: default;
 }
 
@@ -99,7 +120,10 @@
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus,
 .navbar-default .navbar-nav > .open > button,
 .navbar-default .navbar-nav > .open > button:hover,
-.navbar-default .navbar-nav > .open > button:focus {
+.navbar-default .navbar-nav > .open > button:focus,
+.navbar-default .navbar-nav > .open > span,
+.navbar-default .navbar-nav > .open > span:hover,
+.navbar-default .navbar-nav > .open > span:focus {
   background-color: #1f1f1f;
   color: #f3f3f3;
 }
@@ -135,7 +159,7 @@
   background-color: #1f80aa;
 }
 
-.navbar-secondary .navbar-nav a, .navbar-secondary .navbar-nav button {
+.navbar-secondary .navbar-nav a, .navbar-secondary .navbar-nav button, .navbar-secondary .navbar-nav span:not(.caret) {
   color: #fff;
 }
 
@@ -143,10 +167,11 @@
   border-bottom-color: #fff;
 }
 
+.navbar-secondary .navbar-nav li:not(.active) button:hover, .navbar-secondary .navbar-nav li:not(.active) button:focus,
 .navbar-secondary .navbar-nav li:not(.active) a:hover,
-.navbar-secondary .navbar-nav li:not(.active) button:hover,
 .navbar-secondary .navbar-nav li:not(.active) a:focus,
-.navbar-secondary .navbar-nav li:not(.active) button:focus {
+.navbar-secondary .navbar-nav li:not(.active) span:not(.caret):hover,
+.navbar-secondary .navbar-nav li:not(.active) span:not(.caret):focus {
   outline: none;
   background-color: rgba(0, 0, 0, 0.3);
   border-bottom-color: rgba(0, 0, 0, 0.3);
@@ -196,26 +221,35 @@
 
 @media (max-width: 599px) {
   .navbar-default .navbar-nav .open .dropdown-menu > li > a,
-  .navbar-default .navbar-nav .open .dropdown-menu > li > button {
+  .navbar-default .navbar-nav .open .dropdown-menu > li > button,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > span {
     color: #ffffff;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus,
   .navbar-default .navbar-nav .open .dropdown-menu > li > button:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > li > button:focus {
+  .navbar-default .navbar-nav .open .dropdown-menu > li > button:focus,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > span:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > span:focus {
     color: #e6e6e6;
     background-color: #1a8dbe;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > button,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > button:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > button:focus {
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > button:focus,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > span,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > span:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > span:focus {
     color: #f3f3f3;
     background-color: #1f1f1f;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a, .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:focus,
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > button,
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > button:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > button:focus {
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > button:focus,
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > span,
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > span:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > span:focus {
     color: #ccc;
     background-color: transparent;
   }
@@ -223,35 +257,47 @@
 
 @media (max-width: 899px) {
   .navbar-collapse .dropdown-menu li a,
-  .navbar-collapse .dropdown-menu li button {
+  .navbar-collapse .dropdown-menu li button,
+  .navbar-collapse .dropdown-menu li span:not(.caret) {
     color: #ffffff;
   }
   .navbar-collapse .dropdown-menu li a:hover, .navbar-collapse .dropdown-menu li a:focus,
   .navbar-collapse .dropdown-menu li button:hover,
-  .navbar-collapse .dropdown-menu li button:focus {
+  .navbar-collapse .dropdown-menu li button:focus,
+  .navbar-collapse .dropdown-menu li span:not(.caret):hover,
+  .navbar-collapse .dropdown-menu li span:not(.caret):focus {
     background-color: #1f80aa;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > li > a,
-  .navbar-default .navbar-nav .open .dropdown-menu > li > button {
+  .navbar-default .navbar-nav .open .dropdown-menu > li > button,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > span {
     color: #343434;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus,
   .navbar-default .navbar-nav .open .dropdown-menu > li > button:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > li > button:focus {
+  .navbar-default .navbar-nav .open .dropdown-menu > li > button:focus,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > span:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > span:focus {
     color: #272727;
     background-color: #f5f5f5;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > button,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > button:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > button:focus {
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > button:focus,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > span,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > span:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > span:focus {
     color: #ffffff;
     background-color: #1f80aa;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a, .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:focus,
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > button,
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > button:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > button:focus {
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > button:focus,
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > span,
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > span:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > span:focus {
     color: #343434;
     background-color: #777;
   }
