@@ -89,15 +89,20 @@
         /* -------------------------------------
             HEADER, FOOTER, MAIN
         ------------------------------------- */
-        .header {
+        .header > tr > td {
             padding-top: 40px;
             padding-bottom: 20px;
             text-align: center;
         }
 
         .postheader {
-            padding: 0 44px 25px;
-            font-size: 16px;
+            background-color: #fff;
+        }
+
+        .postheader > tr > td {
+          padding: 0 44px 25px;
+          font-size: 16px;
+          font-family: sans-serif;
         }
 
         .main {
@@ -550,14 +555,24 @@
                 <span class="preheader"></span>
 
                 <div class="content-wrapper">
-                    <div class="header">
-                        <img src="{{ logo }}" alt="Logo" class="logo" />
-                    </div>
+                    <!-- START: Header Section -->
+                    <table class="header" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td align="center">
+                            <img src="{{ logo }}" alt="Logo" class="logo" />
+                          </td>
+                        </tr>
+                      </table>
 
                     {% if heading %}
-                        <div class="postheader">
-                            {{ heading }},
-                        </div>
+                        <!-- START: Postheader -->
+                        <table class="postheader" width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <td>
+                                    {{ heading }},
+                                </td>
+                            </tr>
+                      </table>
                     {% endif %}
 
                     <table class="main">
