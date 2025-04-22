@@ -16,7 +16,9 @@ services:
     tags:
       - { name: event_subscriber }
   # Specific group relation handlers.
-  group.relation_handler.access_control.group_node:
+  social_event_managers.relation_handler.access_control.group_node.decorator:
     class: Drupal\social_event_managers\Plugin\Group\RelationHandler\EventsGroupContentAccessControl
-    arguments: [ '@group.relation_handler.access_control']
+    decorates: 'group.relation_handler.access_control'
+    decoration_priority: 100
+    arguments: ['@social_event_managers.relation_handler.access_control.group_node.decorator.inner']
     shared: false
