@@ -331,6 +331,80 @@
   }
 }
 
+.teaser-small-skeleton {
+  $card-padding: 1.25rem;
+
+  $avatar-size: 100px;
+  $avatar-size: 44px;
+  $avatar-position: #{$card-padding} #{$card-padding};
+  $avatar-skeleton: radial-gradient(circle 22px at center, rgb(239, 239, 239) 99%, transparent 0);
+
+  $title-1-height: 12px;
+  $title-1-skeleton: linear-gradient(rgb(239, 239, 239) #{$title-1-height}, transparent 0);
+  $title-1-width: 50%;
+  $title-1-position: left 75px top calc(#{$card-padding} + 6px);
+
+  $subtitle-2-height: 12px;
+  $subtitle-2-skeleton: linear-gradient(rgb(239, 239, 239) #{$subtitle-2-height}, transparent 0);
+  $subtitle-2-width: 25%;
+  $subtitle-2-position: left 75px top calc(#{$card-padding} + 24px);
+
+  $card-height: calc(#{$card-padding} + #{$avatar-size} + #{$card-padding});
+  $card-skeleton: linear-gradient(white #{$card-height}, transparent 0);
+
+  $blur-width: 200px;
+  $blur-size: #{$blur-width} calc(#{$card-height});
+
+  height: #{$card-height};
+
+  &:empty::after {
+    clear: both;
+    content:"";
+    display:block;
+    height: 100%;
+
+    background-image:
+      linear-gradient(
+          90deg,
+          rgba(white, 0) 0,
+          rgba(white, .8) 50%,
+          rgba(white, 0) 100%
+      ),
+      #{$title-1-skeleton},
+      #{$subtitle-2-skeleton},
+      #{$avatar-skeleton},
+      #{$card-skeleton};
+
+    background-size:
+      #{$blur-size},
+      #{$title-1-width} #{$title-1-height},
+      #{$subtitle-2-width} #{$subtitle-2-height},
+      #{$avatar-size} #{$avatar-size},
+      100% 100%;
+
+    background-position:
+      -150% 0,
+      #{$title-1-position},
+      #{$subtitle-2-position},
+      #{$avatar-position},
+      0 0;
+
+    background-repeat: no-repeat;
+    animation: loading-media 4s infinite;
+  }
+
+  @keyframes loading-media {
+    to {
+      background-position:
+        350% 0,
+        #{$title-1-position},
+        #{$subtitle-2-position},
+        #{$avatar-position},
+        0 0;
+    }
+  }
+}
+
 /* Post block without avatar and just the post description */
 .post-skeleton {
   $card-padding: 1.25rem;
