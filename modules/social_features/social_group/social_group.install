@@ -1117,14 +1117,22 @@ function social_group_update_13016(): void {
 }
 
 /**
- * Create a group per type view.
+ * Create a group per type and group overview view.
  */
 function social_group_update_130017(): void {
-  $config_path = Drupal::service('extension.list.module')->getPath('social_group') . '/config/install';
+  // Group per type.
+  $config_path = Drupal::service('extension.list.module')->getPath('social_group') . '/config/static';
   $source = new FileStorage($config_path);
-  $data = $source->read('views.view.group_per_type');
+  $group_per_type = $source->read('views.view.group_per_type_130017');
+  if (is_array($group_per_type)) {
+    \Drupal::entityTypeManager()->getStorage('view')->create($group_per_type)
+      ->save();
+  }
 
-  if (is_array($data)) {
-    \Drupal::entityTypeManager()->getStorage('view')->create($data)->save();
+  // Group overview.
+  $group_overview = $source->read('views.view.group_overview_130017');
+  if (is_array($group_overview)) {
+    \Drupal::entityTypeManager()->getStorage('view')->create($group_overview)
+      ->save();
   }
 }
