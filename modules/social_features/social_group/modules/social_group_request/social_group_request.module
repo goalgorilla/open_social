@@ -183,29 +183,7 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
     'cc',
   ];
   \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
-  if (\Drupal::routeMatch()->getRouteName() === 'entity.group_content.group_approve_membership') {
-    // Name of user which we're adding to the group.
-    $form['question'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'p',
-      '#value' => t(
-        'Are you sure you want to approve the membership request for @name?',
-      ),
-      '#weight' => 1,
-    ];
-
-    // Remove possibility to select members to add to group.
-    if (isset($form['entity_id']['widget'][0]['target_id'])) {
-      unset($form['entity_id']);
-    }
-
-    if (isset($form['group_roles']['widget'])) {
-      unset($form['group_roles']);
-    }
-
-    $form['actions']['submit']['#value'] = t('Yes');
-  }
-  elseif (preg_match(
+  if (preg_match(
     '/^group_(' . implode('|', $social_group_types) . ')_(add|edit)_form$/',
     $form_id,
   )) {

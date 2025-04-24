@@ -3,12 +3,12 @@
 namespace Drupal\social_group_request\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\grequest\Entity\Form\GroupMembershipRejectForm;
+use Drupal\grequest\Entity\Form\GroupMembershipApproveForm;
 
 /**
- * Provides a confirmation form before rejecting membership.
+ * Provides a form for approving a group membership request.
  */
-class GroupRequestMembershipRejectForm extends GroupMembershipRejectForm {
+class GroupRequestMembershipApproveForm extends GroupMembershipApproveForm {
 
   /**
    * {@inheritdoc}
@@ -18,7 +18,7 @@ class GroupRequestMembershipRejectForm extends GroupMembershipRejectForm {
     $group_relationship = $this->getEntity();
     /** @var \Drupal\user\UserInterface $user */
     $user = $group_relationship->getEntity();
-    return $this->t('Are you sure you want to reject the membership request for %user?', ['%user' => $user->getDisplayName()]);
+    return $this->t('Are you sure you want to approve the membership request for %user?', ['%user' => $user->getDisplayName()]);
   }
 
   /**
@@ -44,7 +44,7 @@ class GroupRequestMembershipRejectForm extends GroupMembershipRejectForm {
       'waves-btn',
     ];
 
-    // Remove possibility to select roles when membership request is rejected.
+    // Remove possibility to select roles when membership request is approved.
     if (isset($form['roles'])) {
       unset($form['roles']);
     }

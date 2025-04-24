@@ -159,6 +159,8 @@ class LogContext implements Context {
       || ($row->type === 'update' && (int) $row->severity === RfcLogLevel::NOTICE)
       // Ignore group type created notice.
       || ($row->type === 'group' ) && (int)  $row->severity === RfcLogLevel::NOTICE && (str_contains($row->message, 'Added group type %label.'))
+      // Ignore grequest notices.
+      || ($row->type === 'group_relationship' ) && (int)  $row->severity === RfcLogLevel::NOTICE && (str_contains($row->message, '@type: '))
       ;
   }
 
