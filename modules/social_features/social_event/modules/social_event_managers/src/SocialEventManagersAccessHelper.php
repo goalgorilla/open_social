@@ -91,4 +91,18 @@ class SocialEventManagersAccessHelper {
     return AccessResult::neutral();
   }
 
+  /**
+   * Checks if a node is an event and is having event managers.
+   *
+   * @param \Drupal\node\NodeInterface $entity
+   *   The node entity.
+   *
+   * @return bool
+   *   TRUE or FALSE depending upon validation of conditions.
+   */
+  public static function isEventNodeWithManagers(NodeInterface $entity): bool {
+    return $entity->getType() === 'event'
+      && !$entity->get('field_event_managers')->isEmpty();
+  }
+
 }

@@ -36,10 +36,9 @@ class EventsGroupContentAccessControl implements AccessControlInterface {
 
     // We only care about the update of the Event content
     // and if the field_event_managers is not empty.
-    if ($operation !== 'update' ||
-      !($entity instanceof NodeInterface) ||
-      $entity->bundle() !== 'event' ||
-      $entity->get('field_event_managers')->isEmpty()) {
+    assert($entity instanceof NodeInterface, 'Entity must be a node.');
+    if ($operation !== 'update'
+      && !SocialEventManagersAccessHelper::isEventNodeWithManagers($entity)) {
       return $this->parent->entityAccess($entity, $operation, $account, $return_as_object);
     }
 
