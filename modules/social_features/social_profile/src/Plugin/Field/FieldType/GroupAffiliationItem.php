@@ -11,8 +11,8 @@ use Drupal\social_profile\GroupAffiliation;
  *
  * @FieldType(
  *   id = "group_affiliation",
- *   label = @Translation("Group affiliation"),
- *   description = @Translation("Group affiliation field."),
+ *   label = @Translation("Affiliation"),
+ *   description = @Translation("Affiliation field."),
  *   category = @Translation("Reference"),
  *   default_widget = "group_affiliation_widget",
  *   default_formatter = "entity_reference_label",
