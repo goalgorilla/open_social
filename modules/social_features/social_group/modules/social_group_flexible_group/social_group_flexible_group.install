@@ -88,6 +88,10 @@ function social_group_flexible_group_update_dependencies(): array {
       'social_group_request' => 13006,
     ];
   }
+  // Install the new hubs view before applying changes.
+  $dependencies['social_group_flexible_group'][130013] = [
+    'social_group' => 130017,
+  ];
 
   return $dependencies;
 }
