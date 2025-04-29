@@ -18,3 +18,9 @@ services:
     arguments: [ '@current_route_match', '@request_stack', '@entity_type.manager' ]
     tags:
       - { name: event_subscriber }
+
+  social_group_request.membership_request_access_checker:
+    class: Drupal\social_group_request\Access\SocialGroupMembershipRequestAccessChecker
+    arguments: ['@grequest.membership_request_manager']
+    tags:
+      - { name: access_check, applies_to: _group_membership_request }
