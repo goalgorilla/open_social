@@ -133,8 +133,8 @@ function mentions_crud_update(string $type, array $mentions, int $id, int $autho
     ->execute();
   foreach ($mentions_storage->loadMultiple($mention_ids) as $entity) {
     // Make sure the uid value is available.
-    if (isset($entity->get('uid')->getValue()[0]['value'])) {
-      $old_user = $entity->get('uid')->getValue()[0]['value'];
+    if (isset($entity->get('uid')->getValue()[0]['target_id'])) {
+      $old_user = $entity->get('uid')->getValue()[0]['target_id'];
       $old_users[] = $old_user;
       $old_mids[$old_user] = $entity->id();
     }
