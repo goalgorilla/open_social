@@ -74,7 +74,7 @@ Feature: A group can be configured to require membership to be requested
     And I wait for AJAX to finish
     And I press "Send request" in the "Modal"
 
-    Then I should see "Your request has been sent successfully"
+    Then I should see "Your request is waiting for approval"
 
   Examples:
     | role           |
@@ -111,7 +111,7 @@ Feature: A group can be configured to require membership to be requested
     And I wait for AJAX to finish
     And I press "Send request" in the "Modal"
 
-    Then I should see "Your request has been sent successfully"
+    Then I should see "Your request is waiting for approval"
 
   Scenario: A user can request membership after a previous request has been approved but they left the group
     Given users:
@@ -127,4 +127,4 @@ Feature: A group can be configured to require membership to be requested
     And I wait for AJAX to finish
     And I press "Send request" in the "Modal"
 
-    Then I should see "Your request has been sent successfully"
+    Then I should see "Your request is waiting for approval"
