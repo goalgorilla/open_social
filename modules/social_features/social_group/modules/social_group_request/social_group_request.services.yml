@@ -19,8 +19,8 @@ services:
     tags:
       - { name: event_subscriber }
 
-  social_group_request.membership_request_access_checker:
+  grequest.group_membership_request_access_checker:
     class: Drupal\social_group_request\Access\SocialGroupMembershipRequestAccessChecker
     arguments: ['@grequest.membership_request_manager']
     tags:
-      - { name: access_check, applies_to: _group_membership_request }
+      - { name: access_check, applies_to: _group_membership_request, priority: 5 }

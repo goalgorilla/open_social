@@ -37,8 +37,8 @@ class SocialGroupMembershipRequestAccessChecker extends GroupMembershipRequestAc
 
       // Get the request status if available.
       $status = $group_membership_request->get(GroupMembershipRequest::STATUS_FIELD)->value;
-      // Allow new request if previous one was rejected.
-      if ($status === GroupMembershipRequest::REQUEST_REJECTED) {
+      // Allow new request if there is no pending.
+      if ($status !== GroupMembershipRequest::REQUEST_PENDING) {
         return AccessResult::allowed();
       }
 
