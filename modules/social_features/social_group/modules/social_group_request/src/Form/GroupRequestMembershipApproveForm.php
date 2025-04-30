@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\grequest\Entity\Form\GroupMembershipApproveForm;
 use Drupal\grequest\MembershipRequestManager;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -63,8 +64,8 @@ class GroupRequestMembershipApproveForm extends GroupMembershipApproveForm {
    * {@inheritdoc}
    */
   public function getDescription() {
-    /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_relationship */
     $group_relationship = $this->getEntity();
+    assert($group_relationship instanceof GroupRelationshipInterface, "The GroupRequestMembershipRejectForm form is used for an entity that's not a Group Relationship, this indicates a misconfiguration in the form or a change in the group module.");
     /** @var \Drupal\user\UserInterface $user */
     $user = $group_relationship->getEntity();
     return $this->t('Are you sure you want to approve the membership request for %user?', ['%user' => $user->getDisplayName()]);
@@ -107,8 +108,9 @@ class GroupRequestMembershipApproveForm extends GroupMembershipApproveForm {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
-    /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_relationship */
     $group_relationship = $this->getEntity();
+    assert($group_relationship instanceof GroupRelationshipInterface, "The GroupRequestMembershipRejectForm form is used for an entity that's not a Group Relationship, this indicates a misconfiguration in the form or a change in the group module.");
+
     $group = $group_relationship->getGroup();
 
     // Add cache tags for group views.

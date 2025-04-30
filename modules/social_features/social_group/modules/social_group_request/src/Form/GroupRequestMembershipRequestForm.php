@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\grequest\Entity\Form\GroupMembershipRequestForm;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\grequest\MembershipRequestManager;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -92,8 +93,8 @@ class GroupRequestMembershipRequestForm extends GroupMembershipRequestForm {
   public function save(array $form, FormStateInterface $form_state) {
     $return = parent::save($form, $form_state);
 
-    /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_relationship */
     $group_relationship = $this->getEntity();
+    assert($group_relationship instanceof GroupRelationshipInterface, "The GroupRequestMembershipRequestForm form is used for an entity that's not a Group Relationship, this indicates a misconfiguration in the form or a change in the group module.");
     $group = $group_relationship->getGroup();
 
     // Add cache tags for group views.
