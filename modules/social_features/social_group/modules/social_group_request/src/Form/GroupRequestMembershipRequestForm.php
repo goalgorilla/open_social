@@ -96,20 +96,7 @@ class GroupRequestMembershipRequestForm extends GroupMembershipRequestForm {
     $group_relationship = $this->getEntity();
     assert($group_relationship instanceof GroupRelationshipInterface, "The GroupRequestMembershipRequestForm form is used for an entity that's not a Group Relationship, this indicates a misconfiguration in the form or a change in the group module.");
     $group = $group_relationship->getGroup();
-
-    // Add cache tags for group views.
-    $tags = [
-      'group_list',
-      'group_content_list',
-      'group_view',
-      'group_content_view',
-    ];
-    // Add cache tags that are based on group id.
-    $tags[] = 'group_hero:' . $group->id();
-    $tags[] = 'group_block:' . $group->id();
-    // Add cache tags that are based on group content.
-    $tags[] = 'group_content:' . $this->getEntity()->id();
-    $this->cacheTagsInvalidator->invalidateTags($tags);
+    $this->cacheTagsInvalidator->invalidateTags($group->getCacheTagsToInvalidate());
 
     return $return;
   }

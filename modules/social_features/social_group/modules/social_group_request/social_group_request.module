@@ -302,8 +302,6 @@ function social_group_request_preprocess_page_title(&$variables) {
   $variables['title'] = \Drupal::translation()->formatPlural($requests, $title_singular, $title_multiple, [
     ':group_title' => $group->label(),
   ]);
-
-  $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
 }
 
 /**

@@ -108,7 +108,7 @@ class GroupRequestController extends ControllerBase {
     return $this->t(
       "Request to join: %group_label",
       ['%group_label' => $group->label()],
-      ['context' => 'page title'],
+      ['context' => 'join request page title'],
     );
   }
 
@@ -163,9 +163,9 @@ class GroupRequestController extends ControllerBase {
 
     $this->messenger()->addMessage($this->t('Membership has been successfully denied.'));
 
-    $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
+    $this->cacheTagsInvalidator->invalidateTags(['group:' . $group->id()]);
 
-    return $this->redirect('social_group.stream', ['group' => $group->id()]);
+    return $this->redirect('entity.group.canonical', ['group' => $group->id()]);
   }
 
   /**

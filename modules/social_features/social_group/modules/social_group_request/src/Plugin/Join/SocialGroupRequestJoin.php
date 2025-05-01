@@ -166,7 +166,7 @@ class SocialGroupRequestJoin extends JoinBase {
     }
 
     $variables['#attached']['library'][] = 'social_group_request/social_group_request_popup';
-    $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
+    $variables['#cache']['tags'][] = 'group:' . $group->id();
 
     return $items;
   }

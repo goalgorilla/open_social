@@ -211,7 +211,6 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
 
     if ($this->group !== NULL) {
       $tags = Cache::mergeTags($tags, [
-        'request-membership:' . $this->group->id(),
         'group:' . $this->group->id(),
       ]);
     }
