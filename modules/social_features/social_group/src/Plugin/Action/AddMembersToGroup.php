@@ -10,7 +10,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -116,12 +116,18 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form['#title'] = $this->formatPlural($this->context['selected_count'], 'Add selected member to a group', 'Add @count selected members to a group');
 
-    $groups = Group::loadMultiple();
+    $query = $this->storage->getQuery();
+    $group_ids = $query->sort('type')
+      ->sort('label')
+      ->accessCheck(FALSE)
+      ->execute();
+
+    $groups = $this->storage->loadMultiple($group_ids);
 
     $options = [];
     // Grab all the groups, sorted by group type for the select list.
     foreach ($groups as $group) {
-      /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+      assert($group instanceof GroupInterface);
       $group_type = $group->getGroupType();
       $options[$group_type->label()][$group->id()] = $group->label();
     }
@@ -139,7 +145,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
     unset($form['list']);
 
     $form['groups'] = [
-      '#type' => 'select',
+      '#type' => 'select2',
       '#title' => $this->t('Group'),
       '#options' => $options,
     ];
