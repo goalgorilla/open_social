@@ -86,6 +86,10 @@ class GroupRequestMembershipRejectForm extends GroupMembershipRejectForm {
     $form = parent::buildForm($form, $form_state);
 
     $form['#attributes']['class'][] = 'form--default';
+
+    $form['description']['#prefix'] = '<div class="clearfix">';
+    $form['description']['#suffix'] = '</div></div></div>';
+
     $form['actions']['cancel']['#attributes']['class'] = [
       'button',
       'button--flat',
