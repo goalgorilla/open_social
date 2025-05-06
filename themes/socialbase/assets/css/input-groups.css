@@ -45,7 +45,7 @@
   transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-  padding: 6px 12px;
+  padding: 5px 12px;
   font-size: 16px;
   font-weight: normal;
   line-height: 1;
@@ -100,4 +100,12 @@
 .form-disabled .input-group.input-group-expanded,
 .form-disabled .input-group.input-group-expanded + .help-block {
   opacity: .5;
+}
+
+@media (max-width: 599px) {
+  .input-group.input-group-expanded .input-group-addon {
+    padding-right: .125rem;
+    padding-left: .125rem;
+    font-size: .75rem;
+  }
 }
