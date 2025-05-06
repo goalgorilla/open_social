@@ -100,6 +100,7 @@ function social_group_request_tokens_alter(array &$replacements, array $context,
             $message_template_id = $message->getTemplate()->id();
             switch ($message_template_id) {
               case 'request_to_join_a_group':
+              case 'request_to_join_organization':
                 if (isset($context['tokens']['cta_button'])) {
                   $link = Url::fromRoute('view.group_membership_requests.pending', ['group' => $group->id()],
                     ['absolute' => TRUE]);
