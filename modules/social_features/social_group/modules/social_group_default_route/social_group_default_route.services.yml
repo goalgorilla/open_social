@@ -10,7 +10,13 @@ services:
       - { name: event_subscriber, priority: 3 }
   social_group_default_route.redirect_service:
     class: Drupal\social_group_default_route\SocialGroupDefaultRouteRedirectService
-    arguments: [ '@current_route_match', '@current_user', '@module_handler', '@plugin.manager.group_landing_tabs' ]
+    arguments:
+    - '@current_route_match'
+    - '@current_user'
+    - '@module_handler'
+    - '@plugin.manager.group_landing_tabs'
+    - '@router.route_provider'
+
   plugin.manager.group_landing_tabs:
     class: Drupal\social_group_default_route\GroupLandingTabManager
     arguments: ['@cache.discovery', '@module_handler']

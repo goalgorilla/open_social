@@ -4,6 +4,7 @@ namespace Drupal\social_group_default_route;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
@@ -52,14 +53,16 @@ class SocialGroupDefaultRouteRedirectService {
    *   The module handler.
    * @param \Drupal\social_group_default_route\GroupLandingTabManager $landingTabManager
    *   The landing tab manager.
+   * @param \Drupal\Core\Routing\RouteProviderInterface $routeProvider
+   *   The route provider to load routes by name.
    */
   public function __construct(
     protected RouteMatchInterface $routeMatch,
     protected AccountProxyInterface $currentUser,
     protected ModuleHandlerInterface $moduleHandler,
     protected GroupLandingTabManager $landingTabManager,
-  ) {
-  }
+    protected RouteProviderInterface $routeProvider,
+  ) {}
 
   /**
    * Do redirect.
@@ -75,6 +78,14 @@ class SocialGroupDefaultRouteRedirectService {
     $default_route = $group->hasMember($this->currentUser) ?
       $this->getDefaultMemberRoute($group) :
       $this->getDefaultNonMemberRoute($group);
+
+    // Different routes could have the same path.
+    // Make sure we are not redirecting to the route with the same path.
+    $is_path_same = $this->routeMatch->getRouteObject()?->getPath() ===
+      $this->routeProvider->getRouteByName($default_route)->getPath();
+    if ($is_path_same) {
+      return;
+    }
 
     // Determine the URL we want to redirect to.
     $url = Url::fromRoute($default_route, ['group' => $group->id()]);
