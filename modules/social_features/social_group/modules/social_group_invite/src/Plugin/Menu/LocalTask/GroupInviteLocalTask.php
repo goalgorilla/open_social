@@ -72,10 +72,10 @@ class GroupInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
     if ($this->invitationLoader->loadByUser()) {
       // We don't need plural because users will be redirected
       // if there is no invite.
-      return $this->t('Group invites (@count)', ['@count' => count($this->invitationLoader->loadByUser())]);
+      return $this->t('Other invites (@count)', ['@count' => count($this->invitationLoader->loadByUser())]);
     }
 
-    return $this->t('Group invites');
+    return $this->t('Other invites');
   }
 
   /**

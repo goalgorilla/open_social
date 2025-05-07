@@ -21,6 +21,7 @@ class RouteSubscriber extends RouteSubscriberBase {
       $defaults = $route->getDefaults();
       $requirements = $route->getRequirements();
       $defaults['_form'] = '\Drupal\social_group_invite\Form\SocialBulkGroupInvitation';
+      $defaults['_title_callback'] = '\Drupal\social_group_invite\Controller\SocialGroupInvitationController::invitationTitle';
       // Add custom access check for the invite page.
       $requirements['_custom_access'] = '\Drupal\social_group_invite\Form\SocialBulkGroupInvitation::inviteAccess';
       unset($requirements['_group_permission']);
