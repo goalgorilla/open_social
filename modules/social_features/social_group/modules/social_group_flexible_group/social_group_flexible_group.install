@@ -13,7 +13,6 @@ use Drupal\social_group\Entity\Group;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -419,22 +418,4 @@ function social_group_flexible_group_update_130012(): string {
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
   return $updater->logger()->output();
-}
-
-/**
- * Create Hubs view.
- */
-function social_group_flexible_group_update_130013(): void {
-  // Get hubs view file.
-  $config_file = \Drupal::service('extension.list.module')->getPath('social_group_flexible_group') . '/config/install/views.view.hubs.yml';
-  if (file_exists($config_file) === FALSE) {
-    \Drupal::logger('social_task')->error('Configuration file for "hubs" view not found.');
-    return;
-  }
-
-  // Apply the configuration to create hubs view.
-  $view_config = Yaml::parseFile($config_file);
-  \Drupal::configFactory()->getEditable('views.view.hubs')
-    ->setData($view_config)
-    ->save();
 }
