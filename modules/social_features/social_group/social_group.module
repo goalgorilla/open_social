@@ -1672,9 +1672,11 @@ function social_group_preprocess_profile(&$variables) {
     $roles = $member->getRoles();
 
     if (isset($roles[$group->bundle() . '-group_manager'])) {
+      /** @var \Drupal\group\Entity\GroupRole $group_manager_role */
+      $group_manager_role = $roles[$group->bundle() . '-group_manager'];
       $variables['badges'] = [
         [
-          'label' => t('Group manager'),
+          'label' => $group_manager_role->label(),
           'classes' => ['badge-secondary teaser__badge'],
         ],
       ];

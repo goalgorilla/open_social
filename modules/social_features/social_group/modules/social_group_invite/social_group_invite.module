@@ -203,7 +203,7 @@ function social_group_invite_preprocess_views_view(&$variables) {
     ($group = _social_group_get_current_group()) !== NULL
   ) {
     $variables['more'] = [
-      '#title' => t('Back to group'),
+      '#title' => t('Back'),
       '#type' => 'link',
       '#url' => Url::fromRoute('entity.group.canonical', ['group' => $group->id()]),
       '#attributes' => [
