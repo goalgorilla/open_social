@@ -73,6 +73,7 @@ Feature: A group can be configured to require membership to be requested
     And I click "Request to join"
     And I wait for AJAX to finish
     And I press "Send request"
+    And I wait for AJAX to finish
 
     Then I should see "Your request has been sent successfully"
 
@@ -110,6 +111,7 @@ Feature: A group can be configured to require membership to be requested
     And I click "Request to join"
     And I wait for AJAX to finish
     And I press "Send request"
+    And I wait for AJAX to finish
 
     Then I should see "Your request has been sent successfully"
 
@@ -126,5 +128,6 @@ Feature: A group can be configured to require membership to be requested
     And I click "Request to join"
     And I wait for AJAX to finish
     And I press "Send request"
+    And I wait for AJAX to finish
 
     Then I should see "Your request has been sent successfully"
