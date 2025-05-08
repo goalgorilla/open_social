@@ -6,6 +6,7 @@ use CloudEvents\V1\CloudEventInterface;
 use Consolidation\Config\ConfigInterface;
 use Drupal\address\Plugin\Field\FieldType\AddressFieldItemList;
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -127,6 +128,13 @@ class EdaHandlerTest extends UnitTestCase {
    * Represents the ConfigFactoryInterface.
    */
   protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected TimeInterface $time;
 
   /**
    * {@inheritDoc}
@@ -262,6 +270,11 @@ class EdaHandlerTest extends UnitTestCase {
     // Prophesize the CloudEvent class.
     $cloudEventMock = $this->prophesize(CloudEventInterface::class);
     $this->cloudEvent = $cloudEventMock->reveal();
+
+    // Initialize the time service.
+    $timeMock = $this->prophesize(TimeInterface::class);
+    $timeMock->getRequestTime()->willReturn(1234567890);
+    $this->time = $timeMock->reveal();
   }
 
   /**
@@ -281,7 +294,7 @@ class EdaHandlerTest extends UnitTestCase {
     $this->assertEquals('com.getopensocial.cms.group.create', $event->getType());
     $this->assertEquals('/node/add/event', $event->getSource());
     $this->assertEquals('a5715874-5859-4d8a-93ba-9f8433ea44af', $event->getId());
-    $this->assertEquals(DateTime::fromTimestamp($this->group->getCreatedTime())->toImmutableDateTime(), $event->getTime());
+    $this->assertEquals(DateTime::fromTimestamp(1234567890)->toImmutableDateTime(), $event->getTime());
   }
 
   /**
@@ -435,7 +448,8 @@ class EdaHandlerTest extends UnitTestCase {
       $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
-      $this->configFactory
+      $this->configFactory,
+      $this->time,
     );
   }
 

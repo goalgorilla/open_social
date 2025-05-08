@@ -3,6 +3,7 @@
 namespace Drupal\social_user;
 
 use CloudEvents\V1\CloudEvent;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -62,6 +63,13 @@ final class EdaHandler {
   protected string $topicName;
 
   /**
+   * The request time.
+   *
+   * @var int
+   */
+  protected int $requestTime;
+
+  /**
    * {@inheritDoc}
    */
   public function __construct(
@@ -73,6 +81,7 @@ final class EdaHandler {
     private readonly AccountProxyInterface $account,
     private readonly RouteMatchInterface $routeMatch,
     private readonly ConfigFactoryInterface $configFactory,
+    private readonly TimeInterface $time,
   ) {
     // Load the full user entity if the account is authenticated.
     $account_id = $this->account->id();
@@ -95,6 +104,9 @@ final class EdaHandler {
 
     // Set the community namespace.
     $this->topicName = "{$this->namespace}.cms.user.v1";
+
+    // Set the request time.
+    $this->requestTime = $this->time->getRequestTime();
   }
 
   /**
@@ -315,7 +327,7 @@ final class EdaHandler {
       dataContentType: 'application/json',
       dataSchema: NULL,
       subject: NULL,
-      time: DateTime::fromTimestamp($user->getCreatedTime())->toImmutableDateTime(),
+      time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
     );
   }
 

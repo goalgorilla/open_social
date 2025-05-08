@@ -5,6 +5,7 @@ namespace Drupal\Tests\social_user\Unit;
 use Consolidation\Config\ConfigInterface;
 use Drupal\address\Plugin\Field\FieldType\AddressFieldItemList;
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -124,6 +125,13 @@ class EdaHandlerTest extends UnitTestCase {
    * Represents the ConfigFactoryInterface.
    */
   protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected TimeInterface $time;
 
   /**
    * Set up the test environment.
@@ -246,6 +254,11 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Finally, reveal the entity type manager.
     $this->entityTypeManager = $entityTypeManagerMock->reveal();
+
+    // Initialize the time service.
+    $timeMock = $this->prophesize(TimeInterface::class);
+    $timeMock->getRequestTime()->willReturn(1234567890);
+    $this->time = $timeMock->reveal();
   }
 
   /**
@@ -554,6 +567,7 @@ class EdaHandlerTest extends UnitTestCase {
       $this->account,
       $this->routeMatch,
       $this->configFactory,
+      $this->time,
     );
   }
 
