@@ -39,7 +39,7 @@ Feature: Send invite group email notifications
     And I should see "Add members"
     And I click the xth "1" element with the css ".btn.dropdown-toggle"
     And I click "Invite users"
-    And I should see "Invite members to group: Test-invite-group"
+    And I should see "Invite members to Test-invite-group"
     And I fill in select2 input ".form-type-select" with "authenticated@example.com" and select "authenticated@example.com"
     And I press "Send your invite(s) by email"
     And I should see the error message "There is already a user with the email authenticated@example.com on the platform. This user is not yet verified and can not be invited."
@@ -82,7 +82,7 @@ Feature: Send invite group email notifications
     And I should see "Add members"
     And I click the xth "1" element with the css ".btn.dropdown-toggle"
     And I click "Invite users"
-    And I should see "Invite members to group: Test-invite-group"
+    And I should see "Invite members to Test-invite-group"
     And I fill in select2 input ".form-type-select" with "verified@example.com" and select "verified@example.com"
     And I press "Send your invite(s) by email"
     And I wait for the batch job to finish
