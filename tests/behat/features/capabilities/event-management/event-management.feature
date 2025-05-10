@@ -46,7 +46,7 @@ Feature: Event Management
     And I am on "all-groups"
     And I click "Springfield local business collaboration"
     And I click "Join"
-    And I press "Join group"
+    And I press "Join"
     And I click "Events"
     And I click "Create Event"
     And I fill in the following:

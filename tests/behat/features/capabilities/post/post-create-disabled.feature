@@ -37,7 +37,7 @@ Feature: Group manager should to be able to disabled posts in groups for members
     And I should not see "Say something to the group"
     And I click "Join"
     And I should see "Join group Test flexible group"
-    And I press "Join group"
+    And I press "Join"
     And I should see "Say something to the group"
     And I should see "Group Manager posted in Test flexible group" in the "Main content front"
     And I fill in "Say something to the group" with "Member posted in Flexible Group."
