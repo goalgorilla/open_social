@@ -7,7 +7,6 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -277,12 +276,6 @@ function social_group_request_preprocess_page_title(&$variables) {
 
   /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = \Drupal::routeMatch()->getParameter('group');
-  if (!isset($group) || empty($group)) {
-    return;
-  }
-
-  /** @var \Drupal\group\Entity\GroupInterface $group */
-  $group = _social_group_get_current_group();
   if (!$group->getGroupType()->hasPlugin('group_membership_request')) {
     return;
   }
@@ -334,22 +327,6 @@ function social_group_request_block_access(Block $block, $operation, AccountInte
 
     if (in_array($route_name, $excluded_routes)) {
       return AccessResult::forbidden();
-    }
-  }
-}
-
-/**
- * Implements hook_menu_local_tasks_alter().
- */
-function social_group_request_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface $cacheability) {
-  // Keep only Approved/Rejected tabs on the Pending tab.
-  if ($route_name === 'view.group_membership_requests.pending') {
-    if (!empty($data['tabs'][0])) {
-      foreach ($data['tabs'][0] as $task_name => $task) {
-        if (!str_starts_with($task_name, 'views_view:view.group_membership_requests')) {
-          unset($data['tabs'][0][$task_name]);
-        }
-      }
     }
   }
 }
