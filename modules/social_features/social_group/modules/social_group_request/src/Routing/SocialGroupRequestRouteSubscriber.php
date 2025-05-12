@@ -42,7 +42,7 @@ class SocialGroupRequestRouteSubscriber extends RouteSubscriberBase {
       ]);
     }
 
-    if ($route = $collection->get('view.group_pending_members.membership_requests')) {
+    if ($route = $collection->get('view.group_membership_requests.pending')) {
       $route->setRequirements([
         '_custom_access' => GroupRequestController::class . '::routeAccess',
       ]);

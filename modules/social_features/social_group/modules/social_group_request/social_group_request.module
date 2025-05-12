@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -247,7 +248,7 @@ function social_group_request_preprocess_activity(array &$variables) {
         case 'request_to_join_a_group':
           $activity_entity = $activity->getRelatedEntity();
           if ($activity_entity instanceof GroupRelationshipInterface) {
-            $variables['full_url'] = Url::fromRoute('view.group_pending_members.membership_requests', [
+            $variables['full_url'] = Url::fromRoute('view.group_membership_requests.pending', [
               'group' => $activity_entity->getGroup()->id(),
             ]);
           }
@@ -270,36 +271,23 @@ function social_group_request_preprocess_activity(array &$variables) {
  * Implements hook_preprocess_page_title().
  */
 function social_group_request_preprocess_page_title(&$variables) {
-  if (\Drupal::routeMatch()->getRouteName() !== 'view.group_pending_members.membership_requests') {
-    return;
-  }
-
-  $group_id = \Drupal::routeMatch()->getParameter('group');
-  if (!isset($group_id) || empty($group_id)) {
+  if (\Drupal::routeMatch()->getParameter('view_id') !== 'group_membership_requests') {
     return;
   }
 
   /** @var \Drupal\group\Entity\GroupInterface $group */
-  $group = \Drupal::entityTypeManager()->getStorage('group')->load($group_id);
+  $group = \Drupal::routeMatch()->getParameter('group');
+  if (!isset($group) || empty($group)) {
+    return;
+  }
+
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = _social_group_get_current_group();
   if (!$group->getGroupType()->hasPlugin('group_membership_request')) {
     return;
   }
-  /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('group_content_type');
-  $group_type_id = (string) $group->getGroupType()->id();
-  $relation_type_id = $storage->getRelationshipTypeId($group_type_id, 'group_membership_request');
 
-  $requests = \Drupal::entityQuery('group_content')
-    ->condition('type', $relation_type_id)
-    ->condition('gid', $group->id())
-    ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
-    ->count()
-    ->accessCheck(TRUE)
-    ->execute();
-
-  $title_singular = '1 membership request to group: :group_title';
-  $title_multiple = '@count membership requests to group: :group_title';
-  $variables['title'] = \Drupal::translation()->formatPlural($requests, $title_singular, $title_multiple, [
+  $variables['title'] = t('Membership requests to: :group_title', [
     ':group_title' => $group->label(),
   ]);
 }
@@ -308,7 +296,7 @@ function social_group_request_preprocess_page_title(&$variables) {
  * Implements hook_views_pre_view().
  */
 function social_group_request_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
-  if ($view->id() === 'group_pending_members' && $display_id === 'membership_requests') {
+  if ($view->id() === 'group_membership_requests') {
     $options = [
       'id' => 'area_text_custom',
       'table' => 'views',
@@ -318,7 +306,7 @@ function social_group_request_views_pre_view(ViewExecutable $view, $display_id, 
       'admin_label' => '',
       'empty' => TRUE,
       'tokenize' => FALSE,
-      'content' => Link::fromTextAndUrl(t('Back to group'),
+      'content' => Link::fromTextAndUrl(t('Back'),
         Url::fromRoute('entity.group.canonical', ['group' => $args[0]], [
           'attributes' => [
             'class' => [
@@ -329,7 +317,7 @@ function social_group_request_views_pre_view(ViewExecutable $view, $display_id, 
         ]))->toString(),
       'plugin_id' => 'text_custom',
     ];
-    $view->setHandler('membership_requests', 'footer', 'area_text_custom', $options);
+    $view->setHandler($display_id, 'footer', 'area_text_custom', $options);
   }
 }
 
@@ -346,6 +334,22 @@ function social_group_request_block_access(Block $block, $operation, AccountInte
 
     if (in_array($route_name, $excluded_routes)) {
       return AccessResult::forbidden();
+    }
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_group_request_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface $cacheability) {
+  // Keep only Approved/Rejected tabs on the Pending tab.
+  if ($route_name === 'view.group_membership_requests.pending') {
+    if (!empty($data['tabs'][0])) {
+      foreach ($data['tabs'][0] as $task_name => $task) {
+        if (!str_starts_with($task_name, 'views_view:view.group_membership_requests')) {
+          unset($data['tabs'][0][$task_name]);
+        }
+      }
     }
   }
 }

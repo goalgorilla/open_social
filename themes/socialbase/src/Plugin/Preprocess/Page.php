@@ -188,7 +188,9 @@ class Page extends PreprocessBase implements ContainerFactoryPluginInterface {
     $routes_remove_complementary_class = [
       'view.event_manage_enrollments.page_manage_enrollments',
       'view.group_manage_members.page_group_manage_members',
-      'view.group_pending_members.membership_requests',
+      'view.group_membership_requests.pending',
+      'view.group_membership_requests.rejected',
+      'view.group_membership_requests.approved',
       'view.event_manage_enrollment_requests.page_manage_enrollment_requests',
       'view.event_manage_enrollment_invites.page_manage_enrollment_invites',
       'view.user_event_invites.page_user_event_invites',

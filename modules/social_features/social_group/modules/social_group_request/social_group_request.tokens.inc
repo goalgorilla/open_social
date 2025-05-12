@@ -59,7 +59,7 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
                 ->load($target_id);
 
               if ($group_content !== NULL) {
-                $replacements[$original] = Url::fromRoute('view.group_pending_members.membership_requests', ['group' => $group_content->getGroup()->id()])->toString();
+                $replacements[$original] = Url::fromRoute('view.group_membership_requests.pending', ['group' => $group_content->getGroup()->id()])->toString();
               }
             }
           }
@@ -101,7 +101,7 @@ function social_group_request_tokens_alter(array &$replacements, array $context,
             switch ($message_template_id) {
               case 'request_to_join_a_group':
                 if (isset($context['tokens']['cta_button'])) {
-                  $link = Url::fromRoute('view.group_pending_members.membership_requests', ['group' => $group->id()],
+                  $link = Url::fromRoute('view.group_membership_requests.pending', ['group' => $group->id()],
                     ['absolute' => TRUE]);
                   $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View the requests', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')

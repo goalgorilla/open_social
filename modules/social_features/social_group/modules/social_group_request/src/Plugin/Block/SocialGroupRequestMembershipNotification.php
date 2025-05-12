@@ -152,7 +152,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
     return [
       '#type' => 'html_tag',
       '#tag' => 'div',
-      '#value' => $this->t('There @link to join this group.', [
+      '#value' => $this->t('There @link to join.', [
         '@link' => Link::fromTextAndUrl(
           $this->getStringTranslation()->formatPlural(
             $requests,
@@ -160,7 +160,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
             'are (@count) new requests',
           ),
           Url::fromRoute(
-            'view.group_pending_members.membership_requests',
+            'view.group_membership_requests.pending',
             ['group' => $this->group->id()],
           ),
         )->toString(),

@@ -20,7 +20,7 @@ Feature: Requests to join for a group can be managed
     And I am a member of "Test group" with the "flexible_group-group_manager" role
 
     When I am viewing the "membership-requests" page of group "Test group"
-    And I press "Approve Membership"
+    And I press "Approve membership"
     And I press "Yes"
 
     Then I should see the success message "Membership request approved"
@@ -35,7 +35,7 @@ Feature: Requests to join for a group can be managed
 
     When I am viewing the "membership-requests" page of group "Test group"
     And I press "Toggle Dropdown"
-    And I click "Reject Membership"
+    And I click "Reject membership"
     And I press "Yes"
 
     Then I should see the success message "Membership request rejected"
@@ -48,7 +48,7 @@ Feature: Requests to join for a group can be managed
     And I am a member of "Test group"
 
     When I am viewing the "membership-requests" page of group "Test group"
-    And I press "Approve Membership"
+    And I press "Approve membership"
     And I press "Yes"
 
     Then I should see the success message "Membership request approved"
@@ -62,7 +62,7 @@ Feature: Requests to join for a group can be managed
 
     When I am viewing the "membership-requests" page of group "Test group"
     And I press "Toggle Dropdown"
-    And I click "Reject Membership"
+    And I click "Reject membership"
     And I press "Yes"
 
     Then I should see the success message "Membership request rejected"
@@ -74,7 +74,7 @@ Feature: Requests to join for a group can be managed
     Given I am logged in as a user with the "sitemanager" role
 
     When I am viewing the "membership-requests" page of group "Test group"
-    And I press "Approve Membership"
+    And I press "Approve membership"
     And I press "Yes"
 
     Then I should see the success message "Membership request approved"
@@ -87,7 +87,7 @@ Feature: Requests to join for a group can be managed
 
     When I am viewing the "membership-requests" page of group "Test group"
     And I press "Toggle Dropdown"
-    And I click "Reject Membership"
+    And I click "Reject membership"
     And I press "Yes"
 
     Then I should see the success message "Membership request rejected"

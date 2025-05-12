@@ -253,3 +253,45 @@ function social_group_request_update_13007(): string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Create new membership request view.
+ */
+function social_group_request_update_13008(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_group_request', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
+
+/**
+ * Create new views.view.group_membership_requests.
+ */
+function social_group_request_update_13009(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_group_request', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
+
+/**
+ * Remove old membership_requests display from views.view.group_pending_members.
+ */
+function social_group_request_update_13010(): void {
+  $config_factory = \Drupal::configFactory();
+  $view_config = $config_factory->getEditable('views.view.group_pending_members');
+  $displays = $view_config->get('display');
+  if (isset($displays['membership_requests'])) {
+    // Remove the membership_requests display.
+    $view_config->clear('display.membership_requests');
+    $view_config->save(TRUE);
+  }
+}
