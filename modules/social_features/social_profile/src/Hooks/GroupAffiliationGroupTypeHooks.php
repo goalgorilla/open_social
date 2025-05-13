@@ -57,9 +57,12 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
     if (!$request instanceof Request) {
       return;
     }
+
     $third_party_settings = $entity->getThirdPartySettings('social_profile');
-    $third_party_settings[GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY] = $request->request->get(GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY, FALSE);
-    $entity->setThirdPartySetting('social_profile', GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY, $third_party_settings[GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY]);
+    if ($value = $request->request->get(GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY, FALSE)) {
+      $third_party_settings[GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY] = $value;
+      $entity->setThirdPartySetting('social_profile', GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY, $third_party_settings[GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY]);
+    }
   }
 
   /**
