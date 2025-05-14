@@ -1,4 +1,202 @@
-__global_actions:
-  import_configs:
-    - field.storage.group_content.field_grequest_reason
-    - field.field.group_content.group_content_type_7fcb76fdf61a9.field_grequest_reason
+views.view.group_pending_members:
+  expected_config:
+    display:
+      default: { }
+  update_actions:
+    delete:
+      display:
+        default:
+          cache_metadata:
+            contexts:
+              - user.group_permissions
+          display_options:
+            fields:
+              created:
+                settings:
+                  time_diff:
+                    enabled: false
+                    future_format: '@interval hence'
+                    granularity: 2
+                    past_format: '@interval ago'
+                    refresh: 60
+                  tooltip:
+                    custom_date_format: ''
+                    date_format: ''
+              dropbutton:
+                fields:
+                  nothing: nothing
+                  nothing_1: nothing_1
+              nothing: { }
+              nothing_1: { }
+            filters:
+              grequest_status_value:
+                expose:
+                  max_placeholder: ''
+                  min_placeholder: ''
+                  placeholder: ''
+                value:
+                  max: ''
+                  min: ''
+                  value: '0'
+        page_1:
+          cache_metadata:
+            contexts:
+              - user.group_permissions
+    add:
+      display:
+        default:
+          cache_metadata:
+            contexts:
+              - route.group
+              - user.group_permissions
+          display_options:
+            arguments:
+              gid:
+                default_argument_skip_url: false
+            fields:
+              approve_membership_request:
+                absolute: false
+                admin_label: ''
+                alter:
+                  absolute: false
+                  alt: ''
+                  alter_text: false
+                  ellipsis: true
+                  external: false
+                  html: false
+                  link_class: ''
+                  make_link: false
+                  max_length: 0
+                  more_link: false
+                  more_link_path: ''
+                  more_link_text: ''
+                  nl2br: false
+                  path: ''
+                  path_case: none
+                  prefix: ''
+                  preserve_tags: ''
+                  rel: ''
+                  replace_spaces: false
+                  strip_tags: false
+                  suffix: ''
+                  target: ''
+                  text: ''
+                  trim: false
+                  trim_whitespace: false
+                  word_boundary: true
+                element_class: ''
+                element_default_classes: true
+                element_label_class: ''
+                element_label_colon: false
+                element_label_type: ''
+                element_type: ''
+                element_wrapper_class: ''
+                element_wrapper_type: ''
+                empty: ''
+                empty_zero: false
+                entity_type: group_content
+                exclude: true
+                field: approve_membership_request
+                group_type: group
+                hide_alter_empty: true
+                hide_empty: false
+                id: approve_membership_request
+                label: 'Approve membership'
+                output_url_as_text: false
+                plugin_id: approve_membership_request
+                relationship: none
+                table: group_relationship
+                text: 'Approve membership'
+              dropbutton:
+                fields:
+                  approve_membership_request: approve_membership_request
+        page_1:
+          cache_metadata:
+            contexts:
+              - route.group
+              - user.group_permissions
+    change:
+      display:
+        default:
+          display_options:
+            access:
+              options:
+                group_permission: 'administer membership requests'
+            exposed_form:
+              options:
+                submit_button: Apply
+            fields:
+              dropbutton:
+                fields:
+                  reject_membership_request: reject_membership_request
+              reject_membership_request:
+                absolute: false
+                admin_label: ''
+                alter:
+                  absolute: false
+                  alt: ''
+                  alter_text: false
+                  ellipsis: true
+                  external: false
+                  html: false
+                  link_class: ''
+                  make_link: false
+                  max_length: 0
+                  more_link: false
+                  more_link_path: ''
+                  more_link_text: ''
+                  nl2br: false
+                  path: ''
+                  path_case: none
+                  prefix: ''
+                  preserve_tags: ''
+                  rel: ''
+                  replace_spaces: false
+                  strip_tags: false
+                  suffix: ''
+                  target: ''
+                  text: ''
+                  trim: false
+                  trim_whitespace: false
+                  word_boundary: true
+                element_class: ''
+                element_default_classes: true
+                element_label_class: ''
+                element_label_colon: false
+                element_label_type: ''
+                element_type: ''
+                element_wrapper_class: ''
+                element_wrapper_type: ''
+                empty: ''
+                empty_zero: false
+                entity_type: group_content
+                exclude: true
+                field: reject_membership_request
+                group_type: group
+                hide_alter_empty: true
+                hide_empty: false
+                id: reject_membership_request
+                label: 'Reject membership '
+                output_url_as_text: false
+                plugin_id: reject_membership_request
+                relationship: none
+                table: group_relationship
+                text: 'Reject membership'
+            filters:
+              grequest_status_value:
+                expose:
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  reduce: false
+                operator: in
+                plugin_id: state_machine_state
+                value:
+                  pending: pending
+            pager:
+              options:
+                tags:
+                  next: ››
+                  previous: ‹‹
+            relationships:
+              gc__user:
+                admin_label: 'Group relationship User'

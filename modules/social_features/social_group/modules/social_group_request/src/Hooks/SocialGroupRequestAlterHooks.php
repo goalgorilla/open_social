@@ -50,9 +50,10 @@ class SocialGroupRequestAlterHooks {
         '#rows' => 4,
         '#required' => FALSE,
         '#weight' => 5,
+        '#attributes' => ['class' => ['form-textarea']],
       ];
       // Fix card wrapper for new field.
-      $form['field_grequest_reason']['#prefix'] = '<div class="clearfix">';
+      $form['field_grequest_reason']['#prefix'] = '<div class="clearfix field--widget-string-textarea">';
       $form['field_grequest_reason']['#suffix'] = '</div></div></div>';
       unset($form['description']['#prefix']);
       unset($form['description']['#suffix']);

@@ -117,23 +117,12 @@ Feature: A group can be configured to require membership to be requested
     Given users:
       | name            | mail                 | status | roles    |
       | Approved Member | approved@example.com | 1      | verified |
-    And group members:
-      | group      | user            |
-      | Test group | Approved Member  |
-    And group members:
+    And group membership requests:
       | group      | user            | status   |
       | Test group | Approved Member | approved |
     And I am logged in as "Approved Member"
 
     When I am viewing the group "Test group"
-    And I should see the button "Joined"
-    And I press "Joined"
-    And I should see the link "Leave group"
-    And I click "Leave group"
-    And I should see "This action cannot be undone."
-    And I should see the button "Leave group"
-    And I press "Leave group"
-    And I am viewing the group "Test group"
     And I click "Request to join"
     And I wait for AJAX to finish
     And I press "Send request" in the "Modal"
