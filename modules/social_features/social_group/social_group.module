@@ -5,6 +5,7 @@
  * The Social group module.
  */
 
+use Drupal\Core\Template\Attribute;
 use Drupal\block\Entity\Block;
 use Drupal\bootstrap\Bootstrap;
 use Drupal\Component\Utility\Html;
@@ -1704,6 +1705,13 @@ function social_group_preprocess_views_view(&$variables) {
   $view = &$variables['view'];
 
   if ($view->id() === 'group_manage_members') {
+    // Variable to display the number of rows in the result.
+    $variables['result_summary'] = $view->total_rows ? \Drupal::translation()->formatPlural(
+      $view->total_rows,
+      '1 member',
+      '@count members',
+    ) : '';
+
     $entity = \Drupal::entityTypeManager()->getStorage('block')
       ->load('socialblue_local_actions');
 
@@ -2835,6 +2843,7 @@ function social_group_social_tagging_type(): string {
  */
 function social_group_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   if ($form['#id'] === 'views-exposed-form-group-manage-members-page-group-manage-members') {
+
     /** @var \Drupal\views\ViewExecutable $view */
     $view = $form_state->get('view');
 
@@ -2848,7 +2857,28 @@ function social_group_form_views_exposed_form_alter(array &$form, FormStateInter
       '#type' => 'value',
       '#value' => $view->id() . '__items_per_page',
     ];
-    $form['actions']['submit']['#submit'][] = [MembersPageHelperService::class, 'setItemsPerPage'];
+    $form['#submit'][] = [MembersPageHelperService::class, 'setItemsPerPage'];
+
+    // Add class.
+    $form['#attributes']['class'][] = 'form-inline flex items-end gap-4';
+
+    // Add library.
+    $form['#attached']['library'][] = 'social_group/social_group_exposed_form';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Replace classes from the button in the exposed form `group_manage_members`.
+ */
+function social_group_preprocess_input__button(array &$variables): void {
+  // Replace CSS classes from the submit button.
+  if (isset($variables['element']['#id']) && $variables['element']['#id'] == 'edit-submit-group-manage-members') {
+    if ($variables['attributes'] instanceof Attribute) {
+      $variables['attributes']->removeClass(['btn-default', 'button--default']);
+      $variables['attributes']->addClass(['btn-primary', 'button--primary']);
+    }
   }
 }
 

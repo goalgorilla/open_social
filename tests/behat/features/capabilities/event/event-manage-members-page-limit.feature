@@ -71,7 +71,8 @@ Feature: Items per page limit on the Manage members overview page
 
     And I click "Manage enrollments"
     And I should see "26 enrollees"
-    And I select "50" from "items_per_page"
+    And I select "50" from "Items per page"
+    And I press "Search"
 
     # Should be displayed all items without page.
     Then I should not see the link "Next"
