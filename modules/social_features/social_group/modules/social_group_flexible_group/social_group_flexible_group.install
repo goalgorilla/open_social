@@ -76,27 +76,6 @@ function social_group_flexible_group_update_last_removed() : int {
 }
 
 /**
- * Implements hook_update_dependencies().
- */
-function social_group_flexible_group_update_dependencies(): array {
-  $dependencies = [];
-  // The flexible group membership request update should come after the
-  // grequest related updates from social_group_request if it's enabled.
-  // We can run the update normally if the module is disabled.
-  if (\Drupal::moduleHandler()->moduleExists('social_group_request')) {
-    $dependencies['social_group_flexible_group'][130013] = [
-      'social_group_request' => 13006,
-    ];
-  }
-  // Install the new hubs view before applying changes.
-  $dependencies['social_group_flexible_group'][130013] = [
-    'social_group' => 130017,
-  ];
-
-  return $dependencies;
-}
-
-/**
  * Add taxonomy permission with the Taxonomy Access Fix is enabled.
  */
 function social_group_flexible_group_update_120001(): void {
@@ -438,19 +417,5 @@ function social_group_flexible_group_update_130011(): void {
 function social_group_flexible_group_update_130012(): string {
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
-  return $updater->logger()->output();
-}
-
-/**
- * Update membership request form display.
- */
-function social_group_flexible_group_update_130013(): string {
-  /** @var \Drupal\update_helper\Updater $updater */
-  $updater = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
