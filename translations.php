@@ -210,3 +210,10 @@ new TranslatableMarkup('Create a file');
 new TranslatableMarkup('Create a link');
 new TranslatableMarkup('Create a folder');
 new TranslatableMarkup('Create an organization');
+
+// Strings added to replace the old ones due to ticket PROD-32584.
+new PluralTranslatableMarkup(0, '1 membership request to group: :group_title', '@count membership requests to group: :group_title');
+new TranslatableMarkup('Approve membership request for the group @group_title');
+new TranslatableMarkup('Reject membership request for the group @group_title');
+new TranslatableMarkup('Approve Membership');
+new TranslatableMarkup('Reject Membership');
