@@ -5,6 +5,7 @@ namespace Drupal\social_core\Routing;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Drupal\social_core\Controller\EntityAutocompleteController;
+use Drupal\social_core\Controller\Select2EntityAutocompleteController;
 use Drupal\social_core\Controller\SocialCoreController;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -18,6 +19,7 @@ class RouteSubscriber extends RouteSubscriberBase {
    */
   private const CALLBACKS = [
     'system.entity_autocomplete' => EntityAutocompleteController::class . '::handleAutocomplete',
+    'select2.entity_autocomplete' => Select2EntityAutocompleteController::class . '::handleAutocomplete',
   ];
 
   /**

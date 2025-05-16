@@ -64,6 +64,12 @@ function social_core_install() {
     ]
   );
   user_role_grant_permissions(
+    'verified',
+    [
+      'use select2 autocomplete',
+    ]
+  );
+  user_role_grant_permissions(
     'contentmanager',
     [
       'access content overview',
@@ -75,6 +81,7 @@ function social_core_install() {
       'create url aliases',
       'use text format full_html',
       'access social_core dashboard',
+      'use select2 autocomplete',
     ]
   );
   user_role_grant_permissions(
@@ -105,6 +112,7 @@ function social_core_install() {
       'administer social menu links',
       'access social_core dashboard',
       'access social theme settings',
+      'use select2 autocomplete',
     ]
   );
   // Create AN Homepage block.
@@ -928,4 +936,14 @@ function social_core_update_130022(): void {
   // permission administer social site configuration for this.
   // This is to prevent SM to get access to a lot of additional items.
   user_role_revoke_permissions('sitemanager', ['administer site configuration']);
+}
+
+/**
+ * Add permission for authenticated to access select2 autocomplete route.
+ */
+function social_core_update_130023(): void {
+  // This is needed due to security implications that this route exposes.
+  user_role_grant_permissions('verified', ['use select2 autocomplete']);
+  user_role_grant_permissions('contentmanager', ['use select2 autocomplete']);
+  user_role_grant_permissions('sitemanager', ['use select2 autocomplete']);
 }
