@@ -71,3 +71,7 @@ services:
       - '@group_relation_type.manager'
     tags:
       - { name: event_subscriber }
+
+  Drupal\social_group\Access\RouteAccess:
+    tags:
+      - { name: access_check, applies_to: _social_group_access }

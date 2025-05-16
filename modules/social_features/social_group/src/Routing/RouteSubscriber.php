@@ -57,6 +57,20 @@ class RouteSubscriber extends RouteSubscriberBase {
       );
     }
 
+    $joining_routes = ['entity.group.join', 'entity.group.leave'];
+    foreach ($joining_routes as $name) {
+      // A member shouldn't be able to join or leave a group without viewing
+      // access (for example, a group can be unpublished).
+      if ($route = $collection->get($name)) {
+        $route->setRequirement('_entity_access', 'group.view');
+
+        // Add a few specific access rules.
+        /* @see \Drupal\social_group\Access\RouteAccess::access() */
+        if ($name === 'entity.group.join') {
+          $route->setRequirement('_social_group_access', 'TRUE');
+        }
+      }
+    }
   }
 
 }
