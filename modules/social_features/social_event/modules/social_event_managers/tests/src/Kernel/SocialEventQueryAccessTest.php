@@ -23,12 +23,6 @@ use Drupal\user\UserInterface;
  */
 class SocialEventQueryAccessTest extends NodeQueryAccessTestBase {
 
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = ['social_event_managers', 'group', 'flexible_permissions'];
-
   /**
    * A node with event managers.
    */
@@ -44,6 +38,8 @@ class SocialEventQueryAccessTest extends NodeQueryAccessTestBase {
    */
   protected function setUp() :void {
     parent::setUp();
+
+    $this->installModule('social_event_managers');
 
     // Create 'field_event_managers' field storage.
     FieldStorageConfig::create([
