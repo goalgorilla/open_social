@@ -82,10 +82,16 @@ class SocialMinkContext extends MinkContext {
     }
     $choice->press();
 
-    $select2Input = $page->find('css', '.select2-search__field');
+    $select2Input = $inputField->getParent()->find('css', '.select2-search__field');
     if (!$select2Input) {
+      $select2Input = $page->find('css', '.select2-search__field');
+    }
+
+    if (!$select2Input) {
+      // Try to find an input globally on the page.
       throw new \Exception('No input found');
     }
+
     $select2Input->setValue($value);
 
     $this->getSession()->wait(1000);
