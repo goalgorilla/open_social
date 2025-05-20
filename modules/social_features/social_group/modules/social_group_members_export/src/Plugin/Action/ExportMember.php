@@ -23,6 +23,24 @@ class ExportMember extends ExportUser {
   /**
    * {@inheritdoc}
    */
+  public function getPluginConfiguration($plugin_id, $entity_id): array {
+    $configuration = parent::getPluginConfiguration($plugin_id, $entity_id);
+
+    // Add a group id to the export for making possible to understand
+    // the context of plugins executing.
+    if (
+      !empty($this->view->args) &&
+      is_numeric($argument = current($this->view->args))
+    ) {
+      $configuration['group'] = $argument;
+    }
+
+    return $configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function executeMultiple(array $entities) {
     /** @var \Drupal\group\Entity\GroupRelationshipInterface $entity */
     foreach ($entities as &$entity) {
