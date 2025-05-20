@@ -7,13 +7,15 @@ Feature: Disable Album for SM
   Scenario: Successfully see disabled album feature as SM
     Given I enable the module "social_album"
     And users:
-      | name         | uid | status | pass             | roles       |
-      | SiteManager  | 444 | 1      | SiteManager      | sitemanager |
+      | name         | status | pass             | roles       |
+      | SiteManager1  | 1      | SiteManager      | sitemanager |
 
-    And I am logged in as "SiteManager"
+    And I am logged in as "SiteManager1"
 
     # Verify that Album feature is enabled.
     And I am on "/admin/config/opensocial/album"
+    And I check the box "Active"
+    And I press "Save configuration"
     And I should see checked the box "Active"
 
     And I create an album using its creation page:
