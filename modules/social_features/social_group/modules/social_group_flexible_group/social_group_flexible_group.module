@@ -823,7 +823,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   // sub-query to return value for these types or with visibility.
   if (isset($without_visibility)) {
     $sub_query = $query->getConnection()->select('groups_field_data', 'gfd')
-      ->fields('groups_field_data', ['id'])
+      ->fields('gfd', ['id'])
       ->condition(
         $sub_query->orConditionGroup()
           ->condition('gfd.id', $sub_query, 'IN')
