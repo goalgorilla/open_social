@@ -5,7 +5,9 @@
  * Install, update and uninstall functions for the social_user module.
  */
 
+use Drupal\social_user\Entity\User;
 use Drupal\user\RoleInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_install().
@@ -267,4 +269,26 @@ function social_user_update_13005(): void {
  */
 function social_user_update_13006(): void {
   user_role_grant_permissions('sitemanager', ['assign verified role']);
+}
+
+/**
+ * Remove unnecessary roles from anonymous users.
+ */
+function social_user_update_13007(): void {
+  $anonymous_user = User::load(0);
+  assert($anonymous_user instanceof UserInterface);
+
+  $arr_roles = [
+    'verified',
+    'contentmanager',
+    'sitemanager',
+  ];
+  foreach ($arr_roles as $role) {
+    if ($anonymous_user->hasRole($role)) {
+      $anonymous_user->removeRole($role);
+    }
+
+  }
+
+  $anonymous_user->save();
 }
