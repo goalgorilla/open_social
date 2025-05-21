@@ -28,7 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 #[Action(
   id: 'social_group_send_email_action',
-  label: new TranslatableMarkup('Send email to group members'),
+  label: new TranslatableMarkup('Send email to members'),
   type: 'group_content',
 )]
 class SocialSendEmail extends SocialSendEmailBase {
