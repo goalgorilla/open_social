@@ -123,6 +123,7 @@ function social_group_welcome_message_group_content_insert(GroupRelationshipInte
 
   // If new membership is created.
   if (
+    !$group_content->isSyncing() &&
     $type === 'group_membership' &&
     !$group->get('private_message_send')->isEmpty() &&
     $group->get('private_message_send')->value == 1 &&
