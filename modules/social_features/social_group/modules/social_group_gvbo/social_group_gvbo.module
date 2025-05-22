@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * The Social Group VBO module.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_preprocess_HOOK() for "page".
+ */
+function social_group_gvbo_preprocess_page(array &$variables): void {
+  // In `\Drupal\social_core\Plugin\Block\SocialPageTitleBlock::build()` the
+  // the title is always overrides in favor of a route title.
+  // Confirm forms can contain the title in $form['#title'] variable, and
+  // for group members action confirms pages, we want to get the title from
+  // this variable.
+  if (\Drupal::routeMatch()->getRouteName() === 'social_group_gvbo.views_bulk_operations.confirm') {
+    $variables['page']['title'] = [
+      '#type' => 'page_title',
+      '#title' => $variables['page']['#title'],
+    ];
+  }
+}

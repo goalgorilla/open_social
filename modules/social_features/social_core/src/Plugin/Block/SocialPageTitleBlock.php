@@ -187,13 +187,6 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
     }
     else {
       if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
-        // Forms can override a title in $form['#title'] variable.
-        // So we should check if the title doesn't exist already,
-        // then override it.
-        if ($this->title) {
-          return parent::build();
-        }
-
         $title = $this->titleResolver->getTitle($request, $route);
 
         // Deal with different return types for getTitle().

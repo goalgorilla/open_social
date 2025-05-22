@@ -362,22 +362,37 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       /** @var \Drupal\Core\Url $url */
       $url = $form_state->getRedirect();
 
-      if ($url->getRouteName() === 'views_bulk_operations.execute_configurable') {
-        $parameters = $url->getRouteParameters();
-
-        if (
-          empty($parameters['group']) &&
-          ($group = _social_group_get_current_group()) !== NULL
-        ) {
-          $parameters['group'] = $group->id();
-        }
-
-        $url = Url::fromRoute('social_group_gvbo.views_bulk_operations.execute_configurable', [
-          'group' => $parameters['group'],
-        ]);
-
-        $form_state->setRedirectUrl($url);
+      // For these two specific pages, we want to change the text copies.
+      if (
+        $url->getRouteName() !== 'views_bulk_operations.execute_configurable' &&
+        $url->getRouteName() !== 'views_bulk_operations.confirm'
+      ) {
+        return;
       }
+
+      $parameters = $url->getRouteParameters();
+
+      if (
+        empty($parameters['group']) &&
+        ($group = _social_group_get_current_group()) !== NULL
+      ) {
+        $parameters['group'] = $group->id();
+      }
+
+      if (empty($parameters['group'])) {
+        return;
+      }
+
+      $redirect_route = match ($url->getRouteName()) {
+        'views_bulk_operations.execute_configurable' => 'social_group_gvbo.views_bulk_operations.execute_configurable',
+        'views_bulk_operations.confirm' => 'social_group_gvbo.views_bulk_operations.confirm',
+      };
+
+      $url = Url::fromRoute($redirect_route, [
+        'group' => $parameters['group'],
+      ]);
+
+      $form_state->setRedirectUrl($url);
     }
   }
 
