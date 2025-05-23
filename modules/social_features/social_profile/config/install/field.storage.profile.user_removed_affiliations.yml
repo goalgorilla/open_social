@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - profile
+  enforced:
+    module:
+      - social_profile
+id: profile.user_removed_affiliations
+field_name: user_removed_affiliations
+entity_type: profile
+type: entity_reference
+settings:
+  target_type: group
+  handler: default
+cardinality: -1
+translatable: false
+locked: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

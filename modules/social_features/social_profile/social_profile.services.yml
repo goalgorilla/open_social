@@ -22,3 +22,11 @@ services:
   social_profile.group_affiliation:
     class: Drupal\social_profile\GroupAffiliation
     arguments: ['@entity_type.manager', '@cache.default', '@config.factory']
+  social_profile.automatic_group_affiliations:
+    class: Drupal\social_profile\AutomaticGroupAffiliation
+    arguments:
+      - '@entity_type.manager'
+      - '@config.factory'
+      - '@cache.default'
+      - '@current_route_match'
+      - '@social_profile.group_affiliation'

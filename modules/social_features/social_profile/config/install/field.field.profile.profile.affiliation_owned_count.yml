@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.affiliation_owned_count
+    - profile.type.profile
+  enforced:
+    module:
+      - social_profile
+id: profile.profile.affiliation_owned_count
+field_name: affiliation_owned_count
+entity_type: profile
+bundle: profile
+label: 'Affiliation owned count'
+description: 'Indicates how many items in the list are user-owned. Items from the beginning of the list up to this number are considered owned by the user. Items beyond this threshold are system-added. A value of -1 means the user has not yet managed the list, and all items are currently system-added.'
+required: false
+translatable: false
+default_value:
+  - value: -1
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

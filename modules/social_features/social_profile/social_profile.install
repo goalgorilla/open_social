@@ -349,3 +349,12 @@ function social_profile_update_130008(): string {
   $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Add the internal affiliation fields to profile.
+ */
+function social_profile_update_250001(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+  return $updater->logger()->output();
+}

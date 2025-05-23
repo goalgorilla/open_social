@@ -20,6 +20,9 @@ class GroupAffiliation {
   // Cache tag that invalidates all caches related to group affiliation.
   const GENERAL_CACHE_TAG = 'group_affiliation_options_by_user';
 
+  // Group affiliation field name.
+  const string AFFILIATION_FIELD_NAME = 'field_group_affiliation';
+
   /**
    * Group Affiliation constructor.
    *
