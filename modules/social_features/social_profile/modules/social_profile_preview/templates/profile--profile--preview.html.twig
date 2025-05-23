@@ -11,17 +11,21 @@
 {% block preview_popup_user_number %}{% endblock %}
 
 {% block preview_popup_type %}
+  {% if content.field_profile_organization_reference %}
+    {{ content.field_profile_organization_reference }}
+  {% else %}
     {% if content.field_profile_function['#items'] %}
-        <div class="preview-popup-types--wrapper">
-            {% if content.field_profile_function['#items'] %}
-                <div class="item">
+      <div class="preview-popup-types--wrapper">
+        {% if content.field_profile_function['#items'] %}
+          <div class="item">
             <span>
               {{ content.field_profile_function|render|striptags|trim }}
             </span>
-                </div>
-            {% endif %}
-        </div>
+          </div>
+        {% endif %}
+      </div>
     {% endif %}
+  {% endif %}
 {% endblock %}
 
 {% block preview_popup_description %}{% if profile.field_profile_summary.isEmpty() %}{{ content.field_profile_self_introduction }}{% else %}{{ content.field_profile_summary }}{% endif %}{% endblock %}

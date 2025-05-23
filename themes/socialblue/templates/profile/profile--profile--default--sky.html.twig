@@ -86,14 +86,14 @@
     {% if user_mail %}
       <div class="list-item card--content-merged__list">
           <div class="list-item__label">{% trans %}E-mail{% endtrans %}</div>
-          <div class="list-item__text">{{ user_mail }}</a></div>
+          <div class="list-item__text">{{ user_mail }}</div>
       </div>
     {% endif %}
 
     {% if user_lang %}
       <div class="list-item card--content-merged__list">
         <div class="list-item__label">{% trans %}Language{% endtrans %}</div>
-        <div class="list-item__text">{{ user_lang }}</a></div>
+        <div class="list-item__text">{{ user_lang }}</div>
       </div>
     {% endif %}
 
@@ -103,6 +103,13 @@
           <div class="list-item__text">
               {{ content.field_profile_address }}
           </div>
+      </div>
+    {% endif %}
+
+    {% if social_organization_affiliation_list %}
+      <div class="list-item card--content-merged__list">
+        <div class="list-item__label">{% trans %}Affiliation{% endtrans %}</div>
+        <div class="list-item__text">{{ social_organization_affiliation_list }}</div>
       </div>
     {% endif %}
 

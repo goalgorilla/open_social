@@ -102,6 +102,13 @@
       </div>
     {% endif %}
 
+    {% if social_organization_affiliation_list %}
+      <div class="list-item card--content-merged__list">
+        <div class="list-item__label">{% trans %}Affiliation{% endtrans %}</div>
+        <div class="list-item__text">{{ social_organization_affiliation_list }}</div>
+      </div>
+    {% endif %}
+
     {% if content.field_profile_self_introduction|render %}
       <h5>{% trans %}Intro{% endtrans %}</h5>
       {{ content.field_profile_self_introduction }}
