@@ -5,7 +5,6 @@
  * Install, update and uninstall functions for the social_user module.
  */
 
-use Drupal\social_user\Entity\User;
 use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
 
@@ -275,7 +274,8 @@ function social_user_update_13006(): void {
  * Remove unnecessary roles from anonymous users.
  */
 function social_user_update_13007(): void {
-  $anonymous_user = User::load(0);
+  $user_storage = \Drupal::entityTypeManager()->getStorage('user');
+  $anonymous_user = $user_storage->load(0);
   assert($anonymous_user instanceof UserInterface);
 
   $arr_roles = [
