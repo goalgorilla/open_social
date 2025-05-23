@@ -207,6 +207,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
 
     // Replace recipients field by select2.
     unset($form['email_address']);
+    unset($form['invitees']);
 
     $form['users_fieldset'] = [
       '#type' => 'fieldset',

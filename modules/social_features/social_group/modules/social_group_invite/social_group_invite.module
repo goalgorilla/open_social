@@ -28,6 +28,20 @@ use Drupal\social_group_invite\Plugin\Field\FieldFormatter\EntityReferenceLabelF
 use Drupal\views\ViewExecutable;
 
 /**
+ * Implements hook_module_implements_alter().
+ */
+function social_group_invite_module_implements_alter(array &$implementations, string $hook): void {
+  // Disable ginvite's implementation of hook_group_content_presave.
+  // In recent versions they have code moved from entity_insert to
+  // entity_presave hook, which is a problem since we require to have an ID
+  // when building an invite url this is only possible in entity_insert,
+  // so we switch the logic back here.
+  if ($hook === 'group_content_presave' && isset($implementations['ginvite'])) {
+    unset($implementations['ginvite']);
+  }
+}
+
+/**
  * Implements hook_menu_local_actions_alter().
  */
 function social_group_invite_menu_local_actions_alter(&$local_actions) {
