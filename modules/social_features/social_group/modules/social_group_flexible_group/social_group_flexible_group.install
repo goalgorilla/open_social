@@ -419,3 +419,12 @@ function social_group_flexible_group_update_130012(): string {
   $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Create affiliation entity-form-display for flexible group.
+ */
+function social_group_flexible_group_update_130013(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
+  return $updater->logger()->output();
+}
