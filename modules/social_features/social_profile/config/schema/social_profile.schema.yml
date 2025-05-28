@@ -92,3 +92,23 @@ field.field_settings.group_affiliation:
     handler_settings:
       type: entity_reference_selection.[%parent.handler]
       label: 'Entity reference selection plugin settings'
+
+# Groups field is being added at: social_group.module:1874 to profile_tag term,
+# Missing schema start broken on PHPUnit after fix dependency problem.
+field.widget.settings.social_group_selector_widget:
+  type: mapping
+  label: 'Entity reference autocomplete (Tags style) display format settings'
+  mapping:
+    match_operator:
+      type: string
+      label: 'Autocomplete matching'
+    match_limit:
+      type: integer
+      label: 'Maximum number of autocomplete suggestions.'
+    width:
+      type: string
+      label: 'Size of textfield'
+    autocomplete:
+      type: boolean
+      label: 'Autocomplete'
+
