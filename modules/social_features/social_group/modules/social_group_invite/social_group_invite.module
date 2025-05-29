@@ -349,7 +349,7 @@ function social_group_invite_preprocess_page_title(&$variables) {
   ) {
     $loader = \Drupal::service('ginvite.invitation_loader');
     $count = count($loader->loadByProperties(['gid' => $group->id()]));
-    $title = \Drupal::translation()->formatPlural($count, '1 membership invite for group: @group_name', '@count membership invites for group: @group_name', ['@group_name' => $group->label()]);
+    $title = \Drupal::translation()->formatPlural($count, '1 membership invite for: @group_name', '@count membership invites for: @group_name', ['@group_name' => $group->label()]);
     $variables['title'] = $title;
     $variables['#cache']['tags'][] = 'group_content_list:group:' . $group->id();
     $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:group:' . $group->id();
