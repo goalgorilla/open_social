@@ -932,7 +932,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       ($group = _social_group_get_current_group()) !== NULL
     ) {
       // Add custom submit handler to delete all content of the group.
-      $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group? This action cannot be undone.', ['@group' => $group->label()]);
+      $form['description']['#markup'] = t('Are you sure you want to delete "@group" along with all its content? This action cannot be undone.', ['@group' => $group->label()]);
       $form['actions']['cancel'] = [
         '#type' => 'submit',
         '#value' => t('Cancel'),
