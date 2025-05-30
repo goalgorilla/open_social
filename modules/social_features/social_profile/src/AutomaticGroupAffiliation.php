@@ -6,12 +6,14 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_profile\Entity\ProfileAffiliationInterface;
+use Drupal\social_profile\Plugin\Field\FieldWidget\GroupAffiliationWidget;
 use Drupal\user\UserInterface;
 
 /**
@@ -145,12 +147,22 @@ class AutomaticGroupAffiliation {
       ->getStorage('profile')
       ->loadUnchanged($this->userProfile->id());
 
-    // Early return if the user's platform affiliations have not changed.
-    // Note: Changes in the order of affiliations are also considered changes.
+    // If the affiliation list has changed (including order), mark as changed.
+    // This covers adding/removing affiliations or rearranging them.
     if (
-      $this->userProfile->get($this->groupAffiliation::AFFILIATION_FIELD_NAME)->getValue() ===
-      $original->get($this->groupAffiliation::AFFILIATION_FIELD_NAME)->getValue()
+      $this->userProfile->get(GroupAffiliation::AFFILIATION_FIELD_NAME)->getValue() !==
+      $original->get(GroupAffiliation::AFFILIATION_FIELD_NAME)->getValue()
     ) {
+      $user_profile->markAffiliationsChangedByUser();
+    }
+
+    // Return early if the user has not modified their platform affiliations.
+    //
+    // A modification is detected if:
+    // - The list of affiliated groups has changed (including the order).
+    // - Any inline group membership fields (e.g., role, function) have been
+    // updated.
+    if (!$user_profile->hasUserModifiedAffiliations()) {
 
       return;
     }
@@ -341,6 +353,92 @@ class AutomaticGroupAffiliation {
       // Note: Deleted user membership is not an affiliation, no further steps
       // are needed.
     }
+  }
+
+  /**
+   * Retrieves the values of affiliation-related fields from membership entity.
+   *
+   * This method loads the membership affiliation fields for the group
+   * type associated with the provided user membership entity, then collects
+   * their values.
+   *
+   * What is this method used for:
+   * Affiliation-related membership values set in GroupAffiliationWidget are
+   * compared against the values submitted during the profile update. This
+   * comparison is performed in the SocialProfilePrePresaveFormSubmitSubscriber
+   * to detect if the user has made any modifications. For automatic
+   * affiliations, it is essential to detect user changes because such changes
+   * trigger a state transition from system-added affiliations to user-owned
+   * affiliations. To learn more about automatic affiliations, see this class
+   * description.
+   *
+   * @param \Drupal\group\Entity\GroupMembership $user_membership
+   *   The group membership entity for which to fetch default affiliation field
+   *   values.
+   *
+   * @return array<string, array>
+   *   An associative array where keys are field names and values are the
+   *   the default corresponding field values from the user membership entity.
+   */
+  public function getDefaultMembershipAffiliationValues(GroupMembership $user_membership): array {
+    $default_values = [];
+
+    $group_type = $user_membership->getGroup()->bundle();
+    $fields = $this->getMembershipAffiliationFields($group_type);
+
+    foreach ($fields as $field) {
+      $default_values[$field] = $user_membership->get($field)->getValue();
+    }
+
+    return $default_values;
+  }
+
+  /**
+   * Gets the membership affiliation fields.
+   *
+   * Method cache_id:
+   *   membership_affiliation_fields:{$$group_type}.
+   *
+   * Cache tags:
+   *   Inherit form display cache tags.
+   *
+   * @param string $group_type
+   *   The group type machine name.
+   *
+   * @return array<string, string>
+   *   Array of field machine names.
+   */
+  private function getMembershipAffiliationFields(string $group_type): array {
+    $cid = 'membership_affiliation_fields:' . $group_type;
+
+    if ($cache = $this->cacheBackend->get($cid)) {
+      return $cache->data;
+    }
+
+    $fields = [];
+
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $group_relationship_storage */
+    $group_relationship_storage = $this->entityTypeManager->getStorage('group_content_type');
+    $relationship_type_id = $group_relationship_storage->getRelationshipTypeId($group_type, 'group_membership');
+
+    $form_display_id = 'group_content.' . $relationship_type_id . '.' . GroupAffiliationWidget::AFFILIATION_FORM_MODE;
+    $form_display = EntityFormDisplay::load($form_display_id);
+
+    if ($form_display) {
+      foreach ($form_display->getComponents() as $field_name => $component) {
+        $fields[$field_name] = $field_name;
+      }
+
+      // Cache with proper invalidation tag based on affiliation form display.
+      $this->cacheBackend->set(
+        $cid,
+        $fields,
+        Cache::PERMANENT,
+        $form_display->getCacheTags()
+      );
+    }
+
+    return $fields;
   }
 
   /**

@@ -15,6 +15,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupMembershipTrait;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\profile\Entity\Profile;
+use Drupal\social_profile\AutomaticGroupAffiliation;
 use Drupal\social_profile\GroupAffiliation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -34,6 +35,14 @@ class GroupAffiliationWidget extends WidgetBase {
   use GroupMembershipTrait;
 
   /**
+   * The form mode identifier used to load the group affiliation form display.
+   *
+   * This corresponds to a specific form display configuration variant
+   * dedicated to managing membership affiliations on a per-group-type basis.
+   */
+  const AFFILIATION_FORM_MODE = 'affiliation';
+
+  /**
    * {@inheritDoc}
    */
   public function __construct(
@@ -46,6 +55,7 @@ class GroupAffiliationWidget extends WidgetBase {
     protected CacheBackendInterface $cacheBackend,
     protected BackendChain $cacheBackendGroupMembershipChain,
     protected GroupAffiliation $groupAffiliation,
+    protected AutomaticGroupAffiliation $automaticGroupAffiliation,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
@@ -64,6 +74,7 @@ class GroupAffiliationWidget extends WidgetBase {
       $container->get('cache.default'),
       $container->get('cache.group_memberships_chained'),
       $container->get('social_profile.group_affiliation'),
+      $container->get('social_profile.automatic_group_affiliations'),
     );
   }
 
@@ -125,7 +136,7 @@ class GroupAffiliationWidget extends WidgetBase {
       $user_membership = GroupMembership::loadSingle($delta_group, $user);
     }
 
-    if ($user_membership) {
+    if ($user_membership instanceof GroupMembership) {
 
       // Reset inline entity form values for the item (delta) on ajax, where the
       // group relationship wash changed. This makes sure that affiliation form
@@ -146,12 +157,34 @@ class GroupAffiliationWidget extends WidgetBase {
         '#type' => 'inline_entity_form',
         '#entity_type' => $user_membership->getEntityTypeId(),
         '#bundle' => $user_membership->bundle(),
-        '#form_mode' => 'affiliation',
+        '#form_mode' => self::AFFILIATION_FORM_MODE,
         '#default_value' => $user_membership,
         // Note: at the moment only adding existing relationships is allowing.
         // In the future, it will be possible to have also "add" operation here.
         '#op' => 'edit',
         '#ief_row_delta' => $delta,
+
+        // Custom element property used to store the initial user membership
+        // values. It enables detecting whether the user has modified the inline
+        // entity form (IEF) values.
+        //
+        // For automatic affiliations, it is crucial to know if the user made
+        // changes, as this affects the state transition from system-added
+        // affiliations to user-owned.
+        //
+        // Normally, such comparisons happen during form save handlers, but
+        // here, IEF entities are updated before the parent entity (profile) is
+        // saved, making it difficult to retrieve original values at that point.
+        // Therefore, the initial values are stored in this property for later
+        // comparison.
+        //
+        // Only the fields defined in the affiliation form display are stored
+        // here (self:AFFILIATION_FORM_MODE), because each group type membership
+        // can have different sets of affiliation fields.
+        //
+        // @see AutomaticGroupAffiliation to learn more about automatic
+        // affiliations in general.
+        '#group_membership_default_values' => $this->automaticGroupAffiliation->getDefaultMembershipAffiliationValues($user_membership),
       ];
     }
 

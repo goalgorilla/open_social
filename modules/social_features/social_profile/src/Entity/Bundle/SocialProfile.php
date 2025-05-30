@@ -13,6 +13,16 @@ use Drupal\social_profile\GroupAffiliation;
 final class SocialProfile extends Profile implements ProfileAffiliationInterface {
 
   /**
+   * Indicates if the user manually changed affiliations during the request.
+   *
+   * This is a runtime-only flag and is not persisted across requests.
+   * Useful for conditional logic during form submission or pre-save hooks.
+   *
+   * @var bool
+   */
+  protected bool $userModifiedAffiliations = FALSE;
+
+  /**
    * {@inheritDoc}
    */
   public function profileBundleHasAffiliations(): bool {
@@ -170,6 +180,20 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
    */
   public function isAffiliationUserRemoved(int $group_id): bool {
     return in_array($group_id, $this->getUserRemovedAffiliationGroupIds());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function markAffiliationsChangedByUser(): void {
+    $this->userModifiedAffiliations = TRUE;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function hasUserModifiedAffiliations(): bool {
+    return $this->userModifiedAffiliations;
   }
 
 }

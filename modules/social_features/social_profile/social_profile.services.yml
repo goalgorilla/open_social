@@ -30,3 +30,11 @@ services:
       - '@cache.default'
       - '@current_route_match'
       - '@social_profile.group_affiliation'
+  social_profile.social_profile_pre_presave_form_submit_subscriber:
+    class: Drupal\social_profile\EventSubscriber\SocialProfilePrePresaveFormSubmitSubscriber
+    arguments:
+      - '@entity_type.manager'
+      - '@social_profile.group_affiliation'
+      - '@social_profile.automatic_group_affiliations'
+    tags:
+      - { name: event_subscriber }

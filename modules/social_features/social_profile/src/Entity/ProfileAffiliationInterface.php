@@ -267,4 +267,24 @@ interface ProfileAffiliationInterface extends ProfileInterface {
    */
   public function isAffiliationUserRemoved(int $group_id): bool;
 
+  /**
+   * Marks that the affiliations have been manually changed by the user.
+   *
+   * Call this when detecting user-initiated changes to affiliation-related
+   * fields.
+   *
+   * @return void
+   *   Return void.
+   */
+  public function markAffiliationsChangedByUser(): void;
+
+  /**
+   * Checks whether the affiliations were manually modified by the user.
+   *
+   * @return bool
+   *   TRUE if the user changed affiliations during the request,
+   *   FALSE otherwise.
+   */
+  public function hasUserModifiedAffiliations(): bool;
+
 }
