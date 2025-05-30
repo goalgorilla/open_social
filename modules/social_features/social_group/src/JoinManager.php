@@ -212,6 +212,12 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
           '#primary' => array_shift($items),
           '#secondaries' => $items,
           '#entity' => $entity,
+          '#cache' => [
+            'contexts' => [
+              'route.group',
+              'user.group_permissions',
+            ],
+          ],
         ];
 
         break;
