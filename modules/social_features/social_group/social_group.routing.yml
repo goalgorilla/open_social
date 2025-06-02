@@ -40,3 +40,11 @@ social_group.my_groups:
     _controller: '\Drupal\social_group\Controller\SocialGroupController:redirectMyGroups'
   requirements:
     _user_is_logged_in: 'TRUE'
+
+entity.group.collection:
+  path: '/admin/hub'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Hubs'
+  requirements:
+    _permission: 'access group overview'

@@ -1,11 +1,19 @@
-social_group.settings:
-  title: 'Group settings'
-  description: 'Settings for Social Groups.'
+social_group.hubs.settings:
   route_name: social_group.settings
-  parent: social_core.admin.config.social
-  weight: 51
+  title: 'Settings'
+  description: 'Settings for Social Groups.'
+  parent: system.admin_group
+  weight: 10
 social_group.social_core.dashboard.configuration.settings:
   title: 'Group settings'
   parent: social_core.dashboard.configuration
   route_name: social_group.settings
   weight: -68
+
+# Enable usage of systemAdminMenuBlockPage.
+entity.group.collection:
+  title: Hubs
+  route_name: entity.group.collection
+  description: 'Manage your Hubs.'
+  parent: system.admin_content
+  weight: 0
