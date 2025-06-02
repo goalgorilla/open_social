@@ -6,6 +6,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\Access\GroupAccessControlHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -31,11 +32,16 @@ class SocialGroupAccessControlHandler extends GroupAccessControlHandler implemen
    *   The entity type definition.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The  Entity Type Manager.
    */
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory) {
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($entity_type);
 
     $this->configFactory = $config_factory;
+    // Adding Entity type manager to keep this object that is defined in parent
+    // but in GroupAccessControlHandler::createInstance().
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -44,7 +50,8 @@ class SocialGroupAccessControlHandler extends GroupAccessControlHandler implemen
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('entity_type.manager')
     );
   }
 
