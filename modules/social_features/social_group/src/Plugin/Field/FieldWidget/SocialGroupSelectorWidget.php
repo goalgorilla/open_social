@@ -13,7 +13,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\group\Entity\GroupInterface;
@@ -22,8 +21,6 @@ use Drupal\select2\Plugin\Field\FieldWidget\Select2EntityReferenceWidget;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 use Drupal\user\UserStorageInterface;
-use RecursiveArrayIterator;
-use RecursiveIteratorIterator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -41,7 +38,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   multiple_values = TRUE
  * )
  */
-class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements ContainerFactoryPluginInterface {
+class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
 
   use StringTranslationTrait;
 
@@ -185,7 +182,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
               ->has('group_' . $type . ':' . $entity->bundle());
 
             // If the bundle is not installed,
-            // then unset the entire optiongroup (=group type).
+            // then unset the entire option group (=group type).
             if (!$supported) {
               unset($options[$key]);
             }
@@ -193,7 +190,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
         }
       }
 
-      // Remove groups the user does not have create access to.
+      // Remove groups the user does not have creation access to.
       if (!$groups_admin) {
         $options = $this->removeGroupsWithoutCreateAccess(
           $options,
@@ -243,8 +240,8 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       'event' => 'change',
     ];
 
-    // Unfortunately validateGroupSelection is cast as a static function
-    // So I have to add this setting to the form in order to use it later on.
+    // Unfortunately, validateGroupSelection is cast as a static function,
+    // So I have to add this setting to the form to use it later on.
     $default_visibility = $this->configFactory->get('entity_access_by_field.settings')
       ->get('default_visibility');
 
@@ -263,10 +260,10 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
 
     $entity = $form_object->getEntity();
 
-    // If it is a new node lets add the current group.
+    // If it is a new node, let's add the current group.
     if (!$entity->id()) {
       $current_group = _social_group_get_current_group();
-      if (!empty($current_group) && empty($element['#default_value'])) {
+      if ($current_group !== NULL && empty($element['#default_value'])) {
         $element['#default_value'] = [$current_group->id()];
       }
     }
@@ -302,7 +299,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function validateGroupSelection(array $form, FormStateInterface $form_state) {
+  public static function validateGroupSelection(array $form, FormStateInterface $form_state): AjaxResponse {
     $ajax_response = new AjaxResponse();
 
     /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
@@ -315,7 +312,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       $selected_visibility = $selected_visibility['0']['value'];
     }
     if ($selected_groups = $form_state->getValue('groups')) {
-      $allowed_visibility_options = self::getVisibilityOptionsforMultipleGroups(array_column($selected_groups, 'target_id'), $entity);
+      $allowed_visibility_options = self::getVisibilityOptionsForMultipleGroups(array_column($selected_groups, 'target_id'), $entity);
     }
     else {
       $default_visibility = $form_state->getValue('default_visibility');
@@ -342,7 +339,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
     }
 
-    $text = t('Changing the group may have impact on the <strong>visibility settings</strong> and may cause <strong>author/co-authors</strong> to lose access.');
+    $text = t('Changing the group may have an impact on the <strong>visibility settings</strong> and may cause <strong>author/co-authors</strong> to lose access.');
 
     \Drupal::messenger()->addStatus($text);
 
@@ -354,13 +351,13 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   /**
    * Get content visibility options for multiple groups.
    *
-   *  If there are a few groups user should be able to add visibility options
+   *  If there are a few groups, a user should be able to add visibility options
    *  only if the groups have at least one shared option.
-   *  F.e, if "Open Group" have only "Public" option and "Secret Group" have
-   *  "Only group members" option then user should not be able to save
-   *  the entity (because of error).
+   *  F.e, if "Open Group" has only the "Public" option and "Secret Group" have
+   *  "Only group members" option, then a user should not be able to save
+   *  the entity (because of an error).
    *
-   * @param array $gids
+   * @param array $groupIds
    *   A list of groups ids.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The content entity.
@@ -368,13 +365,13 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  private static function getVisibilityOptionsforMultipleGroups(
-    array $gids,
+  private static function getVisibilityOptionsForMultipleGroups(
+    array $groupIds,
     EntityInterface $entity,
   ): array {
     /** @var \Drupal\group\Entity\GroupInterface[] $groups */
     $groups = \Drupal::entityTypeManager()->getStorage('group')
-      ->loadMultiple($gids);
+      ->loadMultiple($groupIds);
 
     $options = [];
 
@@ -403,12 +400,12 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    * @param array $options
    *   A list of options to check.
    * @param \Drupal\user\UserInterface $account
-   *   The user to check for.
+   *   The user is to check for.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to check for.
    *
    * @return array
-   *   A list of options for the field containing groups with create access.
+   *   A list of options for the field containing groups with creation access.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -441,12 +438,12 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   }
 
   /**
-   * Check if user may create content of bundle in group.
+   * Check if a user may create content of a bundle in a group.
    *
    * @param int $gid
    *   Group id.
    * @param \Drupal\user\UserInterface $account
-   *   The user to check for.
+   *   The user is to check for.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The node bundle to check for.
    *
@@ -463,8 +460,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   ): bool {
     $group = $this->entityTypeManager->getStorage('group')->load($gid);
 
-    if (
-      $group instanceof GroupInterface &&
+    return $group instanceof GroupInterface &&
       $group->hasPermission(
         sprintf(
           'create group_%s:%s entity',
@@ -472,18 +468,13 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
           $entity->bundle(),
         ),
         $account,
-      )
-    ) {
-      return TRUE;
-    }
-
-    return FALSE;
+      );
   }
 
   /**
    * Disable multiple selection based on cross-posting settings.
    *
-   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem<\Drupal\group\Entity\Group>> $items
    *   The field item list interface.
    *
    * @return bool
@@ -499,13 +490,23 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
     return !($hasPermission && $isCrossPostingEnabled && $isContentTypeAllowed);
   }
 
+  /**
+   * Check if multiple selection is available based on the options and settings.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem<\Drupal\group\Entity\Group>> $items
+   *   The field item list interface.
+   *
+   * @return bool
+   *   TRUE if multiple selection is available, FALSE otherwise.
+   */
   private function isMultipleSelectionAvailable(FieldItemListInterface $items): bool {
     // The 'options' array structure is either:
     // - Single level for flexible groups only (flat structure)
-    // - Two levels for mixed group types (nested structure with group types as categories)
-    $iterator = new RecursiveIteratorIterator(
-      new RecursiveArrayIterator($this->options),
-      RecursiveIteratorIterator::SELF_FIRST
+    // - Two levels for mixed group types
+    // (nested structure with group types as categories).
+    $iterator = new \RecursiveIteratorIterator(
+      new \RecursiveArrayIterator($this->options),
+      \RecursiveIteratorIterator::SELF_FIRST
     );
     $optionsDepth = $iterator->getDepth() + 1;
 
@@ -518,8 +519,9 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
 
     // Case 2: Nested options (group types as categories).
     if ($optionsDepth > 1) {
-      // Verify if a sub-element of the option list can include multiple items So,
-      // then multiple selection should be available for such cases.
+      // Check if any option group contains multiple items.
+      // If so, enable multiple selection to allow users to select multiple
+      // items from that group.
       if (
         $this->multiple &&
         ((is_countable(reset($this->options)) ? count(reset($this->options)) : 0) > 1)
@@ -535,4 +537,5 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
 
     return $this->multiple;
   }
+
 }
