@@ -42,14 +42,14 @@ class AlternativeFrontpageEntityDeleteValidation implements ContainerInjectionIn
   }
 
   /**
-   * Add validate function to delete node form.
+   * Add a validate function to delete a node form.
    *
    * @param array $form
    *   Nested array of form elements that comprise the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    * @param string $form_id
-   *   String representing the name of the form itself. Typically this is the
+   *   String representing the name of the form itself. Typically, this is the
    *   name of the function that generated the form.
    *
    * @see hook_form_BASE_FORM_ID_alter()
@@ -64,7 +64,7 @@ class AlternativeFrontpageEntityDeleteValidation implements ContainerInjectionIn
   }
 
   /**
-   * Add validate function to delete group form.
+   * Add a validate function to delete a group form.
    *
    * @param array $form
    *   Nested array of form elements that comprise the form.
@@ -86,7 +86,7 @@ class AlternativeFrontpageEntityDeleteValidation implements ContainerInjectionIn
   }
 
   /**
-   * Add validate function to bulk delete form.
+   * Add a validate function to a bulk delete form.
   *
    * @param array $form
    *   Nested array of form elements that comprise the form.
@@ -106,7 +106,7 @@ class AlternativeFrontpageEntityDeleteValidation implements ContainerInjectionIn
   }
 
   /**
-   * Validate whether the delete entity is set as alternative frontend.
+   * Validate whether the deleted entity is set as an alternative frontend.
    *
    * @param array $form
    *   Nested array of form elements that comprise the form.
@@ -131,7 +131,7 @@ class AlternativeFrontpageEntityDeleteValidation implements ContainerInjectionIn
   }
 
   /**
-   * Validate whether any entity is set as alternative frontend from bulk list.
+   * Validate if any entities are set as an alternative frontend from bulk op.
    *
    * @param array $form
    *   Nested array of form elements that comprise the form.
@@ -165,13 +165,13 @@ class AlternativeFrontpageEntityDeleteValidation implements ContainerInjectionIn
   }
 
   /**
-   * Check if current path from entity is set as alternative frontend.
+   * Check if the current path of the entity is set as an alternative frontend.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   Delete entity to check alternative fronted.
+   *   Delete entity to check alternative frontend.
    *
    * @return bool
-   *   When TRUE the delete entity is set as alternative frontend.
+   *   When TRUE the delete entity is set as an alternative frontend.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
