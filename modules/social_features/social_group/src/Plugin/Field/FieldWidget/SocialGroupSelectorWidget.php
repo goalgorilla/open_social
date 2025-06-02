@@ -22,6 +22,8 @@ use Drupal\select2\Plugin\Field\FieldWidget\Select2EntityReferenceWidget;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 use Drupal\user\UserStorageInterface;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -251,26 +253,9 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       '#value' => $default_visibility,
     ];
 
-    // Verify if sub-element of option list can include multiple items So,
-    // then multiple selection should be available for such cases.
-    if (
-      $this->multiple &&
-      ((is_countable(reset($this->options)) ? count(reset($this->options)) : 0) > 1)
-    ) {
-      $element['#multiple'] = TRUE;
-    }
+    $element['#multiple'] = $this->isMultipleSelectionAvailable($items);
 
-    // Disable multi-selection if cross-posting is disabled or current entity
-    // type isn't in the allowed list.
     $sg_settings = $this->configFactory->get('social_group.settings');
-    $disable_multi_selection = !$this->currentUser->hasPermission('access cross-group posting')
-      || !$sg_settings->get('cross_posting.status')
-      || !in_array($items->getEntity()->bundle(), $sg_settings->get('cross_posting.content_types'), TRUE);
-
-    if ($disable_multi_selection) {
-      $element['#multiple'] = FALSE;
-    }
-
     $change_group_node = $sg_settings->get('allow_group_selection_in_node');
 
     /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
@@ -495,4 +480,59 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
     return FALSE;
   }
 
+  /**
+   * Disable multiple selection based on cross-posting settings.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field item list interface.
+   *
+   * @return bool
+   *   TRUE if multiple selection should be disabled, FALSE otherwise.
+   */
+  private function disableMultipleSelection(FieldItemListInterface $items): bool {
+    $sg_settings = $this->configFactory->get('social_group.settings');
+
+    $hasPermission = $this->currentUser->hasPermission('access cross-group posting');
+    $isCrossPostingEnabled = (bool) $sg_settings->get('cross_posting.status');
+    $isContentTypeAllowed = in_array($items->getEntity()->bundle(), $sg_settings->get('cross_posting.content_types'), TRUE);
+
+    return !($hasPermission && $isCrossPostingEnabled && $isContentTypeAllowed);
+  }
+
+  private function isMultipleSelectionAvailable(FieldItemListInterface $items): bool {
+    // The 'options' array structure is either:
+    // - Single level for flexible groups only (flat structure)
+    // - Two levels for mixed group types (nested structure with group types as categories)
+    $iterator = new RecursiveIteratorIterator(
+      new RecursiveArrayIterator($this->options),
+      RecursiveIteratorIterator::SELF_FIRST
+    );
+    $optionsDepth = $iterator->getDepth() + 1;
+
+    // Case 1: Single level options (flat structure).
+    if ($optionsDepth === 1) {
+      if ($this->multiple && count($this->options) > 1) {
+        return TRUE;
+      }
+    }
+
+    // Case 2: Nested options (group types as categories).
+    if ($optionsDepth > 1) {
+      // Verify if a sub-element of the option list can include multiple items So,
+      // then multiple selection should be available for such cases.
+      if (
+        $this->multiple &&
+        ((is_countable(reset($this->options)) ? count(reset($this->options)) : 0) > 1)
+      ) {
+        return TRUE;
+      }
+    }
+
+    // Override the multiple selection based on the cross-posting settings.
+    if ($this->disableMultipleSelection($items)) {
+      return FALSE;
+    }
+
+    return $this->multiple;
+  }
 }
