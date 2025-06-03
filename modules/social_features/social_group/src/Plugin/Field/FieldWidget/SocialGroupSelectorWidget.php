@@ -134,11 +134,11 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
     /** @var \Drupal\user\Entity\User $account */
     $account = $this->userManager->load($this->currentUser->id());
 
-    $groups_admin = $account->hasPermission('manage all groups');
+    $groupsAdmin = $account->hasPermission('manage all groups');
 
     // If the user can administer content and groups, we allow them to
     // override this. Otherwise, we stick to the original owner.
-    if ($entity instanceof EntityOwnerInterface && !$groups_admin) {
+    if ($entity instanceof EntityOwnerInterface && !$groupsAdmin) {
       if ($type === 'node') {
         $permission = 'administer nodes';
       }
@@ -160,12 +160,12 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
     }
 
     // Limit the settable options for the current user account.
-    $options_provider = $this->fieldDefinition
+    $optionsProvider = $this->fieldDefinition
       ->getFieldStorageDefinition()
       ->getOptionsProvider($this->column, $entity);
 
-    if ($options_provider !== NULL) {
-      $options = $options_provider->getSettableOptions($account);
+    if ($optionsProvider !== NULL) {
+      $options = $optionsProvider->getSettableOptions($account);
 
       $storage = $this->entityTypeManager->getStorage('group');
 
@@ -191,7 +191,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
       }
 
       // Remove groups the user does not have creation access to.
-      if (!$groups_admin) {
+      if (!$groupsAdmin) {
         $options = $this->removeGroupsWithoutCreateAccess(
           $options,
           $account,
@@ -204,8 +204,8 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
     }
 
     // Add an empty option if the widget needs one.
-    if ($empty_label = $this->getEmptyLabel()) {
-      $options = ['_none' => $empty_label] + $options;
+    if ($emptyLabel = $this->getEmptyLabel()) {
+      $options = ['_none' => $emptyLabel] + $options;
     }
 
     $context = [
@@ -242,18 +242,18 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
 
     // Unfortunately, validateGroupSelection is cast as a static function,
     // So I have to add this setting to the form to use it later on.
-    $default_visibility = $this->configFactory->get('entity_access_by_field.settings')
-      ->get('default_visibility');
+    $defaultVisibility = $this->configFactory->get('entity_access_by_field.settings')
+      ->get('defaultVisibility');
 
-    $form['default_visibility'] = [
+    $form['defaultVisibility'] = [
       '#type' => 'value',
-      '#value' => $default_visibility,
+      '#value' => $defaultVisibility,
     ];
 
     $element['#multiple'] = $this->isMultipleSelectionAvailable($items);
 
-    $sg_settings = $this->configFactory->get('social_group.settings');
-    $change_group_node = $sg_settings->get('allow_group_selection_in_node');
+    $socialGroupSettings = $this->configFactory->get('social_group.settings');
+    $changeGroupNode = $socialGroupSettings->get('allow_group_selection_in_node');
 
     /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
     $form_object = $form_state->getFormObject();
@@ -262,13 +262,13 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
 
     // If it is a new node, let's add the current group.
     if (!$entity->id()) {
-      $current_group = _social_group_get_current_group();
-      if ($current_group !== NULL && empty($element['#default_value'])) {
-        $element['#default_value'] = [$current_group->id()];
+      $currentGroup = _social_group_get_current_group();
+      if ($currentGroup !== NULL && empty($element['#default_value'])) {
+        $element['#default_value'] = [$currentGroup->id()];
       }
     }
     else {
-      if (!$change_group_node && !$this->currentUser->hasPermission('manage all groups')) {
+      if (!$changeGroupNode && !$this->currentUser->hasPermission('manage all groups')) {
         $element['#disabled'] = TRUE;
         $element['#description'] = $this->t('Moving content after creation function has been disabled. In order to move this content, please contact a site manager.');
       }
@@ -276,7 +276,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
 
     // We don't allow to LU to edit field if there are multiple values.
     if (count($element['#default_value']) > 1) {
-      if ($sg_settings->get('cross_posting.status') && !$this->currentUser->hasPermission('access cross-group posting')) {
+      if ($socialGroupSettings->get('cross_posting.status') && !$this->currentUser->hasPermission('access cross-group posting')) {
         $element['#disabled'] = TRUE;
         $element['#description'] = $this->t('You are not allowed to edit this field!');
       }
@@ -300,50 +300,50 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public static function validateGroupSelection(array $form, FormStateInterface $form_state): AjaxResponse {
-    $ajax_response = new AjaxResponse();
+    $ajaxResponse = new AjaxResponse();
 
-    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
-    $form_object = $form_state->getFormObject();
+    /** @var \Drupal\Core\Entity\EntityFormInterface $formObject */
+    $formObject = $form_state->getFormObject();
 
-    $entity = $form_object->getEntity();
+    $entity = $formObject->getEntity();
 
-    $selected_visibility = $form_state->getValue('field_content_visibility');
-    if (!empty($selected_visibility)) {
-      $selected_visibility = $selected_visibility['0']['value'];
+    $selectedVisibility = $form_state->getValue('field_content_visibility');
+    if (!empty($selectedVisibility)) {
+      $selectedVisibility = $selectedVisibility['0']['value'];
     }
-    if ($selected_groups = $form_state->getValue('groups')) {
-      $allowed_visibility_options = self::getVisibilityOptionsForMultipleGroups(array_column($selected_groups, 'target_id'), $entity);
+    if ($selectedGroups = $form_state->getValue('groups')) {
+      $allowedVisibilityOptions = self::getVisibilityOptionsForMultipleGroups(array_column($selectedGroups, 'target_id'), $entity);
     }
     else {
-      $default_visibility = $form_state->getValue('default_visibility');
+      $defaultVisibility = $form_state->getValue('defaultVisibility');
 
-      $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $default_visibility, 'prop', ['checked', 'checked']));
+      $allowedVisibilityOptions = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
+      $ajaxResponse->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $defaultVisibility, 'prop', ['checked', 'checked']));
     }
 
-    foreach ($allowed_visibility_options as $visibility => $allowed) {
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
+    foreach ($allowedVisibilityOptions as $visibility => $allowed) {
+      $ajaxResponse->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
       if ($allowed === TRUE) {
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
-        if (empty($default_visibility) || $visibility === $default_visibility) {
-          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+        $ajaxResponse->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
+        if (empty($defaultVisibility) || $visibility === $defaultVisibility) {
+          $ajaxResponse->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
         }
       }
       else {
-        if ($selected_visibility && $selected_visibility === $visibility) {
-          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['checked']));
+        if ($selectedVisibility && $selectedVisibility === $visibility) {
+          $ajaxResponse->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['checked']));
         }
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
+        $ajaxResponse->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
       }
 
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
+      $ajaxResponse->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
     }
 
     $text = t('Changing the group may have an impact on the <strong>visibility settings</strong> and may cause <strong>author/co-authors</strong> to lose access.');
 
     \Drupal::messenger()->addStatus($text);
 
-    return $ajax_response->addCommand(
+    return $ajaxResponse->addCommand(
       new HtmlCommand('#group-selection-result', $text),
     );
   }
@@ -415,21 +415,21 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
     UserInterface $account,
     EntityInterface $entity,
   ): array {
-    foreach ($options as $option_category_key => $groups_in_category) {
-      if (is_array($groups_in_category)) {
-        foreach (array_keys($groups_in_category) as $gid) {
+    foreach ($options as $optionCategoryKey => $groupsInCategory) {
+      if (is_array($groupsInCategory)) {
+        foreach (array_keys($groupsInCategory) as $gid) {
           if (!$this->checkGroupContentCreateAccess($gid, $account, $entity)) {
-            unset($options[$option_category_key][$gid]);
+            unset($options[$optionCategoryKey][$gid]);
           }
         }
         // Remove the entire category if there are no groups for this author.
-        if (empty($options[$option_category_key])) {
-          unset($options[$option_category_key]);
+        if (empty($options[$optionCategoryKey])) {
+          unset($options[$optionCategoryKey]);
         }
       }
       else {
-        if (!$this->checkGroupContentCreateAccess($option_category_key, $account, $entity)) {
-          unset($options[$option_category_key]);
+        if (!$this->checkGroupContentCreateAccess($optionCategoryKey, $account, $entity)) {
+          unset($options[$optionCategoryKey]);
         }
       }
     }
@@ -481,11 +481,11 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
    *   TRUE if multiple selection should be disabled, FALSE otherwise.
    */
   private function disableMultipleSelection(FieldItemListInterface $items): bool {
-    $sg_settings = $this->configFactory->get('social_group.settings');
+    $socialGroupSettings = $this->configFactory->get('social_group.settings');
 
     $hasPermission = $this->currentUser->hasPermission('access cross-group posting');
-    $isCrossPostingEnabled = (bool) $sg_settings->get('cross_posting.status');
-    $isContentTypeAllowed = in_array($items->getEntity()->bundle(), $sg_settings->get('cross_posting.content_types'), TRUE);
+    $isCrossPostingEnabled = (bool) $socialGroupSettings->get('cross_posting.status');
+    $isContentTypeAllowed = in_array($items->getEntity()->bundle(), $socialGroupSettings->get('cross_posting.content_types'), TRUE);
 
     return !($hasPermission && $isCrossPostingEnabled && $isContentTypeAllowed);
   }
