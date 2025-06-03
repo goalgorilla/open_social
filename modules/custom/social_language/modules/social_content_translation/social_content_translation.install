@@ -74,3 +74,22 @@ function social_content_translation_install_language_settings_for_entities() {
 function social_content_translation_update_last_removed() : int {
   return 10301;
 }
+
+/**
+ * Update "Social Content Translation" configs.
+ */
+function social_content_translation_update_10302(): void {
+  // Needed for Drupal 10.4.x and later.
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'translate event node',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'translate event node',
+    ]
+  );
+}
