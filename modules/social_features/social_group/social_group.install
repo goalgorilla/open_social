@@ -1156,3 +1156,13 @@ function social_group_update_13018(): string {
   $updater->executeUpdate('social_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Hide the "Organization" column on "group_manage_members" view.
+ */
+function social_group_update_13019(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
+}
