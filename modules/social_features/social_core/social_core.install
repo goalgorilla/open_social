@@ -957,3 +957,25 @@ function social_core_update_130024(): void {
   ];
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Update "Social Core" permissions.
+ *
+ * With Drupal 10.4 we need to create missing permissions and re-apply them.
+ */
+function social_core_update_130025(): void {
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'create terms in expertise',
+      'delete terms in expertise',
+      'edit terms in expertise',
+      'create terms in interests',
+      'delete terms in interests',
+      'edit terms in interests',
+      'create terms in topic_types',
+      'delete terms in topic_types',
+      'edit terms in topic_types',
+    ]
+  );
+}

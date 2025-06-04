@@ -1136,3 +1136,27 @@ function social_group_update_13017(): void {
       ->save();
   }
 }
+
+/**
+ * Update "Social Group" permissions.
+ *
+ * With Drupal 10.4 we need to create missing permissions and re-apply them.
+ */
+function social_group_update_13018(): void {
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'view node.event.field_content_visibility:group content',
+      'view node.topic.field_content_visibility:group content',
+      'view node.page.field_content_visibility:group content',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'view node.event.field_content_visibility:group content',
+      'view node.topic.field_content_visibility:group content',
+      'view node.page.field_content_visibility:group content',
+    ]
+  );
+}
