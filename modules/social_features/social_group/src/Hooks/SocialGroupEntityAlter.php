@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\social_group\Hooks;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\hux\Attribute\Hook;
+use Drupal\social_group\SocialGroupHelperService;
+use Drupal\user\UserInterface;
 use Drupal\views\ViewEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -29,10 +32,13 @@ final class SocialGroupEntityAlter implements ContainerInjectionInterface {
    *   The entity type manager.
    * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $groupRelationTypeManager
    *   The group relation plugin manager.
+   * @param \Drupal\social_group\SocialGroupHelperService $groupHelper
+   *   The group helper service.
    */
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly GroupRelationTypeManagerInterface $groupRelationTypeManager,
+    private readonly SocialGroupHelperService $groupHelper,
   ) {}
 
   /**
@@ -42,6 +48,7 @@ final class SocialGroupEntityAlter implements ContainerInjectionInterface {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('group_relation_type.manager'),
+      $container->get('social_group.helper_service'),
     );
   }
 
@@ -99,6 +106,45 @@ final class SocialGroupEntityAlter implements ContainerInjectionInterface {
     if ($displays != $view->get('display')) {
       $view->set('display', $displays);
     }
+  }
+
+  /**
+   * Invalidates cache tags when a user is blocked.
+   *
+   * This hook is triggered before a user account is saved.
+   * If the user is being blocked, it invalidates related group membership
+   * cache tags to update group member counts.
+   *
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity that is being saved.
+   *
+   * @see \hook_ENTITY_TYPE_presave()
+   */
+  #[Hook('user_presave')]
+  public function invalidateCacheTagsOnUserBlocking(UserInterface $user): void {
+    if ($user->isNew()) {
+      return;
+    }
+
+    $original = $user->original;
+    assert($original instanceof UserInterface);
+    $become_blocked = $original->isActive() && $user->isBlocked();
+    if (!$become_blocked) {
+      return;
+    }
+
+    // Get all groups where the user is a member.
+    $groups = $this->groupHelper->getAllGroupsForUser((int) $user->id());
+    if (empty($groups)) {
+      return;
+    }
+    // Invalidate a group membership cache.
+    // This invalidation was added for invalidating group members counts.
+    /* @see \Drupal\social_group\GroupStatistics::getGroupMemberCount() */
+    Cache::invalidateTags(array_map(
+      callback: fn ($gid) => "group_content_list:plugin:group_membership:group:$gid",
+      array: $groups)
+    );
   }
 
 }

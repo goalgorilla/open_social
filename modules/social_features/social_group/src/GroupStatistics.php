@@ -2,6 +2,8 @@
 
 namespace Drupal\social_group;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -45,12 +47,34 @@ class GroupStatistics {
    *
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group entity.
+   * @param bool $exclude_blocked
+   *   The flag indicating if blocked users should be excluded.
    *
    * @return int
    *   The number of members.
    */
-  public function getGroupMemberCount(GroupInterface $group) {
-    return $this->count($group, 'group_membership');
+  public function getGroupMemberCount(GroupInterface $group, bool $exclude_blocked = FALSE): int {
+    $members = &drupal_static(__METHOD__, []);
+
+    if (!isset($members[$group->id()])) {
+      try {
+        $query = $this->entityTypeManager->getStorage('group_content')
+          ->getQuery()
+          ->accessCheck(FALSE)
+          ->condition('gid', $group->id())
+          ->condition('plugin_id', 'group_membership');
+
+        if ($exclude_blocked) {
+          $query->condition('entity_id.entity:user.status', 1);
+        }
+
+        $members[$group->id()] = $query->count()->execute();
+      }
+      catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      }
+    }
+
+    return $members[$group->id()] ?? 0;
   }
 
   /**
