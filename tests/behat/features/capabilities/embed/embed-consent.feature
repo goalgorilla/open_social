@@ -7,8 +7,8 @@ Feature: Embed
   Background:
     Given I enable the module "social_embed"
     And topics with non-anonymous author:
-      | title          | field_topic_type | body                                               | field_content_visibility |
-      | Embed consent  | News             | <p>https://www.youtube.com/watch?v=fv2nWEXKSf4</p> | public                   |
+      | title          | field_topic_type | body                                                                                                                            | field_content_visibility |
+      | Embed consent  | News             | <p><drupal-url data-embed-url="https://www.youtube.com/watch?v=fv2nWEXKSf4" data-url-provider="YouTube">&nbsp;</drupal-url></p> | public                   |
 
   Scenario: As AU I want to configure my consent to see all embedded content immediately
     Given I set the configuration item "social_embed.settings" with key "embed_consent_settings_lu" to 1
