@@ -17,6 +17,12 @@ social_user.settings:
     show_mail_in_messages:
       type: boolean
       label: "The site email address in help messages after failed login, signup or password reset."
+    tracked_roles:
+      type: sequence
+      label: "Roles that are tracked for the identification cookie"
+      sequence:
+        type: string
+        label: "Role ID"
 
 social_user.navigation.settings:
   type: config_object

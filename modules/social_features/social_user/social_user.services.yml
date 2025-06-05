@@ -26,3 +26,8 @@ services:
     arguments: ['@class_resolver']
     tags:
       - { name: access_check, applies_to: _user_pages_access_checker }
+  social_user.role_identification_subscriber:
+    class: Drupal\social_user\EventSubscriber\RoleIdentificationSubscriber
+    arguments: ['@current_user', '@config.factory', '@tempstore.private', '@current_route_match']
+    tags:
+      - { name: event_subscriber }
