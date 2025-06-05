@@ -36,9 +36,10 @@ Feature: All group overview filters
       | name |
       | Local Group |
     And groups with non-anonymous owner:
-      | label                   | field_group_description   | field_flexible_group_visibility | type            | created  | field_group_type |
-      | This is a local group   | This is a local group     | public                          | flexible_group  | 01/01/01 | Local Group      |
-      | This is not a local one | Just an ordinary on       | public                          | flexible_group  | 01/01/01 |                  |
+      | label                   | field_group_description   | field_flexible_group_visibility | type            | created  |
+      | This is a local group   | This is a local group     | public                          | flexible_group  | 01/01/01 |
+      | This is not a local one | Just an ordinary on       | public                          | flexible_group  | 01/01/01 |
+    And I add the group type "Local Group" to the group "This is a local group"
 
     When I am viewing the groups overview
     And I select "Local Group" from "Type"
