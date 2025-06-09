@@ -13,11 +13,9 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
-use Drupal\node\NodeInterface;
 use Drupal\social_core\Service\MembersPageHelperService;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 use Drupal\user\UserInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
@@ -289,26 +287,6 @@ function social_event_managers_views_pre_view(ViewExecutable $view, $display_id,
         );
     }
   }
-}
-
-/**
- * Implements hook_node_access().
- *
- * Remember: if any module returns forbidden and denies access to certain node
- * and operation it will not allow the user to do the operation on the node.
- *
- * We need this implementation because we also want to give edit access to event
- * manager regardless these scenarios thought of in gnode_node_access:
- * - is a member in the group and:
- * - has edit own or edit any permission in the group
- *
- * The gnode module specifically returns allowed if any of the above scenarios
- * are met, but forbidden in all the other scenarios. Our code ensures that if
- * we are in operation update and if gnode already returns forbidden we are able
- * to return an allowed if user is an event manager.
- */
-function social_event_managers_node_access(NodeInterface $node, $op, AccountInterface $account) {
-  return SocialEventManagersAccessHelper::getEntityAccessResult($node, $op, $account);
 }
 
 /**
