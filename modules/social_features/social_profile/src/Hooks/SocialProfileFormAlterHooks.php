@@ -4,6 +4,7 @@ namespace Drupal\social_profile\Hooks;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
 use Drupal\social_profile\Event\SocialProfilePrePresaveSubmitEvent;
 use Drupal\social_profile\GroupAffiliation;
@@ -15,6 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @internal
  */
 class SocialProfileFormAlterHooks implements ContainerInjectionInterface {
+
+  use StringTranslationTrait;
 
   /**
    * GroupAffiliationGroupTypeHooks constructor.
@@ -161,6 +164,17 @@ class SocialProfileFormAlterHooks implements ContainerInjectionInterface {
           ':input[name="field_enable_other_affiliations[value]"]' => ['checked' => TRUE],
         ],
       ];
+    }
+  }
+
+   /**Add commentMore actions
+   * Alter user profile form based on affiliation settings.
+   */
+  #[Alter('field_group_form_process')]
+  public function socialProfileFieldGroupFormProcessAlter(array &$element, object &$group, array &$complete_form): void {
+    if (isset($group->group_name) && $group->group_name === 'group_affiliation_representation') {
+      $element['#attributes']['data-primary-text'][] = $this->t('Primary');
+      $element['#attributes']['data-secondary-text'][] = $this->t('Drag and drop items');
     }
   }
 
