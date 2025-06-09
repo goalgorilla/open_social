@@ -147,9 +147,53 @@ interface SocialTaggingServiceInterface {
   public function getCategories(): array;
 
   /**
-   * Check if given term is allowed to use and see for given entities.
+   * Retrieves the machine names of all categories.
+   *
+   * This method uses a static cache to improve performance by avoiding repeated
+   * computations for the same request. If the machine names are already cached,
+   * the cached version is returned. Otherwise, it processes the category labels
+   * and transforms them into machine names using the machine name service.
+   *
+   * @return array
+   *   An associative array of category IDs as keys and their corresponding
+   *   machine names as values.
+   */
+  public function getCategoriesMachineNames(): array;
+
+  /**
+   * Checks whether a term is visible for the specified entity types.
+   *
+   * This method determines the visibility of a term for a set of entities by
+   * checking if there is an intersection between the term's usage entity types
+   * and the provided filter keys.
+   *
+   * @param int $tid
+   *   The taxonomy term ID to check visibility for.
+   * @param array $placement_filter_keys
+   *   An array of entity type keys the term should be matched with.
+   *
+   * @return bool
+   *   Returns TRUE if the term is visible for the given entity type keys,
+   *   FALSE otherwise.
    */
   public function termIsVisibleForEntities(int $tid, array $placement_filter_keys): bool;
+
+  /**
+   * Retrieves the entity types associated with the usage of a taxonomy term.
+   *
+   * This method checks and retrieves from the static cache if available.
+   * If not, it loads the taxonomy term, verifies the presence of the
+   * 'field_category_usage' field, and unserializes its value to provide
+   * the entity types data.
+   *
+   * @param int|string $tid
+   *   The taxonomy term ID for which usage data is being fetched.
+   *
+   * @return array
+   *   An array of entity types related to the taxonomy term usage,
+   *   or an empty array if no usage data is available.
+   */
+  public function getTermUsageEntityTypes(int|string $tid): array;
 
   /**
    * Returns the children of any level term items.

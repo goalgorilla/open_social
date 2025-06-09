@@ -276,27 +276,69 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function getCategoriesMachineNames(): array {
+    $categories_machine_names = &drupal_static(__METHOD__);
+    // Return cached categories if exists, otherwise load it.
+    if (isset($categories_machine_names)) {
+      return $categories_machine_names;
+    }
+
+    foreach ($this->getCategories() as $tid => $label) {
+      $categories_machine_names[$tid] = $this->machineName->transform($label);
+    }
+
+    return $categories_machine_names ?? [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function termIsVisibleForEntities(int $tid, array $placement_filter_keys): bool {
-    $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($tid);
-    if (!$term instanceof TermInterface) {
-      return FALSE;
-    }
-    // Make sure that field_category_usage still exist.
-    if (!$term->hasField('field_category_usage')) {
-      return FALSE;
-    }
-    $usage = unserialize($term->get('field_category_usage')->value ?? '');
+    $usage = (array) $this->getTermUsageEntityTypes($tid);
     // Check if category enabled for given entities.
-    if (is_array($usage) && !empty(array_intersect($placement_filter_keys, $usage))) {
-      return TRUE;
+    return !empty(array_intersect($placement_filter_keys, $usage));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTermUsageEntityTypes(int|string $tid): array {
+    $usage = &drupal_static(__METHOD__, []);
+
+    // Return cached usage if exists, otherwise load it.
+    if (isset($usage[$tid])) {
+      return $usage[$tid];
     }
-    return FALSE;
+
+    $term = $this->entityTypeManager->getStorage('taxonomy_term')
+      ->load($tid);
+    if (!$term instanceof TermInterface) {
+      return $usage[$tid] = [];
+    }
+
+    // Make sure that field_category_usage still exist.
+    if (
+      !$term->hasField('field_category_usage') ||
+      $term->get('field_category_usage')->isEmpty()
+    ) {
+      return $usage[$tid] = [];
+    }
+
+    $usage[$tid] = unserialize($term->get('field_category_usage')->value);
+
+    return $usage[$tid];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getChildren(int $category): array {
+    $children = &drupal_static(__METHOD__, []);
+    // Return cached children if exists, otherwise load it.
+    if (isset($children[$category])) {
+      return $children[$category];
+    }
+
     /** @var \Drupal\taxonomy\TermStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('taxonomy_term');
 
@@ -318,7 +360,7 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
         ->loadTree('social_tagging', $category, 1, FALSE, $language);
 
       if (!empty($terms)) {
-        return $this->prepareTermOptions($terms);
+        return $children[$category] = $this->prepareTermOptions($terms);
       }
     }
 
