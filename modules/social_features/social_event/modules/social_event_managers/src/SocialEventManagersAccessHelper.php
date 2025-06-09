@@ -8,9 +8,6 @@ use Drupal\node\NodeInterface;
 
 /**
  * Helper class for checking update access on event managers nodes.
- *
- * @todo Check: probably, these access rules should be applied only for events
- *   with not empty "field_event_managers" field.
  */
 class SocialEventManagersAccessHelper {
 
@@ -33,6 +30,7 @@ class SocialEventManagersAccessHelper {
    * NodeAccessCheck for given operation, node and user account.
    */
   public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account): int {
+    // We only care about Update (/edit) of the Event content.
     if ($op !== 'update') {
       return static::NEUTRAL;
     }
@@ -79,13 +77,32 @@ class SocialEventManagersAccessHelper {
 
     switch ($access) {
       case static::ALLOW:
-        return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($node);
+        return AccessResult::allowed()
+          // We need to reassess access check if permissions are changed
+          // or if user entity is changed.
+          ->cachePerPermissions()
+          ->cachePerUser()
+          ->addCacheableDependency($node);
 
       case static::FORBIDDEN:
         return AccessResult::forbidden();
     }
 
     return AccessResult::neutral();
+  }
+
+  /**
+   * Checks if a node is an event and is having event managers.
+   *
+   * @param \Drupal\node\NodeInterface $entity
+   *   The node entity.
+   *
+   * @return bool
+   *   TRUE or FALSE depending upon validation of conditions.
+   */
+  public static function isEventNodeWithManagers(NodeInterface $entity): bool {
+    return $entity->getType() === 'event'
+      && !$entity->get('field_event_managers')->isEmpty();
   }
 
 }
