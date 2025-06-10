@@ -167,9 +167,9 @@ class SocialProfileFormAlterHooks implements ContainerInjectionInterface {
     }
   }
 
-   /**Add commentMore actions
-   * Alter user profile form based on affiliation settings.
-   */
+  /**
+  * Alter user profile form based on affiliation settings.
+  */
   #[Alter('field_group_form_process')]
   public function socialProfileFieldGroupFormProcessAlter(array &$element, object &$group, array &$complete_form): void {
     if (isset($group->group_name) && $group->group_name === 'group_affiliation_representation') {
