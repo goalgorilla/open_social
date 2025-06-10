@@ -500,6 +500,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
    *   TRUE if multiple selection is available, FALSE otherwise.
    */
   private function isMultipleSelectionAvailable(FieldItemListInterface $items): bool {
+    $canSelectMultipleGroups = FALSE;
     // The 'options' array structure is either:
     // - Single level for flexible groups only (flat structure)
     // - Two levels for mixed group types
@@ -513,7 +514,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
     // Case 1: Single level options (flat structure).
     if ($optionsDepth === 1) {
       if ($this->multiple && count($this->options) > 1) {
-        return TRUE;
+        $canSelectMultipleGroups = TRUE;
       }
     }
 
@@ -526,15 +527,16 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
         $this->multiple &&
         ((is_countable(reset($this->options)) ? count(reset($this->options)) : 0) > 1)
       ) {
-        return TRUE;
+        $canSelectMultipleGroups = TRUE;
       }
     }
 
     // Override the multiple selection based on the cross-posting settings.
     if ($this->disableMultipleSelection($items)) {
-      return FALSE;
+      $canSelectMultipleGroups = FALSE;
     }
 
+    $this->multiple = $canSelectMultipleGroups;
     return $this->multiple;
   }
 
