@@ -95,7 +95,7 @@ class Page extends PreprocessBase implements ContainerFactoryPluginInterface {
     // Default classes.
     $attributes->addClass('row', 'container');
     // If page has title.
-    if ($variables['page']['title']) {
+    if (isset($variables['page']['title']) === TRUE) {
       $attributes->addClass('with-title-region');
       $variables['display_page_title'] = TRUE;
     }
@@ -158,7 +158,9 @@ class Page extends PreprocessBase implements ContainerFactoryPluginInterface {
     }
 
     // Check complementary_top and complementary_bottom variables.
-    if ($variables['page']['complementary_top'] || $variables['page']['complementary_bottom']) {
+    if (empty($variables['page']['complementary_top']) === FALSE ||
+      empty($variables['page']['complementary_bottom']) === FALSE
+    ) {
       $attributes->addClass('layout--with-complementary');
     }
     // Check if sidebars are empty.
@@ -169,7 +171,9 @@ class Page extends PreprocessBase implements ContainerFactoryPluginInterface {
     }
     // Sidebars logic.
     if (empty($variables['page']['complementary_top']) && empty($variables['page']['complementary_bottom'])) {
-      if ($variables['page']['sidebar_first'] && $variables['page']['sidebar_second']) {
+      if (empty($variables['page']['sidebar_first']) === FALSE &&
+        empty($variables['page']['sidebar_second']) === FALSE
+      ) {
         $attributes->addClass('layout--with-three-columns');
       }
       if (!empty($variables['page']['sidebar_second']) xor !empty($variables['page']['sidebar_first'])) {
@@ -217,7 +221,7 @@ class Page extends PreprocessBase implements ContainerFactoryPluginInterface {
         $this->moduleHander->moduleExists('layout_builder') &&
         $this->moduleHander->moduleExists('social_core')
       ) {
-        if (\Drupal::hasService('social_core.layout') && 
+        if (\Drupal::hasService('social_core.layout') &&
           \Drupal::service('social_core.layout')->isTrueLayoutCompatibleEntity($param)
         ) {
           $attributes->removeClass('row', 'layout--with-complementary');

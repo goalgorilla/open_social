@@ -58,7 +58,9 @@ class Page extends PageBase {
     }
 
     // Add extra class if we have blocks in both complementary regions.
-    if ($variables['page']['complementary_top'] && $variables['page']['complementary_bottom']) {
+    if (empty($variables['page']['complementary_top']) === FALSE &&
+      empty($variables['page']['complementary_bottom']) === FALSE
+    ) {
       $variables['content_attributes']->addClass('complementary-both');
     }
 
