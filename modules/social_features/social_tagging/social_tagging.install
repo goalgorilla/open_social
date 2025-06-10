@@ -242,4 +242,12 @@ function social_tagging_update_130004(): void {
       'view social_tagging',
     ]
   );
+
+  user_role_grant_permissions(
+    'authenticated',
+    [
+      'view terms in social_tagging',
+    ]
+  );
+
 }
