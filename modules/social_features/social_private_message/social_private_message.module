@@ -163,6 +163,11 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   }
 
   $form['#attributes']['class'][] = $form_class;
+
+  // Hide subject field which was added with core module, since we don't use it.
+  if (isset($form['subject'])) {
+    $form['subject']['#access'] = FALSE;
+  }
 }
 
 /**
