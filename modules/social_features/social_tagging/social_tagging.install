@@ -229,25 +229,3 @@ function social_tagging_update_130003(array &$sandbox): void {
     $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
   }
 }
-
-/**
- * Update "Social Tagging" permissions.
- *
- * With Drupal 10.4 we need to create missing permissions and re-apply them.
- */
-function social_tagging_update_130004(): void {
-  user_role_grant_permissions(
-    'sitemanager',
-    [
-      'view social_tagging',
-    ]
-  );
-
-  user_role_grant_permissions(
-    'authenticated',
-    [
-      'view terms in social_tagging',
-    ]
-  );
-
-}
