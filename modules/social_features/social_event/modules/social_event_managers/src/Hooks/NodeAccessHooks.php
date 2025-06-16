@@ -13,7 +13,7 @@ use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 /**
  * Contains entity related hooks.
  */
-final readonly class NodeAccessHook {
+final readonly class NodeAccessHooks {
 
   /**
    * Implements hook_ENTITY_TYPE_access().
@@ -28,8 +28,8 @@ final readonly class NodeAccessHook {
    */
   #[Hook('node_access')]
   public function nodeAccess(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
-    assert($entity instanceof NodeInterface, 'Entity must be a node.');
-    if (SocialEventManagersAccessHelper::isEventNodeWithManagers($entity)) {
+    if ($entity instanceof NodeInterface &&
+      SocialEventManagersAccessHelper::isEventNodeWithManagers($entity)) {
       return SocialEventManagersAccessHelper::getEntityAccessResult($entity, $operation, $account);
     }
     return AccessResult::neutral();

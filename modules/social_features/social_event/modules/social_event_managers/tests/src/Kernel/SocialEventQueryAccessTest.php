@@ -36,10 +36,13 @@ class SocialEventQueryAccessTest extends NodeQueryAccessTestBase {
   /**
    * {@inheritdoc}
    */
+  protected static $modules = ['social_event_managers', 'group', 'flexible_permissions'];
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() :void {
     parent::setUp();
-
-    $this->installModule('social_event_managers');
 
     // Create 'field_event_managers' field storage.
     FieldStorageConfig::create([

@@ -80,7 +80,7 @@ class EventContext extends RawMinkContext {
    *
    * @Given I am on the event overview
    */
-  public function viewEventOverview() : void {
+  public function viewEventOverview(): void {
     $this->visitPath("/community-events");
   }
 
@@ -90,7 +90,7 @@ class EventContext extends RawMinkContext {
    * @When I am viewing the event :event
    * @When am viewing the event :event
    */
-  public function viewingEvent(string $event) : void {
+  public function viewingEvent(string $event): void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
       throw new \RuntimeException("Event '$event' does not exist.");
@@ -106,7 +106,7 @@ class EventContext extends RawMinkContext {
    * @Then I should be viewing the event :event
    * @Then should be viewing the event :event
    */
-  public function shouldBeViewingEvent(string $event) : void {
+  public function shouldBeViewingEvent(string $event): void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
       throw new \RuntimeException("Event '$event' does not exist.");
@@ -121,7 +121,7 @@ class EventContext extends RawMinkContext {
    * @When I am editing the event :event
    * @When am editing the event :event
    */
-  public function editingEvent(string $event) : void {
+  public function editingEvent(string $event): void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
       throw new \RuntimeException("Event '$event' does not exist.");
@@ -135,7 +135,7 @@ class EventContext extends RawMinkContext {
    * @When I am viewing the event manager page for :event
    * @When am viewing the event manager page for :event
    */
-  public function viewEventManagerPage(string $event) : void {
+  public function viewEventManagerPage(string $event): void {
     $event_id = $this->getEventIdFromTitle($event);
     if ($event_id === NULL) {
       throw new \RuntimeException("Event '$event' does not exist.");
@@ -153,7 +153,7 @@ class EventContext extends RawMinkContext {
    *
    * @Given events:
    */
-  public function createEvents(TableNode $eventsTable) : void {
+  public function createEvents(TableNode $eventsTable): void {
     foreach ($eventsTable->getHash() as $eventHash) {
       $event = $this->eventCreate($eventHash);
       $this->created[] = $event->id();
@@ -170,7 +170,7 @@ class EventContext extends RawMinkContext {
    *
    * @Given events with non-anonymous author:
    */
-  public function createEventsWithAuthor(TableNode $eventsTable) : void {
+  public function createEventsWithAuthor(TableNode $eventsTable): void {
     // Create a new random user to own the content, this ensures the author
     // isn't anonymous.
     $user = (object) [
@@ -204,7 +204,7 @@ class EventContext extends RawMinkContext {
    *
    * @Given events authored by current user:
    */
-  public function createEventsAuthoredByCurrentUser(TableNode $eventsTable) : void {
+  public function createEventsAuthoredByCurrentUser(TableNode $eventsTable): void {
     $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
     foreach ($eventsTable->getHash() as $eventHash) {
       if (isset($eventHash['author'])) {
@@ -230,7 +230,7 @@ class EventContext extends RawMinkContext {
    *
    * @When /^(?:|I )create a event using its creation page:$/
    */
-  public function whenICreateAEventUsingTheForm(TableNode $fields) : void {
+  public function whenICreateAEventUsingTheForm(TableNode $fields): void {
     $this->visitPath(self::CREATE_PAGE);
     $this->updatedEventData = $this->fillOutEventForm($fields);
     $this->getSession()->getPage()->pressButton("Create event");
@@ -242,7 +242,7 @@ class EventContext extends RawMinkContext {
    *
    * @When /^(?:|I )view the event creation page$/
    */
-  public function whenIViewTheEventCreationPage() : void {
+  public function whenIViewTheEventCreationPage(): void {
     $this->visitPath(self::CREATE_PAGE);
     $this->assertSession()->statusCodeEquals(200);
   }
@@ -255,7 +255,7 @@ class EventContext extends RawMinkContext {
    *
    * @When /^(?:|I )edit event "(?P<title>(?:[^"]|\\")*)" using its edit page:$/
    */
-  public function whenIEditEventUsingTheForm(string $title, TableNode $fields) : void {
+  public function whenIEditEventUsingTheForm(string $title, TableNode $fields): void {
     $event_id = $this->getEventIdFromTitle($title);
     if ($event_id === NULL) {
       throw new \RuntimeException("Event with title '$title' does not exist. Did you create it in the test?");
@@ -284,7 +284,7 @@ class EventContext extends RawMinkContext {
    *   The array of normalised data, the keys are lowercase field names,
    *   the values are as they would be stored in the database.
    */
-  protected function fillOutEventForm(TableNode $fields) : array {
+  protected function fillOutEventForm(TableNode $fields): array {
     $normalized_data = [];
     $page = $this->getSession()->getPage();
     foreach ($fields->getRowsHash() as $field => $value) {
@@ -306,11 +306,9 @@ class EventContext extends RawMinkContext {
       // @todo Not being able to click the label shows an a11y issue.
       elseif ($key === "description") {
         $this->cKEditorContext->iFillInTheWysiwygEditor($field, $value);
-      }
-      elseif ($key === "type") {
+      } elseif ($key === "type") {
         $page->checkField($value);
-      }
-      elseif ($key === "published") {
+      } elseif ($key === "published") {
         $element = $page->findField($field);
         if ($element === NULL) {
           throw new ElementNotFoundException($this->getSession()->getDriver(), "field", NULL, $field);
@@ -339,12 +337,10 @@ class EventContext extends RawMinkContext {
         $value = (bool) Yaml::parse($value);
         if ($value) {
           $page->checkField($field);
-        }
-        else {
+        } else {
           $page->uncheckField($field);
         }
-      }
-      else {
+      } else {
         $page->fillField($field, $value);
       }
 
@@ -359,7 +355,7 @@ class EventContext extends RawMinkContext {
    *
    * @Then /^(?:|I )should see the event I just (?P<action>(created|updated))$/
    */
-  public function thenIShouldSeeTheEventIJustUpdated(string $action) : void {
+  public function thenIShouldSeeTheEventIJustUpdated(string $action): void {
     $regions = [
       'title' => "Hero block",
       'description' => 'Main content',
@@ -375,12 +371,10 @@ class EventContext extends RawMinkContext {
       elseif ($field === "published") {
         if (!$value) {
           $this->minkContext->assertPageContainsText("Unpublished");
-        }
-        else {
+        } else {
           $this->minkContext->assertPageNotContainsText("Unpublished");
         }
-      }
-      else {
+      } else {
         $this->minkContext->assertPageContainsText($value);
       }
     }
@@ -391,7 +385,7 @@ class EventContext extends RawMinkContext {
    *
    * @Then I should be on the event creation form
    */
-  public function shouldBeOnEventCreationForm() : void {
+  public function shouldBeOnEventCreationForm(): void {
     $status_code = $this->getSession()->getStatusCode();
     if ($status_code !== 200) {
       throw new \RuntimeException("The page status code {$status_code} dis not match 200 Ok.");
@@ -406,7 +400,7 @@ class EventContext extends RawMinkContext {
    * @Given I am an event manager for the :title event
    * @Given am an event manager for the :title event
    */
-  public function iAmAnEventManagerForTheEvent(string $title) : void {
+  public function iAmAnEventManagerForTheEvent(string $title): void {
     $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
 
     if ($current_user === NULL || !isset($current_user->uid) || $current_user->uid === 0) {
@@ -436,7 +430,7 @@ class EventContext extends RawMinkContext {
    * @Given there are :count event enrollments for the :title event
    * @Given there is :count event enrollment for the :title event
    */
-  public function thereAreEventEnrollmentsForEvent(int $count, string $title) : void {
+  public function thereAreEventEnrollmentsForEvent(int $count, string $title): void {
     assert(abs($count) === $count, "The :count may not be negative (got $count).");
 
     $event_id = $this->getEventIdFromTitle($title);
@@ -444,7 +438,7 @@ class EventContext extends RawMinkContext {
       throw new \RuntimeException("Event '$title' does not exist.");
     }
 
-    for ($i = 0; $i<$count; $i++) {
+    for ($i = 0; $i < $count; $i++) {
       // Create a new random user to add as enrollee.
       $user = (object) [
         'name' => $this->drupalContext->getRandom()->name(8),
@@ -572,7 +566,7 @@ class EventContext extends RawMinkContext {
    * @return \Drupal\node\Entity\Node
    *   The event values.
    */
-  private function eventCreate($event) : Node {
+  private function eventCreate($event): Node {
     if (!isset($event['author'])) {
       throw new \RuntimeException("You must specify an `author` when creating an event. Specify the `author` field if using `@Given events:` or use one of `@Given events with non-anonymous author:` or `@Given events authored by current user:` instead.");
     }
@@ -602,6 +596,14 @@ class EventContext extends RawMinkContext {
       $event['field_event_type'] = $type_id;
     }
 
+    // Set default date values if not provided
+    if (!isset($event['field_event_date'])) {
+      $event['field_event_date'] = date('Y-m-d\TH:i:s', strtotime('+1 day'));
+    }
+    if (!isset($event['field_event_date_end'])) {
+      $event['field_event_date_end'] = date('Y-m-d\TH:i:s', strtotime('+1 day +2 hours'));
+    }
+
     $this->validateEntityFields("node", $event);
     $event_object = Node::create($event);
     $violations = $event_object->validate();
@@ -615,8 +617,7 @@ class EventContext extends RawMinkContext {
     if (isset($group_id)) {
       try {
         Group::load($group_id)?->addRelationship($event_object, "group_node:event");
-      }
-      catch (PluginNotFoundException $_) {
+      } catch (PluginNotFoundException $_) {
         throw new \RuntimeException("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
       }
     }
@@ -633,7 +634,7 @@ class EventContext extends RawMinkContext {
    * @return int|null
    *   The integer ID of the event or NULL if no event could be found.
    */
-  private function getEventIdFromTitle(string $event_title) : ?int {
+  private function getEventIdFromTitle(string $event_title): ?int {
     return $this->getNodeIdFromTitle("event", $event_title);
   }
 
@@ -646,7 +647,7 @@ class EventContext extends RawMinkContext {
    * @return int|null
    *   The event type ID or NULL if it can't be found.
    */
-  private function getEventTypeIdFromLabel(string $label) : ?int {
+  private function getEventTypeIdFromLabel(string $label): ?int {
     $query = \Drupal::entityQuery('taxonomy_term')
       ->accessCheck(FALSE)
       ->condition('vid', 'event_types')
@@ -666,5 +667,4 @@ class EventContext extends RawMinkContext {
 
     return NULL;
   }
-
 }
