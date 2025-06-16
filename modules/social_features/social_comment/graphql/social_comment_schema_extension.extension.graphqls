@@ -30,3 +30,11 @@ extend type Query {
     id: ID!
   ): Comment
 }
+
+extend type User {
+  """
+  The number of comments that the user has created on the platform.
+  This only counts comments that still exist on the platform and where the user is set as author.
+  """
+  commentsCreated: Int!
+}

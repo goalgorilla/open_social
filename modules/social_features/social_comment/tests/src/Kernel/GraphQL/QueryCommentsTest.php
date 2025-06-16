@@ -4,11 +4,15 @@ namespace Drupal\Tests\social_comment\Kernel\GraphQL;
 
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\social_comment\Plugin\GraphQL\DataProducer\CommentsCreated;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
+use Drupal\user\UserInterface;
 
 /**
  * Tests the comments field on the Query type.
@@ -53,7 +57,7 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() : void {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('node');
@@ -68,7 +72,10 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
    */
   public function testSupportsRelayPagination(): void {
     // Act as a user that can create and view published comments and contents.
-    $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
+    $this->setUpCurrentUser([], array_merge([
+      'skip comment approval',
+      'access comments',
+    ], $this->userPermissions()));
 
     // Create a node to comment on.
     $node = $this->createNode();
@@ -80,7 +87,7 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
     }
 
     $comment_uuids = array_map(
-      static fn ($comment) => $comment->uuid(),
+      static fn($comment) => $comment->uuid(),
       $comments
     );
 
@@ -96,7 +103,10 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
   public function testUserRequiresAccessCommentsPermission() {
     // Create a published comment on a node.
     $node = $this->createNode();
-    $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
+    $this->setUpCurrentUser([], array_merge([
+      'skip comment approval',
+      'access comments',
+    ], $this->userPermissions()));
     $this->createComment($node);
 
     // Create a user that is not allowed to view comments.
@@ -209,6 +219,148 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
     $comment->save();
 
     return $comment;
+  }
+
+  /**
+   * Helper method to get cache for commentsCreated tets.
+   */
+  private function createMetadataForCommentsCreated(UserInterface $user): CacheableMetadata {
+    $cache_metadata = $this->defaultCacheMetaData();
+    $cache_metadata->setCacheContexts([
+      'languages:language_interface',
+      'user.permissions',
+    ]);
+    $cache_metadata->addCacheableDependency($user);
+
+    return $cache_metadata;
+  }
+
+  /**
+   * Helper method to get query for commentsCreated tests.
+   */
+  private function getQueryForCommentsCreated(): string {
+    return '
+      query ($id: ID!) {
+        user(id: $id) {
+          id
+          commentsCreated
+        }
+      }
+    ';
+  }
+
+  /**
+   * Test that the default value for the commentsCreated count is zero.
+   */
+  public function testUserCreatedCommentsIsZero(): void {
+    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
+
+    // Set expected array.
+    $expected_data = [
+      'user' => [
+        'id' => $user->uuid(),
+        'commentsCreated' => 0,
+      ],
+    ];
+
+    // Scenario: The default value for the count is zero.
+    $this->assertResults(
+      $this->getQueryForcommentsCreated(),
+      ['id' => $user->uuid()],
+      $expected_data,
+      $this->createMetadataForcommentsCreated($user)
+    );
+  }
+
+  /**
+   * Test that adding an event will increase the user's statistic count.
+   */
+  public function testUserCreatedCommentsCount(): void {
+    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
+    $node = $this->createNode();
+
+    // Create comment.
+    $this->createComment($node, $user);
+
+    // Set expected array.
+    $expected_data = [
+      'user' => [
+        'id' => $user->uuid(),
+        'commentsCreated' => 1,
+      ],
+    ];
+
+    // Scenario: Adding an event will increase the user's statistic count.
+    $this->assertResults(
+      $this->getQueryForcommentsCreated(),
+      ['id' => $user->uuid()],
+      $expected_data,
+      $this->createMetadataForcommentsCreated($user)
+    );
+
+  }
+
+  /**
+   * Test that deleting an item is reflected in the number of Comments created.
+   */
+  public function testUserCreatedCommentsDeleted(): void {
+    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
+    $node = $this->createNode();
+
+    // Create comment.
+    $comment = $this->createComment($node, $user);
+
+    // Delete comment.
+    $comment->delete();
+
+    // Set expected array.
+    $expected_data = [
+      'user' => [
+        'id' => $user->uuid(),
+        'commentsCreated' => 0,
+      ],
+    ];
+
+    // Scenario: Deleting an event is reflected in the number of Comments
+    // created by the user.
+    $this->assertResults(
+      $this->getQueryForcommentsCreated(),
+      ['id' => $user->uuid()],
+      $expected_data,
+      $this->createMetadataForcommentsCreated($user)
+    );
+
+  }
+
+  /**
+   * Test that the database not called if cache is set .
+   */
+  public function testUserCreatedCommentsCached(): void {
+    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
+    // Set custom cache result.
+    $new_result = 35;
+    $cid = CommentsCreated::CID_BASE . $user->id();
+    \Drupal::service('cache.default')
+      ->set($cid, $new_result, Cache::PERMANENT, [$cid]);
+
+    // Update expected counter.
+    // Set expected array.
+    $expected_data = [
+      'user' => [
+        'id' => $user->uuid(),
+        'commentsCreated' => $new_result,
+      ],
+    ];
+
+    // Scenario: Requesting the same statistic twice should not trigger
+    // multiple database queries, the database not called if cache is set.
+    $this->assertResults(
+      $this->getQueryForcommentsCreated(),
+      ['id' => $user->uuid()],
+      $expected_data,
+      $this->createMetadataForcommentsCreated($user)
+    );
+
   }
 
 }

@@ -87,6 +87,12 @@ class CommentSchemaExtension extends SchemaExtensionPluginBase {
         ->map('bundles', $builder->fromValue(['comment']))
         ->map('uuid', $builder->fromArgument('id'))
     );
+
+    $builder = new ResolverBuilder();
+    $registry->addFieldResolver('User', 'commentsCreated',
+      $builder->produce('social_comments_created')
+        ->map('entity', $builder->fromParent())
+    );
   }
 
 }
