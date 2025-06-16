@@ -164,6 +164,7 @@ class SocialProfileFormAlterHooks implements ContainerInjectionInterface {
           ':input[name="field_enable_other_affiliations[value]"]' => ['checked' => TRUE],
         ],
       ];
+      $form['#attached']['library'][] = 'social_profile/affiliation';
     }
   }
 
