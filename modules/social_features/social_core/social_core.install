@@ -947,3 +947,17 @@ function social_core_update_130023(): void {
   user_role_grant_permissions('contentmanager', ['use select2 autocomplete']);
   user_role_grant_permissions('sitemanager', ['use select2 autocomplete']);
 }
+
+/**
+ * Fix crop on image style social_medium.
+ */
+function social_core_update_130024(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', __FUNCTION__);
+
+  // Output logged messages to a related channel of update execution.
+  return $updateHelper->logger()->output();
+}
