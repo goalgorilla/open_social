@@ -358,3 +358,12 @@ function social_profile_update_250001(): string {
   $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Make none-platform affiliation organization name required.
+ */
+function social_profile_update_250002(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+  return $updater->logger()->output();
+}
