@@ -38,6 +38,7 @@
 
   <ul{{ attributes.addClass('nav navbar-nav navbar-user') }} role="navigation">
 
+    {% if social_is_mobile_app %}
     <li>
       <a href="{{ path('view.search_all.page_no_value') }}" class="navbar__open-search-block--is-mobile-app" rel="search" title="{{ 'Go to the search page'|t }}">
         <svg class="navbar-nav__icon navbar-nav__icon--search--is-mobile-app" aria-hidden="true">
@@ -46,6 +47,7 @@
         </svg>
       </a>
     </li>
+    {% endif %}
 
     <li class="dropdown profile not-logged-in">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" aria-haspopup="true" role="button" title="{% trans %} User menu {% endtrans %}">
