@@ -126,3 +126,28 @@ function social_like_update_13002(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Grant permissions to roles for adding or removing like votes.
+ *
+ * @see \Drupal\social_like\Plugin\views\access\WhoLikedAccess
+ */
+function social_like_update_13003(): void {
+  $permissions = [
+    'add or remove like votes on post',
+    'add or remove like votes on photo of post',
+  ];
+
+  user_role_grant_permissions(
+    'verified',
+    $permissions,
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    $permissions,
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    $permissions
+  );
+}
