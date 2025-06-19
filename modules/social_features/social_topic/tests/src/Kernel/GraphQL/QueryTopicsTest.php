@@ -2,10 +2,14 @@
 
 namespace Drupal\Tests\social_topic\Kernel\GraphQL;
 
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\node\NodeInterface;
+use Drupal\social_topic\Plugin\GraphQL\DataProducer\TopicsCreated;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
+use Drupal\user\UserInterface;
 
 /**
  * Tests the topics field on the Query type.
@@ -59,6 +63,8 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
     'views',
     'group',
     'variationcache',
+    'path_alias',
+    'hux',
   ];
 
   /**
@@ -69,6 +75,8 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
 
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
+    $this->installEntitySchema('comment');
+    $this->installEntitySchema('path_alias');
 
     $this->installSchema('comment', 'comment_entity_statistics');
     $this->installConfig([
@@ -237,6 +245,187 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
       $this->defaultCacheMetaData()
         ->setCacheMaxAge(0)
         ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Helper method to get cache for topicsCreated tets.
+   */
+  private function createMetadataForTopicsCreated(UserInterface $user): CacheableMetadata {
+    $cache_metadata = $this->defaultCacheMetaData();
+    $cache_metadata->setCacheContexts([
+      'languages:language_interface',
+      'user.permissions',
+    ]);
+    $cache_metadata->addCacheableDependency($user);
+
+    return $cache_metadata;
+  }
+
+  /**
+   * Helper method to get query for topicsCreated tests.
+   */
+  private function getQueryForTopicsCreated(): string {
+    return '
+      query ($id: ID!) {
+        user(id: $id) {
+          id
+          topicsCreated
+        }
+      }
+    ';
+  }
+
+  /**
+   * Test that the default value for the topicsCreated count is zero.
+   */
+  public function testUserCreatedTopicsIsZero(): void {
+    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
+
+    // Set expected array.
+    $expected_data = [
+      'user' => [
+        'id' => $user->uuid(),
+        'topicsCreated' => 0,
+      ],
+    ];
+
+    // Scenario: The default value for the count is zero.
+    $this->assertResults(
+      $this->getQueryForTopicsCreated(),
+      ['id' => $user->uuid()],
+      $expected_data,
+      $this->createMetadataForTopicsCreated($user)
+    );
+  }
+
+  /**
+   * Test that adding a topic will increase the user's statistic count.
+   */
+  public function testUserCreatedTopicsCount(): void {
+    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
+
+    // Create node.
+    $this->createNode([
+      'type' => 'topic',
+      'field_content_visibility' => 'public',
+      'uid' => $user->id(),
+    ]);
+
+    // Set expected array.
+    $expected_data = [
+      'user' => [
+        'id' => $user->uuid(),
+        'topicsCreated' => 1,
+      ],
+    ];
+
+    // Scenario: Adding a topic will increase the user's statistic count.
+    $this->assertResults(
+      $this->getQueryForTopicsCreated(),
+      ['id' => $user->uuid()],
+      $expected_data,
+      $this->createMetadataForTopicsCreated($user)
+    );
+
+  }
+
+  /**
+   * Test that deleting a topic is reflected in the number of topics created.
+   */
+  public function testUserCreatedTopicsDeleted(): void {
+    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
+
+    // Create node.
+    $node = $this->createNode([
+      'type' => 'topic',
+      'field_content_visibility' => 'public',
+      'uid' => $user->id(),
+    ]);
+
+    // Delete node.
+    $node->delete();
+
+    // Set expected array.
+    $expected_data = [
+      'user' => [
+        'id' => $user->uuid(),
+        'topicsCreated' => 0,
+      ],
+    ];
+
+    // Scenario: Deleting a topic is reflected in the number of topics created
+    // by the user.
+    $this->assertResults(
+      $this->getQueryForTopicsCreated(),
+      ['id' => $user->uuid()],
+      $expected_data,
+      $this->createMetadataForTopicsCreated($user)
+    );
+
+  }
+
+  /**
+   * Test that the database not called if cache is set.
+   */
+  public function testUserCreatedTopicsCached(): void {
+    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
+    // Set custom cache result.
+    $new_result = 35;
+    $cid = TopicsCreated::CID_BASE . $user->id();
+    \Drupal::service('cache.default')
+      ->set($cid, $new_result, Cache::PERMANENT, [$cid]);
+
+    // Update expected counter.
+    // Set expected array.
+    $expected_data = [
+      'user' => [
+        'id' => $user->uuid(),
+        'topicsCreated' => $new_result,
+      ],
+    ];
+
+    // Scenario: Requesting the same statistic twice should not trigger
+    // multiple database queries, the database not called if cache is set.
+    $this->assertResults(
+      $this->getQueryForTopicsCreated(),
+      ['id' => $user->uuid()],
+      $expected_data,
+      $this->createMetadataForTopicsCreated($user)
+    );
+
+  }
+
+  /**
+   * Test that the topicsCreated count is updated on owner change.
+   */
+  public function testUserCreatedTopicsAuthorChange(): void {
+    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
+
+    // Creating one node for current user.
+    // Create node.
+    $node = $this->createNode([
+      'type' => 'topic',
+      'field_content_visibility' => 'public',
+      'uid' => $user->id(),
+    ]);
+
+    // Change owner to anonymous, for example.
+    $node->setOwnerId(0);
+    $node->save();
+
+    // Making a call and our user should have 0.
+    $expected_data = [
+      'user' => [
+        'id' => $user->uuid(),
+        'topicsCreated' => 0,
+      ],
+    ];
+    $this->assertResults(
+      $this->getQueryForTopicsCreated(),
+      ['id' => $user->uuid()],
+      $expected_data,
+      $this->createMetadataForTopicsCreated($user)
     );
   }
 

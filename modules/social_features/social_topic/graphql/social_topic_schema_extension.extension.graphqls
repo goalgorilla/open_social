@@ -58,3 +58,11 @@ extend type Query {
   """
   topicTypes: [TopicType!]!
 }
+
+extend type User {
+  """
+  The number of topics that the user has created on the platform.
+  This only counts topics that still exist on the platform and where the user is set as author.
+  """
+  topicsCreated: Int!
+}

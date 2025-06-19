@@ -160,6 +160,12 @@ class TopicSchemaExtension extends SdlSchemaExtensionPluginBase {
         ->map('vid', $builder->fromValue('topic_types'))
         ->map('parent', $builder->fromValue(0))
     );
+
+    // Add topicsCreated field to the user object.
+    $registry->addFieldResolver('User', 'topicsCreated',
+      $builder->produce('social_topics_created')
+        ->map('entity', $builder->fromParent())
+    );
   }
 
 }
