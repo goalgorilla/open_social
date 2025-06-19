@@ -367,3 +367,12 @@ function social_profile_update_250002(): string {
   $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Typo fix: Change "organisation" to "organization" on affiliation fields.
+ */
+function social_profile_update_250003(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+  return $updater->logger()->output();
+}
