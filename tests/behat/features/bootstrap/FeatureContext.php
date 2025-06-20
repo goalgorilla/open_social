@@ -1037,4 +1037,28 @@ class FeatureContext extends RawMinkContext {
       }
     }
 
+    /**
+     * Checks that a DOM element has a specific attribute, optionally with a given value.
+     *
+     * @Then the :selector element should have the attribute :attribute
+     * @Then the :selector element should have the attribute :attribute with value :expectedValue
+     */
+    public function elementShouldHaveAttributeWithOptionalValue($selector, $attribute, $expectedValue = null): void {
+      $element = $this->getSession()->getPage()->find('css', $selector);
+
+      if (!$element) {
+        throw new ElementNotFoundException("Element '$selector' not found on the page.");
+      }
+
+      $actualValue = $element->getAttribute($attribute);
+
+      if ($actualValue === null) {
+        throw new ElementNotFoundException("Attribute '$attribute' not found on element '$selector'.");
+      }
+
+      if ($expectedValue !== null && $actualValue !== $expectedValue) {
+        throw new ElementNotFoundException("Expected '$attribute' to be '$expectedValue', but found '$actualValue'.");
+      }
+    }
+
 }

@@ -18,4 +18,4 @@ Feature: Check that profile organization tags are correctly displayed
     When I am on "\user"
 
     Then I should see the text "Behat Sitemanager from A&B's commented on Behat Sitemanager's topic"
-    And I should see "A&B's" in the ".profile-organization-tag .text" element
+    And the ".social-profile-tag" element should have the attribute "data-social-tooltip" with value "A&B's"
