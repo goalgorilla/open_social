@@ -75,33 +75,32 @@ class SocialSearchApi {
    *   The tagged conditions group.
    */
   public static function findTaggedQueryConditionsGroup(string $tag, ConditionGroupInterface $conditions): ?ConditionGroupInterface {
+    // Check if the current condition group has the target tag.
     if ($conditions->hasTag($tag)) {
       return $conditions;
     }
 
-    $conditions = $conditions->getConditions();
+    // Get all conditions from the current group.
+    $all_conditions = $conditions->getConditions();
 
-    do {
-      $current = $conditions;
-      $conditions = [];
-
-      foreach ($current as $condition) {
-        if (!$condition instanceof ConditionGroupInterface) {
-          continue;
-        }
-
-        if ($condition->hasTag($tag)) {
-          return $condition;
-        }
-
-        $nested_condition_groups = array_filter($condition->getConditions(), fn($group) => $group instanceof ConditionGroupInterface);
-        if (!$nested_condition_groups) {
-          continue;
-        }
-
-        $conditions = [...$conditions, ...$nested_condition_groups];
+    // Process each condition in the current group.
+    foreach ($all_conditions as $condition) {
+      // Skip non-condition group items (like regular Condition objects).
+      if (!$condition instanceof ConditionGroupInterface) {
+        continue;
       }
-    } while ($conditions);
+
+      // Check if this nested condition group has the target tag.
+      if ($condition->hasTag($tag)) {
+        return $condition;
+      }
+
+      // Recursively search deeper into this condition group.
+      $result = self::findTaggedQueryConditionsGroup($tag, $condition);
+      if ($result !== NULL) {
+        return $result;
+      }
+    }
 
     return NULL;
   }
