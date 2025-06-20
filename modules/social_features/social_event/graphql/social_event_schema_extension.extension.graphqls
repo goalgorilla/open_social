@@ -29,3 +29,11 @@ extend type Query {
     id: ID!
   ): Event
 }
+
+extend type User {
+  """
+  The number of events that the user has created on the platform.
+  This only counts events that still exist on the platform and where the user is set as author.
+  """
+  eventsCreated: Int!
+}

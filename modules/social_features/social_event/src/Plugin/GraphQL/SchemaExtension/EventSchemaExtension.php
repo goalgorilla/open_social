@@ -157,6 +157,12 @@ class EventSchemaExtension extends SdlSchemaExtensionPluginBase {
         ->map('bundles', $builder->fromValue(['event']))
         ->map('uuid', $builder->fromArgument('id'))
     );
+
+    // Add eventsCreated field to the user object.
+    $registry->addFieldResolver('User', 'eventsCreated',
+      $builder->produce('social_events_created')
+        ->map('entity', $builder->fromParent())
+    );
   }
 
 }
