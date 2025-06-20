@@ -2,6 +2,15 @@ form.profile-form {
   // Affiliation field.
   .field--name-field-group-affiliation,
   .field--name-field-other-affiliations {
+    // Hide a misplaced success msg from Drupal not related to this field.
+    .alert-success {
+      display: none !important;
+    }
+
+    .table-responsive {
+      overflow: hidden;
+    }
+
     // Hide weight button.
     .btn.tabledrag-toggle-weight {
       display: none;
@@ -12,6 +21,9 @@ form.profile-form {
     }
 
     table {
+      border-collapse: separate;
+      border-spacing: 0 12px;
+
       td,
       th {
         border: none;
@@ -23,7 +35,10 @@ form.profile-form {
 
       tbody {
         tr {
-          border-bottom: 12px solid white;
+
+          &:hover {
+            background: #f3f3f3;
+          }
         }
 
         td {
@@ -42,6 +57,7 @@ form.profile-form {
               padding-right: 16px;
               padding-left: 20px;
               position: relative;
+              font-weight: 600;
 
               [dir='rtl'] & {
                 padding-right: 20px;
@@ -59,6 +75,11 @@ form.profile-form {
                 left: 0;
                 top: 50%;
                 transform: translateY(-50%);
+
+                [dir='rtl'] & {
+                  right: 0;
+                  left: auto;
+                }
               }
             }
           }
@@ -71,26 +92,44 @@ form.profile-form {
             max-width: none;
           }
 
-          & > .form-wrapper {
-            & > .form-group:not(.js-form-type-select) {
-              max-width: 280px;
-            }
-          }
-
-          .alert-success {
-            max-width: 350px;
-          }
-
           .form-type-select {
             flex: none;
             display: flex;
             align-items: center;
             width: 100%;
-            max-width: 350px;
+            max-width: 100%;
+
+            .select2-container {
+              .select2-selection {
+                padding-left: 40px;
+                position: relative;
+
+                &:before {
+                  content: '';
+                  display: block;
+                  height: 16px;
+                  width: 16px;
+                  padding: 2px;
+                  background-color: #808080;
+                  background-image: url('../images/sign.svg');
+                  background-repeat: no-repeat;
+                  background-position: center;
+                  background-size: 12px;
+                  background-blend-mode: overlay;
+                  position: absolute;
+                  left: 12px;
+                  top: 11px;
+                }
+              }
+            }
 
             .input-group {
-              max-width: 350px;
+              max-width: 100%;
               width: 100%;
+
+              .select-wrapper {
+                max-width: calc(100% - 60px);
+              }
             }
           }
 
@@ -119,41 +158,25 @@ form.profile-form {
 
             + td {
               padding-left: .25rem;
+              padding-top: 1.75rem;
+              max-width: calc(100vw - 220px);
+
+              @media (min-width: 600px) {
+                max-width: 324px;
+              }
+
+              [dir='rtl'] & {
+                padding-right: 1rem;
+                padding-left: .25rem;
+              }
             }
           }
         }
       }
 
       #ief-ajax-wrapper-0 {
-        max-width: 350px;
         flex-direction: column;
         align-items: flex-start;
-      }
-    }
-
-    .form-item-field-group-affiliation-0-container-group {
-      .select2-container {
-        .select2-selection {
-          padding-left: 40px;
-          position: relative;
-
-          &:before {
-            content: '';
-            display: block;
-            height: 16px;
-            width: 16px;
-            padding: 2px;
-            background-color: #808080;
-            background-image: url('../images/sign.svg');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 12px;
-            background-blend-mode: overlay;
-            position: absolute;
-            left: 12px;
-            top: 11px;
-          }
-        }
       }
     }
   }
@@ -164,14 +187,6 @@ form.profile-form {
         td:nth-last-child(2) {
           width: 110px;
           position: relative;
-
-          button {
-            position: absolute;
-            top: 28px;
-            left: 0;
-            right: 0;
-            z-index: 2;
-          }
         }
       }
     }
@@ -179,29 +194,43 @@ form.profile-form {
       padding-top: 32px;
       position: relative;
 
+      table {
+        tr:first-child {
+          td {
+            &:first-child {
+              border-bottom: 5px solid #343434;
+              border-left: 5px solid #343434;
+
+              [dir='rtl'] & {
+                border-right: 5px solid #343434;
+                border-left: none;
+              }
+            }
+
+            &:nth-child(2) {
+              border-bottom: 5px solid #343434;
+            }
+
+            &:nth-child(3) {
+              border-bottom: 5px solid #343434;
+              border-right: 5px solid #343434;
+
+              [dir='rtl'] & {
+                border-left: 5px solid #343434;
+                border-right: none;
+              }
+            }
+          }
+        }
+      }
+
       &::after {
         content: '';
         width: 100%;
         height: 32px;
         position: absolute;
         background: #343434;
-        top: 0;
-      }
-
-      table {
-        tr:first-child {
-          position: relative;
-
-          &::after {
-            content: '';
-            position: absolute;
-            height: calc(100% + 10px);
-            width: 100%;
-            border: 5px solid #343434;
-            top: 0;
-            left: 0;
-          }
-        }
+        top: 12px;
       }
     }
   }
@@ -277,7 +306,7 @@ form.profile-form {
       content: attr(data-primary-text);
       position: absolute;
       color: white;
-      top: 27px;
+      top: 39px;
       left: 30px;
       font-size: 14px;
       font-weight: 600;
@@ -294,7 +323,7 @@ form.profile-form {
       content: attr(data-secondary-text);
       position: absolute;
       color: white;
-      top: 27px;
+      top: 39px;
       left: auto;
       right: 30px;
       font-size: 14px;
@@ -314,6 +343,74 @@ form.profile-form {
         [dir='rtl'] & {
           left: calc(100% - 544px);
           right: auto;
+        }
+      }
+    }
+  }
+
+  .field--name-field-other-affiliations {
+    .paragraphs-subform {
+      max-width: calc(100vw - 240px);
+
+      @media (min-width: 600px) {
+        max-width: 360px;
+      }
+    }
+    .paragraph-type {
+      display: none;
+    }
+
+    .paragraphs-actions {
+      & > button {
+        display: none;
+      }
+
+      .paragraphs-dropdown {
+        .paragraphs-dropdown-toggle,
+        .paragraphs-dropdown-actions button:not(:first-child) {
+          display: none;
+        }
+
+        .paragraphs-dropdown-actions {
+          display: block;
+          top: 6px;
+          right: 0;
+          border: none;
+          background: transparent;
+          box-shadow: none;
+
+          button:first-child {
+            border: none !important;
+            background: none;
+            width: 110px;
+            padding-right: 16px;
+            padding-left: 20px;
+            position: relative;
+            text-align: center;
+
+            [dir='rtl'] & {
+              padding-right: 20px;
+              padding-left: 16px;
+            }
+
+            &::before {
+              content: '';
+              display: block;
+              height: 16px;
+              width: 16px;
+              background-image: url('../images/icon-basket.svg');
+              background-size: contain;
+              position: absolute;
+              left: 0;
+              top: 50%;
+              transform: translateY(-50%);
+
+              [dir='rtl'] & {
+                right: 0;
+                left: auto;
+              }
+            }
+          }
         }
       }
     }

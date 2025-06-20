@@ -515,11 +515,6 @@ fieldset strong {
   min-width: auto;
 }
 
-.field--name-field-group-affiliation,
-.field--name-field-other-affiliations {
-  max-width: 544px;
-}
-
 .enrollment-methods .panel-body fieldset,
 .enrollment-methods .panel-body .panel-body {
   padding: 0;
@@ -531,6 +526,13 @@ fieldset strong {
 
 .enrollment-methods .panel-body .panel-heading header {
   font-weight: 400;
+}
+
+@media (min-width: 600px) {
+  .field--name-field-group-affiliation,
+  .field--name-field-other-affiliations {
+    max-width: 544px;
+  }
 }
 
 @media (max-width: 599px) {

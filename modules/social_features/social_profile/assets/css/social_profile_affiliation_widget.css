@@ -1,3 +1,11 @@
+form.profile-form .field--name-field-group-affiliation .alert-success,
+form.profile-form .field--name-field-other-affiliations .alert-success {
+  display: none !important;
+}
+form.profile-form .field--name-field-group-affiliation .table-responsive,
+form.profile-form .field--name-field-other-affiliations .table-responsive {
+  overflow: hidden;
+}
 form.profile-form .field--name-field-group-affiliation .btn.tabledrag-toggle-weight,
 form.profile-form .field--name-field-other-affiliations .btn.tabledrag-toggle-weight {
   display: none;
@@ -5,6 +13,11 @@ form.profile-form .field--name-field-other-affiliations .btn.tabledrag-toggle-we
 form.profile-form .field--name-field-group-affiliation .clearfix,
 form.profile-form .field--name-field-other-affiliations .clearfix {
   background: none;
+}
+form.profile-form .field--name-field-group-affiliation table,
+form.profile-form .field--name-field-other-affiliations table {
+  border-collapse: separate;
+  border-spacing: 0 12px;
 }
 form.profile-form .field--name-field-group-affiliation table td,
 form.profile-form .field--name-field-group-affiliation table th,
@@ -16,9 +29,9 @@ form.profile-form .field--name-field-group-affiliation table thead,
 form.profile-form .field--name-field-other-affiliations table thead {
   display: none;
 }
-form.profile-form .field--name-field-group-affiliation table tbody tr,
-form.profile-form .field--name-field-other-affiliations table tbody tr {
-  border-bottom: 12px solid white;
+form.profile-form .field--name-field-group-affiliation table tbody tr:hover,
+form.profile-form .field--name-field-other-affiliations table tbody tr:hover {
+  background: #f3f3f3;
 }
 form.profile-form .field--name-field-group-affiliation table tbody td,
 form.profile-form .field--name-field-other-affiliations table tbody td {
@@ -39,6 +52,7 @@ form.profile-form .field--name-field-other-affiliations table tbody td:nth-last-
   padding-right: 16px;
   padding-left: 20px;
   position: relative;
+  font-weight: 600;
 }
 [dir=rtl] form.profile-form .field--name-field-group-affiliation table tbody td:nth-last-child(2) button,
 [dir=rtl] form.profile-form .field--name-field-other-affiliations table tbody td:nth-last-child(2) button {
@@ -58,6 +72,11 @@ form.profile-form .field--name-field-other-affiliations table tbody td:nth-last-
   top: 50%;
   transform: translateY(-50%);
 }
+[dir=rtl] form.profile-form .field--name-field-group-affiliation table tbody td:nth-last-child(2) button::before,
+[dir=rtl] form.profile-form .field--name-field-other-affiliations table tbody td:nth-last-child(2) button::before {
+  right: 0;
+  left: auto;
+}
 form.profile-form .field--name-field-group-affiliation table tbody td label,
 form.profile-form .field--name-field-other-affiliations table tbody td label {
   display: block;
@@ -66,26 +85,44 @@ form.profile-form .field--name-field-group-affiliation table tbody td .input-gro
 form.profile-form .field--name-field-other-affiliations table tbody td .input-group {
   max-width: none;
 }
-form.profile-form .field--name-field-group-affiliation table tbody td > .form-wrapper > .form-group:not(.js-form-type-select),
-form.profile-form .field--name-field-other-affiliations table tbody td > .form-wrapper > .form-group:not(.js-form-type-select) {
-  max-width: 280px;
-}
-form.profile-form .field--name-field-group-affiliation table tbody td .alert-success,
-form.profile-form .field--name-field-other-affiliations table tbody td .alert-success {
-  max-width: 350px;
-}
 form.profile-form .field--name-field-group-affiliation table tbody td .form-type-select,
 form.profile-form .field--name-field-other-affiliations table tbody td .form-type-select {
   flex: none;
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 350px;
+  max-width: 100%;
+}
+form.profile-form .field--name-field-group-affiliation table tbody td .form-type-select .select2-container .select2-selection,
+form.profile-form .field--name-field-other-affiliations table tbody td .form-type-select .select2-container .select2-selection {
+  padding-left: 40px;
+  position: relative;
+}
+form.profile-form .field--name-field-group-affiliation table tbody td .form-type-select .select2-container .select2-selection:before,
+form.profile-form .field--name-field-other-affiliations table tbody td .form-type-select .select2-container .select2-selection:before {
+  content: "";
+  display: block;
+  height: 16px;
+  width: 16px;
+  padding: 2px;
+  background-color: #808080;
+  background-image: url("../images/sign.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 12px;
+  background-blend-mode: overlay;
+  position: absolute;
+  left: 12px;
+  top: 11px;
 }
 form.profile-form .field--name-field-group-affiliation table tbody td .form-type-select .input-group,
 form.profile-form .field--name-field-other-affiliations table tbody td .form-type-select .input-group {
-  max-width: 350px;
+  max-width: 100%;
   width: 100%;
+}
+form.profile-form .field--name-field-group-affiliation table tbody td .form-type-select .input-group .select-wrapper,
+form.profile-form .field--name-field-other-affiliations table tbody td .form-type-select .input-group .select-wrapper {
+  max-width: calc(100% - 60px);
 }
 form.profile-form .field--name-field-group-affiliation table tbody td.field-multiple-drag,
 form.profile-form .field--name-field-other-affiliations table tbody td.field-multiple-drag {
@@ -114,49 +151,51 @@ form.profile-form .field--name-field-other-affiliations table tbody td.field-mul
 form.profile-form .field--name-field-group-affiliation table tbody td.field-multiple-drag + td,
 form.profile-form .field--name-field-other-affiliations table tbody td.field-multiple-drag + td {
   padding-left: 0.25rem;
+  padding-top: 1.75rem;
+  max-width: calc(100vw - 220px);
+}
+@media (min-width: 600px) {
+  form.profile-form .field--name-field-group-affiliation table tbody td.field-multiple-drag + td,
+  form.profile-form .field--name-field-other-affiliations table tbody td.field-multiple-drag + td {
+    max-width: 324px;
+  }
+}
+[dir=rtl] form.profile-form .field--name-field-group-affiliation table tbody td.field-multiple-drag + td,
+[dir=rtl] form.profile-form .field--name-field-other-affiliations table tbody td.field-multiple-drag + td {
+  padding-right: 1rem;
+  padding-left: 0.25rem;
 }
 form.profile-form .field--name-field-group-affiliation table #ief-ajax-wrapper-0,
 form.profile-form .field--name-field-other-affiliations table #ief-ajax-wrapper-0 {
-  max-width: 350px;
   flex-direction: column;
   align-items: flex-start;
-}
-form.profile-form .field--name-field-group-affiliation .form-item-field-group-affiliation-0-container-group .select2-container .select2-selection,
-form.profile-form .field--name-field-other-affiliations .form-item-field-group-affiliation-0-container-group .select2-container .select2-selection {
-  padding-left: 40px;
-  position: relative;
-}
-form.profile-form .field--name-field-group-affiliation .form-item-field-group-affiliation-0-container-group .select2-container .select2-selection:before,
-form.profile-form .field--name-field-other-affiliations .form-item-field-group-affiliation-0-container-group .select2-container .select2-selection:before {
-  content: "";
-  display: block;
-  height: 16px;
-  width: 16px;
-  padding: 2px;
-  background-color: #808080;
-  background-image: url("../images/sign.svg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 12px;
-  background-blend-mode: overlay;
-  position: absolute;
-  left: 12px;
-  top: 11px;
 }
 form.profile-form .field--name-field-group-affiliation table tbody td:nth-last-child(2) {
   width: 110px;
   position: relative;
 }
-form.profile-form .field--name-field-group-affiliation table tbody td:nth-last-child(2) button {
-  position: absolute;
-  top: 28px;
-  left: 0;
-  right: 0;
-  z-index: 2;
-}
 form.profile-form .field--name-field-group-affiliation.has-multiple-items {
   padding-top: 32px;
   position: relative;
+}
+form.profile-form .field--name-field-group-affiliation.has-multiple-items table tr:first-child td:first-child {
+  border-bottom: 5px solid #343434;
+  border-left: 5px solid #343434;
+}
+[dir=rtl] form.profile-form .field--name-field-group-affiliation.has-multiple-items table tr:first-child td:first-child {
+  border-right: 5px solid #343434;
+  border-left: none;
+}
+form.profile-form .field--name-field-group-affiliation.has-multiple-items table tr:first-child td:nth-child(2) {
+  border-bottom: 5px solid #343434;
+}
+form.profile-form .field--name-field-group-affiliation.has-multiple-items table tr:first-child td:nth-child(3) {
+  border-bottom: 5px solid #343434;
+  border-right: 5px solid #343434;
+}
+[dir=rtl] form.profile-form .field--name-field-group-affiliation.has-multiple-items table tr:first-child td:nth-child(3) {
+  border-left: 5px solid #343434;
+  border-right: none;
 }
 form.profile-form .field--name-field-group-affiliation.has-multiple-items::after {
   content: "";
@@ -164,19 +203,7 @@ form.profile-form .field--name-field-group-affiliation.has-multiple-items::after
   height: 32px;
   position: absolute;
   background: #343434;
-  top: 0;
-}
-form.profile-form .field--name-field-group-affiliation.has-multiple-items table tr:first-child {
-  position: relative;
-}
-form.profile-form .field--name-field-group-affiliation.has-multiple-items table tr:first-child::after {
-  content: "";
-  position: absolute;
-  height: calc(100% + 10px);
-  width: 100%;
-  border: 5px solid #343434;
-  top: 0;
-  left: 0;
+  top: 12px;
 }
 form.profile-form .field--name-field-affiliation-function .form-type-textfield:before,
 form.profile-form .field--name-field-affiliation-org-name .form-type-textfield:before,
@@ -233,7 +260,7 @@ form.profile-form fieldset::after {
   content: attr(data-primary-text);
   position: absolute;
   color: white;
-  top: 27px;
+  top: 39px;
   left: 30px;
   font-size: 14px;
   font-weight: 600;
@@ -248,7 +275,7 @@ form.profile-form fieldset::before {
   content: attr(data-secondary-text);
   position: absolute;
   color: white;
-  top: 27px;
+  top: 39px;
   left: auto;
   right: 30px;
   font-size: 14px;
@@ -269,6 +296,61 @@ form.profile-form fieldset::before {
     left: calc(100% - 544px);
     right: auto;
   }
+}
+form.profile-form .field--name-field-other-affiliations .paragraphs-subform {
+  max-width: calc(100vw - 240px);
+}
+@media (min-width: 600px) {
+  form.profile-form .field--name-field-other-affiliations .paragraphs-subform {
+    max-width: 360px;
+  }
+}
+form.profile-form .field--name-field-other-affiliations .paragraph-type {
+  display: none;
+}
+form.profile-form .field--name-field-other-affiliations .paragraphs-actions > button {
+  display: none;
+}
+form.profile-form .field--name-field-other-affiliations .paragraphs-actions .paragraphs-dropdown .paragraphs-dropdown-toggle,
+form.profile-form .field--name-field-other-affiliations .paragraphs-actions .paragraphs-dropdown .paragraphs-dropdown-actions button:not(:first-child) {
+  display: none;
+}
+form.profile-form .field--name-field-other-affiliations .paragraphs-actions .paragraphs-dropdown .paragraphs-dropdown-actions {
+  display: block;
+  top: 6px;
+  right: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+form.profile-form .field--name-field-other-affiliations .paragraphs-actions .paragraphs-dropdown .paragraphs-dropdown-actions button:first-child {
+  border: none !important;
+  background: none;
+  width: 110px;
+  padding-right: 16px;
+  padding-left: 20px;
+  position: relative;
+  text-align: center;
+}
+[dir=rtl] form.profile-form .field--name-field-other-affiliations .paragraphs-actions .paragraphs-dropdown .paragraphs-dropdown-actions button:first-child {
+  padding-right: 20px;
+  padding-left: 16px;
+}
+form.profile-form .field--name-field-other-affiliations .paragraphs-actions .paragraphs-dropdown .paragraphs-dropdown-actions button:first-child::before {
+  content: "";
+  display: block;
+  height: 16px;
+  width: 16px;
+  background-image: url("../images/icon-basket.svg");
+  background-size: contain;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+[dir=rtl] form.profile-form .field--name-field-other-affiliations .paragraphs-actions .paragraphs-dropdown .paragraphs-dropdown-actions button:first-child::before {
+  right: 0;
+  left: auto;
 }
 
 /*# sourceMappingURL=social_profile_affiliation_widget.css.map */

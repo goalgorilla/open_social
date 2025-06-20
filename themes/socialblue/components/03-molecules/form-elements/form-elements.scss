@@ -367,7 +367,9 @@ fieldset {
 
 .field--name-field-group-affiliation,
 .field--name-field-other-affiliations {
-  max-width: 544px;
+  @include for-tablet-portrait-up {
+    max-width: 544px;
+  }
 }
 
 .enrollment-methods {
