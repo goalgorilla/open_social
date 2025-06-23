@@ -22,6 +22,12 @@
       if ($('body.user-logged-in').length === 0) { return; }
 
       $(once('previewPopupBehavior', $(context).find('[data-preview-url]'), context))
+        // when href is set to #, it takes user to the top of the page on click.
+        .on('click', function (e) {
+          if ($(this).attr('href') === '#') {
+            e.preventDefault();
+          }
+        })
         .on('mouseover', function () {
           var $element = $(this);
           var selector = $element.attr('id');
