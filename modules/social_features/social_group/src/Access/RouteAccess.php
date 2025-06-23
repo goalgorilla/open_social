@@ -60,14 +60,14 @@ class RouteAccess implements AccessInterface {
       return AccessResult::allowed();
     }
 
-    // Check if this group bundle supports direct join method via hooks.
-    if ($this->supportsDirectJoinMethod($group) && $route_match->getRouteName() === 'entity.group.join') {
-      return AccessResult::allowed();
-    }
-
     $join_method = $group->hasField('field_group_allowed_join_method')
       ? $group->get('field_group_allowed_join_method')->value
       : NULL;
+
+    // When a group lacks the join_method field, check for the alter hook.
+    if ($join_method === NULL && $this->supportsDirectJoinMethod($group) && $route_match->getRouteName() === 'entity.group.join') {
+      return AccessResult::allowed();
+    }
 
     // A member shouldn't be able to join a group if a group has "request"
     // or added" joining methods.
@@ -88,7 +88,7 @@ class RouteAccess implements AccessInterface {
    *   TRUE if the group supports direct join method, FALSE otherwise.
    */
   protected function supportsDirectJoinMethod(GroupInterface $group): bool {
-    return $this->joinManager->hasMethodValue($group, 'direct');
+    return $this->joinManager->hasMethod($group->bundle(), 'direct');
   }
 
 }

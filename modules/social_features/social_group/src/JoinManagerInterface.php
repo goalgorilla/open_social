@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group;
 
-use Drupal\group\Entity\GroupInterface;
 use Drupal\Core\Plugin\Context\ContextAwarePluginManagerInterface;
 
 /**
@@ -34,18 +33,5 @@ interface JoinManagerInterface extends ContextAwarePluginManagerInterface {
    *   The join method.
    */
   public function hasMethod(string $bundle, string $method): bool;
-
-  /**
-   * Check if a specific group has the direct join method.
-   *
-   * @param \Drupal\group\Entity\GroupInterface $group
-   *   The group entity.
-   * @param string $method
-   *   The join method.
-   *
-   * @return bool
-   *   TRUE if the group has the direct join method, FALSE otherwise.
-   */
-  public function hasMethodValue(GroupInterface $group, string $method): bool;
 
 }
