@@ -191,6 +191,10 @@ class FileContext extends RawMinkContext {
     $session = $this->getSession();
     $link = $session->getPage()->find('named', ['link', $link_text]);
     $url = $link->getAttribute('href');
+    
+    // Fix malformed URLs with empty query parameters.
+    // Issue introduced with views_data_export 1.6.0.
+    $url = $this->ensureWellFormedUrl($url);
 
     $hostname = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
     if (strpos($url, $hostname) === FALSE) {
@@ -201,6 +205,51 @@ class FileContext extends RawMinkContext {
     $response = $this->getUrlWithGuzzle($cookies, $url);
 
     return $response->getBody()->getContents();
+  }
+
+  /**
+   * Clean malformed URLs by removing empty query parameters.
+   *
+   * @param string $url
+   *   The URL to clean.
+   *
+   * @return string
+   *   The cleaned URL.
+   */
+  protected function ensureWellFormedUrl(string $url): string {
+    $parsed = parse_url($url);
+    
+    if (!isset($parsed['query'])) {
+      return $url;
+    }
+    
+    // Parse query string.
+    parse_str($parsed['query'], $query_params);
+    
+    // Remove empty parameters.
+    $query_params = array_filter($query_params, function($value) {
+      return $value !== '' && $value !== null;
+    });
+    
+    // Rebuild query string.
+    if (!empty($query_params)) {
+      $parsed['query'] = http_build_query($query_params);
+    } else {
+      unset($parsed['query']);
+    }
+    
+    // Rebuild complete URL.
+    $scheme = isset($parsed['scheme']) ? $parsed['scheme'] . '://' : '';
+    $host = isset($parsed['host']) ? $parsed['host'] : '';
+    $port = isset($parsed['port']) ? ':' . $parsed['port'] : '';
+    $user = isset($parsed['user']) ? $parsed['user'] : '';
+    $pass = isset($parsed['pass']) ? ':' . $parsed['pass'] : '';
+    $pass = ($user || $pass) ? "$pass@" : '';
+    $path = isset($parsed['path']) ? $parsed['path'] : '';
+    $query = isset($parsed['query']) ? '?' . $parsed['query'] : '';
+    $fragment = isset($parsed['fragment']) ? '#' . $parsed['fragment'] : '';
+    
+    return $scheme . $user . $pass . $host . $port . $path . $query . $fragment;
   }
 
   /**
