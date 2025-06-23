@@ -73,5 +73,7 @@ services:
       - { name: event_subscriber }
 
   Drupal\social_group\Access\RouteAccess:
+    arguments:
+      - '@plugin.manager.social_group.join'
     tags:
       - { name: access_check, applies_to: _social_group_access }

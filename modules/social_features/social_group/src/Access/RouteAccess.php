@@ -10,6 +10,7 @@ use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\JoinManagerInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -20,6 +21,21 @@ use Symfony\Component\Routing\Route;
  * constraints.
  */
 class RouteAccess implements AccessInterface {
+
+  /**
+   * The join manager.
+   */
+  protected JoinManagerInterface $joinManager;
+
+  /**
+   * RouteAccess constructor.
+   *
+   * @param \Drupal\social_group\JoinManagerInterface $join_manager
+   *   The join manager service.
+   */
+  public function __construct(JoinManagerInterface $join_manager) {
+    $this->joinManager = $join_manager;
+  }
 
   /**
    * Determines access to a route based on group settings and requirements.
@@ -44,6 +60,11 @@ class RouteAccess implements AccessInterface {
       return AccessResult::allowed();
     }
 
+    // Check if this group bundle supports direct join method via hooks.
+    if ($this->supportsDirectJoinMethod($group) && $route_match->getRouteName() === 'entity.group.join') {
+      return AccessResult::allowed();
+    }
+
     $join_method = $group->hasField('field_group_allowed_join_method')
       ? $group->get('field_group_allowed_join_method')->value
       : NULL;
@@ -55,6 +76,19 @@ class RouteAccess implements AccessInterface {
     }
 
     return AccessResult::allowed();
+  }
+
+  /**
+   * Check if a group supports direct join method based on hook implementations.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group entity.
+   *
+   * @return bool
+   *   TRUE if the group supports direct join method, FALSE otherwise.
+   */
+  protected function supportsDirectJoinMethod(GroupInterface $group): bool {
+    return $this->joinManager->hasMethodValue($group, 'direct');
   }
 
 }
