@@ -420,8 +420,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     }
 
     if (!empty($invalid_emails)) {
-      $message_singular = "User with @error_message e-mail already a member of this group.";
-      $message_plural = "Users with: @error_message e-mails already members of this group.";
+      $message_singular = "User with @error_message e-mail already a member.";
+      $message_plural = "Users with: @error_message e-mails already members.";
 
       $this->displayErrorMessage($invalid_emails, $message_singular, $message_plural, $form_state);
 

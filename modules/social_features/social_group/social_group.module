@@ -849,7 +849,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     ->id() != 1) {
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Find people by name');
-    $form['group_roles']['widget']['#title'] = t('Group roles');
+    $form['group_roles']['widget']['#title'] = t('Roles');
     $form['path']['#type'] = 'hidden';
   }
 
@@ -1179,7 +1179,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
         // Add nice messages.
         if (!empty($count)) {
           $message = \Drupal::translation()
-            ->formatPlural($count, '@count new member joined the group.', '@count new members joined the group.');
+            ->formatPlural($count, '@count new member joined.', '@count new members joined.');
           \Drupal::messenger()->addMessage($message, 'status');
         }
 

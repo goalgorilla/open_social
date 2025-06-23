@@ -32,7 +32,7 @@ Feature: View filtered users as site manager
     And I fill in select2 input ".form-type-select" with "Behat Member 1" and select "Behat Member 1"
     And I wait for AJAX to finish
     And I press "Save"
-    And I should see "1 new member joined the group."
+    And I should see "1 new member joined."
 
     # Add Behat member 2 to the Behat Group 2 group directly.
     And I am on "/all-groups"
@@ -43,7 +43,7 @@ Feature: View filtered users as site manager
     And I fill in select2 input ".form-type-select" with "Behat Member 2" and select "Behat Member 2"
     And I wait for AJAX to finish
     And I press "Save"
-    And I should see "1 new member joined the group."
+    And I should see "1 new member joined."
 
     # Add Behat member 2 to the Behat Group 3 group directly.
     And I am on "/all-groups"
@@ -54,7 +54,7 @@ Feature: View filtered users as site manager
     And I fill in select2 input ".form-type-select" with "Behat Member 3" and select "Behat Member 3"
     And I wait for AJAX to finish
     And I press "Save"
-    And I should see "1 new member joined the group."
+    And I should see "1 new member joined."
 
     # Add Behat member 4 to the Behat Group 4 group directly.
     And I am on "/all-groups"
@@ -65,7 +65,7 @@ Feature: View filtered users as site manager
     And I fill in select2 input ".form-type-select" with "Behat Member 4" and select "Behat Member 4"
     And I wait for AJAX to finish
     And I press "Save"
-    And I should see "1 new member joined the group."
+    And I should see "1 new member joined."
 
     # Checks if the filter by group in a admin/people is working
     And I am logged in as an "sitemanager"

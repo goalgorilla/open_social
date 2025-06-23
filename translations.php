@@ -217,3 +217,11 @@ new TranslatableMarkup('Approve membership request for the group @group_title');
 new TranslatableMarkup('Reject membership request for the group @group_title');
 new TranslatableMarkup('Approve Membership');
 new TranslatableMarkup('Reject Membership');
+
+// Strings added to replace the old ones due to ticket PROD-33038.
+new PluralTranslatableMarkup(0, '@count new member joined the group.', '@count new members joined the group.');
+new PluralTranslatableMarkup(0, 'Choose which group roles to assign to the member you selected', 'Choose which group roles to assign to the @count members you selected');
+new PluralTranslatableMarkup(0, '1 group invite', '@count group invites');
+new PluralTranslatableMarkup(0, 'User with @error_message e-mail already a member of this group', 'Users with: @error_message e-mails already members of this group');
+new TranslatableMarkup('Send a welcome message to new group members');
+new TranslatableMarkup('Group roles');

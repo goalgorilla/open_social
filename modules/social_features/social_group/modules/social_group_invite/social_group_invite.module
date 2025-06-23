@@ -359,7 +359,7 @@ function social_group_invite_preprocess_page_title(&$variables) {
     !empty(\Drupal::routeMatch()->getParameter('user'))) {
     $loader = \Drupal::service('ginvite.invitation_loader');
     $count = count($loader->loadByUser());
-    $translation = \Drupal::translation()->formatPlural($count, '1 group invite', '@count group invites');
+    $translation = \Drupal::translation()->formatPlural($count, '1 invite', '@count invites');
     $variables['title'] = $translation;
 
     $user = \Drupal::routeMatch()->getParameter('user');

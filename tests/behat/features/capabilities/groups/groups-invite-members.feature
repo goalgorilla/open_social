@@ -96,7 +96,7 @@ Feature: Send invite group email notifications
     And I logout
     And I am logged in as "verified"
     And I go to "/my-invites"
-    And I should see "1 group invite"
+    And I should see "1 invite"
     And I should see "Test-invite-group"
 
 #    # Make sure the invite is not shown as part of the "group membership count" when on SKY theme in the profile block.

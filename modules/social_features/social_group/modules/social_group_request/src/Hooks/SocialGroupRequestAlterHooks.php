@@ -46,7 +46,7 @@ class SocialGroupRequestAlterHooks {
       $form['field_grequest_reason'] = [
         '#type' => 'textarea',
         '#title' => t('Reason'),
-        '#description' => t('Would you like to a add a reason?'),
+        '#description' => t('Would you like to add a reason?'),
         '#rows' => 4,
         '#required' => FALSE,
         '#weight' => 5,

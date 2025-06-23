@@ -181,8 +181,8 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
     $roles[$id] = $this->entityTypeManager->getStorage('group_role')->load($id);
 
     $markup = $this->formatPlural($this->context['selected_count'],
-      'Choose which group roles to assign to the member you selected',
-      'Choose which group roles to assign to the @count members you selected'
+      'Choose which roles to assign to the member you selected',
+      'Choose which roles to assign to the @count members you selected'
     );
 
     $form['description'] = [
@@ -198,7 +198,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
 
     $form['role'] = [
       '#type' => 'radios',
-      '#title' => $this->t('Group roles'),
+      '#title' => $this->t('Roles'),
       '#options' => $roles,
       '#default_value' => $id,
     ];

@@ -28,7 +28,7 @@ Feature: Validate access and visibility of topics for Verified User
     And I fill in select2 input ".form-type-select" with "Group Member" and select "Group Member"
     And I wait for AJAX to finish
     And I press "Save"
-    And I should see "1 new member joined the group."
+    And I should see "1 new member joined."
 
   Scenario: Verified user should see public and community topics
     Given I am logged in as a user with the verified role
