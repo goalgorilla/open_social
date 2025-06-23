@@ -38,7 +38,9 @@
               dialogs[selector] = Drupal.dialog(
                 '<div>'.concat(previewPopup[identifier].data, '</div>'),
                 {
-                  dialogClass: 'social-dialog social-dialog--user-preview',
+                  classes: {
+                    'ui-dialog': 'social-dialog social-dialog--user-preview',
+                  },
                   width: '360px',
                   position: {
                     my: 'left top',
