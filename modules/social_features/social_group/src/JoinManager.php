@@ -11,6 +11,7 @@ use Drupal\Core\Render\RenderableInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\social_group\Annotation\Join;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * Defines the join manager.
@@ -240,6 +241,55 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
         )
       ) {
         return TRUE;
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasMethodValue(GroupInterface $group, string $method): bool {
+    $entity_type = $group->getEntityType();
+    $entity_type_id = $group->getEntityTypeId();
+
+    foreach ($this->relations() as $relation) {
+      if (
+        $relation['entity_type'] === $entity_type_id &&
+        (
+          !isset($relation['bundle']) &&
+          $entity_type->getBundleEntityType() === NULL ||
+          in_array($group->bundle(), (array) $relation['bundle'])
+        )
+      ) {
+        if (isset($relation['field'])) {
+          if (isset($relation['method'])) {
+            // If both field and method are specified, check if the field has a value.
+            if (in_array($method, (array) $relation['method'])) {
+              $field = $group->get($relation['field']);
+              if (!$field->isEmpty() && !empty($field->getValue()[0]['value'])) {
+                return TRUE;
+              }
+            }
+          }
+          else {
+            // If only field is specified, check the field value.
+            $field = $group->get($relation['field']);
+            if (!$field->isEmpty()) {
+              $field_values = array_column($field->getValue(), 'value');
+              if (in_array($method, $field_values)) {
+                return TRUE;
+              }
+            }
+          }
+        }
+        else {
+          // If no field is specified, check if the method is supported.
+          if (isset($relation['method']) && in_array($method, (array) $relation['method'])) {
+            return TRUE;
+          }
+        }
       }
     }
 
