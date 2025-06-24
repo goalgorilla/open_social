@@ -45,6 +45,13 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
    * {@inheritdoc}
    */
   public function relations(): array {
+    $relations = &drupal_static(__FUNCTION__, []);
+
+    // Return cached data if exists.
+    if (!empty($relations)) {
+      return $relations;
+    }
+
     $items = $this->moduleHandler->invokeAll(self::HOOK_JOIN_METHOD_USAGE);
 
     $this->moduleHandler->alter(self::HOOK_JOIN_METHOD_USAGE, $items);
@@ -105,7 +112,7 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
       }
     }
 
-    return $items;
+    return $relations = $items;
   }
 
   /**

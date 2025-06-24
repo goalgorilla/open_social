@@ -60,12 +60,11 @@ class RouteAccess implements AccessInterface {
       return AccessResult::allowed();
     }
 
-    $join_method = $group->hasField('field_group_allowed_join_method')
-      ? $group->get('field_group_allowed_join_method')->value
-      : NULL;
+    $join_method = $this->getJoinMethod($group);
 
-    // When a group lacks the join_method field, check for the alter hook.
-    if ($join_method === NULL && $this->supportsDirectJoinMethod($group) && $route_match->getRouteName() === 'entity.group.join') {
+    // The join method is required for further access check.
+    // If it's empty, we won't do anything.
+    if (!$join_method) {
       return AccessResult::allowed();
     }
 
@@ -79,16 +78,51 @@ class RouteAccess implements AccessInterface {
   }
 
   /**
-   * Check if a group supports direct join method based on hook implementations.
+   * Determines the join method for a given group.
    *
    * @param \Drupal\group\Entity\GroupInterface $group
-   *   The group entity.
+   *   The group entity for which to determine the join method.
    *
-   * @return bool
-   *   TRUE if the group supports direct join method, FALSE otherwise.
+   * @return string|null
+   *   The join method for the group if available, or NULL if no join method
+   *   is found.
    */
-  protected function supportsDirectJoinMethod(GroupInterface $group): bool {
-    return $this->joinManager->hasMethod($group->bundle(), 'direct');
+  protected function getJoinMethod(GroupInterface $group): ?string {
+    // Try to get the join method from the group field.
+    $join_method = $group->hasField('field_group_allowed_join_method')
+      ? $group->get('field_group_allowed_join_method')->value
+      : NULL;
+
+    if ($join_method) {
+      return $join_method;
+    }
+
+    // If the group doesn't have a join method in the appropriate field, try
+    // to find a fallback join method definition by join manager.
+    $join_definitions = $this->joinManager->relations();
+    if (empty($join_definitions)) {
+      return NULL;
+    }
+
+    foreach ($join_definitions as $definition) {
+      // We need all of these three data sets.
+      if (!isset($definition['entity_type'], $definition['bundle'], $definition['method'])) {
+        continue;
+      }
+
+      // Should be a group type.
+      if ($definition['entity_type'] !== 'group') {
+        continue;
+      }
+      // And with the appropriate bundle.
+      if (!in_array($group->bundle(), (array) $definition['bundle'])) {
+        continue;
+      }
+
+      return $definition['method'];
+    }
+
+    return NULL;
   }
 
 }
