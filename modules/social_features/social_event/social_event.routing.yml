@@ -28,6 +28,7 @@ social_event.update_enrollment_request:
   requirements:
     _custom_access: '\Drupal\social_event\Controller\UpdateEnrollRequestController::access'
     approve: '[0-1]+'
+    _csrf_token: 'TRUE'
 
 social_event.enrollment_request_decline_form:
   path: '/node/{node}/all-enrollment-requests/confirm-decline/{event_enrollment}'
