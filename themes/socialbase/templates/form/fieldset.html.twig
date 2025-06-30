@@ -24,9 +24,12 @@
 #}
 {%
   set classes = [
+    'fieldset',
     form_group ? 'form-group',
-    not form_group ? 'js-form-wrapper',
-    not form_group ? 'form-wrapper',
+    'js-form-item',
+    'form-item',
+    'js-form-wrapper',
+    'form-wrapper',
   ]
 %}
 
@@ -58,7 +61,7 @@
     <div{{ description.attributes.addClass('help-block') }}>{{ description.content }}</div>
   {% endif %}
 
-  <div class="fieldset-wrapper">
+  <div{{content_attributes.addClass('fieldset-wrapper')}}>
     {% if prefix %}
       <span class="field-prefix">{{ prefix }}</span>
     {% endif %}
