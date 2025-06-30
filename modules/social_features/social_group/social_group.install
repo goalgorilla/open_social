@@ -1138,19 +1138,9 @@ function social_group_update_13017(): void {
 }
 
 /**
- * Re-create view `group_manage_members` from config.
+ * Update view `group_manage_members` default display.
  */
 function social_group_update_13018(): string {
-  $view_id = 'group_manage_members';
-
-  $view = \Drupal::entityTypeManager()
-    ->getStorage('view')
-    ->load($view_id);
-
-  if ($view) {
-    $view->delete();
-  }
-
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_group', __FUNCTION__);
