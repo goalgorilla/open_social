@@ -32,7 +32,10 @@ final class GroupHooks {
       return;
     }
     // Invalidate cache for group_membership create/delete.
-    $this->cacheInvalidator->invalidateTags([UserFlexibleGroupMemberships::CID_BASE . $entity->getOwnerId()]);
+    // We are getting ID of the related entity, that is User id in this case.
+    // But not the owner, because any Admin user can add members, and this user
+    // will be the author.
+    $this->cacheInvalidator->invalidateTags([UserFlexibleGroupMemberships::CID_BASE . $entity->getEntityId()]);
   }
 
 }
