@@ -40,16 +40,24 @@
     {% endif %}
     {% for item in items %}
       {%
+        set is_nolink = false
+      %}
+      {# Check if URL contains nolink to determine if it's a nolink item #}
+      {% if item.url.toString() == '<nolink>' %}
+        {% set is_nolink = true %}
+      {% endif %}
+
+      {%
         set item_classes = [
           'expanded',
           'dropdown',
           item.in_active_trail ? 'active',
-          item.url.routeName == '<nolink>' ? 'no-link'
+          is_nolink ? 'no-link'
         ]
       %}
       {% if item.is_expanded %}
         <li{{ item.attributes.addClass(item_classes) }}>
-          {% if item.url.routeName == '<nolink>' %}
+          {% if is_nolink %}
             <span class="dropdown-toggle" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">
               {{ item.title }}
               <span class="caret"></span>
