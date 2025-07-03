@@ -65,6 +65,11 @@ class FrontpageEntityDeletionValidator implements ContainerInjectionInterface {
   public static function validateFrontpage(array $form, FormStateInterface $form_state): void {
     $container = \Drupal::getContainer();
     $instance = static::create($container);
+
+    if (isset($form['#form_id']) && $form['#form_id'] === 'alternative_frontpage_delete_form') {
+      return;
+    }
+
     $instance->validateFrontpageInternal($form, $form_state);
   }
 

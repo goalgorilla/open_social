@@ -55,11 +55,9 @@ Feature: Set alternative frontpage
     And I am logged in as "behatsitemanager"
     And I am on "admin/config/alternative_frontpage/manage/anonymous_users/delete"
     And I click the xth "0" element with the css "#edit-submit"
-    And I click "Delete"
     And I should see "Entity Anonymous users has been deleted."
     And I am on "admin/config/alternative_frontpage/manage/logged_users/delete"
     And I click the xth "0" element with the css "#edit-submit"
-    And I click "Delete"
     And I should see "Logged users has been deleted."
     And I click "Back to site"
     And the cache has been cleared
