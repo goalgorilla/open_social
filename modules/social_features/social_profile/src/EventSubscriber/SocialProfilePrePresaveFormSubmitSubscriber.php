@@ -128,6 +128,11 @@ class SocialProfilePrePresaveFormSubmitSubscriber implements EventSubscriberInte
     // Iterate over all group affiliation widgets submitted in the form.
     foreach ($form_state->getValue(GroupAffiliation::AFFILIATION_FIELD_NAME) as $key => $group_affiliation) {
 
+      // Skip non-array keys such as objects.
+      if (!is_array($group_affiliation)) {
+        continue;
+      }
+
       // Skip if the membership form subcomponent is empty (no affiliation
       // fields).
       if (!empty($group_affiliation['container']['group_membership_form'])) {
