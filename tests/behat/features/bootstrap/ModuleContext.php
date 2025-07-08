@@ -25,6 +25,11 @@ class ModuleContext extends RawMinkContext {
   private DrupalContext $drupalContext;
 
   /**
+   * The test bridge that allows running code in the Drupal installation.
+   */
+  private TestBridgeContext $testBridge;
+
+  /**
    * Make some contexts available here so we can delegate steps.
    *
    * @BeforeScenario
@@ -33,6 +38,7 @@ class ModuleContext extends RawMinkContext {
     $environment = $scope->getEnvironment();
 
     $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
+    $this->testBridge = $environment->getContext(TestBridgeContext::class);
   }
 
   /**
@@ -57,7 +63,9 @@ class ModuleContext extends RawMinkContext {
    * @Given I enable the module :module
    */
   public function iEnableTheModule(string $module) : void {
-    \Drupal::service('module_installer')->install([$module]);
+    $this->testBridge->installModules([$module]);
+
+    // @todo This can be removed when we no longer rely on Drupal state.
     $this->drupalContext->assertCacheClear();
   }
 
@@ -67,7 +75,7 @@ class ModuleContext extends RawMinkContext {
    * @When I disable the module :module
    */
   public function uninstallModule(string $module) : void {
-    \Drupal::service('module_installer')->uninstall([$module], FALSE);
+    $this->testBridge->uninstallModules([$module], FALSE);
   }
 
   /**
@@ -76,7 +84,7 @@ class ModuleContext extends RawMinkContext {
    * @When I disable module :module and its dependants
    */
   public function uninstallModuleAndDependants(string $module) : void {
-    \Drupal::service('module_installer')->uninstall([$module], TRUE);
+    $this->testBridge->uninstallModules([$module], TRUE);
   }
 
   /**
@@ -86,6 +94,7 @@ class ModuleContext extends RawMinkContext {
    * set-up since it requires parameters from the database.
    *
    * @return array<string, array>
+   *   The array of optional modules.
    */
   protected function getOptionalModules() : array {
     if ($this->optionalModules === NULL) {
