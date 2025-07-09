@@ -50,7 +50,7 @@ function activity_send_schema() {
     'primary keys' => [
       'uid',
       'destination',
-      'frequency',
+      'message_template',
     ],
   ];
 
@@ -71,7 +71,7 @@ function activity_send_update_13000() {
   $fields = [
     'uid',
     'destination',
-    'frequency',
+    'message_template',
   ];
   $schema = Database::getConnection()->schema();
 
