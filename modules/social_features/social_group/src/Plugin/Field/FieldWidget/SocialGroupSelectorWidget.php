@@ -491,6 +491,19 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
   }
 
   /**
+   * Check if the array is flat or not.
+   *
+   * @param array $items
+   *   List of items.
+   *
+   * @return bool
+   *   TRUE if nested, FALSE if flat.
+   */
+  private function isNestedArray(array $items): bool {
+    return is_array(reset($items));
+  }
+
+  /**
    * Check if multiple selection is available based on the options and settings.
    *
    * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem<\Drupal\group\Entity\Group>> $items
@@ -501,25 +514,17 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
    */
   private function isMultipleSelectionAvailable(FieldItemListInterface $items): bool {
     $canSelectMultipleGroups = FALSE;
-    // The 'options' array structure is either:
-    // - Single level for flexible groups only (flat structure)
-    // - Two levels for mixed group types
-    // (nested structure with group types as categories).
-    $iterator = new \RecursiveIteratorIterator(
-      new \RecursiveArrayIterator($this->options),
-      \RecursiveIteratorIterator::SELF_FIRST
-    );
-    $optionsDepth = $iterator->getDepth() + 1;
+    $nested = $this->isNestedArray($this->options);
 
     // Case 1: Single level options (flat structure).
-    if ($optionsDepth === 1) {
+    if ($nested === FALSE) {
       if ($this->multiple && count($this->options) > 1) {
         $canSelectMultipleGroups = TRUE;
       }
     }
 
     // Case 2: Nested options (group types as categories).
-    if ($optionsDepth > 1) {
+    if ($nested === TRUE) {
       // Check if any option group contains multiple items.
       // If so, enable multiple selection to allow users to select multiple
       // items from that group.
