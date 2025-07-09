@@ -39,9 +39,9 @@ Feature: Comment on a Post
     Given posts:
       | field_post                |  author      | type | field_visibility | status | langcode |
       | This is a community post. |  PostUser1   | post | 1                | 1      | en       |
-    And comments authored by current user:
-      | target_type   | target_label               | status | subject                  | field_comment_body           | comment_type |
-      | post:post     | This is a community post.  | 1      | The comment subject      | This is a really cool topic! | post_comment |
+    And comments:
+      | author    | target_type   | target_label               | status | subject                  | field_comment_body           | comment_type |
+      | PostUser2 | post:post     | This is a community post.  | 1      | The comment subject      | This is a really cool topic! | post_comment |
 
     When I am logged in as "PostUser2"
     And I click the xth "0" element with the css ".comment .comment__actions .dropdown-toggle" in the "Main content"
@@ -55,9 +55,9 @@ Feature: Comment on a Post
     Given posts:
       | field_post                |  author      | type | field_visibility | status | langcode |
       | This is a community post. |  PostUser1   | post | 1                | 1      | en       |
-    And comments authored by current user:
-      | target_type   | target_label               | status | subject                  | field_comment_body           | comment_type |
-      | post:post     | This is a community post.  | 1      | The comment subject      | This is a really cool topic! | post_comment |
+    And comments:
+      | author    | target_type   | target_label               | status | subject                  | field_comment_body           | comment_type |
+      | PostUser2 | post:post     | This is a community post.  | 1      | The comment subject      | This is a really cool topic! | post_comment |
 
     When I am logged in as "PostUser2"
     And I am on the homepage
