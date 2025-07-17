@@ -106,6 +106,10 @@ class FrontpageEntityDeletionValidator implements ContainerInjectionInterface {
       return;
     }
 
+    if (!in_array($entity->getEntityTypeId(), ['node', 'group'])) {
+      return;
+    }
+
     if ($this->avoidDeletingFrontPageEntity->isEntitySetAsAlternativeFrontPage($entity, $entity_type)) {
       $this->setFrontpageDeletionError($form_state, $entity, $entity_type);
     }
