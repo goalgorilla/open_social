@@ -132,7 +132,8 @@ class ActivityLoggerFactory {
           $new_message['created'] = $entity->get('created')->value;
         }
         else {
-          $new_message['created'] = $entity->getCreatedTime();
+          // Using entity update time if exists, if no created time.
+          $new_message['created'] = method_exists($entity, 'getChangedTime') ? $entity->getChangedTime() : $entity->getCreatedTime();
         }
       }
 
