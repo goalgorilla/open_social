@@ -33,6 +33,7 @@ class AddToOutlook extends SocialAddToCalendarBase {
         'startdt' => $settings['dates']['start'],
         'enddt' => $settings['dates']['end'],
         'allday' => $settings['dates']['all_day'] ? 'true' : 'false',
+        'body' => $settings['description'],
         'location' => $settings['location'],
       ],
       'attributes' => [
