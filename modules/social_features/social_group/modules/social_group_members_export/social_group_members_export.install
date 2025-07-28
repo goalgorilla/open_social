@@ -23,19 +23,43 @@ function social_group_members_export_install(): void {
 function _social_group_members_export_alter_group_manage_members_view(): void {
   $config = \Drupal::configFactory()->getEditable('views.view.group_manage_members');
   $selected_actions = $config->get('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.selected_actions');
-  $selected_actions[] = [
-    'action_id' => 'social_group_members_export_member_action',
-    'preconfiguration' => [
-      'label_override' => t('Export'),
-    ],
-  ];
-  $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.selected_actions', $selected_actions);
-  $config->save();
+
+  // Check if the export action is already present to avoid duplicates.
+  $action_exists = FALSE;
+  foreach ($selected_actions as $action) {
+    if ($action['action_id'] === 'social_group_members_export_member_action') {
+      $action_exists = TRUE;
+      break;
+    }
+  }
+
+  // Add the export action if it doesn't exist.
+  if (!$action_exists) {
+    $selected_actions[] = [
+      'action_id' => 'social_group_members_export_member_action',
+      'preconfiguration' => [
+        'label_override' => t('Export'),
+      ],
+    ];
+    $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.selected_actions', $selected_actions);
+    $config->save();
+  }
 }
 
 /**
  * Implements hook_update_last_removed().
  */
-function social_group_members_export_update_last_removed() : int {
+function social_group_members_export_update_last_removed(): int {
   return 11002;
+}
+
+/**
+ * Adds the export action back to 'views.view.group_manage_members'.
+ *
+ * It was removed by social_group_update_13018().
+ * Action ID: 'social_group_members_export_member_action'.
+ */
+function social_group_members_export_update_11003(): void {
+  // Reuse the existing function to add the export action.
+  _social_group_members_export_alter_group_manage_members_view();
 }
