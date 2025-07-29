@@ -132,7 +132,7 @@ function social_profile_uninstall() {
 /**
  * Implements hook_update_last_removed().
  */
-function social_profile_update_last_removed(): int {
+function social_profile_update_last_removed() : int {
   return 111101;
 }
 
@@ -210,8 +210,7 @@ function social_profile_update_130001(): void {
  */
 function social_profile_update_130002(): void {
   $moduleHandler = \Drupal::moduleHandler();
-  if (
-    $moduleHandler->moduleExists('views') === FALSE ||
+  if ($moduleHandler->moduleExists('views') === FALSE ||
     $moduleHandler->moduleExists('user') === FALSE ||
     $moduleHandler->moduleExists('profile') === FALSE
   ) {
@@ -317,7 +316,7 @@ function social_profile_update_130004(): string {
 /**
  * Update access rules to "user/{uid}/information" page.
  */
-function social_profile_update_130005(): string {
+function social_profile_update_130005() : string {
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_profile', __FUNCTION__);
@@ -376,33 +375,4 @@ function social_profile_update_250003(): string {
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
-}
-
-/**
- * Enable group_by for newest_users view to prevent duplicate members.
- *
- * This update hook adds the group_by option to the newest_users view query
- * to ensure that each user is only displayed once, even when there are
- * multiple profile records or relationships that could cause duplicates.
- * The group_by setting helps aggregate results and prevent duplicate entries
- * in the newest users listing.
- *
- * @link https://getopensocial.atlassian.net/browse/PROD-33202 @endlink
- */
-function social_profile_update_250004(): void {
-  // Get the configuration factory service to modify the view configuration.
-  $config_factory = \Drupal::configFactory();
-  $view_config = $config_factory->getEditable('views.view.newest_users');
-
-  // Get the current display options from the view configuration.
-  $display_options = $view_config->get('display.default.display_options');
-  $query_options = $display_options['query']['options'];
-
-  // Add the group_by option to prevent duplicate members in the results.
-  $query_options['group_by'] = TRUE;
-  $display_options['query']['options'] = $query_options;
-
-  // Update the view configuration with the new query options.
-  $view_config->set('display.default.display_options', $display_options);
-  $view_config->save();
 }
