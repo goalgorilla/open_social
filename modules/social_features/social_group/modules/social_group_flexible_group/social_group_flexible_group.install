@@ -437,3 +437,15 @@ function social_group_flexible_group_update_130014(): string {
   $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Update the group visibility field description.
+ */
+function social_group_flexible_group_update_130015(): void {
+  $field_config = \Drupal::configFactory()
+    ->getEditable('field.field.group.flexible_group.field_flexible_group_visibility');
+
+  $field_config->set('label', 'Visibility');
+  $field_config->set('description', 'Who can find and view your group.');
+  $field_config->save();
+}

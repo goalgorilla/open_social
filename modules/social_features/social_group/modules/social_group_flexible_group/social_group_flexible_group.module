@@ -21,8 +21,10 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\block\Entity\Block;
+use Drupal\Core\Render\Markup;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\social_group\SocialGroupHelperService;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate;
@@ -429,7 +431,7 @@ function social_group_flexible_group_preprocess_fieldset(array &$variables): voi
 
   $fields = [
     'field_flexible_group_visibility' => [
-      'title' => t('Group Visibility'),
+      'title' => t('Visibility'),
       'hook' => 'social_group_group_visibility_description',
     ],
     'field_group_allowed_visibility' => [
@@ -447,11 +449,45 @@ function social_group_flexible_group_preprocess_fieldset(array &$variables): voi
 
   $description = '';
 
+  // Get entity type and group type from route param.
+  $entity_type_id = \Drupal::routeMatch()->getParameter('entity_type_id');
+  $group_type = \Drupal::routeMatch()->getParameter('group_type');
   foreach ($element['#options'] as $key => $label) {
     $description .= $helper->description(
       $key,
       $fields[$element['#field_name']]['hook'],
     );
+
+    // Replace Group with actual group type name.
+    if ($entity_type_id && $group_type && $group_type instanceof GroupTypeInterface) {
+      if ($key == 'members' && $group_type->id() != 'flexible_group') {
+        $description = str_replace(
+          "Group",
+          (string) $group_type->label(),
+          $description
+        );
+
+        $description = str_replace(
+          "group",
+          strtolower((string) $group_type->label()),
+          $description
+        );
+      }
+    }
+  }
+
+  // Replace Group with actual group type name.
+  if ($entity_type_id && $group_type && $group_type instanceof GroupTypeInterface && $group_type->id() != 'flexible_group') {
+    $children = $variables['children'];
+    assert($children instanceof Markup);
+
+    $children = str_replace(
+      "Group",
+      (string) $group_type->label(),
+      $variables['children']->__toString()
+    );
+    $new_children_markup = Markup::create($children);
+    $variables['children'] = $new_children_markup;
   }
 
   // Render a specific tooltip based on a field name and description.

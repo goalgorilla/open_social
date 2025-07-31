@@ -12,12 +12,21 @@
  * @ingroup themeable
  */
 #}
+
+{{ attach_library('social_group/visibility-tooltip') }}
+
 <p>
-  <strong>
-    <svg class="icon-small">
-      <use xlink:href="#icon-{% if icon %}{{ icon }}{% else %}{{ name }}{% endif %}"></use>
-    </svg>
-    {{ title }}
-  </strong>
-  - {{ description }}
+  <span>
+    <strong>
+      <svg class="icon-small">
+        <use xlink:href="#icon-{% if icon %}{{ icon }}{% else %}{{ name }}{% endif %}"></use>
+      </svg>
+      <span>
+        {{ title }}
+      </span>
+    </strong>
+  </span>
+  <span>
+    {{ description }}
+  </span>
 </p>

@@ -589,15 +589,15 @@ function social_group_social_group_content_visibility_description_alter(string $
   $items = [
     'public' => [
       'title' => t('Public'),
-      'description' => t('visible to all visitors to the platform.'),
+      'description' => t('Visible to everyone, including those not logged in'),
     ],
     'community' => [
       'title' => t('Community'),
-      'description' => t('only visible to all logged-in users.'),
+      'description' => t('All verified users can access it'),
     ],
     'group' => [
       'title' => t('Group members only'),
-      'description' => t('only visible to logged-in group members.'),
+      'description' => t('Available to members of a selected group'),
       'icon' => 'lock',
     ],
   ];
@@ -614,15 +614,15 @@ function social_group_social_group_group_visibility_description_alter(string $ke
   $items = [
     'public' => [
       'title' => t('Public'),
-      'description' => t('All visitors of the platform can see this group'),
+      'description' => t('Visible to everyone, including those not logged in'),
     ],
     'community' => [
       'title' => t('Community'),
-      'description' => t('Only members who are logged in can see this group'),
+      'description' => t('All verified users can access it'),
     ],
     'members' => [
-      'title' => t('Group members only (Secret)'),
-      'description' => t('Only group members can see this group'),
+      'title' => t('Group members only'),
+      'description' => t('Available to members of a selected group'),
       'icon' => 'lock',
     ],
   ];
@@ -2619,6 +2619,7 @@ function social_group_render_tooltip($field_name, TranslatableMarkup $data_title
       'aria-hidden' => 'true',
     ],
   ];
+
   // As documented in Render API, Note that the value is passed through
   // \Drupal\Component\Utility\Xss::filterAdmin(), which strips known XSS
   // vectors while allowing a permissive list of HTML tags.

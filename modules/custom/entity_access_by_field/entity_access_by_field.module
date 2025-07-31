@@ -132,6 +132,14 @@ function entity_access_by_field_field_widget_single_element_form_alter(&$element
   }
 
   $element['#default_value'] = _entity_access_by_field_get_default_visibility($entity);
+  if ($entity->getEntityTypeId() == 'node') {
+    $element['#description'] = t(
+      'Who can find and view your @bundle',
+      [
+        '@bundle' => $entity->bundle(),
+      ]
+    );
+  }
 
   // Check if the option is enabled and the current user has no permission
   // to override disabled public visibility.
@@ -142,6 +150,7 @@ function entity_access_by_field_field_widget_single_element_form_alter(&$element
           $element['public']['#disabled'] = TRUE;
           $element['#description'] = t('The public visibility setting has been disabled. In order to change the visibility to public, please contact a site manager.')->render();
         }
+
         break;
 
       case 'post':
