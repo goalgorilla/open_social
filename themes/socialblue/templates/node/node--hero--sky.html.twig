@@ -126,7 +126,7 @@
             </div>
 
             <div class="metainfo__content">
-              {{ author }} @{{ author_organization }}
+              {{ author }} {% if author_organization %} @{{ author_organization }} {% endif %}
               <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
 
               {% if visibility_icon and visibility_label %}
