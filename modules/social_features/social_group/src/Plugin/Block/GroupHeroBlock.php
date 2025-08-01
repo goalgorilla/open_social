@@ -8,6 +8,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\GroupMembership;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -88,8 +89,17 @@ class GroupHeroBlock extends BlockBase implements ContainerFactoryPluginInterfac
    */
   protected function blockAccess(AccountInterface $account) {
     $current_route = $this->routeMatch->getRouteName();
+    $group_content = $this->routeMatch->getParameter('group_content');
 
-    if ($current_route == 'entity.group_content.create_form') {
+    // Hide hero block for all create content and membership edit/remove.
+    // On those simple pages hero block has no value.
+    // We are doing it here instead of changing block pages visibility because
+    // that config is overridden several times, and we can brake something for
+    // clients.
+    if ($current_route === 'entity.group_content.create_form' ||
+      ($current_route === 'entity.group_content.delete_form' && $group_content instanceof GroupMembership) ||
+      ($current_route === 'entity.group_content.edit_form' && $group_content instanceof GroupMembership)
+    ) {
       return AccessResult::forbidden();
     }
 
