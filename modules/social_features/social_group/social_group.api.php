@@ -410,5 +410,27 @@ function hook_group_types_alter(array &$types): void {
 }
 
 /**
+ * Exclude specific group roles from the admin people filter.
+ *
+ * This hook allows modules to exclude certain group roles from appearing in the
+ * group roles filter on the admin people page. Modules implementing this hook
+ * should return an array of group types which role IDs should be excluded.
+ *
+ * @return array
+ *   An array of group role IDs to exclude from the admin people filter.
+ *   Example: ['flexible_group', 'course']
+ *
+ * @see \Drupal\social_group\Plugin\views\filter\GroupRoles::getValueOptions()
+ *
+ * @ingroup social_group_api
+ */
+function hook_exclude_group_roles_on_admin_people() {
+  return [
+    'flexible_group',
+    'course',
+  ];
+}
+
+/**
  * @} End of "addtogroup hooks".
  */

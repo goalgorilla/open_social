@@ -53,4 +53,14 @@ function social_group_views_data_alter(array &$data) {
       'id' => 'filter_by_group',
     ],
   ];
+
+  $data['group_relationship_field_data']['group_roles'] = [
+    'title' => t('Group roles'),
+    'group' => t('Social'),
+    'filter' => [
+      'title' => t('Group roles'),
+      'help' => t('Displays users by the group roles with the "-group_manager" or "-member" pattern.'),
+      'id' => 'group_roles',
+    ],
+  ];
 }

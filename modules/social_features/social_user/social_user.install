@@ -292,3 +292,13 @@ function social_user_update_13007(): void {
 
   $anonymous_user->save();
 }
+
+/**
+ * Rename a "Group" filter label to "Hubs".
+ */
+function social_user_update_13008() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_user', __FUNCTION__);
+  return $updater->logger()->output();
+}

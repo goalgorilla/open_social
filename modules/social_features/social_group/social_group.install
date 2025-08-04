@@ -1176,3 +1176,13 @@ function social_group_update_13021(): string {
   $updater->executeUpdate('social_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Exclude blocked users on group membership pages.
+ */
+function social_group_update_13022(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
+}
