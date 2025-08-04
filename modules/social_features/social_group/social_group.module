@@ -1176,11 +1176,14 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
           }
         }
 
-        // Add nice messages.
         if (!empty($count)) {
+          $messenger = \Drupal::messenger();
+          // Remove an extra message from ginvite when member added directly.
+          $messenger->deleteByType('status');
+          // Add a nice message that new member joined.
           $message = \Drupal::translation()
             ->formatPlural($count, '@count new member joined.', '@count new members joined.');
-          \Drupal::messenger()->addMessage($message, 'status');
+          $messenger->addMessage($message, 'status');
         }
 
         $form_state->setRedirect(
