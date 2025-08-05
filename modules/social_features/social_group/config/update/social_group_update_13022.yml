@@ -1,0 +1,83 @@
+views.view.user_admin_people:
+  expected_config: { }
+  update_actions:
+    add:
+      display:
+        default:
+          display_options:
+            exposed_form:
+              options:
+                bef:
+                  filter:
+                    group_roles:
+                      plugin_id: bef_select2
+                      advanced:
+                        sort_options: false
+                        placeholder_text: Select...
+                        rewrite:
+                          filter_rewrite_values: ''
+                          filter_rewrite_values_key: false
+                        collapsible: false
+                        collapsible_disable_automatic_open: false
+                        is_secondary: false
+                        hide_label: false
+            filters:
+              group_roles:
+                id: group_roles
+                table: group_relationship_field_data
+                field: group_roles
+                relationship: group_content
+                group_type: group
+                admin_label: ''
+                entity_type: group_content
+                plugin_id: group_roles
+                operator: or
+                value: { }
+                group: 1
+                exposed: true
+                expose:
+                  operator_id: group_roles_op
+                  label: 'Hubs Role'
+                  description: ''
+                  use_operator: false
+                  operator: group_roles_op
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: group_roles
+                  required: false
+                  remember: false
+                  multiple: true
+                  remember_roles:
+                    authenticated: authenticated
+                    anonymous: '0'
+                    administrator: '0'
+                    verified: '0'
+                    contentmanager: '0'
+                    sitemanager: '0'
+                  reduce: 0
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+                reduce_duplicates: 0
+        page_1:
+          display_options:
+            display_extenders:
+              views_ef_fieldset:
+                views_ef_fieldset:
+                  options:
+                    sort:
+                      group_roles:
+                        depth: '2'
+                        id: group_roles
+                        pid: container-0
+                        type: filter
+                        weight: '-98'

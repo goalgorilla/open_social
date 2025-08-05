@@ -19,8 +19,9 @@ Feature: View "Hubs Role" filter on admin people page
       | Flexible Group | FG Member |
 
   Scenario: Successfully see Hubs Role filter on admin people page
-    When I am logged in as an "sitemanager"
-    And I am on "admin/people"
+    Given I am logged in as an "sitemanager"
+
+    When I am on "admin/people"
 
     # Check that the Hubs Role filter is visible.
     Then I should see "Hubs Role"
