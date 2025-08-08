@@ -56,13 +56,13 @@ class EmailContext implements Context {
    * @AfterScenario @email-spool
    */
   public function disableEmailSpool() : void {
-    // Restore transport back to mailcatcher.
+    // Restore transport back to the service that catches email.
     $config = \Drupal::configFactory()
       ->getEditable('symfony_mailer.mailer_transport.sendmail');
     $config->set('plugin', 'smtp');
     $config->set('configuration.user', '');
     $config->set('configuration.pass', '');
-    $config->set('configuration.host', 'mailcatcher');
+    $config->set('configuration.host', 'mail');
     $config->set('configuration.port', '1025');
     $config->save();
 

@@ -794,7 +794,7 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
  * into the world.
  */
 $config['swiftmailer.transport']['transport'] = 'smtp';
-$config['swiftmailer.transport']['smtp_host'] = 'mailcatcher';
+$config['swiftmailer.transport']['smtp_host'] = 'mail';
 $config['swiftmailer.transport']['smtp_port'] = 1025;
 
 /**
@@ -806,7 +806,7 @@ $config['swiftmailer.transport']['smtp_port'] = 1025;
 $config['symfony_mailer.mailer_transport.sendmail']['plugin'] = 'smtp';
 $config['symfony_mailer.mailer_transport.sendmail']['configuration']['user'] = '';
 $config['symfony_mailer.mailer_transport.sendmail']['configuration']['pass'] = '';
-$config['symfony_mailer.mailer_transport.sendmail']['configuration']['host'] = 'mailcatcher';
+$config['symfony_mailer.mailer_transport.sendmail']['configuration']['host'] = 'mail';
 $config['symfony_mailer.mailer_transport.sendmail']['configuration']['port'] = '1025';
 
 /**

@@ -63,13 +63,13 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: social
-      mailcatcher:
-        image: schickling/mailcatcher
+      mail:
+        image: axllent/mailpit
         env:
-          VIRTUAL_HOST: mailcatcher.social.dev
-          VIRTUAL_PORT: 1080
+          VIRTUAL_HOST: mail.social.dev
+          VIRTUAL_PORT: 8025
         ports:
-          - "1080"
+          - "8025"
       redis:
         image: redis:latest
       solr:
@@ -192,13 +192,13 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: social
-      mailcatcher:
-        image: schickling/mailcatcher
+      mail:
+        image: axllent/mailpit
         env:
-          VIRTUAL_HOST: mailcatcher.social.dev
-          VIRTUAL_PORT: 1080
+          VIRTUAL_HOST: mail.social.dev
+          VIRTUAL_PORT: 8025
         ports:
-          - "1080"
+          - "8025"
       redis:
         image: redis:latest
       solr:
@@ -371,13 +371,13 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: social
-      mailcatcher:
-        image: schickling/mailcatcher
+      mail:
+        image: axllent/mailpit
         env:
-          VIRTUAL_HOST: mailcatcher.social.dev
-          VIRTUAL_PORT: 1080
+          VIRTUAL_HOST: mail.social.dev
+          VIRTUAL_PORT: 8025
         ports:
-          - "1080"
+          - "8025"
       redis:
         image: redis:latest
       solr:
