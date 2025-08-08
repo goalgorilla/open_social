@@ -31,7 +31,6 @@ Feature: Follow Content
     Then I should see the link "Follow content"
     And I should not see the link "Unfollow content"
 
-  @email-spool
   Scenario: Receive (email) notification of topic you are following
     Given users:
       | name   | mail               | status |

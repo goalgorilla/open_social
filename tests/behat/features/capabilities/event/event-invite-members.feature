@@ -4,7 +4,6 @@ Feature: Send invite event email notifications
   Role: As a SM
   Goal/desire: I want to be able to invite event members
 
-  @email-spool
   Scenario: Send event invite email for new user
 
     Given I set the configuration item "system.site" with key "name" to "Open Social"

@@ -4,7 +4,6 @@ Feature: Follow Tags
   Role: As LU
   Goal/Desire: I want to follow tags and receive notifications about content with tags
 
-  @email-spool
   Scenario: Successfully follow added tags
     Given I set the configuration item "system.site" with key "name" to "Open Social"
     And I enable the module "social_tagging"

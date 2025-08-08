@@ -2,102 +2,106 @@
 
 namespace Drupal\social\Behat;
 
-use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Session;
+use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\social\Behat\Mailpit\Client as MailpitClient;
+use Drupal\social\Behat\Mailpit\Message;
+use Drupal\social\Behat\Mailpit\MessageSummary;
 use Drupal\ultimate_cron\Entity\CronJob;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Mime\Email as MimeEmail;
-use Drupal\symfony_mailer\Email as DrupalSymfonyEmail;
-use Symfony\Component\Mime\Header\Headers;
-use Symfony\Component\Mime\Header\UnstructuredHeader;
-use Drupal\symfony_mailer\Address;
 
 /**
  * Provides helpful test steps around the handling of e-mails.
  *
- * To enable email collection for one or more scenario's add the @email-spool
- * annotation to the scenario or to an entire feature. Email collection in the
- * mail-spool directory will automatically happen for annotated tests.
- *
  * Steps exist to check that a certain email was or was not sent.
  */
-class EmailContext implements Context {
+class EmailContext extends RawMinkContext {
 
   /**
-   * We need to enable the spool directory.
-   *
-   * @BeforeScenario @email-spool
+   * Our client for the Mailpit API.
    */
-  public function enableEmailSpool() : void {
-    // Set transport to null to stop sending out emails.
-    $config = \Drupal::configFactory()
-      ->getEditable('symfony_mailer.mailer_transport.sendmail');
-    $config->set('plugin', 'null');
-    $config->set('configuration', []);
-    $config->save();
+  protected MailpitClient $mailpit;
 
-    // Add the mail logger plugin to the default policy.
-    $config = \Drupal::configFactory()
-      ->getEditable('symfony_mailer.mailer_policy._');
-    $mailer_configuration = $config->get('configuration');
-    $mailer_configuration['log_mail'] = ['spool_directory' => $this->getSpoolDir()];
-    $config->set('configuration', $mailer_configuration)->save();
+  /**
+   * The time when the test started.
+   *
+   * Used to ignore older emails without having to delete them, so that they can
+   * be inspected by developers.
+   *
+   * The format of this string was specifically chosen to be parseable by
+   * Mailpit because it supports fewer formats than its API docs suggest.
+   */
+  protected string $previousEmailDate = "1970-01-01 00:00:00.000 +0000";
 
-    // Clean up emails that were left behind.
-    $this->purgeSpool();
+  /**
+   * Create a new EmailContext instance.
+   *
+   * @param string $logsPath
+   *   The path to the Behat logs where e-mails will be output on failure.
+   */
+  public function __construct(
+    private string $logsPath,
+  ) {
+    $this->mailpit = new MailpitClient();
   }
 
   /**
-   * Revert back to the old situation (native PHP mail).
+   * Get the timestamp of the previous email in Mailpit.
    *
-   * @AfterScenario @email-spool
+   * This allows searches for emails sent during the current scenario to exclude
+   * previous emails without having to delete them.
+   *
+   * @BeforeScenario
    */
-  public function disableEmailSpool() : void {
-    // Restore transport back to the service that catches email.
-    $config = \Drupal::configFactory()
-      ->getEditable('symfony_mailer.mailer_transport.sendmail');
-    $config->set('plugin', 'smtp');
-    $config->set('configuration.user', '');
-    $config->set('configuration.pass', '');
-    $config->set('configuration.host', 'mail');
-    $config->set('configuration.port', '1025');
-    $config->save();
-
-    // Remove the mail logger plugin to the default policy.
-    $config = \Drupal::configFactory()
-      ->getEditable('symfony_mailer.mailer_policy._');
-    $mailer_configuration = $config->get('configuration');
-    unset($mailer_configuration['log_mail']);
-    $config->set('configuration', $mailer_configuration)->save();
+  public function getLastEmailTimestamp() : void {
+    $this->previousEmailDate = $this->mailpit
+      ->getLastEmailDate()
+      // Add one millisecond because Mailpit filters inclusive after.
+      // Larger values could cause race conditions in tests that execute quickly
+      // but steps generally take at least a few milliseconds.
+      ->add(\DateInterval::createFromDateString('1 millisecond'))
+      ->format("Y-m-d H:i:s.v O");
   }
 
   /**
-   * Extract all .message files into metadata, html and text.
+   * Close any window used to inspect mail.
    *
-   * To help developers debug, in case a scenario failed we parse the serialized
-   * email into its text contents, html contents, and the header metadata. This
-   * is written in 3 files to the mail spool folder. This makes it easier for a
-   * developer to examine the contents of an email.
-   *
-   * @AfterScenario @email-spool
+   * @AfterScenario
    */
-  public function extractSentEmails(AfterScenarioScope $afterScenario) : void {
+  public function closeMailSession(AfterScenarioScope $afterScenario) : void {
+    // Only stop the session if one was registered.
+    if ($this->getMink()->hasSession('mail')) {
+      $this->getSession('mail')->stop();
+    }
+  }
+
+  /**
+   * Extract all received emails into metadata, HTML, and text.
+   *
+   * To help developers debug, in case a scenario failed, we connect with the
+   * Mailpit API and capture the text contents, HTML contents, and the header
+   * metadata of all received emails. This is written in 3 files to the logs
+   * folder. This makes it easier for a developer to examine the contents of an
+   * email.
+   *
+   * @AfterScenario
+   */
+  public function extractReceivedEmails(AfterScenarioScope $afterScenario) : void {
     if ($afterScenario->getTestResult()->isPassed()) {
       return;
     }
 
-    $spool_directory = $this->getSpoolDir();
-    $emails = $this->getSpooledEmails();
-    foreach ($emails as $serialized) {
-      $path = $spool_directory . DIRECTORY_SEPARATOR . $serialized->getBasename($serialized->getExtension());
+    $result = $this->mailpit->search(
+      after: $this->previousEmailDate,
+    );
 
-      $email = $this->getEmailContent($serialized);
-      file_put_contents($path . "html", $email->getHtmlBody());
-      file_put_contents($path . "txt", $email->getTextBody());
-      file_put_contents($path . "metadata", $email->getHeaders()->toString());
+    foreach ($result->messages as $message) {
+      $path = "$this->logsPath/mail-$message->id";
+
+      file_put_contents("$path.html", $this->mailpit->renderMessageHtml($message));
+      file_put_contents("$path.txt", $this->mailpit->renderMessageText($message));
+      file_put_contents("$path.headers.json", json_encode($this->mailpit->getMessageHeaders($message), JSON_PRETTY_PRINT));
     }
   }
 
@@ -158,11 +162,12 @@ class EmailContext implements Context {
    * @Then no emails have been sent
    */
   public function noEmailsHaveBeenSent() : void {
-    $finder = $this->getSpooledEmails();
+    $result = $this->mailpit->search(
+      after: $this->previousEmailDate,
+    );
 
-    $count = $finder->count();
-    if ($count !== 0) {
-      throw new \Exception("No email messages should have been sent, but found $count.");
+    if ($result->messagesCount !== 0) {
+      throw new \Exception("No email messages should have been sent, but found {$result->messagesCount}.");
     }
   }
 
@@ -176,10 +181,13 @@ class EmailContext implements Context {
    * @Then I should not have an email with subject :subject
    */
   public function iShouldNotHaveAnEmailWithSubject(string $subject) : void {
-    $emails = $this->findEmailsWithSubject($subject);
-    $email_count = count($emails);
-    if ($email_count !== 0) {
-      throw new \Exception("Expected no emails with subject '$subject' but found $email_count");
+    $result = $this->mailpit->search(
+      after: $this->previousEmailDate,
+      subject: $subject,
+    );
+
+    if ($result->messagesCount !== 0) {
+      throw new \Exception("Expected no emails with subject '$subject' but found $result->messagesCount.");
     }
   }
 
@@ -212,7 +220,6 @@ class EmailContext implements Context {
    *
    * @param string $subject
    *   The exact subject the email should have.
-   *
    * @param list<string> $expected_lines
    *   A list of lines that should all be present in the body of the e-mail.
    *
@@ -221,54 +228,9 @@ class EmailContext implements Context {
    *   matching subject, no matching lines, or missing a specific line match).
    */
   protected function assertEmailWithSubjectAndBody(string $subject, array $expected_lines) : void {
-    $emails = $this->findEmailsWithSubject($subject);
-
-    // If no emails with the subject exist then we want to report that so a
-    // developer knows that may be the cause of their failure.
-    $subject_match_count = count($emails);
-    if ($subject_match_count === 0) {
-      throw new \Exception("No emails with subject '$subject' were found.");
+    if ($this->findEmailWithSubjectAndBody($subject, $expected_lines) === NULL) {
+      throw new \Exception("No emails with the expected subject and contents were found.");
     }
-
-    $partial_matches = [];
-    $count_expected = count($expected_lines);
-    foreach ($emails as $email) {
-      $matched_lines = $this->getMatchingLinesForEmail($expected_lines, $email);
-
-      $count_matched = count($matched_lines);
-      // If we have a complete match then we're done.
-      if ($count_matched === $count_expected) {
-        return;
-      }
-
-      if ($count_matched > 0) {
-        $partial_matches[] = $matched_lines;
-      }
-    }
-
-    $partial_match_count = count($partial_matches);
-    // If we had no partial matches then we can provide a simplified error message.
-    if ($partial_match_count === 0) {
-      $message = $subject_match_count === 1
-        ? "One email with the subject '$subject' was found but none of the expected lines were found in the body of the email."
-        : "$subject_match_count emails with the subject '$subject' were found but none of the expected lines were found in the body of the email.";
-      throw new \Exception($message);
-    }
-    // If we had a single partial match then we tell the developer and there's
-    // probably a simple typo in the email or test.
-    if ($partial_match_count === 1) {
-      $missing_lines = array_diff($expected_lines, $partial_matches[0]);
-      $message = "One email was found which matched the subject and some lines but the following lines were missing from the e-mail: \n  " . implode("\n  ", $missing_lines);
-      throw new \Exception($message);
-    }
-    // With multiple partial matches we want to provide the developer as much
-    // information as possible.
-    $message = "$partial_match_count emails were found that matched the subject but all of them were missing some expected lines from the email:\n";
-    foreach ($partial_matches as $i => $partial_match) {
-      $missing_lines = array_diff($expected_lines, $partial_match);
-      $message .= "------- Partial match $i --------\n  " . implode("\n  ", $missing_lines);
-    }
-    throw new \Exception($message);
   }
 
   /**
@@ -285,151 +247,85 @@ class EmailContext implements Context {
    *   text.
    */
   protected function assertNoEmailWithSubjectAndBody(string $subject, array $expected_lines) : void {
-    $emails = $this->findEmailsWithSubject($subject);
-
-    $count_expected = count($expected_lines);
-    foreach ($emails as $email) {
-      $matched_lines = $this->getMatchingLinesForEmail($expected_lines, $email);
-
-      $count_matched = count($matched_lines);
-      if ($count_matched === $count_expected) {
-        throw new \Exception("An email exists with the specified subject and body.");
-      }
+    if ($message = $this->findEmailWithSubjectAndBody($subject, $expected_lines)) {
+      throw new \Exception("Email with subject and body containing the provided text was found (Message ID: $message->id).");
     }
   }
 
   /**
-   * Purge the messages in the spool.
-   */
-  protected function purgeSpool() : void {
-    $filesystem = new Filesystem();
-    $finder = $this->getSpooledEmails();
-
-    /** @var \Symfony\Component\Finder\SplFileInfo $file */
-    foreach ($finder as $file) {
-      $filesystem->remove($file->getRealPath());
-    }
-  }
-
-  /**
-   * Find all emails that were sent with a given subject.
+   * Checks whether an email matches the subject and all lines in the body.
    *
    * @param string $subject
-   *   The subject to search for.
-   *
-   * @return array
-   *   An array of matching emails.
-   * @throws \Exception
-   *   An exception in case no emails were sent or email collection is
-   *   incorrectly configured.
-   */
-  protected function findEmailsWithSubject(string $subject) : array {
-    $finder = $this->getSpooledEmails();
-
-    if ($finder->count() === 0) {
-      throw new \Exception('No email messages have been sent in the test.');
-    }
-
-    $emails = [];
-    foreach ($finder as $file) {
-      $email = $this->getEmailContent($file);
-
-      if ($email->getSubject() === $subject) {
-        $emails[] = $email;
-      }
-    }
-
-    return $emails;
-  }
-
-  /**
-   * Get a list of spooled emails.
-   *
-   * @return Finder
-   *   Returns a Finder if the directory exists.
-   * @throws \Exception
-   *   An exception is thrown in case the configured directory does not exist.
-   */
-  protected function getSpooledEmails() : Finder {
-    $finder = new Finder();
-    $spoolDir = $this->getSpoolDir();
-
-    try {
-      // We don't provide a filter on extension here because we use the same
-      // finder in our purgeSpool function. extractSentEmails does create files
-      // with other extensions, but that should always happen last.
-      return $finder->files()->in($spoolDir);
-    }
-    catch (\InvalidArgumentException $exception) {
-      throw new \Exception("The e-mail spool directory does not exist or is incorrectly configured, expected '{$spoolDir}' to exist.");
-    }
-  }
-
-  /**
-   * Get the path where the spooled emails are stored.
-   *
-   * @return string
-   *   The path where the spooled emails are stored.
-   */
-  protected function getSpoolDir() : string {
-    // This path should exist within the repository and have a .gitignore file
-    // that ignores all e-mails so developers don't accidentally commit them.
-    return \Drupal::service('extension.list.profile')->getPath('social') . '/tests/behat/mail-spool';
-  }
-
-  /**
-   * Get content of email.
-   *
-   * @param \Symfony\Component\Finder\SplFileInfo $file
-   *   The .message file to get content for.
-   *
-   * @return \Drupal\symfony_mailer\Email
-   *   A deserialized email.
-   */
-  protected function getEmailContent(SplFileInfo $file) : DrupalSymfonyEmail {
-    assert($file->getExtension() === "message", "File passed to " . __FUNCTION__ . " must be a serialized .message file.");
-    return unserialize(file_get_contents($file), ["allowed_classes" => [
-      DrupalSymfonyEmail::class,
-      Headers::class,
-      UnstructuredHeader::class,
-      Address::class,
-      MimeEmail::class
-    ]]);
-  }
-
-  /**
-   * Find the matching lines in a specific email.
-   *
+   *   The subject to match against.
    * @param list<string> $expected_lines
-   *   The list of lines of text that is expected to be in the email.
-   * @param $email
-   *   The email to check.
+   *   An array of strings that match the body's contents. For an email to be
+   *   considered a match, all lines in the array must match.
    *
-   * @return list<string>
-   *   A list of lines from $expected_lines that was found in the body of
-   *   $email.
+   * @return \Drupal\social\Behat\Mailpit\MessageSummary|null
+   *   Whether there is an email that matches both the subject and contains all
+   *   the expected lines in the body.
    */
-  protected function getMatchingLinesForEmail(array $expected_lines, $email) : array {
-    $body = $email->getHtmlBody();
+  protected function findEmailWithSubjectAndBody(string $subject, array $expected_lines) : ?MessageSummary {
+    $result = $this->mailpit->search(
+      after: $this->previousEmailDate,
+      subject: $subject,
+    );
 
-    // Make it a traversable HTML doc.
-    $doc = new \DOMDocument();
-    @$doc->loadHTML($body);
-    $xpath = new \DOMXPath($doc);
-    // Find the post header and email content in the HTML file.
-    $content = $xpath->evaluate('string(//*[contains(@class,"postheader")])');
-    $content .= $xpath->evaluate('string(//*[contains(@class,"main")])');
+    foreach ($result->messages as $message) {
+      $mail = $this->openMail($message);
 
-    $matched_lines = [];
-
-    foreach ($expected_lines as $string) {
-      if (str_contains($content, $string)) {
-        $matched_lines[] = $string;
+      // If none of the lines were filtered out that means they're all in the
+      // mail and this is an unexpected mail that we should fail on.
+      // @todo Replace with array_all in PHP 8.4 and up.
+      if (array_filter($expected_lines, fn ($line) => $mail->hasContent($line)) === $expected_lines) {
+        return $message;
       }
     }
 
-    return $matched_lines;
+    // We got through all mails with matching subject but none matched all the
+    // body lines.
+    return NULL;
   }
 
+  /**
+   * Open an email as a webpage so that its HTML contents can be inspected.
+   *
+   * @param \Drupal\social\Behat\Mailpit\Message|\Drupal\social\Behat\Mailpit\MessageSummary|string $message
+   *   The message to view.
+   *
+   * @return \Behat\Mink\Element\DocumentElement
+   *   Returns the HTML of the Message as a page which allows calling normal
+   *   Behat selectors on it.
+   */
+  protected function openMail(Message|MessageSummary|string $message) {
+    $this->getMailSession()
+      ->visit($this->mailpit->getMessageHtmlUrl($message));
+
+    return $this->getSession("mail")->getPage();
+  }
+
+  /**
+   * Retrieve or create a session for inspecting emails.
+   *
+   * By not using the default session we ensure that we don't disrupt any
+   * ongoing navigation and allow test writers to not care about the order of
+   * their assertions in feature files.
+   *
+   * @return \Behat\Mink\Session
+   *   A session for mail inspection.
+   */
+  protected function getMailSession() {
+    // If we don't have a mail session yet, create one using the same Driver as
+    // our main session. This should ensure we don't disrupt any ongoing
+    // navigation.
+    if (!$this->getMink()->hasSession("mail")) {
+      $this->getMink()->registerSession(
+        'mail',
+        new Session($this->getSession()->getDriver())
+      );
+    }
+
+    return $this->getsession('mail');
+  }
 
 }

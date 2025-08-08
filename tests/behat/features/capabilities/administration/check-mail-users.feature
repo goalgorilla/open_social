@@ -6,7 +6,6 @@ Feature: Send bulk email
 
   # @todo https://www.drupal.org/project/social/issues/3334769
 
-  @email-spool
   Scenario: Send bulk email as SM to the first 3 users
     Given users:
       | name      | status | roles    |

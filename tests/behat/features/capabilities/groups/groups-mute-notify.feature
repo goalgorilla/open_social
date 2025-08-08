@@ -57,7 +57,6 @@ Feature: Mute/Unmute group notifications
     And I should see "Ressinel's group 1st"
     And I should see "Ressinel's group 2nd"
 
-  @email-spool
   Scenario: LU able to receive notifications from the unmuted group
     # Lets first check if sending mail works properly
     Given I am logged in as an "administrator"
@@ -99,7 +98,6 @@ Feature: Mute/Unmute group notifications
     And I should have an email with subject "New content has been added to a group you are in" and in the content:
       | dude_2nd created a topic Topic for unmute notify in the Ressinel's group 1st group |
 
-  @email-spool
   Scenario: LU not able to receive notifications from the muted group
     # Lets first check if sending mail works properly
     Given I am logged in as an "administrator"
