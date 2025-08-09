@@ -227,6 +227,7 @@ class SocialDrupalContext extends DrupalContext {
    */
   public function iWaitForTheQueueToBeEmpty() {
     $this->processQueue();
+    $this->processQueue();
   }
 
   /**
