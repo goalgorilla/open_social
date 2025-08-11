@@ -306,3 +306,13 @@ function social_event_update_130005(): string {
   $updater->executeUpdate('social_event', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Add "Online" field to "Event" node type.
+ */
+function social_event_update_130006(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_event', __FUNCTION__);
+  return $updater->logger()->output();
+}

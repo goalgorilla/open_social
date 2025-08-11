@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_event_all_day
+    - field.field.node.event.field_event_online
     - field.field.node.event.field_files
     - image.style.social_x_large
     - node.type.event
@@ -42,15 +43,31 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
-      region: hidden
+      region: content
+    group_event_schedule:
+      children:
+        - group_date_time
+        - field_event_online
+      format_settings:
+        classes: ''
+        description: ''
+        id: ''
+        label_as_html: false
+        required_fields: false
+        show_empty_fields: false
+      format_type: fieldset
+      label: Schedule
+      parent_name: ''
+      region: content
+      weight: 1
     group_date_time:
       children:
         - field_event_all_day
         - field_event_date
         - field_event_date_end
-      parent_name: ''
+      parent_name: 'group_event_schedule'
       weight: 1
-      label: 'Date & time'
+      label: 'Date and time'
       format_type: fieldset
       format_settings:
         description: ''
@@ -310,6 +327,13 @@ content:
       match_limit: 10
     third_party_settings: {  }
     region: content
+  field_event_online:
+    type: boolean_checkbox
+    weight: 128
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
 hidden:
   promote: true
   sticky: true
