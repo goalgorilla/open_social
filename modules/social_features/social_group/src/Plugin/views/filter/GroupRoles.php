@@ -93,18 +93,27 @@ class GroupRoles extends ManyToOne {
 
       // Exception for a "Flexible Group" membership role.
       if ($group_type->id() === 'flexible_group' && str_ends_with((string) $role->id(), '-member')) {
-        $target_group_roles[$role_id] = $this->t('Group') . ' ' . strtolower((string) $role->label());
+        $options[$role_id] = $this->t('Group') . ' ' . strtolower((string) $role->label());
         continue;
       }
 
-      $target_group_roles[$role_id] = str_ends_with((string) $role->id(), '-member')
-        // Label for a "member" role.
-        ? (string) $group_type->label() . ' ' . strtolower((string) $role->label())
-        // Label for a "group manager" role.
-        : ucfirst(strtolower((string) $role->label()));
+      // Check if the role has a full label.
+      if ($role->get('full_label')) {
+        $label = $role->get('full_label');
+      }
+      else {
+        // Otherwise build it dynamically.
+        $label = str_ends_with((string) $role->id(), '-member')
+          // Label for a "member" role.
+          ? (string) $group_type->label() . ' ' . strtolower((string) $role->label())
+          // Label for a "group manager" role.
+          : ucfirst(strtolower((string) $role->label()));
+      }
+
+      $options[$role_id] = $label;
     }
 
-    $this->valueOptions = $target_group_roles;
+    $this->valueOptions = $options ?? [];
 
     return $this->valueOptions;
   }
