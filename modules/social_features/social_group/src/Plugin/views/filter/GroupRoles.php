@@ -135,20 +135,31 @@ class GroupRoles extends ManyToOne {
     /** @var \Drupal\views\Plugin\views\query\Sql $query */
     $query = $this->query;
 
-    // Make sure we have access to the group relationship table.
-    $group_relationship_join_configuration = [
-      'table' => 'group_relationship_field_data',
-      'field' => 'entity_id',
-      'left_table' => 'users_field_data',
-      'left_field' => 'uid',
-      'type' => 'LEFT',
-    ];
+    // Try to find an existing join to the group relationship table.
+    $group_memberships_table = NULL;
+    foreach ($query->getTableQueue() as $tables) {
+      if (($tables['table'] ?? NULL) === 'group_relationship_field_data') {
+        $group_memberships_table = $tables['alias'];
+        break;
+      }
+    }
 
-    $join = Views::pluginManager('join')
-      ->createInstance('standard', $group_relationship_join_configuration);
-    assert($join instanceof JoinPluginBase);
+    // If not yet joined, add the LEFT join from users to a group relationship.
+    if ($group_memberships_table === NULL) {
+      $group_relationship_join_configuration = [
+        'table' => 'group_relationship_field_data',
+        'field' => 'entity_id',
+        'left_table' => 'users_field_data',
+        'left_field' => 'uid',
+        'type' => 'LEFT',
+      ];
 
-    $group_relationship_table = $query->addRelationship('grfd', $join, 'group_relationship_field_data');
+      $join = Views::pluginManager('join')
+        ->createInstance('standard', $group_relationship_join_configuration);
+      assert($join instanceof JoinPluginBase);
+
+      $group_memberships_table = $query->addRelationship('grfd', $join, 'group_relationship_field_data');
+    }
 
     // We can't filter users just by role ids as roles are configuration
     // entities.
@@ -181,7 +192,7 @@ class GroupRoles extends ManyToOne {
     if (!empty($group_membership_ids)) {
       $query->addWhere(
         $or_group ?? $this->options['group'],
-        "$group_relationship_table.type",
+        "$group_memberships_table.type",
         $group_membership_ids,
         'IN'
       );
@@ -193,7 +204,7 @@ class GroupRoles extends ManyToOne {
       $join_configuration = [
         'table' => 'group_content__group_roles',
         'field' => 'entity_id',
-        'left_table' => $group_relationship_table,
+        'left_table' => $group_memberships_table,
         'left_field' => 'id',
         'type' => 'LEFT',
       ];
