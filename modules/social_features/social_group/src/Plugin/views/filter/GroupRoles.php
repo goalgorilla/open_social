@@ -57,14 +57,10 @@ class GroupRoles extends ManyToOne {
    * {@inheritdoc}
    */
   public function getValueOptions() {
-    // Allow other modules to exclude specific group roles.
-    $excluded_group_ids = $this->getModuleHandler()->invokeAll('exclude_group_roles_on_admin_people');
-
     $group_role_ids = $this->entityTypeManager
       ->getStorage('group_role')
       ->getQuery()
       ->accessCheck(FALSE)
-      ->condition('group_type', $excluded_group_ids ?: [0], 'NOT IN')
       ->execute();
 
     if (empty($group_role_ids)) {
@@ -76,41 +72,18 @@ class GroupRoles extends ManyToOne {
       ->getStorage('group_role')
       ->loadMultiple($group_role_ids);
 
-    // Allow other modules to exclude specific group roles.
-    $excluded_role_ids = $this->getModuleHandler()->invokeAll('exclude_group_roles_on_admin_people');
-
     // For the moment we need only "member" and "group manager" roles.
+    // The role should have a "hubs_filter" property set to TRUE.
     $target_group_roles = array_filter(
       array: $group_roles,
-      callback: fn(GroupRoleInterface $role) => !in_array($role->id(), $excluded_role_ids) &&
+      callback: fn(GroupRoleInterface $role) => $role->getThirdPartySetting('social_group', 'hubs_filter') &&
         str_ends_with((string) $role->id(), '-member') ||
         str_ends_with((string) $role->id(), '-group_manager')
     );
 
     // Build options list.
     foreach ($target_group_roles as $role_id => $role) {
-      $group_type = $role->getGroupType();
-
-      // Exception for a "Flexible Group" membership role.
-      if ($group_type->id() === 'flexible_group' && str_ends_with((string) $role->id(), '-member')) {
-        $options[$role_id] = $this->t('Group') . ' ' . strtolower((string) $role->label());
-        continue;
-      }
-
-      // Check if the role has a full label.
-      if ($role->get('full_label')) {
-        $label = $role->get('full_label');
-      }
-      else {
-        // Otherwise build it dynamically.
-        $label = str_ends_with((string) $role->id(), '-member')
-          // Label for a "member" role.
-          ? (string) $group_type->label() . ' ' . strtolower((string) $role->label())
-          // Label for a "group manager" role.
-          : ucfirst(strtolower((string) $role->label()));
-      }
-
-      $options[$role_id] = $label;
+      $options[$role_id] = $role->getThirdPartySetting('social_group', 'full_label') ?: $role->label();
     }
 
     $this->valueOptions = $options ?? [];

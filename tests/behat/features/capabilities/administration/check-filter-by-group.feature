@@ -80,8 +80,8 @@ Feature: View filtered users as site manager
     And I should see "Behat Member 2"
     And I should see "Behat Member 3"
     And I should see "Behat Member 4"
-    And I select "Behat Group 1" from "Group"
-    And I additionally select "Behat Group 2" from "Group"
+    And I select "Behat Group 1" from "Hubs"
+    And I additionally select "Behat Group 2" from "Hubs"
     And I press "Filter"
     And I wait for AJAX to finish
     And I should see "Behat Member 1"

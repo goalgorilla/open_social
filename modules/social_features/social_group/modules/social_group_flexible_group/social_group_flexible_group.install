@@ -449,3 +449,12 @@ function social_group_flexible_group_update_130015(): void {
   $field_config->set('description', 'Who can find and view your group.');
   $field_config->save();
 }
+
+/**
+ * Add third_party_settings for flexible group roles.
+ */
+function social_group_flexible_group_update_130016(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
+  return $updater->logger()->output();
+}

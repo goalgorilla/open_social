@@ -48,3 +48,14 @@ views.field.social_views_bulk_operations_bulk_form_group:
     clear_on_exposed:
       type: boolean
       label: 'Clear selection when exposed filters change'
+
+group.role.*.third_party.social_group:
+  type: mapping
+  label: 'Social Group third party settings'
+  mapping:
+    hubs_filter:
+      type: boolean
+      label: 'Enable hubs filter for this role'
+    full_label:
+      type: label
+      label: 'Full descriptive label for the role'
