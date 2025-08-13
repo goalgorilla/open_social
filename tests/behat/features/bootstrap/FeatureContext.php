@@ -304,9 +304,47 @@ class FeatureContext extends RawMinkContext {
       $adminlink->click();
     }
 
+  /**
+   * Clicks a link in the row of a table.
+   *
+   * ACCESSIBILITY ISSUE: Using this step means your test is exposing an
+   * accessibility issue in your implementation. Links should be uniquely
+   * distinguishable on pages for assistive technology. Achieve this by using
+   * a unique link text (e.g. `Remove <sr-only>[subject]</sr-only>` instead of
+   * "Remove") or by using the `aria-labelledby` attribute. If your
+   * implementation is accessible, it should be possible to replace this step
+   * with "I click :link".
+   *
+   * @When I click :linkText in the row containing :text |ACCESSIBILITY ISSUE|
+   */
+  public function iClickLinkInRow(string $linkText, string $text) : void {
+    $session = $this->getSession();
+    $rows = $session->getPage()->findAll('css', 'tr');
+    foreach($rows as $row) {
+      if (str_contains($row->getText(), $text)) {
+        $link = $row->findLink($linkText);
+        if ($link === NULL) {
+          throw new \InvalidArgumentException("Cannot find the link with text: '$linkText' in row with text '$text'.");
+        }
+        $link->click();
+        return;
+      }
+    }
 
+    throw new \InvalidArgumentException("Could not find row with text '$text'");
+  }
 
   /**
+   * Clicks the xth link.
+   *
+   * ACCESSIBILITY ISSUE: Using this step means your test is exposing an
+   * accessibility issue in your implementation. Links should be uniquely
+   * distinguishable on pages for assistive technology. Achieve this by using
+   * a unique link text (e.g. `Remove <sr-only>[subject]</sr-only>` instead of
+   * "Remove") or by using the `aria-labelledby` attribute. If your
+   * implementation is accessible, it should be possible to replace this step
+   * with "I click :link".
+   *
    * @When I click the xth :position link with the text :locator
    */
   public function iClickTheLinkWithText($position, $locator)
