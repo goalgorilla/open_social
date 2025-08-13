@@ -174,7 +174,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends FilterBase implements Container
       $result_link = $url_for_processing;
 
       // Full URL with protocol (http, https etc.).
-      $info = \Drupal::service('url_embed')->getUrlInfo($url);
+      $info = \Drupal::service('social_embed.url_embed_helper')->getUrlInfo($url);
 
       if ($info) {
         /** @var \Drupal\user\Entity\User $user */

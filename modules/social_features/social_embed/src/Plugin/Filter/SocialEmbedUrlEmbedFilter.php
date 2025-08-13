@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Utility\Error;
 use Drupal\filter\FilterProcessResult;
 use Drupal\social_embed\Service\SocialEmbedHelper;
+use Drupal\social_embed\SocialUrlEmbedHelperInterface;
 use Drupal\url_embed\Plugin\Filter\UrlEmbedFilter;
 use Drupal\url_embed\UrlEmbedInterface;
 use Drupal\user\Entity\User;
@@ -66,6 +67,13 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
   protected LoggerChannelFactoryInterface $loggerFactory;
 
   /**
+   * Social Url Embed service.
+   *
+   * @var \Drupal\social_embed\SocialUrlEmbedHelperInterface
+   */
+  protected SocialUrlEmbedHelperInterface $socialUrlEmbedHelper;
+
+  /**
    * Constructs a SocialEmbedUrlEmbedFilter object.
    *
    * @param array $configuration
@@ -90,6 +98,8 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
    *   The route match service.
    * @param \Drupal\Core\Render\Renderer $renderer
    *   Renderer services.
+   * @param \Drupal\social_embed\SocialUrlEmbedHelperInterface $social_url_embed_helper
+   *   The url embed services.
    */
   public function __construct(
     array $configuration,
@@ -103,6 +113,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
     LoggerChannelFactoryInterface $loggerFactory,
     protected RouteMatchInterface $routeMatch,
     Renderer $renderer,
+    SocialUrlEmbedHelperInterface $social_url_embed_helper,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $url_embed, $renderer);
 
@@ -111,6 +122,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
     $this->embedHelper = $embed_helper;
     $this->currentUser = $current_user;
     $this->loggerFactory = $loggerFactory;
+    $this->socialUrlEmbedHelper = $social_url_embed_helper;
   }
 
   /**
@@ -129,6 +141,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
       $container->get('logger.factory'),
       $container->get('current_route_match'),
       $container->get('renderer'),
+      $container->get('social_embed.url_embed_helper'),
     );
   }
 
@@ -169,7 +182,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
 
         $url_output = '';
         try {
-          $info = $this->urlEmbed->getUrlInfo($url);
+          $info = $this->socialUrlEmbedHelper->getUrlInfo($url);
           /** @var \Drupal\user\Entity\User $user */
           $user = $this->currentUser->isAnonymous() ? NULL : User::load($this->currentUser->id());
           if (!empty($info['code'])

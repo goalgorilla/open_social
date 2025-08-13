@@ -10,7 +10,7 @@ use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
-use Drupal\url_embed\UrlEmbed;
+use Drupal\social_embed\SocialUrlEmbedHelperInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -22,11 +22,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class EmbedController extends ControllerBase {
 
   /**
-   * Url Embed services.
+   * Social Url Embed service.
    *
-   * @var \Drupal\url_embed\UrlEmbed
+   * @var \Drupal\social_embed\SocialUrlEmbedHelperInterface
    */
-  protected UrlEmbed $urlEmbed;
+  protected SocialUrlEmbedHelperInterface $socialUrlEmbedHelper;
 
   /**
    * The flood service.
@@ -38,13 +38,13 @@ class EmbedController extends ControllerBase {
   /**
    * The EmbedController constructor.
    *
-   * @param \Drupal\url_embed\UrlEmbed $url_embed
+   * @param \Drupal\social_embed\SocialUrlEmbedHelperInterface $social_url_embed_helper
    *   The url embed services.
    * @param \Drupal\Core\Flood\FloodInterface $flood
    *   The flood service.
    */
-  public function __construct(UrlEmbed $url_embed, FloodInterface $flood) {
-    $this->urlEmbed = $url_embed;
+  public function __construct(SocialUrlEmbedHelperInterface $social_url_embed_helper, FloodInterface $flood) {
+    $this->socialUrlEmbedHelper = $social_url_embed_helper;
     $this->flood = $flood;
   }
 
@@ -58,7 +58,7 @@ class EmbedController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('url_embed'),
+      $container->get('social_embed.url_embed_helper'),
       $container->get('flood')
     );
   }
@@ -110,7 +110,7 @@ class EmbedController extends ControllerBase {
     // Use uuid to set the selector to the specific div we need to replace.
     $selector = "#social-embed-iframe-$uuid";
     // If the content is embeddable then return the iFrame.
-    $info = $this->urlEmbed->getUrlInfo($url);
+    $info = $this->socialUrlEmbedHelper->getUrlInfo($url);
     if ($info && !empty($iframe = $info['code'])) {
       $provider = strtolower($info['providerName']);
       $content = "<div id='social-embed-iframe-$uuid' class='social-embed-iframe-$provider'><p>$iframe</p></div>";
