@@ -243,7 +243,12 @@ function _social_path_manager_group_tabs() {
     // Loop over the available tabs on a group.
     foreach ($group_tabs as $key => $localtask) {
       /** @var \Drupal\Core\Url $localtask */
-      $tabs[$key] = $localtask->getRouteName();
+      $route_name = $localtask->getRouteName();
+
+      // Exclude the canonical route itself from being processed as a tab.
+      if ($route_name !== 'entity.group.canonical' && $route_name !== 'social_group.stream') {
+        $tabs[$key] = $route_name;
+      }
     }
     // Allow other modules to change the group tabs.
     \Drupal::moduleHandler()->alter('social_path_manager_group_tabs', $tabs);
