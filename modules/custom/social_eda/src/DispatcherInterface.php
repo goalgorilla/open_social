@@ -2,7 +2,7 @@
 
 namespace Drupal\social_eda;
 
-use CloudEvents\CloudEventInterface;
+use CloudEvents\V1\CloudEventInterface;
 
 /**
  * Interface for dispatching CloudEvents to the message broker.
@@ -14,7 +14,7 @@ interface DispatcherInterface {
    *
    * @param string $topic
    *   The topic name.
-   * @param \CloudEvents\CloudEventInterface $event
+   * @param \CloudEvents\V1\CloudEventInterface $event
    *   The event to dispatch.
    */
   public function dispatch(string $topic, CloudEventInterface $event): void;
