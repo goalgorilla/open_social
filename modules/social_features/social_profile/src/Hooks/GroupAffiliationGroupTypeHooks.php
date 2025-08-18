@@ -109,7 +109,7 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
 
       $form['third_party_settings']['social_profile_affiliation'][GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY] = [
         '#type' => 'checkbox',
-        '#title' => t('Enable/Disable affiliation for this group type'),
+        '#title' => t('Enable affiliation for this group type'),
         '#default_value' => $default_value,
       ];
     }
