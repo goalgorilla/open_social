@@ -4,10 +4,17 @@
  */
 
 .event-meeting-widget {
+  --color-dark: #303841;
 
   > div.form-group {
-    padding: 0.5rem;
     background: #f3f3f3;
+    padding-block: 1px;
+    border-radius: 0;
+  }
+
+  .form-group.checkbox {
+    padding: 0;
+    background: white;
   }
 
   .meeting-type-wrapper {
@@ -15,6 +22,7 @@
     background: white;
     border: 1px solid #cecece;
     margin-block: 0.5rem;
+    margin-inline: 0.5rem;
     padding-block-end: 0.5rem;
 
     & > div {
@@ -26,7 +34,7 @@
       width: fit-content;
       padding-inline: 1rem;
       background: #f3f3f3;
-      color: black;
+      color: var(--color-dark);
       font-weight: bold;
       font-size: small;
       cursor: pointer;
@@ -37,7 +45,7 @@
       &::before {
         content: '';
         display: inline-block;
-        color: black;
+        color: var(--color-dark);
         width: 1rem;
         height: 1rem;
         border-radius: 50%;
@@ -53,12 +61,12 @@
   }
 
   span.meeting-type-label[data-is-selected="true"] {
-    background: black;
+    background: var(--color-dark);
     color: white;
 
     &::before {
       background-image: url(../icons/selected.svg);
-      background-color: black;
+      background-color: var(--color-dark);
       background-repeat: no-repeat;
       border: none;
     }

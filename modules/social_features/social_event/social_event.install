@@ -311,6 +311,13 @@ function social_event_update_130005(): string {
  * Add "Online" field to "Event" node type.
  */
 function social_event_update_130006(): string {
+  // Install meeting api modules.
+  \Drupal::service('module_installer')->install([
+    'meeting_api',
+    'meeting_api_manual',
+    'meeting_api_bbb',
+  ]);
+
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_event', __FUNCTION__);

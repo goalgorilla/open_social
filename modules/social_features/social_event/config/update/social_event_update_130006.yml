@@ -1,9 +1,5 @@
 __global_actions:
   import_configs:
-    - field.storage.node.field_event_online
-    - field.field.node.event.field_event_online
-    - field.storage.node.field_meeting
-    - field.field.node.event.field_meeting
     - meeting_api.meeting_api_server.bigbluebutton
     - meeting_api.meeting_api_server.manual_url
     - meeting_api.meeting_api_meeting_type.big_blue_button
@@ -12,8 +8,8 @@ __global_actions:
     - core.entity_form_display.meeting_api_meeting.big_blue_button.default
     - core.entity_form_display.meeting_api_meeting.big_blue_button.event
     - core.entity_form_display.meeting_api_meeting.custom_link.event
-    - system.action.meeting_api_meeting_delete_action
-    - system.action.meeting_api_meeting_save_action
+    - field.storage.node.field_event_meeting
+    - field.field.node.event.field_event_meeting
 
 core.entity_form_display.node.event.default:
   expected_config: { }
@@ -32,8 +28,7 @@ core.entity_form_display.node.event.default:
         field_group:
           group_event_schedule:
             children:
-              - field_event_online
-              - field_meeting
+              - field_event_meeting
               - group_date_time
             label: Schedule
             region: content
@@ -48,14 +43,7 @@ core.entity_form_display.node.event.default:
               description: ''
               required_fields: false
       content:
-        field_event_online:
-          type: boolean_checkbox
-          weight: 128
-          region: content
-          settings:
-            display_label: true
-          third_party_settings: { }
-        field_meeting:
+        field_event_meeting:
           type: event_meeting
           weight: 129
           region: content
@@ -68,74 +56,60 @@ core.entity_view_display.node.event.activity:
     add:
       dependencies:
         config:
-          - field.field.node.event.field_event_online
-          - field.field.node.event.field_meeting
+          - field.field.node.event.field_event_meeting
       hidden:
-        field_event_online: true
-        field_meeting: true
+        field_event_meeting: true
 core.entity_view_display.node.event.activity_comment:
   expected_config: { }
   update_actions:
     add:
       dependencies:
         config:
-          - field.field.node.event.field_event_online
-          - field.field.node.event.field_meeting
+          - field.field.node.event.field_event_meeting
       hidden:
-        field_event_online: true
-        field_meeting: true
+        field_event_meeting: true
 core.entity_view_display.node.event.default:
   expected_config: { }
   update_actions:
     add:
       dependencies:
         config:
-          - field.field.node.event.field_event_online
-          - field.field.node.event.field_meeting
+          - field.field.node.event.field_event_meeting
       hidden:
-        field_event_online: true
-        field_meeting: true
+        field_event_meeting: true
 core.entity_view_display.node.event.hero:
   expected_config: { }
   update_actions:
     add:
       dependencies:
         config:
-          - field.field.node.event.field_event_online
-          - field.field.node.event.field_meeting
+          - field.field.node.event.field_event_meeting
       hidden:
-        field_event_online: true
-        field_meeting: true
+        field_event_meeting: true
 core.entity_view_display.node.event.search_index:
   expected_config: { }
   update_actions:
     add:
       dependencies:
         config:
-          - field.field.node.event.field_event_online
-          - field.field.node.event.field_meeting
+          - field.field.node.event.field_event_meeting
       hidden:
-        field_event_online: true
-        field_meeting: true
+        field_event_meeting: true
 core.entity_view_display.node.event.small_teaser:
   expected_config: { }
   update_actions:
     add:
       dependencies:
         config:
-          - field.field.node.event.field_event_online
-          - field.field.node.event.field_meeting
+          - field.field.node.event.field_event_meeting
       hidden:
-        field_event_online: true
-        field_meeting: true
+        field_event_meeting: true
 core.entity_view_display.node.event.teaser:
   expected_config: { }
   update_actions:
     add:
       dependencies:
         config:
-          - field.field.node.event.field_event_online
-          - field.field.node.event.field_meeting
+          - field.field.node.event.field_event_meeting
       hidden:
-        field_event_online: true
-        field_meeting: true
+        field_event_meeting: true

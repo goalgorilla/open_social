@@ -47,11 +47,11 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    protected readonly EntityTypeManagerInterface $entityTypeManager,
-    protected readonly EntityDisplayRepositoryInterface $entityDisplayRepository,
-    protected readonly ConfigFactoryInterface $configFactory,
-    protected readonly Connection $database,
-    protected readonly LoggerInterface $logger,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected EntityDisplayRepositoryInterface $entityDisplayRepository,
+    protected ConfigFactoryInterface $configFactory,
+    protected Connection $database,
+    protected LoggerInterface $logger,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
@@ -299,13 +299,14 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       '#attached' => [
         'library' => ['social_event/event_meeting_widget'],
       ],
-      '#states' => [
-        'visible' => [
-          ':input[name="field_event_online[value]"]' => ['checked' => TRUE],
-        ],
-      ],
-      '#meeting_entity' => [],
       '#tree' => TRUE,
+    ];
+
+    // Add a checkbox to indicate if the event is online.
+    $element['is_online'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Online'),
+      '#default_value' => !$items[$delta]->isEmpty(),
     ];
 
     // Add a meeting type selector.
@@ -336,6 +337,11 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     $element['meeting_form_wrapper'] = [
       '#type' => 'container',
       '#attributes' => ['id' => $wrapper_id],
+      '#states' => [
+        'visible' => [
+          ':input[name="' . $field_name . "[$delta]" . '[is_online]"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
 
     $meeting_form_element =& $element['meeting_form_wrapper'];
@@ -426,7 +432,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
 
     foreach ($widget_state as $delta => &$values) {
       // @todo Replace it with the widget item.
-      if (!$form_state->getValue(['field_event_online', 'value'])) {
+      if (!$values['is_online']) {
         if (NULL !== $values['target_id']) {
           $previous_meeting = $this->entityTypeManager
             ->getStorage('meeting_api_meeting')
