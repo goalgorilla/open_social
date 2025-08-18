@@ -29,17 +29,17 @@ final class EventOnline {
    * is set as required.
    * It is applied dynamically using the #after_build property.
    */
-  public static function rebuildAddressFieldCallback(array $form, FormStateInterface $form_state): array {
+  public static function rebuildAddressFieldCallback(array $element, FormStateInterface $form_state): array {
     // Get online value.
     $is_online = $form_state->getValue(['field_event_online', 'value']);
     if ($is_online) {
-      $form['field_event_address']['widget'][0]['#suffix'] = '<div class="help-block">' . t('For online events that can also be joined at location.') . '</div>';
+      $element['widget'][0]['#suffix'] = '<div class="help-block">' . t('For online events that can also be joined at location.') . '</div>';
     }
 
     // Set requirement.
-    $form['field_event_address']['widget'][0]['address']['country_code']['country_code']['#required'] = !$is_online;
+    $element['widget'][0]['address']['country_code']['country_code']['#required'] = !$is_online;
 
-    return $form;
+    return $element;
   }
 
   /**

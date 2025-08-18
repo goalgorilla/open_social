@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_meeting
+    - meeting_api.meeting_api_meeting_type.big_blue_button
+    - meeting_api.meeting_api_meeting_type.custom_link
+    - node.type.event
+id: node.event.field_meeting
+field_name: field_meeting
+entity_type: node
+bundle: event
+label: Meeting
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:meeting_api_meeting'
+  handler_settings:
+    target_bundles:
+      big_blue_button: big_blue_button
+      custom_link: custom_link
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: big_blue_button
+field_type: entity_reference

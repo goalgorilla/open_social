@@ -17,6 +17,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EventSettingsForm extends ConfigFormBase {
 
   /**
+   * The configuration settings for social events.
+   */
+  const string SETTINGS = 'social_event.settings';
+
+  /**
+   * Maximum allowed concurrent BigBlueButton meetings attendees.
+   */
+  public const int MAX_CONCURRENT_BBB_ATTENDEES = 200;
+
+  /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -140,6 +150,9 @@ class EventSettingsForm extends ConfigFormBase {
       '#default_value' => $social_event_config->get('disable_event_enroll'),
     ];
 
+    // Online Meetings section.
+    $this->buildOnlineMeetingsSection($form, $form_state);
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -162,10 +175,77 @@ class EventSettingsForm extends ConfigFormBase {
       ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
       ->set('show_user_timezone', $form_state->getValue('show_user_timezone'))
       ->set('disable_event_enroll', $form_state->getValue('disable_event_enroll'))
+      ->set('online_meeting',  $form_state->getValue('online_meeting'))
       ->save();
 
     // Invalidate cache tags to refresh blocks of list of events.
     $this->cacheTagsInvalidator->invalidateTags(['node_list']);
+  }
+
+  /**
+   * Get available meeting types.
+   *
+   * @return array
+   *   Array of meeting type options keyed by ID.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function getAvailableMeetingTypes(): array {
+    $meeting_type_storage = $this->entityTypeManager
+      ->getStorage('meeting_api_meeting_type');
+
+    $meeting_types = $meeting_type_storage->loadMultiple();
+
+    foreach ($meeting_types as $meeting_type_id => $meeting_type_entity) {
+      $options[$meeting_type_id] = $meeting_type_entity->label();
+    }
+
+    return $options ?? [];
+  }
+
+  /**
+   * Builds the online meetings configuration section form.
+   *
+   * @param array $form
+   *   The form to which the online meetings section will be added.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return void
+   *   No explicit return as the modifications are applied directly
+   *   to the $form array.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  private function buildOnlineMeetingsSection(array &$form, FormStateInterface $form_state): void {
+    $event_settings = $this->configFactory->getEditable(self::SETTINGS);
+
+    $form['online_meeting'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Online Meeting'),
+      '#tree' => TRUE,
+    ];
+
+    $online_meeting =&  $form['online_meeting'];
+
+    $online_meeting['default_meeting_type'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Default meeting type'),
+      '#description' => $this->t('Select the default meeting type for new events.'),
+      '#options' =>  $this->getAvailableMeetingTypes(),
+      '#default_value' => $event_settings->get('online_meeting.default_meeting_type'),
+    ];
+
+    $online_meeting['max_attendees'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Max attendees'),
+      '#description' => $this->t('Default maximum number of attendees for online meeting.'),
+      '#default_value' => $event_settings->get('online_meeting.max_attendees') ?: self::MAX_CONCURRENT_BBB_ATTENDEES,
+      '#min' => 1,
+      '#max' => self::MAX_CONCURRENT_BBB_ATTENDEES,
+    ];
   }
 
 }

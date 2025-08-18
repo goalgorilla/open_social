@@ -16,6 +16,7 @@ dependencies:
     - field.field.node.event.field_event_all_day
     - field.field.node.event.field_event_online
     - field.field.node.event.field_files
+    - field.field.node.event.field_meeting
     - image.style.social_x_large
     - node.type.event
   module:
@@ -46,20 +47,21 @@ third_party_settings:
       region: content
     group_event_schedule:
       children:
-        - group_date_time
         - field_event_online
+        - field_meeting
+        - group_date_time
+      label: Schedule
+      region: content
+      parent_name: ''
+      weight: 2
+      format_type: fieldset
       format_settings:
         classes: ''
-        description: ''
+        show_empty_fields: false
         id: ''
         label_as_html: false
+        description: ''
         required_fields: false
-        show_empty_fields: false
-      format_type: fieldset
-      label: Schedule
-      parent_name: ''
-      region: content
-      weight: 1
     group_date_time:
       children:
         - field_event_all_day
@@ -282,6 +284,12 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: { }
+  field_meeting:
+    type: event_meeting
+    weight: 129
+    region: content
+    settings: { }
     third_party_settings: { }
   field_event_all_day:
     weight: 9

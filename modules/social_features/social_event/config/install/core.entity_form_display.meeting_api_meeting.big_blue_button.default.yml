@@ -1,0 +1,64 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - meeting_api.meeting_api_meeting_type.big_blue_button
+  module:
+    - datetime_range_timezone
+    - meeting_api
+id: meeting_api_meeting.big_blue_button.default
+targetEntityType: meeting_api_meeting
+bundle: big_blue_button
+mode: default
+content:
+  backend_settings:
+    type: meeting_api_backend_settings_widget
+    weight: 35
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  datetime:
+    type: daterange_timezone
+    weight: 25
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  label:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  max_attendees:
+    type: number
+    weight: 30
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 0
+    region: content
+    settings:
+      display_label: false
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 15
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

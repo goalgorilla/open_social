@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.meeting_api_meeting.event
+    - meeting_api.meeting_api_meeting_type.big_blue_button
+  module:
+    - meeting_api
+id: meeting_api_meeting.big_blue_button.event
+targetEntityType: meeting_api_meeting
+bundle: big_blue_button
+mode: event
+content:
+  backend_settings:
+    type: meeting_api_backend_settings_widget
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  max_attendees:
+    type: number
+    weight: 0
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  datetime: true
+  label: true
+  status: true
+  uid: true

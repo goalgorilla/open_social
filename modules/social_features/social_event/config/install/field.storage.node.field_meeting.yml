@@ -2,12 +2,14 @@ langcode: en
 status: true
 dependencies:
   module:
+    - meeting_api
     - node
-id: node.field_event_online
-field_name: field_event_online
+id: node.field_meeting
+field_name: field_meeting
 entity_type: node
-type: boolean
-settings: {  }
+type: entity_reference
+settings:
+  target_type: meeting_api_meeting
 module: core
 locked: false
 cardinality: 1

@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.meeting_api_meeting.event
+    - meeting_api.meeting_api_meeting_type.custom_link
+  module:
+    - meeting_api
+id: meeting_api_meeting.custom_link.event
+targetEntityType: meeting_api_meeting
+bundle: custom_link
+mode: event
+content:
+  backend_settings:
+    type: meeting_api_backend_settings_widget
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  datetime: true
+  label: true
+  max_attendees: true
+  status: true
+  uid: true
