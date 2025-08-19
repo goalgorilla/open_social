@@ -158,6 +158,12 @@ class DatabaseContext implements Context {
       throw new \RuntimeException("Could not drop existing database.", 0, $e);
     }
 
+    // Drush CR is run because it ensures that all caches are cleared, including
+    // non-database caches like Redis.
+    // The additional database clears below duplicate effort but are needed to
+    // clear the memory of Behat.
+    $this->drushDriver->drush("cr", ["-y"]);
+
     // When there's no database Drupal kicks into Install mode which sets up a
     // read only config. Now that we have a database loaded we need to get
     // Drupal out of that mode.
@@ -181,7 +187,6 @@ class DatabaseContext implements Context {
     // 5. We must clear the current user, since the container rebuild saves it,
     //    but it references a non-existent user now.
     \Drupal::currentUser()->setInitialAccountId(0);
-
 
     $this->triggerOnDatabaseLoaded();
   }
