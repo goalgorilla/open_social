@@ -17,7 +17,6 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\meeting_api\MeetingEntityInterface;
-use Drupal\node\NodeInterface;
 use Drupal\social_event\Form\EventSettingsForm;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -104,6 +103,10 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     $meeting_form = ['#parents' => [$field_name, $delta, 'meeting_form_wrapper']];
     $form_display->buildForm($meeting_entity, $meeting_form, $form_state);
 
+    // Add validation to make sure the all values for meeting were provided
+    // correctly.
+    $wrapper['#element_validate'][] = [$this, 'validateMeetingValues'];
+
     // Hide revision for the moment.
     if (isset($meeting_form['revision_log'])) {
       $meeting_form['revision_log']['#access'] = FALSE;
@@ -116,7 +119,6 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
 
       $meeting_form['max_attendees']['widget'][0]['value']['#max'] = $max_attendees;
       $meeting_form['max_attendees']['widget'][0]['value']['#min'] = self::DEFAULT_ATTENDEES;
-      $meeting_form['max_attendees']['widget'][0]['value']['#element_validate'][] = [$this, 'validateMeetingCapacity'];
     }
 
     // Add the meeting form to the wrapper.
@@ -192,6 +194,57 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       'max_attendees' => self::DEFAULT_ATTENDEES,
       'title' => $this->t('Event Meeting'),
     ];
+  }
+
+  /**
+   * Updates the meeting entity with form values.
+   *
+   * This method assigns values collected from the form state and additional
+   * computed values related to the event's start and end dates to the
+   * meeting entity fields.
+   * If any field values are updated, it returns TRUE.
+   *
+   * @param \Drupal\meeting_api\MeetingEntityInterface $meeting
+   *   The meeting entity to be updated.
+   * @param array $values
+   *   An associative array of field values to update the meeting entity with.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object containing submitted form values.
+   *
+   * @return bool
+   *   TRUE if any field values in the meeting entity were changed;
+   *   otherwise, FALSE.
+   */
+  private function putFormValuesToMeeting(MeetingEntityInterface $meeting, array $values, FormStateInterface $form_state): bool {
+    $event_start = $form_state->getValue(['field_event_date', 0, 'value']);
+    $event_end = $form_state->getValue(['field_event_date_end', 0, 'value']);
+    if (empty($event_start) || empty($event_end)) {
+      return FALSE;
+    }
+
+    assert($event_start instanceof DrupalDateTime);
+    assert($event_end instanceof DrupalDateTime);
+
+    $values_from_event = [
+      'label' => $this->t('Meeting for @title event', [
+        '@title' => $form_state->getValue(['title', 0, 'value']) ?: 'Meeting',
+      ]),
+      'datetime' => [
+        'value' => $event_start->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
+        'end_value' => $event_end->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
+        'timezone' => date_default_timezone_get(),
+      ]
+    ];
+
+    $is_changed = FALSE;
+    foreach ($values + $values_from_event as $field_name => $field_value) {
+      if ($meeting->hasField($field_name)) {
+        $meeting->set($field_name, $field_value);
+        $is_changed = TRUE;
+      }
+    }
+
+    return $is_changed;
   }
 
   /**
@@ -407,31 +460,13 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       return;
     }
 
-    // @todo The methods triggered twice after event submit, check the reason.
+    // @todo The methods triggered a few times after event submit,
+    //   check the reason.
     if (empty($widget_state[0]['meeting_form_wrapper'])) {
       return;
     }
 
-    $event = $items->getEntity();
-    if (!$event instanceof NodeInterface) {
-      // This widget works only in the event node entity context.
-      return;
-    }
-
-    $values_from_event = [
-      'label' => $this->t('Meeting for @title (ID: @id) event', [
-        '@title' => $event->label(),
-        '@id' => $event->id(),
-      ]),
-      'datetime' => [
-        'value' => $event->get('field_event_date')->getString(),
-        'end_value' => $event->get('field_event_date_end')->getString(),
-        'timezone' => date_default_timezone_get(),
-      ]
-    ];
-
     foreach ($widget_state as $delta => &$values) {
-      // @todo Replace it with the widget item.
       if (!$values['is_online']) {
         if (NULL !== $values['target_id']) {
           $previous_meeting = $this->entityTypeManager
@@ -456,17 +491,11 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       $default_value = $values['target_id'] ?? NULL;
 
       // Extract values from the meeting form wrapper.
-      $meeting_form_values = $values_from_event + ($values['meeting_form_wrapper'] ?? []);
+      $meeting_form_values = $values['meeting_form_wrapper'] ?? [];
 
       if ($meeting->isNew() || $meeting->id() != $default_value) {
-        // If the bundle has changed, create a new meeting entity.
-        $meeting = $this->entityTypeManager
-          ->getStorage('meeting_api_meeting')
-          ->create([
-            'bundle' => $values['meeting_type'],
-            'title' => $this->t('Event Meeting'),
-          ] + $meeting_form_values);
-
+        $this->putFormValuesToMeeting($meeting, $meeting_form_values, $form_state);
+        // We always save a new meeting.
         $meeting->save();
 
         // Unpublish previous meeting.
@@ -482,21 +511,8 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
         }
       }
       else {
-        $is_changed = FALSE;
-        foreach ($meeting_form_values as $field_name_meeting => $field_value) {
-          if ($meeting->hasField($field_name_meeting)) {
-            // Make sure the values were changed.
-            if ($meeting->get($field_name_meeting)->getValue() === $field_value) {
-              continue;
-            }
-
-            $meeting->set($field_name_meeting, $field_value);
-            $is_changed = TRUE;
-          }
-        }
-
-        if ($is_changed) {
-          // Save the meeting entity.
+        // Save the meeting entity if there are changes, otherwise skip.
+        if ($this->putFormValuesToMeeting($meeting, $meeting_form_values, $form_state)) {
           $meeting->save();
         }
       }
@@ -542,112 +558,63 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    * @param array $form
    *   The complete form structure.
    */
-  public function validateMeetingCapacity(array $element, FormStateInterface $form_state, array $form): void {
-    // Get the selected meeting type from the form state.
+  public function validateMeetingValues(array $element, FormStateInterface $form_state, array $form): void {
     $parents = $element['#parents'];
     $field_name = $parents[0];
     $delta = $parents[1];
-    
+
+    // Validate only if the event is online.
+    $is_online = $form_state->getValue([$field_name, $delta, 'is_online']);
+    if (!$is_online) {
+      return;
+    }
+
+    // Get the selected meeting type from the form state.
+    $meeting_values = $form_state->getValue($parents);
+    if (!$meeting_values) {
+      return;
+    }
+
     $meeting_type = $form_state->getValue([$field_name, $delta, 'meeting_type']);
-    
-    // Only validate if BigBlueButton is selected.
-    if ($meeting_type !== 'big_blue_button') {
+    // Get the current meeting ID to exclude it from count (for edits).
+    $current_meeting = NestedArray::getValue($form[$field_name]['widget'][$delta], ['meeting_form_wrapper', $meeting_type, '#meeting_entity']);
+    if (!$current_meeting instanceof MeetingEntityInterface) {
       return;
     }
 
-    $event_start = $form_state->getValue(['field_event_date', 0, 'value']);
-    $event_end = $form_state->getValue(['field_event_date_end', 0, 'value']);
-    if (empty($event_start) || empty($event_end)) {
+    // Use a cloned meeting for validation because the values state of the
+    // meeting object should be untouched until the form is submitted.
+    // On form submitting (technically, when ::extractFormValues() is called),
+    // we want to know if the values have changed, and if so, we want to save
+    // the meeting, otherwise won't touch it.
+    $cloned_meeting = clone $current_meeting;
+
+    $this->putFormValuesToMeeting($cloned_meeting, $meeting_values, $form_state);
+
+    $violations = $cloned_meeting->validate();
+    if ($violations->count() <= 0) {
       return;
     }
 
-    assert($event_start instanceof DrupalDateTime);
-    assert($event_end instanceof DrupalDateTime);
-    
-    try {
-      // Get the current meeting ID to exclude it from count (for edits).
-      $current_meeting = NestedArray::getValue($form[$field_name]['widget'][$delta], ['meeting_form_wrapper', $meeting_type, '#meeting_entity']);
-
-      // Count the total capacity of overlapping BigBlueButton meetings.
-      $total_capacity = $this->countOverlappingMeetingsAttendees($event_start, $event_end, $current_meeting?->id());
-      
-      // Check if the capacity limit is exceeded.
-      if ($total_capacity >= EventSettingsForm::MAX_CONCURRENT_BBB_ATTENDEES) {
-        $form_state->setError($element, $this->t('BigBlueButton meeting capacity limit reached. The total capacity of concurrent meetings is @count attendees during this time. Maximum allowed capacity is @max attendees.', [
-          '@count' => $total_capacity,
-          '@max' => EventSettingsForm::MAX_CONCURRENT_BBB_ATTENDEES,
-        ]));
-      }
+    foreach ($violations as $violation) {
+      // Attach all errors to the "Online" checkbox.
+      $form_state->setError($form[$field_name]['widget'][$delta]['is_online'], $violation->getMessage());
     }
-    catch (\Exception $e) {
-      // Log the error but don't fail validation to avoid blocking form submission.
-      $this->logger->error('Error validating meeting capacity: @message', [
-        '@message' => $e->getMessage(),
-      ]);
-    }
-  }
-
-  /**
-   * Counts total capacity of overlapping BigBlueButton meetings for the given
-   * time period.
-   *
-   * @param \Drupal\Core\Datetime\DrupalDateTime $event_start
-   *   The start datetime of the event.
-   * @param \Drupal\Core\Datetime\DrupalDateTime $event_end
-   *   The end datetime of the event.
-   * @param int|null $exclude_meeting_id
-   *   Meeting ID to exclude from the count (for edits).
-   *
-   * @return int
-   *   The total max_attendees capacity of overlapping meetings.
-   *
-   * @throws \Exception
-   */
-  protected function countOverlappingMeetingsAttendees(DrupalDateTime $event_start, DrupalDateTime $event_end, ?int $exclude_meeting_id = NULL): int {
-    $event_start = $event_start->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
-    $event_end = $event_end->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
-    
-    // Build the query to find overlapping BigBlueButton meetings.
-    $query = $this->database->select('meeting_api_meeting', 'm')
-      ->condition('bundle', 'big_blue_button')
-      ->condition('status', TRUE);
-    $query->addExpression('SUM(m.max_attendees)', 'total_capacity');
-
-    // Exclude current meeting if editing.
-    if ($exclude_meeting_id) {
-      $query->condition('id', $exclude_meeting_id, '<>');
-    }
-
-    // Add overlap conditions using the "OR" group.
-    $overlap_conditions = $query->orConditionGroup()
-      // Case 1: Meeting starts during an event.
-      ->condition(
-        $query->andConditionGroup()
-          ->condition('datetime__value', $event_start, '>=')
-          ->condition('datetime__value', $event_end, '<')
-      )
-      // Case 2: Meeting ends during an event.
-      ->condition(
-        $query->andConditionGroup()
-          ->condition('datetime__end_value', $event_start, '>')
-          ->condition('datetime__end_value', $event_end, '<=')
-      )
-      // Case 3: Meeting encompasses the entire event.
-      ->condition(
-        $query->andConditionGroup()
-          ->condition('datetime__value', $event_start, '<=')
-          ->condition('datetime__end_value', $event_end, '>=')
-      );
-
-    $query->condition($overlap_conditions);
-
-    return (int) $query->execute()->fetchField();
   }
 
   /**
    * {@inheritdoc}
    */
   public static function isApplicable(FieldDefinitionInterface $field_definition): bool {
+    // This widget is very specific to an Event node type and
+    // should not be used on other entity types.
+    if (
+      $field_definition->getTargetBundle() !== 'event' &&
+      $field_definition->getTargetEntityTypeId() !== 'node'
+    ) {
+      return FALSE;
+    }
+
     // Only apply to entity_reference fields.
     if ($field_definition->getType() !== 'entity_reference') {
       return FALSE;

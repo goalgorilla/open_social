@@ -7,6 +7,8 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -205,6 +207,37 @@ class EventSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Checks if BigBlueButton backend is properly configured.
+   *
+   * @return bool
+   *   TRUE if BigBlueButton backend has a non-empty URL and key,
+   *   FALSE otherwise.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  private function isBigBlueButtonServerConfigured(): bool {
+    $meeting_api_servers = \Drupal::entityTypeManager()
+      ->getStorage('meeting_api_server')
+      ->loadMultiple();
+
+    $bbb_servers = array_filter($meeting_api_servers, fn ($server) => $server->get('backend') === 'bigbluebutton');
+    if (empty($bbb_servers)) {
+      return FALSE;
+    }
+
+    foreach ($bbb_servers as $bbb_server) {
+      if ($configuration = $bbb_server->get('backend_config')) {
+        if (!empty($configuration['url']) && !empty($configuration['key'])) {
+          return TRUE;
+        }
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
    * Builds the online meetings configuration section form.
    *
    * @param array $form
@@ -237,6 +270,19 @@ class EventSettingsForm extends ConfigFormBase {
       '#options' =>  $this->getAvailableMeetingTypes(),
       '#default_value' => $event_settings->get('online_meeting.default_meeting_type'),
     ];
+
+    // Check if the BigBlueButton is properly configured.
+    $bbb_configured = $this->isBigBlueButtonServerConfigured();
+    // Display warning if BigBlueButton is not properly configured.
+    if (!$bbb_configured) {
+      $online_meeting['bbb_warning'] = [
+        '#type' => 'markup',
+        '#markup' => '<div class="messages messages--warning">' . $this->t('BigBlueButton backend is not properly configured. Please ensure the URL and Key are set @url.', [
+          '@url' => Link::fromTextAndUrl($this->t('here'), Url::fromRoute('entity.meeting_api_server.collection'))->toString(),
+          ]) . '</div>',
+        '#weight' => -10,
+      ];
+    }
 
     $online_meeting['max_attendees'] = [
       '#type' => 'number',

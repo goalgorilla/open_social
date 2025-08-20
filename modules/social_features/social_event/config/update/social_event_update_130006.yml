@@ -11,6 +11,14 @@ __global_actions:
     - field.storage.node.field_event_meeting
     - field.field.node.event.field_event_meeting
 
+social_event.settings:
+  expected_config: { }
+  update_actions:
+    add:
+      online_meeting:
+        default_meeting_type: 'custom_link'
+        max_attendees: 200
+
 core.entity_form_display.node.event.default:
   expected_config: { }
   update_actions:
