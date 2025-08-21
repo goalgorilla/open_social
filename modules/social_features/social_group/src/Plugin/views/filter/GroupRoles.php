@@ -76,9 +76,11 @@ class GroupRoles extends ManyToOne {
     // The role should have a "hubs_filter" property set to TRUE.
     $target_group_roles = array_filter(
       array: $group_roles,
-      callback: fn(GroupRoleInterface $role) => $role->getThirdPartySetting('social_group', 'hubs_filter') &&
-        str_ends_with((string) $role->id(), '-member') ||
-        str_ends_with((string) $role->id(), '-group_manager')
+      callback: fn(GroupRoleInterface $role) => $role->getThirdPartySetting('social_group', 'hubs_filter')
+        && (
+          str_ends_with((string) $role->id(), '-member') ||
+          str_ends_with((string) $role->id(), '-group_manager')
+        )
     );
 
     // Build options list.
