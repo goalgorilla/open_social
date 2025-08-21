@@ -29,6 +29,11 @@ class EventSettingsForm extends ConfigFormBase {
   public const int MAX_CONCURRENT_BBB_ATTENDEES = 200;
 
   /**
+   * The default number of attendees.
+   */
+  public const int DEFAULT_MEETING_ATTENDEES = 2;
+
+  /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface

@@ -33,11 +33,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The default number of attendees.
-   */
-  public const int DEFAULT_ATTENDEES = 2;
-
-  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -115,10 +110,16 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     // Make sure the max attendees value is synchronized with global settings.
     if (isset($meeting_form['max_attendees']['widget'][0]['value'])) {
       $event_settings = $this->configFactory->get(EventSettingsForm::SETTINGS);
-      $max_attendees = $event_settings->get('online_meeting.max_attendees') ?: 200;
 
-      $meeting_form['max_attendees']['widget'][0]['value']['#max'] = $max_attendees;
-      $meeting_form['max_attendees']['widget'][0]['value']['#min'] = self::DEFAULT_ATTENDEES;
+      $max = $event_settings->get('online_meeting.max_attendees') ?: 200;
+      $min = $this->getMeetingDefaultValues()['max_attendees'];
+
+      $meeting_form['max_attendees']['widget'][0]['value']['#max'] = $max;
+      $meeting_form['max_attendees']['widget'][0]['value']['#min'] = $min;
+      $meeting_form['max_attendees']['widget'][0]['value']['#description'] = $this->t('The maximum allowed number of attendees. Allowed value is from <em>@min</em> to <em>@max</em>.', [
+        '@min' => $min,
+        '@max' => $max,
+      ]);
     }
 
     // Add the meeting form to the wrapper.
@@ -191,7 +192,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    */
   protected function getMeetingDefaultValues(): array {
     return [
-      'max_attendees' => self::DEFAULT_ATTENDEES,
+      'max_attendees' => EventSettingsForm::DEFAULT_MEETING_ATTENDEES,
       'title' => $this->t('Event Meeting'),
     ];
   }

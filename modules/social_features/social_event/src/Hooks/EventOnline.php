@@ -4,14 +4,38 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Hooks;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
+use Drupal\social_event\Form\EventSettingsForm;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides hooks related to node event online feature.
  */
-final class EventOnline {
+final class EventOnline implements ContainerInjectionInterface {
+
+  use StringTranslationTrait;
+
+  /**
+   * Construct the EventOnline object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
+   */
+  public function __construct(protected ConfigFactoryInterface $configFactory) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): self {
+    return new static(
+      $container->get('config.factory'),
+    );
+  }
 
   /**
    * Adds validation constraints to the Meeting entity type.
@@ -62,8 +86,26 @@ final class EventOnline {
    * @see hook_form_FORM_ID_alter()
    */
   #[Alter('form_meeting_api_meeting_big_blue_button_add_form')]
+  #[Alter('form_meeting_api_meeting_big_blue_button_edit_form')]
   public function alterBigBlueButtonForm(array &$form, FormStateInterface $form_state): void {
-    return;
+    $meeting = $form_state->getFormObject()->getEntity();
+    if ($meeting->bundle() !== 'big_blue_button') {
+      return;
+    }
+
+    // Change min and max attendees.
+    if (isset($form['max_attendees']['widget'][0]['value'])) {
+      $event_settings = $this->configFactory->get(EventSettingsForm::SETTINGS);
+      $max = $event_settings->get('online_meeting.max_attendees') ?: 200;
+      $min = EventSettingsForm::DEFAULT_MEETING_ATTENDEES;
+
+      $form['max_attendees']['widget'][0]['value']['#max'] = $max;
+      $form['max_attendees']['widget'][0]['value']['#min'] = $min;
+      $form['max_attendees']['widget'][0]['value']['#description'] = $this->t('The maximum allowed number of attendees. Allowed value is from <em>@min</em> to <em>@max</em>.', [
+        '@min' => $min,
+        '@max' => $max,
+      ]);
+    }
   }
 
 }
