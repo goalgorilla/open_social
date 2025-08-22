@@ -29,7 +29,7 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
    */
   public function __construct(
     private readonly Connection $database,
-    private readonly LoggerInterface $logger
+    private readonly LoggerInterface $logger,
   ) {}
 
   /**
@@ -77,7 +77,7 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
         }
 
         // Count the total capacity of overlapping BigBlueButton meetings.
-        $other_attendees = $this->countOverlappingMeetingsAttendees($event_start, $event_end, $meeting->id());
+        $other_attendees = $this->countOverlappingMeetingsAttendees($event_start, $event_end, (int) $meeting->id());
 
         // Add the current meeting's capacity to the total.
         $current_capacity = $meeting->get('max_attendees')->value ?? 0;
@@ -94,7 +94,8 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
       }
     }
     catch (\Exception $e) {
-      // Log the error but don't fail validation to avoid blocking form submission.
+      // Log the error but don't fail validation to avoid blocking form
+      // submission.
       $this->logger->error('Error validating meeting capacity: @message', [
         '@message' => $e->getMessage(),
       ]);
@@ -102,14 +103,15 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
   }
 
   /**
-   * Counts the total max_attendees capacity of overlapping BigBlueButton meetings.
+   * Counts the total max_attendees capacity of overlapping meetings.
    *
    * @param \Drupal\Core\Datetime\DrupalDateTime $event_start_date
    *   The start date and time of the event.
    * @param \Drupal\Core\Datetime\DrupalDateTime $event_end_date
    *   The end date and time of the event.
    * @param int|null $exclude_meeting_id
-   *   Optional meeting ID to exclude from the count (for editing existing meetings).
+   *   Optional meeting ID to exclude from the count (for editing existing
+   *   meetings).
    *
    * @return int
    *   The total max_attendees capacity of overlapping meetings.
@@ -119,11 +121,10 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
   protected function countOverlappingMeetingsAttendees(DrupalDateTime $event_start_date, DrupalDateTime $event_end_date, ?int $exclude_meeting_id = NULL): int {
     $event_start = $event_start_date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
     $event_end = $event_end_date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
-    
     // Build the query to find overlapping BigBlueButton meetings.
     $query = $this->database->select('meeting_api_meeting', 'm')
       ->condition('bundle', 'big_blue_button')
-      ->condition('status', TRUE);
+      ->condition('status', 1);
     $query->addExpression('SUM(m.max_attendees)', 'total_capacity');
 
     // Exclude current meeting if editing.
@@ -134,7 +135,6 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
     // Meeting entity table columns names.
     $meeting_start = 'datetime__value';
     $meeting_end = 'datetime__end_value';
-    
     // Add overlap conditions using the "OR" group.
     $overlap_conditions = $query->orConditionGroup()
       // Case 1: Meeting starts during an event.
@@ -158,7 +158,7 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
 
     $query->condition($overlap_conditions);
 
-    return (int) $query->execute()->fetchField();
+    return (int) $query->execute()?->fetchField();
   }
 
 }

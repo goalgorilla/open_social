@@ -6,6 +6,7 @@ namespace Drupal\social_event\Hooks;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -88,7 +89,10 @@ final class EventOnline implements ContainerInjectionInterface {
   #[Alter('form_meeting_api_meeting_big_blue_button_add_form')]
   #[Alter('form_meeting_api_meeting_big_blue_button_edit_form')]
   public function alterBigBlueButtonForm(array &$form, FormStateInterface $form_state): void {
-    $meeting = $form_state->getFormObject()->getEntity();
+    $form_object = $form_state->getFormObject();
+    assert($form_object instanceof EntityFormInterface);
+
+    $meeting = $form_object->getEntity();
     if ($meeting->bundle() !== 'big_blue_button') {
       return;
     }

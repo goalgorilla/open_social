@@ -182,7 +182,7 @@ class EventSettingsForm extends ConfigFormBase {
       ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
       ->set('show_user_timezone', $form_state->getValue('show_user_timezone'))
       ->set('disable_event_enroll', $form_state->getValue('disable_event_enroll'))
-      ->set('online_meeting',  $form_state->getValue('online_meeting'))
+      ->set('online_meeting', $form_state->getValue('online_meeting'))
       ->save();
 
     // Invalidate cache tags to refresh blocks of list of events.
@@ -222,10 +222,11 @@ class EventSettingsForm extends ConfigFormBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   private function isBigBlueButtonServerConfigured(): bool {
-    $meeting_api_servers = \Drupal::entityTypeManager()
+    $meeting_api_servers = $this->entityTypeManager
       ->getStorage('meeting_api_server')
       ->loadMultiple();
 
+    /** @var \Drupal\meeting_api\ServerInterface[] $meeting_api_servers */
     $bbb_servers = array_filter($meeting_api_servers, fn ($server) => $server->get('backend') === 'bigbluebutton');
     if (empty($bbb_servers)) {
       return FALSE;
@@ -272,7 +273,7 @@ class EventSettingsForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => $this->t('Default meeting type'),
       '#description' => $this->t('Select the default meeting type for new events.'),
-      '#options' =>  $this->getAvailableMeetingTypes(),
+      '#options' => $this->getAvailableMeetingTypes(),
       '#default_value' => $event_settings->get('online_meeting.default_meeting_type'),
     ];
 
@@ -284,7 +285,7 @@ class EventSettingsForm extends ConfigFormBase {
         '#type' => 'markup',
         '#markup' => '<div class="messages messages--warning">' . $this->t('BigBlueButton backend is not properly configured. Please ensure the URL and Key are set @url.', [
           '@url' => Link::fromTextAndUrl($this->t('here'), Url::fromRoute('entity.meeting_api_server.collection'))->toString(),
-          ]) . '</div>',
+        ]) . '</div>',
         '#weight' => -10,
       ];
     }

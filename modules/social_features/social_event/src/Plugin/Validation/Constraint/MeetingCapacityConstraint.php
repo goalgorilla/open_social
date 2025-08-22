@@ -6,6 +6,12 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Validation\Attribute\Constraint;
 use Symfony\Component\Validator\Constraint as SymfonyConstraint;
 
+/**
+ * Validates that a meeting's capacity does not exceed concurrent limits.
+ *
+ * This constraint ensures that BigBlueButton meetings do not exceed
+ * the maximum allowed concurrent attendees limit.
+ */
 #[Constraint(
   id: 'MeetingCapacity',
   label: new TranslatableMarkup('Meeting Capacity', [], ['context' => 'Validation']),

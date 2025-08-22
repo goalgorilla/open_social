@@ -22,7 +22,7 @@ class MeetingServerSettingsConstraintValidator extends ConstraintValidator imple
    *   The entity type manager.
    */
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -62,13 +62,12 @@ class MeetingServerSettingsConstraintValidator extends ConstraintValidator imple
         return;
       }
 
+      assert($server instanceof ServerInterface);
+
       // We want to check the BigBlueButton server only.
       if ($server->get('backend') !== 'bigbluebutton') {
         return;
       }
-
-      assert($server instanceof ServerInterface);
-
 
       // Validate that the server has the proper configuration.
       $backend_config = $server->get('backend_config');
