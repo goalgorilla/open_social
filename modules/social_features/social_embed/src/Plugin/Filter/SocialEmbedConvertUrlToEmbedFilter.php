@@ -26,8 +26,6 @@ class SocialEmbedConvertUrlToEmbedFilter extends FilterBase implements Container
 
   /**
    * The social embed helper services.
-   *
-   * @var \Drupal\social_embed\Service\SocialEmbedHelper
    */
   protected SocialEmbedHelper $embedHelper;
 

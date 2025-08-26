@@ -16,6 +16,6 @@ interface SocialUrlEmbedHelperInterface {
    * @return null|array
    *   the info for the URL embed.
    */
-  public function getUrlInfo($url): ?array;
+  public function getUrlInfo(string $url): ?array;
 
 }

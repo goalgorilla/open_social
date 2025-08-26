@@ -13,24 +13,18 @@ class SocialUrlEmbedHelper implements SocialUrlEmbedHelperInterface {
 
   /**
    * The URL embed service.
-   *
-   * @var \Drupal\url_embed\UrlEmbedInterface
    */
-  protected $urlEmbed;
+  protected UrlEmbedInterface $urlEmbed;
 
   /**
    * Cache backend.
-   *
-   * @var \Drupal\Core\Cache\CacheBackendInterface
    */
-  protected $cacheBackend;
+  protected CacheBackendInterface $cacheBackend;
 
   /**
    * Time service.
-   *
-   * @var \Drupal\Component\Datetime\TimeInterface
    */
-  protected $time;
+  protected TimeInterface $time;
 
   /**
    * Constructs a new SocialUrlEmbedHelper object.
@@ -54,7 +48,7 @@ class SocialUrlEmbedHelper implements SocialUrlEmbedHelperInterface {
    * @return array|null
    *   Embed metadata or null.
    */
-  public function getUrlInfo($url): ?array {
+  public function getUrlInfo(string $url): ?array {
     $data = [];
     $keys = [
       'code',

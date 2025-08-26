@@ -23,15 +23,11 @@ class EmbedController extends ControllerBase {
 
   /**
    * Social Url Embed service.
-   *
-   * @var \Drupal\social_embed\SocialUrlEmbedHelperInterface
    */
   protected SocialUrlEmbedHelperInterface $socialUrlEmbedHelper;
 
   /**
    * The flood service.
-   *
-   * @var \Drupal\Core\Flood\FloodInterface
    */
   protected FloodInterface $flood;
 
@@ -84,7 +80,7 @@ class EmbedController extends ControllerBase {
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   The Ajax response.
    */
-  public function generateEmbed(Request $request) {
+  public function generateEmbed(Request $request): AjaxResponse {
     // Get the requested URL of content to embed.
     $url = $request->query->get('url');
     // Get unique identifier for the button which was clicked.

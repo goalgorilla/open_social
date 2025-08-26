@@ -33,43 +33,31 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
 
   /**
    * Uuid services.
-   *
-   * @var \Drupal\Component\Uuid\UuidInterface
    */
   protected UuidInterface $uuid;
 
   /**
    * The config factory services.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
    */
   protected ConfigFactory $configFactory;
 
   /**
    * The social embed helper services.
-   *
-   * @var \Drupal\social_embed\Service\SocialEmbedHelper
    */
   protected SocialEmbedHelper $embedHelper;
 
   /**
    * Current user object.
-   *
-   * @var \Drupal\Core\Session\AccountProxyInterface
    */
   protected AccountProxyInterface $currentUser;
 
   /**
    * The logger factory.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
   protected LoggerChannelFactoryInterface $loggerFactory;
 
   /**
    * Social Url Embed service.
-   *
-   * @var \Drupal\social_embed\SocialUrlEmbedHelperInterface
    */
   protected SocialUrlEmbedHelperInterface $socialUrlEmbedHelper;
 
@@ -148,7 +136,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
   /**
    * {@inheritdoc}
    */
-  public function process($text, $langcode) {
+  public function process($text, $langcode): FilterProcessResult {
     $result = new FilterProcessResult($text);
 
     // Add settings in case we need to use _filter_url().
