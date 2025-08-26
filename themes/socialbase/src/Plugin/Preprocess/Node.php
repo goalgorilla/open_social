@@ -306,7 +306,7 @@ class Node extends PreprocessBase implements ContainerFactoryPluginInterface {
           $variables['content']['links']['#lazy_builder'][1]
         )
       );
-      unset($variables['content']['links']['#lazy_builder']);
+      unset($variables['content']['links']['#lazy_builder'], $variables['content']['links']['#create_placeholder']);
     }
 
   }
