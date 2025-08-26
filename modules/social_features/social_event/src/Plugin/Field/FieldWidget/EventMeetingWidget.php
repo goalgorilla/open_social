@@ -20,6 +20,7 @@ use Drupal\meeting_api\MeetingEntityInterface;
 use Drupal\social_event\Form\EventSettingsForm;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Validator\ConstraintViolationInterface;
 
 /**
  * Plugin implementation of the 'event_meeting' widget.
@@ -307,6 +308,13 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
+  public function errorElement(array $element, ConstraintViolationInterface $error, array $form, FormStateInterface $form_state) {
+    return $element['is_online'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     // Get available meeting bundles.
     $meeting_bundles = $this->getAvailableMeetingBundles();
@@ -443,6 +451,10 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state): void {
+    if (!$form_state->isValidationComplete()) {
+      return;
+    }
+
     $triggering_element = $form_state->getTriggeringElement();
     if (empty($triggering_element['#type'])) {
       return;

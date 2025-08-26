@@ -6,6 +6,7 @@ Feature: Create/update online events
 
   Scenario: Online checkbox is visible when creating an event
     Given I am logged in as an "verified"
+
     When I am on "node/add/event"
 
     And I fill in the following:

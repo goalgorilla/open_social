@@ -77,7 +77,7 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
         }
 
         // Count the total capacity of overlapping BigBlueButton meetings.
-        $other_attendees = $this->countOverlappingMeetingsAttendees($event_start, $event_end, (int) $meeting->id());
+        $other_attendees = $this->countOverlappingMeetingsAttendees($event_start, $event_end);
 
         // Add the current meeting's capacity to the total.
         $current_capacity = $meeting->get('max_attendees')->value ?? 0;
