@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\social_group\Plugin\search_api\processor;
 
 use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Processor\ProcessorPluginBase;
@@ -114,6 +115,10 @@ class SearchApiQueryAlter extends ProcessorPluginBase {
     }
 
     $account = $query->getOption('social_search_access_account');
+    if (!$account instanceof AccountInterface) {
+      return;
+    }
+
     $user_groups = $this->groupHelper->getAllGroupsForUser((int) $account->id());
 
     $groups_with_membership = $query->createConditionGroup()
