@@ -67,14 +67,14 @@ trait UserSegmentGroupTrait {
     $gcgr_alias = "gcgr$suffix";
 
     // Join group relationships.
-    $query->leftJoin('group_relationship_field_data', $grfd_alias, "$grfd_alias.entity_id = {$alias}.uid");
+    $query->join('group_relationship_field_data', $grfd_alias, "$grfd_alias.entity_id = {$alias}.uid");
     $sub_conditions->condition("$grfd_alias.plugin_id", 'group_membership');
 
     $query->join('groups', $g_alias, "$grfd_alias.gid = $g_alias.id");
     $sub_conditions->condition("$g_alias.type", $group_type);
 
     foreach ($condition->properties as $condition_property) {
-      $this->applyGroupMembershipProperty($condition_property, $sub_conditions, $query, $alias, $suffix, $grfd_alias, $g_alias, $gcgr_alias);
+      $this->applyGroupMembershipProperty($condition_property, $sub_conditions, $query, $alias, $suffix, $grfd_alias, $gcgr_alias);
     }
 
     $condition_target->condition($sub_conditions);
@@ -125,6 +125,10 @@ trait UserSegmentGroupTrait {
       throw new \InvalidArgumentException('Role list must be a non-empty array.');
     }
 
+    if (count($roles) !== count(array_unique($roles))) {
+      throw new \InvalidArgumentException('Role list must contain unique values.');
+    }
+
     if (!$condition_property->match instanceof PropertyMatch) {
       throw new \InvalidArgumentException('The "match" property is required for the role condition.');
     }
@@ -162,9 +166,10 @@ trait UserSegmentGroupTrait {
       // Match: all.
       case PropertyRelationship::Include->value . ':' . PropertyMatch::All->value:
         // Build subquery to find group_content entity IDs (i.e., group
-        // memberships) that have exactly all the specified roles.
+        // memberships) that have all the specified roles.
         $subquery_gcgr_alias = "sq_gcgr$suffix";
         $subquery = $this->database->select('group_content__group_roles', $subquery_gcgr_alias);
+        $subquery->distinct();
         $subquery->addField($subquery_gcgr_alias, 'entity_id');
         $subquery->condition("$subquery_gcgr_alias.group_roles_target_id", $roles, 'IN');
         // Group by entity_id and ensure all roles are matched.
@@ -181,46 +186,55 @@ trait UserSegmentGroupTrait {
       // Relationship: exclude
       // Match: any.
       case PropertyRelationship::Exclude->value . ':' . PropertyMatch::Any->value:
-        // Because this is a condition negation (the conditions themselves
-        // are negated inside the rule), we must first include users who
-        // have $group_type memberships, and then apply property-based negation.
-        // If this were a rule negation instead, we would also include users
-        // without $group_type memberships.
-        // All users in this list are ensured to be $group_type members before
-        // any condition negation is applied, as handled by the methods
-        // `applyGroupMembershipCondition()` with `$sub_conditions->
-        // condition("$grfd_alias.plugin_id", 'group_membership');` and
-        // `$sub_conditions->condition("$g_alias.type", $group_type);`.
+        // Goal: Find users who have at least one membership (of the given type)
+        // where those memberships do NOT have any of the specified roles.
         //
-        // Build subquery to find users that have given role(s).
-        $subquery_grfd_alias = "sq_grfd$suffix";
-        $subquery_gcgr_alias = "sq_gcgr$suffix";
-        $subquery = $this->database->select('group_relationship_field_data', $subquery_grfd_alias);
-        $subquery->distinct();
-        $subquery->leftJoin('group_content__group_roles', $subquery_gcgr_alias, "$subquery_grfd_alias.id = {$subquery_gcgr_alias}.entity_id");
-        $subquery->addField($subquery_grfd_alias, 'entity_id');
-        $subquery->condition("$subquery_gcgr_alias.group_roles_target_id", $roles, 'IN');
-
+        // This is a property-based exclusion (i.e., specific properties are
+        // excluded within the rule itself). Therefore, we must first include
+        // users who have memberships of the specified $group_type, and only
+        // then apply the property-based exclusion logic.
+        //
+        // If this were a rule-level negation instead, we would also include
+        // users who do not have any $group_type memberships.
+        //
+        // All users in this list are guaranteed to be members of the specified
+        // group type before any condition-based exclusion is applied. This is
+        // enforced by the `applyGroupMembershipCondition()` method, which adds
+        // conditions like: `$sub_conditions->condition("$grfd_alias.plugin_id",
+        // 'group_membership');` and `$sub_conditions->condition("$g_alias.type"
+        // , $group_type);`.
+        //
+        // All related subqueries (e.g., $role_subquery and $wrapper_subquery)
+        // follow this same pattern.
+        //
+        // Step 1: Build subquery to get membership IDs that have ANY of the
+        // roles.
+        $role_subquery_gcgr_alias = "rsq_gcgr$suffix";
+        $role_subquery = $this->database->select('group_content__group_roles', $role_subquery_gcgr_alias);
+        // entity_id = group membership ID.
+        $role_subquery->addField($role_subquery_gcgr_alias, 'entity_id');
+        $role_subquery->condition("$role_subquery_gcgr_alias.group_roles_target_id", $roles, 'IN');
         // Constrain to group type ($group_type) memberships.
-        $subquery_g_alias = "sq_g$suffix";
-        $subquery->condition("$subquery_grfd_alias.plugin_id", 'group_membership');
-        $subquery->leftJoin('groups', $subquery_g_alias, "$subquery_grfd_alias.gid = $subquery_g_alias.id");
-        $subquery->condition("$subquery_g_alias.type", $group_type);
+        $role_subquery_grfd_alias = "rsq_grfd$suffix";
+        $role_subquery_g_alias = "rsq_g$suffix";
+        $role_subquery->join('group_relationship_field_data', $role_subquery_grfd_alias, "$role_subquery_gcgr_alias.entity_id = $role_subquery_grfd_alias.id");
+        $role_subquery->condition("$role_subquery_grfd_alias.plugin_id", 'group_membership');
+        $role_subquery->join('groups', $role_subquery_g_alias, "$role_subquery_grfd_alias.gid = $role_subquery_g_alias.id");
+        $role_subquery->condition("$role_subquery_g_alias.type", $group_type);
 
-        // Build wrapping subquery to negate the list of users with given
-        // role(s).
-        $wrapper_subquery_grfd_alias = "wq_grfd$suffix";
+        // Step 2: Find memberships not in that list, constrained by group type.
+        $wrapper_subquery_grfd_alias = "wsq_grfd$suffix";
         $wrapper_subquery = $this->database->select('group_relationship_field_data', $wrapper_subquery_grfd_alias);
+        $wrapper_subquery->distinct();
         $wrapper_subquery->addField($wrapper_subquery_grfd_alias, 'entity_id');
-        $wrapper_subquery->condition("$wrapper_subquery_grfd_alias.entity_id", $subquery, 'NOT IN');
-
+        $wrapper_subquery->condition("$wrapper_subquery_grfd_alias.id", $role_subquery, 'NOT IN');
         // Constrain to group type ($group_type) memberships.
-        $wrapper_subquery_g_alias = "wq_g$suffix";
+        $wrapper_subquery_g_alias = "wsq_g$suffix";
         $wrapper_subquery->condition("$wrapper_subquery_grfd_alias.plugin_id", 'group_membership');
-        $wrapper_subquery->leftJoin('groups', $wrapper_subquery_g_alias, "$wrapper_subquery_grfd_alias.gid = $wrapper_subquery_g_alias.id");
+        $wrapper_subquery->join('groups', $wrapper_subquery_g_alias, "$wrapper_subquery_grfd_alias.gid = $wrapper_subquery_g_alias.id");
         $wrapper_subquery->condition("$wrapper_subquery_g_alias.type", $group_type);
 
-        // Apply the build condition to an original subquery.
+        // Step 3: Apply subquery as condition to the main user query.
         $sub_conditions->condition("$alias.uid", $wrapper_subquery, 'IN');
 
         break;
@@ -228,47 +242,61 @@ trait UserSegmentGroupTrait {
       // Relationship: exclude
       // Match: all.
       case PropertyRelationship::Exclude->value . ':' . PropertyMatch::All->value:
-        // Because this is a condition negation (the conditions themselves
-        // are negated inside the rule), we must first include users who
-        // have $group_type memberships, and then apply property-based negation.
-        // If this were a rule negation instead, we would also include users
-        // without $group_type memberships.
-        // All users in this list are ensured to be $group_type members before
-        // any condition negation is applied, as handled by the methods
-        // `applyGroupMembershipCondition()` with `$sub_conditions->
-        // condition("$grfd_alias.plugin_id", 'group_membership');` and
-        // `$sub_conditions->condition("$g_alias.type", $group_type);`.
+        // Goal: Find users who have at least one membership (of the given type)
+        // where those memberships do NOT have ALL the specified roles.
         //
-        // Build subquery to find users that have given role(s).
-        $subquery_grfd_alias = "sq_grfd$suffix";
-        $subquery_gcgr_alias = "sq_gcgr$suffix";
-        $subquery = $this->database->select('group_relationship_field_data', $subquery_grfd_alias);
-        $subquery->leftJoin('group_content__group_roles', $subquery_gcgr_alias, "$subquery_grfd_alias.id = {$subquery_gcgr_alias}.entity_id");
-        $subquery->addField($subquery_grfd_alias, 'entity_id');
-        $subquery->condition("$subquery_gcgr_alias.group_roles_target_id", $roles, 'IN');
+        // This is a property-based exclusion (i.e., specific properties are
+        // excluded within the rule itself). Therefore, we must first include
+        // users who have memberships of the specified $group_type, and only
+        // then apply the property-based exclusion logic.
+        //
+        // If this were a rule-level negation instead, we would also include
+        // users who do not have any $group_type memberships.
+        //
+        // All users in this list are guaranteed to be members of the specified
+        // group type before any condition-based exclusion is applied. This is
+        // enforced by the `applyGroupMembershipCondition()` method, which adds
+        // conditions like: `$sub_conditions->condition("$grfd_alias.plugin_id",
+        // 'group_membership');` and `$sub_conditions->condition("$g_alias.type"
+        // , $group_type);`.
+        //
+        // All related subqueries (e.g., $role_subquery and $wrapper_subquery)
+        // follow this same pattern.
+        //
+        // Step 1: Build subquery to get membership IDs that have ALL the roles.
+        $role_subquery_gcgr_alias = "rsq_gcgr$suffix";
+        $role_subquery = $this->database->select('group_content__group_roles', $role_subquery_gcgr_alias);
+        // entity_id = group membership ID.
+        $role_subquery->addField($role_subquery_gcgr_alias, 'entity_id');
+        $role_subquery->condition("$role_subquery_gcgr_alias.group_roles_target_id", $roles, 'IN');
+        // Group by membership ID (the next 5 lines are the only difference
+        // between exclude ALL roles and exclude ANY roles).
+        $role_subquery->groupBy("$role_subquery_gcgr_alias.entity_id");
+        // Only keep memberships that have all the roles assigned (count
+        // distinct roles = number of roles).
+        $role_subquery->having("COUNT(DISTINCT $role_subquery_gcgr_alias.group_roles_target_id) = :role_count", [
+          ':role_count' => count(array_unique($roles)),
+        ]);
+        // Constrain to group type ($group_type) memberships.
+        $role_subquery_grfd_alias = "rsq_grfd$suffix";
+        $role_subquery_g_alias = "rsq_g$suffix";
+        $role_subquery->join('group_relationship_field_data', $role_subquery_grfd_alias, "$role_subquery_gcgr_alias.entity_id = $role_subquery_grfd_alias.id");
+        $role_subquery->condition("$role_subquery_grfd_alias.plugin_id", 'group_membership');
+        $role_subquery->join('groups', $role_subquery_g_alias, "$role_subquery_grfd_alias.gid = $role_subquery_g_alias.id");
+        $role_subquery->condition("$role_subquery_g_alias.type", $group_type);
 
-        // Constrain to a $group_type memberships.
-        $subquery_g_alias = "sq_g$suffix";
-        $subquery->condition("$subquery_grfd_alias.plugin_id", 'group_membership');
-        $subquery->leftJoin('groups', $subquery_g_alias, "$subquery_grfd_alias.gid = $subquery_g_alias.id");
-        $subquery->condition("$subquery_g_alias.type", $group_type);
-        $subquery->groupBy("$subquery_grfd_alias.id");
-        $subquery->having("COUNT(DISTINCT {$subquery_gcgr_alias}.group_roles_target_id) = :role_count", [':role_count' => count(array_unique($roles))]);
-
-        // Build wrapping subquery to negate the list of users with given
-        // role(s).
-        $wrapper_subquery_grfd_alias = "wq_grfd$suffix";
+        // Step 2: Find memberships not in that list, constrained by group type.
+        $wrapper_subquery_grfd_alias = "wsq_grfd$suffix";
         $wrapper_subquery = $this->database->select('group_relationship_field_data', $wrapper_subquery_grfd_alias);
         $wrapper_subquery->addField($wrapper_subquery_grfd_alias, 'entity_id');
-        $wrapper_subquery->condition("$wrapper_subquery_grfd_alias.entity_id", $subquery, 'NOT IN');
-
-        // Constrain to $group_type memberships.
-        $wrapper_subquery_g_alias = "wq_g$suffix";
+        $wrapper_subquery->condition("$wrapper_subquery_grfd_alias.id", $role_subquery, 'NOT IN');
+        // Constrain to group type ($group_type) memberships.
+        $wrapper_subquery_g_alias = "wsq_g$suffix";
         $wrapper_subquery->condition("$wrapper_subquery_grfd_alias.plugin_id", 'group_membership');
-        $wrapper_subquery->leftJoin('groups', $wrapper_subquery_g_alias, "$wrapper_subquery_grfd_alias.gid = $wrapper_subquery_g_alias.id");
+        $wrapper_subquery->join('groups', $wrapper_subquery_g_alias, "$wrapper_subquery_grfd_alias.gid = $wrapper_subquery_g_alias.id");
         $wrapper_subquery->condition("$wrapper_subquery_g_alias.type", $group_type);
 
-        // Apply the build condition to an original subquery.
+        // Step 3: Apply subquery as condition to the main user query.
         $sub_conditions->condition("$alias.uid", $wrapper_subquery, 'IN');
 
         break;
