@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
 use Drupal\social_event\Form\EventSettingsForm;
+use Drupal\social_event\Service\EventOnline as EventOnlineService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -100,8 +101,8 @@ final class EventOnline implements ContainerInjectionInterface {
     // Change min and max attendees.
     if (isset($form['max_attendees']['widget'][0]['value'])) {
       $event_settings = $this->configFactory->get(EventSettingsForm::SETTINGS);
-      $max = $event_settings->get('online_meeting.max_attendees') ?: EventSettingsForm::MAX_CONCURRENT_BBB_ATTENDEES;
-      $min = EventSettingsForm::DEFAULT_MEETING_ATTENDEES;
+      $max = $event_settings->get('online_meeting.max_attendees') ?: EventOnlineService::MAX_CONCURRENT_BBB_ATTENDEES;
+      $min = EventOnlineService::DEFAULT_MEETING_ATTENDEES;
 
       $form['max_attendees']['widget'][0]['value']['#max'] = $max;
       $form['max_attendees']['widget'][0]['value']['#min'] = $min;

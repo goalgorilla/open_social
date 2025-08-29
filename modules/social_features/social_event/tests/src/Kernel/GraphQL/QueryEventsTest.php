@@ -62,6 +62,14 @@ class QueryEventsTest extends SocialGraphQLTestBase {
     'views',
     'group',
     'datetime',
+
+    // Meeting API modules required by social_event configurations.
+    'datetime_range_timezone',
+    'key',
+    'meeting_api',
+    'meeting_api_bbb',
+    'meeting_api_manual',
+
     'address',
     'profile',
     'social_profile',

@@ -27,20 +27,6 @@ class EventSettingsForm extends ConfigFormBase {
   public const SETTINGS = 'social_event.settings';
 
   /**
-   * Maximum allowed concurrent BigBlueButton meetings attendees.
-   *
-   * @var int
-   */
-  public const MAX_CONCURRENT_BBB_ATTENDEES = 200;
-
-  /**
-   * The default number of attendees.
-   *
-   * @var int
-   */
-  public const DEFAULT_MEETING_ATTENDEES = 2;
-
-  /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -256,9 +242,9 @@ class EventSettingsForm extends ConfigFormBase {
       '#type' => 'number',
       '#title' => $this->t('Max attendees'),
       '#description' => $this->t('Default maximum number of attendees for online meeting.'),
-      '#default_value' => $event_settings->get('online_meeting.max_attendees') ?: self::MAX_CONCURRENT_BBB_ATTENDEES,
+      '#default_value' => $event_settings->get('online_meeting.max_attendees') ?: EventOnline::MAX_CONCURRENT_BBB_ATTENDEES,
       '#min' => 1,
-      '#max' => self::MAX_CONCURRENT_BBB_ATTENDEES,
+      '#max' => EventOnline::MAX_CONCURRENT_BBB_ATTENDEES,
     ];
   }
 

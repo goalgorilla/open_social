@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -109,7 +110,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     if (isset($entity_form['max_attendees']['widget'][0]['value'])) {
       $event_settings = $this->configFactory->get(EventSettingsForm::SETTINGS);
 
-      $max = $event_settings->get('online_meeting.max_attendees') ?: EventSettingsForm::MAX_CONCURRENT_BBB_ATTENDEES;
+      $max = $event_settings->get('online_meeting.max_attendees') ?: EventOnline::MAX_CONCURRENT_BBB_ATTENDEES;
       $min = $this->getMeetingDefaultValues()['max_attendees'];
 
       $entity_form['max_attendees']['widget'][0]['value']['#max'] = $max;
@@ -149,9 +150,8 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     }
     else {
       // First, try to load an existing entity if we have a target_id.
-      /** @var \Drupal\Core\Field\FieldItemInterface $field_item */
       $field_item = $items->first();
-      if ($field_item && !$field_item->isEmpty() && $field_item->target_id) {
+      if ($field_item instanceof EntityReferenceItem && !$field_item->isEmpty() && $field_item->target_id) {
         $existing_entity = $this->entityTypeManager
           ->getStorage('meeting_api_meeting')
           ->load($field_item->target_id);
@@ -189,7 +189,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    */
   protected function getMeetingDefaultValues(): array {
     return [
-      'max_attendees' => EventSettingsForm::DEFAULT_MEETING_ATTENDEES,
+      'max_attendees' => EventOnline::DEFAULT_MEETING_ATTENDEES,
       'title' => $this->t('Event Meeting'),
     ];
   }
@@ -321,7 +321,6 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       return $element;
     }
 
-    /** @var \Drupal\Core\Field\FieldItemInterface $field_item */
     $field_item = $items->first();
 
     $field_name = $items->getName();
@@ -331,7 +330,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     $selected_bundle = $form_state->getValue([$field_name, 'meeting_type']);
     if (!$selected_bundle) {
       // Check if there's an existing entity.
-      if ($field_item && !$field_item->isEmpty() && $field_item->target_id) {
+      if ($field_item instanceof EntityReferenceItem && !$field_item->isEmpty() && $field_item->target_id) {
         $default_value_entity = $field_item->entity;
 
         if ($default_value_entity && $this->eventOnline->validateMeetingTypeUsage($default_value_entity->bundle())) {
@@ -374,7 +373,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     // Add the hidden target ID field with the existing meeting.
     $element['target_id'] = [
       '#type' => 'hidden',
-      '#value' => $field_item && !$field_item->isEmpty() && $this->eventOnline->validateMeetingTypeUsage($field_item->entity->bundle())
+      '#value' => $field_item instanceof EntityReferenceItem && !$field_item->isEmpty() && $field_item->entity && $this->eventOnline->validateMeetingTypeUsage($field_item->entity->bundle())
         ? $field_item->target_id
         : NULL,
     ];
@@ -391,7 +390,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     $meeting_form_element['is_online'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Online'),
-      '#default_value' => $field_item && !$field_item->isEmpty(),
+      '#default_value' => $field_item instanceof EntityReferenceItem && !$field_item->isEmpty(),
       '#ajax' => [
         'callback' => [$this, 'meetingTypeAjaxCallback'],
         'wrapper' => $wrapper_id,
@@ -400,7 +399,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     ];
 
     $is_online = $form_state->getValue([$field_name, 'meeting_form', 'is_online']);
-    if ($is_online === NULL && !$field_item) {
+    if ($is_online === NULL && !($field_item instanceof EntityReferenceItem)) {
       return $element;
     }
 

@@ -20,6 +20,20 @@ class EventOnline implements ContainerInjectionInterface {
   use StringTranslationTrait;
 
   /**
+   * Maximum allowed concurrent BigBlueButton meetings attendees.
+   *
+   * @var int
+   */
+  public const MAX_CONCURRENT_BBB_ATTENDEES = 200;
+
+  /**
+   * The default number of attendees.
+   *
+   * @var int
+   */
+  public const DEFAULT_MEETING_ATTENDEES = 2;
+
+  /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface

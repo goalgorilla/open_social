@@ -8,7 +8,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\meeting_api\MeetingInterface;
-use Drupal\social_event\Form\EventSettingsForm;
+use Drupal\social_event\Service\EventOnline;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
@@ -84,9 +84,9 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
         $total_capacity = $other_attendees + $current_capacity;
 
         // Check if the capacity limit is exceeded.
-        if ($total_capacity > EventSettingsForm::MAX_CONCURRENT_BBB_ATTENDEES) {
+        if ($total_capacity > EventOnline::MAX_CONCURRENT_BBB_ATTENDEES) {
           $this->context->buildViolation($constraint->bbbCapacityLimitExceeded, [
-            '@capacity' => max(EventSettingsForm::MAX_CONCURRENT_BBB_ATTENDEES - $other_attendees, 0),
+            '@capacity' => max(EventOnline::MAX_CONCURRENT_BBB_ATTENDEES - $other_attendees, 0),
           ])
             ->atPath('max_attendees')
             ->addViolation();
