@@ -21,23 +21,21 @@ Feature: Create/update online events
 
     # Make sure the "Online" checkbox is visible.
     Then I should see "Online"
-    And I should not see "BigBlueButton"
     And I should not see "Custom Link"
 
     # Check the "BigBlueButton" and "Custom Link" options visibility.
     And I check the box "Online"
     And I wait for AJAX to finish
-    And I should see "BigBlueButton"
     And I should see "Custom Link"
     And I uncheck the box "Online"
     And I wait for AJAX to finish
-    And I should not see "BigBlueButton"
     And I should not see "Custom Link"
 
     # Create event with Custom Link meeting.
     And I check the box "Online"
     And I wait for AJAX to finish
-    And I click the element with css selector "#edit-field-event-meeting-0-meeting-form-wrapper-custom-link .meeting-type-label"
+    And I click the element with css selector ".meeting-type-wrapper .meeting-type-label"
+    And I wait for AJAX to finish
     And I fill in "Meeting URL" with "https://example.com/meeting/12345"
     And I press "Create event"
     And I should see "Online Event has been created."
@@ -52,14 +50,4 @@ Feature: Create/update online events
     And I press "Save"
     And I should see "Online Event has been updated"
     And I click "Edit content"
-    And I should not see "BigBlueButton"
     And I should not see "Custom Link"
-
-    # Make sure it's not possible to create BigBlueButton meeting.
-    And I check the box "Online"
-    And I wait for AJAX to finish
-    And I click the element with css selector "#edit-field-event-meeting-0-meeting-form-wrapper-big-blue-button .meeting-type-label"
-    And I wait for AJAX to finish
-    And I press "Save"
-    And I should not see "Online Event has been updated"
-    And I should see the text "BigBlueButton server is not properly configured. Please ensure the URL and Key are set for the selected server"

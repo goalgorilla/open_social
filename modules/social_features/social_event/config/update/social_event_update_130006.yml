@@ -1,6 +1,6 @@
 __global_actions:
   import_configs:
-    - meeting_api.meeting_api_server.bigbluebutton
+    - meeting_api.meeting_api_server.big_blue_button
     - meeting_api.meeting_api_server.manual_url
     - meeting_api.meeting_api_meeting_type.big_blue_button
     - meeting_api.meeting_api_meeting_type.custom_link
@@ -24,13 +24,11 @@ core.entity_form_display.node.event.default:
   update_actions:
     change:
       third_party_settings:
-        change:
-          third_party_settings:
-            field_group:
-              group_date_time:
-                label: 'Date and time'
-                parent_name: 'group_event_schedule'
-                region: content
+        field_group:
+          group_date_time:
+            label: 'Date and time'
+            parent_name: 'group_event_schedule'
+            region: content
     add:
       third_party_settings:
         field_group:

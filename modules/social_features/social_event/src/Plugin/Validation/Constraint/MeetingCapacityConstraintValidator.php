@@ -80,7 +80,7 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
         $other_attendees = $this->countOverlappingMeetingsAttendees($event_start, $event_end);
 
         // Add the current meeting's capacity to the total.
-        $current_capacity = $meeting->get('max_attendees')->value ?? 0;
+        $current_capacity = (int) ($meeting->get('max_attendees')->value ?? 0);
         $total_capacity = $other_attendees + $current_capacity;
 
         // Check if the capacity limit is exceeded.
@@ -125,7 +125,7 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
     $query = $this->database->select('meeting_api_meeting', 'm')
       ->condition('bundle', 'big_blue_button')
       ->condition('status', 1);
-    $query->addExpression('SUM(m.max_attendees)', 'total_capacity');
+    $query->addExpression('COALESCE(SUM(m.max_attendees), 0)', 'total_capacity');
 
     // Exclude current meeting if editing.
     if ($exclude_meeting_id) {

@@ -4,7 +4,6 @@ namespace Drupal\social_event\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -18,7 +17,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\meeting_api\MeetingEntityInterface;
 use Drupal\social_event\Form\EventSettingsForm;
-use Psr\Log\LoggerInterface;
+use Drupal\social_event\Service\EventOnline;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 
@@ -30,6 +29,7 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
   label: new TranslatableMarkup('Event Meeting'),
   description: new TranslatableMarkup('Display meeting entity in event form mode.'),
   field_types: ['entity_reference'],
+  multiple_values: TRUE,
 )]
 final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPluginInterface {
 
@@ -45,8 +45,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     protected EntityTypeManagerInterface $entityTypeManager,
     protected EntityDisplayRepositoryInterface $entityDisplayRepository,
     protected ConfigFactoryInterface $configFactory,
-    protected Connection $database,
-    protected LoggerInterface $logger,
+    protected EventOnline $eventOnline,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
@@ -64,8 +63,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       $container->get('entity_type.manager'),
       $container->get('entity_display.repository'),
       $container->get('config.factory'),
-      $container->get('database'),
-      $container->get('logger.factory')->get('social_event'),
+      $container->get(EventOnline::class),
     );
   }
 
@@ -78,53 +76,52 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    *   A reference to the wrapper array where the meeting form will be appended.
    * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The field item list of the meeting entity.
-   * @param int|string $delta
-   *   The delta index of the current item in the field.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state to pass to the meeting form.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  private function buildMeetingForm(string $selected_bundle, array &$wrapper, FieldItemListInterface $items, int|string $delta, FormStateInterface $form_state): void {
+  private function buildMeetingForm(string $selected_bundle, array &$wrapper, FieldItemListInterface $items, FormStateInterface $form_state): void {
     $field_name = $items->getName();
 
-    $meeting_entity = $this->getMeetingEntity($selected_bundle, $wrapper, $items, $delta);
+    $meeting_entity = $this->getMeetingEntity($selected_bundle, $wrapper, $items);
 
     // Get the form display for the 'event' form mode.
     $form_display = $this->entityDisplayRepository
       ->getFormDisplay('meeting_api_meeting', $meeting_entity->bundle(), 'event');
 
     // Build the entity form.
-    $meeting_form = ['#parents' => [$field_name, $delta, 'meeting_form_wrapper']];
-    $form_display->buildForm($meeting_entity, $meeting_form, $form_state);
+    $entity_form = ['#parents' => [$field_name, 'meeting_form']];
+    $form_display->buildForm($meeting_entity, $entity_form, $form_state);
 
     // Add validation to make sure the all values for meeting were provided
     // correctly.
     $wrapper['#element_validate'][] = [$this, 'validateMeetingValues'];
 
     // Hide revision for the moment.
-    if (isset($meeting_form['revision_log'])) {
-      $meeting_form['revision_log']['#access'] = FALSE;
+    if (isset($entity_form['revision_log'])) {
+      $entity_form['revision_log']['#access'] = FALSE;
     }
 
     // Make sure the max attendees value is synchronized with global settings.
-    if (isset($meeting_form['max_attendees']['widget'][0]['value'])) {
+    if (isset($entity_form['max_attendees']['widget'][0]['value'])) {
       $event_settings = $this->configFactory->get(EventSettingsForm::SETTINGS);
 
-      $max = $event_settings->get('online_meeting.max_attendees') ?: 200;
+      $max = $event_settings->get('online_meeting.max_attendees') ?: EventSettingsForm::MAX_CONCURRENT_BBB_ATTENDEES;
       $min = $this->getMeetingDefaultValues()['max_attendees'];
 
-      $meeting_form['max_attendees']['widget'][0]['value']['#max'] = $max;
-      $meeting_form['max_attendees']['widget'][0]['value']['#min'] = $min;
-      $meeting_form['max_attendees']['widget'][0]['value']['#description'] = $this->t('The maximum allowed number of attendees. Allowed value is from <em>@min</em> to <em>@max</em>.', [
+      $entity_form['max_attendees']['widget'][0]['value']['#max'] = $max;
+      $entity_form['max_attendees']['widget'][0]['value']['#min'] = $min;
+      $entity_form['max_attendees']['widget'][0]['value']['#description'] = $this->t('The maximum allowed number of attendees. Allowed value is from <em>@min</em> to <em>@max</em>.', [
         '@min' => $min,
         '@max' => $max,
       ]);
     }
 
     // Add the meeting form to the wrapper.
-    $wrapper[$selected_bundle]['meeting_form'] = $meeting_form;
+    $wrapper[$selected_bundle]['entity_form'] = $entity_form;
   }
 
   /**
@@ -132,30 +129,29 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    *
    * @param string $selected_bundle
    *   The bundle of the meeting entity to retrieve or create.
-   * @param array &$meeting_form_wrapper
+   * @param array &$meeting_form
    *   The form wrapper holding temporary data for meeting entities.
    * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The items array which contains the entity data.
-   * @param int|string $delta
-   *   The index of the item to process.
    *
    * @return \Drupal\meeting_api\MeetingEntityInterface
    *   The retrieved or newly created meeting entity.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  private function getMeetingEntity(string $selected_bundle, array &$meeting_form_wrapper, FieldItemListInterface $items, int|string $delta): MeetingEntityInterface {
+  private function getMeetingEntity(string $selected_bundle, array &$meeting_form, FieldItemListInterface $items): MeetingEntityInterface {
     // If no existing entity, check if we have a temporary entity stored
     // for this bundle.
-    if (isset($meeting_form_wrapper[$selected_bundle]['#meeting_entity'])) {
-      $meeting_entity = $meeting_form_wrapper[$selected_bundle]['#meeting_entity'];
+    if (isset($meeting_form[$selected_bundle]['#meeting_entity'])) {
+      $meeting_entity = $meeting_form[$selected_bundle]['#meeting_entity'];
     }
     else {
       // First, try to load an existing entity if we have a target_id.
       /** @var \Drupal\Core\Field\FieldItemInterface $field_item */
-      $field_item = $items[$delta];
-      if (!$field_item->isEmpty() && $field_item->target_id) {
+      $field_item = $items->first();
+      if ($field_item && !$field_item->isEmpty() && $field_item->target_id) {
         $existing_entity = $this->entityTypeManager
           ->getStorage('meeting_api_meeting')
           ->load($field_item->target_id);
@@ -165,7 +161,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
           $meeting_entity = $existing_entity;
 
           // Store the entity by bundle for reuse during AJAX calls.
-          $meeting_form_wrapper[$selected_bundle]['#meeting_entity'] = $meeting_entity;
+          $meeting_form[$selected_bundle]['#meeting_entity'] = $meeting_entity;
         }
       }
     }
@@ -177,7 +173,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
         ->create(['bundle' => $selected_bundle] + $this->getMeetingDefaultValues());
 
       // Store the entity by bundle for reuse during AJAX calls.
-      $meeting_form_wrapper[$selected_bundle]['#meeting_entity'] = $meeting_entity;
+      $meeting_form[$selected_bundle]['#meeting_entity'] = $meeting_entity;
     }
 
     return $meeting_entity;
@@ -236,7 +232,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     ];
 
     $is_changed = FALSE;
-    foreach ($values + $values_from_event as $field_name => $field_value) {
+    foreach ($values_from_event + $values as $field_name => $field_value) {
       if ($meeting->hasField($field_name)) {
         $meeting->set($field_name, $field_value);
         $is_changed = TRUE;
@@ -248,6 +244,9 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
 
   /**
    * Get available meeting bundles for the field.
+   *
+   * This method gets the meeting types configured for the field and
+   * validates they are properly configured using the EventOnline service.
    *
    * @return array
    *   Array of bundle options keyed by bundle ID.
@@ -263,18 +262,11 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       return [];
     }
 
-    // Get bundle labels from the configured target bundles.
-    $meeting_type_storage = $this->entityTypeManager
-      ->getStorage('meeting_api_meeting_type');
-
-    foreach ($target_bundles as $bundle_id) {
-      $bundle_entity = $meeting_type_storage->load($bundle_id);
-      if ($bundle_entity) {
-        $options[$bundle_id] = $bundle_entity->label();
-      }
-    }
-
-    return $options ?? [];
+    // We need to make sure the meeting types are valid.
+    return array_intersect_key(
+      $this->eventOnline->getMeetingTypesAsOptionsList(),
+      $target_bundles
+    );
   }
 
   /**
@@ -282,34 +274,33 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    *
    * @return string|null
    *   The default bundle name or NULL if none is found.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function getDefaultBundle(): ?string {
     // Verify that the configured default type is valid and available.
-    $handler_settings = $this->fieldDefinition->getSetting('handler_settings');
-    $target_bundles = $handler_settings['target_bundles'] ?? [];
+    $meeting_types = array_keys($this->getAvailableMeetingBundles());
 
     // Get default meeting type from configuration.
     $event_settings = $this->configFactory->get(EventSettingsForm::SETTINGS);
     $default_meeting_type = $event_settings->get('online_meeting.default_meeting_type');
 
-    if (in_array($default_meeting_type, $target_bundles)) {
+    if (in_array($default_meeting_type, $meeting_types)) {
       return $default_meeting_type;
     }
 
-    // Fallback to field configuration or the first available bundle.
-    // If target bundles are configured, use the first one.
-    if (!empty($target_bundles)) {
-      return reset($target_bundles);
-    }
+    // If the default value isn't available, use the first one from available.
+    $first_meeting_type = (string) reset($meeting_types);
 
-    return NULL;
+    return $first_meeting_type ?: NULL;
   }
 
   /**
    * {@inheritdoc}
    */
   public function errorElement(array $element, ConstraintViolationInterface $error, array $form, FormStateInterface $form_state) {
-    return $element['is_online'];
+    return $element['meeting_form']['is_online'];
   }
 
   /**
@@ -330,21 +321,21 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       return $element;
     }
 
+    /** @var \Drupal\Core\Field\FieldItemInterface $field_item */
+    $field_item = $items->first();
+
     $field_name = $items->getName();
-    $wrapper_id = "meeting-type-wrapper-{$field_name}-{$delta}";
+    $wrapper_id = "meeting-type-wrapper-{$field_name}";
 
     // Get a selected bundle from form state or default.
-    $selected_bundle = $form_state->getValue([$field_name, $delta, 'meeting_type']);
+    $selected_bundle = $form_state->getValue([$field_name, 'meeting_type']);
     if (!$selected_bundle) {
       // Check if there's an existing entity.
-      /** @var \Drupal\Core\Field\FieldItemInterface $field_item */
-      $field_item = $items[$delta];
-      if (!$field_item->isEmpty() && $field_item->target_id) {
-        $existing_entity = $this->entityTypeManager
-          ->getStorage('meeting_api_meeting')
-          ->load($field_item->target_id);
-        if ($existing_entity) {
-          $selected_bundle = $existing_entity->bundle();
+      if ($field_item && !$field_item->isEmpty() && $field_item->target_id) {
+        $default_value_entity = $field_item->entity;
+
+        if ($default_value_entity && $this->eventOnline->validateMeetingTypeUsage($default_value_entity->bundle())) {
+          $selected_bundle = $default_value_entity->bundle();
         }
       }
 
@@ -361,15 +352,6 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
         'library' => ['social_event/event_meeting_widget'],
       ],
       '#tree' => TRUE,
-    ];
-
-    // Add a checkbox to indicate if the event is online.
-    /** @var \Drupal\Core\Field\FieldItemInterface $field_item */
-    $field_item = $items[$delta];
-    $element['is_online'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Online'),
-      '#default_value' => !$field_item->isEmpty(),
     ];
 
     // Add a meeting type selector.
@@ -392,22 +374,39 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     // Add the hidden target ID field with the existing meeting.
     $element['target_id'] = [
       '#type' => 'hidden',
-      '#value' => $field_item->target_id ?? NULL,
-      '#parents' => [$field_name, $delta, 'target_id'],
+      '#value' => $field_item && !$field_item->isEmpty() && $this->eventOnline->validateMeetingTypeUsage($field_item->entity->bundle())
+        ? $field_item->target_id
+        : NULL,
     ];
 
     // Container for the meeting form that will be updated via AJAX.
-    $element['meeting_form_wrapper'] = [
+    $element['meeting_form'] = [
       '#type' => 'container',
       '#attributes' => ['id' => $wrapper_id],
-      '#states' => [
-        'visible' => [
-          ':input[name="' . $field_name . "[$delta]" . '[is_online]"]' => ['checked' => TRUE],
-        ],
+    ];
+
+    $meeting_form_element =& $element['meeting_form'];
+
+    // Add a checkbox to indicate if the event is online.
+    $meeting_form_element['is_online'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Online'),
+      '#default_value' => $field_item && !$field_item->isEmpty(),
+      '#ajax' => [
+        'callback' => [$this, 'meetingTypeAjaxCallback'],
+        'wrapper' => $wrapper_id,
+        'effect' => 'fade',
       ],
     ];
 
-    $meeting_form_element =& $element['meeting_form_wrapper'];
+    $is_online = $form_state->getValue([$field_name, 'meeting_form', 'is_online']);
+    if ($is_online === NULL && !$field_item) {
+      return $element;
+    }
+
+    if ($is_online !== NULL && !$is_online) {
+      return $element;
+    }
 
     foreach ($meeting_bundles as $meeting_bundle => $meeting_bundle_label) {
       $meeting_form_element[$meeting_bundle] = [
@@ -430,7 +429,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
 
     // Only build the meeting form if a bundle is selected.
     if ($selected_bundle) {
-      $this->buildMeetingForm($selected_bundle, $meeting_form_element, $items, $delta, $form_state);
+      $this->buildMeetingForm($selected_bundle, $meeting_form_element, $items, $form_state);
     }
 
     return $element;
@@ -440,11 +439,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state): array {
-    foreach ($values as $delta => $value) {
-      $target_ids[$delta] = ['target_id' => $value['target_id']];
-    }
-
-    return $target_ids ?? [];
+    return ['target_id' => $values['target_id']];
   }
 
   /**
@@ -476,64 +471,66 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
 
     // @todo The methods triggered a few times after event submit,
     //   check the reason.
-    if (empty($widget_state[0]['meeting_form_wrapper'])) {
+    if (empty($widget_state['meeting_form'])) {
       return;
     }
 
-    foreach ($widget_state as $delta => &$values) {
-      if (!$values['is_online']) {
-        if (NULL !== $values['target_id']) {
-          $previous_meeting = $this->entityTypeManager
-            ->getStorage('meeting_api_meeting')
-            ->load($values['target_id']);
+    $values =& $widget_state;
 
-          if ($previous_meeting instanceof MeetingEntityInterface) {
-            $previous_meeting->set('status', FALSE);
-            $previous_meeting->save();
-          }
+    if (!$values['meeting_form']['is_online']) {
+      if (NULL !== $values['target_id']) {
+        $previous_meeting = $this->entityTypeManager
+          ->getStorage('meeting_api_meeting')
+          ->load($values['target_id']);
+
+        if ($previous_meeting instanceof MeetingEntityInterface) {
+          $previous_meeting->set('status', FALSE);
+          $previous_meeting->save();
         }
-
-        $values['target_id'] = NULL;
-        continue;
       }
 
-      $meeting = NestedArray::getValue($form[$field_name]['widget'][$delta], ['meeting_form_wrapper', $values['meeting_type'], '#meeting_entity']);
+      $values['target_id'] = NULL;
+    }
+    else {
+      $meeting = NestedArray::getValue($form[$field_name]['widget'], ['meeting_form', $values['meeting_type'], '#meeting_entity']);
+
       if (!$meeting instanceof MeetingEntityInterface) {
-        continue;
-      }
-
-      $default_value = $values['target_id'] ?? NULL;
-
-      // Extract values from the meeting form wrapper.
-      $meeting_form_values = $values['meeting_form_wrapper'] ?? [];
-
-      if ($meeting->isNew() || $meeting->id() != $default_value) {
-        $this->putFormValuesToMeeting($meeting, $meeting_form_values, $form_state);
-        // We always save a new meeting.
-        $meeting->save();
-
-        // Unpublish previous meeting.
-        if (NULL !== $default_value) {
-          $previous_meeting = $this->entityTypeManager
-            ->getStorage('meeting_api_meeting')
-            ->load($default_value);
-
-          if ($previous_meeting instanceof MeetingEntityInterface) {
-            $previous_meeting->set('status', FALSE);
-            $previous_meeting->save();
-          }
-        }
+        $values['target_id'] = NULL;
       }
       else {
-        // Save the meeting entity if there are changes, otherwise skip.
-        if ($this->putFormValuesToMeeting($meeting, $meeting_form_values, $form_state)) {
+        $default_value = $values['target_id'] ?? NULL;
+
+        // Extract values from the meeting form wrapper.
+        $meeting_form_values = $values['meeting_form'] ?? [];
+
+        if ($meeting->isNew() || $meeting->id() != $default_value) {
+          $this->putFormValuesToMeeting($meeting, $meeting_form_values, $form_state);
+          // We always save a new meeting.
           $meeting->save();
+
+          // Unpublish previous meeting.
+          if (NULL !== $default_value) {
+            $previous_meeting = $this->entityTypeManager
+              ->getStorage('meeting_api_meeting')
+              ->load($default_value);
+
+            if ($previous_meeting instanceof MeetingEntityInterface) {
+              $previous_meeting->set('status', FALSE);
+              $previous_meeting->save();
+            }
+          }
         }
+        else {
+          // Save the meeting entity if there are changes, otherwise skip.
+          if ($this->putFormValuesToMeeting($meeting, $meeting_form_values, $form_state)) {
+            $meeting->save();
+          }
+        }
+
+        NestedArray::setValue($form[$field_name]['widget'], ['meeting_form', $values['meeting_type'], '#meeting_entity'], NULL);
+
+        $values['target_id'] = $meeting->id();
       }
-
-      NestedArray::setValue($form[$field_name]['widget'][$delta], ['meeting_form_wrapper', $values['meeting_type'], '#meeting_entity'], NULL);
-
-      $values['target_id'] = $meeting->id();
     }
 
     // Set back the widget state.
@@ -561,7 +558,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     }
 
     $parents = array_slice($triggering_element['#array_parents'], 0, -2);
-    $parents[] = 'meeting_form_wrapper';
+    $parents[] = 'meeting_form';
 
     return NestedArray::getValue($form, $parents) ?? [];
   }
@@ -579,10 +576,9 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
   public function validateMeetingValues(array $element, FormStateInterface $form_state, array $form): void {
     $parents = $element['#parents'];
     $field_name = $parents[0];
-    $delta = $parents[1];
 
     // Validate only if the event is online.
-    $is_online = $form_state->getValue([$field_name, $delta, 'is_online']);
+    $is_online = $form_state->getValue([$field_name, 'meeting_form', 'is_online']);
     if (!$is_online) {
       return;
     }
@@ -593,9 +589,9 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       return;
     }
 
-    $meeting_type = $form_state->getValue([$field_name, $delta, 'meeting_type']);
+    $meeting_type = $form_state->getValue([$field_name, 'meeting_type']);
     // Get the current meeting ID to exclude it from count (for edits).
-    $current_meeting = NestedArray::getValue($form[$field_name]['widget'][$delta], ['meeting_form_wrapper', $meeting_type, '#meeting_entity']);
+    $current_meeting = NestedArray::getValue($form[$field_name]['widget'], ['meeting_form', $meeting_type, '#meeting_entity']);
     if (!$current_meeting instanceof MeetingEntityInterface) {
       return;
     }
@@ -616,7 +612,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
 
     foreach ($violations as $violation) {
       // Attach all errors to the "Online" checkbox.
-      $form_state->setError($form[$field_name]['widget'][$delta]['is_online'], $violation->getMessage());
+      $form_state->setError($form[$field_name]['widget']['meeting_form']['is_online'], $violation->getMessage());
     }
   }
 
@@ -627,7 +623,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     // This widget is very specific to an Event node type and
     // should not be used on other entity types.
     if (
-      $field_definition->getTargetBundle() !== 'event' &&
+      $field_definition->getTargetBundle() !== 'event' ||
       $field_definition->getTargetEntityTypeId() !== 'node'
     ) {
       return FALSE;

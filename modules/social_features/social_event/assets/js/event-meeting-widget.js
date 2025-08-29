@@ -43,7 +43,7 @@
           }
 
           // Find the corresponding radio input with the same value.
-          const radioInput = radios.querySelector('input[type="radio"][value="' + meetingType + '"]')
+          const radioInput = radios.querySelector('input[type="radio"][value="' + meetingType + '"]');
 
           if (radioInput) {
             // Trigger click on the radio input to select it.
@@ -56,8 +56,10 @@
             });
             span.setAttribute('data-is-selected', 'true');
 
-            widget.querySelector('.meeting-type-wrapper')
-              .setAttribute('style', 'opacity: 0.6;');
+            const wrapper = widget.querySelector('.meeting-type-wrapper');
+            if (wrapper) {
+              wrapper.style.opacity = '0.6';
+            }
           }
         });
       });

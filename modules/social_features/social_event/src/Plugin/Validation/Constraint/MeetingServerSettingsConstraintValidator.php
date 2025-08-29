@@ -3,9 +3,8 @@
 namespace Drupal\social_event\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\meeting_api\MeetingInterface;
-use Drupal\meeting_api\ServerInterface;
+use Drupal\meeting_api\Entity\Meeting;
+use Drupal\social_event\Service\EventOnline;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -18,11 +17,11 @@ class MeetingServerSettingsConstraintValidator extends ConstraintValidator imple
   /**
    * Constructs a MeetingServerSettingsConstraintValidator object.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The entity type manager.
+   * @param \Drupal\social_event\Service\EventOnline $eventOnline
+   *   The event online service.
    */
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly EventOnline $eventOnline,
   ) {}
 
   /**
@@ -30,7 +29,7 @@ class MeetingServerSettingsConstraintValidator extends ConstraintValidator imple
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('entity_type.manager')
+      $container->get(EventOnline::class)
     );
   }
 
@@ -46,37 +45,23 @@ class MeetingServerSettingsConstraintValidator extends ConstraintValidator imple
 
     // The value should be the Meeting entity itself.
     $meeting = $value;
-    if (!$meeting instanceof MeetingInterface) {
+    if (!$meeting instanceof Meeting) {
       return;
     }
 
     try {
-      $server_id = $meeting->getServerId();
-
-      // Load the server entity.
-      $server = $this->entityTypeManager
-        ->getStorage('meeting_api_server')
-        ->load($server_id);
-
-      if (!$server) {
-        return;
-      }
-
-      assert($server instanceof ServerInterface);
+      $server_backend_id = $this->eventOnline->getMeetingBackendId($meeting);
 
       // We want to check the BigBlueButton server only.
-      if ($server->get('backend') !== 'bigbluebutton') {
+      if ($server_backend_id !== 'bigbluebutton') {
         return;
       }
 
-      // Validate that the server has the proper configuration.
-      $backend_config = $server->get('backend_config');
+      // Get the meeting type from the meeting bundle.
+      $meeting_type_id = $meeting->bundle();
 
-      if (
-        empty($backend_config) ||
-        empty($backend_config['url']) ||
-        empty($backend_config['key'])
-      ) {
+      // Use the EventOnline service to validate server configuration.
+      if (!$this->eventOnline->validateMeetingTypeUsage($meeting_type_id)) {
         $this->context->addViolation($constraint->bigBlueButtonServerNotConfigured);
       }
     }

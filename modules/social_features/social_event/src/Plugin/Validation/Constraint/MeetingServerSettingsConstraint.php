@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraint as SymfonyConstraint;
  */
 #[Constraint(
   id: 'MeetingServerSettings',
-  label:  new TranslatableMarkup('Validate Big Blue Button configuration', [], ['context' => 'Validation']),
+  label:  new TranslatableMarkup('Validate BigBlueButton configuration', [], ['context' => 'Validation']),
   type: 'entity:meeting_api_meeting'
 )]
 class MeetingServerSettingsConstraint extends SymfonyConstraint {

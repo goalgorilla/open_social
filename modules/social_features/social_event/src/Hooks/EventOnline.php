@@ -100,7 +100,7 @@ final class EventOnline implements ContainerInjectionInterface {
     // Change min and max attendees.
     if (isset($form['max_attendees']['widget'][0]['value'])) {
       $event_settings = $this->configFactory->get(EventSettingsForm::SETTINGS);
-      $max = $event_settings->get('online_meeting.max_attendees') ?: 200;
+      $max = $event_settings->get('online_meeting.max_attendees') ?: EventSettingsForm::MAX_CONCURRENT_BBB_ATTENDEES;
       $min = EventSettingsForm::DEFAULT_MEETING_ATTENDEES;
 
       $form['max_attendees']['widget'][0]['value']['#max'] = $max;

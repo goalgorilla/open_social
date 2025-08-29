@@ -24,6 +24,6 @@ class MeetingCapacityConstraint extends SymfonyConstraint {
    *
    * @var string
    */
-  public string $bbbCapacityLimitExceeded = 'BigBlueButton meeting capacity limit reached. At selected time the @capacity attendees number is allowed. Change the meeting time or decrease the number of attendees.';
+  public string $bbbCapacityLimitExceeded = 'BigBlueButton capacity limit reached. At the selected time, only @capacity attendees are allowed. Change the meeting time or decrease the number of attendees.';
 
 }

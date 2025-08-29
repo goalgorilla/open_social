@@ -9,6 +9,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\social_event\Service\EventOnline;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,18 +21,24 @@ class EventSettingsForm extends ConfigFormBase {
 
   /**
    * The configuration settings for social events.
+   *
+   * @var string
    */
-  const string SETTINGS = 'social_event.settings';
+  public const SETTINGS = 'social_event.settings';
 
   /**
    * Maximum allowed concurrent BigBlueButton meetings attendees.
+   *
+   * @var int
    */
-  public const int MAX_CONCURRENT_BBB_ATTENDEES = 200;
+  public const MAX_CONCURRENT_BBB_ATTENDEES = 200;
 
   /**
    * The default number of attendees.
+   *
+   * @var int
    */
-  public const int DEFAULT_MEETING_ATTENDEES = 2;
+  public const DEFAULT_MEETING_ATTENDEES = 2;
 
   /**
    * The entity type manager.
@@ -48,6 +55,11 @@ class EventSettingsForm extends ConfigFormBase {
   protected $cacheTagsInvalidator;
 
   /**
+   * The event online service.
+   */
+  protected EventOnline $eventOnline;
+
+  /**
    * EventSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -56,12 +68,15 @@ class EventSettingsForm extends ConfigFormBase {
    *   The entity type manager.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
    *   The cache tags invalidator.
+   * @param \Drupal\social_event\Service\EventOnline $event_online
+   *   The event online service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, CacheTagsInvalidatorInterface $cache_tags_invalidator) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, CacheTagsInvalidatorInterface $cache_tags_invalidator, EventOnline $event_online) {
     parent::__construct($config_factory);
 
     $this->entityTypeManager = $entity_type_manager;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
+    $this->eventOnline = $event_online;
   }
 
   /**
@@ -71,7 +86,8 @@ class EventSettingsForm extends ConfigFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
-      $container->get('cache_tags.invalidator')
+      $container->get('cache_tags.invalidator'),
+      $container->get(EventOnline::class)
     );
   }
 
@@ -190,60 +206,6 @@ class EventSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * Get available meeting types.
-   *
-   * @return array
-   *   Array of meeting type options keyed by ID.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   */
-  protected function getAvailableMeetingTypes(): array {
-    $meeting_type_storage = $this->entityTypeManager
-      ->getStorage('meeting_api_meeting_type');
-
-    $meeting_types = $meeting_type_storage->loadMultiple();
-
-    foreach ($meeting_types as $meeting_type_id => $meeting_type_entity) {
-      $options[$meeting_type_id] = $meeting_type_entity->label();
-    }
-
-    return $options ?? [];
-  }
-
-  /**
-   * Checks if BigBlueButton backend is properly configured.
-   *
-   * @return bool
-   *   TRUE if BigBlueButton backend has a non-empty URL and key,
-   *   FALSE otherwise.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   */
-  private function isBigBlueButtonServerConfigured(): bool {
-    $meeting_api_servers = $this->entityTypeManager
-      ->getStorage('meeting_api_server')
-      ->loadMultiple();
-
-    /** @var \Drupal\meeting_api\ServerInterface[] $meeting_api_servers */
-    $bbb_servers = array_filter($meeting_api_servers, fn ($server) => $server->get('backend') === 'bigbluebutton');
-    if (empty($bbb_servers)) {
-      return FALSE;
-    }
-
-    foreach ($bbb_servers as $bbb_server) {
-      if ($configuration = $bbb_server->get('backend_config')) {
-        if (!empty($configuration['url']) && !empty($configuration['key'])) {
-          return TRUE;
-        }
-      }
-    }
-
-    return FALSE;
-  }
-
-  /**
    * Builds the online meetings configuration section form.
    *
    * @param array $form
@@ -273,12 +235,12 @@ class EventSettingsForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => $this->t('Default meeting type'),
       '#description' => $this->t('Select the default meeting type for new events.'),
-      '#options' => $this->getAvailableMeetingTypes(),
+      '#options' => $this->eventOnline->getMeetingTypesAsOptionsList(),
       '#default_value' => $event_settings->get('online_meeting.default_meeting_type'),
     ];
 
     // Check if the BigBlueButton is properly configured.
-    $bbb_configured = $this->isBigBlueButtonServerConfigured();
+    $bbb_configured = $this->eventOnline->isBigBlueButtonServerConfigured();
     // Display warning if BigBlueButton is not properly configured.
     if (!$bbb_configured) {
       $online_meeting['bbb_warning'] = [
