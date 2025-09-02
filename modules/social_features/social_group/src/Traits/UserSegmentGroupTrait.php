@@ -148,7 +148,7 @@ trait UserSegmentGroupTrait {
     }
 
     // Group roles join.
-    $query->join('group_content__group_roles', $gcgr_alias, "$grfd_alias.id = $gcgr_alias.entity_id");
+    $query->leftJoin('group_content__group_roles', $gcgr_alias, "$grfd_alias.id = $gcgr_alias.entity_id");
 
     // Relationship / match cases.
     $match = $condition_property->match->value;
