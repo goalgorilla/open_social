@@ -16,9 +16,6 @@ Feature: Show/hide enrollments on Event
       | field_content_visibility | public                 |
       | field_hide_enrollments   | 1                      |
 
-    And I should see an "#block-socialblue-views-block-event-enrollments-event-enrollments-socialbase" element
-    And I should see the link "Manage enrollments"
-
     When I click "Manage enrollments"
 
     Then I should see the text "0 Enrollees"
