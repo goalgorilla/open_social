@@ -41,7 +41,10 @@ class EntityAccessHelper {
    *   An array containing a list of values to ignore.
    */
   public static function getIgnoredValues() {
-    return [];
+    // Handled by user segments access policy instead.
+    return [
+      'visibility_by_segment',
+    ];
   }
 
   /**
