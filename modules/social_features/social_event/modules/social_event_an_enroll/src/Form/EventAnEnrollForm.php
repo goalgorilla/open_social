@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
-use Drupal\node\NodeInterface;
+use Drupal\social_event\Entity\Node\EventInterface;
 use Drupal\social_event\Form\EnrollActionForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,7 +69,7 @@ class EventAnEnrollForm extends EnrollActionForm {
     }
 
     // Do nothing if we don't have the 'node' param in the URL.
-    if (!$node instanceof NodeInterface) {
+    if (!$node instanceof EventInterface) {
       return [];
     }
 
@@ -116,7 +116,7 @@ class EventAnEnrollForm extends EnrollActionForm {
     $enrollment_open = TRUE;
 
     // Add the enrollment closed label.
-    if ($this->eventHasBeenFinished($node)) {
+    if ($node->isEnded()) {
       $submit_text = $this->t('Event has passed');
       $enrollment_open = FALSE;
     }

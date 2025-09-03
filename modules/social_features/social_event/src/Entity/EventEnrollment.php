@@ -245,6 +245,50 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
+  public function hasEnrollmentStatus(): bool {
+    return $this->hasField('field_enrollment_status') &&
+      !$this->get('field_enrollment_status')->isEmpty();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isEnrolled(): bool {
+    if (!$this->hasEnrollmentStatus()) {
+      return FALSE;
+    }
+
+    $status = $this->get('field_enrollment_status')->getString();
+    // Check if the value is a valid status.
+    if (!in_array($status, [self::STATUS_ENROLLED, self::STATUS_NOT_ENROLLED])) {
+      return FALSE;
+    }
+
+    return $this->get('field_enrollment_status')->getString() === self::STATUS_ENROLLED;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasJoiningStatus(): bool {
+    return $this->hasField('field_request_or_invite_status') &&
+      !$this->get('field_request_or_invite_status')->isEmpty();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getJoiningStatus(): ?int {
+    if (!$this->hasJoiningStatus()) {
+      return NULL;
+    }
+
+    return (int) $this->get('field_request_or_invite_status')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))

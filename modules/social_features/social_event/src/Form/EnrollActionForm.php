@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupRelationship;
-use Drupal\node\NodeInterface;
+use Drupal\social_event\Entity\Node\EventInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\SocialEventTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -122,7 +122,7 @@ class EnrollActionForm extends FormBase {
 
     // This entire function collapses if we don't have a node so we just short-
     // circuit early.
-    if (!$node instanceof NodeInterface) {
+    if (!$node instanceof EventInterface) {
       return [];
     }
 
@@ -132,6 +132,7 @@ class EnrollActionForm extends FormBase {
 
     // If the user is invited to an event
     // it shouldn't care about group permissions.
+    /** @var \Drupal\social_event\EventEnrollmentInterface[] $enrollments */
     $enrollments = $this->enrollmentStorage->loadByProperties([
       'field_account' => $current_user->id(),
       'field_event' => $node->id(),
@@ -233,7 +234,7 @@ class EnrollActionForm extends FormBase {
     }
 
     // Add the enrollment closed label.
-    if ($this->eventHasBeenFinished($node)) {
+    if ($node->isEnded()) {
       $submit_text = $this->t('Event has passed');
       $enrollment_open = FALSE;
     }
@@ -241,8 +242,38 @@ class EnrollActionForm extends FormBase {
     if (!$current_user->isAnonymous()) {
       if ($enrollment = array_pop($enrollments)) {
         $current_enrollment_status = $enrollment->field_enrollment_status->value;
+
         if ($current_enrollment_status === '1') {
-          $submit_text = $this->t('Enrolled');
+          // Check if this is an online event and adjust
+          // the submitting text accordingly.
+          // Make sure the meeting isn't finished.
+          if ($node->isOnline() && !$node->isEnded()) {
+
+            // Meeting is open, users can join now.
+            if ($node->joiningMeetingIsOpen()) {
+              // We want to display a different button text if the meeting URL
+              // is available or not.
+              if ($node->getMeetingLink()) {
+                $submit_text = $this->t('Join now');
+              }
+              else {
+                $submit_text = $this->t('Contact organizers to join');
+                // Disable the button.
+                $enrollment_open = FALSE;
+              }
+
+              // Add a specific class to the button for styling.
+              $attributes['class'][] = 'btn-accent__join-now';
+            }
+            // Meeting has not been started yet.
+            else {
+              $submit_text = $this->t('Join at the start time');
+            }
+          }
+          else {
+            $submit_text = $this->t('Enrolled');
+          }
+
           $to_enroll_status = '0';
         }
         // If someone requested to join the event.
@@ -323,14 +354,21 @@ class EnrollActionForm extends FormBase {
 
     $form['#attributes']['name'] = 'enroll_action_form';
 
-    if ((isset($enrollment->field_enrollment_status->value) && $enrollment->field_enrollment_status->value === '1')
-      || (isset($enrollment->field_request_or_invite_status->value)
-      && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING)) {
+    // Further changes needs in case if enrollment exists.
+    if (empty($enrollment) || $node->joiningMeetingIsOpen()) {
+      return $form;
+    }
+
+    if (
+      $enrollment->isEnrolled() ||
+      $enrollment->getJoiningStatus() === EventEnrollmentInterface::REQUEST_PENDING
+    ) {
       // Extra attributes needed for when a user is logged in. This will make
       // sure the button acts like a dropwdown.
       $form['enroll_wrapper']['enroll_for_this_event'] = [
         '#type' => 'button',
         '#value' => $submit_text,
+        '#disabled' => !$enrollment_open,
         '#attributes' => [
           'class' => [
             'btn',
@@ -379,14 +417,25 @@ class EnrollActionForm extends FormBase {
     $nid = $form_state->getValue('event') ?? $this->routeMatch->getRawParameter('node');
     $current_user = $this->currentUser();
 
-    /** @var \Drupal\node\NodeInterface $node */
-    $node = $this->entityTypeManager->getStorage('node')->load($nid);
+    /** @var \Drupal\social_event\Entity\Node\EventInterface $event */
+    $event = $this->entityTypeManager->getStorage('node')->load($nid);
+    if ($event->isOnline()) {
+      if ($event->joiningMeetingIsOpen()) {
+        // We should redirect the user to the meeting page.
+        if ($redirect_link = $event->getMeetingLink()) {
+          $response->addCommand(new RedirectCommand($redirect_link));
+
+          return $response;
+        }
+      }
+    }
+
     // Redirect anonymous use to login page before enrolling to an event.
     if ($current_user->isAnonymous()) {
       $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])->toString();
       $destination = $node_url;
       // If the request enroll method is set, alter the destination for AN.
-      if ((int) $node->get('field_enroll_method')->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST) {
+      if ((int) $event->get('field_enroll_method')->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST) {
         $destination = $node_url . '?requested-enrollment=TRUE';
       }
 
@@ -493,7 +542,7 @@ class EnrollActionForm extends FormBase {
       // Create a new enrollment for the event.
       $enrollment = $this->enrollmentStorage->create($fields);
       $enrollment->save();
-      $enroll_confirmation = $this->entityTypeManager->getViewBuilder('node')->view($node, 'teaser');
+      $enroll_confirmation = $this->entityTypeManager->getViewBuilder('node')->view($event, 'teaser');
       $enroll_confirmation['#theme'] = 'event_enrollment_confirmation';
       $response->addCommand(new OpenModalDialogCommand(
         $this->t('Thanks for enrolling!'),

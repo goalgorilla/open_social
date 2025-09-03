@@ -20,6 +20,11 @@ trait SocialEventTrait {
    *
    * @return bool
    *   TRUE if the evens is finished/completed.
+   *
+   * @deprecated in social:13.0.0 and is removed from social:14.0.0. Use
+   * \Drupal\social_event\Entity\Node\EventInterface::isEnded() instead.
+   *
+   * @see https://www.drupal.org/project/issues/social
    */
   protected function eventHasBeenFinished(NodeInterface $node): bool {
     $current_time = new DrupalDateTime();

@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\Entity\Node\EventInterface;
 use Drupal\social_event\SocialEventTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -82,9 +83,10 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL) {
-    if ($node === NULL || is_null($node->getTitle())) {
+    if (!$node instanceof EventInterface) {
       return [];
     }
+
     $nid = $node->id();
     $token = $this->getRequest()->query->get('token');
     if (empty($token)) {
@@ -146,7 +148,7 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
       $form['#attached']['library'][] = 'social_event/form_submit';
     }
     else {
-      if ($this->eventHasBeenFinished($node)) {
+      if ($node->isEnded()) {
         $form['event_enrollment'] = [
           '#type' => 'submit',
           '#value' => $this->t('Event has passed'),
@@ -175,7 +177,7 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
           ],
           'data-dialog-type' => 'modal',
           'data-dialog-options' => json_encode([
-            'title' => t('Enroll in') . ' ' . strip_tags($node->getTitle()),
+            'title' => t('Enroll in') . ' ' . strip_tags((string) $node->getTitle()),
             'width' => 'auto',
           ]),
         ];

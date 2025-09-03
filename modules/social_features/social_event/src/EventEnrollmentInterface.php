@@ -65,6 +65,9 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    */
   const INVITE_INVALID_OR_EXPIRED = 6;
 
+  const string STATUS_ENROLLED = '1';
+  const string STATUS_NOT_ENROLLED = '0';
+
   /**
    * Gets the Event enrollment name.
    *
@@ -155,5 +158,51 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    *   The user entity or NULL.
    */
   public function getAccountEntity(): ?UserInterface;
+
+  /**
+   * Checks if the enrollment has an enrollment status field.
+   *
+   * @return bool
+   *   TRUE if the enrollment status field exists and is not empty,
+   *   FALSE otherwise.
+   */
+  public function hasEnrollmentStatus(): bool;
+
+  /**
+   * Checks if the user is enrolled for the event.
+   *
+   * @return bool
+   *   TRUE if the user is enrolled (enrollment status is '1'), FALSE otherwise.
+   */
+  public function isEnrolled(): bool;
+
+  /**
+   * Checks if the enrollment has a joining status field.
+   *
+   * @return bool
+   *   TRUE if the joining status field exists and is not empty,
+   *   FALSE otherwise.
+   */
+  public function hasJoiningStatus(): bool;
+
+  /**
+   * Gets the joining status of the enrollment.
+   *
+   * This method returns the request or invite status that indicates
+   * how the user joined the event (pending, approved, declined, etc.).
+   *
+   * @return int|null
+   *   The joining status as an integer corresponding to one of the
+   *   REQUEST_* or INVITE_* constants, or NULL if no status is set.
+   *
+   * @see \Drupal\social_event\EventEnrollmentInterface::REQUEST_PENDING
+   * @see \Drupal\social_event\EventEnrollmentInterface::REQUEST_APPROVED
+   * @see \Drupal\social_event\EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED
+   * @see \Drupal\social_event\EventEnrollmentInterface::INVITE_INVITED
+   * @see \Drupal\social_event\EventEnrollmentInterface::INVITE_PENDING_REPLY
+   * @see \Drupal\social_event\EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED
+   * @see \Drupal\social_event\EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED
+   */
+  public function getJoiningStatus(): ?int;
 
 }
