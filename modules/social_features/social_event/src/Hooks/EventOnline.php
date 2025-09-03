@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
 use Drupal\social_event\Form\EventSettingsForm;
+use Drupal\social_event\PluginForm\ManualMeetingConfigurationForm;
 use Drupal\social_event\Service\EventOnline as EventOnlineService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -74,6 +75,26 @@ final class EventOnline implements ContainerInjectionInterface {
 
     if (isset($fields['max_attendees'])) {
       $fields['max_attendees']->addConstraint('MeetingCapacity');
+    }
+  }
+
+  /**
+   * Alter the backend info definitions for the meeting API module.
+   *
+   *  We need to make the "URL" form element optional.
+   *  In other words, users can create "Custom Link" meetings without
+   *  a link and add it later.
+   *
+   * @param array $definitions
+   *   An array of backend definitions for the meeting API.
+   *
+   * @see hook_meeting_api_backend_info_alter()
+   */
+  #[Alter('meeting_api_backend_info')]
+  public function meetingApiBackendInfoAlter(array &$definitions): void {
+    if (isset($definitions['manual'])) {
+      // Replace the form class with our custom one.
+      $definitions['manual']['forms']['meeting'] = ManualMeetingConfigurationForm::class;
     }
   }
 
