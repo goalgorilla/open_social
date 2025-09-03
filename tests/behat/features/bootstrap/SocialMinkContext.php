@@ -31,7 +31,7 @@ class SocialMinkContext extends MinkContext {
       }
     }
 
-    throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
+    throw new \RuntimeException(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
   }
 
   /**
@@ -55,7 +55,7 @@ class SocialMinkContext extends MinkContext {
    */
   public function iMakeAScreenshotWithFileName($filename) {
     $dir = __DIR__ . '/../../logs';
-    if (is_writeable($dir)) {
+    if (is_writable($dir)) {
       file_put_contents(
         "$dir/$filename.jpg",
         $this->getSession()->getScreenshot()
@@ -71,14 +71,14 @@ class SocialMinkContext extends MinkContext {
 
     $inputField = $page->find('css', $field);
     if (!$inputField) {
-      throw new \Exception('No field found');
+      throw new \RuntimeException('No field found');
     }
 
     $this->getSession()->wait(1000);
 
     $choice = $inputField->getParent()->find('css', '.select2-selection');
     if (!$choice) {
-      throw new \Exception('No select2 choice found');
+      throw new \RuntimeException('No select2 choice found');
     }
     $choice->press();
 
@@ -89,16 +89,16 @@ class SocialMinkContext extends MinkContext {
 
     if (!$select2Input) {
       // Try to find an input globally on the page.
-      throw new \Exception('No input found');
+      throw new \RuntimeException('No input found');
     }
 
     $select2Input->setValue($value);
 
     $this->getSession()->wait(1000);
 
-    $chosenResults = $page->findAll('css', '.select2-results li');
+    $chosenResults = $page->findAll('css', '.select2-results__options li');
     foreach ($chosenResults as $result) {
-      if ($result->getText() == $entry) {
+      if ($result->getText() === $entry) {
         $result->click();
         break;
       }
@@ -114,14 +114,14 @@ class SocialMinkContext extends MinkContext {
 
     $inputField = $page->find('css', '.field--name-groups .select2');
     if (!$inputField) {
-      throw new \Exception('No field found');
+      throw new \RuntimeException('No field found');
     }
 
     $this->getSession()->wait(1000);
 
     $clearButton = $inputField->find('css', '.select2-selection__clear');
     if (!$clearButton) {
-      throw new \Exception('No clear button found');
+      throw new \RuntimeException('No clear button found');
     }
 
     $clearButton->click();
@@ -155,11 +155,10 @@ class SocialMinkContext extends MinkContext {
       $field = $this->getSession()->getPage()->findField($checkbox);
 
       if (null === $field) {
-        throw new \Exception(sprintf('The checkbox "%s" with id|name|label|value was not found', $checkbox));
+        throw new \RuntimeException(sprintf('The checkbox "%s" with id|name|label|value was not found', $checkbox));
       }
-      else {
-        throw new \Exception(sprintf('The checkbox "%s" is not checked', $checkbox));
-      }
+
+      throw new \RuntimeException(sprintf('The checkbox "%s" is not checked', $checkbox));
     }
   }
 
@@ -173,11 +172,10 @@ class SocialMinkContext extends MinkContext {
       $field = $this->getSession()->getPage()->findField($checkbox);
 
       if (null === $field) {
-        throw new \Exception(sprintf('The checkbox "%s" with id|name|label|value was not found', $checkbox));
+        throw new \RuntimeException(sprintf('The checkbox "%s" with id|name|label|value was not found', $checkbox));
       }
-      else {
-        throw new \Exception(sprintf('The checkbox "%s" is checked', $checkbox));
-      }
+
+      throw new \RuntimeException(sprintf('The checkbox "%s" is checked', $checkbox));
     }
   }
 
@@ -219,7 +217,7 @@ class SocialMinkContext extends MinkContext {
     }
 
     if (!$opt->isSelected()) {
-      throw new \Exception("Expected '$option' to be selected but it was not.");
+      throw new \RuntimeException("Expected '$option' to be selected but it was not.");
     }
   }
 
@@ -239,7 +237,7 @@ class SocialMinkContext extends MinkContext {
     $opt = $field->find('named', ['option', $option]);
 
     if ($opt !== NULL) {
-      throw new \Exception("The field was not supposed to contain '$option' but it was an option in the select field.");
+      throw new \RuntimeException("The field was not supposed to contain '$option' but it was an option in the select field.");
     }
   }
 
@@ -265,7 +263,7 @@ class SocialMinkContext extends MinkContext {
     }
 
     if ($count !== (int) $num) {
-      throw new \Exception(sprintf('The text %s was not found %d time(s) in the text of the current page.', $text, $num));
+      throw new \RuntimeException(sprintf('The text %s was not found %d time(s) in the text of the current page.', $text, $num));
     }
 
     return TRUE;
@@ -287,7 +285,11 @@ class SocialMinkContext extends MinkContext {
       $option = $field->find('named', ['option', $value['options']]);
 
       if ($option !== NULL) {
-        throw new \Exception("The field was supposed to not contain '$option' but it was an option in the select field.");
+        throw new \RuntimeException(sprintf(
+          "The select field '%s' was not supposed to contain option '%s' but it did.",
+          $locator,
+          $value['options']
+        ));
       }
     }
   }
@@ -308,7 +310,7 @@ class SocialMinkContext extends MinkContext {
       $option = $field->find('named', ['option', $value['options']]);
 
       if ($option === NULL) {
-        throw new \Exception("The field was supposed to contain '$option' but it was not an option in the select field.");
+        throw new \RuntimeException("The field was supposed to contain '$option' but it was not an option in the select field.");
       }
     }
   }
@@ -320,7 +322,8 @@ class SocialMinkContext extends MinkContext {
     $allText = $this->getSession()->getPage()->getText();
     $numberText = substr_count($allText, $text);
     if ($expectedNumber != $numberText) {
-      throw new \Exception('Found '.$numberText.' times of "'.$text.'" when expecting '.$expectedNumber);
+      throw new \RuntimeException('Found '.$numberText.' times of "'.$text.'" when expecting '.$expectedNumber);
     }
   }
+
 }
