@@ -62,19 +62,19 @@ trait UserSegmentGroupTrait {
     $rule_id = $this->configuration['id'];
 
     $suffix = '_' . $index . '_' . $rule_id;
-    $grfd_alias = "grfd$suffix";
-    $g_alias = "g$suffix";
-    $gcgr_alias = "gcgr$suffix";
+    $group_relationship_field_data_alias = "grfd$suffix";
+    $groups_alias = "g$suffix";
+    $group_content__group_roles_alias = "gcgr$suffix";
 
     // Join group relationships.
-    $query->join('group_relationship_field_data', $grfd_alias, "$grfd_alias.entity_id = {$alias}.uid");
-    $sub_conditions->condition("$grfd_alias.plugin_id", 'group_membership');
+    $query->join('group_relationship_field_data', $group_relationship_field_data_alias, "$group_relationship_field_data_alias.entity_id = {$alias}.uid");
+    $sub_conditions->condition("$group_relationship_field_data_alias.plugin_id", 'group_membership');
 
-    $query->join('groups', $g_alias, "$grfd_alias.gid = $g_alias.id");
-    $sub_conditions->condition("$g_alias.type", $group_type);
+    $query->join('groups', $groups_alias, "$group_relationship_field_data_alias.gid = $groups_alias.id");
+    $sub_conditions->condition("$groups_alias.type", $group_type);
 
     foreach ($condition->properties as $condition_property) {
-      $this->applyGroupMembershipProperty($condition_property, $sub_conditions, $query, $alias, $suffix, $grfd_alias, $gcgr_alias);
+      $this->applyGroupMembershipProperty($condition_property, $sub_conditions, $query, $alias, $suffix, $group_relationship_field_data_alias, $group_content__group_roles_alias);
     }
 
     $condition_target->condition($sub_conditions);
@@ -95,9 +95,9 @@ trait UserSegmentGroupTrait {
    *   The alias of the user table in the query.
    * @param string $suffix
    *   Rule suffix, used to distinguish joins and conditions between rules.
-   * @param string $grfd_alias
+   * @param string $group_relationship_field_data_alias
    *   Table alias for 'group_relationship_field_data'.
-   * @param string $gcgr_alias
+   * @param string $group_content__group_roles_alias
    *   Table alias for 'group_content__group_roles'.
    *
    * @return void
@@ -110,8 +110,8 @@ trait UserSegmentGroupTrait {
     SelectInterface &$query,
     string $alias,
     string $suffix,
-    string $grfd_alias,
-    string $gcgr_alias,
+    string $group_relationship_field_data_alias,
+    string $group_content__group_roles_alias,
   ): void {
 
     $config = $condition_property->config;
@@ -148,7 +148,7 @@ trait UserSegmentGroupTrait {
     }
 
     // Group roles join.
-    $query->leftJoin('group_content__group_roles', $gcgr_alias, "$grfd_alias.id = $gcgr_alias.entity_id");
+    $query->leftJoin('group_content__group_roles', $group_content__group_roles_alias, "$group_relationship_field_data_alias.id = $group_content__group_roles_alias.entity_id");
 
     // Relationship / match cases.
     $match = $condition_property->match->value;
@@ -158,7 +158,7 @@ trait UserSegmentGroupTrait {
       // Relationship: include
       // Match: any.
       case PropertyRelationship::Include->value . ':' . PropertyMatch::Any->value:
-        $sub_conditions->condition("$gcgr_alias.group_roles_target_id", $roles, 'IN');
+        $sub_conditions->condition("$group_content__group_roles_alias.group_roles_target_id", $roles, 'IN');
 
         break;
 
@@ -167,23 +167,23 @@ trait UserSegmentGroupTrait {
       case PropertyRelationship::Include->value . ':' . PropertyMatch::All->value:
         // Build subquery to find group_content entity IDs (i.e., group
         // memberships) that have all the specified roles.
-        $subquery_gcgr_alias = "sq_gcgr$suffix";
-        $subquery = $this->database->select('group_content__group_roles', $subquery_gcgr_alias);
+        $subquery_group_content__group_roles_alias = "sq_gcgr$suffix";
+        $subquery = $this->database->select('group_content__group_roles', $subquery_group_content__group_roles_alias);
         $subquery->distinct();
-        $subquery->addField($subquery_gcgr_alias, 'entity_id');
-        $subquery->condition("$subquery_gcgr_alias.group_roles_target_id", $roles, 'IN');
+        $subquery->addField($subquery_group_content__group_roles_alias, 'entity_id');
+        $subquery->condition("$subquery_group_content__group_roles_alias.group_roles_target_id", $roles, 'IN');
         // Group by entity_id and ensure all roles are matched.
-        $subquery->groupBy("$subquery_gcgr_alias.entity_id");
+        $subquery->groupBy("$subquery_group_content__group_roles_alias.entity_id");
         // We avoid using a placeholder for $role_count here to reduce
         // overhead and prevent potential naming conflicts in complex
         // dynamic queries. Since the value comes from count(), which always
         // returns an integer, it is safe to inline directly into the SQL
         // and does not pose an SQL injection risk.
         $role_count = (int) count(array_unique($roles));
-        $subquery->having("COUNT(DISTINCT $subquery_gcgr_alias.group_roles_target_id) = $role_count");
+        $subquery->having("COUNT(DISTINCT $subquery_group_content__group_roles_alias.group_roles_target_id) = $role_count");
 
         // Apply this as a filter in the condition subquery.
-        $sub_conditions->condition("$gcgr_alias.entity_id", $subquery, 'IN');
+        $sub_conditions->condition("$group_content__group_roles_alias.entity_id", $subquery, 'IN');
 
         break;
 
@@ -204,39 +204,39 @@ trait UserSegmentGroupTrait {
         // All users in this list are guaranteed to be members of the specified
         // group type before any condition-based exclusion is applied. This is
         // enforced by the `applyGroupMembershipCondition()` method, which adds
-        // conditions like: `$sub_conditions->condition("$grfd_alias.plugin_id",
-        // 'group_membership');` and `$sub_conditions->condition("$g_alias.type"
-        // , $group_type);`.
+        // conditions like: `$sub_conditions->condition("
+        // $group_relationship_field_data_alias.plugin_id",'group_membership');`
+        // and `$sub_conditions->condition("$groups_alias.type", $group_type);`.
         //
         // All related subqueries (e.g., $role_subquery and $wrapper_subquery)
         // follow this same pattern.
         //
         // Step 1: Build subquery to get membership IDs that have ANY of the
         // roles.
-        $role_subquery_gcgr_alias = "rsq_gcgr$suffix";
-        $role_subquery = $this->database->select('group_content__group_roles', $role_subquery_gcgr_alias);
+        $role_subquery_group_content__group_roles_alias = "rsq_gcgr$suffix";
+        $role_subquery = $this->database->select('group_content__group_roles', $role_subquery_group_content__group_roles_alias);
         // entity_id = group membership ID.
-        $role_subquery->addField($role_subquery_gcgr_alias, 'entity_id');
-        $role_subquery->condition("$role_subquery_gcgr_alias.group_roles_target_id", $roles, 'IN');
+        $role_subquery->addField($role_subquery_group_content__group_roles_alias, 'entity_id');
+        $role_subquery->condition("$role_subquery_group_content__group_roles_alias.group_roles_target_id", $roles, 'IN');
         // Constrain to group type ($group_type) memberships.
-        $role_subquery_grfd_alias = "rsq_grfd$suffix";
-        $role_subquery_g_alias = "rsq_g$suffix";
-        $role_subquery->join('group_relationship_field_data', $role_subquery_grfd_alias, "$role_subquery_gcgr_alias.entity_id = $role_subquery_grfd_alias.id");
-        $role_subquery->condition("$role_subquery_grfd_alias.plugin_id", 'group_membership');
-        $role_subquery->join('groups', $role_subquery_g_alias, "$role_subquery_grfd_alias.gid = $role_subquery_g_alias.id");
-        $role_subquery->condition("$role_subquery_g_alias.type", $group_type);
+        $role_subquery_group_relationship_field_data_alias = "rsq_grfd$suffix";
+        $role_subquery_groups_alias = "rsq_g$suffix";
+        $role_subquery->join('group_relationship_field_data', $role_subquery_group_relationship_field_data_alias, "$role_subquery_group_content__group_roles_alias.entity_id = $role_subquery_group_relationship_field_data_alias.id");
+        $role_subquery->condition("$role_subquery_group_relationship_field_data_alias.plugin_id", 'group_membership');
+        $role_subquery->join('groups', $role_subquery_groups_alias, "$role_subquery_group_relationship_field_data_alias.gid = $role_subquery_groups_alias.id");
+        $role_subquery->condition("$role_subquery_groups_alias.type", $group_type);
 
         // Step 2: Find memberships not in that list, constrained by group type.
-        $wrapper_subquery_grfd_alias = "wsq_grfd$suffix";
-        $wrapper_subquery = $this->database->select('group_relationship_field_data', $wrapper_subquery_grfd_alias);
+        $wrapper_subquery_group_relationship_field_data_alias = "wsq_grfd$suffix";
+        $wrapper_subquery = $this->database->select('group_relationship_field_data', $wrapper_subquery_group_relationship_field_data_alias);
         $wrapper_subquery->distinct();
-        $wrapper_subquery->addField($wrapper_subquery_grfd_alias, 'entity_id');
-        $wrapper_subquery->condition("$wrapper_subquery_grfd_alias.id", $role_subquery, 'NOT IN');
+        $wrapper_subquery->addField($wrapper_subquery_group_relationship_field_data_alias, 'entity_id');
+        $wrapper_subquery->condition("$wrapper_subquery_group_relationship_field_data_alias.id", $role_subquery, 'NOT IN');
         // Constrain to group type ($group_type) memberships.
-        $wrapper_subquery_g_alias = "wsq_g$suffix";
-        $wrapper_subquery->condition("$wrapper_subquery_grfd_alias.plugin_id", 'group_membership');
-        $wrapper_subquery->join('groups', $wrapper_subquery_g_alias, "$wrapper_subquery_grfd_alias.gid = $wrapper_subquery_g_alias.id");
-        $wrapper_subquery->condition("$wrapper_subquery_g_alias.type", $group_type);
+        $wrapper_subquery_groups_alias = "wsq_g$suffix";
+        $wrapper_subquery->condition("$wrapper_subquery_group_relationship_field_data_alias.plugin_id", 'group_membership');
+        $wrapper_subquery->join('groups', $wrapper_subquery_groups_alias, "$wrapper_subquery_group_relationship_field_data_alias.gid = $wrapper_subquery_groups_alias.id");
+        $wrapper_subquery->condition("$wrapper_subquery_groups_alias.type", $group_type);
 
         // Step 3: Apply subquery as condition to the main user query.
         $sub_conditions->condition("$alias.uid", $wrapper_subquery, 'IN');
@@ -260,22 +260,22 @@ trait UserSegmentGroupTrait {
         // All users in this list are guaranteed to be members of the specified
         // group type before any condition-based exclusion is applied. This is
         // enforced by the `applyGroupMembershipCondition()` method, which adds
-        // conditions like: `$sub_conditions->condition("$grfd_alias.plugin_id",
-        // 'group_membership');` and `$sub_conditions->condition("$g_alias.type"
-        // , $group_type);`.
+        // conditions like: `$sub_conditions->condition("
+        // $group_relationship_field_data_alias.plugin_id",'group_membership');`
+        // and `$sub_conditions->condition("$groups_alias.type", $group_type);`.
         //
         // All related subqueries (e.g., $role_subquery and $wrapper_subquery)
         // follow this same pattern.
         //
         // Step 1: Build subquery to get membership IDs that have ALL the roles.
-        $role_subquery_gcgr_alias = "rsq_gcgr$suffix";
-        $role_subquery = $this->database->select('group_content__group_roles', $role_subquery_gcgr_alias);
+        $role_subquery_group_content__group_roles_alias = "rsq_gcgr$suffix";
+        $role_subquery = $this->database->select('group_content__group_roles', $role_subquery_group_content__group_roles_alias);
         // entity_id = group membership ID.
-        $role_subquery->addField($role_subquery_gcgr_alias, 'entity_id');
-        $role_subquery->condition("$role_subquery_gcgr_alias.group_roles_target_id", $roles, 'IN');
+        $role_subquery->addField($role_subquery_group_content__group_roles_alias, 'entity_id');
+        $role_subquery->condition("$role_subquery_group_content__group_roles_alias.group_roles_target_id", $roles, 'IN');
         // Group by membership ID (the next 5 lines are the only difference
         // between exclude ALL roles and exclude ANY roles).
-        $role_subquery->groupBy("$role_subquery_gcgr_alias.entity_id");
+        $role_subquery->groupBy("$role_subquery_group_content__group_roles_alias.entity_id");
         // Only keep memberships that have all the roles assigned (count
         // distinct roles = number of roles).
         // We avoid using a placeholder for $role_count here to reduce
@@ -284,26 +284,26 @@ trait UserSegmentGroupTrait {
         // returns an integer, it is safe to inline directly into the SQL
         // and does not pose an SQL injection risk.
         $role_count = (int) count(array_unique($roles));
-        $role_subquery->having("COUNT(DISTINCT $role_subquery_gcgr_alias.group_roles_target_id) = $role_count");
+        $role_subquery->having("COUNT(DISTINCT $role_subquery_group_content__group_roles_alias.group_roles_target_id) = $role_count");
 
         // Constrain to group type ($group_type) memberships.
-        $role_subquery_grfd_alias = "rsq_grfd$suffix";
-        $role_subquery_g_alias = "rsq_g$suffix";
-        $role_subquery->join('group_relationship_field_data', $role_subquery_grfd_alias, "$role_subquery_gcgr_alias.entity_id = $role_subquery_grfd_alias.id");
-        $role_subquery->condition("$role_subquery_grfd_alias.plugin_id", 'group_membership');
-        $role_subquery->join('groups', $role_subquery_g_alias, "$role_subquery_grfd_alias.gid = $role_subquery_g_alias.id");
-        $role_subquery->condition("$role_subquery_g_alias.type", $group_type);
+        $role_subquery_group_relationship_field_data_alias = "rsq_grfd$suffix";
+        $role_subquery_groups_alias = "rsq_g$suffix";
+        $role_subquery->join('group_relationship_field_data', $role_subquery_group_relationship_field_data_alias, "$role_subquery_group_content__group_roles_alias.entity_id = $role_subquery_group_relationship_field_data_alias.id");
+        $role_subquery->condition("$role_subquery_group_relationship_field_data_alias.plugin_id", 'group_membership');
+        $role_subquery->join('groups', $role_subquery_groups_alias, "$role_subquery_group_relationship_field_data_alias.gid = $role_subquery_groups_alias.id");
+        $role_subquery->condition("$role_subquery_groups_alias.type", $group_type);
 
         // Step 2: Find memberships not in that list, constrained by group type.
-        $wrapper_subquery_grfd_alias = "wsq_grfd$suffix";
-        $wrapper_subquery = $this->database->select('group_relationship_field_data', $wrapper_subquery_grfd_alias);
-        $wrapper_subquery->addField($wrapper_subquery_grfd_alias, 'entity_id');
-        $wrapper_subquery->condition("$wrapper_subquery_grfd_alias.id", $role_subquery, 'NOT IN');
+        $wrapper_subquery_group_relationship_field_data_alias = "wsq_grfd$suffix";
+        $wrapper_subquery = $this->database->select('group_relationship_field_data', $wrapper_subquery_group_relationship_field_data_alias);
+        $wrapper_subquery->addField($wrapper_subquery_group_relationship_field_data_alias, 'entity_id');
+        $wrapper_subquery->condition("$wrapper_subquery_group_relationship_field_data_alias.id", $role_subquery, 'NOT IN');
         // Constrain to group type ($group_type) memberships.
-        $wrapper_subquery_g_alias = "wsq_g$suffix";
-        $wrapper_subquery->condition("$wrapper_subquery_grfd_alias.plugin_id", 'group_membership');
-        $wrapper_subquery->join('groups', $wrapper_subquery_g_alias, "$wrapper_subquery_grfd_alias.gid = $wrapper_subquery_g_alias.id");
-        $wrapper_subquery->condition("$wrapper_subquery_g_alias.type", $group_type);
+        $wrapper_subquery_groups_alias = "wsq_g$suffix";
+        $wrapper_subquery->condition("$wrapper_subquery_group_relationship_field_data_alias.plugin_id", 'group_membership');
+        $wrapper_subquery->join('groups', $wrapper_subquery_groups_alias, "$wrapper_subquery_group_relationship_field_data_alias.gid = $wrapper_subquery_groups_alias.id");
+        $wrapper_subquery->condition("$wrapper_subquery_groups_alias.type", $group_type);
 
         // Step 3: Apply subquery as condition to the main user query.
         $sub_conditions->condition("$alias.uid", $wrapper_subquery, 'IN');

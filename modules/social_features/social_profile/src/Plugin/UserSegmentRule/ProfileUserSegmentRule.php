@@ -220,8 +220,8 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase implements 
         }
 
         // Include all users, event those without roles.
-        $ur_alias = "ur$suffix";
-        $query->leftJoin('user__roles', $ur_alias, "$ur_alias.entity_id = {$alias}.uid AND $ur_alias.bundle = 'user'");
+        $user__roles_alias = "ur$suffix";
+        $query->leftJoin('user__roles', $user__roles_alias, "$user__roles_alias.entity_id = {$alias}.uid AND $user__roles_alias.bundle = 'user'");
 
         // Relationship / match cases.
         $match = $condition_property->match->value;
@@ -231,27 +231,27 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase implements 
           // Relationship: include
           // Match: any.
           case PropertyRelationship::Include->value . ':' . PropertyMatch::Any->value:
-            $sub_conditions->condition("$ur_alias.roles_target_id", $roles, 'IN');
+            $sub_conditions->condition("$user__roles_alias.roles_target_id", $roles, 'IN');
 
             break;
 
           // Relationship: include
           // Match: all.
           case PropertyRelationship::Include->value . ':' . PropertyMatch::All->value:
-            $subquery_ur_alias = "sq_ur$suffix";
+            $subquery_user__roles_alias = "sq_ur$suffix";
 
-            $subquery = $this->database->select('user__roles', $subquery_ur_alias);
-            $subquery->addField($subquery_ur_alias, 'entity_id');
-            $subquery->condition("$subquery_ur_alias.roles_target_id", $roles, 'IN');
-            $subquery->condition("$subquery_ur_alias.bundle", 'user');
-            $subquery->groupBy("$subquery_ur_alias.entity_id");
+            $subquery = $this->database->select('user__roles', $subquery_user__roles_alias);
+            $subquery->addField($subquery_user__roles_alias, 'entity_id');
+            $subquery->condition("$subquery_user__roles_alias.roles_target_id", $roles, 'IN');
+            $subquery->condition("$subquery_user__roles_alias.bundle", 'user');
+            $subquery->groupBy("$subquery_user__roles_alias.entity_id");
             // We avoid using a placeholder for $role_count here to reduce
             // overhead and prevent potential naming conflicts in complex
             // dynamic queries. Since the value comes from count(), which always
             // returns an integer, it is safe to inline directly into the SQL
             // and does not pose an SQL injection risk.
             $role_count = (int) count(array_unique($roles));
-            $subquery->having("COUNT(DISTINCT $subquery_ur_alias.roles_target_id) = $role_count");
+            $subquery->having("COUNT(DISTINCT $subquery_user__roles_alias.roles_target_id) = $role_count");
 
             // Apply this as a filter in the condition subquery.
             $sub_conditions->condition("{$alias}.uid", $subquery, 'IN');
@@ -261,12 +261,12 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase implements 
           // Relationship: exclude
           // Match: any.
           case PropertyRelationship::Exclude->value . ':' . PropertyMatch::Any->value:
-            $subquery_ur_alias = "sq_ur$suffix";
+            $subquery_user__roles_alias = "sq_ur$suffix";
 
-            $subquery = $this->database->select('user__roles', $subquery_ur_alias);
-            $subquery->addField($subquery_ur_alias, 'entity_id');
-            $subquery->condition("$subquery_ur_alias.roles_target_id", $roles, 'IN');
-            $subquery->condition("$subquery_ur_alias.bundle", 'user');
+            $subquery = $this->database->select('user__roles', $subquery_user__roles_alias);
+            $subquery->addField($subquery_user__roles_alias, 'entity_id');
+            $subquery->condition("$subquery_user__roles_alias.roles_target_id", $roles, 'IN');
+            $subquery->condition("$subquery_user__roles_alias.bundle", 'user');
 
             // Apply this as a filter in the condition subquery.
             $sub_conditions->condition("{$alias}.uid", $subquery, 'NOT IN');
@@ -277,20 +277,20 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase implements 
           // Match: all.
           case PropertyRelationship::Exclude->value . ':' . PropertyMatch::All->value:
 
-            $subquery_ur_alias = "sq_ur$suffix";
+            $subquery_user__roles_alias = "sq_ur$suffix";
 
-            $subquery = $this->database->select('user__roles', $subquery_ur_alias);
-            $subquery->addField($subquery_ur_alias, 'entity_id');
-            $subquery->condition("$subquery_ur_alias.roles_target_id", $roles, 'IN');
-            $subquery->condition("$subquery_ur_alias.bundle", 'user');
-            $subquery->groupBy("$subquery_ur_alias.entity_id");
+            $subquery = $this->database->select('user__roles', $subquery_user__roles_alias);
+            $subquery->addField($subquery_user__roles_alias, 'entity_id');
+            $subquery->condition("$subquery_user__roles_alias.roles_target_id", $roles, 'IN');
+            $subquery->condition("$subquery_user__roles_alias.bundle", 'user');
+            $subquery->groupBy("$subquery_user__roles_alias.entity_id");
             // We avoid using a placeholder for $role_count here to reduce
             // overhead and prevent potential naming conflicts in complex
             // dynamic queries. Since the value comes from count(), which always
             // returns an integer, it is safe to inline directly into the SQL
             // and does not pose an SQL injection risk.
             $role_count = (int) count(array_unique($roles));
-            $subquery->having("COUNT(DISTINCT $subquery_ur_alias.roles_target_id) = $role_count");
+            $subquery->having("COUNT(DISTINCT $subquery_user__roles_alias.roles_target_id) = $role_count");
 
             // Apply this as a filter in the condition subquery.
             $sub_conditions->condition("{$alias}.uid", $subquery, 'NOT IN');
