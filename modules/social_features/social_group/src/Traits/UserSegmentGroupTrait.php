@@ -300,6 +300,17 @@ trait UserSegmentGroupTrait {
         $sub_conditions->condition("$alias.uid", $wrapper_subquery, 'IN');
 
         break;
+
+      // Handle unexpected relationship/match combinations.
+      // This error should be unreachable because all valid combinations
+      // are explicitly handled above, and the input is restricted to
+      // allowed relationship and match enum values.
+      default:
+        throw new \InvalidArgumentException(sprintf(
+          'Unsupported relationship/match combination: %s:%s',
+          $relationship,
+          $match
+        ));
     }
 
   }
