@@ -118,6 +118,16 @@ function social_event_preprocess_event_enrollment_confirmation(array &$variables
     ],
   ];
 
+  // Contains the online flag.
+  // The variable could be included in other views modes (like "teaser"), so
+  // build in case if it's not set.
+  if (empty($variables['event_flag_online'])) {
+    $variables['event_flag_online'] = [
+      '#theme' => 'event_flag_online',
+      '#node' => $node,
+    ];
+  }
+
   $who_going_url = Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $node->id()], $options);
   if ($who_going_url->access(\Drupal::currentUser())) {
     $variables['who_going_link'] = Link::fromTextAndUrl(t('See who else is going'), $who_going_url);
