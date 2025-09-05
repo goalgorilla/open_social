@@ -174,9 +174,13 @@ trait UserSegmentGroupTrait {
         $subquery->condition("$subquery_gcgr_alias.group_roles_target_id", $roles, 'IN');
         // Group by entity_id and ensure all roles are matched.
         $subquery->groupBy("$subquery_gcgr_alias.entity_id");
-        $subquery->having("COUNT(DISTINCT $subquery_gcgr_alias.group_roles_target_id) = :role_count", [
-          ':role_count' => count(array_unique($roles)),
-        ]);
+        // We avoid using a placeholder for $role_count here to reduce
+        // overhead and prevent potential naming conflicts in complex
+        // dynamic queries. Since the value comes from count(), which always
+        // returns an integer, it is safe to inline directly into the SQL
+        // and does not pose an SQL injection risk.
+        $role_count = (int) count(array_unique($roles));
+        $subquery->having("COUNT(DISTINCT $subquery_gcgr_alias.group_roles_target_id) = $role_count");
 
         // Apply this as a filter in the condition subquery.
         $sub_conditions->condition("$gcgr_alias.entity_id", $subquery, 'IN');
@@ -274,9 +278,14 @@ trait UserSegmentGroupTrait {
         $role_subquery->groupBy("$role_subquery_gcgr_alias.entity_id");
         // Only keep memberships that have all the roles assigned (count
         // distinct roles = number of roles).
-        $role_subquery->having("COUNT(DISTINCT $role_subquery_gcgr_alias.group_roles_target_id) = :role_count", [
-          ':role_count' => count(array_unique($roles)),
-        ]);
+        // We avoid using a placeholder for $role_count here to reduce
+        // overhead and prevent potential naming conflicts in complex
+        // dynamic queries. Since the value comes from count(), which always
+        // returns an integer, it is safe to inline directly into the SQL
+        // and does not pose an SQL injection risk.
+        $role_count = (int) count(array_unique($roles));
+        $role_subquery->having("COUNT(DISTINCT $role_subquery_gcgr_alias.group_roles_target_id) = $role_count");
+
         // Constrain to group type ($group_type) memberships.
         $role_subquery_grfd_alias = "rsq_grfd$suffix";
         $role_subquery_g_alias = "rsq_g$suffix";
