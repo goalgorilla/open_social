@@ -7,6 +7,7 @@
 
 use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\Entity\Node\EventInterface;
 
 /**
  * Prepares variables for join templates.
@@ -65,6 +66,70 @@ function template_preprocess_event_location_address(array &$variables): void {
       ? $node->get('field_event_address')->getString()
       : NULL;
   }
+
+  // We want to use icon from the loaded file rather than embed it. Because
+  // it causes performance issue on some pages (event listing, for example).
+  // Conversely, in the email we can't get svg icons by id because the file
+  // with svg bulk can't be loaded (so, we embed icon directly in the template).
+  $variables['icon_loaded'] = $variables['view_mode'] !== 'email_card';
+
+  $variables['#attached']['library'][] = 'social_event/event';
+}
+
+/**
+ * Prepares variables for the online flag.
+ *
+ * Default template: event-flag-online.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - attributes: An array of HTML attributes to apply to the wrapper.
+ *   - primary: The primary element.
+ *   - secondaries: The secondary elements.
+ */
+function template_preprocess_event_flag_online(array &$variables): void {
+  $event = $variables['node'];
+  if (!$event instanceof EventInterface) {
+    return;
+  }
+
+  $variables['attributes'] = (new Attribute($variables['attributes']))
+    ->addClass('event-flag-online')
+    ->setAttribute('title', t('This event also provides an online meeting room'));
+
+  $variables['online'] = $event->isOnline();
+
+  // We want to use icon from the loaded file rather than embed it. Because
+  // it causes performance issue on some pages (event listing, for example).
+  // Conversely, in the email we can't get svg icons by id because the file
+  // with svg bulk can't be loaded (so, we embed icon directly in the template).
+  $variables['icon_loaded'] = $variables['view_mode'] !== 'email_card';
+
+  $variables['#attached']['library'][] = 'social_event/event';
+}
+
+/**
+ * Prepares variables for the enrolled flag.
+ *
+ * Default template: event-flag-enrolled.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - attributes: An array of HTML attributes to apply to the wrapper.
+ *   - primary: The primary element.
+ *   - secondaries: The secondary elements.
+ */
+function template_preprocess_event_flag_enrolled(array &$variables): void {
+  $event = $variables['node'];
+  if (!$event instanceof EventInterface) {
+    return;
+  }
+
+  $variables['attributes'] = (new Attribute($variables['attributes']))
+    ->addClass('event-flag-enrolled')
+    ->setAttribute('title', t('You are enrolled in this event'));
+
+  $variables['is_enrolled'] = $event->getParticipation();
 
   // We want to use icon from the loaded file rather than embed it. Because
   // it causes performance issue on some pages (event listing, for example).

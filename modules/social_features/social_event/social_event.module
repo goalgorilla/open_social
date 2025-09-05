@@ -59,6 +59,20 @@ function social_event_theme(): array {
       ],
       'file' => 'social_event.theme.inc',
     ],
+    'event_flag_online' => [
+      'variables' => [
+        'node' => NULL,
+        'view_mode' => NULL,
+      ],
+      'file' => 'social_event.theme.inc',
+    ],
+    'event_flag_enrolled' => [
+      'variables' => [
+        'node' => NULL,
+        'view_mode' => NULL,
+      ],
+      'file' => 'social_event.theme.inc',
+    ],
     'event_enrollment_confirmation' => [
       'base hook' => 'node',
     ],
@@ -494,6 +508,20 @@ function social_event_preprocess_node(array &$variables) {
     // Contains combined with a few fields location information.
     $variables['event_location_address'] = [
       '#theme' => 'event_location_address',
+      '#node' => $node,
+      '#view_mode' => $view_mode,
+    ];
+
+    // Contains the online flag.
+    $variables['event_flag_online'] = [
+      '#theme' => 'event_flag_online',
+      '#node' => $node,
+      '#view_mode' => $view_mode,
+    ];
+
+    // Contains the enrolled flag.
+    $variables['event_flag_enrolled'] = [
+      '#theme' => 'event_flag_enrolled',
       '#node' => $node,
       '#view_mode' => $view_mode,
     ];

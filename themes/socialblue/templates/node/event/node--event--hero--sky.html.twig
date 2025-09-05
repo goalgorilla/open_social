@@ -94,6 +94,8 @@
 {% endblock %}
 
 {% block nodefull_specialfields %}
+  {% set is_online = node.isOnline() %}
+
   <div class="hero-footer__header">
     <div class="hero-footer__text">
 
@@ -116,6 +118,24 @@
           </div>
         {% endif %}
 
+        <div class="event-flags">
+          {% if is_online %}
+            {{ event_flag_online }}
+            {#
+              // For online events the enrollment flag should be displayed
+              // after online flag.
+              // We should always include the container as the enrollment
+              // indication could be refreshed by ajax with append/remove
+              // action.
+            #}
+            <div class="event-flag-enrolled__container">
+              {% if event_flag_enrolled %}
+                {{ event_flag_enrolled }}
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+
         {% if content.field_event_addtocal|render is not empty %}
           <div class="article__special-field">
             <div class="hero_btn-group">
@@ -126,30 +146,44 @@
           </div>
         {% endif %}
 
-        {% if content.field_event_address|render or content.field_event_location|render %}
-          {#
+        <div class="event-location-address__container">
+          {% if content.field_event_address|render or content.field_event_location|render %}
+            {#
             @todo: Leave only the event_location_address variable for
               Open Social 11.4.x and above.
               @see https://github.com/goalgorilla/open_social/pull/2853
+            #}
+            {% if event_location_address is defined %}
+              {{ event_location_address }}
+            {% else %}
+              <div class="article__special-field">
+                <svg class="article__special-fields-icon">
+                  <title>{% trans %}Event location{% endtrans %}</title>
+                  <use xlink:href="#icon-location"></use>
+                </svg>
+                <span class="sr-only">{% trans %}Event location{% endtrans %}</span>
+                <span class="inline-center">
+                  {{ content.field_event_location }}
+                  {% if content.field_event_address|render is not empty and content.field_event_location|render is not empty %} &bullet; {% endif %}
+                  {{ content.field_event_address }}
+                </span>
+              </div>
+            {% endif %}
+          {% endif %}
+          {#
+            // For non-online events the enrollment flag should be displayed
+            // after address.
+            // We should always include the container as the enrollment
+            // indication could be refreshed by ajax with append/remove action.
           #}
-          {% if event_location_address is defined %}
-            {{ event_location_address }}
-          {% else %}
-            <div class="article__special-field">
-              <svg class="article__special-fields-icon">
-                <title>{% trans %}Event location{% endtrans %}</title>
-                <use xlink:href="#icon-location"></use>
-              </svg>
-              <span class="sr-only">{% trans %}Event location{% endtrans %}</span>
-              <span class="inline-center">
-                {{ content.field_event_location }}
-                {% if content.field_event_address|render is not empty and content.field_event_location|render is not empty %} &bullet; {% endif %}
-                {{ content.field_event_address }}
-              </span>
+          {% if not is_online %}
+            <div class="event-flag-enrolled__container">
+              {% if event_flag_enrolled %}
+                {{ event_flag_enrolled }}
+              {% endif %}
             </div>
           {% endif %}
-        {% endif %}
-
+        </div>
       </div>
     </div>
 

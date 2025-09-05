@@ -1,0 +1,32 @@
+{#
+/**
+ * @file event-flag-enrolled.html.twig
+ * Default theme implementation to show the Enrolled flag.
+ *
+ * This template is used for correct displaying Enrolled flag on Event view modes.
+ *
+ *
+ * Available variables:
+ * - icon: an icon before the flag
+ * - text: a text string
+ *
+ * @see template_preprocess_event_flag_enrolled()
+ *
+ * @ingroup themeable
+ */
+#}
+{% if is_enrolled %}
+  <div{{ attributes }}>
+    <span class="inline-center enrolled">
+      {{ 'Enrolled'|t }}
+    </span>
+
+    {% if icon_loaded %}
+      <svg class="icon no-b-lazy" aria-hidden="true">
+        <title>{% trans %}Enrolled{% endtrans %}</title>
+        <use xlink:href="#icon-check"></use>
+      </svg>
+    {% endif %}
+  </div>
+{% endif %}
+

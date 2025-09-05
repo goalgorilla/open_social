@@ -3,8 +3,10 @@
 namespace Drupal\social_event\Form;
 
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\AppendCommand;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Ajax\RedirectCommand;
+use Drupal\Core\Ajax\RemoveCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormBase;
@@ -503,6 +505,9 @@ class EnrollActionForm extends FormBase {
         else {
           $enrollment->delete();
         }
+
+        // Remove the "Enrolled" flag.
+        $response->addCommand(new RemoveCommand('.event-flag-enrolled'));
       }
       elseif ($to_enroll_status === '1' && $current_enrollment_status === '0') {
         $enrollment->field_enrollment_status->value = '1';
@@ -556,6 +561,14 @@ class EnrollActionForm extends FormBase {
           'dialogClass' => 'social-dialog--event-addtocal',
         ]
       ));
+
+      // Add the "Enrolled" flag.
+      $build = [
+        '#theme' => 'event_flag_enrolled',
+        '#node' => $event,
+      ];
+
+      $response->addCommand(new AppendCommand('.event-flag-enrolled__container', $build));
     }
 
     // Rebuild the form.

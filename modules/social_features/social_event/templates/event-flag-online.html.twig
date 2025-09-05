@@ -1,0 +1,33 @@
+{#
+/**
+ * @file event-flag-online.html.twig
+ * Default theme implementation to show the Online flag.
+ *
+ * This template is used for correct displaying Online flag on Event view modes.
+ *
+ *
+ * Available variables:
+ * - icon: an icon before the flag
+ * - text: a text string
+ *
+ * @see template_preprocess_event_flag_online()
+ *
+ * @ingroup themeable
+ */
+#}
+{% if online %}
+  <div{{ attributes }}>
+    {% if icon_loaded %}
+      <span class="icon-wrapper">
+      <svg class="icon no-b-lazy" aria-hidden="true">
+        <title>{% trans %}Online{% endtrans %}</title>
+        <use xlink:href="#icon-online"></use>
+      </svg>
+    </span>
+    {% endif %}
+
+    <span class="inline-center online">
+    {{ 'Online'|t }}
+  </span>
+  </div>
+{% endif %}
