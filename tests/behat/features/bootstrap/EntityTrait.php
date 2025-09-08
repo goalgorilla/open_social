@@ -100,9 +100,10 @@ trait EntityTrait {
           $values[$field_name] = $date->format('Y-m-d\TH:i:s');
         }
       }
-      // Created and changed fields are stored as a normal timestamp but require
-      // the same human-readable input as datetime fields.
-      if ($field_definition !== NULL && in_array($field_definition->getType(), ["created", "changed"], TRUE)) {
+      // Allow timestamp fields to use the same human-readable input as datetime
+      // fields above. 'created' and 'changed' are separate field types but
+      // are stored as a normal timestamp.
+      if ($field_definition !== NULL && in_array($field_definition->getType(), ["timestamp", "created", "changed"], TRUE)) {
         $values[$field_name] = strtotime($values[$field_name]);
       }
       // Allow group fields to be a comma separated list of IDs or labels.
