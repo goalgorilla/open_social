@@ -248,26 +248,27 @@ class EnrollActionForm extends FormBase {
           // the submitting text accordingly.
           // Make sure the meeting isn't finished.
           if ($node->isOnline() && !$node->isEnded()) {
+            $has_meeting_link = $node->getMeetingLink();
+
+            // Meeting has not been started yet.
+            // We want to display a different button text if the meeting URL
+            // is available or not.
+            $submit_text = $has_meeting_link
+              ? $this->t('Join at the start time')
+              : $this->t('Contact organizers to join');
 
             // Meeting is open, users can join now.
             if ($node->joiningMeetingIsOpen()) {
-              // We want to display a different button text if the meeting URL
-              // is available or not.
-              if ($node->getMeetingLink()) {
+              if ($has_meeting_link) {
                 $submit_text = $this->t('Join now');
               }
               else {
-                $submit_text = $this->t('Contact organizers to join');
                 // Disable the button.
                 $enrollment_open = FALSE;
               }
 
               // Add a specific class to the button for styling.
               $attributes['class'][] = 'btn-accent__join-now';
-            }
-            // Meeting has not been started yet.
-            else {
-              $submit_text = $this->t('Join at the start time');
             }
           }
           else {
