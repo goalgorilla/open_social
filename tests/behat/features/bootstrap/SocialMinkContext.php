@@ -55,7 +55,7 @@ class SocialMinkContext extends MinkContext {
    */
   public function iMakeAScreenshotWithFileName($filename) {
     $dir = __DIR__ . '/../../logs';
-    if (is_writable($dir)) {
+    if (is_writeable($dir)) {
       file_put_contents(
         "$dir/$filename.jpg",
         $this->getSession()->getScreenshot()
