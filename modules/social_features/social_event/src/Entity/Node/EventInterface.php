@@ -3,12 +3,12 @@
 namespace Drupal\social_event\Entity\Node;
 
 use Drupal\Core\Session\AccountInterface;
-use Drupal\meeting_api\MeetingInterface;
+use Drupal\meeting_api\Entity\Meeting;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Provides an interface for "Event" node bundle class.
+ * Provides an interface for the "Event" node bundle class.
  *
  * @ingroup social_event
  */
@@ -82,10 +82,10 @@ interface EventInterface extends NodeInterface {
   /**
    * Returns the meeting entity if the event is online.
    *
-   * @return \Drupal\meeting_api\MeetingInterface|null
+   * @return \Drupal\meeting_api\Entity\Meeting|null
    *   The meeting entity or NULL.
    */
-  public function getMeeting(): ?MeetingInterface;
+  public function getMeeting(): ?Meeting;
 
   /**
    * Retrieve the meeting link associated with an online event.

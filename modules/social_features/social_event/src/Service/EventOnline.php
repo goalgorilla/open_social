@@ -9,6 +9,7 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\meeting_api\Entity\MeetingType;
 use Drupal\meeting_api\MeetingInterface;
 use Drupal\meeting_api\ServerInterface;
@@ -46,6 +47,22 @@ class EventOnline {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {}
+
+  /**
+   * Retrieves the tooltip text for a specified meeting bundle.
+   *
+   * @param string $meeting_bundle
+   *   The machine name of the meeting bundle.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The tooltip text corresponding to the meeting bundle.
+   */
+  public function getTooltipText(string $meeting_bundle): TranslatableMarkup {
+    return match ($meeting_bundle) {
+      'big_blue_button' => $this->t('BigBlueButton meeting'),
+      default => $this->t('Online meeting'),
+    };
+  }
 
   /**
    * Retrieves the backend ID for a given meeting.

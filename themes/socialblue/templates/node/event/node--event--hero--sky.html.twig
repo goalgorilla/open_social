@@ -136,16 +136,6 @@
           {% endif %}
         </div>
 
-        {% if content.field_event_addtocal|render is not empty %}
-          <div class="article__special-field">
-            <div class="hero_btn-group">
-              <div class="meta-addtocal">
-                {{ content.field_event_addtocal }}
-              </div>
-            </div>
-          </div>
-        {% endif %}
-
         <div class="event-location-address__container">
           {% if content.field_event_address|render or content.field_event_location|render %}
             {#
@@ -184,6 +174,17 @@
             </div>
           {% endif %}
         </div>
+
+        {% if content.field_event_addtocal|render is not empty %}
+          <div class="article__special-field">
+            <div class="hero_btn-group">
+              <div class="meta-addtocal">
+                {{ content.field_event_addtocal }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
       </div>
     </div>
 

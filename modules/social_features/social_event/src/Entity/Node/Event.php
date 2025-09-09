@@ -4,9 +4,9 @@ namespace Drupal\social_event\Entity\Node;
 
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\meeting_api\Entity\Meeting;
 use Drupal\meeting_api\MeetingAttendee;
 use Drupal\meeting_api\MeetingAttendeeInterface;
-use Drupal\meeting_api\MeetingInterface;
 use Drupal\meeting_api\MeetingManagerInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_node\Entity\Node as Node;
@@ -174,7 +174,7 @@ class Event extends Node implements EventInterface {
   /**
    * {@inheritdoc}
    */
-  public function getMeeting(): ?MeetingInterface {
+  public function getMeeting(): ?Meeting {
     // Return the meeting entity if the event is online.
     if (!$this->isOnline()) {
       return NULL;
@@ -182,7 +182,7 @@ class Event extends Node implements EventInterface {
 
     $meeting = $this->get('field_event_meeting')->entity;
 
-    return $meeting instanceof MeetingInterface ? $meeting : NULL;
+    return $meeting instanceof Meeting ? $meeting : NULL;
   }
 
   /**

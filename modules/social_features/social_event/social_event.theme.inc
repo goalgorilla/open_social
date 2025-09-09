@@ -8,6 +8,7 @@
 use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Entity\Node\EventInterface;
+use Drupal\social_event\Service\EventOnline;
 
 /**
  * Prepares variables for join templates.
@@ -93,9 +94,16 @@ function template_preprocess_event_flag_online(array &$variables): void {
     return;
   }
 
+  /** @var \Drupal\social_event\Service\EventOnline $eos */
+  $eos = \Drupal::service(EventOnline::class);
+
   $variables['attributes'] = (new Attribute($variables['attributes']))
-    ->addClass('event-flag-online')
-    ->setAttribute('title', t('This event also provides an online meeting room'));
+    ->addClass('event-flag-online');
+
+  if ($meeting = $event->getMeeting()) {
+    $variables['attributes']
+      ->setAttribute('title', $eos->getTooltipText($meeting->bundle()));
+  }
 
   $variables['online'] = $event->isOnline();
 
