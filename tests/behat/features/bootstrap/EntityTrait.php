@@ -53,7 +53,7 @@ trait EntityTrait {
       // We can only do this for the default handler because other handlers
       // might have a different settings format so we can't know the target
       // bundles.
-      $field_definition = $dummy->getFieldDefinition($field_name);
+      $field_definition = ($dummy instanceof FieldableEntityInterface) ? $dummy->getFieldDefinition($field_name) : NULL;
       if ($field_definition !== NULL && $field_definition->getType() === "entity_reference" && $field_definition->getSetting("target_type") === "taxonomy_term") {
         $taxonomy_storage = $entity_type_manager->getStorage("taxonomy_term");
         if ($field_definition->getSetting("handler") === "default:taxonomy_term") {
@@ -138,6 +138,34 @@ trait EntityTrait {
                 throw new \InvalidArgumentException("Group $id_or_name does not exist" . implode(", ", $allowed_bundles));
               }
               return ["target_id" => (int) reset($group_ids)];
+            },
+            explode(",", $field_value)
+          );
+        }
+      }
+      // Allow segment visibility fields to be a comma separated list of segment labels.
+      // Convert segment labels to their corresponding IDs using the allowed values function.
+      if ($field_definition !== NULL && $field_definition->getType() === "list_string" && $field_name === "field_segment_visibility") {
+        assert(is_string($field_value), "The segment visibility value for '$field_name' has already been converted but this isn't needed.");
+        if (trim($field_value) === "") {
+          unset($values[$field_name]);
+          continue;
+        }
+        
+        // Get the allowed values from the field's allowed_values_function.
+        $allowed_values_function = $field_definition->getSetting("allowed_values_function");
+        if ($allowed_values_function && is_callable($allowed_values_function)) {
+          $allowed_values = $allowed_values_function();
+          // Split comma-separated values and convert labels to IDs.
+          $values[$field_name] = array_map(
+            function ($segment_label) use ($allowed_values) {
+              $segment_label = trim($segment_label);
+              // Find the segment ID by label.
+              $segment_id = array_search($segment_label, $allowed_values);
+              if ($segment_id === FALSE) {
+                throw new \InvalidArgumentException("Segment '$segment_label' does not exist or is not available for visibility.");
+              }
+              return $segment_id;
             },
             explode(",", $field_value)
           );
