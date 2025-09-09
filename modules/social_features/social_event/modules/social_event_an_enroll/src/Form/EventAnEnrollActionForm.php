@@ -177,7 +177,7 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
           ],
           'data-dialog-type' => 'modal',
           'data-dialog-options' => json_encode([
-            'title' => t('Enroll in') . ' ' . strip_tags((string) $node->getTitle()),
+            'title' => $this->t('Enroll in') . ' ' . $node->getTitle(),
             'width' => 'auto',
           ]),
         ];

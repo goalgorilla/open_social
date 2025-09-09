@@ -262,10 +262,6 @@ class EnrollActionForm extends FormBase {
               if ($has_meeting_link) {
                 $submit_text = $this->t('Join now');
               }
-              else {
-                // Disable the button.
-                $enrollment_open = FALSE;
-              }
 
               // Add a specific class to the button for styling.
               $attributes['class'][] = 'btn-accent__join-now';
@@ -356,7 +352,13 @@ class EnrollActionForm extends FormBase {
     $form['#attributes']['name'] = 'enroll_action_form';
 
     // Further changes needs in case if enrollment exists.
-    if (empty($enrollment) || $node->joiningMeetingIsOpen()) {
+    if (empty($enrollment)) {
+      return $form;
+    }
+
+    // If the event is online and the meeting is open, we need to display a
+    // button with a link to join without a dropdown.
+    if ($node->isOnline() && $node->joiningMeetingIsOpen() && $node->getMeetingLink()) {
       return $form;
     }
 
@@ -418,8 +420,9 @@ class EnrollActionForm extends FormBase {
     $nid = $form_state->getValue('event') ?? $this->routeMatch->getRawParameter('node');
     $current_user = $this->currentUser();
 
-    /** @var \Drupal\social_event\Entity\Node\EventInterface $event */
     $event = $this->entityTypeManager->getStorage('node')->load($nid);
+    assert($event instanceof EventInterface);
+
     if ($event->isOnline()) {
       if ($event->joiningMeetingIsOpen()) {
         // We should redirect the user to the meeting page.

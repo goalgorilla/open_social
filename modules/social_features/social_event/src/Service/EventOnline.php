@@ -238,9 +238,9 @@ class EventOnline {
   private function serverConfigurationIsValid(ServerInterface $server): bool {
     $backendConfig = $server->get('backend_config');
 
-    return empty($backendConfig) ||
-      empty($backendConfig['url']) ||
-      empty($backendConfig['key']);
+    return !empty($backendConfig) &&
+      !empty($backendConfig['url']) &&
+      !empty($backendConfig['key']);
   }
 
 }
