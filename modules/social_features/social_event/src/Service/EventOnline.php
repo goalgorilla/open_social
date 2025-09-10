@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Service;
 
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\meeting_api\Entity\MeetingType;
 use Drupal\meeting_api\MeetingInterface;
 use Drupal\meeting_api\ServerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Service for handling event online meeting functionality.
  */
-class EventOnline implements ContainerInjectionInterface {
+class EventOnline {
 
   use StringTranslationTrait;
 
@@ -34,30 +35,17 @@ class EventOnline implements ContainerInjectionInterface {
   public const DEFAULT_MEETING_ATTENDEES = 2;
 
   /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
    * Constructs a new EventOnline object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
+   *   The logger channel factory.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
-    $this->entityTypeManager = $entityTypeManager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container): static {
-    return new static(
-      $container->get('entity_type.manager')
-    );
-  }
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly LoggerChannelFactoryInterface $loggerFactory,
+  ) {}
 
   /**
    * Retrieves the backend ID for a given meeting.
@@ -149,8 +137,9 @@ class EventOnline implements ContainerInjectionInterface {
       ->getStorage('meeting_api_server')
       ->loadMultiple();
 
-    /** @var \Drupal\meeting_api\ServerInterface[] $meeting_api_servers */
-    $bbb_servers = array_filter($meeting_api_servers, fn ($server) => $server->get('backend') === 'bigbluebutton');
+    $bbb_servers = array_filter(
+      array: $meeting_api_servers,
+      callback: fn ($server) => $server instanceof ServerInterface && $server->get('backend') === 'bigbluebutton');
 
     foreach ($bbb_servers as $bbb_server) {
       if ($this->validateServerConfiguration($bbb_server)) {
@@ -205,16 +194,20 @@ class EventOnline implements ContainerInjectionInterface {
    *
    * @return bool
    *   TRUE if the server is properly configured, FALSE otherwise.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function validateServerConfiguration(ServerInterface|string $server): bool {
     // Load the server entity.
     if (is_string($server)) {
-      $server = $this->entityTypeManager
-        ->getStorage('meeting_api_server')
-        ->load($server);
+      try {
+        $server = $this->entityTypeManager
+          ->getStorage('meeting_api_server')
+          ->load($server);
+      }
+      catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+        $this->loggerFactory->get('social_event')->error($e->getMessage());
+        return FALSE;
+      }
+
     }
 
     if (!$server instanceof ServerInterface) {
@@ -229,17 +222,25 @@ class EventOnline implements ContainerInjectionInterface {
     }
 
     // For BigBlueButton backends, validate configuration.
-    $backendConfig = $server->get('backend_config');
-    if (
-      empty($backendConfig) ||
-      empty($backendConfig['url']) ||
-      empty($backendConfig['key'])
-    ) {
-      // BigBlueButton server is not properly configured.
-      return FALSE;
-    }
+    return $this->serverConfigurationIsValid($server);
+  }
 
-    return TRUE;
+  /**
+   * Checks whether the server configuration is valid for BigBlueButton.
+   *
+   * @param \Drupal\meeting_api\ServerInterface $server
+   *   The server entity to validate.
+   *
+   * @return bool
+   *   TRUE if the server configuration is invalid or incomplete,
+   *   FALSE otherwise.
+   */
+  private function serverConfigurationIsValid(ServerInterface $server): bool {
+    $backendConfig = $server->get('backend_config');
+
+    return empty($backendConfig) ||
+      empty($backendConfig['url']) ||
+      empty($backendConfig['key']);
   }
 
 }

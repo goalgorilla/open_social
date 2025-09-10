@@ -3,6 +3,7 @@
 namespace Drupal\social_event\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\meeting_api\Entity\Meeting;
 use Drupal\social_event\Service\EventOnline;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -19,9 +20,12 @@ class MeetingServerSettingsConstraintValidator extends ConstraintValidator imple
    *
    * @param \Drupal\social_event\Service\EventOnline $eventOnline
    *   The event online service.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
+   *   The logger channel factory.
    */
   public function __construct(
     private readonly EventOnline $eventOnline,
+    private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {}
 
   /**
@@ -29,7 +33,8 @@ class MeetingServerSettingsConstraintValidator extends ConstraintValidator imple
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get(EventOnline::class)
+      $container->get(EventOnline::class),
+      $container->get('logger.factory'),
     );
   }
 
@@ -69,6 +74,7 @@ class MeetingServerSettingsConstraintValidator extends ConstraintValidator imple
       // If we can't validate, fail gracefully without adding violations.
       // This prevents errors during entity creation
       // or when a server is missing.
+      $this->loggerFactory->get('social_event')->error($e->getMessage());
       return;
     }
   }

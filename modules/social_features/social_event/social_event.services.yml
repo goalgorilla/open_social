@@ -48,4 +48,6 @@ services:
     tags:
       - { name: social.eda.handler }
   Drupal\social_event\Service\EventOnline:
-    arguments: ['@entity_type.manager']
+    arguments:
+      - '@entity_type.manager'
+      - '@logger.factory'

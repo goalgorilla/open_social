@@ -215,7 +215,7 @@ class EventSettingsForm extends ConfigFormBase {
       '#tree' => TRUE,
     ];
 
-    $online_meeting =&  $form['online_meeting'];
+    $online_meeting =& $form['online_meeting'];
 
     $online_meeting['default_meeting_type'] = [
       '#type' => 'select',

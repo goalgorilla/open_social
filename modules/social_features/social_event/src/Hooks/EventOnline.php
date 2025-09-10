@@ -50,8 +50,10 @@ final class EventOnline implements ContainerInjectionInterface {
    */
   #[Alter('entity_type')]
   public function addViolationsToMeetingEntity(array &$entity_types): void {
-    /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
     if (isset($entity_types['meeting_api_meeting'])) {
+      $entity_type = $entity_types['meeting_api_meeting'];
+      assert($entity_type instanceof EntityTypeInterface);
+
       // Add validation constraint to a Meeting entity.
       $entity_types['meeting_api_meeting']->addConstraint('MeetingServerSettings');
     }
