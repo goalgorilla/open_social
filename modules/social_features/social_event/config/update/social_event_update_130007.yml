@@ -1,0 +1,52 @@
+views.view.upcoming_events:
+  expected_config: { }
+  update_actions:
+    add:
+      display:
+        page_community_events:
+          display_options:
+            filters:
+              social_event_is_online:
+                id: social_event_is_online
+                table: node_field_data
+                field: social_event_is_online
+                relationship: none
+                group_type: group
+                admin_label: ''
+                entity_type: node
+                plugin_id: social_event_is_online
+                operator: '='
+                value: false
+                group: 1
+                exposed: true
+                expose:
+                  operator_id: ''
+                  label: Online
+                  description: ''
+                  use_operator: false
+                  operator: social_event_is_online_op
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: social_event_is_online
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                    anonymous: '0'
+                    administrator: '0'
+                    verified: '0'
+                    contentmanager: '0'
+                    sitemanager: '0'
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }

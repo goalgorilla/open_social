@@ -323,3 +323,23 @@ function social_event_update_130006(): string {
   $updater->executeUpdate('social_event', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Add "Online" filter to "/community-events" page.
+ */
+function social_event_update_130007(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_event', __FUNCTION__);
+
+  // Put the "Online" filter on the top of the filters' list.
+  $config = \Drupal::configFactory()->getEditable('views.view.upcoming_events');
+  $filters = $config->get('display.page_community_events.display_options.filters');
+  $online_filter = $filters['social_event_is_online'];
+  unset($filters['social_event_is_online']);
+  $filters = ['social_event_is_online' => $online_filter] + $filters;
+  $config->set('display.page_community_events.display_options.filters', $filters);
+  $config->save();
+
+  return $updater->logger()->output();
+}
