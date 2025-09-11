@@ -2,10 +2,11 @@
 
 namespace Drupal\social_profile\Plugin\UserSegmentRule;
 
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Database\Query\SelectInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\PluginFormInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\user_segments\Attribute\UserSegmentRule;
 use Drupal\user_segments\DataObject\Condition;
@@ -13,7 +14,13 @@ use Drupal\user_segments\DataObject\ConditionGroup;
 use Drupal\user_segments\DataObject\Property;
 use Drupal\user_segments\Enum\PropertyMatch;
 use Drupal\user_segments\Enum\PropertyRelationship;
+use Drupal\user_segments\Ui\DataObject\Condition as UiCondition;
+use Drupal\user_segments\Ui\DataObject\Scope;
+use Drupal\user_segments\Ui\DataObject\UiStructure;
+use Drupal\user_segments\Ui\Enum\ConditionTarget;
+use Drupal\user_segments\Ui\FieldTypeDataObject\SelectProperty;
 use Drupal\user_segments\UserSegmentRulePluginBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the Global role segment condition.
@@ -25,48 +32,76 @@ use Drupal\user_segments\UserSegmentRulePluginBase;
   label: new TranslatableMarkup('User profile'),
   description: new TranslatableMarkup('User profile rule with segment conditions')
 )]
-final class ProfileUserSegmentRule extends UserSegmentRulePluginBase implements PluginFormInterface {
+final class ProfileUserSegmentRule extends UserSegmentRulePluginBase {
 
   public const string PLUGIN_ID = 'profile';
 
-  /**
-   * Builds the plugin configuration form.
-   *
-   * @param array $form
-   *   The form array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state object.
-   *
-   * @return array
-   *   The altered form array.
-   */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
-    // @todo Implement form elements for user profile and other config.
-    return $form;
+  // User profile user role condition and properties.
+  public const string CONDITION__USER_ROLES = 'user_roles';
+  public const string CONDITION__USER_ROLES__PROPERTY_ROLE = 'role';
+
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    protected Connection $database,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    private readonly CacheBackendInterface $cacheBackend,
+  ) {
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $database,
+      $entityTypeManager,
+    );
   }
 
   /**
-   * Handles form submission for the plugin configuration.
-   *
-   * @param array $form
-   *   The form array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state object.
+   * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
-    // @todo Implement form submission handler.
+  public static function create(
+    ContainerInterface $container,
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+  ): static {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('database'),
+      $container->get('entity_type.manager'),
+      $container->get('cache.default'),
+    );
   }
 
   /**
-   * Validates the configuration form input.
-   *
-   * @param array $form
-   *   The form array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state object.
+   * {@inheritdoc}
    */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
-    // @todo Implement form validation logic.
+  public function uiStructure(): UiStructure {
+    return new UiStructure(
+      scope: new Scope(
+        machine_name: 'profile_information',
+        label: $this->t('Profile information'),
+      ),
+      hub: NULL,
+      conditions: [
+        new UiCondition(
+          condition_type: self::CONDITION__USER_ROLES,
+          target: ConditionTarget::Scope,
+          properties: [
+            new SelectProperty(
+              property_type: self::CONDITION__USER_ROLES__PROPERTY_ROLE,
+              label: t('Role'),
+              cardinality: -1,
+              allowed_values: $this->getUserRoleOptionsForUi(),
+              supports_match_all: TRUE,
+            ),
+          ]
+        ),
+      ]
+    );
   }
 
   /**
@@ -117,7 +152,7 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase implements 
       switch ($condition_id) {
 
         // User roles.
-        case 'user_roles':
+        case self::CONDITION__USER_ROLES:
           $this->applyUserRoleCondition($condition, $query, $alias, $condition_target, $index);
           break;
 
@@ -187,7 +222,7 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase implements 
     $config = $condition_property->config;
 
     switch ($property_id) {
-      case 'role':
+      case self::CONDITION__USER_ROLES__PROPERTY_ROLE:
 
         if (!isset($config['value'])) {
           throw new \InvalidArgumentException('The "value" property is required for the role condition.');
@@ -323,11 +358,60 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase implements 
    *   An array of available user role machine names.
    */
   private function getUserRoleOptions(): array {
-    $roles = $this->entityTypeManager
+    $roles = $this->getUserRoleOptionsForUi();
+
+    return array_keys($roles);
+  }
+
+  /**
+   * Retrieves a cached list of user role machine names and labels.
+   *
+   * This method loads all user roles and returns an associative array where
+   * the keys are role machine names and the values are role labels.
+   *
+   * The result is cached permanently to avoid repeated entity loading and
+   * will be automatically invalidated when user roles are changed.
+   *
+   * Method cache_id:
+   *   profile_user_segment_rule.user_role_options_for_ui
+   *
+   * Cache tags:
+   *   config:user_role_list
+   *
+   * @return array<string,string|\Drupal\Core\StringTranslation\TranslatableMarkup>
+   *   An associative array of user role machine names and their corresponding
+   *   translated labels.
+   */
+  public function getUserRoleOptionsForUi(): array {
+    $cid = 'profile_user_segment_rule.user_role_options_for_ui';
+
+    // Try to get from cache.
+    if ($cache = $this->cacheBackend->get($cid)) {
+      return $cache->data;
+    }
+
+    $entity_type = $this->entityTypeManager->getDefinition('user_role');
+    $list_cache_tags = $entity_type->getListCacheTags();
+
+    $role_entities = $this->entityTypeManager
       ->getStorage('user_role')
       ->loadMultiple();
 
-    return array_keys($roles);
+    $roles = [];
+    foreach ($role_entities as $role_entity) {
+      if ($role_entity->label() !== NULL) {
+        $roles[(string) $role_entity->id()] = $role_entity->label();
+      }
+    }
+
+    $this->cacheBackend->set(
+      $cid,
+      $roles,
+      CacheBackendInterface::CACHE_PERMANENT,
+      $list_cache_tags
+    );
+
+    return $roles;
   }
 
 }

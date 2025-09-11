@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Traits;
 
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\user_segments\DataObject\Condition;
@@ -334,11 +335,66 @@ trait UserSegmentGroupTrait {
    *   An array of role machine names available for the given group type.
    */
   private function getGroupRoleOptions(string $group_type): array {
-    $roles = $this->entityTypeManager
+    $roles = $this->getGroupRoleOptionsForUi($group_type);
+
+    return array_keys($roles);
+  }
+
+  /**
+   * Retrieves a cached list of group type role machine names and labels.
+   *
+   * This method loads all group roles and returns an associative array where
+   * the keys are role machine names and the values are role labels.
+   *
+   * The result is cached permanently to avoid repeated entity loading and
+   * will be automatically invalidated when any group roles are changed.
+   *
+   * Method cache_id:
+   *   group_user_segment_rule.user_role_options_for_ui:{group_type}
+   *
+   * Cache tags:
+   *   config:group_role_list
+   *
+   * @param string $group_type
+   *   The group type ID.
+   *
+   * @return array<string,string|\Drupal\Core\StringTranslation\TranslatableMarkup>
+   *   An associative array of group role machine names and their corresponding
+   *   translated labels.
+   */
+  public function getGroupRoleOptionsForUi(string $group_type): array {
+    $cid = 'group_user_segment_rule.user_role_options_for_ui:' . $group_type;
+
+    /** @var \Drupal\Core\Cache\CacheBackendInterface $cache_backend */
+    $cache_backend = \Drupal::cache();
+
+    // Try to get from cache.
+    if ($cache = $cache_backend->get($cid)) {
+      return $cache->data;
+    }
+
+    $entity_type = \Drupal::entityTypeManager()->getDefinition('group_role');
+    $list_cache_tags = $entity_type->getListCacheTags();
+
+    $role_entities = $this->entityTypeManager
       ->getStorage('group_role')
       ->loadByProperties(['group_type' => $group_type]);
 
-    return array_keys($roles);
+    $roles = [];
+    foreach ($role_entities as $role_entity) {
+      if ($role_entity->label() !== NULL) {
+        $roles[(string) $role_entity->id()] = $role_entity->label();
+      }
+    }
+
+    $cache_backend->set(
+      $cid,
+      $roles,
+      CacheBackendInterface::CACHE_PERMANENT,
+      $list_cache_tags
+    );
+
+    return $roles;
   }
 
 }
