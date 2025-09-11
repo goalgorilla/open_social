@@ -817,16 +817,34 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
 
   if ($operation === 'view' && ($block->getPluginId() === 'views_block:event_enrollments-event_enrollments')) {
     $nid = \Drupal::routeMatch()->getRawParameter('node');
-    if (!empty($nid) && $node = Node::load($nid)) {
-      if (
-        // Show only for event node type.
-        !$node instanceof Event ||
-        // Check if event enrollment were disabled explicitly.
-        !$node->isEnrollmentEnabled() ||
-        // Or disabled in the event.
-        !$node->showEnrollments()
-      ) {
-        // Return forbidden, since access was not explicitly granted.
+    // Show only for an event node type.
+    if (!empty($nid)
+      && ($node = Node::load($nid))
+    ) {
+      if ($node instanceof Event) {
+        if (
+          // Check if event enrollment was disabled explicitly.
+        !$node->isEnrollmentEnabled()
+        ) {
+          return AccessResult::forbidden()
+            ->addCacheableDependency($node);
+        }
+        // Block should be visible for authors, SM/CM and admins.
+        // if hide enrollments are enabled.
+        elseif (
+          !$node->showEnrollments()
+          && $node->getOwnerId() !== $account->id()
+          && !array_intersect(['administrator', 'sitemanager', 'contentmanager'], $account->getRoles())
+        ) {
+          // Return forbidden, since access was not explicitly granted.
+          return AccessResult::forbidden()
+            ->addCacheableDependency($node)
+            ->addCacheContexts(['user', 'user.roles']);
+        }
+      }
+      else {
+        // Return forbidden, since this block is not supposed to be visible on
+        // other nodes.
         return AccessResult::forbidden()
           ->addCacheableDependency($node);
       }

@@ -21,10 +21,10 @@ final class MenuLocalTasksAlter implements ContainerInjectionInterface {
   /**
    * View IDs for enrollment tabs.
    */
-  private const string VIEW_EVENT_ENROLLMENTS_TAB_ID = 'views_view:view.event_enrollments.view_enrollments';
-  private const string VIEW_MANAGE_ENROLLMENTS_TAB_ID = 'views_view:view.manage_enrollments.page';
-  private const string VIEW_MANAGERS_TAB_ID = 'views_view:view.managers.view_managers';
-  private const string VIEW_EVENT_MANAGE_ENROLLMENT_TAB_ID = 'views_view:view.event_manage_enrollments.page_manage_enrollments';
+  private const VIEW_EVENT_ENROLLMENTS_TAB_ID = 'views_view:view.event_enrollments.view_enrollments';
+  private const VIEW_MANAGE_ENROLLMENTS_TAB_ID = 'views_view:view.manage_enrollments.page';
+  private const VIEW_MANAGERS_TAB_ID = 'views_view:view.managers.view_managers';
+  private const VIEW_EVENT_MANAGE_ENROLLMENT_TAB_ID = 'views_view:view.event_manage_enrollments.page_manage_enrollments';
 
   /**
    * Constructs a new MenuLocalTasksAlter.
