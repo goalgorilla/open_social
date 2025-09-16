@@ -121,6 +121,17 @@ final class EdaHandler {
   }
 
   /**
+   * Publish topic handler.
+   */
+  public function topicPublish(NodeInterface $node): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.topic.publish",
+      node: $node
+    );
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException

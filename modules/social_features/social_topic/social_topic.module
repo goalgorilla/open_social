@@ -467,3 +467,13 @@ function social_topic_entity_insert(EntityInterface $entity): void {
     \Drupal::service('social_topic.eda_handler')->topicCreate($entity);
   }
 }
+
+/**
+ * Implements hook_social_core_ENTITY_TYPE_published().
+ */
+function social_topic_social_core_node_published(EntityInterface $entity): void {
+  // When a node of type `topic` is published, dispatch the proper EDA event.
+  if ($entity instanceof NodeInterface && $entity->bundle() == 'topic') {
+    \Drupal::service('social_topic.eda_handler')->topicPublish($entity);
+  }
+}

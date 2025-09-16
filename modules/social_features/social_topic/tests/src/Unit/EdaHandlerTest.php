@@ -315,6 +315,33 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the topicPublish() method.
+   *
+   * @covers ::topicPublish
+   */
+  public function testTopicPublish(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.topic.publish');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.topic.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the topicPublish method.
+    $handler->topicPublish($this->node);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.topic.publish', $event->getType());
+  }
+
+  /**
    * Returns a mocked handler with dependencies injected.
    *
    * @return \Drupal\social_topic\EdaHandler
