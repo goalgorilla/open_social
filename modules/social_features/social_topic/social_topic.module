@@ -477,3 +477,13 @@ function social_topic_social_core_node_published(EntityInterface $entity): void 
     \Drupal::service('social_topic.eda_handler')->topicPublish($entity);
   }
 }
+
+/**
+ * Implements hook_social_core_ENTITY_TYPE_unpublished().
+ */
+function social_topic_social_core_node_unpublished(EntityInterface $entity): void {
+  // When a node of type `topic` is unpublished, dispatch the proper EDA event.
+  if ($entity instanceof NodeInterface && $entity->bundle() == 'topic') {
+    \Drupal::service('social_topic.eda_handler')->topicUnpublish($entity);
+  }
+}

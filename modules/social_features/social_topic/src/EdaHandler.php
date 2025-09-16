@@ -132,6 +132,17 @@ final class EdaHandler {
   }
 
   /**
+   * Unpublish topic handler.
+   */
+  public function topicUnpublish(NodeInterface $node): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.topic.unpublish",
+      node: $node
+    );
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
