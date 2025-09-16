@@ -396,6 +396,30 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the topicDelete() method.
+   *
+   * @covers ::topicDelete
+   */
+  public function testTopicDelete(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.topic.delete', 'delete');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.topic.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the topicDelete method.
+    $handler->topicDelete($this->node);
+  }
+
+  /**
    * Returns a mocked handler with dependencies injected.
    *
    * @return \Drupal\social_topic\EdaHandler

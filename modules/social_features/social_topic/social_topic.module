@@ -497,3 +497,12 @@ function social_topic_entity_update(EntityInterface $entity): void {
     \Drupal::service('social_topic.eda_handler')->topicUpdate($entity);
   }
 }
+
+/**
+ * Implements hook_entity_delete().
+ */
+function social_topic_entity_delete(EntityInterface $entity): void {
+  if ($entity instanceof NodeInterface && $entity->bundle() === 'topic') {
+    \Drupal::service('social_topic.eda_handler')->topicDelete($entity);
+  }
+}

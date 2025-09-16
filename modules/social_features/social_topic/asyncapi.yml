@@ -481,6 +481,126 @@ channels:
                                   type: string
                                   format: uri
                                   description: Canonical URL for the actor profile
+  topicDelete:
+    address: com.getopensocial.cms.topic.delete
+    messages:
+      topicDelete:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    topic:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the topic.
+                        created:
+                          type: string
+                          format: date-time
+                          description: The creation time of the topic.
+                        updated:
+                          type: string
+                          format: date-time
+                          description: The last updated time of the topic.
+                        status:
+                          type: string
+                          description: The status of the topic.
+                          enum:
+                            - removed
+                        label:
+                          type: string
+                          description: The label of the topic.
+                        visibility:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              description: The visibility type.
+                            groups:
+                              type: array
+                              description: The list of groups (only applicable for "groups" visibility).
+                            roles:
+                              type: array
+                              description: The list of roles (only applicable for "roles" visibility).
+                        type:
+                          type: string
+                          nullable: true
+                          description: The type of the topic.
+                        group:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the group.
+                            label:
+                              type: string
+                              description: The label of the group.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the group.
+                        author:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the author.
+                            displayName:
+                              type: string
+                              description: The display name of the author.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the author.
+                        href:
+                          type: object
+                          properties:
+                            canonical:
+                              type: string
+                              format: uri
+                              description: Canonical URL of the topic.
+                    actor:
+                      type: object
+                      properties:
+                        application:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Application ID (UUIDv4)
+                            name:
+                              type: string
+                              description: Name of the application
+                        user:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Actor user ID (UUIDv4)
+                            displayName:
+                              type: string
+                              description: Display name of the actor user
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL for the actor profile
 operations:
   onTopicCreate:
     action: 'receive'
@@ -498,3 +618,7 @@ operations:
     action: 'receive'
     channel:
       $ref: '#/channels/topicUpdate'
+  onTopicDelete:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/topicDelete'
