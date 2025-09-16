@@ -216,7 +216,7 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase {
     SelectInterface &$query,
     string $alias,
     string $suffix,
-  ) {
+  ): void {
 
     $property_id = $condition_property->property_type;
     $config = $condition_property->config;
@@ -254,7 +254,7 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase {
           ));
         }
 
-        // Include all users, event those without roles.
+        // Include all users, even those without roles.
         $user__roles_alias = "ur$suffix";
         $query->leftJoin('user__roles', $user__roles_alias, "$user__roles_alias.entity_id = {$alias}.uid AND $user__roles_alias.bundle = 'user'");
 
