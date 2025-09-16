@@ -143,6 +143,17 @@ final class EdaHandler {
   }
 
   /**
+   * Update topic handler.
+   */
+  public function topicUpdate(NodeInterface $node): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.topic.update",
+      node: $node
+    );
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException

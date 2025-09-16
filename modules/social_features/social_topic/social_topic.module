@@ -487,3 +487,13 @@ function social_topic_social_core_node_unpublished(EntityInterface $entity): voi
     \Drupal::service('social_topic.eda_handler')->topicUnpublish($entity);
   }
 }
+
+/**
+ * Implements hook_entity_update().
+ */
+function social_topic_entity_update(EntityInterface $entity): void {
+  if ($entity instanceof NodeInterface && $entity->bundle() === 'topic') {
+    // Trigger the EDA event.
+    \Drupal::service('social_topic.eda_handler')->topicUpdate($entity);
+  }
+}
