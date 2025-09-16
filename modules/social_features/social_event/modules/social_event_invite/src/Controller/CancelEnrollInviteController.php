@@ -7,6 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\EdaEventEnrollmentHandler;
 use Drupal\social_event\EventEnrollmentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,16 +35,26 @@ class CancelEnrollInviteController extends ControllerBase {
   protected $currentUser;
 
   /**
+   * The EDA event enrollment handler.
+   *
+   * @var \Drupal\social_event\EdaEventEnrollmentHandler|\Drupal\social_core\EdaDummyHandler
+   */
+  protected $edaEventEnrollmentHandler;
+
+  /**
    * UpdateEnrollRequestController constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.
    * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user.
+   * @param \Drupal\social_event\EdaEventEnrollmentHandler|\Drupal\social_core\EdaDummyHandler $edaEventEnrollmentHandler
+   *   The EDA event enrollment handler.
    */
-  public function __construct(RequestStack $requestStack, AccountProxyInterface $currentUser) {
+  public function __construct(RequestStack $requestStack, AccountProxyInterface $currentUser, $edaEventEnrollmentHandler) {
     $this->requestStack = $requestStack;
     $this->currentUser = $currentUser;
+    $this->edaEventEnrollmentHandler = $edaEventEnrollmentHandler;
   }
 
   /**
@@ -52,7 +63,8 @@ class CancelEnrollInviteController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('request_stack'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('social_event.eda_event_enrollment_handler')
     );
   }
 
@@ -72,8 +84,13 @@ class CancelEnrollInviteController extends ControllerBase {
   public function cancelEnrollmentInvite(NodeInterface $node, EventEnrollmentInterface $event_enrollment) {
     // When the event owner/organizer cancelled the invite, simply remove the
     // whole event enrollment.
-    $this->messenger()->addStatus(t('The invite has been removed.'));
+    $this->messenger()->addStatus($this->t('The invite has been removed.'));
+
     $event_enrollment->delete();
+
+    if ($this->edaEventEnrollmentHandler instanceof EdaEventEnrollmentHandler) {
+      $this->edaEventEnrollmentHandler->eventInviteToJoinCancelled($event_enrollment);
+    }
 
     // Get the redirect destination we're given in the request for the response.
     $destination = $this->requestStack->getCurrentRequest()->query->get('destination');

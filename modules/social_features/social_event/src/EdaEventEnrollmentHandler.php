@@ -3,6 +3,7 @@
 namespace Drupal\social_event;
 
 use CloudEvents\V1\CloudEvent;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -63,10 +64,16 @@ final class EdaEventEnrollmentHandler {
   protected string $topicName;
 
   /**
+   * The request time.
+   *
+   * @var int
+   */
+  protected int $requestTime;
+
+  /**
    * {@inheritDoc}
    */
   public function __construct(
-    private readonly DispatcherInterface $dispatcher,
     private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
@@ -74,6 +81,8 @@ final class EdaEventEnrollmentHandler {
     private readonly AccountProxyInterface $account,
     private readonly RouteMatchInterface $routeMatch,
     private readonly ConfigFactoryInterface $configFactory,
+    private readonly TimeInterface $time,
+    private readonly ?DispatcherInterface $dispatcher = NULL,
   ) {
     // Load the full user entity if the account is authenticated.
     $account_id = $this->account->id();
@@ -96,6 +105,9 @@ final class EdaEventEnrollmentHandler {
 
     // Set the community namespace.
     $this->topicName = "{$this->namespace}.cms.event_enrollment.v1";
+
+    // Set the request time.
+    $this->requestTime = $this->time->getRequestTime();
   }
 
   /**
@@ -115,7 +127,95 @@ final class EdaEventEnrollmentHandler {
   public function eventEnrollmentCancel(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.cancel",
+      event_type: "{$this->namespace}.cms.event_enrollment.delete",
+      event_enrollment: $event_enrollment,
+    );
+  }
+
+  /**
+   * Request to join event.
+   */
+  public function eventRequestToJoin(EventEnrollmentInterface $event_enrollment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event_enrollment.request.create",
+      event_enrollment: $event_enrollment,
+    );
+  }
+
+  /**
+   * Request to join event cancelled.
+   */
+  public function eventRequestToJoinCancelled(EventEnrollmentInterface $event_enrollment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event_enrollment.request.delete",
+      event_enrollment: $event_enrollment,
+    );
+  }
+
+  /**
+   * Request to join event accepted.
+   */
+  public function eventRequestToJoinAccepted(EventEnrollmentInterface $event_enrollment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event_enrollment.request.accept",
+      event_enrollment: $event_enrollment,
+    );
+  }
+
+  /**
+   * Request to join event declined.
+   */
+  public function eventRequestToJoinDeclined(EventEnrollmentInterface $event_enrollment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event_enrollment.request.decline",
+      event_enrollment: $event_enrollment,
+    );
+  }
+
+  /**
+   * Invite to join event.
+   */
+  public function eventInviteToJoin(EventEnrollmentInterface $event_enrollment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event_enrollment.invite.create",
+      event_enrollment: $event_enrollment,
+    );
+  }
+
+  /**
+   * Invite to join event cancelled.
+   */
+  public function eventInviteToJoinCancelled(EventEnrollmentInterface $event_enrollment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event_enrollment.invite.delete",
+      event_enrollment: $event_enrollment,
+    );
+  }
+
+  /**
+   * Invite to join event accepted.
+   */
+  public function eventInviteToJoinAccepted(EventEnrollmentInterface $event_enrollment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event_enrollment.invite.accept",
+      event_enrollment: $event_enrollment,
+    );
+  }
+
+  /**
+   * Invite to join event declined.
+   */
+  public function eventInviteToJoinDeclined(EventEnrollmentInterface $event_enrollment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.event_enrollment.invite.decline",
       event_enrollment: $event_enrollment,
     );
   }
@@ -135,19 +235,17 @@ final class EdaEventEnrollmentHandler {
 
     // List enrollment statuses.
     $enrollment_status = [
-      EventEnrollmentInterface::REQUEST_PENDING => 'pending',
-      EventEnrollmentInterface::REQUEST_APPROVED => 'approved',
-      EventEnrollmentInterface::INVITE_INVITED => 'invited',
-      EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED => 'joined',
+      "{$this->namespace}.cms.event_enrollment.create" => 'active',
+      "{$this->namespace}.cms.event_enrollment.delete" => 'removed',
+      "{$this->namespace}.cms.event_enrollment.request.create" => 'request_pending',
+      "{$this->namespace}.cms.event_enrollment.request.delete" => 'request_cancelled',
+      "{$this->namespace}.cms.event_enrollment.request.accept" => 'active',
+      "{$this->namespace}.cms.event_enrollment.request.decline" => 'request_declined',
+      "{$this->namespace}.cms.event_enrollment.invite.create" => 'invite_pending',
+      "{$this->namespace}.cms.event_enrollment.invite.delete" => 'invite_cancelled',
+      "{$this->namespace}.cms.event_enrollment.invite.accept" => 'active',
+      "{$this->namespace}.cms.event_enrollment.invite.decline" => 'invite_declined',
     ];
-
-    $enrollment_status_value = (string) $event_enrollment
-      ->get('field_request_or_invite_status')
-      ->value;
-
-    if (!$enrollment_status_value) {
-      $enrollment_status_value = 1;
-    }
 
     // Get event.
     $event = $event_enrollment->getEvent();
@@ -185,6 +283,24 @@ final class EdaEventEnrollmentHandler {
       }
     }
 
+    // Resolve event type label (first referenced term, if any).
+    $type_label = NULL;
+    if ($event->hasField('field_event_type') && !$event->get('field_event_type')->isEmpty()) {
+      $refs = $event->get('field_event_type')->referencedEntities();
+      if (!empty($refs)) {
+        $type_label = reset($refs)->label();
+      }
+    }
+
+    // Resolve first referenced group (if any).
+    $group_entity = NULL;
+    if ($event->hasField('groups') && !$event->get('groups')->isEmpty()) {
+      $groups = $event->get('groups')->referencedEntities();
+      if (!empty($groups)) {
+        $group_entity = Entity::fromEntity(reset($groups));
+      }
+    }
+
     return new CloudEvent(
       id: $this->uuid->generate(),
       source: $this->source,
@@ -194,7 +310,7 @@ final class EdaEventEnrollmentHandler {
           'id' => $event_enrollment->get('uuid')->value,
           'created' => DateTime::fromTimestamp($event_enrollment->getCreatedTime())->toString(),
           'updated' => DateTime::fromTimestamp($event_enrollment->getChangedTime())->toString(),
-          'status' => $enrollment_status[$enrollment_status_value],
+          'status' => $enrollment_status[$event_type],
           'event' => new EventEntityData(
             id: $event->get('uuid')->value,
             created: DateTime::fromTimestamp($event->getCreatedTime())->toString(),
@@ -202,7 +318,7 @@ final class EdaEventEnrollmentHandler {
             status: $event->get('status')->value ? 'published' : 'unpublished',
             label: (string) $event->label(),
             visibility: ContentVisibility::fromEntity($event),
-            group: !$event->get('groups')->isEmpty() ? Entity::fromEntity($event->get('groups')->getEntity()) : NULL,
+            group: $group_entity,
             author: User::fromEntity($event->get('uid')->entity),
             allDay: $event->get('field_event_all_day')->value,
             start: $event->get('field_event_date')->value,
@@ -217,19 +333,19 @@ final class EdaEventEnrollmentHandler {
               'method' => $enrollment_methods[$event->get('field_enroll_method')->value],
             ],
             href: Href::fromEntity($event),
-            type: $event->hasField('field_event_type') && !$event->get('field_event_type')->isEmpty() ? $event->get('field_event_type')->getEntity()->label() : NULL,
+            type: $type_label,
           ),
           'user' => $enrollee_data,
         ],
         'actor' => [
           'application' => $actor_application ? Application::fromId($actor_application) : NULL,
-          'user' => User::fromEntity($enrollee),
+          'user' => $actor_user ? User::fromEntity($actor_user) : NULL,
         ],
       ],
       dataContentType: 'application/json',
       dataSchema: NULL,
       subject: NULL,
-      time: DateTime::fromTimestamp($event_enrollment->getCreatedTime())->toImmutableDateTime(),
+      time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
     );
   }
 
@@ -275,7 +391,7 @@ final class EdaEventEnrollmentHandler {
    */
   private function dispatch(string $topic_name, string $event_type, EventEnrollmentInterface $event_enrollment): void {
     // Skip if required modules are not enabled.
-    if (!$this->moduleHandler->moduleExists('social_eda')) {
+    if (!$this->moduleHandler->moduleExists('social_eda') || !$this->dispatcher) {
       return;
     }
 

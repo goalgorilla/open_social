@@ -14,7 +14,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -89,12 +89,12 @@ class EdaHandlerTest extends UnitTestCase {
   /**
    * Represents the event type field, typically a taxonomy term.
    */
-  protected FieldItemListInterface $eventTypeField;
+  protected EntityReferenceFieldItemListInterface $eventTypeField;
 
   /**
    * Represents a list of field items, such as a reference to groups.
    */
-  protected FieldItemListInterface $fieldItemList;
+  protected EntityReferenceFieldItemListInterface $fieldItemList;
 
   /**
    * Represents a node entity.
@@ -244,15 +244,17 @@ class EdaHandlerTest extends UnitTestCase {
     $eventTypeTermMock->label()->willReturn('Term Label');
     $this->eventTypeTerm = $eventTypeTermMock->reveal();
 
-    $eventTypeFieldMock = $this->prophesize(FieldItemListInterface::class);
+    $eventTypeFieldMock = $this->prophesize(EntityReferenceFieldItemListInterface::class);
     $eventTypeFieldMock->isEmpty()->willReturn(FALSE);
     $eventTypeFieldMock->getEntity()->willReturn($this->eventTypeTerm);
+    $eventTypeFieldMock->referencedEntities()->willReturn([$this->eventTypeTerm]);
     $this->eventTypeField = $eventTypeFieldMock->reveal();
 
     // Prophesize the FieldItemListInterface.
-    $fieldItemListMock = $this->prophesize(FieldItemListInterface::class);
+    $fieldItemListMock = $this->prophesize(EntityReferenceFieldItemListInterface::class);
     $fieldItemListMock->isEmpty()->willReturn(FALSE);
     $fieldItemListMock->getEntity()->willReturn($this->entityInterface);
+    $fieldItemListMock->referencedEntities()->willReturn([$this->entityInterface]);
     $this->fieldItemList = $fieldItemListMock->reveal();
 
     // Prophesize the Node.
@@ -456,8 +458,6 @@ class EdaHandlerTest extends UnitTestCase {
    */
   protected function getMockedHandler(): EdaHandler {
     return new EdaHandler(
-      // @phpstan-ignore-next-line
-      $this->dispatcher,
       $this->uuid,
       $this->requestStack,
       $this->moduleHandler,
@@ -466,6 +466,8 @@ class EdaHandlerTest extends UnitTestCase {
       $this->routeMatch,
       $this->configFactory,
       $this->time,
+      // @phpstan-ignore-next-line
+      $this->dispatcher
     );
   }
 

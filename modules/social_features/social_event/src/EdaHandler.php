@@ -74,7 +74,6 @@ final class EdaHandler {
    * {@inheritDoc}
    */
   public function __construct(
-    private readonly ?DispatcherInterface $dispatcher,
     private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
@@ -83,6 +82,7 @@ final class EdaHandler {
     private readonly RouteMatchInterface $routeMatch,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TimeInterface $time,
+    private readonly ?DispatcherInterface $dispatcher = NULL,
   ) {
     // Load the full user entity if the account is authenticated.
     $account_id = $this->account->id();
@@ -186,6 +186,24 @@ final class EdaHandler {
       $status = $node->get('status')->value ? 'published' : 'unpublished';
     }
 
+    // Resolve event type label (first referenced term, if any).
+    $type_label = NULL;
+    if ($node->hasField('field_event_type') && !$node->get('field_event_type')->isEmpty()) {
+      $refs = $node->get('field_event_type')->referencedEntities();
+      if (!empty($refs)) {
+        $type_label = reset($refs)->label();
+      }
+    }
+
+    // Resolve first referenced group (if any).
+    $group_entity = NULL;
+    if ($node->hasField('groups') && !$node->get('groups')->isEmpty()) {
+      $groups = $node->get('groups')->referencedEntities();
+      if (!empty($groups)) {
+        $group_entity = Entity::fromEntity(reset($groups));
+      }
+    }
+
     return new CloudEvent(
       id: $this->uuid->generate(),
       source: $this->source,
@@ -198,7 +216,7 @@ final class EdaHandler {
           status: $status,
           label: (string) $node->label(),
           visibility: ContentVisibility::fromEntity($node),
-          group: !$node->get('groups')->isEmpty() ? Entity::fromEntity($node->get('groups')->getEntity()) : NULL,
+          group: $group_entity,
           author: User::fromEntity($node->get('uid')->entity),
           allDay: $node->get('field_event_all_day')->value,
           start: $node->get('field_event_date')->value,
@@ -213,7 +231,7 @@ final class EdaHandler {
             'method' => $enrollment_methods[$node->get('field_enroll_method')->value],
           ],
           href: Href::fromEntity($node),
-          type: $node->hasField('field_event_type') && !$node->get('field_event_type')->isEmpty() ? $node->get('field_event_type')->getEntity()->label() : NULL,
+          type: $type_label,
         ),
         'actor' => [
           'application' => $actor_application ? Application::fromId($actor_application) : NULL,
@@ -276,7 +294,7 @@ final class EdaHandler {
     $event = $this->fromEntity($node, $event_type, $op);
 
     // Dispatch to message broker.
-    $this->dispatcher->dispatch($this->topicName, $event);
+    $this->dispatcher->dispatch($topic_name, $event);
   }
 
 }

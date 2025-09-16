@@ -6,6 +6,7 @@ use CloudEvents\V1\CloudEventInterface;
 use Consolidation\Config\ConfigInterface;
 use Drupal\address\Plugin\Field\FieldType\AddressFieldItemList;
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -13,7 +14,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -27,7 +28,6 @@ use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\taxonomy\TermInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -43,8 +43,10 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
 
   /**
    * Mocked dispatcher service for sending CloudEvents.
+   *
+   * @var \PHPUnit\Framework\MockObject\MockObject|\Drupal\social_eda\DispatcherInterface
    */
-  protected MockObject $dispatcher;
+  protected $dispatcher;
 
   /**
    * Handles UUID generation.
@@ -89,12 +91,12 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
   /**
    * Represents the event type field, typically a taxonomy term.
    */
-  protected FieldItemListInterface $eventTypeField;
+  protected EntityReferenceFieldItemListInterface $eventTypeField;
 
   /**
    * Represents a list of field items, such as a reference to groups.
    */
-  protected FieldItemListInterface $fieldItemList;
+  protected EntityReferenceFieldItemListInterface $fieldItemList;
 
   /**
    * Represents a event enrollment entity.
@@ -132,6 +134,11 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
    * Represents the ConfigFactoryInterface.
    */
   protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * Represents the TimeInterface.
+   */
+  protected TimeInterface $time;
 
   /**
    * {@inheritDoc}
@@ -191,6 +198,11 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $uuidMock->generate()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $this->uuid = $uuidMock->reveal();
 
+    // Prophesize the TimeInterface.
+    $timeMock = $this->prophesize(TimeInterface::class);
+    $timeMock->getRequestTime()->willReturn(1234567890);
+    $this->time = $timeMock->reveal();
+
     // Prophesize the Request.
     $requestMock = $this->prophesize(Request::class);
     $requestMock->getUri()->willReturn('http://example.com/node/add/event');
@@ -236,15 +248,17 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $eventTypeTermMock->label()->willReturn('Term Label');
     $this->eventTypeTerm = $eventTypeTermMock->reveal();
 
-    $eventTypeFieldMock = $this->prophesize(FieldItemListInterface::class);
+    $eventTypeFieldMock = $this->prophesize(EntityReferenceFieldItemListInterface::class);
     $eventTypeFieldMock->isEmpty()->willReturn(FALSE);
     $eventTypeFieldMock->getEntity()->willReturn($this->eventTypeTerm);
+    $eventTypeFieldMock->referencedEntities()->willReturn([$this->eventTypeTerm]);
     $this->eventTypeField = $eventTypeFieldMock->reveal();
 
     // Prophesize the FieldItemListInterface.
-    $fieldItemListMock = $this->prophesize(FieldItemListInterface::class);
+    $fieldItemListMock = $this->prophesize(EntityReferenceFieldItemListInterface::class);
     $fieldItemListMock->isEmpty()->willReturn(FALSE);
     $fieldItemListMock->getEntity()->willReturn($this->entityInterface);
+    $fieldItemListMock->referencedEntities()->willReturn([$this->entityInterface]);
     $this->fieldItemList = $fieldItemListMock->reveal();
 
     // Prophesize the Event.
@@ -325,16 +339,16 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
   }
 
   /**
-   * Tests the eventEnrollmentCreate method.
+   * Tests the eventEnrollmentCancel method.
    *
-   * @covers ::eventEnrollmentCreate
+   * @covers ::eventEnrollmentCancel
    */
   public function testEventEnrollmentCancel(): void {
     // Create the handler instance.
     $handler = $this->getMockedHandler();
 
     // Create the event object.
-    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.cancel');
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.delete');
 
     // Expect dispatch to be called with specific parameters.
     $this->dispatcher->expects($this->once())
@@ -346,6 +360,198 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
 
     // Call the eventEnrollmentCancel method.
     $handler->eventEnrollmentCancel($this->eventEnrollment);
+  }
+
+  /**
+   * Tests the eventRequestToJoin method.
+   *
+   * @covers ::eventRequestToJoin
+   */
+  public function testEventRequestToJoin(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.request.create');
+
+    // Expect dispatch to be called with specific parameters.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event_enrollment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventRequestToJoin method.
+    $handler->eventRequestToJoin($this->eventEnrollment);
+  }
+
+  /**
+   * Tests the eventRequestToJoinCancelled method.
+   *
+   * @covers ::eventRequestToJoinCancelled
+   */
+  public function testEventRequestToJoinCancelled(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.request.delete');
+
+    // Expect dispatch to be called with specific parameters.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event_enrollment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventRequestToJoinCancelled method.
+    $handler->eventRequestToJoinCancelled($this->eventEnrollment);
+  }
+
+  /**
+   * Tests the eventRequestToJoinAccepted method.
+   *
+   * @covers ::eventRequestToJoinAccepted
+   */
+  public function testEventRequestToJoinAccepted(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.request.accept');
+
+    // Expect dispatch to be called with specific parameters.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event_enrollment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventRequestToJoinAccepted method.
+    $handler->eventRequestToJoinAccepted($this->eventEnrollment);
+  }
+
+  /**
+   * Tests the eventRequestToJoinDeclined method.
+   *
+   * @covers ::eventRequestToJoinDeclined
+   */
+  public function testEventRequestToJoinDeclined(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.request.decline');
+
+    // Expect dispatch to be called with specific parameters.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event_enrollment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventRequestToJoinDeclined method.
+    $handler->eventRequestToJoinDeclined($this->eventEnrollment);
+  }
+
+  /**
+   * Tests the eventInviteToJoin method.
+   *
+   * @covers ::eventInviteToJoin
+   */
+  public function testEventInviteToJoin(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.invite.create');
+
+    // Expect dispatch to be called with specific parameters.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event_enrollment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventInviteToJoin method.
+    $handler->eventInviteToJoin($this->eventEnrollment);
+  }
+
+  /**
+   * Tests the eventInviteToJoinCancelled method.
+   *
+   * @covers ::eventInviteToJoinCancelled
+   */
+  public function testEventInviteToJoinCancelled(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.invite.delete');
+
+    // Expect dispatch to be called with specific parameters.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event_enrollment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventInviteToJoinCancelled method.
+    $handler->eventInviteToJoinCancelled($this->eventEnrollment);
+  }
+
+  /**
+   * Tests the eventInviteToJoinAccepted method.
+   *
+   * @covers ::eventInviteToJoinAccepted
+   */
+  public function testEventInviteToJoinAccepted(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.invite.accept');
+
+    // Expect dispatch to be called with specific parameters.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event_enrollment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventInviteToJoinAccepted method.
+    $handler->eventInviteToJoinAccepted($this->eventEnrollment);
+  }
+
+  /**
+   * Tests the eventInviteToJoinDeclined method.
+   *
+   * @covers ::eventInviteToJoinDeclined
+   */
+  public function testEventInviteToJoinDeclined(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.invite.decline');
+
+    // Expect dispatch to be called with specific parameters.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.event_enrollment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the eventInviteToJoinDeclined method.
+    $handler->eventInviteToJoinDeclined($this->eventEnrollment);
   }
 
   /**
@@ -370,7 +576,7 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $this->assertEquals('com.getopensocial.cms.event_enrollment.create', $event->getType());
     $this->assertEquals('/node/add/event', $event->getSource());
     $this->assertEquals('a5715874-5859-4d8a-93ba-9f8433ea44af', $event->getId());
-    $this->assertEquals(DateTime::fromTimestamp($this->eventEnrollment->getCreatedTime())->toImmutableDateTime(), $event->getTime());
+    $this->assertEquals(DateTime::fromTimestamp(1234567890)->toImmutableDateTime(), $event->getTime());
   }
 
   /**
@@ -381,8 +587,6 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
    */
   protected function getMockedHandler(): EdaEventEnrollmentHandler {
     return new EdaEventEnrollmentHandler(
-    // @phpstan-ignore-next-line
-      $this->dispatcher,
       $this->uuid,
       $this->requestStack,
       $this->moduleHandler,
@@ -390,6 +594,8 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
       $this->account,
       $this->routeMatch,
       $this->configFactory,
+      $this->time,
+      $this->dispatcher
     );
   }
 

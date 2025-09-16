@@ -7,6 +7,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\social_event\EdaEventEnrollmentHandler;
 use Drupal\social_event\EventEnrollmentInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -26,6 +27,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
     if ($accept_decline === '1') {
       $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
       $event_enrollment->field_enrollment_status->value = '1';
+
       $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
       if (!empty($statusMessage)) {
         // Lets delete all messages to keep the messages clean.
@@ -37,6 +39,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
     // we set the field_request_or_invite_status to decline.
     elseif ($accept_decline === '0') {
       $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+
       $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
       if (!empty($statusMessage)) {
         // Lets delete all messages to keep the messages clean.
@@ -48,6 +51,17 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
     // And finally save (update) this updated $event_enrollment.
     // @todo maybe think of deleting approved/declined records from the db?
     $event_enrollment->save();
+
+    // Dispatch EDA events after successful save to ensure events are only
+    // emitted for state that has been committed to the database.
+    if ($this->edaEventEnrollmentHandler instanceof EdaEventEnrollmentHandler) {
+      if ($accept_decline === '1') {
+        $this->edaEventEnrollmentHandler->eventInviteToJoinAccepted($event_enrollment);
+      }
+      elseif ($accept_decline === '0') {
+        $this->edaEventEnrollmentHandler->eventInviteToJoinDeclined($event_enrollment);
+      }
+    }
 
     // Invalidate cache.
     $tags = [];

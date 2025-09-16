@@ -9,6 +9,7 @@ use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_event\EdaEventEnrollmentHandler;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\EventEnrollmentStatusHelper;
@@ -72,6 +73,13 @@ class EnrollRequestDeclineForm extends FormBase {
   protected SocialProfileNameService $socialProfileNameService;
 
   /**
+   * The EDA event enrollment handler.
+   *
+   * @var \Drupal\social_event\EdaEventEnrollmentHandler|\Drupal\social_core\EdaDummyHandler
+   */
+  protected $edaEventEnrollmentHandler;
+
+  /**
    * EnrollRequestDeclineForm constructor.
    *
    * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
@@ -84,6 +92,8 @@ class EnrollRequestDeclineForm extends FormBase {
    *   Entity type manager.
    * @param \Drupal\social_profile\SocialProfileNameService $social_profile_name_service
    *   The Social Profile name service.
+   * @param \Drupal\social_event\EdaEventEnrollmentHandler|\Drupal\social_core\EdaDummyHandler $eda_event_enrollment_handler
+   *   The EDA event enrollment handler.
    */
   public function __construct(
     RedirectDestinationInterface $redirect_destination,
@@ -91,12 +101,14 @@ class EnrollRequestDeclineForm extends FormBase {
     EventEnrollmentStatusHelper $enrollmentStatusHelper,
     EntityTypeManagerInterface $entity_type_manager,
     SocialProfileNameService $social_profile_name_service,
+    $eda_event_enrollment_handler,
   ) {
     $this->redirectDestination = $redirect_destination;
     $this->currentUser = $current_user;
     $this->eventInviteStatus = $enrollmentStatusHelper;
     $this->entityTypeManager = $entity_type_manager;
     $this->socialProfileNameService = $social_profile_name_service;
+    $this->edaEventEnrollmentHandler = $eda_event_enrollment_handler;
   }
 
   /**
@@ -108,7 +120,8 @@ class EnrollRequestDeclineForm extends FormBase {
       $container->get('current_user'),
       $container->get('social_event.status_helper'),
       $container->get('entity_type.manager'),
-      $container->get('social_profile.name_service')
+      $container->get('social_profile.name_service'),
+      $container->get('social_event.eda_event_enrollment_handler')
     );
   }
 
@@ -192,6 +205,10 @@ class EnrollRequestDeclineForm extends FormBase {
     if (!empty($this->eventEnrollment)) {
       $this->eventEnrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
       $this->eventEnrollment->save();
+
+      if ($this->edaEventEnrollmentHandler instanceof EdaEventEnrollmentHandler) {
+        $this->edaEventEnrollmentHandler->eventRequestToJoinDeclined($this->eventEnrollment);
+      }
     }
 
     $this->messenger()->addStatus($this->t('The enrollment request of @name has been declined.', ['@name' => $this->fullName]));

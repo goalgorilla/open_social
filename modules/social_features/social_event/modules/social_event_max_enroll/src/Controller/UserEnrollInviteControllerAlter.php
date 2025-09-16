@@ -32,8 +32,9 @@ class UserEnrollInviteControllerAlter extends UserEnrollInviteController {
     RequestStack $requestStack,
     AccountProxyInterface $currentUser,
     EventMaxEnrollService $eventMaxEnrollService,
+    $edaEventEnrollmentHandler,
   ) {
-    parent::__construct($requestStack, $currentUser);
+    parent::__construct($requestStack, $currentUser, $edaEventEnrollmentHandler);
 
     $this->eventMaxEnrollService = $eventMaxEnrollService;
   }
@@ -45,7 +46,8 @@ class UserEnrollInviteControllerAlter extends UserEnrollInviteController {
     return new static(
       $container->get('request_stack'),
       $container->get('current_user'),
-      $container->get('social_event_max_enroll.service')
+      $container->get('social_event_max_enroll.service'),
+      $container->get('social_event.eda_event_enrollment_handler')
     );
   }
 

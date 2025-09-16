@@ -7,6 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\EdaEventEnrollmentHandler;
 use Drupal\social_event\EventEnrollmentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,16 +35,26 @@ class UpdateEnrollRequestController extends ControllerBase {
   protected $currentUser;
 
   /**
+   * The EDA event enrollment handler.
+   *
+   * @var \Drupal\social_event\EdaEventEnrollmentHandler|\Drupal\social_core\EdaDummyHandler
+   */
+  protected $edaEventEnrollmentHandler;
+
+  /**
    * UpdateEnrollRequestController constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.
    * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user.
+   * @param \Drupal\social_event\EdaEventEnrollmentHandler|\Drupal\social_core\EdaDummyHandler $edaEventEnrollmentHandler
+   *   The EDA event enrollment handler.
    */
-  public function __construct(RequestStack $requestStack, AccountProxyInterface $currentUser) {
+  public function __construct(RequestStack $requestStack, AccountProxyInterface $currentUser, $edaEventEnrollmentHandler) {
     $this->requestStack = $requestStack;
     $this->currentUser = $currentUser;
+    $this->edaEventEnrollmentHandler = $edaEventEnrollmentHandler;
   }
 
   /**
@@ -52,7 +63,8 @@ class UpdateEnrollRequestController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('request_stack'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('social_event.eda_event_enrollment_handler')
     );
   }
 
@@ -79,13 +91,15 @@ class UpdateEnrollRequestController extends ControllerBase {
     if ((string) $approve === '1') {
       $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_APPROVED;
       $event_enrollment->field_enrollment_status->value = '1';
-      $this->messenger()->addStatus(t('The event enrollment request has been approved.'));
+
+      $this->messenger()->addStatus($this->t('The event enrollment request has been approved.'));
     }
     // When the user declined,
     // we set the field_request_or_invite_status to decline.
     elseif ((string) $approve === '0') {
       $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
-      $this->messenger()->addStatus(t('The event enrollment request has been declined.'));
+
+      $this->messenger()->addStatus($this->t('The event enrollment request has been declined.'));
     }
 
     // In order for the notifications to be sent correctly we're updating the
@@ -97,6 +111,17 @@ class UpdateEnrollRequestController extends ControllerBase {
     // And finally save (update) this updated $event_enrollment.
     // @todo maybe think of deleting approved/declined records from the db?
     $event_enrollment->save();
+
+    // Dispatch EDA events after successful save to ensure events are only
+    // emitted for state that has been committed to the database.
+    if ($this->edaEventEnrollmentHandler instanceof EdaEventEnrollmentHandler) {
+      if ((string) $approve === '1') {
+        $this->edaEventEnrollmentHandler->eventRequestToJoinAccepted($event_enrollment);
+      }
+      elseif ((string) $approve === '0') {
+        $this->edaEventEnrollmentHandler->eventRequestToJoinDeclined($event_enrollment);
+      }
+    }
 
     // Get the redirect destination we're given in the request for the response.
     $destination = $this->requestStack->getCurrentRequest()->query->get('destination');

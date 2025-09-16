@@ -20,12 +20,30 @@ services:
     tags:
       - { name: access_check, applies_to: _social_event_enrollments_access }
   social_event.eda_handler:
-    autowire: true
     class: Drupal\social_event\EdaHandler
+    arguments:
+      - '@uuid'
+      - '@request_stack'
+      - '@module_handler'
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@current_route_match'
+      - '@config.factory'
+      - '@datetime.time'
+      - '@?social_eda.dispatcher'
     tags:
       - { name: social.eda.handler }
   social_event.eda_event_enrollment_handler:
-    autowire: true
     class: Drupal\social_event\EdaEventEnrollmentHandler
+    arguments:
+      - '@uuid'
+      - '@request_stack'
+      - '@module_handler'
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@current_route_match'
+      - '@config.factory'
+      - '@datetime.time'
+      - '@?social_eda.dispatcher'
     tags:
       - { name: social.eda.handler }

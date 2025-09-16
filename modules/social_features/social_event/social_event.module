@@ -283,30 +283,36 @@ function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $q
  * Implements hook_entity_insert().
  */
 function social_event_entity_insert(EntityInterface $entity): void {
-  if ($entity instanceof EventEnrollment) {
+  if (!$entity instanceof EventEnrollment) {
+    return;
+  }
 
-    // Invite or user requests statuses.
-    $invite_or_request_statuses = [
-      EventEnrollmentInterface::REQUEST_PENDING,
-      EventEnrollmentInterface::REQUEST_APPROVED,
-      EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
-      EventEnrollmentInterface::INVITE_INVITED,
-      EventEnrollmentInterface::INVITE_PENDING_REPLY,
-      EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED,
-      EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
-    ];
+  $enrollment_status = (int) $entity->get('field_enrollment_status')->getString();
+  $request_or_invite_status = NULL;
 
-    if (!$entity->get('field_request_or_invite_status')->isEmpty() &&
-      in_array(
-        (int) $entity->get('field_request_or_invite_status')->getString(),
-        $invite_or_request_statuses
-      )
-    ) {
-      return;
-    }
+  if (!$entity->get('field_request_or_invite_status')->isEmpty()) {
+    $request_or_invite_status = (int) $entity->get('field_request_or_invite_status')->getString();
+  }
 
-    \Drupal::service('social_event.eda_event_enrollment_handler')
-      ->eventEnrollmentCreate($entity);
+  // The user enrolls into an event directly.
+  if ($enrollment_status === 1
+    && $request_or_invite_status === NULL) {
+    \Drupal::service('social_event.eda_event_enrollment_handler')->eventEnrollmentCreate($entity);
+    return;
+  }
+
+  // The user requests to join an event.
+  if ($enrollment_status === 0
+    && $request_or_invite_status === EventEnrollmentInterface::REQUEST_PENDING) {
+    \Drupal::service('social_event.eda_event_enrollment_handler')->eventRequestToJoin($entity);
+    return;
+  }
+
+  // The user is invited to join an event.
+  if ($enrollment_status === 0
+    && $request_or_invite_status === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
+    \Drupal::service('social_event.eda_event_enrollment_handler')->eventInviteToJoin($entity);
+    return;
   }
 }
 
@@ -314,25 +320,27 @@ function social_event_entity_insert(EntityInterface $entity): void {
  * Implements hook_entity_delete().
  */
 function social_event_entity_delete(EntityInterface $entity): void {
-  if ($entity instanceof EventEnrollment) {
-    // Invite or user requests statuses.
-    $invite_or_request_statuses = [
-      EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
-      EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
-      EventEnrollmentInterface::INVITE_PENDING_REPLY,
-    ];
+  if (!$entity instanceof EventEnrollment) {
+    return;
+  }
 
-    if (!$entity->get('field_request_or_invite_status')->isEmpty() &&
-      in_array(
-        (int) $entity->get('field_request_or_invite_status')->getString(),
-        $invite_or_request_statuses
-      )
-    ) {
-      return;
-    }
+  $enrollment_status = (int) $entity->get('field_enrollment_status')->getString();
+  $request_or_invite_status = NULL;
 
-    \Drupal::service('social_event.eda_event_enrollment_handler')
-      ->eventEnrollmentCancel($entity);
+  if (!$entity->get('field_request_or_invite_status')->isEmpty()) {
+    $request_or_invite_status = (int) $entity->get('field_request_or_invite_status')->getString();
+  }
+
+  // The user cancels their enrollment.
+  if ($enrollment_status === 1
+    && $request_or_invite_status === NULL) {
+    \Drupal::service('social_event.eda_event_enrollment_handler')->eventEnrollmentCancel($entity);
+  }
+
+  // The request to join an event is cancelled.
+  if ($enrollment_status === 0
+    && $request_or_invite_status === EventEnrollmentInterface::REQUEST_PENDING) {
+    \Drupal::service('social_event.eda_event_enrollment_handler')->eventRequestToJoinCancelled($entity);
   }
 }
 
