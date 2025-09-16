@@ -44,8 +44,8 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase {
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    protected Connection $database,
-    protected EntityTypeManagerInterface $entityTypeManager,
+    Connection $database,
+    EntityTypeManagerInterface $entityTypeManager,
     private readonly CacheBackendInterface $cacheBackend,
   ) {
     parent::__construct(
