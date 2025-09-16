@@ -1549,6 +1549,230 @@ channels:
                                   type: string
                                   format: uri
                                   description: Canonical URL for the actor profile
+  eventEnrollmentRequestToJoinCancel:
+    address: com.getopensocial.cms.event_enrollment.request.delete
+    messages:
+      eventEnrollmentRequestToJoinCancel:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    eventEnrollment:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the enrollment.
+                        created:
+                          type: string
+                          format: date-time
+                          description: The creation time of the enrollment.
+                        updated:
+                          type: string
+                          format: date-time
+                          description: The last updated time of the enrollment.
+                        status:
+                          type: string
+                          description: The status of the enrollment.
+                          enum:
+                            - request_cancelled
+                        event:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the event.
+                            created:
+                              type: string
+                              format: date-time
+                              description: The creation time of the event.
+                            updated:
+                              type: string
+                              format: date-time
+                              description: The last updated time of the event.
+                            status:
+                              type: string
+                              description: The status of the event.
+                              enum:
+                                - published
+                                - unpublished
+                            label:
+                              type: string
+                              description: The label of the event.
+                            visibility:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                  description: The visibility type.
+                                  enum:
+                                    - public
+                                    - community
+                                    - groups
+                                    - roles
+                                groups:
+                                  type: array
+                                  description: List of group UUIDs (only applicable for "groups" visibility).
+                                roles:
+                                  type: array
+                                  description: List of role IDs (only applicable for "roles" visibility).
+                            type:
+                              type: string
+                              nullable: true
+                              description: The type of the event.
+                            group:
+                              type: object
+                              nullable: true
+                              properties:
+                                id:
+                                  type: string
+                                  description: The UUID of the group.
+                                label:
+                                  type: string
+                                  description: The label of the group.
+                                href:
+                                  type: object
+                                  properties:
+                                    canonical:
+                                      type: string
+                                      format: uri
+                                      description: Canonical URL of the group.
+                            author:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: The UUID of the author.
+                                displayName:
+                                  type: string
+                                  description: The display name of the author.
+                                href:
+                                  type: object
+                                  properties:
+                                    canonical:
+                                      type: string
+                                      format: uri
+                                      description: Canonical URL of the author.
+                            allDay:
+                              type: boolean
+                              description: Indicates if the event lasts all day.
+                            start:
+                              type: string
+                              format: date-time
+                              description: The start time of the event.
+                            end:
+                              type: string
+                              format: date-time
+                              description: The end time of the event.
+                            timezone:
+                              type: string
+                              description: The timezone of the event.
+                            address:
+                              type: object
+                              properties:
+                                label:
+                                  type: string
+                                  description: The label of the event location.
+                                countryCode:
+                                  type: string
+                                  description: The country code of the event location.
+                                administrativeArea:
+                                  type: string
+                                  description: The administrative area of the event location.
+                                locality:
+                                  type: string
+                                  description: The locality of the event location.
+                                dependentLocality:
+                                  type: string
+                                  description: The dependent locality of the event location.
+                                postalCode:
+                                  type: string
+                                  description: The postal code of the event location.
+                                sortingCode:
+                                  type: string
+                                  description: The sorting code of the event location.
+                                addressLine1:
+                                  type: string
+                                  description: The first address line of the event location.
+                                addressLine2:
+                                  type: string
+                                  description: The second address line of the event location.
+                            enrollment:
+                              type: object
+                              properties:
+                                enabled:
+                                  type: boolean
+                                  description: Indicates if enrollment is enabled.
+                                method:
+                                  type: string
+                                  description: The method of enrollment.
+                                  enum:
+                                    - open
+                                    - invite
+                                    - request
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the event.
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              nullable: true
+                              description: The UUID of the user (empty if anonymous).
+                            displayName:
+                              type: string
+                              description: The display name of the user.
+                            email:
+                              type: string
+                              format: email
+                              nullable: true
+                              description: The email of the user (present if anonymous).
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the user.
+                    actor:
+                      type: object
+                      properties:
+                        application:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Application ID (UUIDv4)
+                            name:
+                              type: string
+                              description: Name of the application
+                        user:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Actor user ID (UUIDv4)
+                            displayName:
+                              type: string
+                              description: Display name of the actor user
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL for the actor profile
 operations:
   onEventCreate:
     action: 'receive'
@@ -1582,3 +1806,7 @@ operations:
     action: 'receive'
     channel:
       $ref: '#/channels/eventEnrollmentRequestToJoin'
+  onEventEnrollmentRequestToJoinCancel:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/eventEnrollmentRequestToJoinCancel'
