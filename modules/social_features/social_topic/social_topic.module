@@ -458,3 +458,12 @@ function social_topic_theme(): array {
     ],
   ];
 }
+
+/**
+ * Implements hook_entity_insert().
+ */
+function social_topic_entity_insert(EntityInterface $entity): void {
+  if ($entity instanceof NodeInterface && $entity->bundle() === 'topic') {
+    \Drupal::service('social_topic.eda_handler')->topicCreate($entity);
+  }
+}
