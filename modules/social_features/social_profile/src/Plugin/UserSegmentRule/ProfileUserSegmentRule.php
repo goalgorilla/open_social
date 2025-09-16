@@ -93,7 +93,7 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase {
           properties: [
             new SelectProperty(
               property_type: self::CONDITION__USER_ROLES__PROPERTY_ROLE,
-              label: t('Role'),
+              label: $this->t('Role'),
               cardinality: -1,
               allowed_values: $this->getUserRoleOptionsForUi(),
               supports_match_all: TRUE,
@@ -108,7 +108,7 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase {
    * {@inheritDoc}
    */
   public function applyToQuery(SelectInterface &$query, string $alias, ConditionInterface $condition_target): void {
-    $plugin_configuration = $this->getConfiguration();
+    $plugin_configuration = $this->configuration;
     $condition_groups = $plugin_configuration['condition_groups'] ?? [];
 
     /**
