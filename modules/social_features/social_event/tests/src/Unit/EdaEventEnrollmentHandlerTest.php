@@ -176,13 +176,6 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    // Prophesize the EntityTypeManagerInterface and the corresponding storage.
-    $entityStorageMock = $this->prophesize(EntityStorageInterface::class);
-    $entityTypeManagerMock = $this->prophesize(EntityTypeManagerInterface::class);
-    $entityTypeManagerMock->getStorage('user')
-      ->willReturn($entityStorageMock->reveal());
-    $this->entityTypeManager = $entityTypeManagerMock->reveal();
-
     // Prophesize the AccountProxyInterface.
     $accountMock = $this->prophesize(AccountProxyInterface::class);
     $accountMock->id()->willReturn(1);
@@ -232,8 +225,17 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $userMock->id()->willReturn(10);
     $userMock->getDisplayName()->willReturn('User name');
     $userMock->getEmail()->willReturn('user@example.com');
+    $userMock->isAnonymous()->willReturn(FALSE);
     $userMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
     $this->userInterface = $userMock->reveal();
+
+    // Prophesize the EntityTypeManagerInterface and the corresponding storage.
+    $entityStorageMock = $this->prophesize(EntityStorageInterface::class);
+    $entityStorageMock->load(1)->willReturn($this->userInterface);
+    $entityTypeManagerMock = $this->prophesize(EntityTypeManagerInterface::class);
+    $entityTypeManagerMock->getStorage('user')
+      ->willReturn($entityStorageMock->reveal());
+    $this->entityTypeManager = $entityTypeManagerMock->reveal();
 
     // Mock Address field.
     $addressItemMock = $this->prophesize(AddressItem::class);

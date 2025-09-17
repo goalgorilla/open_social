@@ -256,11 +256,11 @@ final class EdaEventEnrollmentHandler {
     assert($event instanceof NodeInterface);
 
     // Get enrollee data.
-    /** @var \Drupal\user\UserInterface $enrollee */
     $enrollee = $event_enrollment->getAccountEntity();
 
     $enrollee_data = [];
-    if ($enrollee->id() != 0) {
+    // Enrollee is an authenticated user.
+    if ($enrollee instanceof UserInterface && !$enrollee->isAnonymous()) {
       $enrollee_data = [
         'id' => (string) $enrollee->uuid(),
         'displayName' => (string) $enrollee->getDisplayName(),
@@ -269,14 +269,28 @@ final class EdaEventEnrollmentHandler {
       ];
     }
     else {
-      $first_name = $event_enrollment->get('field_first_name')->value ?? NULL;
-      $last_name = $event_enrollment->get('field_last_name')->value ?? NULL;
-      $email = $event_enrollment->get('field_email')->value ?? NULL;
+      // The user is an external user.
+      $first_name = NULL;
+      $last_name = NULL;
+      $email = NULL;
+      if ($event_enrollment->hasField('field_first_name') && !$event_enrollment->get('field_first_name')->isEmpty()) {
+        $first_name = $event_enrollment->get('field_first_name')->value ?? NULL;
+      }
+      if ($event_enrollment->hasField('field_last_name') && !$event_enrollment->get('field_last_name')->isEmpty()) {
+        $last_name = $event_enrollment->get('field_last_name')->value ?? NULL;
+      }
+      // If first and last name are present, use them to display the name.
+      $display_name = $first_name && $last_name ? $first_name . " " . $last_name : NULL;
 
-      if ($first_name && $last_name && $email) {
+      if ($event_enrollment->hasField('field_email') && !$event_enrollment->get('field_email')->isEmpty()) {
+        $email = $event_enrollment->get('field_email')->value ?? NULL;
+      }
+
+      // Email is always required to be present.
+      if ($email) {
         $enrollee_data = [
           'id' => NULL,
-          'displayName' => $first_name . " " . $last_name,
+          'displayName' => $display_name,
           'email' => $email,
           'href' => NULL,
         ];
@@ -359,15 +373,12 @@ final class EdaEventEnrollmentHandler {
     $application = NULL;
     $user = NULL;
 
-    switch ($this->routeName) {
-      case 'entity.node.edit_form':
-      case 'system.admin_content':
-        $user = $this->currentUser;
-        break;
+    if ($this->currentUser instanceof UserInterface) {
+      $user = $this->currentUser;
+    }
 
-      case 'entity.ultimate_cron_job.run':
-        $application = 'cron';
-        break;
+    if ($this->routeName == 'entity.ultimate_cron_job.run') {
+      $application = 'cron';
     }
 
     return [
@@ -395,9 +406,10 @@ final class EdaEventEnrollmentHandler {
       return;
     }
 
-    // An event enrolment should always have an event and a user associated
-    // with it.
-    if (!$event_enrollment->getEvent() || !$event_enrollment->getAccountEntity()) {
+    // An event enrolment should always have an event associated with it.
+    // The user is optional, as external users are also allowed to be invited
+    // or join the event.
+    if (!$event_enrollment->getEvent()) {
       return;
     }
 
