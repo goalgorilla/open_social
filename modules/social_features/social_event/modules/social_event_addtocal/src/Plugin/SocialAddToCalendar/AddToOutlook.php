@@ -20,28 +20,36 @@ use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarBase;
  */
 class AddToOutlook extends SocialAddToCalendarBase {
 
+  protected const string URL = 'https://outlook.live.com/calendar/0/deeplink/compose';
+
   /**
    * {@inheritdoc}
    */
-  public function generateUrl(NodeInterface $node) {
+  public function generateUrl(NodeInterface $node): Url {
     $settings = $this->generateSettings($node);
+
+    $query_params = [
+      'subject' => $settings['title'],
+      'startdt' => $settings['dates']['start'],
+      'enddt' => $settings['dates']['end'],
+      'allday' => $settings['dates']['all_day'] ? 'true' : 'false',
+      'body' => $settings['description'] ?? '',
+      'location' => $settings['location'] ?? '',
+    ];
+
     $options = [
-      'query' => [
-        'path' => '/calendar/action/compose',
-        'rru' => 'addevent',
-        'subject' => $settings['title'],
-        'startdt' => $settings['dates']['start'],
-        'enddt' => $settings['dates']['end'],
-        'allday' => $settings['dates']['all_day'] ? 'true' : 'false',
-        'body' => $settings['description'],
-        'location' => $settings['location'],
-      ],
+      'query' => $query_params,
       'attributes' => [
         'target' => '_blank',
       ],
     ];
 
-    return Url::fromUri($this->pluginDefinition['url'] ?? 'https://outlook.live.com/calendar/0/deeplink/compose', $options);
+    $url = self::URL;
+    if (!empty($this->pluginDefinition['url'])) {
+      $url = $this->pluginDefinition['url'];
+    }
+
+    return Url::fromUri($url, $options);
   }
 
 }
