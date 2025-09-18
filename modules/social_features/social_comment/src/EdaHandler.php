@@ -148,6 +148,17 @@ final class EdaHandler {
   }
 
   /**
+   * Unpublish comment handler.
+   */
+  public function commentUnpublish(CommentInterface $comment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.comment.unpublish",
+      comment: $comment
+    );
+  }
+
+  /**
    * Transforms a CommentInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException

@@ -311,6 +311,33 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the commentUnpublish() method.
+   *
+   * @covers ::commentUnpublish
+   */
+  public function testCommentUnpublish(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->comment, 'com.getopensocial.cms.comment.unpublish');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.comment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the commentUnpublish method.
+    $handler->commentUnpublish($this->comment);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.comment.unpublish', $event->getType());
+  }
+
+  /**
    * Test thread calculation for top-level comment.
    *
    * @covers ::calculateThreadInfo

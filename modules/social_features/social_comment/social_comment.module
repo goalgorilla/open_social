@@ -476,3 +476,14 @@ function social_comment_social_core_comment_published(EntityInterface $entity): 
     \Drupal::service('social_comment.eda_handler')->commentPublish($entity);
   }
 }
+
+/**
+ * Implements hook_social_core_ENTITY_TYPE_unpublished().
+ */
+function social_comment_social_core_comment_unpublished(EntityInterface $entity): void {
+  // When a comment is unpublished, dispatch the proper EDA event.
+  if ($entity->getEntityTypeId() === 'comment') {
+    assert($entity instanceof CommentInterface);
+    \Drupal::service('social_comment.eda_handler')->commentUnpublish($entity);
+  }
+}
