@@ -1,0 +1,17 @@
+__global_actions:
+  import_configs:
+    - message.template.enrolled_to_online_event
+    - field.field.message.enrolled_to_online_event.field_message_context
+    - field.field.message.enrolled_to_online_event.field_message_destination
+    - field.field.message.enrolled_to_online_event.field_message_related_object
+
+message.template.user_was_enrolled_to_event:
+  expected_config: { }
+  update_actions:
+    delete:
+      text: ~
+    add:
+      text:
+        -
+          value: "<p>Congratulations! You are now enrolled in the event <em>[social_event:event_iam_organizing]</em>.</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
+          format: full_html

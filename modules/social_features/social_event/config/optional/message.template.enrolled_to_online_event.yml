@@ -17,14 +17,14 @@ third_party_settings:
       email: email
     activity_create_direct: true
     activity_aggregate: false
-    activity_entity_condition: event_enrollment_standalone_enroll
-    email_subject: 'You’ve enrolled for an event'
-template: user_was_enrolled_to_event
-label: 'A user was enrolled for the event'
-description: 'A user was enrolled for the event'
+    activity_entity_condition: event_online_enrollment_condition
+    email_subject: 'You’ve enrolled for an online event'
+template: enrolled_to_online_event
+label: 'A user was enrolled for the online event'
+description: 'A user was enrolled for the online event'
 text:
   -
-    value: "<p>Congratulations! You are now enrolled in the event <em>[social_event:event_iam_organizing]</em>.</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
+    value: "<p>Congratulations! You are now enrolled in the event <em>[social_event:event_iam_organizing]</em>.You can enter the meeting by using ‘Join now’ button which appears 10 minutes before start time. The meeting might be recorded. For more information view this event in your community.</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
     format: full_html
 settings:
   'token options':

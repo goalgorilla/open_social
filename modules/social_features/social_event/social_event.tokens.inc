@@ -181,6 +181,7 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
                   break;
 
                 case 'user_was_enrolled_to_event':
+                case 'enrolled_to_online_event':
                   $link = $event->toUrl();
                   $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See event details', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')

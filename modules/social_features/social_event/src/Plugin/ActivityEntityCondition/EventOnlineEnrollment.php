@@ -7,15 +7,15 @@ use Drupal\social_event\Entity\Node\EventInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
- * Checks if event of even_enrollments allows to send specific mails to users.
+ * Applied only to "event_enrollments" with online events.
  *
  * @ActivityEntityCondition(
- *  id = "event_enrollment_standalone_enroll",
- *  label = @Translation("Event Enrollment - Send confirmation after standalone enroll"),
+ *  id = "event_online_enrollment_condition",
+ *  label = @Translation("Event Online Enrollment"),
  *  entities = {"event_enrollment" = {}}
  * )
  */
-class EventEnrollmentStandaloneEnrollActivityEntityCondition extends ActivityEntityConditionBase {
+class EventOnlineEnrollment extends ActivityEntityConditionBase {
 
   /**
    * {@inheritdoc}
@@ -25,8 +25,8 @@ class EventEnrollmentStandaloneEnrollActivityEntityCondition extends ActivityEnt
       assert($entity instanceof EventEnrollmentInterface);
       $event = $entity->getEvent();
 
-      // This condition should be applied only for offline events.
-      if (!$event instanceof EventInterface || $event->isOnline()) {
+      // This condition should be applied only for online events.
+      if (!$event instanceof EventInterface || !$event->isOnline()) {
         return FALSE;
       }
 
