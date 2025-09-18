@@ -338,6 +338,33 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the commentUpdate() method.
+   *
+   * @covers ::commentUpdate
+   */
+  public function testCommentUpdate(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->comment, 'com.getopensocial.cms.comment.update');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.comment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the commentUpdate method.
+    $handler->commentUpdate($this->comment);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.comment.update', $event->getType());
+  }
+
+  /**
    * Test thread calculation for top-level comment.
    *
    * @covers ::calculateThreadInfo
