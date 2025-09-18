@@ -95,6 +95,13 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     'datetime',
     'select2',
 
+    // Meeting API modules required by social_event configurations.
+    'datetime_range_timezone',
+    'key',
+    'meeting_api',
+    'meeting_api_bbb',
+    'meeting_api_manual',
+
     // Required by social_profile.
     'telephone',
     'paragraphs',
