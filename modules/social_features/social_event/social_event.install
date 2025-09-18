@@ -343,3 +343,13 @@ function social_event_update_130007(): string {
 
   return $updater->logger()->output();
 }
+
+/**
+ * Add "Online" filter to "/search/content" page.
+ */
+function social_event_update_130008(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_event', __FUNCTION__);
+  return $updater->logger()->output();
+}

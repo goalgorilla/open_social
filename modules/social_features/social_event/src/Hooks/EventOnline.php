@@ -136,4 +136,26 @@ final class EventOnline implements ContainerInjectionInterface {
     }
   }
 
+  /**
+   * Enhance "Online" filter display on search page.
+   *
+   * @param array $form
+   *   The form build.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
+   *
+   * @see hook_form_FORM_ID_alter()
+   */
+  #[Alter('form_views_exposed_form')]
+  public function searchExposedFiltersAlter(array &$form, FormStateInterface $form_state): void {
+    if ($form['#id'] !== 'views-exposed-form-search-content-page') {
+      return;
+    }
+
+    /* @see social_search_alter_content_exposed_filter_block() */
+    $form['field_event_meeting']['#group'] = 'settings';
+    // Move the field to the top of the form element group.
+    $form['field_event_meeting']['#weight'] = -100;
+  }
+
 }

@@ -1,0 +1,105 @@
+search_api.index.social_content:
+  expected_config: { }
+  update_actions:
+    add:
+      dependencies:
+        config:
+          - field.storage.node.field_event_meeting
+      field_settings:
+        field_event_meeting:
+          label: Meeting
+          datasource_id: 'entity:node'
+          property_path: field_event_meeting
+          type: boolean
+          dependencies:
+            config:
+              - field.storage.node.field_event_meeting
+
+views.view.search_content:
+  expected_config: { }
+  update_actions:
+    add:
+      display:
+        default:
+          display_options:
+            exposed_form:
+              options:
+                bef:
+                  filter:
+                    field_event_meeting:
+                      plugin_id: bef_single
+                      advanced:
+                        sort_options: false
+                        rewrite:
+                          filter_rewrite_values: ''
+                          filter_rewrite_values_key: false
+                        collapsible: false
+                        collapsible_disable_automatic_open: false
+                        is_secondary: false
+                        hide_label: false
+            filters:
+              field_event_meeting:
+                id: field_event_meeting
+                table: search_api_index_social_content
+                field: field_event_meeting
+                relationship: none
+                group_type: group
+                admin_label: ''
+                plugin_id: search_api_boolean
+                operator: '='
+                value: ''
+                group: 1
+                exposed: true
+                expose:
+                  operator_id: ''
+                  label: Online
+                  description: ''
+                  use_operator: false
+                  operator: field_event_meeting_op
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  identifier: field_event_meeting
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: {  }
+                  group_items: {  }
+
+        page:
+          display_options:
+            display_extenders:
+              views_ef_fieldset:
+                views_ef_fieldset:
+                  options:
+                    sort:
+                      field_event_meeting:
+                        depth: '1'
+                        id: field_event_meeting
+                        pid: root
+                        type: filter
+                        weight: '-20'
+        page_no_value:
+          display_options:
+            display_extenders:
+              views_ef_fieldset:
+                views_ef_fieldset:
+                  options:
+                    sort:
+                      field_event_meeting:
+                        depth: '1'
+                        id: field_event_meeting
+                        pid: root
+                        type: filter
+                        weight: '-20'
