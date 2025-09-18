@@ -137,6 +137,17 @@ final class EdaHandler {
   }
 
   /**
+   * Publish comment handler.
+   */
+  public function commentPublish(CommentInterface $comment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.comment.publish",
+      comment: $comment
+    );
+  }
+
+  /**
    * Transforms a CommentInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException

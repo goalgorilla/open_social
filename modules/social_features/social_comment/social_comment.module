@@ -465,3 +465,14 @@ function social_comment_entity_insert(EntityInterface $entity): void {
     $eda_handler->commentCreate($entity);
   }
 }
+
+/**
+ * Implements hook_social_core_ENTITY_TYPE_published().
+ */
+function social_comment_social_core_comment_published(EntityInterface $entity): void {
+  // When a comment is published, dispatch the proper EDA event.
+  if ($entity->getEntityTypeId() === 'comment') {
+    assert($entity instanceof CommentInterface);
+    \Drupal::service('social_comment.eda_handler')->commentPublish($entity);
+  }
+}

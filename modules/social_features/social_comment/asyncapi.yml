@@ -113,8 +113,125 @@ channels:
                                   type: string
                                   format: uri
                                   description: Canonical URL for the actor profile
+  commentPublish:
+    address: com.getopensocial.cms.comment.publish
+    messages:
+      commentPublish:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    comment:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the comment.
+                        created:
+                          type: string
+                          format: date-time
+                          description: The creation time of the comment.
+                        updated:
+                          type: string
+                          format: date-time
+                          description: The last updated time of the comment.
+                        status:
+                          type: string
+                          description: The status of the comment.
+                          enum:
+                            - published
+                        target:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the target entity.
+                            type:
+                              type: string
+                              description: The type of the target entity.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the target entity.
+                        thread:
+                          type: object
+                          properties:
+                            root_id:
+                              type: string
+                              description: The UUID of the root comment in the thread.
+                            parent_id:
+                              type: string
+                              nullable: true
+                              description: The UUID of the parent comment, or null if top-level.
+                            depth:
+                              type: integer
+                              description: The depth of the comment in the thread (0 = top level).
+                        author:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the author.
+                            displayName:
+                              type: string
+                              description: The display name of the author.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the author.
+                        href:
+                          type: object
+                          properties:
+                            canonical:
+                              type: string
+                              format: uri
+                              description: Canonical URL of the comment.
+                    actor:
+                      type: object
+                      properties:
+                        application:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Application ID (UUIDv4)
+                            name:
+                              type: string
+                              description: Name of the application
+                        user:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Actor user ID (UUIDv4)
+                            displayName:
+                              type: string
+                              description: Display name of the actor user
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL for the actor profile
 operations:
   onCommentCreate:
     action: 'receive'
     channel:
       $ref: '#/channels/commentCreate'
+  onCommentPublish:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/commentPublish'
