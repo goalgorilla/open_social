@@ -454,3 +454,14 @@ function social_comment_views_data_alter(array &$data): void {
     ];
   }
 }
+
+/**
+ * Implements hook_entity_insert().
+ */
+function social_comment_entity_insert(EntityInterface $entity): void {
+  if ($entity->getEntityTypeId() === 'comment') {
+    $eda_handler = \Drupal::service('social_comment.eda_handler');
+    assert($entity instanceof CommentInterface);
+    $eda_handler->commentCreate($entity);
+  }
+}
