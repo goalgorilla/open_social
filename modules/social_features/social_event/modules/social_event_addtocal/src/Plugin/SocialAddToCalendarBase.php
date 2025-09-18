@@ -11,6 +11,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\Entity\Node\EventInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -163,10 +164,19 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
     // ID - it will trigger EntityMalformedException. This could happen when
     // previewing the node, in that case we don't have to render a description.
     try {
-      $description = $this->t('See the event page for details: @link', ['@link' => $node->toUrl('canonical', ['absolute' => TRUE])->toString()]);
+      if (!$node instanceof EventInterface) {
+        return '';
+      }
 
-      // Update event description with adding event link.
-      return Unicode::truncate(strip_tags($description), 1000, TRUE, TRUE);
+      if ($node->isOnline()) {
+        $description = $this->t('You can enter the meeting by using the "Join now" button, which appears 10 minutes before the start time. The meeting might be recorded. For more information, view this <a href="@url">event</a> in your community.', ['@url' => $node->toUrl('canonical', ['absolute' => TRUE])->toString()]);
+      }
+      else {
+        $description = $this->t('For more information, view this <a href="@url">event</a> in your community.', ['@url' => $node->toUrl('canonical', ['absolute' => TRUE])->toString()]);
+      }
+
+      // Update event description with adding an event link.
+      return Unicode::truncate($description, 1000, TRUE, TRUE);
     }
     catch (EntityMalformedException) {
       return '';
