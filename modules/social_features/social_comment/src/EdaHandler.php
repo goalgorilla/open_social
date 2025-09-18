@@ -170,6 +170,18 @@ final class EdaHandler {
   }
 
   /**
+   * Delete comment handler.
+   */
+  public function commentDelete(CommentInterface $comment): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.comment.delete",
+      comment: $comment,
+      op: 'delete'
+    );
+  }
+
+  /**
    * Transforms a CommentInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException

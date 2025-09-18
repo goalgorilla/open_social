@@ -365,6 +365,30 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the commentDelete() method.
+   *
+   * @covers ::commentDelete
+   */
+  public function testCommentDelete(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->comment, 'com.getopensocial.cms.comment.delete', 'delete');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.comment.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the commentDelete method.
+    $handler->commentDelete($this->comment);
+  }
+
+  /**
    * Test thread calculation for top-level comment.
    *
    * @covers ::calculateThreadInfo

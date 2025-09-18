@@ -498,3 +498,14 @@ function social_comment_entity_update(EntityInterface $entity): void {
     $eda_handler->commentUpdate($entity);
   }
 }
+
+/**
+ * Implements hook_entity_delete().
+ */
+function social_comment_entity_delete(EntityInterface $entity): void {
+  if ($entity->getEntityTypeId() === 'comment') {
+    $eda_handler = \Drupal::service('social_comment.eda_handler');
+    assert($entity instanceof CommentInterface);
+    $eda_handler->commentDelete($entity);
+  }
+}
