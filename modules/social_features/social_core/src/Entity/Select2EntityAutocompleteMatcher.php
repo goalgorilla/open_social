@@ -6,6 +6,7 @@ use Drupal\select2\EntityAutocompleteMatcher as EntityAutocompleteMatcherBase;
 use Drupal\Component\Utility\Html;
 use Drupal\social_user\VerifyableUserInterface;
 use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Class Select2EntityAutocompleteMatcher.
@@ -41,11 +42,18 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
           continue;
         }
 
-        // Ensure that we are able to select Verified+ users only.
         if ($target_type === 'user' && $selection_handler === 'social') {
-          /** @var \Drupal\user\UserInterface|NULL $account */
           $account = User::load($entity_id);
+          // Filter out blocked users from autocomplete results.
+          if ($account instanceof UserInterface && $account->isBlocked()) {
+            continue;
+          }
+          // Filtering out unverified users from autocomplete results.
           if ($account instanceof VerifyableUserInterface && !$account->isVerified()) {
+            continue;
+          }
+          // Filtering out admin users from autocomplete results.
+          if ($account instanceof UserInterface && (int) $account->id() === 1) {
             continue;
           }
         }
