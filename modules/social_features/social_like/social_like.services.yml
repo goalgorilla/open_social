@@ -7,3 +7,18 @@ services:
     class: Drupal\social_like\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  social_like.eda_handler:
+    class: Drupal\social_like\EdaHandler
+    arguments:
+      - '@uuid'
+      - '@request_stack'
+      - '@module_handler'
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@current_route_match'
+      - '@config.factory'
+      - '@datetime.time'
+      - '@logger.factory'
+      - '@?social_eda.dispatcher'
+    tags:
+      - { name: social.eda.handler }
