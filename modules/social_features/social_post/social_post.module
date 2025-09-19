@@ -350,3 +350,13 @@ function social_post_social_core_post_published(EntityInterface $entity): void {
     \Drupal::service('social_post.eda_handler')->postPublish($entity);
   }
 }
+
+/**
+ * Implements hook_social_core_ENTITY_TYPE_unpublished().
+ */
+function social_post_social_core_post_unpublished(EntityInterface $entity): void {
+  // When a post is unpublished, dispatch the proper EDA event.
+  if ($entity instanceof PostInterface) {
+    \Drupal::service('social_post.eda_handler')->postUnpublish($entity);
+  }
+}
