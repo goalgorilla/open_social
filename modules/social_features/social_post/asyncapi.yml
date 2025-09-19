@@ -1,0 +1,208 @@
+channels:
+  postCreate:
+    address: com.getopensocial.cms.post.create
+    messages:
+      postCreate:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    post:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the post.
+                        created:
+                          type: string
+                          format: date-time
+                          description: The creation time of the post.
+                        updated:
+                          type: string
+                          format: date-time
+                          description: The last updated time of the post.
+                        status:
+                          type: string
+                          description: The status of the post.
+                          enum:
+                            - published
+                            - unpublished
+                        visibility:
+                          $ref: '#/components/schemas/PostContentVisibility'
+                        stream:
+                          $ref: '#/components/schemas/Stream'
+                        author:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the author.
+                            displayName:
+                              type: string
+                              description: The display name of the author.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the author.
+                        href:
+                          type: object
+                          properties:
+                            canonical:
+                              type: string
+                              format: uri
+                              description: Canonical URL of the post.
+                    actor:
+                      type: object
+                      properties:
+                        application:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Application ID (UUIDv4)
+                            name:
+                              type: string
+                              description: Application name
+                        user:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the user.
+                            displayName:
+                              type: string
+                              description: The display name of the user.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the author.
+
+operations:
+  onPostCreate:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/postCreate'
+
+components:
+  schemas:
+    PostContentVisibility:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The visibility type.
+          enum:
+            - public
+            - community
+            - groups
+            - roles
+      oneOf:
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [public]
+          required: [type]
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [community]
+          required: [type]
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [groups]
+            groups:
+              type: array
+              description: The list of group UUIDs.
+              items:
+                type: string
+          required: [type, groups]
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [roles]
+            roles:
+              type: array
+              description: The list of role IDs.
+              items:
+                type: string
+          required: [type, roles]
+    Stream:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The stream type.
+          enum:
+            - community
+            - group
+            - user
+      oneOf:
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [community]
+          required: [type]
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [group]
+            group:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: The UUID of the group.
+                label:
+                  type: string
+                  description: The label of the group.
+                href:
+                  type: object
+                  properties:
+                    canonical:
+                      type: string
+                      format: uri
+                      description: Canonical URL of the group.
+              required: [id, label, href]
+          required: [type, group]
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [user]
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: The UUID of the user.
+                displayName:
+                  type: string
+                  description: The display name of the user.
+                href:
+                  type: object
+                  properties:
+                    canonical:
+                      type: string
+                      format: uri
+                      description: Canonical URL of the group.
+              required: [id, displayName, href]
+          required: [type, user]

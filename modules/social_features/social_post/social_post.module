@@ -14,6 +14,8 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\Group;
 use Drupal\user\UserInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\social_post\Entity\PostInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -328,4 +330,13 @@ function social_post_social_core_add_form_title_override(): array {
       },
     ],
   ];
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function social_post_entity_insert(EntityInterface $entity): void {
+  if ($entity instanceof PostInterface) {
+    \Drupal::service('social_post.eda_handler')->postCreate($entity);
+  }
 }

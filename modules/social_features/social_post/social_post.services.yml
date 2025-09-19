@@ -22,3 +22,18 @@ services:
       - { name: hooks }
   # make `SocialPostFormHooks` injectable in another service (e.g. for decoration)
   Drupal\social_post\Hooks\SocialPostFormHooks: '@social_post.form.hooks'
+
+  social_post.eda_handler:
+    class: Drupal\social_post\EdaHandler
+    arguments:
+      - '@uuid'
+      - '@request_stack'
+      - '@module_handler'
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@current_route_match'
+      - '@config.factory'
+      - '@datetime.time'
+      - '@?social_eda.dispatcher'
+    tags:
+      - { name: social.eda.handler }
