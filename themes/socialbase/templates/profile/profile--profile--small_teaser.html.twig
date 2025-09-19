@@ -40,7 +40,9 @@
     </div>
 
     {% if content.field_profile_organization_reference %}
-      {{ '@function @ <span class="notranslate">@organization</span>'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization_reference|render}) }}
+      <div class="teaser--small__meta">
+        {{ '@function @ <span class="notranslate">@organization</span>'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization_reference|render}) }}
+      </div>
     {% else %}
       {% if content.field_profile_function|render or content.field_profile_organization|render %}
         <div class="teaser--small__meta">
