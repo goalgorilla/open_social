@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
+use Drupal\flag\FlaggingInterface;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 
@@ -245,5 +246,18 @@ function _social_follow_user_check_following_status(array &$variables): void {
   if (\Drupal::service('social_follow_user.helper')
     ->isFollowingAllowed($variables['profile'])) {
     $variables['following_enabled'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function social_follow_user_entity_insert(EntityInterface $entity): void {
+  if ($entity->getEntityTypeId() == 'flagging') {
+    // Dispatch EDA event for follow user creation.
+    if ($entity instanceof FlaggingInterface && $entity->getFlagId() === 'follow_user') {
+      $eda_handler = \Drupal::service('social_follow_user.eda_handler');
+      $eda_handler->followUserCreate($entity);
+    }
   }
 }
