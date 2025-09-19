@@ -50,8 +50,7 @@ class UserSegmentContext extends RawMinkContext {
    *
    * @BeforeScenario
    */
-  public function gatherContexts(BeforeScenarioScope $scope): void
-  {
+  public function gatherContexts(BeforeScenarioScope $scope): void {
     $environment = $scope->getEnvironment();
 
     $this->minkContext = $environment->getContext(SocialMinkContext::class);
@@ -196,8 +195,12 @@ class UserSegmentContext extends RawMinkContext {
         $page->fillField("Visibility option label", $value);
       }
       elseif ($key === "rules") {
-        // For rules, we expect a JSON string.
-        $page->fillField("Rules", $value);
+        $id = "edit-rules-0-value";
+        // Skipping fillField() for "rules" since the field is inside a
+        // container with display: none, which makes it inaccessible to Mink's
+        // standard form interaction methods.
+        $javascript = "document.getElementById('$id').value = JSON.stringify($value);";
+        $this->getSession()->executeScript($javascript);
       }
       else {
         $page->fillField($field, $value);
@@ -253,6 +256,10 @@ class UserSegmentContext extends RawMinkContext {
       }
       elseif ($field === "visibility_option_label") {
         $this->minkContext->assertPageContainsText($value);
+      }
+      elseif ($field === "rules") {
+        // The rules field is not displayed on user segment entity view.
+        continue;
       }
       else {
         $this->minkContext->assertPageContainsText($value);
