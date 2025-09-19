@@ -58,6 +58,12 @@ function social_like_entity_insert(EntityInterface $entity) {
 function social_like_entity_delete(EntityInterface $entity) {
   if ($entity->getEntityTypeId() == 'vote') {
     social_like_invalidate_cache($entity);
+
+    // Dispatch EDA event for like deletion.
+    if ($entity instanceof VoteInterface && $entity->bundle() === 'like') {
+      $eda_handler = \Drupal::service('social_like.eda_handler');
+      $eda_handler->likeDelete($entity);
+    }
   }
 }
 

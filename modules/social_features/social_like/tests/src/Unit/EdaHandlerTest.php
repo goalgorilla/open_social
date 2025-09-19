@@ -329,6 +329,31 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the likeDelete() method.
+   *
+   * @covers ::likeDelete
+   */
+  public function testLikeDelete(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Expect the dispatch method in the dispatcher to be called with correct
+    // topic and event type.
+    $this->dispatcherProphecy->dispatch(
+      'com.getopensocial.cms.like.v1',
+      Argument::that(function ($event) {
+        return $event->getType() === 'com.getopensocial.cms.like.delete';
+      })
+    )->shouldBeCalled();
+
+    // Call the likeDelete method.
+    $handler->likeDelete($this->vote);
+
+    // Assert that the correct event type is dispatched.
+    $this->assertEquals('com.getopensocial.cms.like.delete', $handler->fromEntity($this->vote, 'com.getopensocial.cms.like.delete')->getType());
+  }
+
+  /**
    * Test that events are not dispatched when social_eda module is disabled.
    *
    * @covers ::likeCreate

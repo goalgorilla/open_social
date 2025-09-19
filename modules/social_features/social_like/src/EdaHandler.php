@@ -158,6 +158,17 @@ final class EdaHandler {
   }
 
   /**
+   * Delete like handler.
+   */
+  public function likeDelete(VoteInterface $vote): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.like.delete",
+      vote: $vote
+    );
+  }
+
+  /**
    * Transforms a VoteInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException

@@ -87,9 +87,100 @@ channels:
                                   type: string
                                   format: uri
                                   description: Canonical URL for the actor profile
-
+  likeDelete:
+    address: com.getopensocial.cms.like.delete
+    messages:
+      likeDelete:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    like:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the like.
+                        created:
+                          type: string
+                          format: date-time
+                          description: The creation time of the like.
+                        updated:
+                          type: string
+                          format: date-time
+                          description: The last updated time of the like.
+                        target:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the target entity.
+                            type:
+                              type: string
+                              description: The type of the target entity.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the target entity.
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the user who liked.
+                            displayName:
+                              type: string
+                              description: The display name of the user who liked.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the user profile.
+                    actor:
+                      type: object
+                      properties:
+                        application:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Application ID (UUIDv4)
+                            name:
+                              type: string
+                              description: Name of the application
+                        user:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Actor user ID (UUIDv4)
+                            displayName:
+                              type: string
+                              description: Display name of the actor user
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL for the actor profile
 operations:
   onLikeCreate:
     action: 'receive'
     channel:
       $ref: '#/channels/likeCreate'
+  onLikeDelete:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/likeDelete'
