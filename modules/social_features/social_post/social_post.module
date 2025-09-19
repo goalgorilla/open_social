@@ -340,3 +340,13 @@ function social_post_entity_insert(EntityInterface $entity): void {
     \Drupal::service('social_post.eda_handler')->postCreate($entity);
   }
 }
+
+/**
+ * Implements hook_social_core_ENTITY_TYPE_published().
+ */
+function social_post_social_core_post_published(EntityInterface $entity): void {
+  // When a post is published, dispatch the proper EDA event.
+  if ($entity instanceof PostInterface) {
+    \Drupal::service('social_post.eda_handler')->postPublish($entity);
+  }
+}

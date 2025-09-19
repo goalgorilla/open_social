@@ -317,6 +317,33 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the postPublish() method.
+   *
+   * @covers ::postPublish
+   */
+  public function testPostPublish(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Create the event object.
+    $event = $handler->fromEntity($this->post, 'com.getopensocial.cms.post.publish');
+
+    // Expect the dispatch method in the dispatcher to be called.
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.post.v1'),
+        $this->equalTo($event)
+      );
+
+    // Call the postPublish method.
+    $handler->postPublish($this->post);
+
+    // Assert that the correct event is dispatched.
+    $this->assertEquals('com.getopensocial.cms.post.publish', $event->getType());
+  }
+
+  /**
    * Test the fromEntity() method with group stream.
    *
    * @covers ::fromEntity

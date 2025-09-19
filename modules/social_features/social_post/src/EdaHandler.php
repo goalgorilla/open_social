@@ -121,6 +121,17 @@ final class EdaHandler {
   }
 
   /**
+   * Publish post handler.
+   */
+  public function postPublish(PostInterface $post): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.post.publish",
+      post: $post
+    );
+  }
+
+  /**
    * Transforms a PostInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
