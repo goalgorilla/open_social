@@ -152,6 +152,17 @@ final class EdaHandler {
   }
 
   /**
+   * Delete follow user handler.
+   */
+  public function followUserDelete(FlaggingInterface $flagging): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.follow.user.delete",
+      flagging: $flagging
+    );
+  }
+
+  /**
    * Transforms a FlaggingInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException

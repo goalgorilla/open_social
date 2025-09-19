@@ -328,6 +328,31 @@ class EdaHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Test the followUserDelete() method.
+   *
+   * @covers ::followUserDelete
+   */
+  public function testFollowUserDelete(): void {
+    // Create the handler instance.
+    $handler = $this->getMockedHandler();
+
+    // Expect the dispatch method in the dispatcher to be called with correct
+    // topic and event type.
+    $this->dispatcherProphecy->dispatch(
+      'com.getopensocial.cms.follow.v1',
+      Argument::that(function ($event) {
+        return $event->getType() === 'com.getopensocial.follow.user.delete';
+      })
+    )->shouldBeCalled();
+
+    // Call the followUserDelete method.
+    $handler->followUserDelete($this->flagging);
+
+    // Assert that the correct event type is dispatched.
+    $this->assertEquals('com.getopensocial.follow.user.delete', $handler->fromEntity($this->flagging, 'com.getopensocial.follow.user.delete')->getType());
+  }
+
+  /**
    * Test that events are not dispatched when social_eda module is disabled.
    *
    * @covers ::followUserCreate

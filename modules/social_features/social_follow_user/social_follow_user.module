@@ -261,3 +261,16 @@ function social_follow_user_entity_insert(EntityInterface $entity): void {
     }
   }
 }
+
+/**
+ * Implements hook_entity_delete().
+ */
+function social_follow_user_entity_delete(EntityInterface $entity): void {
+  if ($entity->getEntityTypeId() == 'flagging') {
+    // Dispatch EDA event for follow user deletion.
+    if ($entity instanceof FlaggingInterface && $entity->getFlagId() === 'follow_user') {
+      $eda_handler = \Drupal::service('social_follow_user.eda_handler');
+      $eda_handler->followUserDelete($entity);
+    }
+  }
+}
