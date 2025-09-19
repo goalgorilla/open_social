@@ -267,6 +267,96 @@ channels:
                                   format: uri
                                   description: Canonical URL of the author.
 
+  postUpdate:
+    address: com.getopensocial.cms.post.update
+    messages:
+      postUpdate:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    post:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the post.
+                        created:
+                          type: string
+                          format: date-time
+                          description: The creation time of the post.
+                        updated:
+                          type: string
+                          format: date-time
+                          description: The last updated time of the post.
+                        status:
+                          type: string
+                          description: The status of the post.
+                          enum:
+                            - published
+                            - unpublished
+                        visibility:
+                          $ref: '#/components/schemas/PostContentVisibility'
+                        stream:
+                          $ref: '#/components/schemas/Stream'
+                        author:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the author.
+                            displayName:
+                              type: string
+                              description: The display name of the author.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the author.
+                        href:
+                          type: object
+                          properties:
+                            canonical:
+                              type: string
+                              format: uri
+                              description: Canonical URL of the post.
+                    actor:
+                      type: object
+                      properties:
+                        application:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Application ID (UUIDv4)
+                            name:
+                              type: string
+                              description: Application name
+                        user:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the user.
+                            displayName:
+                              type: string
+                              description: The display name of the user.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the author.
+
 operations:
   onPostCreate:
     action: 'receive'
@@ -280,6 +370,10 @@ operations:
     action: 'receive'
     channel:
       $ref: '#/channels/postUnpublish'
+  onPostUpdate:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/postUpdate'
 
 components:
   schemas:

@@ -360,3 +360,13 @@ function social_post_social_core_post_unpublished(EntityInterface $entity): void
     \Drupal::service('social_post.eda_handler')->postUnpublish($entity);
   }
 }
+
+/**
+ * Implements hook_entity_update().
+ */
+function social_post_entity_update(EntityInterface $entity): void {
+  if ($entity instanceof PostInterface) {
+    // Trigger the EDA event.
+    \Drupal::service('social_post.eda_handler')->postUpdate($entity);
+  }
+}
