@@ -154,6 +154,18 @@ final class EdaHandler {
   }
 
   /**
+   * Delete post handler.
+   */
+  public function postDelete(PostInterface $post): void {
+    $this->dispatch(
+      topic_name: $this->topicName,
+      event_type: "{$this->namespace}.cms.post.delete",
+      post: $post,
+      op: 'delete'
+    );
+  }
+
+  /**
    * Transforms a PostInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException

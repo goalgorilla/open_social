@@ -370,3 +370,12 @@ function social_post_entity_update(EntityInterface $entity): void {
     \Drupal::service('social_post.eda_handler')->postUpdate($entity);
   }
 }
+
+/**
+ * Implements hook_entity_delete().
+ */
+function social_post_entity_delete(EntityInterface $entity): void {
+  if ($entity instanceof PostInterface) {
+    \Drupal::service('social_post.eda_handler')->postDelete($entity);
+  }
+}
