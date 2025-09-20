@@ -318,10 +318,14 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
       $defaultVisibility = $form_state->getValue('defaultVisibility');
 
       $allowedVisibilityOptions = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
+      // Drupal selectors don't use underscores, but hyphens.
+      $defaultVisibility = str_replace('_', '-', $defaultVisibility);
       $ajaxResponse->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $defaultVisibility, 'prop', ['checked', 'checked']));
     }
 
     foreach ($allowedVisibilityOptions as $visibility => $allowed) {
+      // Drupal selectors don't use underscores, but hyphens.
+      $visibility = str_replace('_', '-', $visibility);
       $ajaxResponse->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
       if ($allowed === TRUE) {
         $ajaxResponse->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
