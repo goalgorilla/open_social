@@ -8,3 +8,9 @@ dependencies:
   - grequest:grequest
   - social:social_group
   - social:social_activity
+  # The dependency on social_group_flexible_group is the wrong way around. The social_group_request module is a system
+  # that lets group-based features add request functionality. However, a large part of the feature functionality of
+  # flexible group is currently included in this module where installation without the Flexible Group _feature_ fails.
+  # For now we add the dependency which we should later remove after migrating the flexible group specific code into the
+  # flexible group module.
+  - social:social_group_flexible_group
