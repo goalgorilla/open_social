@@ -1101,10 +1101,6 @@ function social_event_activity_send_email_notifications_alter(array &$items, arr
   if (isset($email_message_templates['user_was_enrolled_to_event'])) {
     $items['message_to_me']['templates'][] = 'user_was_enrolled_to_event';
   }
-
-  if (isset($email_message_templates['enrolled_to_online_event'])) {
-    $items['message_to_me']['templates'][] = 'enrolled_to_online_event';
-  }
 }
 
 /**

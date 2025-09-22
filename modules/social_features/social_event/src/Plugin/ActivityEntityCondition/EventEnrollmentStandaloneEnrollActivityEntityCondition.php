@@ -3,8 +3,7 @@
 namespace Drupal\social_event\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
-use Drupal\social_event\Entity\Node\EventInterface;
-use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Checks if event of even_enrollments allows to send specific mails to users.
@@ -22,17 +21,13 @@ class EventEnrollmentStandaloneEnrollActivityEntityCondition extends ActivityEnt
    */
   public function isValidEntityCondition($entity): bool {
     if ($entity->getEntityTypeId() === 'event_enrollment') {
-      assert($entity instanceof EventEnrollmentInterface);
+      /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
       $event = $entity->getEvent();
 
-      // This condition should be applied only for offline events.
-      if (!$event instanceof EventInterface || $event->isOnline()) {
-        return FALSE;
-      }
-
       if (
+        $event instanceof NodeInterface &&
         $event->hasField('field_event_send_confirmation') &&
-        $event->get('field_event_send_confirmation')->getString()
+        (bool) $event->get('field_event_send_confirmation')->getString()
       ) {
         return TRUE;
       }
