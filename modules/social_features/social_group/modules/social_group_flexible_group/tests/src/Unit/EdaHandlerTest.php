@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @coversDefaultClass \Drupal\social_group_flexible_group\EdaHandler
+ * @group social_group_flexible_group
  */
 class EdaHandlerTest extends UnitTestCase {
 

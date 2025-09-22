@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\social_group_flexible_group\Event;
 
 use Drupal\social_eda\Types\Address;
@@ -9,12 +11,12 @@ use Drupal\social_group_flexible_group\Types\GroupMembershipMethod;
 use Drupal\social_group_flexible_group\Types\GroupVisibility;
 
 /**
- * Contains data about the creation of an Open Social group.
+ * Contains data about a group.
  */
-class GroupEntityData {
+final class GroupEntityData {
 
   /**
-   * {@inheritDoc}
+   * Constructs the GroupEntityData type.
    */
   public function __construct(
     public readonly string $id,
