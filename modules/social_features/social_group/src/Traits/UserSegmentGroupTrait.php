@@ -5,6 +5,7 @@ namespace Drupal\social_group\Traits;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\group\PermissionScopeInterface;
 use Drupal\user_segments\DataObject\Condition;
 use Drupal\user_segments\DataObject\Property;
 use Drupal\user_segments\Enum\PropertyMatch;
@@ -350,20 +351,38 @@ trait UserSegmentGroupTrait {
    * will be automatically invalidated when any group roles are changed.
    *
    * Method cache_id:
-   *   group_user_segment_rule.user_role_options_for_ui:{group_type}
+   *   group_user_segment_rule.user_role_options_for_ui:{group_type}:{scope}
    *
    * Cache tags:
    *   config:group_role_list
    *
    * @param string $group_type
    *   The group type ID.
+   * @param string|null $scope
+   *   Optional scope to filter roles. Must be one of:
+   *   - PermissionScopeInterface::OUTSIDER_ID
+   *   - PermissionScopeInterface::INSIDER_ID
+   *   - PermissionScopeInterface::INDIVIDUAL_ID
+   *   If NULL, all roles for the group type will be returned.
    *
    * @return array<string,string|\Drupal\Core\StringTranslation\TranslatableMarkup>
    *   An associative array of group role machine names and their corresponding
    *   translated labels.
    */
-  public function getGroupRoleOptionsForUi(string $group_type): array {
-    $cid = 'group_user_segment_rule.user_role_options_for_ui:' . $group_type;
+  public function getGroupRoleOptionsForUi(string $group_type, ?string $scope = NULL): array {
+    // Validate scope parameter if provided.
+    if ($scope !== NULL) {
+      $valid_scopes = [
+        PermissionScopeInterface::OUTSIDER_ID,
+        PermissionScopeInterface::INSIDER_ID,
+        PermissionScopeInterface::INDIVIDUAL_ID,
+      ];
+      if (!in_array($scope, $valid_scopes, TRUE)) {
+        throw new \InvalidArgumentException("Invalid scope '{$scope}'. Must be one of: " . implode(', ', $valid_scopes));
+      }
+    }
+
+    $cid = 'group_user_segment_rule.user_role_options_for_ui:' . $group_type . ':' . ($scope ?? 'all');
 
     /** @var \Drupal\Core\Cache\CacheBackendInterface $cache_backend */
     $cache_backend = \Drupal::cache();
@@ -376,9 +395,14 @@ trait UserSegmentGroupTrait {
     $entity_type = \Drupal::entityTypeManager()->getDefinition('group_role');
     $list_cache_tags = $entity_type->getListCacheTags();
 
+    $properties = ['group_type' => $group_type];
+    if ($scope !== NULL) {
+      $properties['scope'] = $scope;
+    }
+
     $role_entities = $this->entityTypeManager
       ->getStorage('group_role')
-      ->loadByProperties(['group_type' => $group_type]);
+      ->loadByProperties($properties);
 
     $roles = [];
     foreach ($role_entities as $role_entity) {
