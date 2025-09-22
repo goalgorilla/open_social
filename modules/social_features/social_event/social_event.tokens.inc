@@ -11,6 +11,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\Entity\Node\EventInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
@@ -41,6 +42,11 @@ function social_event_token_info() {
   $social_event['enrolled_users_count'] = [
     'name' => t('Enrolled users count'),
     'description' => t('The total count of enrolled users to the current event.'),
+  ];
+
+  $social_event['is-online-addition'] = [
+    'name' => t('Online event addition information.'),
+    'description' => t('Additional information for online events.'),
   ];
 
   return [
@@ -122,6 +128,15 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
               }
             }
             break;
+
+          case 'is-online-addition':
+            $event = _social_event_get_event_from_enrollment($event_enrollment_id);
+            $replacements[$original] = $event instanceof EventInterface && $event->isOnline()
+              ? t("You can enter the meeting by using 'Join now' button which appears 10 minutes before start time. The meeting might be recorded. For more information view this event in your community.")
+              : '';
+
+            break;
+
         }
       }
     }
