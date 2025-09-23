@@ -396,7 +396,16 @@ function social_group_flexible_group_group_content_insert(GroupRelationshipInter
     $group = $group_content->getGroup();
     if ($group->bundle() === 'flexible_group') {
       $eda_handler = \Drupal::service('social_group_flexible_group.group_membership.eda_handler');
-      $eda_handler->groupMembershipCreate($group_content);
+
+      // Check if this membership was created from a request approval or
+      // accepting an invite.
+      // If so, skip the membership creation event as the respective event
+      // already covers it.
+      $state_manager = \Drupal::service('social_group_flexible_group.group_membership.state_manager');
+      $from_request = $state_manager->isMembershipFromRequestApproval($group_content);
+      if (!$from_request) {
+        $eda_handler->groupMembershipCreate($group_content);
+      }
     }
   }
 }

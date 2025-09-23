@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\social_group_flexible_group\EdaGroupMembershipHandler;
 use Drupal\group\Entity\GroupMembershipInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -257,6 +258,39 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Tests group membership request creation.
+   */
+  public function testGroupMembershipRequestCreate(): void {
+    $request = $this->createRequestMock();
+    $group = $this->createGroupMock();
+    $user = $this->createUserMock();
+
+    $request->getGroup()->willReturn($group->reveal());
+    $request->getEntity()->willReturn($user->reveal());
+    $request->uuid()->willReturn('request-uuid');
+    $request->getCreatedTime()->willReturn(1234567890);
+    $request->getChangedTime()->willReturn(1234567890);
+    $request->label()->willReturn('Request to join group');
+    $request->hasField('group_roles')->willReturn(TRUE);
+    $request->get('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $request->id()->willReturn(456);
+
+    $group->uuid()->willReturn('group-uuid');
+    $group->label()->willReturn('Test Group');
+    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+
+    $user->uuid()->willReturn('user-uuid');
+    $user->getDisplayName()->willReturn('Test User');
+    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->isAnonymous()->willReturn(FALSE);
+
+    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
+      ->shouldBeCalledOnce();
+
+    $this->edaHandler->groupMembershipRequestCreate($request->reveal());
+  }
+
+  /**
    * Tests that no dispatch occurs when module is not enabled.
    */
   public function testNoDispatchWhenModuleNotEnabled(): void {
@@ -361,6 +395,13 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
    */
   protected function createMembershipMock(): ObjectProphecy {
     return $this->prophesize(GroupMembershipInterface::class);
+  }
+
+  /**
+   * Creates a mock GroupRelationshipInterface for requests.
+   */
+  protected function createRequestMock(): ObjectProphecy {
+    return $this->prophesize(GroupRelationshipInterface::class);
   }
 
   /**

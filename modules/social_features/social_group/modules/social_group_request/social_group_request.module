@@ -96,6 +96,15 @@ function social_group_request_group_content_insert(GroupRelationshipInterface $g
   if ($group_content instanceof GroupMembershipInterface) {
     _social_group_request_approve_request_for_joined_member($group_content);
   }
+
+  // Handle EDA dispatch for group membership requests.
+  if ($group_content->getPlugin()->getPluginId() === 'group_membership_request') {
+    $group = $group_content->getGroup();
+    if ($group->bundle() === 'flexible_group') {
+      $eda_handler = \Drupal::service('social_group_flexible_group.group_membership.eda_handler');
+      $eda_handler->groupMembershipRequestCreate($group_content);
+    }
+  }
 }
 
 /**

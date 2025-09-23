@@ -134,6 +134,17 @@ final class EdaGroupMembershipHandler {
   }
 
   /**
+   * Request to join group handler.
+   */
+  public function groupMembershipRequestCreate(GroupRelationshipInterface $request): void {
+    $this->dispatch(
+      $this->topicName,
+      "{$this->namespace}.cms.group_membership.request.create",
+      $request
+    );
+  }
+
+  /**
    * Transforms a group membership or request/invitation into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -148,6 +159,7 @@ final class EdaGroupMembershipHandler {
       // Direct membership statuses.
       "{$this->namespace}.cms.group_membership.create" => 'active',
       "{$this->namespace}.cms.group_membership.delete" => 'removed',
+      "{$this->namespace}.cms.group_membership.request.create" => 'request_pending',
     ];
 
     // Get group and user.
