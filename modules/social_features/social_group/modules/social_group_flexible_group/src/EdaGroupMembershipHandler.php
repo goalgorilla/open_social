@@ -145,6 +145,17 @@ final class EdaGroupMembershipHandler {
   }
 
   /**
+   * Request to join group cancelled handler.
+   */
+  public function groupMembershipRequestDelete(GroupRelationshipInterface $request): void {
+    $this->dispatch(
+      $this->topicName,
+      "{$this->namespace}.cms.group_membership.request.delete",
+      $request
+    );
+  }
+
+  /**
    * Transforms a group membership or request/invitation into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -160,6 +171,7 @@ final class EdaGroupMembershipHandler {
       "{$this->namespace}.cms.group_membership.create" => 'active',
       "{$this->namespace}.cms.group_membership.delete" => 'removed',
       "{$this->namespace}.cms.group_membership.request.create" => 'request_pending',
+      "{$this->namespace}.cms.group_membership.request.delete" => 'request_cancelled',
     ];
 
     // Get group and user.
