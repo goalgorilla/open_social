@@ -11,16 +11,26 @@
     {%- endblock -%}
   {% endembed %}
 
-  {% if content.field_event_location|render is not empty %}
-    {% embed "node--teaser__field.html.twig" %}
-      {%- block field_icon -%} location {%- endblock -%}
-      {%- block svg_title -%} {% trans %}The event will take place at the{% endtrans %} {%- endblock -%}
-      {%- block field_value -%}
-        <span class="sr-only">{% trans %}The event will take place at the{% endtrans %} </span>
-        {{ content.field_event_location }}
-      {%- endblock -%}
-    {% endembed %}
-  {% endif %}
+  <div>
+    {% if is_online %}
+      {{ event_flag_online }}
+    {% endif %}
+
+    {% if content.field_event_location|render is not empty %}
+      {% embed "node--teaser__field.html.twig" %}
+        {%- block field_icon -%} location {%- endblock -%}
+        {%- block svg_title -%} {% trans %}The event will take place at the{% endtrans %} {%- endblock -%}
+        {%- block field_value -%}
+          <span class="sr-only">{% trans %}The event will take place at the{% endtrans %} </span>
+          {{ content.field_event_location }}
+        {%- endblock -%}
+      {% endembed %}
+    {% endif %}
+
+    {% if is_online %}
+      {{ event_flag_enrolled }}
+    {% endif %}
+  </div>
 
   {% if content.group_name %}
     {% embed "node--teaser__field.html.twig" %}
