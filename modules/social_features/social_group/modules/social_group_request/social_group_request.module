@@ -341,6 +341,29 @@ function social_group_request_block_access(Block $block, $operation, AccountInte
 }
 
 /**
+ * Implements hook_group_content_update().
+ */
+function social_group_request_group_content_update(GroupRelationshipInterface $group_content): void {
+  // Handle group membership request status changes.
+  if ($group_content->getPlugin()->getPluginId() === 'group_membership_request') {
+    $group = $group_content->getGroup();
+    if ($group->bundle() === 'flexible_group') {
+      $eda_handler = \Drupal::service('social_group_flexible_group.group_membership.eda_handler');
+      switch ($group_content->get('grequest_status')->value) {
+        case GroupMembershipRequest::REQUEST_APPROVED:
+          // Set a flag to indicate that a membership will be created from this
+          // request approval.
+          // This prevents duplicate events when the membership is created.
+          $state_manager = \Drupal::service('social_group_flexible_group.group_membership.state_manager');
+          $state_manager->markRequestApprovalInProgress((int) $group->id(), (int) $group_content->getEntity()->id());
+          $eda_handler->groupMembershipRequestAccept($group_content);
+          break;
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_group_content_delete().
  */
 function social_group_request_group_content_delete(GroupRelationshipInterface $group_content): void {
