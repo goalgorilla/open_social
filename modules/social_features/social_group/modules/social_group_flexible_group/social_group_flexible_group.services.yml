@@ -52,3 +52,9 @@ services:
       - '@?social_eda.dispatcher'
     tags:
       - { name: social.eda.handler }
+
+  social_group_flexible_group.group_membership.state_manager:
+    class: Drupal\social_group_flexible_group\Service\GroupMembershipStateManager
+    arguments:
+      - '@keyvalue.expirable'
+      - '@datetime.time'
