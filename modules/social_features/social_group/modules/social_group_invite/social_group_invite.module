@@ -933,6 +933,10 @@ function social_group_invite_group_content_update(GroupRelationshipInterface $gr
           $state_manager->markInvitationAcceptanceInProgress((int) $group->id(), (int) $group_content->getEntity()->id());
           $eda_handler->groupMembershipInviteAccept($group_content);
           break;
+
+        case GroupInvitation::INVITATION_REJECTED:
+          $eda_handler->groupMembershipInviteDecline($group_content);
+          break;
       }
     }
   }
