@@ -138,16 +138,6 @@ class GroupMembershipStateManagerTest extends UnitTestCase {
   }
 
   /**
-   * Tests that cleanup is no longer needed with TTL.
-   */
-  public function testNoCleanupNeededWithTtl(): void {
-    // With KeyValueExpirable and TTL, manual cleanup is no longer needed.
-    // This test verifies that the cleanupExpiredEntries method no longer
-    // exists.
-    $this->assertFalse(method_exists($this->stateManager, 'cleanupExpiredEntries'));
-  }
-
-  /**
    * Creates a mock GroupMembershipInterface.
    */
   protected function createMembershipMock(): ObjectProphecy {

@@ -403,7 +403,8 @@ function social_group_flexible_group_group_content_insert(GroupRelationshipInter
       // already covers it.
       $state_manager = \Drupal::service('social_group_flexible_group.group_membership.state_manager');
       $from_request = $state_manager->isMembershipFromRequestApproval($group_content);
-      if (!$from_request) {
+      $from_invite = $state_manager->isMembershipFromInvitationAcceptance($group_content);
+      if (!$from_request && !$from_invite) {
         $eda_handler->groupMembershipCreate($group_content);
       }
     }

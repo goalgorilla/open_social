@@ -19,6 +19,11 @@ final class GroupMembershipStateManager {
   private const COLLECTION_REQUEST_APPROVALS = 'social_group_flexible_group_request_approvals';
 
   /**
+   * The collection name for invitation acceptances.
+   */
+  private const COLLECTION_INVITATION_ACCEPTANCES = 'social_group_flexible_group_invitation_acceptances';
+
+  /**
    * The TTL in seconds for expirable entries.
    */
   private const TTL_SECONDS = 10;
@@ -77,6 +82,55 @@ final class GroupMembershipStateManager {
     $approval = $store->get($key);
 
     if ($approval !== NULL) {
+      // Entry exists and is not expired, remove it since we've used it.
+      $store->delete($key);
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Marks an invitation acceptance as in progress.
+   *
+   * @param int $group_id
+   *   The group ID.
+   * @param int $user_id
+   *   The user ID.
+   */
+  public function markInvitationAcceptanceInProgress(int $group_id, int $user_id): void {
+    $key = $this->createStateKey($group_id, $user_id);
+
+    $store = $this->keyValueExpirableFactory->get(self::COLLECTION_INVITATION_ACCEPTANCES);
+    $store->setWithExpire(
+      $key,
+      [
+        'group_id' => $group_id,
+        'user_id' => $user_id,
+        'timestamp' => $this->time->getRequestTime(),
+      ],
+      self::TTL_SECONDS
+    );
+  }
+
+  /**
+   * Checks if a membership was created from accepting an invite.
+   *
+   * @param \Drupal\group\Entity\GroupMembershipInterface $membership
+   *   The membership entity.
+   *
+   * @return bool
+   *   TRUE if the membership was created from accepting an invite.
+   */
+  public function isMembershipFromInvitationAcceptance(GroupMembershipInterface $membership): bool {
+    $group = $membership->getGroup();
+    $user = $membership->getEntity();
+    $key = $this->createStateKey((int) $group->id(), (int) $user->id());
+
+    $store = $this->keyValueExpirableFactory->get(self::COLLECTION_INVITATION_ACCEPTANCES);
+    $acceptance = $store->get($key);
+
+    if ($acceptance !== NULL) {
       // Entry exists and is not expired, remove it since we've used it.
       $store->delete($key);
       return TRUE;
