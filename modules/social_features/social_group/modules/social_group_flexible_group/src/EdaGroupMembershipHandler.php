@@ -167,6 +167,17 @@ final class EdaGroupMembershipHandler {
   }
 
   /**
+   * Request to join group declined handler.
+   */
+  public function groupMembershipRequestDecline(GroupRelationshipInterface $request): void {
+    $this->dispatch(
+      $this->topicName,
+      "{$this->namespace}.cms.group_membership.request.decline",
+      $request
+    );
+  }
+
+  /**
    * Transforms a group membership or request/invitation into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -184,6 +195,7 @@ final class EdaGroupMembershipHandler {
       "{$this->namespace}.cms.group_membership.request.create" => 'request_pending',
       "{$this->namespace}.cms.group_membership.request.delete" => 'request_cancelled',
       "{$this->namespace}.cms.group_membership.request.accept" => 'active',
+      "{$this->namespace}.cms.group_membership.request.decline" => 'request_declined',
     ];
 
     // Get group and user.

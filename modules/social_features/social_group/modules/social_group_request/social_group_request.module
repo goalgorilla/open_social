@@ -358,6 +358,10 @@ function social_group_request_group_content_update(GroupRelationshipInterface $g
           $state_manager->markRequestApprovalInProgress((int) $group->id(), (int) $group_content->getEntity()->id());
           $eda_handler->groupMembershipRequestAccept($group_content);
           break;
+
+        case GroupMembershipRequest::REQUEST_REJECTED:
+          $eda_handler->groupMembershipRequestDecline($group_content);
+          break;
       }
     }
   }
