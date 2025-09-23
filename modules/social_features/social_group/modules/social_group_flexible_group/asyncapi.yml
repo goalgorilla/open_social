@@ -823,6 +823,109 @@ channels:
                                   type: string
                                   format: uri
                                   description: Canonical URL for the actor profile
+  groupMembershipDelete:
+    address: com.getopensocial.cms.group_membership.delete
+    messages:
+      groupMembershipDelete:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    groupMembership:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the group membership.
+                        created:
+                          type: string
+                          format: date-time
+                          description: The creation time of the group membership.
+                        updated:
+                          type: string
+                          format: date-time
+                          description: The last updated time of the group membership.
+                        status:
+                          type: string
+                          description: The status of the group membership.
+                          enum:
+                            - removed
+                        roles:
+                          type: array
+                          description: The list of roles for the user in the group.
+                          items:
+                            type: string
+                        group:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the group.
+                            label:
+                              type: string
+                              description: The label of the group.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL for the group
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the user.
+                            displayName:
+                              type: string
+                              description: The display name of the user.
+                            email:
+                              type: string
+                              format: email
+                              nullable: true
+                              description: The email address of the user.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL for the user profile
+                    actor:
+                      type: object
+                      properties:
+                        application:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the application.
+                            name:
+                              type: string
+                              description: The name of the application.
+                        user:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the actor user.
+                            displayName:
+                              type: string
+                              description: The display name of the actor user.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL for the actor profile
 operations:
   onGroupCreate:
     action: 'receive'
@@ -848,3 +951,7 @@ operations:
     action: 'receive'
     channel:
       $ref: '#/channels/groupMembershipCreate'
+  onGroupMembershipDelete:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/groupMembershipDelete'

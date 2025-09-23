@@ -402,6 +402,20 @@ function social_group_flexible_group_group_content_insert(GroupRelationshipInter
 }
 
 /**
+ * Implements hook_group_content_delete().
+ */
+function social_group_flexible_group_group_content_delete(GroupRelationshipInterface $group_content): void {
+  // Handle direct group membership deletion.
+  if ($group_content instanceof GroupMembershipInterface) {
+    $group = $group_content->getGroup();
+    if ($group->bundle() === 'flexible_group') {
+      $eda_handler = \Drupal::service('social_group_flexible_group.group_membership.eda_handler');
+      $eda_handler->groupMembershipDelete($group_content);
+    }
+  }
+}
+
+/**
  * Implements template_preprocess_form_element().
  */
 function social_group_flexible_group_preprocess_form_element(&$variables) {

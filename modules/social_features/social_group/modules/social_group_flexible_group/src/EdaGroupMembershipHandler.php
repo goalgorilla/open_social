@@ -123,6 +123,17 @@ final class EdaGroupMembershipHandler {
   }
 
   /**
+   * Delete group membership handler (leave group).
+   */
+  public function groupMembershipDelete(GroupMembershipInterface $membership): void {
+    $this->dispatch(
+      $this->topicName,
+      "{$this->namespace}.cms.group_membership.delete",
+      $membership
+    );
+  }
+
+  /**
    * Transforms a group membership or request/invitation into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -136,6 +147,7 @@ final class EdaGroupMembershipHandler {
     $status_mappings = [
       // Direct membership statuses.
       "{$this->namespace}.cms.group_membership.create" => 'active',
+      "{$this->namespace}.cms.group_membership.delete" => 'removed',
     ];
 
     // Get group and user.

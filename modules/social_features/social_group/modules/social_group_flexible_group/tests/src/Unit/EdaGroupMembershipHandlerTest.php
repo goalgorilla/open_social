@@ -225,6 +225,38 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Tests group membership deletion.
+   */
+  public function testGroupMembershipDelete(): void {
+    $membership = $this->createMembershipMock();
+    $group = $this->createGroupMock();
+    $user = $this->createUserMock();
+
+    $membership->getGroup()->willReturn($group->reveal());
+    $membership->getEntity()->willReturn($user->reveal());
+    $membership->uuid()->willReturn('membership-uuid');
+    $membership->getCreatedTime()->willReturn(1234567890);
+    $membership->getChangedTime()->willReturn(1234567890);
+    $membership->hasField('group_roles')->willReturn(TRUE);
+    $membership->get('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $membership->id()->willReturn(123);
+
+    $group->uuid()->willReturn('group-uuid');
+    $group->label()->willReturn('Test Group');
+    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+
+    $user->uuid()->willReturn('user-uuid');
+    $user->getDisplayName()->willReturn('Test User');
+    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->isAnonymous()->willReturn(FALSE);
+
+    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
+      ->shouldBeCalledOnce();
+
+    $this->edaHandler->groupMembershipDelete($membership->reveal());
+  }
+
+  /**
    * Tests that no dispatch occurs when module is not enabled.
    */
   public function testNoDispatchWhenModuleNotEnabled(): void {
