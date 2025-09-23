@@ -900,3 +900,17 @@ function social_group_invite_query_group_content_access_alter(AlterableInterface
 
   $group_relationship_query_conditions->condition($see_own_invites_condition);
 }
+
+/**
+ * Implements hook_group_content_insert().
+ */
+function social_group_invite_group_content_insert(GroupRelationshipInterface $group_content): void {
+  // Handle group invitations.
+  if ($group_content->getPlugin()->getPluginId() === 'group_invitation') {
+    $group = $group_content->getGroup();
+    if ($group->bundle() === 'flexible_group') {
+      $eda_handler = \Drupal::service('social_group_flexible_group.group_membership.eda_handler');
+      $eda_handler->groupMembershipInviteCreate($group_content);
+    }
+  }
+}

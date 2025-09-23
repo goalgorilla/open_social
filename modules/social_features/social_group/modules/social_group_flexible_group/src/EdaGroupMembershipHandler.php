@@ -178,6 +178,17 @@ final class EdaGroupMembershipHandler {
   }
 
   /**
+   * Invite to join group handler.
+   */
+  public function groupMembershipInviteCreate(GroupRelationshipInterface $invitation): void {
+    $this->dispatch(
+      $this->topicName,
+      "{$this->namespace}.cms.group_membership.invite.create",
+      $invitation
+    );
+  }
+
+  /**
    * Transforms a group membership or request/invitation into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -196,6 +207,7 @@ final class EdaGroupMembershipHandler {
       "{$this->namespace}.cms.group_membership.request.delete" => 'request_cancelled',
       "{$this->namespace}.cms.group_membership.request.accept" => 'active',
       "{$this->namespace}.cms.group_membership.request.decline" => 'request_declined',
+      "{$this->namespace}.cms.group_membership.invite.create" => 'invite_pending',
     ];
 
     // Get group and user.
@@ -219,7 +231,7 @@ final class EdaGroupMembershipHandler {
         $email = $entity->get('invitee_mail')->value ?? NULL;
       }
 
-      // Email is always required to be present.
+      // Email is expected to always be present.
       if ($email) {
         $user_data = [
           'id' => NULL,
@@ -235,7 +247,7 @@ final class EdaGroupMembershipHandler {
             '@id' => $entity->id(),
           ]);
 
-        // Set a placeholder or throw exception based on requirements.
+        // We'll default to a placeholder user data if no email is provided.
         $user_data = [
           'id' => NULL,
           'displayName' => NULL,

@@ -390,6 +390,39 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
   }
 
   /**
+   * Tests group membership invite creation.
+   */
+  public function testGroupMembershipInviteCreate(): void {
+    $invitation = $this->createInvitationMock();
+    $group = $this->createGroupMock();
+    $user = $this->createUserMock();
+
+    $invitation->getGroup()->willReturn($group->reveal());
+    $invitation->getEntity()->willReturn($user->reveal());
+    $invitation->uuid()->willReturn('invitation-uuid');
+    $invitation->getCreatedTime()->willReturn(1234567890);
+    $invitation->getChangedTime()->willReturn(1234567890);
+    $invitation->label()->willReturn('Invitation to join group');
+    $invitation->hasField('group_roles')->willReturn(TRUE);
+    $invitation->get('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $invitation->id()->willReturn(789);
+
+    $group->uuid()->willReturn('group-uuid');
+    $group->label()->willReturn('Test Group');
+    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+
+    $user->uuid()->willReturn('user-uuid');
+    $user->getDisplayName()->willReturn('Test User');
+    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->isAnonymous()->willReturn(FALSE);
+
+    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
+      ->shouldBeCalledOnce();
+
+    $this->edaHandler->groupMembershipInviteCreate($invitation->reveal());
+  }
+
+  /**
    * Tests that no dispatch occurs when module is not enabled.
    */
   public function testNoDispatchWhenModuleNotEnabled(): void {
@@ -500,6 +533,13 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
    * Creates a mock GroupRelationshipInterface for requests.
    */
   protected function createRequestMock(): ObjectProphecy {
+    return $this->prophesize(GroupRelationshipInterface::class);
+  }
+
+  /**
+   * Creates a mock GroupRelationshipInterface for invitations.
+   */
+  protected function createInvitationMock(): ObjectProphecy {
     return $this->prophesize(GroupRelationshipInterface::class);
   }
 
