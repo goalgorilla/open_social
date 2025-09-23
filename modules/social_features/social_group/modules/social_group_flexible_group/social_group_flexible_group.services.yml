@@ -36,3 +36,19 @@ services:
     class: Drupal\social_group_flexible_group\EdaHandler
     tags:
       - { name: social.eda.handler }
+
+  social_group_flexible_group.group_membership.eda_handler:
+    class: Drupal\social_group_flexible_group\EdaGroupMembershipHandler
+    arguments:
+      - '@uuid'
+      - '@request_stack'
+      - '@module_handler'
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@current_route_match'
+      - '@config.factory'
+      - '@datetime.time'
+      - '@logger.factory'
+      - '@?social_eda.dispatcher'
+    tags:
+      - { name: social.eda.handler }
