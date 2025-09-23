@@ -61,8 +61,6 @@ final class MenuLocalTasksAlter implements ContainerInjectionInterface {
     $routes_to_check = _social_event_menu_local_tasks_routes();
     // Certain tabs should be hidden on other nodes.
     $showTabs = FALSE;
-    // Check if enrollment is enabled for the event.
-    $enrollmentEnabled = FALSE;
 
     if (in_array($route_name, $routes_to_check)) {
       // Get the current node from route parameters.
@@ -98,6 +96,7 @@ final class MenuLocalTasksAlter implements ContainerInjectionInterface {
     // These tabs should not be shown on any pages.
     if (!$showTabs) {
       unset($data['tabs'][0][self::VIEW_MANAGERS_TAB_ID]);
+      unset($data['tabs'][0][self::VIEW_EVENT_ENROLLMENTS_TAB_ID]);
       unset($data['tabs'][0][self::VIEW_EVENT_MANAGE_ENROLLMENT_TAB_ID]);
     }
   }
