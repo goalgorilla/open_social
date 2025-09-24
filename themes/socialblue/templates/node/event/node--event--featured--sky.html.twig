@@ -40,8 +40,10 @@
     {% endembed %}
 
     {% if is_online %}
-      {{ event_flag_online }}
-      {{ event_flag_enrolled }}
+      <div class="event-details">
+        {{ event_flag_online }}
+        {{ event_flag_enrolled }}
+      </div>
     {% else %}
       {% if node.hasField('field_event_location') and not node.get('field_event_location').isEmpty() %}
         {% embed "node--teaser__field.html.twig" %}

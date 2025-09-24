@@ -288,7 +288,7 @@
 
 .teaser--small .teaser--small__title {
   font-size: 1rem;
-  line-height: 24px;
+  line-height: 1.2;
 }
 
 .teaser--small .teaser--small__details {
@@ -494,6 +494,15 @@
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
+}
+
+.teaser__title span,
+.teaser--small__title span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (min-width: 600px) {

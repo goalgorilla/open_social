@@ -377,7 +377,7 @@
 
   .teaser--small__title {
     font-size: 1rem;
-    line-height: 24px;
+    line-height: 1.2;
   }
 
   .teaser--small__details {
@@ -556,4 +556,15 @@
   max-width: 100%;
   display: flex;
   justify-content: flex-end;
+}
+
+.teaser__title,
+.teaser--small__title {
+  span {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
