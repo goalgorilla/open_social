@@ -5,6 +5,8 @@
  * Installation code for the activity_send module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_schema().
  */
@@ -45,6 +47,11 @@ function activity_send_schema() {
       'uas_message_template' => ['message_template'],
       'uas_frequency' => ['frequency'],
     ],
+    'primary keys' => [
+      'uid',
+      'destination',
+      'message_template',
+    ],
   ];
 
   return $schema;
@@ -55,4 +62,19 @@ function activity_send_schema() {
  */
 function activity_send_update_last_removed() : int {
   return 8002;
+}
+
+/**
+ * Set primary key for activity_notification_status table.
+ */
+function activity_send_update_13000() {
+  $fields = [
+    'uid',
+    'destination',
+    'message_template',
+  ];
+  $schema = Database::getConnection()->schema();
+
+  // Set primary key.
+  $schema->addPrimaryKey('user_activity_send', $fields);
 }
