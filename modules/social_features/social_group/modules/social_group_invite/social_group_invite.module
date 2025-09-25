@@ -525,6 +525,11 @@ function social_group_invite_preprocess_join(array &$variables): void {
   if (!$entity instanceof GroupInterface) {
     return;
   }
+  // We should only show the invite link functionality if the group is not a
+  // 'organization' group.
+  elseif ($entity->getGroupType()->id() === 'organization') {
+    return;
+  }
 
   $url = Url::fromRoute('ginvite.invitation.bulk', [
     'group' => $entity->id(),
