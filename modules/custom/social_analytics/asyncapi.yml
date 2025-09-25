@@ -1,0 +1,72 @@
+channels:
+  pageView:
+    address: com.getopensocial.cms.page_view
+    messages:
+      pageView:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                      format: uri
+                      description: The full URL being visited (including domain and parameters).
+                    target:
+                      type: array
+                      nullable: true
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            description: The UUID of the target entity.
+                          type:
+                            type: string
+                            description: The type of the target entity.
+                          href:
+                            type: object
+                            properties:
+                              canonical:
+                                type: string
+                                format: uri
+                                description: Canonical URL of the target entity.
+                    actor:
+                      type: object
+                      properties:
+                        application:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: Application ID (UUIDv4)
+                            name:
+                              type: string
+                              description: Application name
+                        user:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              description: The UUID of the user.
+                            displayName:
+                              type: string
+                              description: The display name of the user.
+                            href:
+                              type: object
+                              properties:
+                                canonical:
+                                  type: string
+                                  format: uri
+                                  description: Canonical URL of the user profile.
+
+operations:
+  onPageView:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/pageView'

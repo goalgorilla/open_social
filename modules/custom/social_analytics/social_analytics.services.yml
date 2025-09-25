@@ -1,0 +1,23 @@
+services:
+  social_analytics.eda_handler:
+    class: Drupal\social_analytics\EdaHandler
+    arguments:
+      - '@uuid'
+      - '@request_stack'
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@current_route_match'
+      - '@config.factory'
+      - '@datetime.time'
+      - '@logger.factory'
+      - '@?social_eda.dispatcher'
+    tags:
+      - { name: social.eda.handler }
+
+  social_analytics.page_view_subscriber:
+    class: Drupal\social_analytics\EventSubscriber\PageViewSubscriber
+    arguments:
+      - '@social_analytics.eda_handler'
+      - '@current_user'
+    tags:
+      - { name: event_subscriber }
