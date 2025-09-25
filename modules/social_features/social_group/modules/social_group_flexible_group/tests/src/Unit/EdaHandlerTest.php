@@ -222,7 +222,7 @@ class EdaHandlerTest extends UnitTestCase {
     $userMock = $this->prophesize(UserInterface::class);
     $userMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $userMock->getDisplayName()->willReturn('User name');
-    $userMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $userMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->userInterface = $userMock->reveal();
 
     // Mock Group Type.
@@ -265,7 +265,7 @@ class EdaHandlerTest extends UnitTestCase {
     $groupMock->get('field_group_location')->willReturn($this->addressItemList);
     $groupMock->get('uid')
       ->willReturn((object) ['entity' => $this->userInterface]);
-    $groupMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $groupMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->group = $groupMock->reveal();
 
     // Prophesize the CloudEvent class.

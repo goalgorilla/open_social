@@ -198,7 +198,7 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Prophesize the EntityInterface (commented node).
     $entityMock = $this->prophesize(NodeInterface::class);
-    $entityMock->toUrl('canonical', ['absolute' => TRUE])
+    $entityMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
       ->willReturn($this->url);
     $entityMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $entityMock->label()->willReturn('Test Node');
@@ -210,7 +210,7 @@ class EdaHandlerTest extends UnitTestCase {
     $userMock = $this->prophesize(UserInterface::class);
     $userMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $userMock->getDisplayName()->willReturn('User name');
-    $userMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $userMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->userInterface = $userMock->reveal();
 
     // Prophesize the Comment.
@@ -223,7 +223,7 @@ class EdaHandlerTest extends UnitTestCase {
     $commentMock->getCommentedEntity()->willReturn($this->commentedNode);
     $commentMock->getCommentedEntityTypeId()->willReturn('node');
     $commentMock->hasParentComment()->willReturn(FALSE);
-    $commentMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $commentMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->comment = $commentMock->reveal();
 
     // Prophesize the CloudEvent class.
@@ -423,7 +423,7 @@ class EdaHandlerTest extends UnitTestCase {
     $parentCommentMock->getParentComment()->willReturn(NULL);
     $parentCommentMock->getEntityTypeId()->willReturn('comment');
     $parentCommentMock->getCommentedEntity()->willReturn($this->nodeInterface);
-    $parentCommentMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $parentCommentMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $parentComment = $parentCommentMock->reveal();
 
     // Update the comment mock to have a parent.
@@ -437,7 +437,7 @@ class EdaHandlerTest extends UnitTestCase {
     $commentMock->getCommentedEntityTypeId()->willReturn('comment');
     $commentMock->hasParentComment()->willReturn(TRUE);
     $commentMock->getParentComment()->willReturn($parentComment);
-    $commentMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $commentMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $replyComment = $commentMock->reveal();
 
     // Create the handler instance.

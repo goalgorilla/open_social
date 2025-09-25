@@ -212,11 +212,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
@@ -244,11 +244,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
@@ -277,11 +277,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
@@ -310,11 +310,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
@@ -343,11 +343,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
@@ -376,11 +376,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
@@ -409,11 +409,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
@@ -442,11 +442,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
@@ -475,11 +475,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
@@ -508,11 +508,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
@@ -602,11 +602,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $group->uuid()->willReturn('group-uuid');
     $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
 
     $user->uuid()->willReturn('user-uuid');
     $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
     $user->isAnonymous()->willReturn(FALSE);
 
     // Make the dispatcher throw an exception.

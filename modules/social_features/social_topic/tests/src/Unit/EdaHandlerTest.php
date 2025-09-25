@@ -206,7 +206,7 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Prophesize the EntityInterface.
     $entityMock = $this->prophesize(EntityInterface::class);
-    $entityMock->toUrl('canonical', ['absolute' => TRUE])
+    $entityMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
       ->willReturn($this->url);
     $entityMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $entityMock->label()->willReturn('Test Entity');
@@ -216,7 +216,7 @@ class EdaHandlerTest extends UnitTestCase {
     $userMock = $this->prophesize(UserInterface::class);
     $userMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $userMock->getDisplayName()->willReturn('User name');
-    $userMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $userMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->userInterface = $userMock->reveal();
 
     // Prophesize the field_topic_type.
@@ -252,7 +252,7 @@ class EdaHandlerTest extends UnitTestCase {
       ->willReturn((object) ['value' => 'public']);
     $nodeMock->get('uid')
       ->willReturn((object) ['entity' => $this->userInterface]);
-    $nodeMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $nodeMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $nodeMock->hasField('field_topic_type')->willReturn(TRUE);
     $nodeMock->get('field_topic_type')->willReturn($this->topicTypeField);
     $this->node = $nodeMock->reveal();

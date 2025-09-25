@@ -34,7 +34,7 @@ class Href {
    */
   public static function fromEntity(EntityInterface $entity): self {
     return new self(
-      canonical: $entity->toUrl('canonical', ['absolute' => TRUE])->toString(),
+      canonical: $entity->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->toString(),
     );
   }
 

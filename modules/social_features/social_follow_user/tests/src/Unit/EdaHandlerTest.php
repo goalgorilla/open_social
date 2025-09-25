@@ -219,7 +219,7 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Prophesize the EntityInterface.
     $entityMock = $this->prophesize(EntityInterface::class);
-    $entityMock->toUrl('canonical', ['absolute' => TRUE])
+    $entityMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
       ->willReturn($this->url);
     $entityMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $entityMock->label()->willReturn('Test Entity');
@@ -229,21 +229,21 @@ class EdaHandlerTest extends UnitTestCase {
     $targetUserMock = $this->prophesize(UserInterface::class);
     $targetUserMock->uuid()->willReturn('target-user-uuid-123');
     $targetUserMock->getDisplayName()->willReturn('Target User');
-    $targetUserMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $targetUserMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->targetUser = $targetUserMock->reveal();
 
     // Prophesize the follower user.
     $followerUserMock = $this->prophesize(UserInterface::class);
     $followerUserMock->uuid()->willReturn('follower-user-uuid-456');
     $followerUserMock->getDisplayName()->willReturn('Follower User');
-    $followerUserMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $followerUserMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->followerUser = $followerUserMock->reveal();
 
     // Prophesize the Profile.
     $profileMock = $this->prophesize(ProfileInterface::class);
     $profileMock->getOwner()->willReturn($this->targetUser);
     $profileMock->uuid()->willReturn('profile-uuid-789');
-    $profileMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $profileMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->profile = $profileMock->reveal();
 
     // Prophesize the Flagging (follow relationship).

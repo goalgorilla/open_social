@@ -189,14 +189,14 @@ class EdaHandlerTest extends UnitTestCase {
     $userMock = $this->prophesize(UserInterface::class);
     $userMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $userMock->getDisplayName()->willReturn('User name');
-    $userMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $userMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->userInterface = $userMock->reveal();
 
     // Prophesize the GroupInterface.
     $groupMock = $this->prophesize(GroupInterface::class);
     $groupMock->uuid()->willReturn('group-uuid-1234');
     $groupMock->label()->willReturn('Test Group');
-    $groupMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $groupMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->groupInterface = $groupMock->reveal();
 
     // Prophesize the Post.
@@ -215,7 +215,7 @@ class EdaHandlerTest extends UnitTestCase {
     $postMock->get('field_recipient_user')->willReturn($this->createEmptyField());
     $postMock->get('user_id')
       ->willReturn((object) ['entity' => $this->userInterface]);
-    $postMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $postMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $postMock->getEntityTypeId()->willReturn('post');
     $this->post = $postMock->reveal();
 
@@ -446,7 +446,7 @@ class EdaHandlerTest extends UnitTestCase {
     $postMock->get('field_recipient_user')->willReturn($this->createEmptyField());
     $postMock->get('user_id')
       ->willReturn((object) ['entity' => $this->userInterface]);
-    $postMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $postMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $postMock->getEntityTypeId()->willReturn('post');
     $post = $postMock->reveal();
 
@@ -485,7 +485,7 @@ class EdaHandlerTest extends UnitTestCase {
     $postMock->get('field_recipient_user')->willReturn($this->createUserField());
     $postMock->get('user_id')
       ->willReturn((object) ['entity' => $this->userInterface]);
-    $postMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $postMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $postMock->getEntityTypeId()->willReturn('post');
     $post = $postMock->reveal();
 

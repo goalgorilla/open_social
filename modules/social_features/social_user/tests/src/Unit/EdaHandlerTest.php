@@ -200,7 +200,7 @@ class EdaHandlerTest extends UnitTestCase {
     $user->getRoles()->willReturn(['authenticated']);
     $user->getPreferredLangcode()->willReturn('en');
     $user->getTimeZone()->willReturn('UTC');
-    $user->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $userMock = $user->reveal();
     $this->user = $userMock;
 

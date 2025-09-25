@@ -213,7 +213,7 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
 
     // Prophesize the EntityInterface.
     $entityMock = $this->prophesize(EntityInterface::class);
-    $entityMock->toUrl('canonical', ['absolute' => TRUE])
+    $entityMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
       ->willReturn($this->url);
     $entityMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $entityMock->label()->willReturn('Test Entity');
@@ -226,7 +226,7 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $userMock->getDisplayName()->willReturn('User name');
     $userMock->getEmail()->willReturn('user@example.com');
     $userMock->isAnonymous()->willReturn(FALSE);
-    $userMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $userMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $this->userInterface = $userMock->reveal();
 
     // Prophesize the EntityTypeManagerInterface and the corresponding storage.
@@ -289,7 +289,7 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $nodeMock->get('field_event_type')->willReturn((object) ['value' => 0]);
     $nodeMock->get('uid')
       ->willReturn((object) ['entity' => $this->userInterface]);
-    $nodeMock->toUrl('canonical', ['absolute' => TRUE])->willReturn($this->url);
+    $nodeMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
     $nodeMock->hasField('field_event_type')->willReturn(TRUE);
     $nodeMock->get('field_event_type')->willReturn($this->eventTypeField);
 
