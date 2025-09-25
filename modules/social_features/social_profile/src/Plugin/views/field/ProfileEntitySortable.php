@@ -167,7 +167,9 @@ class ProfileEntitySortable extends RenderedEntity {
         }
         // If we have only one field for sort then use the Profile name field.
         elseif (count($order_by_fields) === 1) {
-          $this->field_alias = $definition['table'] . '.profile_name_value';
+          $profile_name_field = $definition['table'] . '.profile_name_value';
+          $this->field_alias = $profile_name_field;
+          $query->addGroupBy($profile_name_field);
         }
       }
       // Since fields should always have themselves already added, just
