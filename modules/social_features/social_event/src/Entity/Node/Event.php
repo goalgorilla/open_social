@@ -189,8 +189,17 @@ class Event extends Node implements EventInterface {
    * {@inheritdoc}
    */
   public function getParticipation(?AccountInterface $account = NULL): bool {
+    $participation = &drupal_static(__METHOD__, []);
+
     if ($account === NULL) {
       $account = \Drupal::currentUser();
+    }
+
+    $uid = $account->id();
+    $event_id = $this->id();
+
+    if (isset($participation[$event_id][$uid])) {
+      return $participation[$event_id][$uid];
     }
 
     $enrollments_storage = \Drupal::entityTypeManager()
@@ -199,8 +208,8 @@ class Event extends Node implements EventInterface {
     $eid = (array) $enrollments_storage->getQuery()
       // @todo Not sure if we need to check the access here.
       ->accessCheck()
-      ->condition('field_account', $account->id())
-      ->condition('field_event', $this->id())
+      ->condition('field_account', $uid)
+      ->condition('field_event', $event_id)
       ->execute();
 
     // We need the last one.
@@ -211,8 +220,9 @@ class Event extends Node implements EventInterface {
 
     /** @var \Drupal\social_event\EventEnrollmentInterface $enrollment */
     $enrollment = $enrollments_storage->load($eid);
+    $participation[$event_id][$uid] = $enrollment->isEnrolled();
 
-    return $enrollment->isEnrolled();
+    return $participation[$event_id][$uid];
   }
 
   /**

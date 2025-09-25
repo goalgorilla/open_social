@@ -12,7 +12,7 @@
   {% endembed %}
 
   <div class="event-details">
-    {% if is_online %}
+    {% if event_flag_online %}
       {{ event_flag_online }}
     {% endif %}
 
@@ -27,7 +27,7 @@
       {% endembed %}
     {% endif %}
 
-    {% if is_online %}
+    {% if event_flag_enrolled %}
       {{ event_flag_enrolled }}
     {% endif %}
   </div>

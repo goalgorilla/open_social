@@ -39,10 +39,14 @@
       {%- endblock -%}
     {% endembed %}
 
-    {% if is_online %}
+    {% if event_flag_online or event_flag_enrolled %}
       <div class="event-details">
-        {{ event_flag_online }}
-        {{ event_flag_enrolled }}
+        {% if event_flag_online %}
+          {{ event_flag_online }}
+        {% endif %}
+        {% if event_flag_enrolled %}
+          {{ event_flag_enrolled }}
+        {% endif %}
       </div>
     {% else %}
       {% if node.hasField('field_event_location') and not node.get('field_event_location').isEmpty() %}
