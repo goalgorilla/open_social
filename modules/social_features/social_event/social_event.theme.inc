@@ -38,7 +38,7 @@ function template_preprocess_event_date_advanced(array &$variables): void {
   // with svg bulk can't be loaded (so, we embed icon directly in the template).
   $variables['icon_loaded'] = $variables['view_mode'] !== 'email_card';
 
-  $variables['#attached']['library'][] = 'social_event/event';
+  $variables['#attached']['library'][] = 'socialbase/event';
   $variables['#cache']['contexts'][] = 'timezone';
 }
 
@@ -74,7 +74,7 @@ function template_preprocess_event_location_address(array &$variables): void {
   // with svg bulk can't be loaded (so, we embed icon directly in the template).
   $variables['icon_loaded'] = $variables['view_mode'] !== 'email_card';
 
-  $variables['#attached']['library'][] = 'social_event/event';
+  $variables['#attached']['library'][] = 'socialbase/event';
 }
 
 /**
@@ -113,7 +113,7 @@ function template_preprocess_event_flag_online(array &$variables): void {
   // with svg bulk can't be loaded (so, we embed icon directly in the template).
   $variables['icon_loaded'] = $variables['view_mode'] !== 'email_card';
 
-  $variables['#attached']['library'][] = 'social_event/event';
+  $variables['#attached']['library'][] = 'socialbase/event';
 }
 
 /**
@@ -145,5 +145,5 @@ function template_preprocess_event_flag_enrolled(array &$variables): void {
   // with svg bulk can't be loaded (so, we embed icon directly in the template).
   $variables['icon_loaded'] = $variables['view_mode'] !== 'email_card';
 
-  $variables['#attached']['library'][] = 'social_event/event';
+  $variables['#attached']['library'][] = 'socialbase/event';
 }
