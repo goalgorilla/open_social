@@ -231,7 +231,7 @@ class UserSegmentContext extends RawMinkContext {
    * @Then should see the user segment I just created
    */
   public function thenIShouldSeeTheUserSegmentIJustCreated() : void {
-    $this->minkContext->assertPageContainsText("User segment {$this->lastCreatedValues['label']} has been created.");
+    $this->minkContext->assertPageContainsText("New segment {$this->lastCreatedValues['label']} has been created.");
 
     foreach ($this->lastCreatedValues as $field => $value) {
       if ($field === "label") {
