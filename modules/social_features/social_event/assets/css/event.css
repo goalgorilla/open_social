@@ -2,12 +2,8 @@
 .event-location-address,
 .event-flag-online,
 .event-flag-enrolled {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
   gap: 12px;
   height: 26px;
 }
@@ -17,19 +13,33 @@
   width: 20px;
   height: 20px;
 }
+.event-date-advanced .sr-only,
+.event-location-address .sr-only {
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  word-wrap: normal;
+  margin: -1px;
+  padding: 0;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
 
 .event-date-advanced > span {
   vertical-align: middle;
 }
 
 .event-location-address__container {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: self-end;
-      -ms-flex-align: self-end;
-          align-items: self-end;
+  align-items: self-end;
   gap: 10px;
+}
+@media (max-width: 599px) {
+  .event-location-address__container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .event-flag-enrolled {
@@ -44,25 +54,15 @@
 }
 
 .event-flags {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
   gap: 10px;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
 }
 
 .event-flag-online .icon-wrapper {
-  display: -webkit-inline-box;
-  display: -ms-inline-flexbox;
   display: inline-flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  align-items: center;
+  justify-content: center;
   width: 14px;
   height: 14px;
   padding: 3px;
@@ -80,7 +80,6 @@
 .event-flag-online {
   cursor: pointer;
 }
-
 .event-flag-enrolled .icon,
 .event-flag-online .icon {
   width: 12px;
@@ -92,31 +91,15 @@
   line-height: 1;
   margin-right: 5px;
 }
-
 .inline-center.enrolled {
   margin-right: 0;
 }
 
 .event-details {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
   gap: 12px;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
-@media (max-width: 599px) {
-  .event-location-address__container {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-box-align: start;
-        -ms-flex-align: start;
-            align-items: flex-start;
-  }
-}
+/*# sourceMappingURL=event.css.map */
