@@ -154,3 +154,35 @@ Feature: Enroll for an event
     And I am viewing the event "Test content"
 
     Then I should see "13 people have enrolled"
+
+  Scenario: Can enroll to the online meeting
+    Given users:
+      | name         | pass     | mail                 | status | roles       |
+      | Enrollee     | enrollee | enrollee@example.com | 1      | verified    |
+
+    And events with non-anonymous author:
+      | title                | body        | field_event_all_day | field_event_date | field_event_date_end | field_content_visibility | meeting_type | meeting_url                   |
+      | Future Online event  | lorem ipsum | 1                   | +1 day           | +1 day               | public                   | custom_link  | https://my.meeting.url        |
+      | Present Online event | lorem ipsum | 1                   | +5 minutes       | +1 day               | public                   | custom_link  | https://www.getopensocial.com |
+
+    When I am logged in as "Enrollee"
+    Then I am viewing the event "Future Online event"
+    And I should see the button "Enroll"
+    And I press the "Enroll" button
+    And I wait for AJAX to finish
+    And I press the "Close" button
+    And I should see the button "Join at the start time"
+    And I press the "Join at the start time" button
+    And I should see the button "Cancel enrollment"
+    And the url should match "/node/\d+"
+
+    And I am viewing the event "Present Online event"
+    And I should see the button "Enroll"
+    And I press the "Enroll" button
+    And I wait for AJAX to finish
+    And I press the "Close" button
+    And I should see the button "Join now"
+    And I press the "Join now" button
+    And I wait for AJAX to finish
+    # We need to check redirection only.
+    And I should be on "https://www.getopensocial.com"

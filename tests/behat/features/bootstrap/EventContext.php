@@ -604,6 +604,15 @@ class EventContext extends RawMinkContext {
       $event['field_event_date_end'] = date('Y-m-d\TH:i:s', strtotime('+1 day +2 hours'));
     }
 
+    if (isset($event['meeting_type'])) {
+      $event['field_event_meeting'] = $this->createMeetingEntity($event['meeting_type'], $event);
+    }
+
+    // Unset meeting related fields to avoid validation errors.
+    unset($event['meeting_type']);
+    unset($event['meeting_attendees']);
+    unset($event['meeting_url']);
+
     $this->validateEntityFields("node", $event);
     $event_object = Node::create($event);
     $violations = $event_object->validate();
@@ -667,4 +676,57 @@ class EventContext extends RawMinkContext {
 
     return NULL;
   }
+
+  /**
+   * Creates a meeting entity with the given bundle and event values.
+   *
+   * This method generates and saves a meeting entity based on the provided
+   * bundle and event details, including meeting label, date and time,
+   * attendee limits, and optional custom links.
+   *
+   * @param string $bundle
+   *   The entity bundle type, for example, 'custom_link'.
+   * @param array $event_values
+   *   An associative array containing event and meeting details:
+   *   - title: (string) The title of the event.
+   *   - field_event_date: (string) The start date and time of the event.
+   *   - field_event_date_end: (string) The end date and time of the event.
+   *   - meeting_attendees: (int) (optional) The maximum number of attendees
+   *     for the meeting (default is 10).
+   *   - meeting_url: (string) (optional) A custom URL for the meeting, required
+   *     if the bundle is 'custom_link'.
+   *
+   * @return int
+   *   Returns the ID of the created meeting entity.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  private function createMeetingEntity(string $bundle, array $event_values): int {
+    $values = [
+      'label' => t('Meeting for @title event', [
+        '@title' => $event_values['title'] ?: 'Meeting',
+      ]),
+      'datetime' => [
+        'value' => $event_values['field_event_date'],
+        'end_value' => $event_values['field_event_date_end'],
+        'timezone' => date_default_timezone_get(),
+      ],
+      'bundle' => $bundle,
+      'max_attendees' => $event_values['meeting_attendees'] ?? 10,
+    ];
+
+    if ($bundle === 'custom_link') {
+      $values['backend_settings']['url'] = $event_values['meeting_url'] ?? 'https://example.com/meeting/12345';
+    }
+
+    $meeting = \Drupal::entityTypeManager()
+      ->getStorage('meeting_api_meeting')
+      ->create($values);
+    $meeting->save();
+
+    return (int) $meeting->id();
+  }
+
 }
