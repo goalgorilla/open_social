@@ -948,9 +948,13 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     else {
       $description = t("The event date and time are set based on the site's default timezone.");
     }
+
     $form['timezone_indication'] = [
       '#type' => 'container',
-      '#weight' => 99,
+      // Place the field after the "Online".
+      '#weight' => $form['field_event_meeting']['#weight']
+        ? $form['field_event_meeting']['#weight'] + 1
+        : 99,
       'content' => [
         '#type' => 'item',
         '#markup' => $markup,
@@ -991,8 +995,8 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
     }
 
-    $form['#fieldgroups']['group_date_time']->children[] = 'timezone_indication';
-    $form['#group_children']['timezone_indication'] = 'group_date_time';
+    $form['#fieldgroups']['group_event_schedule']->children[] = 'timezone_indication';
+    $form['#group_children']['timezone_indication'] = 'group_event_schedule';
     $form['#after_build'][] = 'social_event_date_after_build';
   }
 
