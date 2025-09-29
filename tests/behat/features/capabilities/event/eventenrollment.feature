@@ -166,6 +166,7 @@ Feature: Enroll for an event
       | Present Online event | lorem ipsum | 1                   | +5 minutes       | +1 day               | public                   | custom_link  | https://www.getopensocial.com |
 
     When I am logged in as "Enrollee"
+
     Then I am viewing the event "Future Online event"
     And I should see the button "Enroll"
     And I press the "Enroll" button
