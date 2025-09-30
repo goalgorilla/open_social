@@ -19,6 +19,10 @@ final class ManualMeetingConfigurationForm extends Base {
     $form = parent::buildConfigurationForm($form, $form_state);
     // We want to have the "Url" field optional.
     $form['url']['#required'] = FALSE;
+    // Hide the URL field title.
+    $form['url']['#title_display'] = 'invisible';
+    // Override the description.
+    $form['url']['#description'] = $this->t('For enrollees to join in one click, use any meeting tool.');
 
     return $form;
   }
