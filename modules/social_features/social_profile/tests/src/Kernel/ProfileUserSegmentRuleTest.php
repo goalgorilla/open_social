@@ -220,34 +220,32 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Invalid user role(s) provided: role-that-does-not-exist.');
 
-    $rules = [
-      new Rule(
-        id: 1,
-        plugin: ProfileUserSegmentRule::PLUGIN_ID,
-        conditionGroups: [
-          new ConditionGroup(
-            conjunction: ConditionGroupConjunction::And,
-            conditions: [
-              new Condition(
-                condition_type: 'user_roles',
-                properties: [
-                  new Property(
-                    property_type: 'role',
-                    relationship: PropertyRelationship::Include,
-                    match: PropertyMatch::Any,
-                    config: [
-                      'value' => [
-                        'role-that-does-not-exist',
-                      ],
-                    ]
-                  ),
-                ]
-              ),
-            ]
-          ),
-        ]
-      ),
-    ];
+    $rules = new Rule(
+      id: 1,
+      plugin: ProfileUserSegmentRule::PLUGIN_ID,
+      conditionGroups: [
+        new ConditionGroup(
+          conjunction: ConditionGroupConjunction::And,
+          conditions: [
+            new Condition(
+              condition_type: 'user_roles',
+              properties: [
+                new Property(
+                  property_type: 'role',
+                  relationship: PropertyRelationship::Include,
+                  match: PropertyMatch::Any,
+                  config: [
+                    'value' => [
+                      'role-that-does-not-exist',
+                    ],
+                  ]
+                ),
+              ]
+            ),
+          ]
+        ),
+      ]
+    );
 
     $this->userSegmentQueryBuilder->getUserIds($rules);
   }
@@ -265,32 +263,30 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Role list must be a non-empty array.');
 
-    $rules = [
-      new Rule(
-        id: 1,
-        plugin: ProfileUserSegmentRule::PLUGIN_ID,
-        conditionGroups: [
-          new ConditionGroup(
-            conjunction: ConditionGroupConjunction::And,
-            conditions: [
-              new Condition(
-                condition_type: 'user_roles',
-                properties: [
-                  new Property(
-                    property_type: 'role',
-                    relationship: PropertyRelationship::Include,
-                    match: PropertyMatch::Any,
-                    config: [
-                      'value' => [],
-                    ]
-                  ),
-                ]
-              ),
-            ]
-          ),
-        ]
-      ),
-    ];
+    $rules = new Rule(
+      id: 1,
+      plugin: ProfileUserSegmentRule::PLUGIN_ID,
+      conditionGroups: [
+        new ConditionGroup(
+          conjunction: ConditionGroupConjunction::And,
+          conditions: [
+            new Condition(
+              condition_type: 'user_roles',
+              properties: [
+                new Property(
+                  property_type: 'role',
+                  relationship: PropertyRelationship::Include,
+                  match: PropertyMatch::Any,
+                  config: [
+                    'value' => [],
+                  ]
+                ),
+              ]
+            ),
+          ]
+        ),
+      ]
+    );
 
     $this->userSegmentQueryBuilder->getUserIds($rules);
   }
@@ -308,30 +304,28 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('The "value" property is required for the role condition.');
 
-    $rules = [
-      new Rule(
-        id: 1,
-        plugin: ProfileUserSegmentRule::PLUGIN_ID,
-        conditionGroups: [
-          new ConditionGroup(
-            conjunction: ConditionGroupConjunction::And,
-            conditions: [
-              new Condition(
-                condition_type: 'user_roles',
-                properties: [
-                  new Property(
-                    property_type: 'role',
-                    relationship: PropertyRelationship::Include,
-                    match: PropertyMatch::Any,
-                    config: []
-                  ),
-                ]
-              ),
-            ]
-          ),
-        ]
-      ),
-    ];
+    $rules = new Rule(
+      id: 1,
+      plugin: ProfileUserSegmentRule::PLUGIN_ID,
+      conditionGroups: [
+        new ConditionGroup(
+          conjunction: ConditionGroupConjunction::And,
+          conditions: [
+            new Condition(
+              condition_type: 'user_roles',
+              properties: [
+                new Property(
+                  property_type: 'role',
+                  relationship: PropertyRelationship::Include,
+                  match: PropertyMatch::Any,
+                  config: []
+                ),
+              ]
+            ),
+          ]
+        ),
+      ]
+    );
 
     $this->userSegmentQueryBuilder->getUserIds($rules);
   }
@@ -350,34 +344,32 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('The "match" property is required for the role condition.');
 
-    $rules = [
-      new Rule(
-        id: 1,
-        plugin: ProfileUserSegmentRule::PLUGIN_ID,
-        conditionGroups: [
-          new ConditionGroup(
-            conjunction: ConditionGroupConjunction::And,
-            conditions: [
-              new Condition(
-                condition_type: 'user_roles',
-                properties: [
-                  new Property(
-                    property_type: 'role',
-                    relationship: PropertyRelationship::Include,
-                    match: NULL,
-                    config: [
-                      'value' => [
-                        'administrator',
-                      ],
-                    ]
-                  ),
-                ]
-              ),
-            ]
-          ),
-        ]
-      ),
-    ];
+    $rules = new Rule(
+      id: 1,
+      plugin: ProfileUserSegmentRule::PLUGIN_ID,
+      conditionGroups: [
+        new ConditionGroup(
+          conjunction: ConditionGroupConjunction::And,
+          conditions: [
+            new Condition(
+              condition_type: 'user_roles',
+              properties: [
+                new Property(
+                  property_type: 'role',
+                  relationship: PropertyRelationship::Include,
+                  match: NULL,
+                  config: [
+                    'value' => [
+                      'administrator',
+                    ],
+                  ]
+                ),
+              ]
+            ),
+          ]
+        ),
+      ]
+    );
 
     $this->userSegmentQueryBuilder->getUserIds($rules);
   }
@@ -396,34 +388,32 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('The "relationship" property is required for the role condition.');
 
-    $rules = [
-      new Rule(
-        id: 1,
-        plugin: ProfileUserSegmentRule::PLUGIN_ID,
-        conditionGroups: [
-          new ConditionGroup(
-            conjunction: ConditionGroupConjunction::And,
-            conditions: [
-              new Condition(
-                condition_type: 'user_roles',
-                properties: [
-                  new Property(
-                    property_type: 'role',
-                    relationship: NULL,
-                    match: PropertyMatch::Any,
-                    config: [
-                      'value' => [
-                        'administrator',
-                      ],
-                    ]
-                  ),
-                ]
-              ),
-            ]
-          ),
-        ]
-      ),
-    ];
+    $rules = new Rule(
+      id: 1,
+      plugin: ProfileUserSegmentRule::PLUGIN_ID,
+      conditionGroups: [
+        new ConditionGroup(
+          conjunction: ConditionGroupConjunction::And,
+          conditions: [
+            new Condition(
+              condition_type: 'user_roles',
+              properties: [
+                new Property(
+                  property_type: 'role',
+                  relationship: NULL,
+                  match: PropertyMatch::Any,
+                  config: [
+                    'value' => [
+                      'administrator',
+                    ],
+                  ]
+                ),
+              ]
+            ),
+          ]
+        ),
+      ]
+    );
 
     $this->userSegmentQueryBuilder->getUserIds($rules);
   }
@@ -441,32 +431,30 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Role list must be a non-empty array.');
 
-    $rules = [
-      new Rule(
-        id: 1,
-        plugin: ProfileUserSegmentRule::PLUGIN_ID,
-        conditionGroups: [
-          new ConditionGroup(
-            conjunction: ConditionGroupConjunction::And,
-            conditions: [
-              new Condition(
-                condition_type: 'user_roles',
-                properties: [
-                  new Property(
-                    property_type: 'role',
-                    relationship: PropertyRelationship::Include,
-                    match: PropertyMatch::Any,
-                    config: [
-                      'value' => 'administrator',
-                    ]
-                  ),
-                ]
-              ),
-            ]
-          ),
-        ]
-      ),
-    ];
+    $rules = new Rule(
+      id: 1,
+      plugin: ProfileUserSegmentRule::PLUGIN_ID,
+      conditionGroups: [
+        new ConditionGroup(
+          conjunction: ConditionGroupConjunction::And,
+          conditions: [
+            new Condition(
+              condition_type: 'user_roles',
+              properties: [
+                new Property(
+                  property_type: 'role',
+                  relationship: PropertyRelationship::Include,
+                  match: PropertyMatch::Any,
+                  config: [
+                    'value' => 'administrator',
+                  ]
+                ),
+              ]
+            ),
+          ]
+        ),
+      ]
+    );
 
     $this->userSegmentQueryBuilder->getUserIds($rules);
   }
@@ -484,35 +472,33 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Role list must contain unique values.');
 
-    $rules = [
-      new Rule(
-        id: 1,
-        plugin: ProfileUserSegmentRule::PLUGIN_ID,
-        conditionGroups: [
-          new ConditionGroup(
-            conjunction: ConditionGroupConjunction::And,
-            conditions: [
-              new Condition(
-                condition_type: 'user_roles',
-                properties: [
-                  new Property(
-                    property_type: 'role',
-                    relationship: PropertyRelationship::Include,
-                    match: PropertyMatch::Any,
-                    config: [
-                      'value' => [
-                        'administrator',
-                        'administrator',
-                      ],
-                    ]
-                  ),
-                ]
-              ),
-            ]
-          ),
-        ]
-      ),
-    ];
+    $rules = new Rule(
+      id: 1,
+      plugin: ProfileUserSegmentRule::PLUGIN_ID,
+      conditionGroups: [
+        new ConditionGroup(
+          conjunction: ConditionGroupConjunction::And,
+          conditions: [
+            new Condition(
+              condition_type: 'user_roles',
+              properties: [
+                new Property(
+                  property_type: 'role',
+                  relationship: PropertyRelationship::Include,
+                  match: PropertyMatch::Any,
+                  config: [
+                    'value' => [
+                      'administrator',
+                      'administrator',
+                    ],
+                  ]
+                ),
+              ]
+            ),
+          ]
+        ),
+      ]
+    );
 
     $this->userSegmentQueryBuilder->getUserIds($rules);
   }
@@ -523,34 +509,32 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
    * Scenario: 2.a.
    */
   public function testGetEmptyResults(): void {
-    $rules = [
-      new Rule(
-        id: 1,
-        plugin: ProfileUserSegmentRule::PLUGIN_ID,
-        conditionGroups: [
-          new ConditionGroup(
-            conjunction: ConditionGroupConjunction::And,
-            conditions: [
-              new Condition(
-                condition_type: 'user_roles',
-                properties: [
-                  new Property(
-                    property_type: 'role',
-                    relationship: PropertyRelationship::Include,
-                    match: PropertyMatch::All,
-                    config: [
-                      'value' => [
-                        'sitemanager',
-                      ],
-                    ]
-                  ),
-                ]
-              ),
-            ]
-          ),
-        ]
-      ),
-    ];
+    $rules = new Rule(
+      id: 1,
+      plugin: ProfileUserSegmentRule::PLUGIN_ID,
+      conditionGroups: [
+        new ConditionGroup(
+          conjunction: ConditionGroupConjunction::And,
+          conditions: [
+            new Condition(
+              condition_type: 'user_roles',
+              properties: [
+                new Property(
+                  property_type: 'role',
+                  relationship: PropertyRelationship::Include,
+                  match: PropertyMatch::All,
+                  config: [
+                    'value' => [
+                      'sitemanager',
+                    ],
+                  ]
+                ),
+              ]
+            ),
+          ]
+        ),
+      ]
+    );
 
     $user_ids = $this->userSegmentQueryBuilder->getUserIds($rules);
     $this->assertCount(0, $user_ids, 'Should return exactly 0 users being site managers, because none of the users have this role assigned.');
@@ -631,38 +615,36 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
   /**
    * Returns a user segment with a site manager rule.
    *
-   * @return \Drupal\user_segments\DataObject\Rule[]
+   * @return \Drupal\user_segments\DataObject\Rule
    *   Returns a use segment with a site manager rule.
    */
-  private function getUserSegmentSiteManagerRule(): array {
-    return [
-      new Rule(
-        id: 1,
-        plugin: ProfileUserSegmentRule::PLUGIN_ID,
-        conditionGroups: [
-          new ConditionGroup(
-            conjunction: ConditionGroupConjunction::And,
-            conditions: [
-              new Condition(
-                condition_type: 'user_roles',
-                properties: [
-                  new Property(
-                    property_type: 'role',
-                    relationship: PropertyRelationship::Include,
-                    match: PropertyMatch::All,
-                    config: [
-                      'value' => [
-                        'sitemanager',
-                      ],
-                    ]
-                  ),
-                ]
-              ),
-            ]
-          ),
-        ]
-      ),
-    ];
+  private function getUserSegmentSiteManagerRule(): Rule {
+    return new Rule(
+      id: 1,
+      plugin: ProfileUserSegmentRule::PLUGIN_ID,
+      conditionGroups: [
+        new ConditionGroup(
+          conjunction: ConditionGroupConjunction::And,
+          conditions: [
+            new Condition(
+              condition_type: 'user_roles',
+              properties: [
+                new Property(
+                  property_type: 'role',
+                  relationship: PropertyRelationship::Include,
+                  match: PropertyMatch::All,
+                  config: [
+                    'value' => [
+                      'sitemanager',
+                    ],
+                  ]
+                ),
+              ]
+            ),
+          ]
+        ),
+      ]
+    );
   }
 
   /**
@@ -709,9 +691,8 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     // Create users and rules.
     $users = $this->createUsers();
     $rule = $this->buildRule(1, $rule);
-    $rules = [$rule];
 
-    $results = $this->userSegmentQueryBuilder->getUserIds($rules);
+    $results = $this->userSegmentQueryBuilder->getUserIds($rule);
     $segmented_users = array_map(
       fn ($uid) => $users[$uid],
       $results
@@ -754,7 +735,7 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     );
 
     // Execute query.
-    $results = $this->userSegmentQueryBuilder->getUserIds([$rule_group]);
+    $results = $this->userSegmentQueryBuilder->getUserIds($rule_group);
     $segmented_users = array_map(
       fn ($uid) => $users[$uid],
       $results
