@@ -730,8 +730,9 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     $rule_1 = $this->buildRule(1, $rules[0]);
     $rule_2 = $this->buildRule(2, $rules[1]);
     $rule_group = new RuleGroup(
-      $conjunction,
-      [$rule_1, $rule_2]
+      id: 3,
+      conjunction: $conjunction,
+      rules: [$rule_1, $rule_2]
     );
 
     // Execute query.
