@@ -5,6 +5,6 @@ social_comment.unpublish:
     _controller: '\Drupal\social_comment\Controller\SocialCommentController::commentUnpublish'
     entity_type: 'comment'
   requirements:
-    _permission: 'administer comments'
+    _entity_access: 'comment.unpublish'
     _csrf_token: 'TRUE'
     comment: \d+

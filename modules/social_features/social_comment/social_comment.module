@@ -187,7 +187,7 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
 function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
   $account = \Drupal::currentUser();
 
-  if ($entity->isPublished() && $account->hasPermission('administer comments')) {
+  if ($entity->isPublished() && $entity->access('unpublish', $account)) {
     $links['comment']['#links']['comment-unpublish'] = [
       'title' => t('Unpublish'),
       'url' => Url::fromRoute('social_comment.unpublish', ['comment' => $entity->id()]),
