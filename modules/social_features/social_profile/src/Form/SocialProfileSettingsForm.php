@@ -20,6 +20,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 
   /**
+   * The settings configuration key for social profiles.
+   *
+   * @var string
+   */
+  const SETTINGS = 'social_profile.settings';
+
+  /**
    * The database.
    *
    * @var \Drupal\Core\Database\Connection
