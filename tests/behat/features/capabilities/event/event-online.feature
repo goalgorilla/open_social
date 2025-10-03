@@ -21,17 +21,17 @@ Feature: Create/update online events
 
     # Make sure the "Online" checkbox is visible.
     Then I should see "Online"
-    And I should not see "Custom Link"
+    And I should not see "Join link"
 
-    # Check the "BigBlueButton" and "Custom Link" options visibility.
+    # Check the "BigBlueButton" and "Join link" options visibility.
     And I check the box "Online"
     And I wait for AJAX to finish
-    And I should see "Custom Link"
+    And I should see "Join link"
     And I uncheck the box "Online"
     And I wait for AJAX to finish
-    And I should not see "Custom Link"
+    And I should not see "Join link"
 
-    # Create event with Custom Link meeting.
+    # Create event with Join link meeting.
     And I check the box "Online"
     And I wait for AJAX to finish
     And I click the element with css selector ".meeting-type-wrapper .meeting-type-label"
@@ -50,4 +50,4 @@ Feature: Create/update online events
     And I press "Save"
     And I should see "Online Event has been updated"
     And I click "Edit content"
-    And I should not see "Custom Link"
+    And I should not see "Join link"
