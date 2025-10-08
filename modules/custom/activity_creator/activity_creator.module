@@ -17,7 +17,9 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\activity_creator\Entity\Activity;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\search_api\Task\TaskInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Activity statuses.
@@ -341,6 +343,17 @@ function _activity_creator_activity_for_entity_updater($action, EntityInterface 
 
     // Ignore Task entity from search api module.
     if (\Drupal::moduleHandler()->moduleExists('search_api') && $entity instanceof TaskInterface) {
+      return;
+    }
+
+    // Ignore user and group entities upon entity update.
+    // The invalidation of cache tags is causing a huge performance issues for
+    // users with many activities associated with them. Similar, but not as
+    // bad, for groups.
+    //
+    // @todo Re-evaluate whether this entire update hook is needed.
+    if ($action === 'update' &&
+      ($entity instanceof UserInterface || $entity instanceof GroupInterface)) {
       return;
     }
 
