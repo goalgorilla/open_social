@@ -72,10 +72,19 @@ class FormElementLabel extends BaseFormElementLabel {
       if (in_array($element['#id'], $locale_settings)) {
         $variables->addClass('control-label--wide');
       }
+
+      // Provide meaningful labels for VBO checkboxes to ensure accessibility.
+      if (
+        str_contains($element['#id'], 'edit-social-views-bulk-operations-bulk-form-invites') !== FALSE &&
+        isset($element['#is_checkbox']) &&
+        empty($element['#title'])
+      ) {
+        $variables['title'] = t('Anonymous Invited user');
+        $variables['title_display'] = 'invisible';
+      }
     }
 
     parent::preprocessElement($element, $variables);
-
   }
 
 }
