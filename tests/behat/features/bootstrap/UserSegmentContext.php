@@ -9,6 +9,8 @@ use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\user_segments\DataObject\Rule;
+use Drupal\user_segments\DataObject\RuleGroup;
 use Drupal\user_segments\Entity\UserSegment;
 use Drupal\social\Behat\EntityTrait;
 use Drupal\social\Behat\UserSegmentTrait;
@@ -195,7 +197,7 @@ class UserSegmentContext extends RawMinkContext {
         $page->fillField("Visibility option label", $value);
       }
       elseif ($key === "rules") {
-        $id = "edit-rules-0-value";
+        $id = "user-segment-value";
         // Skipping fillField() for "rules" since the field is inside a
         // container with display: none, which makes it inaccessible to Mink's
         // standard form interaction methods.
@@ -355,9 +357,14 @@ class UserSegmentContext extends RawMinkContext {
     $userSegment['uid'] = $account->id();
     unset($userSegment['author']);
 
-    // Convert rules to JSON string if it's an array
-    if (isset($userSegment['rules']) && is_array($userSegment['rules'])) {
-      $userSegment['rules'] = json_encode($userSegment['rules']);
+    // User segment rules are passed as JSON string from the test to the entity.
+    if (isset($userSegment['rules']) && is_string($userSegment['rules'])) {
+      $rules = json_decode($userSegment['rules'], TRUE, 512, JSON_THROW_ON_ERROR);
+      $userSegment['rules'] = match ($rules['type'] ?? '') {
+        'rule' => Rule::fromArray($rules),
+        'rule_group' => RuleGroup::fromArray($rules),
+        default => throw new \InvalidArgumentException("Unknown top-level type '{$rules['type']}', expected 'rule' or 'rule_group'."),
+      };
     }
 
     // Let's create some user segments.
