@@ -60,8 +60,8 @@ class NotificationsController extends ControllerBase {
     $response->addCommand(new HtmlCommand('.js-notification-center-wrapper', $rendered_view));
 
     // Update the notification count to mark as seen.
-    $notification_count = $this->activities->markAllNotificationsAsSeen($this->currentUser()) ? 0 : count($this->activities->getNotifications($this->currentUser()));
-    $response->addCommand(new HtmlCommand('.notification-bell .badge', $notification_count));
+    $notification_count = $this->activities->markAllNotificationsAsSeen($this->currentUser()) ? 0 : $this->activities->getNotificationsCount($this->currentUser());
+    $response->addCommand(new HtmlCommand('.notification-bell .badge', (string) $notification_count));
 
     return $response;
   }

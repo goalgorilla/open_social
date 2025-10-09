@@ -61,6 +61,21 @@ class ActivityNotifications extends ControllerBase {
   }
 
   /**
+   * Returns the count of Notifications for a given account.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account object to get notifications for.
+   * @param array $status
+   *   Filter by status.
+   *
+   * @return int
+   *   The amount of notifications.
+   */
+  public function getNotificationsCount(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]): int {
+    return $this->getNotificationIdsCount($account, $status);
+  }
+
+  /**
    * Returns the Activity objects with destination 'notification' for account.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
@@ -218,6 +233,43 @@ class ActivityNotifications extends ControllerBase {
       }
     }
     return [];
+  }
+
+  /**
+   * Returns the Activity ids for an account with destination 'notification'.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account object.
+   * @param array $status
+   *   Array of notification statuses.
+   *
+   * @return int
+   *   Returns a count of notification ids or 0.
+   */
+  protected function getNotificationIdsCount(AccountInterface $account, array $status = []): int {
+    $count = 0;
+
+    if (!empty($uid = $account->id())) {
+      try {
+        $query = $this->database->select('activity_notification_status', 'ans')
+          ->fields('ans', ['aid'])
+          ->condition('uid', (string) $uid);
+
+        if (!empty($status)) {
+          $query->condition('status', $status, 'IN');
+        }
+
+        $query = $query->countQuery();
+        $result = $query->execute();
+        $count = $result ? $result->fetchField() : 0;
+      }
+      catch (\Exception $exception) {
+        // Log the exception to watchdog.
+        $this->getLogger('default')->error($exception->getMessage());
+        $count = 0;
+      }
+    }
+    return $count;
   }
 
   /**

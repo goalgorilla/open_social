@@ -254,9 +254,23 @@ function social_activity_theme($existing, $type, $theme, $path) {
  * @see \Drupal\activity_creator\ActivityNotifications
  */
 function social_activity_social_account_notifications_counter(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]) : int {
-  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
+  $cache = &drupal_static(__FUNCTION__);
 
-  return count($account_notifications->getNotifications($account, $status)) ?? 0;
+  // Create a cache key based on user ID and status.
+  $cache_key = $account->id() . ':' . implode(',', $status);
+
+  // Return cached result if available.
+  if (isset($cache[$cache_key])) {
+    return $cache[$cache_key];
+  }
+
+  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
+  $count = $account_notifications->getNotificationsCount($account, $status);
+
+  // Cache the result.
+  $cache[$cache_key] = $count;
+
+  return $count;
 }
 
 /**
