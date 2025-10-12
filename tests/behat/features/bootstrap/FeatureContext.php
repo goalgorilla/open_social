@@ -315,7 +315,7 @@ class FeatureContext extends RawMinkContext {
    * implementation is accessible, it should be possible to replace this step
    * with "I click :link".
    *
-   * @When I click :linkText in the row containing :text |ACCESSIBILITY ISSUE|
+   * @When I click :linkText in the row containing :text !ACCESSIBILITY ISSUE!
    */
   public function iClickLinkInRow(string $linkText, string $text) : void {
     $session = $this->getSession();
