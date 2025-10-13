@@ -41,6 +41,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     "group",
     "paragraphs",
     "entity_reference_revisions",
+    "hux",
     // The actual module under test.
     "social_profile",
   ];
@@ -62,6 +63,8 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    */
   protected function setUp() : void {
     parent::setUp();
+    // Paragraphs needs for getting affiliation data.
+    $this->installEntitySchema('paragraph');
 
     $this->installEntitySchema('profile_type');
     $this->installEntitySchema('profile');

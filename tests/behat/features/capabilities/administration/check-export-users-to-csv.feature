@@ -78,7 +78,7 @@ Feature: Export users
     And I should see the text "Export the selected users to CSV (3)"
     And the file downloaded from "Download file" should have contents:
       """
-     "User ID",UUID,"First name","Last name",Username,"Display name",Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,Organization,Function,Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
+     "User ID",UUID,"First name","Last name",Username,"Display name",Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,"Primary affiliation",Function,Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
       4,5d0df1b9-ee3b-4356-9e48-8891fadfff85,,,ExportUser3,ExportUser3,exportuser3@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,1,1,"Test group 1 (1)",0
       3,34fff0f1-8897-4ca8-a682-707c9dd87501,,,ExportUser2,ExportUser2,exportuser2@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,0,0,,0
       2,85e14211-147c-4f01-ae18-b97300671de6,,,ExportUser1,ExportUser1,exportuser1@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,0,0,,1
@@ -109,7 +109,7 @@ Feature: Export users
     And I should see the text "Export the selected users to CSV (3)"
     And the file downloaded from "Download file" should have contents:
       """
-      "User ID",UUID,"First name","Last name",Username,"Display name",Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,Organization,Function,"Organization Tag",Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
+      "User ID",UUID,"First name","Last name",Username,"Display name",Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,"Primary affiliation",Function,"Organization Tag",Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
       4,5d0df1b9-ee3b-4356-9e48-8891fadfff85,,,ExportUser3,ExportUser3,exportuser3@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,1,1,"Test group 1 (1)",0
       3,34fff0f1-8897-4ca8-a682-707c9dd87501,,,ExportUser2,ExportUser2,exportuser2@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,0,0,,0
       2,85e14211-147c-4f01-ae18-b97300671de6,,,ExportUser1,ExportUser1,exportuser1@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,0,0,,1
@@ -140,7 +140,7 @@ Feature: Export users
     And I should see the text "Export the selected users to CSV (3)"
     And the file downloaded from "Download file" should have contents:
       """
-      "User ID",UUID,"First name","Last name",Username,"Display name",Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,Organization,Function,Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes","Number of Private messages"
+      "User ID",UUID,"First name","Last name",Username,"Display name",Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,"Primary affiliation",Function,Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes","Number of Private messages"
       4,5d0df1b9-ee3b-4356-9e48-8891fadfff85,,,ExportUser3,ExportUser3,exportuser3@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,1,1,"Test group 1 (1)",0,0
       3,34fff0f1-8897-4ca8-a682-707c9dd87501,,,ExportUser2,ExportUser2,exportuser2@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,0,0,,0,0
       2,85e14211-147c-4f01-ae18-b97300671de6,,,ExportUser1,ExportUser1,exportuser1@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,0,0,,1,0
@@ -183,7 +183,7 @@ Feature: Export users
     And I should see the text "Export the selected users to CSV (3)"
     And the file downloaded from "Download file" should have contents:
         """
-        "User ID",UUID,"First name","Last name",Username,"Display name",Nickname,Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,Organization,Function,Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
+        "User ID",UUID,"First name","Last name",Username,"Display name",Nickname,Email,"Last login","Last activity","Registration date",Status,"Country code","Administrative address","Address locality","Postal code","Address line 1","Address line 2","Phone number",Nationality,"Primary affiliation",Function,Skills,Interests,Summary,"Self introduction","Profile tag",Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
         4,5d0df1b9-ee3b-4356-9e48-8891fadfff85,,,ExportUser3,ExportUser3,,exportuser3@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,1,1,"Test group 1 (1)",0
         3,34fff0f1-8897-4ca8-a682-707c9dd87501,,,ExportUser2,ExportUser2,,exportuser2@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,0,0,,0
         2,85e14211-147c-4f01-ae18-b97300671de6,,,ExportUser1,ExportUser1,,exportuser1@example.com,never,never,"02/17/2023 - 14:42",Active,,,,,,,,,,,,,,,,"authenticated, verified",1,1,1,1,1,0,0,,1
@@ -225,10 +225,10 @@ Feature: Export users
     And I should see the text "Export the selected users to CSV (3)"
     And the file downloaded from "Download file" should have contents:
       """
-      "User ID",UUID,Username,"Display name",Email,"Last login","Last activity","Registration date",Status,Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
-      4,5d0df1b9-ee3b-4356-9e48-8891fadfff85,ExportUser3,ExportUser3,exportuser3@example.com,never,never,"02/17/2023 - 14:42",Active,"authenticated, verified",1,1,1,1,1,1,1,"Test group 1 (1)",0
-      3,34fff0f1-8897-4ca8-a682-707c9dd87501,ExportUser2,ExportUser2,exportuser2@example.com,never,never,"02/17/2023 - 14:42",Active,"authenticated, verified",1,1,1,1,1,0,0,,0
-      2,85e14211-147c-4f01-ae18-b97300671de6,ExportUser1,ExportUser1,exportuser1@example.com,never,never,"02/17/2023 - 14:42",Active,"authenticated, verified",1,1,1,1,1,0,0,,1
+      "User ID",UUID,Username,"Display name",Email,"Last login","Last activity","Registration date",Status,"Primary affiliation",Function,Roles,"Posts created","Comments created","Topics created","Events created","Event enrollments","Groups created","Group memberships","Group memberships (specified)","Number of Likes"
+      4,5d0df1b9-ee3b-4356-9e48-8891fadfff85,ExportUser3,ExportUser3,exportuser3@example.com,never,never,"02/17/2023 - 14:42",Active,,,"authenticated, verified",1,1,1,1,1,1,1,"Test group 1 (1)",0
+      3,34fff0f1-8897-4ca8-a682-707c9dd87501,ExportUser2,ExportUser2,exportuser2@example.com,never,never,"02/17/2023 - 14:42",Active,,,"authenticated, verified",1,1,1,1,1,0,0,,0
+      2,85e14211-147c-4f01-ae18-b97300671de6,ExportUser1,ExportUser1,exportuser1@example.com,never,never,"02/17/2023 - 14:42",Active,,,"authenticated, verified",1,1,1,1,1,0,0,,1
       """
 
   Scenario: The export group members is not displayed if every export plugin is disabled

@@ -16,8 +16,6 @@ Feature: I want to have a profile
     When I fill in the following:
       | First name | Edit |
       | Last name  | Profile |
-      | Function   | Behat test |
-      | Organization | GoalGorilla |
       | Phone number | 911 |
     And I select "UA" from "Country"
     And I wait for AJAX to finish
@@ -34,8 +32,6 @@ Feature: I want to have a profile
 
     And I should see "Edit"
     And I should see "Profile"
-#    And I should see "GoalGorilla"
-#    And I should see "Behat test"
     And I should see "911"
     And I should see "Fedkovycha 60a"
     And I should see "79000"

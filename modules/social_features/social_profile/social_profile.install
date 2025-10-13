@@ -500,8 +500,10 @@ function social_profile_update_250005(array &$sandbox): MarkupInterface {
 
     $original = $profile->get('field_other_affiliations')->getValue();
     $profile->addNonPlatformAffiliation($organization_value, $function_value);
-    $is_changed = $profile->get('field_other_affiliations')->getValue() !== $original;
+    // Set an affiliation checkbox as well.
+    $profile->set('field_enable_other_affiliations', TRUE);
 
+    $is_changed = $profile->get('field_other_affiliations')->getValue() !== $original;
     if ($is_changed) {
       $profile->save();
     }

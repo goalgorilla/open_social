@@ -57,11 +57,11 @@ class ProfileSchemaExtension extends SchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('Profile', 'function',
-      $builder->fromPath('entity:profile', 'field_profile_function.0.value')
+      $builder->callback(fn ($profile) => (string) $profile->getPrimaryAffiliationFunction())
     );
 
     $registry->addFieldResolver('Profile', 'organization',
-      $builder->fromPath('entity:profile', 'field_profile_organization.0.value')
+      $builder->callback(fn ($profile) => (string) $profile->getPrimaryAffiliationName())
     );
   }
 

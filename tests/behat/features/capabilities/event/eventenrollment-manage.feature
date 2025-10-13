@@ -75,7 +75,6 @@ Feature: Manage event enrollment
 
     Then I should see the text "2 Enrollees"
     And I should see the link "Enrollee"
-    And I should see the link "Organization"
     And I should see the link "Enroll date"
     And I should see the text "Operation"
 
