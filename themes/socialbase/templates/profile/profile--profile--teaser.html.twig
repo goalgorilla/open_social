@@ -62,15 +62,11 @@
               <use xlink:href="#icon-business_center"></use>
             </svg>
             <span class="teaser__content-text">
-            {% if content.field_profile_organization_reference %}
-              {{ '@function at @organization'|t({'@function': content.primary_affiliation_function|render, '@organization': content.field_profile_organization_reference|render}) }}
-            {% else %}
-              {% if content.primary_affiliation_name['#markup'] %}
-                {{ '@function at @organization'|t({'@function': content.primary_affiliation_function|render, '@organization': content.primary_affiliation_name|render}) }}
+              {% if content.primary_affiliation_function['#markup'] and content.primary_affiliation_name['#markup'] %}
+                {{ '@affiliation_function at @affiliation_name'|t({'@affiliation_function': content.primary_affiliation_function|render, '@affiliation_name': content.primary_affiliation_name|render}) }}
               {% else %}
                 {{ content.primary_affiliation_function }}
               {% endif %}
-            {% endif %}
           </span>
           </div>
         {% endif %}

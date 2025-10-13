@@ -11,8 +11,8 @@
 {% block preview_popup_user_number %}{% endblock %}
 
 {% block preview_popup_type %}
-  {% if content.field_profile_organization_reference %}
-    {{ content.field_profile_organization_reference }}
+  {% if content.primary_affiliation_name['#markup'] %}
+    {{ content.primary_affiliation_name }}
   {% else %}
     {% if content.primary_affiliation_function['#markup'] %}
       <div class="preview-popup-types--wrapper">

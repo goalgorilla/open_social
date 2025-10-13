@@ -9,9 +9,7 @@
   <div class="card__info-user--about">
     <div class="card__info-user--about-job">{{ content.primary_affiliation_function }}</div>
     <div class="card__info-user--about-organization" translate="no">
-      {% if content.field_profile_organization_reference %}
-        {{ content.field_profile_organization_reference }}
-      {% else %}
+      {% if content.primary_affiliation_name['#markup'] %}
         {{ content.primary_affiliation_name }}
       {% endif %}
     </div>

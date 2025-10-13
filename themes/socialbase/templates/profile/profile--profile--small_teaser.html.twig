@@ -39,20 +39,14 @@
       </a>
     </div>
 
-    {% if content.field_profile_organization_reference %}
+    {% if content.primary_affiliation_function['#markup'] or content.primary_affiliation_name['#markup'] %}
       <div class="teaser--small__meta">
-        {{ '@function @ <span class="notranslate">@organization</span>'|t({'@function': content.primary_affiliation_function|render, '@organization': content.field_profile_organization_reference|render}) }}
+        {% if content.primary_affiliation_name['#markup'] %}
+          {{ '@affiliation_function @ <span class="notranslate">@affiliation_name</span>'|t({'@affiliation_function': content.primary_affiliation_function|render, '@affiliation_name': content.primary_affiliation_name|render}) }}
+        {% else %}
+          {{ content.primary_affiliation_function }}
+        {% endif %}
       </div>
-    {% else %}
-      {% if content.primary_affiliation_function['#markup'] or content.primary_affiliation_name['#markup'] %}
-        <div class="teaser--small__meta">
-          {% if content.primary_affiliation_name['#markup'] %}
-            {{ '@function @ <span class="notranslate">@organization</span>'|t({'@function': content.primary_affiliation_function|render, '@organization': content.primary_affiliation_name|render}) }}
-          {% else %}
-            {{ content.primary_affiliation_function }}
-          {% endif %}
-        </div>
-      {% endif %}
     {% endif %}
   </div>
 
