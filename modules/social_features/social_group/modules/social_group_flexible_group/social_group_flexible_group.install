@@ -458,3 +458,13 @@ function social_group_flexible_group_update_130016(): string {
   $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Add affiliation feature for "Flexible Group" group type.
+ */
+function social_group_flexible_group_update_130017(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+  $update_helper->executeUpdate('social_group_flexible_group', __FUNCTION__);
+  return $update_helper->logger()->output();
+}

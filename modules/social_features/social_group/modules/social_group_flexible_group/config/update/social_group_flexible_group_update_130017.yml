@@ -1,0 +1,40 @@
+__global_actions:
+  import_configs:
+    - field.field.group_content.flexible_group-group_membership.field_affiliation_function
+
+core.entity_form_display.group_content.flexible_group-group_membership.default:
+  expected_config: { }
+  update_actions:
+    add:
+      dependencies:
+        config:
+          - field.field.group_content.flexible_group-group_membership.field_affiliation_function
+      hidden:
+        field_affiliation_function: true
+
+core.entity_view_display.group_content.flexible_group-group_membership.default:
+  expected_config: { }
+  update_actions:
+    add:
+      dependencies:
+        config:
+          - field.field.group_content.flexible_group-group_membership.field_affiliation_function
+      hidden:
+        field_affiliation_function: true
+
+core.entity_form_display.group_content.flexible_group-group_membership.affiliation:
+  expected_config: { }
+  update_actions:
+    add:
+      content:
+        field_affiliation_function:
+          type: string_textfield
+          weight: 0
+          region: content
+          settings:
+            size: 60
+            placeholder: ''
+          third_party_settings: { }
+    delete:
+      hidden:
+        field_affiliation_function: ~
