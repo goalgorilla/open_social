@@ -93,6 +93,10 @@ class SocialNodeForm extends NodeForm {
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = $this->buildEntity($form, $form_state);
 
+    if (empty($form['field_content_visibility'])) {
+      return $entity;
+    }
+
     // Get visibility options.
     $visibilities = $form['field_content_visibility']['widget']['#options'];
 

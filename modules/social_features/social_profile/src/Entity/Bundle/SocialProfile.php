@@ -2,6 +2,11 @@
 
 namespace Drupal\social_profile\Entity\Bundle;
 
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupMembership;
+use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\paragraphs\ParagraphInterface;
 use Drupal\profile\Entity\Profile;
 use Drupal\social_profile\AutomaticGroupAffiliation;
 use Drupal\social_profile\Entity\ProfileAffiliationInterface;
@@ -194,6 +199,131 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
    */
   public function hasUserModifiedAffiliations(): bool {
     return $this->userModifiedAffiliations;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getPrimaryAffiliation(): array {
+    // Use a static cache to avoid re-calculating the affiliation.
+    // It's cached per object instance.
+    $affiliation = &drupal_static(__METHOD__ . ':' . $this->uuid());
+    if (isset($affiliation)) {
+      return $affiliation;
+    }
+
+    // Make sure the affiliation feature is enabled globally.
+    if (!\Drupal::service('social_profile.group_affiliation')
+      ->isAffiliationFeatureEnabled()
+    ) {
+      return $affiliation = [];
+    }
+
+    // 1. Read the affiliation function from group membership
+    // selected in the "field_group_affiliation" profile field.
+    if (
+      $this->hasField('field_group_affiliation') &&
+      !$this->get('field_group_affiliation')->isEmpty()
+    ) {
+      $group = $this->get('field_group_affiliation')->entity;
+      assert($group instanceof GroupInterface);
+      $value['affiliation_name'] = $group->label();
+
+      $account = $this->getOwner();
+      $membership = GroupMembership::loadSingle($group, $account);
+      if (
+        $membership instanceof GroupMembership &&
+        $membership->hasField('field_affiliation_function')
+      ) {
+        $value['affiliation_function'] = $membership->get('field_affiliation_function')->getString();
+      }
+    }
+
+    // 2. Get an affiliation function from the "field_other_affiliations" field.
+    if (empty($value)) {
+      if (
+        $this->hasField('field_other_affiliations') &&
+        !$this->get('field_other_affiliations')->isEmpty()
+      ) {
+        $paragraph = $this->get('field_other_affiliations')->entity;
+        if ($paragraph instanceof ParagraphInterface) {
+          $value = [
+            'affiliation_name' => $paragraph->get('field_affiliation_org_name')->getString(),
+            'affiliation_function' => $paragraph->get('field_affiliation_org_function')->getString(),
+          ];
+        }
+      }
+    }
+
+    $affiliation = $value ?? [];
+    return $affiliation;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getPrimaryAffiliationName(): string|MarkupInterface {
+    return $this->getPrimaryAffiliation()['affiliation_name'] ?? '';
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getPrimaryAffiliationFunction(): string|MarkupInterface {
+    return $this->getPrimaryAffiliation()['affiliation_function'] ?? '';
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function addNonPlatformAffiliation(?string $affiliation_name = NULL, ?string $affiliation_function = NULL): static {
+    if (empty($affiliation_name) && empty($affiliation_function)) {
+      return $this;
+    }
+
+    // Check if the affiliation doesn't exist.
+    // Make sure we don't create a paragraph with the same values (duplicate).
+    if (!$this->get('field_other_affiliations')->isEmpty()) {
+      $paragraph_ids = array_column($this->get('field_other_affiliations')->getValue(), 'target_id');
+      $paragraphs_query = \Drupal::entityQuery('paragraph')
+        ->accessCheck(FALSE)
+        ->condition('type', 'other_affiliations')
+        ->condition('id', $paragraph_ids, 'IN');
+
+      if ($affiliation_name) {
+        $paragraphs_query->condition('field_affiliation_org_name', $affiliation_name);
+      }
+      else {
+        $paragraphs_query->notExists('field_affiliation_org_name');
+      }
+
+      if ($affiliation_function) {
+        $paragraphs_query->condition('field_affiliation_org_function', $affiliation_function);
+      }
+      else {
+        $paragraphs_query->notExists('field_affiliation_org_function');
+      }
+
+      $exists = $paragraphs_query->execute();
+      if ($exists) {
+        return $this;
+      }
+    }
+
+    $paragraph = Paragraph::create([
+      'type' => 'other_affiliations',
+      'field_affiliation_org_name' => $affiliation_name,
+      'field_affiliation_org_function' => $affiliation_function,
+    ]);
+    $paragraph->save();
+
+    // Append the paragraph reference to the profile field.
+    $this->get('field_other_affiliations')->appendItem([
+      'target_id' => $paragraph->id(),
+      'target_revision_id' => $paragraph->getRevisionId(),
+    ]);
+
+    return $this;
   }
 
 }

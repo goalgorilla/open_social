@@ -4,14 +4,13 @@ namespace Drupal\social_profile\Hooks;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\hux\Attribute\Alter;
 use Drupal\hux\Attribute\Hook;
-use Drupal\paragraphs\ParagraphInterface;
+use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_profile\Form\SocialProfileSettingsForm;
 use Drupal\social_profile\GroupAffiliation;
 use Drupal\profile\Entity\ProfileInterface;
@@ -35,13 +34,10 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
    *   Group affiliation service.
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The entity type manager service.
    */
   public function __construct(
     protected GroupAffiliation $groupAffiliation,
     protected RequestStack $requestStack,
-    protected EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -51,7 +47,6 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
     return new static(
       $container->get('social_profile.group_affiliation'),
       $container->get('request_stack'),
-      $container->get('entity_type.manager'),
     );
   }
 
@@ -70,10 +65,21 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
    */
   #[Hook('entity_extra_field_info')]
   public function profileEntityExtraFieldInfo(): array {
-    $extra['profile']['profile']['display']['profile_function'] = [
-      'label' => $this->t('Function'),
+    $extra['profile']['profile']['display']['primary_affiliation_name'] = [
+      // @todo Probably, we should use another label for this extra field.
+      'label' => $this->t('Primary Affiliation Name'),
       // By default, please it at the bottom of the profile view mode.
       'weight' => 100,
+      // Hidden by default.
+      'visible' => FALSE,
+    ];
+
+    $extra['profile']['profile']['display']['primary_affiliation_function'] = [
+      'label' => $this->t('Primary Affiliation Function'),
+      // By default, please it at the bottom of the profile view mode.
+      'weight' => 100,
+      // Hidden by default.
+      'visible' => FALSE,
     ];
 
     return $extra;
@@ -104,49 +110,30 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
       ['config:' . SocialProfileSettingsForm::SETTINGS]
     );
 
-    // @todo Replace "field_profile_function" with "profile_function" after
-    //   complete migrating to affiliation feature.
-    //   @see https://getopensocial.atlassian.net/browse/PROD-33090
-    if (!$display->getComponent('field_profile_function')) {
+    if (!$profile instanceof ProfileAffiliationInterface) {
       return;
     }
 
-    // Create an empty build.
-    $build['profile_function'] = [
-      '#type' => 'markup',
-    ];
-
-    // @todo Remove the following after migrating to affiliation feature.
+    // @todo Replace "field_profile_organization" with
+    //   "primary_affiliation_name" after complete migrating
+    //   to affiliation feature.
     //   @see https://getopensocial.atlassian.net/browse/PROD-33090
-    $build['field_profile_function'] =& $build['profile_function'];
-
-    if (!$this->groupAffiliation->isAffiliationFeatureEnabled()) {
-      return;
+    if ($display->getComponent('field_profile_organization')) {
+      $build['field_profile_organization'] = [
+        '#type' => 'markup',
+        '#markup' => trim(strip_tags($profile->getPrimaryAffiliationName())),
+      ];
     }
 
-    // 1. Get an affiliation function from the field.
-    if (
-      $profile->hasField('field_other_affiliations') &&
-      !$profile->get('field_other_affiliations')->isEmpty()
-    ) {
-      /** @var \Drupal\paragraphs\ParagraphInterface|null $paragraph */
-      $paragraph = $profile->get('field_other_affiliations')->entity;
-      if ($paragraph instanceof ParagraphInterface) {
-        $value = $paragraph->get('field_affiliation_org_function')->getString();
-
-        $build['#cache']['tags'] = Cache::mergeTags(
-          $build['#cache']['tags'],
-          $paragraph->getCacheTags()
-        );
-      }
+    // @todo Replace "field_profile_function" with "primary_affiliation_name"
+    //   after complete migrating to affiliation feature.
+    //   @see https://getopensocial.atlassian.net/browse/PROD-33090
+    if ($display->getComponent('field_profile_function')) {
+      $build['field_profile_function'] = [
+        '#type' => 'markup',
+        '#markup' => trim(strip_tags($profile->getPrimaryAffiliationFunction())),
+      ];
     }
-
-    // 2. Fallback: use deprecated profile function field value.
-    if (empty($value)) {
-      $value = $profile->get('field_profile_function')->getString();
-    }
-
-    $build['profile_function']['#markup'] = trim(strip_tags($value));
   }
 
   /**

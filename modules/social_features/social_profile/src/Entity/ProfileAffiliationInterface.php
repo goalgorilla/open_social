@@ -2,6 +2,7 @@
 
 namespace Drupal\social_profile\Entity;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\profile\Entity\ProfileInterface;
 
 /**
@@ -286,5 +287,52 @@ interface ProfileAffiliationInterface extends ProfileInterface {
    *   FALSE otherwise.
    */
   public function hasUserModifiedAffiliations(): bool;
+
+  /**
+   * Retrieves the primary affiliation details of the current entity.
+   *
+   * This method determines the primary group affiliation and associated
+   * function based on the entity's configured fields and group membership.
+   *
+   * @return array
+   *   An associative array containing the following keys:
+   *   - affiliation_name: The name of the affiliation group or organization.
+   *   - affiliation_function: The specific function associated with
+   *     the affiliation.
+   *   If no affiliation is found, an empty array is returned.
+   */
+  public function getPrimaryAffiliation(): array;
+
+  /**
+   * Retrieves the name of the primary affiliation.
+   *
+   * @return string|MarkupInterface
+   *   The name of the primary affiliation or an empty string if not available.
+   */
+  public function getPrimaryAffiliationName(): string|MarkupInterface;
+
+  /**
+   * Retrieves the function of the primary affiliation.
+   *
+   * @return string|MarkupInterface
+   *   The primary affiliation function if available, or an empty string if not.
+   */
+  public function getPrimaryAffiliationFunction(): string|MarkupInterface;
+
+  /**
+   * Adds a non-platform affiliation to the entity if it does not already exist.
+   *
+   * @param string|null $affiliation_name
+   *   The name of the affiliation organization.
+   * @param string|null $affiliation_function
+   *   The function or role within the affiliation organization.
+   *
+   * @return static
+   *   Returns the current instance of the entity with the new affiliation
+   *   added, or unchanged if the affiliation already exists.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function addNonPlatformAffiliation(?string $affiliation_name = NULL, ?string $affiliation_function = NULL): static;
 
 }
