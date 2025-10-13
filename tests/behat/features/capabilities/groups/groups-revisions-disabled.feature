@@ -6,9 +6,9 @@ Feature: Revisions are disabled for open group
 
   Scenario: Successfully edit group and don't see revisions tab
     Given users:
-      | name              | mail             | field_profile_organization | status | roles    |
-      | Group Manager One | gm_1@example.com | GoalGorilla                | 1      | verified |
-      | Group Member Two  | gm_2@example.com | Drupal                     | 1      | verified |
+      | name              | mail             | status | roles    |
+      | Group Manager One | gm_1@example.com | 1      | verified |
+      | Group Member Two  | gm_2@example.com | 1      | verified |
     And I am logged in as "Group Manager One"
     And I am on "group/add/flexible_group"
 

@@ -26,8 +26,6 @@ class Field extends PreprocessBase {
     // For each field that doesn't need a div to wrap the content in.
     switch ($element['#field_name']) {
       case 'field_profile_image':
-      case 'field_profile_function':
-      case 'field_profile_organization':
       case 'field_group_description':
       case 'field_group_address':
       case 'field_group_location':

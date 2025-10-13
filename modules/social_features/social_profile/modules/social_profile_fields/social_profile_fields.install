@@ -190,3 +190,12 @@ function social_profile_fields_update_130002(): void {
     ->set('content', $content)
     ->save();
 }
+
+/**
+ * Remove deprecated fields from "social_profile_fields.settings".
+ */
+function social_profile_fields_update_130003(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile_fields', __FUNCTION__);
+  return $updater->logger()->output();
+}

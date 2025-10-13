@@ -14,15 +14,13 @@
   {% if content.field_profile_organization_reference %}
     {{ content.field_profile_organization_reference }}
   {% else %}
-    {% if content.field_profile_function['#items'] %}
+    {% if content.primary_affiliation_function['#markup'] %}
       <div class="preview-popup-types--wrapper">
-        {% if content.field_profile_function['#items'] %}
-          <div class="item">
-            <span>
-              {{ content.field_profile_function|render|striptags|trim }}
-            </span>
-          </div>
-        {% endif %}
+        <div class="item">
+          <span>
+            {{ content.primary_affiliation_function }}
+          </span>
+        </div>
       </div>
     {% endif %}
   {% endif %}

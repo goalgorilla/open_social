@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 
@@ -10,13 +11,8 @@ use Drupal\user\UserInterface;
  *
  * @UserExportPlugin(
  *  id = "user_organization",
- *  label = @Translation("Organization"),
+ *  label = @Translation("Primary affiliation"),
  *  weight = -320,
- *  dependencies = @PluginDependency(
- *    config = {
- *      "field.field.profile.profile.field_profile_organization",
- *    },
- *  )
  * )
  */
 class UserOrganization extends UserExportPluginBase {
@@ -25,7 +21,7 @@ class UserOrganization extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getHeader() {
-    return $this->t('Organization');
+    return $this->t('Primary affiliation');
   }
 
   /**
@@ -38,7 +34,11 @@ class UserOrganization extends UserExportPluginBase {
    *   The value.
    */
   public function getValue(UserInterface $entity) {
-    return $this->profileGetFieldValue('field_profile_organization', $this->getProfile($entity));
+    $profile = $this->getProfile($entity);
+
+    return $profile instanceof ProfileAffiliationInterface
+      ? $profile->getPrimaryAffiliationName()
+      : '';
   }
 
 }

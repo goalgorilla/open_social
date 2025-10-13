@@ -55,7 +55,7 @@
       {% endblock %}
 
       {% block card_body %}
-        {% if content.field_profile_function|render or content.field_profile_organization|render %}
+        {% if content.primary_affiliation_function['#markup'] or content.primary_affiliation_name['#markup'] %}
           <div class="teaser__content-line">
             <svg class="teaser__content-type-icon">
               <title>{% trans %}User function and organization{% endtrans %}</title>
@@ -63,12 +63,12 @@
             </svg>
             <span class="teaser__content-text">
             {% if content.field_profile_organization_reference %}
-              {{ '@function at @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization_reference|render}) }}
+              {{ '@function at @organization'|t({'@function': content.primary_affiliation_function|render, '@organization': content.field_profile_organization_reference|render}) }}
             {% else %}
-              {% if content.field_profile_organization|render %}
-                {{ '@function at @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
+              {% if content.primary_affiliation_name['#markup'] %}
+                {{ '@function at @organization'|t({'@function': content.primary_affiliation_function|render, '@organization': content.primary_affiliation_name|render}) }}
               {% else %}
-                {{ content.field_profile_function }}
+                {{ content.primary_affiliation_function }}
               {% endif %}
             {% endif %}
           </span>

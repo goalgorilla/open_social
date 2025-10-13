@@ -114,22 +114,15 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
       return;
     }
 
-    // @todo Replace "field_profile_organization" with
-    //   "primary_affiliation_name" after complete migrating
-    //   to affiliation feature.
-    //   @see https://getopensocial.atlassian.net/browse/PROD-33090
-    if ($display->getComponent('field_profile_organization')) {
-      $build['field_profile_organization'] = [
+    if ($display->getComponent('primary_affiliation_name')) {
+      $build['primary_affiliation_name'] = [
         '#type' => 'markup',
         '#markup' => trim(strip_tags($profile->getPrimaryAffiliationName())),
       ];
     }
 
-    // @todo Replace "field_profile_function" with "primary_affiliation_name"
-    //   after complete migrating to affiliation feature.
-    //   @see https://getopensocial.atlassian.net/browse/PROD-33090
-    if ($display->getComponent('field_profile_function')) {
-      $build['field_profile_function'] = [
+    if ($display->getComponent('primary_affiliation_function')) {
+      $build['primary_affiliation_function'] = [
         '#type' => 'markup',
         '#markup' => trim(strip_tags($profile->getPrimaryAffiliationFunction())),
       ];

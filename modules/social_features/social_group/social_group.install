@@ -149,6 +149,11 @@ function social_group_update_dependencies(): array {
     $dependencies['social_group'][13001]['address'] = 9201;
   }
 
+  // Prevent views being removed after removing deprecated profile fields.
+  $dependencies['social_profile'][250006] = [
+    'social_group' => 13024,
+  ];
+
   return $dependencies;
 }
 
@@ -1193,4 +1198,14 @@ function social_group_update_13023() : void {
   if (function_exists('social_search_resave_data_source_search_indexes')) {
     social_search_resave_data_source_search_indexes(['group']);
   }
+}
+
+/**
+ * Remove deprecated profile fields from group members views.
+ */
+function social_group_update_13024(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
 }

@@ -70,3 +70,12 @@ function _social_profile_privacy_get_permissions($role) {
 function social_profile_privacy_update_last_removed() : int {
   return 8002;
 }
+
+/**
+ * Remove the legacy profile fields from "social_registration_fields.settings".
+ */
+function social_profile_privacy_update_25000(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile_privacy', __FUNCTION__);
+  return $updater->logger()->output();
+}

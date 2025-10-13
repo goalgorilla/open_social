@@ -7,8 +7,8 @@ Feature: Embed
   Scenario: Create the files
     Given I enable the module "social_embed"
     And users:
-      | name                  | mail                            | status | field_profile_first_name  | field_profile_last_name | field_profile_organization | field_profile_function | roles    |
-      | embed_1               | embed_1@example.com             | 1      | Em                        | Bed                     | Youtube                    | Anything               | verified |
+      | name    | mail                | status | field_profile_first_name | field_profile_last_name | roles    |
+      | embed_1 | embed_1@example.com | 1      | Em                       | Bed                     | verified |
     And I am logged in as "embed_1"
 
     # Create a topic with one attachment.

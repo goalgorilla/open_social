@@ -10,6 +10,7 @@ use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
@@ -514,4 +515,30 @@ function social_profile_update_250005(array &$sandbox): MarkupInterface {
     '@count' => $sandbox['processed'],
     '@total' => $sandbox['total'],
   ]);
+}
+
+/**
+ * Uninstall deprecated 'field_profile_organization' from profiles.
+ */
+function social_profile_update_250006(): string {
+  $deprecated_fields = [
+    'field_profile_function',
+    'field_profile_organization',
+  ];
+
+  foreach ($deprecated_fields as $name) {
+    // Remove field instance if exists.
+    /** @var \Drupal\field\Entity\FieldConfig|null $field */
+    $field = FieldConfig::load("profile.profile.$name");
+    $field?->delete();
+
+    // Remove field storage if exists and unused.
+    /** @var \Drupal\field\Entity\FieldStorageConfig|null $storage */
+    $storage = FieldStorageConfig::load("profile.$name");
+    $storage?->delete();
+  }
+
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+  return $updater->logger()->output();
 }

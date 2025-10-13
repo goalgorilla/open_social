@@ -1,0 +1,25 @@
+views.view.event_manage_enrollment_requests:
+  expected_config: { }
+  update_actions:
+    delete:
+      dependencies:
+        config:
+          - field.storage.profile.field_profile_organization
+      display:
+        default:
+          display_options:
+            style:
+              options:
+                columns:
+                  field_profile_organization: ~
+                info:
+                  field_profile_organization: ~
+            fields:
+              field_profile_organization: ~
+          cache_metadata:
+            tags:
+              - 'config:field.storage.profile.field_profile_organization'
+        page_manage_enrollment_requests:
+          cache_metadata:
+            tags:
+              - 'config:field.storage.profile.field_profile_organization'

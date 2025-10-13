@@ -1,0 +1,25 @@
+views.view.group_manage_members:
+  expected_config: { }
+  update_actions:
+    delete:
+      dependencies:
+        config:
+          - field.storage.profile.field_profile_organization
+      display:
+        default:
+          display_options:
+            fields:
+              field_profile_organization: ~
+            style:
+              options:
+                columns:
+                  field_profile_organization: ~
+                info:
+                  field_profile_organization: ~
+          cache_metadata:
+            tags:
+              - 'config:field.storage.profile.field_profile_organization'
+        page_group_manage_members:
+          cache_metadata:
+            tags:
+              - 'config:field.storage.profile.field_profile_organization'

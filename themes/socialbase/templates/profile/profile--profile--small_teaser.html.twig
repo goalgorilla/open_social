@@ -41,15 +41,15 @@
 
     {% if content.field_profile_organization_reference %}
       <div class="teaser--small__meta">
-        {{ '@function @ <span class="notranslate">@organization</span>'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization_reference|render}) }}
+        {{ '@function @ <span class="notranslate">@organization</span>'|t({'@function': content.primary_affiliation_function|render, '@organization': content.field_profile_organization_reference|render}) }}
       </div>
     {% else %}
-      {% if content.field_profile_function|render or content.field_profile_organization|render %}
+      {% if content.primary_affiliation_function['#markup'] or content.primary_affiliation_name['#markup'] %}
         <div class="teaser--small__meta">
-          {% if content.field_profile_organization|render %}
-            {{ '@function @ <span class="notranslate">@organization</span>'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
+          {% if content.primary_affiliation_name['#markup'] %}
+            {{ '@function @ <span class="notranslate">@organization</span>'|t({'@function': content.primary_affiliation_function|render, '@organization': content.primary_affiliation_name|render}) }}
           {% else %}
-            {{ content.field_profile_function }}
+            {{ content.primary_affiliation_function }}
           {% endif %}
         </div>
       {% endif %}

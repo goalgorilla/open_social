@@ -116,6 +116,11 @@ function social_event_update_dependencies(): array {
     'social_event' => 130000,
   ];
 
+  // Prevent views being removed after removing deprecated profile fields.
+  $dependencies['social_profile'][250006] = [
+    'social_event' => 130010,
+  ];
+
   return $dependencies;
 }
 
@@ -357,6 +362,16 @@ function social_event_update_130008(): string {
  * Refresh enrollments message templates.
  */
 function social_event_update_130009(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_event', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
+ * Remove deprecated profile fields from event enrollment views.
+ */
+function social_event_update_130010(): string {
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_event', __FUNCTION__);

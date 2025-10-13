@@ -157,8 +157,6 @@ Feature: Export users
     And I set the configuration item "field.field.profile.profile.field_profile_phone_number" with key "status" to 1
     And I set the configuration item "field.field.profile.profile.field_profile_profile_tag" with key "status" to 1
     And I set the configuration item "field.field.profile.profile.field_profile_nationality" with key "status" to 1
-    And I set the configuration item "field.field.profile.profile.field_profile_organization" with key "status" to 1
-    And I set the configuration item "field.field.profile.profile.field_profile_function" with key "status" to 1
     And I set the configuration item "field.field.profile.profile.field_profile_expertise" with key "status" to 1
     And I set the configuration item "field.field.profile.profile.field_profile_interests" with key "status" to 1
     And I set the configuration item "field.field.profile.profile.field_profile_self_introduction" with key "status" to 1
@@ -200,8 +198,6 @@ Feature: Export users
     And I set the configuration item "field.field.profile.profile.field_profile_phone_number" with key "status" to 0
     And I set the configuration item "field.field.profile.profile.field_profile_profile_tag" with key "status" to 0
     And I set the configuration item "field.field.profile.profile.field_profile_nationality" with key "status" to 0
-    And I set the configuration item "field.field.profile.profile.field_profile_organization" with key "status" to 0
-    And I set the configuration item "field.field.profile.profile.field_profile_function" with key "status" to 0
     And I set the configuration item "field.field.profile.profile.field_profile_expertise" with key "status" to 0
     And I set the configuration item "field.field.profile.profile.field_profile_interests" with key "status" to 0
     And I set the configuration item "field.field.profile.profile.field_profile_self_introduction" with key "status" to 0

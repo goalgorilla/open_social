@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 
@@ -12,11 +13,6 @@ use Drupal\user\UserInterface;
  *  id = "user_function",
  *  label = @Translation("Function"),
  *  weight = -310,
- *  dependencies = @PluginDependency(
- *    config = {
- *      "field.field.profile.profile.field_profile_function",
- *    },
- *  )
  * )
  */
 class UserFunction extends UserExportPluginBase {
@@ -32,7 +28,11 @@ class UserFunction extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    return $this->profileGetFieldValue('field_profile_function', $this->getProfile($entity));
+    $profile = $this->getProfile($entity);
+
+    return $profile instanceof ProfileAffiliationInterface
+      ? $profile->getPrimaryAffiliationFunction()
+      : '';
   }
 
 }

@@ -48,18 +48,18 @@
     </header>
 
 
-  {% if (content.field_profile_function|render or content.field_profile_organization|render) or profile_contact_label == 'private_message' %}
+  {% if (content.primary_affiliation_function['#markup'] or content.primary_affiliation_name['#markup']) or profile_contact_label == 'private_message' %}
     <footer class="hero-footer">
   {% endif %}
 
     <div class="hero-footer__text">
-      {% if content.field_profile_function|render %}
-        <strong>{{ content.field_profile_function }}</strong>
+      {% if content.primary_affiliation_function['#markup'] %}
+        <strong>{{ content.primary_affiliation_function }}</strong>
       {% endif %}
-      {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
+      {% if (content.primary_affiliation_function['#markup'] and content.primary_affiliation_name['#markup']) %}
       &nbsp;-&nbsp;
       {% endif %}
-        {{ content.field_profile_organization }}
+        {{ content.primary_affiliation_name }}
     </div>
 
     {% if profile_contact_label == 'private_message' %}
@@ -70,12 +70,12 @@
       </div>
     {% endif %}
 
-  {% if (content.field_profile_function|render or content.field_profile_organization|render) or profile_contact_label == 'private_message' %}
+  {% if (content.primary_affiliation_function['#markup'] or content.primary_affiliation_name['#markup']) or profile_contact_label == 'private_message' %}
     </footer>
   {% endif %}
 
     {# render other fields that developers might add #}
-    {{ content|without('field_profile_first_name', 'field_profile_last_name', 'field_profile_image', 'field_profile_function', 'field_profile_organization') }}
+    {{ content|without('field_profile_first_name', 'field_profile_last_name', 'field_profile_image', 'primary_affiliation_function', 'primary_affiliation_name') }}
   </div>
 
 </div>

@@ -19,7 +19,6 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
-use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\ProfileStorageInterface;
 use Drupal\social_eda\DispatcherInterface;
 use Drupal\social_user\EdaHandler;
@@ -261,6 +260,10 @@ class EdaHandlerTest extends UnitTestCase {
       }
       return NULL;
     });
+
+    // Mock the affiliation data.
+    $this->profile->method('getPrimaryAffiliationFunction')->willReturn('Developer');
+    $this->profile->method('getPrimaryAffiliationName')->willReturn('Organization');
 
     // Mock the User entity.
     $this->user = $this->createMock(UserInterface::class);

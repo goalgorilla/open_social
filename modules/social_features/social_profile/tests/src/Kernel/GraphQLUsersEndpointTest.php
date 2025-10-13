@@ -4,6 +4,7 @@ namespace Drupal\Tests\social_profile\Kernel;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_profile\Entity\Bundle\SocialProfile;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 
 /**
@@ -81,6 +82,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     $this->setUpCurrentUser([], [], TRUE);
     $test_user = $this->createUser();
     $profile = $this->ensureTestProfile($test_user, 'profile');
+    assert($profile instanceof SocialProfile);
     $query = "
       query {
         user(id: \"{$test_user->uuid()}\") {
@@ -115,8 +117,8 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
               'processed' => $profile->get('field_profile_self_introduction')->first()->get('processed')->getString(),
             ],
             'phone' => $profile->get('field_profile_phone_number')->first()->getString(),
-            'function' => $profile->get('field_profile_function')->first()->getString(),
-            'organization' => $profile->get('field_profile_organization')->first()->getString(),
+            'function' => $profile->getPrimaryAffiliationFunction(),
+            'organization' => $profile->getPrimaryAffiliationName(),
           ],
         ],
       ],
@@ -143,6 +145,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
     $profile_storage = $this->container->get('entity_type.manager')->getStorage('profile');
     $profile = $profile_storage->loadByUser($user, $profile_type);
+    assert($profile instanceof SocialProfile);
     $profile
       ->set('field_profile_first_name', $this->randomString())
       ->set('field_profile_last_name', $this->randomString())
@@ -151,8 +154,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
         ['format' => 'basic_html', 'value' => $this->randomString()]
       )
       ->set('field_profile_phone_number', $this->randomString())
-      ->set('field_profile_function', $this->randomString())
-      ->set('field_profile_organization', $this->randomString())
+      ->addNonPlatformAffiliation($this->randomString(), $this->randomString())
       ->save();
 
     return $profile;

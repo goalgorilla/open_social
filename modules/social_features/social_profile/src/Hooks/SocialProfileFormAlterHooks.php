@@ -138,20 +138,14 @@ class SocialProfileFormAlterHooks implements ContainerInjectionInterface {
     // affiliation feature is resolving the same business logic and both
     // features can not co-exist.
     // Fields to remove from UI:
-    // 1. field_profile_organization
-    // 2. field_profile_function
-    // 3. field_profile_organization_tag
-    // 4. field_profile_org_details.
+    // 1. field_profile_organization_tag
+    // 2. field_profile_org_details.
     else {
-      // 1. & 2. Remove "Organization" and "Function" fields from UI.
-      unset($form['field_profile_organization']);
-      unset($form['field_profile_function']);
-
-      // 3. Remove "Organization tag" (field_profile_organization_tag) field.
+      // 1. Remove "Organization tag" (field_profile_organization_tag) field.
       // Module: social_profile_organization_tag
       unset($form['field_profile_organization_tag']);
 
-      // 4. Remove "Organizations" (field_profile_org_details) field.
+      // 2. Remove "Organizations" (field_profile_org_details) field.
       // Module: social_organization
       unset($form['field_profile_org_details']);
     }

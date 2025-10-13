@@ -67,14 +67,6 @@ function social_profile_field_widget_single_element_form_alter(&$element, FormSt
     case 'field_profile_last_name':
       $element['value']['#attributes']['autocomplete'][] = 'family-name';
       break;
-
-    case 'field_profile_organization':
-      $element['value']['#attributes']['autocomplete'][] = 'organization';
-      break;
-
-    case 'field_profile_function':
-      $element['value']['#attributes']['autocomplete'][] = 'organization-title';
-      break;
   }
 
   // This replaces all user entity references with our EntityReferenceSelection.

@@ -9,11 +9,9 @@ dependencies:
     - field.field.profile.profile.field_profile_banner_image
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
-    - field.field.profile.profile.field_profile_function
     - field.field.profile.profile.field_profile_image
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
-    - field.field.profile.profile.field_profile_organization
     - field.field.profile.profile.field_profile_phone_number
     - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
@@ -59,9 +57,7 @@ third_party_settings:
         id: name
         classes: scrollspy
     group_profile_funct_organization:
-      children:
-        - field_profile_function
-        - field_profile_organization
+      children: {  }
       parent_name: ''
       weight: 1
       label: 'Function and organization'
@@ -143,14 +139,6 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
-  field_profile_function:
-    weight: 16
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_profile_image:
     weight: 11
     settings:
@@ -179,14 +167,6 @@ content:
     region: content
   field_profile_last_name:
     weight: 9
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
-    region: content
-  field_profile_organization:
-    weight: 17
     settings:
       size: 60
       placeholder: ''

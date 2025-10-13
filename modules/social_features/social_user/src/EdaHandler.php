@@ -17,6 +17,7 @@ use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\Address;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Href;
+use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_user\Event\UserEventData;
 use Drupal\social_user\Event\UserEventDataLite;
 use Drupal\social_user\Event\UserEventEmailData;
@@ -293,8 +294,11 @@ final class EdaHandler {
       $last_name = $profile->get('field_profile_last_name')->value;
       $address = $profile->get('field_profile_address')->value;
       $phone_number = $profile->get('field_profile_phone_number')->value;
-      $function = $profile->get('field_profile_function')->value;
-      $organization = $profile->get('field_profile_organization')->value;
+
+      if ($profile instanceof ProfileAffiliationInterface) {
+        $function = $profile->getPrimaryAffiliationFunction();
+        $organization = $profile->getPrimaryAffiliationName();
+      }
     }
 
     // Determine status value.

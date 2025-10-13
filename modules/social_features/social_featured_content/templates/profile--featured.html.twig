@@ -40,11 +40,11 @@
 {% endblock %}
 
 {% block card_body %}
-  {% if content.field_profile_function|render or content.field_profile_organization|render %}
+  {% if content.primary_affiliation_function or content.primary_affiliation_name %}
     <div class="teaser__content-line">
       <span class="teaser__content-text">
-        <span>{{ content.field_profile_function|render }}</span>
-        <span>{{ content.field_profile_organization|render }}</span>
+        <span>{{ content.primary_affiliation_function }}</span>
+        <span>{{ content.primary_affiliation_name }}</span>
       </span>
     </div>
   {% endif %}

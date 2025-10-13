@@ -12,9 +12,9 @@ Feature: Event Management
   Scenario: Successfully assign event organiser
     Given I enable the module "social_event_managers"
     And users:
-      | name              | mail             | field_profile_organization | status | roles    |
-      | event_organiser_1 | eo_1@example.com | GoalGorilla                | 1      | verified |
-      | event_organiser_2 | eo_2@example.com | Drupal                     | 1      | verified |
+      | name              | mail             | status | roles    |
+      | event_organiser_1 | eo_1@example.com | 1      | verified |
+      | event_organiser_2 | eo_2@example.com | 1      | verified |
     And groups:
       | label                                    | field_group_description | author            | type           | field_flexible_group_visibility | field_group_allowed_join_method | field_group_allowed_visibility | langcode |
       | Springfield local business collaboration | Description text        | event_organiser_1 | flexible_group | public                          | direct                          | community                      | en       |

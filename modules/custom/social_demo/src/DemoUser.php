@@ -209,11 +209,12 @@ abstract class DemoUser extends DemoContent {
    *   The profile field item.
    */
   protected function fillProfile(ProfileInterface $profile, array $item) {
+    // Add affiliation.
+    $profile->addNonPlatformAffiliation($item['organization'], $item['function']);
+
     $profile->field_profile_image = $item['image'];
     $profile->field_profile_first_name = $item['first_name'];
     $profile->field_profile_last_name = $item['last_name'];
-    $profile->field_profile_organization = $item['organization'];
-    $profile->field_profile_function = $item['function'];
     $profile->field_profile_phone_number = $item['phone_number'];
     $profile->field_profile_self_introduction = $item['self_introduction'];
     $profile->field_profile_address = $item['address'];
