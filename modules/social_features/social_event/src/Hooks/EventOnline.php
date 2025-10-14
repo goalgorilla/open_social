@@ -158,4 +158,41 @@ final class EventOnline implements ContainerInjectionInterface {
     $form['field_event_meeting']['#weight'] = -100;
   }
 
+  /**
+   * Alters the event node form for specific adjustments for online feature.
+   *
+   * @param array $form
+   *   The form build.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
+   *
+   * @see hook_form_FORM_ID_alter()
+   */
+  #[Alter('form_node_event_form')]
+  #[Alter('form_node_event_edit_form')]
+  public function eventFormAlter(array &$form, FormStateInterface $form_state): void {
+    if (isset($form['field_event_address'], $form['field_event_meeting'])) {
+      $form['field_event_address']['#element_validate'][] = [static::class, 'validateAddress'];
+    }
+  }
+
+  /**
+   * Validates the event address field.
+   *
+   * Make the "field_event_address" form element required
+   * if the event is offline.
+   *
+   * @param array $element
+   *   The event address form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state of the entire form.
+   */
+  public static function validateAddress(array $element, FormStateInterface $form_state): void {
+    $is_online = $form_state->getValue(['field_event_meeting', 'meeting_form', 'is_online']);
+    $country_code = $form_state->getValue(['field_event_address', 0, 'address', 'country_code']);
+    if (!$is_online && !$country_code) {
+      $form_state->setErrorByName('field_event_address', t('The country is required.'));
+    }
+  }
+
 }
