@@ -50,6 +50,9 @@ Feature: Show/hide enrollments on Event
 
     And I open the "event" node with title "My Behat Event created"
     And I click "Edit content"
+    # Country field is required.
+    And I select "NL" from "Country"
+    And I wait for AJAX to finish
     And I uncheck the box "Hide enrollments"
     And I press "Save"
     And I should see "Event My Behat Event created has been updated."

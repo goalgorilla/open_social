@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
+use Drupal\hux\Attribute\Hook;
 use Drupal\social_event\Form\EventSettingsForm;
 use Drupal\social_event\PluginForm\ManualMeetingConfigurationForm;
 use Drupal\social_event\Service\EventOnline as EventOnlineService;
@@ -38,6 +39,28 @@ final class EventOnline implements ContainerInjectionInterface {
     return new static(
       $container->get('config.factory'),
     );
+  }
+
+  /**
+   * Provides theme suggestions based on the event flag status and view mode.
+   *
+   * @param array $variables
+   *   An associative array containing the variables for determining the
+   *   appropriate theme suggestions.
+   *   It includes keys such as 'theme_hook_original' and 'view_mode'.
+   *
+   * @return array
+   *   An array of theme suggestions constructed from the 'theme_hook_original'
+   *   combined with the 'view_mode'.
+   *
+   * @see hook_theme_suggestions_HOOK()
+   */
+  #[Hook('theme_suggestions_event_flag_online')]
+  #[Hook('theme_suggestions_event_flag_enrolled')]
+  public function themeSuggestions(array $variables): array {
+    return [
+      $variables['theme_hook_original'] . '__' . $variables['view_mode'],
+    ];
   }
 
   /**

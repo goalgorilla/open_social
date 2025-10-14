@@ -20,14 +20,14 @@
     {% if icon_loaded %}
       <span class="icon-wrapper">
       <svg class="icon no-b-lazy" aria-hidden="true">
-        <title>{% trans %}Online{% endtrans %}</title>
+        <title>{{- 'Online'|t -}}</title>
         <use xlink:href="#icon-online"></use>
       </svg>
     </span>
     {% endif %}
 
     <span class="inline-center online">
-    {{ 'Online'|t }}
+    {{- 'Online'|t -}}
   </span>
   </div>
 {% endif %}

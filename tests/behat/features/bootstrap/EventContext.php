@@ -607,6 +607,12 @@ class EventContext extends RawMinkContext {
     if (isset($event['meeting_type'])) {
       $event['field_event_meeting'] = $this->createMeetingEntity($event['meeting_type'], $event);
     }
+    else {
+      // Country code is required for non-online events.
+      $address['country_code'] = $event['country_code'] ?? 'NL';
+    }
+
+    $event['field_event_address'] = $address ?? [];
 
     // Unset meeting related fields to avoid validation errors.
     unset($event['meeting_type']);

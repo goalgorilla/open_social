@@ -29,6 +29,8 @@ Feature: Manage event enrollment
       | Jane Doe | event_organiser | event_organiser@example.com | 1      | verified     |
 
     When I am editing the event "Test content"
+    And I select "NL" from "Country"
+    And I wait for AJAX to finish
     And I expand the "Additional information" section
     # @todo: The fact that we can't do this through a label shows a potential
     #  accessibility issue.

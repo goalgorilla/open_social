@@ -17,6 +17,7 @@ Feature: Create/update online events
       | edit-field-event-date-end-0-value-time | 12:00:00                 |
       | Location name                          | Online Meeting           |
 
+    And I select "NL" from "Country"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "This is an online event."
 
     # Make sure the "Online" checkbox is visible.

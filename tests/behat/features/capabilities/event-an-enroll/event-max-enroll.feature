@@ -24,6 +24,8 @@ Feature: Limitation event enrollments
     And I should see "0 people have enrolled"
     And I should not see "0 people have enrolled (7 spots left)"
     And I click "Edit content"
+    And I select "NL" from "Country"
+    And I wait for AJAX to finish
     And I should see unchecked the box "Set a limit to number of enrollees"
     And I should see "Set a limit to number of enrollees" in the "#enrollment" element
     And I should not see "Maximum number of enrollees" in the "#enrollment" element

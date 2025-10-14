@@ -29,6 +29,7 @@ Feature: Event Management
       | edit-field-event-date-0-value-time     | 11:00:00                               |
       | edit-field-event-date-end-0-value-time | 11:00:00                               |
       | Location name                          | GG HQ                                  |
+    And I select "NL" from "Country"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I click the xth "0" element with the css "#attachments summary"
     And I fill in "event_organiser_1" for "field_event_managers[0][target_id]"
@@ -56,6 +57,7 @@ Feature: Event Management
       | edit-field-event-date-0-value-time     | 11:00:00                                        |
       | edit-field-event-date-end-0-value-time | 11:00:00                                        |
       | Location name                          | GG HQ                                           |
+    And I select "NL" from "Country"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I click the xth "0" element with the css "#attachments summary"
     And I fill in "event_organiser_1" for "field_event_managers[0][target_id]"
@@ -122,6 +124,8 @@ Feature: Event Management
       | Ryan Gosling | event_organiser | event_organiser@example.com | 1      | verified     |
 
     When I am editing the event "My awesome event"
+    And I select "NL" from "Country"
+    And I wait for AJAX to finish
     And I expand the "Additional information" section
     And I fill in "Ryan Gosling" for "field_event_managers[0][target_id]"
     And I press "Save"

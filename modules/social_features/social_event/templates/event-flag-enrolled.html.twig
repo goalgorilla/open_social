@@ -18,15 +18,14 @@
 {% if is_enrolled %}
   <div{{ attributes }}>
     <span class="inline-center enrolled">
-      {{ 'Enrolled'|t }}
+      {{- 'Enrolled'|t -}}
     </span>
 
     {% if icon_loaded %}
       <svg class="icon no-b-lazy" aria-hidden="true">
-        <title>{% trans %}Enrolled{% endtrans %}</title>
+        <title>{{- 'Enrolled'|t -}}</title>
         <use xlink:href="#icon-check"></use>
       </svg>
     {% endif %}
   </div>
 {% endif %}
-

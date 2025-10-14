@@ -139,6 +139,8 @@ Feature: See and get notified when content is created
       | edit-field-event-date-0-value-time     | 11:00:00         |
       | edit-field-event-date-end-0-value-time | 11:00:00         |
       | Location name                          | GG HQ            |
+    And I select "NL" from "Country"
+    And I wait for AJAX to finish
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Create event"
     And I should see "Test group event"
