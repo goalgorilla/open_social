@@ -62,8 +62,11 @@ trait UserSegmentGroupTrait {
     $sub_conditions = $query->andConditionGroup();
 
     $rule_id = $this->configuration['id'];
+    // Include condition_id to prevent alias collisions when multiple conditions
+    // exist in the same rule.
+    $condition_id = $condition->condition_type;
+    $suffix = '_' . $index . '_' . $rule_id . '_' . $condition_id;
 
-    $suffix = '_' . $index . '_' . $rule_id;
     $group_relationship_field_data_alias = "grfd$suffix";
     $groups_alias = "g$suffix";
     $group_content__group_roles_alias = "gcgr$suffix";

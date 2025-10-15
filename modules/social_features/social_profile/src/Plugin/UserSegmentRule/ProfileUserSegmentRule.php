@@ -181,9 +181,12 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase {
    */
   private function applyUserRoleCondition(Condition $condition, SelectInterface &$query, string $alias, ConditionInterface $condition_target, int $index): void {
     $sub_conditions = $query->andConditionGroup();
-    $rule_id = $this->configuration['id'];
 
-    $suffix = '_' . $index . '_' . $rule_id;
+    $rule_id = $this->configuration['id'];
+    // Include condition_id to prevent alias collisions when multiple conditions
+    // exist in the same rule.
+    $condition_id = self::CONDITION__USER_ROLES;
+    $suffix = '_' . $index . '_' . $rule_id . '_' . $condition_id;
 
     foreach ($condition->properties as $condition_property) {
       $property_type = $condition_property->property_type;
