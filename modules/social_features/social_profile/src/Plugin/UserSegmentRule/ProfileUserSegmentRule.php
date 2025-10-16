@@ -186,7 +186,17 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase {
     $suffix = '_' . $index . '_' . $rule_id;
 
     foreach ($condition->properties as $condition_property) {
-      $this->applyUserRoleProperty($condition_property, $sub_conditions, $query, $alias, $suffix);
+      $property_type = $condition_property->property_type;
+
+      switch ($property_type) {
+        // Role property type.
+        case self::CONDITION__USER_ROLES__PROPERTY_ROLE:
+          $this->applyUserRoleProperty($condition_property, $sub_conditions, $query, $alias, $suffix);
+          break;
+
+        default:
+          throw new \InvalidArgumentException(sprintf('Unsupported property type: "%s".', $property_type));
+      }
     }
 
     $condition_target->condition($sub_conditions);

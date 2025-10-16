@@ -75,6 +75,9 @@ trait UserSegmentGroupTrait {
     $query->join('groups', $groups_alias, "$group_relationship_field_data_alias.gid = $groups_alias.id");
     $sub_conditions->condition("$groups_alias.type", $group_type);
 
+    // IMPORTANT: If more than one property needs to be added, do not apply it
+    // here but in applyGroupMembershipProperty() in the user segment plugin,
+    // where you can list more properties in `switch ($property_id)`.
     foreach ($condition->properties as $condition_property) {
       $this->applyGroupMembershipProperty($condition_property, $sub_conditions, $query, $alias, $suffix, $group_relationship_field_data_alias, $group_content__group_roles_alias);
     }
