@@ -142,18 +142,11 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
     if ($group instanceof GroupInterface) {
       /** @var \Drupal\social_node\Entity\Node[] $books */
       $books = $group->getRelatedEntities('group_node:book');
-      $bids = array_map(function ($book) {
-        return $book->id();
-      }, $books);
+      $bids = array_map(fn ($book) => $book->id(), $books);
 
       $form['book']['bid']['#options'] = array_filter($form['book']['bid']['#options'], function ($key) use ($bids) {
         return $key === 0 || $key === 'new' || in_array($key, $bids);
       }, ARRAY_FILTER_USE_KEY);
-
-      // We need skip validation for the field "Books". The issue is that when
-      // ajax reload this field it still contains old values and default
-      // validation rise an error.
-      $form['book']['bid']['#validated'] = TRUE;
     }
   }
   else {
@@ -170,11 +163,61 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
     }, ARRAY_FILTER_USE_KEY);
   }
 
+  // Add custom validation to handle AJAX reloads and ensure valid book ID.
+  $form['book']['bid']['#element_validate'][] = '_social_flexible_group_book_validate_book_bid';
+
   // We want to change "Book outline" book list according the "Group" chosen.
   // The "Group" field is already ajaxified, so we can't add another ajax
   // callback. So, we just override "Group" field ajax callback and change it
   // response.
   $form['groups']['widget']['#ajax']['callback'] = '_social_flexible_group_book_ajax_callback';
+}
+
+/**
+ * Custom validation handler for book bid field.
+ *
+ * Ensures that the selected book ID is valid and exists, preventing
+ * fatal errors when viewing books created with invalid book IDs.
+ */
+function _social_flexible_group_book_validate_book_bid(array $element, FormStateInterface $form_state): void {
+  $bid = $element['#value'];
+
+  // Allow special values.
+  if ($bid === 0 || $bid === '0' || $bid === 'new' || empty($bid)) {
+    return;
+  }
+
+  // Check if the book ID is in the allowed options.
+  if (!isset($element['#options'][$bid])) {
+    // The book is not in the allowed options for the selected group.
+    // Reset to "new" to create a new book.
+    if (isset($element['#options']['new'])) {
+      $form_state->setValueForElement($element, 'new');
+    }
+    else {
+      // If "new" is not available, use the first available option.
+      $first_option = array_key_first($element['#options']);
+      $form_state->setValueForElement($element, $first_option);
+    }
+    return;
+  }
+
+  // Validate that the book node exists.
+  $existing_nodes = \Drupal::entityQuery('node')
+    ->accessCheck(TRUE)
+    ->condition('nid', $bid)
+    ->execute();
+
+  if (empty($existing_nodes)) {
+    // If the book doesn't exist, reset to "new" to create a new book.
+    if (isset($element['#options']['new'])) {
+      $form_state->setValueForElement($element, 'new');
+    }
+    else {
+      $first_option = array_key_first($element['#options']);
+      $form_state->setValueForElement($element, $first_option);
+    }
+  }
 }
 
 /**
@@ -207,39 +250,40 @@ function _social_flexible_group_book_ajax_callback(array $form, FormStateInterfa
     return $response;
   }
 
-  $all_books = \Drupal::service('book.outline_storage')->getBooks();
-
-  if (empty($all_books)) {
+  // Ensure the book field exists in the form.
+  if (!isset($form['book']['bid']['#options'])) {
     return $response;
   }
 
-  /** @var \Drupal\social_node\Entity\Node[] $books_in_group */
-  $books_in_group = \Drupal::entityTypeManager()->getStorage('group_content')
-    ->loadByProperties([
-      'plugin_id' => 'group_node:book',
-      'entity_id' => $all_books,
-    ]);
+  // Get books that belong to the selected group.
+  /** @var \Drupal\social_node\Entity\Node[] $books */
+  $books = $group->getRelatedEntities('group_node:book');
+  $bids = array_map(fn ($book) => $book->id(), $books);
 
-  // Get translations.
-  $books_in_group = array_map([\Drupal::service('entity.repository'), 'getTranslationFromContext'], $books_in_group);
+  // Filter the existing options to only show books from the selected group.
+  $form['book']['bid']['#options'] = array_filter($form['book']['bid']['#options'], function ($key) use ($bids) {
+    return $key === 0 || $key === 'new' || in_array($key, $bids);
+  }, ARRAY_FILTER_USE_KEY);
 
-  // Rebuild options.
-  if (!empty($form['book']['bid']['#options']['new'])) {
-    $form['book']['bid']['#options'] = ['new' => $form['book']['bid']['#options']['new']];
+  // Always reset the book selection when group changes to prevent errors.
+  // This ensures that only books from the selected group are available.
+  $new_value = NULL;
+  if (isset($form['book']['bid']['#options']['new'])) {
+    $new_value = 'new';
   }
-  else {
-    $form['book']['bid']['#options'] = [];
-  }
-
-  foreach ($books_in_group as $book) {
-    if (is_null($book)) {
-      continue;
-    }
-
-    $options[$book->id()] = $book->label();
+  elseif (!empty($form['book']['bid']['#options'])) {
+    $new_value = array_key_first($form['book']['bid']['#options']);
   }
 
-  $form['book']['bid']['#options'] += ($options ?? []);
+  if ($new_value !== NULL) {
+    // Update both the form element and the form state.
+    $form['book']['bid']['#value'] = $new_value;
+    $form['book']['bid']['#default_value'] = $new_value;
+    $form_state->setValue(['book', 'bid'], $new_value);
+  }
+
+  // Clear any validation errors for the book field.
+  $form_state->clearErrors();
 
   // Reset "Parent item" field in "Book outline" to default values.
   // @see \Drupal\book\BookManager::addParentSelectFormElements()
