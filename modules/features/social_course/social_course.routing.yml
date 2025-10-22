@@ -1,0 +1,49 @@
+social_course.course_add:
+  path: '/course/add'
+  defaults:
+    _controller: '\Drupal\social_course\Controller\CoursesController::content'
+    _title: 'Add course'
+  requirements:
+    _custom_access:  '\Drupal\social_course\Controller\CoursesController::access'
+social_course.start_section:
+  path: '/group/{group}/section/{node}/start'
+  defaults:
+    _controller: '\Drupal\social_course\Controller\CoursesController::startSection'
+  requirements:
+    _csrf_token: 'TRUE'
+    _custom_access: '\Drupal\social_course\Controller\CoursesController::startSectionAccess'
+  options:
+    parameters:
+      group:
+        type: entity:group
+      node:
+        type: entity:node
+social_course.next_material:
+  path: '/group/{group}/section/{node}/next'
+  defaults:
+    _controller: '\Drupal\social_course\Controller\CoursesController::nextMaterial'
+  requirements:
+    _csrf_token: 'TRUE'
+    _custom_access: '\Drupal\social_course\Controller\CoursesController::nextMaterialAccess'
+  options:
+    parameters:
+      group:
+        type: entity:group
+      node:
+        type: entity:node
+social_course.join:
+  path: '/course/{group}/join'
+  defaults:
+    _controller: '\Drupal\social_course\Controller\CourseJoinController::anonymousRequestMembership'
+  requirements:
+    _user_is_logged_in: 'FALSE'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
+social_course.my_courses:
+  path: '/my-courses'
+  defaults:
+    _controller: '\Drupal\social_course\Controller\CoursesController::redirectMyCourses'
+  requirements:
+    _user_is_logged_in: 'TRUE'

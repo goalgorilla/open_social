@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_group_allowed_join_method
+    - group.type.course_advanced
+  module:
+    - options
+id: group.course_advanced.field_group_allowed_join_method
+field_name: field_group_allowed_join_method
+entity_type: group
+bundle: course_advanced
+label: 'Allowed join method'
+description: 'Choose how people can join this course.'
+required: true
+translatable: false
+default_value:
+  -
+    value: direct
+default_value_callback: ''
+settings: {  }
+field_type: list_string

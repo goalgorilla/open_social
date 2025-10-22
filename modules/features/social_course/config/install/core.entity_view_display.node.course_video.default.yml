@@ -1,0 +1,37 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.course_video.field_course_video_description
+    - field.field.node.course_video.field_course_video_video
+    - node.type.course_video
+  module:
+    - text
+    - user
+    - video_embed_field
+id: node.course_video.default
+targetEntityType: node
+bundle: course_video
+mode: default
+content:
+  field_course_video_description:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_course_video_video:
+    weight: 0
+    label: hidden
+    settings:
+      responsive: true
+      width: 854
+      height: 480
+      autoplay: false
+    third_party_settings: {  }
+    type: video_embed_field_video
+    region: content
+hidden:
+  flag_follow_content: true
+  links: true

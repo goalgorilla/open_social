@@ -1,0 +1,11 @@
+<div class="card__info-user">
+  {{ content.field_profile_image }}
+  <h2 class="card__info-user--name">
+    {{ profile_name }} {{ profile_name_extra }}
+  </h2>
+
+  <div class="card__info-user--about">
+    <div class="card__info-user--about-job">{{ content.field_profile_function }}</div>
+    <div class="card__info-user--about-organization">{{ content.field_profile_organization }}</div><div class="card__info-user--about-address">{{ content|without('field_profile_first_name', 'field_profile_last_name', 'field_profile_image', 'field_profile_function', 'field_profile_organization') }}</div>
+  </div>
+</div>

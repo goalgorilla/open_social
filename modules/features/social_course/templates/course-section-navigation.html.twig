@@ -1,0 +1,9 @@
+<div class="card__block card__block--list">
+  {% for item in items %}
+        <span {{ item.attributes.addClass('list-item') }}>
+          <span class="list-item__text">
+            {{ item.label }}
+          </span>
+      </span>
+  {% endfor %}
+</div>

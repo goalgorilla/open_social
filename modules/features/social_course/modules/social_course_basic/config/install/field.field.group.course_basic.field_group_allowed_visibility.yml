@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_group_allowed_visibility
+    - group.type.course_basic
+  module:
+    - options
+id: group.course_basic.field_group_allowed_visibility
+field_name: field_group_allowed_visibility
+entity_type: group
+bundle: course_basic
+label: 'Available content visibility'
+description: 'Choose the allowed visibility settings for the group content.'
+required: true
+translatable: false
+default_value:
+  -
+    value: public
+  -
+    value: community
+  -
+    value: group
+default_value_callback: ''
+settings: {  }
+field_type: list_string

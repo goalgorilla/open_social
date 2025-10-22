@@ -1,0 +1,21 @@
+<div class="card">
+  <div class="card__block">
+
+    {% if types is not empty %}
+
+      {% for type in types %}
+        <dl class="list-item">
+          <dt class="list-item__label"><span class="btn btn-flat">{{ type.add_link }}</span></dt>
+          <dd class="list-item__text">{{ type.description }}</dd>
+        </dl>
+      {% endfor %}
+
+    {% else %}
+      <div class="list-item">
+        {% trans %}
+        You have not created any courses types yet. Go to the Group types creation page to add a new course type.
+        {% endtrans %}
+      </div>
+    {% endif %}
+  </div>
+</div>

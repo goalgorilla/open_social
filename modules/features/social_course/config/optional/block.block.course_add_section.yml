@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - group
+    - social_course
+    - system
+  theme:
+    - socialbase
+id: course_add_section
+theme: socialbase
+region: complementary_top
+weight: -95
+provider: null
+plugin: course_add_section
+settings:
+  id: course_add_section
+  label: 'Course add section block'
+  provider: social_course
+  label_display: '0'
+  context_mapping:
+    group: '@group.group_route_context:group'
+visibility:
+  group_type:
+    id: group_type
+    group_types:
+      course_advanced: course_advanced
+      course_basic: course_basic
+    negate: false
+    context_mapping:
+      group: '@group.group_route_context:group'
+  request_path:
+    id: request_path
+    pages: '/group/*/about'
+    negate: false
+    context_mapping: {  }

@@ -1,0 +1,197 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group.course_basic.field_course_opening_date
+    - field.field.group.course_basic.field_course_opening_status
+    - field.field.group.course_basic.field_course_order
+    - field.field.group.course_basic.field_course_redirect_url
+    - field.field.group.course_basic.field_course_related_courses
+    - field.field.group.course_basic.field_course_type
+    - field.field.group.course_basic.field_group_description
+    - field.field.group.course_basic.field_group_image
+    - group.type.course_basic
+    - image.style.social_x_large
+  module:
+    - datetime
+    - field_group
+    - image_widget_crop
+    - link
+    - text
+    - path
+third_party_settings:
+  field_group:
+    group_information:
+      children:
+        - field_course_type
+        - label
+        - field_group_description
+        - field_group_image
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Basic information'
+      region: content
+    group_settings:
+      children:
+        - group_date_and_time
+        - field_course_order
+        - status
+        - field_course_redirect_url
+        - path
+      parent_name: ''
+      weight: 3
+      format_type: details
+      format_settings:
+        description: ''
+        required_fields: true
+        id: ''
+        classes: social-collapsible-fieldset
+        open: false
+      label: Settings
+      region: content
+    group_date_and_time:
+      children:
+        - field_course_opening_date
+      parent_name: group_settings
+      weight: 1
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Course starting time'
+      region: content
+    group_additional_details:
+      children:
+        - field_course_related_courses
+      parent_name: ''
+      weight: 2
+      format_type: details
+      region: content
+      format_settings:
+        id: ''
+        classes: social-collapsible-fieldset
+        description: ''
+        open: false
+        required_fields: true
+      label: 'Additional information'
+    group_access_permissions:
+      children:
+        - field_flexible_group_visibility
+        - field_group_allowed_visibility
+      format_settings:
+        classes: ''
+        description: ''
+        id: ''
+        required_fields: true
+      format_type: fieldset
+      label: 'Access permissions'
+      parent_name: ''
+      region: content
+      weight: 1
+id: group.course_basic.default
+targetEntityType: group
+bundle: course_basic
+mode: default
+content:
+  field_course_opening_date:
+    type: datetime_default
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_course_order:
+    weight: 7
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
+  field_course_redirect_url:
+    weight: 10
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+    region: content
+  field_course_related_courses:
+    weight: 51
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_course_type:
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
+  field_group_description:
+    weight: 7
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_group_image:
+    weight: 6
+    settings:
+      show_crop_area: true
+      show_default_crop: true
+      warn_multiple_usages: true
+      preview_image_style: social_x_large
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - hero
+        - teaser
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: image_widget_crop
+    region: content
+  label:
+    type: string_textfield
+    weight: 5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    weight: 9
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+  field_flexible_group_visibility:
+    region: content
+    settings: { }
+    third_party_settings: { }
+    type: options_buttons
+    weight: 100
+  field_group_allowed_visibility:
+    weight: 101
+    settings: { }
+    third_party_settings: { }
+    type: options_buttons
+    region: content
+  path:
+    type: path
+    weight: 30
+    settings: { }
+    third_party_settings: { }
+    region: content
+hidden:
+  field_course_opening_status: true
+  uid: true

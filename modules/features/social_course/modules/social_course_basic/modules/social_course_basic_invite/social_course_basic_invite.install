@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @file
+ * The social_course_basic_invite install file.
+ */
+
+use Drupal\group\Entity\GroupType;
+use Drupal\group\Entity\GroupTypeInterface;
+
+/**
+ * Implements hook_install().
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_course_basic_invite_install(): void {
+  $group_type = GroupType::load('course_basic');
+
+  if ($group_type instanceof GroupTypeInterface) {
+    social_group_invite_set_default_permissions_for_group_type($group_type);
+  }
+}
+
+/**
+ * Update email invitation messages with new token for the symfony mailer.
+ *
+ * After introducing the symfony mailer, the steps in building an email changed
+ * giving us issues with replacing the current-user in the invitation batch,
+ * resulting in anonymous. We replace this with the user token where we set
+ * the correct data in the symfony email builder for group invitations.
+ */
+function social_course_basic_invite_update_10001(): void {
+  $config_factory = \Drupal::configFactory();
+
+  // Update the group content specific invite configuration.
+  $configuration = $config_factory->getEditable('group.content_type.course_basic-group_invitation');
+
+  // Skip if the configuration doesn't exist.
+  if (!($configuration->isNew())) {
+    // Set email subject text.
+    if (!empty($configuration->get('plugin_config.invitation_subject'))) {
+      $subject = str_replace('[current-user:display-name]', '[user:display-name]', $configuration->get('plugin_config.invitation_subject'));
+      $configuration->set('plugin_config.invitation_subject', $subject);
+      $configuration->save();
+    }
+    // Set email body text.
+    if (!empty($configuration->get('plugin_config.invitation_body'))) {
+      $body = str_replace('[current-user:display-name]', '[user:display-name]', $configuration->get('plugin_config.invitation_body'));
+      $configuration->set('plugin_config.invitation_body', $body);
+      $configuration->save();
+    }
+  }
+}

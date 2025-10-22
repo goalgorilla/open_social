@@ -1,0 +1,38 @@
+{%
+  set classes = [
+    'block-' ~ configuration.provider|clean_class,
+    'block-' ~ plugin_id|clean_class,
+    card ? 'card brand-border-radius' : '',
+  ]
+%}
+
+{%
+  set title_classes = [
+    card ? 'card__title' : 'block-title',
+  ]
+%}
+
+
+{% if not bare %}
+  <section{{ attributes.addClass(classes) }}>
+
+    {{ title_prefix }}
+    <header{{ title_attributes.addClass('complementary-title') }}>
+      <h4 class="card__title">{% trans %}In this section{% endtrans %}</h4>
+    </header>
+    {{ title_suffix }}
+{% endif %}
+
+    {% block content %}
+      <div class="card__block card__block--list">
+          {{ content }}
+      </div>
+
+      <footer class="card__actionbar">
+          <a class="btn btn-flat" href="{{ course_url }}">{% trans %}Go back{% endtrans %}</a>
+      </footer>
+    {% endblock %}
+
+{% if not bare %}
+  </section>
+{% endif %}

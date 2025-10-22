@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_course_statistics
+    - system
+  theme:
+    - socialblue
+id: course_statistics_hero_block
+theme: socialblue
+region: hero
+weight: 0
+provider: null
+plugin: course_statistics_hero_block
+settings:
+  id: course_statistics_hero_block
+  label: 'Course statistics hero block'
+  provider: social_course_statistics
+  label_display: '0'
+  context_mapping: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: "/group/*/statistics\r\n/group/*/statistics/*"
+    negate: false
+    context_mapping: {  }

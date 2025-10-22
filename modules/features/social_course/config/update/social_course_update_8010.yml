@@ -1,0 +1,75 @@
+core.entity_form_display.node.course_section.default:
+  expected_config: { }
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_section_content:
+            children:
+              - title
+              - field_course_section_description
+              - groups
+            format_settings:
+              label: Information
+    add:
+      third_party_settings:
+        field_group:
+          group_section_content:
+            children:
+              - title
+              - field_course_section_description
+          group_settings:
+            children:
+              - field_course_section_redirect
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              id: ''
+              open: false
+              required_fields: true
+            format_type: details
+            label: Settings
+            parent_name: ''
+            region: content
+            weight: 3
+          group_visibility:
+            children:
+              - groups
+            format_settings:
+              classes: ''
+              description: ''
+              id: ''
+              required_fields: true
+            format_type: fieldset
+            label: 'Access permissions'
+            parent_name: ''
+            region: content
+            weight: 1
+    change:
+      content:
+        field_course_section_content:
+          weight: 2
+        field_course_section_redirect:
+          weight: 6
+      third_party_settings:
+        field_group:
+          group_section_content:
+            label: 'Basic Information'
+core.entity_form_display.node.course_article.course:
+  expected_config: {  }
+  update_actions:
+    delete:
+      content:
+        status:
+    add:
+      hidden:
+        status: true
+core.entity_form_display.node.course_video.course:
+  expected_config: {  }
+  update_actions:
+    delete:
+      content:
+        status:
+    add:
+      hidden:
+        status: true

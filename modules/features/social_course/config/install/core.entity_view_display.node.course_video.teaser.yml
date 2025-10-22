@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.course_video.field_course_video_description
+    - field.field.node.course_video.field_course_video_video
+    - node.type.course_video
+  module:
+    - user
+id: node.course_video.teaser
+targetEntityType: node
+bundle: course_video
+mode: teaser
+content: {  }
+hidden:
+  field_course_video_description: true
+  field_course_video_video: true
+  flag_follow_content: true
+  links: true

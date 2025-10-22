@@ -1,0 +1,124 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.node.course
+    - field.field.node.course_section.field_course_section_content
+    - field.field.node.course_section.field_course_section_description
+    - field.field.node.course_section.field_course_section_redirect
+    - field.field.node.course_section.field_course_section_weight
+    - image.style.social_x_large
+    - node.type.course_section
+  module:
+    - field_group
+    - image
+    - inline_entity_form
+    - link
+    - social_group
+    - text
+third_party_settings:
+  field_group:
+    group_section_content:
+      children:
+        - title
+        - field_course_section_description
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        description: ''
+        required_fields: true
+        id: ''
+        classes: ''
+      label: 'Basic Information'
+      region: content
+    group_settings:
+      children:
+        - field_course_section_redirect
+      format_settings:
+        classes: social-collapsible-fieldset
+        description: ''
+        id: ''
+        open: false
+        required_fields: true
+      format_type: details
+      label: Settings
+      parent_name: ''
+      weight: 3
+      region: content
+    group_visibility:
+      children:
+        - groups
+      format_settings:
+        classes: ''
+        description: ''
+        id: ''
+        required_fields: true
+      format_type: fieldset
+      label: 'Access permissions'
+      parent_name: ''
+      region: content
+      weight: 1
+id: node.course_section.default
+targetEntityType: node
+bundle: course_section
+mode: default
+content:
+  field_course_section_content:
+    weight: 2
+    settings:
+      form_mode: course
+      override_labels: true
+      label_singular: ''
+      label_plural: ''
+      allow_new: true
+      match_operator: CONTAINS
+      allow_existing: false
+    third_party_settings: {  }
+    type: inline_entity_form_complex
+    region: content
+  field_course_section_description:
+    weight: 2
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_course_section_redirect:
+    weight: 6
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+    region: content
+  groups:
+    type: social_group_selector_widget
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 2
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_course_section_weight: true
+  path: true
+  promote: true
+  social_tagging: true
+  sticky: true
+  uid: true

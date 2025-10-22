@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_video_video
+    - node.type.course_video
+  module:
+    - video_embed_field
+id: node.course_video.field_course_video_video
+field_name: field_course_video_video
+entity_type: node
+bundle: course_video
+label: Video
+description: 'Enter a URL to video on Vimeo internet media provider, e.g. https://vimeo.com/1234567'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_providers:
+    vimeo: vimeo
+    youtube_playlist: '0'
+    youtube: '0'
+field_type: video_embed_field

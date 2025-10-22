@@ -1,0 +1,67 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.course_article.field_course_article_content
+    - node.type.course_article
+  module:
+    - field_group
+    - paragraphs
+third_party_settings:
+  field_group:
+    group_content:
+      children:
+        - title
+        - field_course_article_content
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: Content
+      region: content
+id: node.course_article.default
+targetEntityType: node
+bundle: course_article
+mode: default
+content:
+  field_course_article_content:
+    type: paragraphs
+    weight: 2
+    settings:
+      title: Part
+      title_plural: Parts
+      edit_mode: open
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: text
+      closed_mode: summary
+      autocollapse: none
+    third_party_settings: {  }
+    region: content
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 3
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  groups: true
+  path: true
+  promote: true
+  social_tagging: true
+  sticky: true
+  uid: true

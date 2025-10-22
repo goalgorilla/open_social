@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - social_course
+    - system
+  theme:
+    - socialbase
+id: course_material_pager
+theme: socialbase
+region: content
+weight: 0
+provider: null
+plugin: course_material_pager
+settings:
+  id: course_material_pager
+  label: 'Course material pager block'
+  provider: social_course
+  label_display: '0'
+  context_mapping:
+    node: '@node.node_route_context:node'
+visibility:
+  entity_bundle:node:
+    id: 'entity_bundle:node'
+    bundles:
+      course_article: course_article
+      course_video: course_video
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+  request_path:
+    id: request_path
+    pages: "/node/*/edit\r\n/node/*/delete\r\n/node/*/translations*"
+    negate: true
+    context_mapping: {  }

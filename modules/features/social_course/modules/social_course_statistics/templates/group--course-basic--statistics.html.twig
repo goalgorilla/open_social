@@ -1,0 +1,93 @@
+{{ attach_library('socialbase/hero') }}
+{{ attach_library('socialblue/hero--sky') }}
+{{ attach_library('social_course_statistics/social_course_statistics') }}
+
+
+{% set attribute_hero_statistic = create_attribute() %}
+{%
+  set hero_statistic_classes = [
+  'hero__banner hero__banner--static no-image hero__banner--course_statistic',
+  user_picture or sections_status or course_last_active or course_start_date ? 'hero__banner--course_statistic--profile',
+]
+%}
+
+<div {{ attribute_hero_statistic.addClass(hero_statistic_classes) }}>
+  <div class="container">
+    <div class="cover-wrap cover-wrap--course-statistic">
+      <a href="{{ back_link_url }}"  title="{{ back_link_title }}" class="back-link">
+        <svg aria-hidden="true">
+          <title>{{ back_link_title }}</title>
+          <use xlink:href="#icon-navigate_before"></use>
+        </svg>
+        {{ back_link_title }}
+      </a>
+
+      <div class="cover-wrap--course-statistic-profile">
+        {% if user_picture %}
+          <div class="teaser__tag">{% trans %}Personal progress{% endtrans %}</div>
+          {{ user_picture }}
+        {% endif %}
+      </div>
+
+      {% if participants %}
+        <div class="teaser__tag">{% trans %}Course statistics{% endtrans %}</div>
+        <h2 class="teaser__title"> {{ content.label }}</h2>
+      {% endif %}
+
+      <div class="hero-footer">
+        <div class="hero-footer__list">
+          <div class="meta-engage">
+            {% set attribute_footer_items = create_attribute() %}
+            {%
+              set hero_footer_items_classes = [
+              'hero-footer__list-item',
+              sections_status or course_last_active or course_start_date ? 'hero-footer__list-user',
+            ]
+            %}
+
+            {% if (participants or sections_status)  %}
+              <div {{ attribute_footer_items.addClass(hero_footer_items_classes) }}>
+                {% if participants %}
+                  <div class="hero-footer__list-label">{% trans %}Number of participants{% endtrans %}</div>
+                  <div class="hero-footer__list-content">{{ participants }}</div>
+                {% endif %}
+
+                {% if sections_status %}
+                  <div class="hero-footer__list-label">{% trans %}Status{% endtrans %}</div>
+                  <div class="hero-footer__list-content hero-footer__list-content--user">{{ sections_status }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if course_start_date %}
+              <div {{ attribute_footer_items.addClass(hero_footer_items_classes) }}>
+                <div class="hero-footer__list-label">{% trans %}Start date{% endtrans %}</div>
+                <div class="hero-footer__list-content hero-footer__list-content--user">{{ course_start_date }}</div>
+              </div>
+            {% endif %}
+
+            {% if (percent_done or course_last_active) %}
+              <div {{ attribute_footer_items.addClass(hero_footer_items_classes) }}>
+                {% if percent_done %}
+                  <div class="hero-footer__list-label">{% trans %}Passing rate{% endtrans %}</div>
+                  <div class="hero-footer__list-content">{{ percent_done }}</div>
+                {% endif %}
+
+                {% if course_last_active %}
+                  <div class="hero-footer__list-label">{% trans %}Last active{% endtrans %}</div>
+                  <div class="hero-footer__list-content hero-footer__list-content--user">{{ course_last_active }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% if user_picture or sections_status or course_last_active or course_start_date %}
+        <div class="section-title-block hide-desktop">
+          {% trans %}Sections{% endtrans %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,480 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_course_basic module.
+ */
+
+use Drupal\Core\Config\FileStorage;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRoleInterface;
+use Drupal\group\GroupMembership;
+use Drupal\social_group\Entity\Group;
+use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
+use Drupal\user\UserInterface;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_course_basic.
+ */
+function social_course_basic_install(): void {
+  // Anonymous.
+  $permissions[RoleInterface::ANONYMOUS_ID] = [
+    'view public course_basic group',
+  ];
+  // Authenticated.
+  $permissions[RoleInterface::AUTHENTICATED_ID] = $permissions[RoleInterface::ANONYMOUS_ID];
+  // Verified.
+  $permissions['verified'] = [
+    ...$permissions[RoleInterface::AUTHENTICATED_ID],
+    ...[
+      'view community course_basic group',
+      'view members course_basic group',
+    ],
+  ];
+  // Content manager.
+  $permissions['contentmanager'] = [
+    ...$permissions['verified'],
+    ...['create course_basic group'],
+  ];
+  // Site manager.
+  $permissions['sitemanager'] = $permissions['contentmanager'];
+
+  foreach ($permissions as $rid => $new_permissions) {
+    user_role_grant_permissions($rid, $new_permissions);
+  }
+
+  // Enable Social Group Default Route module if it exists.
+  if (!(\Drupal::moduleHandler()->moduleExists('social_group_default_route'))) {
+    \Drupal::service('module_installer')->install(['social_group_default_route']);
+  }
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_course_basic_update_dependencies(): array {
+  // We need to run hook 13001, to install the new view.
+  $dependencies['social_course_basic'][13011] = [
+    'social_course' => 13001,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Add the field_flexible_group_visibility field to the course_basic group.
+ */
+function social_course_basic_update_8001(): void {
+  $config_path = \Drupal::service('extension.list.module')->getPath('module', 'social_course_basic') . '/config/install';
+  $source = new FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $config_names = [
+    'field.field.group.course_basic.field_flexible_group_visibility',
+    'field.field.group.course_basic.field_group_allowed_visibility',
+  ];
+
+  foreach ($config_names as $config_name) {
+    $data = $source->read($config_name);
+    if (is_array($data)) {
+      $config_storage->write($config_name, $data);
+    }
+  }
+}
+
+/**
+ * Add view group permission for the anonymous users.
+ */
+function social_course_basic_update_8004(): void {
+  $config_name = 'group.role.course_basic-anonymous';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $permissions = $config->get('permissions');
+  $permissions[] = 'view group';
+
+  $config->set('permissions', $permissions)->save();
+}
+
+/**
+ * Configuration update: change form display.
+ */
+function social_course_basic_update_8005(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_course_basic', 'social_course_basic_update_8001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Set field_flexible_group_visibility as public by default.
+ */
+function social_course_basic_update_8006(): void {
+  $group_storage = \Drupal::entityTypeManager()->getStorage('group');
+  $course_ids = $group_storage
+    ->getQuery()
+    ->accessCheck(TRUE)
+    ->condition('type', 'course_basic')
+    ->execute();
+
+  foreach ($course_ids as $course_id) {
+    /** @var \Drupal\group\Entity\GroupInterface $course */
+    $course = $group_storage->load($course_id);
+    if ($course->hasField('field_flexible_group_visibility')) {
+      $course->set('field_flexible_group_visibility', 'public');
+      $course->save();
+    }
+  }
+}
+
+/**
+ * Set field_group_allowed_visibility as community by default.
+ */
+function social_course_basic_update_8007(): void {
+  $group_storage = \Drupal::entityTypeManager()->getStorage('group');
+  $course_ids = $group_storage
+    ->getQuery()
+    ->accessCheck(TRUE)
+    ->condition('type', 'course_basic')
+    ->execute();
+
+  foreach ($course_ids as $course_id) {
+    /** @var \Drupal\group\Entity\GroupInterface $course */
+    $course = $group_storage->load($course_id);
+    if ($course->hasField('field_group_allowed_visibility')) {
+      $course->set('field_group_allowed_visibility', ['community']);
+      $course->save();
+    }
+  }
+}
+
+/**
+ * Remove redundant field group "Related courses" for "Course Basic".
+ */
+function social_course_basic_update_8901(): void {
+  if ($group = field_group_load_field_group('group_related_courses', 'group', 'course_basic', 'form', 'default')) {
+    field_group_delete_field_group($group);
+  }
+}
+
+/**
+ * Configuration update: add path alias field.
+ */
+function social_course_basic_update_8902(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_course_basic', 'social_course_basic_update_8902');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Disable revisions for Basic Courses.
+ */
+function social_course_basic_update_8903(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_course_basic', 'social_course_basic_update_8903');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Replace deprecated group permissions for course_basic.
+ */
+function social_course_basic_update_13001(): void {
+  _social_course_update_group_permissions('course_basic');
+}
+
+/**
+ * Move group_admin to group_manager group role for course_basic.
+ *
+ * @param array $sandbox
+ *   Stores information for batch updates. See above for more information.
+ *
+ * @return string
+ *   Displays a message about results to user after the update has completed.
+ */
+function social_course_basic_update_13002(array &$sandbox): string {
+  if (!isset($sandbox['progress'])) {
+    $db = \Drupal::database();
+
+    // Fetch users with group_admin role that should be updated.
+    $query = $db->select('group_content__group_roles', 'gcgr');
+    $query->addField('gcgr', 'entity_id');
+    $query->addField('grfd', 'entity_id', 'uid');
+    $query->addField('grfd', 'gid');
+    $query->condition('gcgr.group_roles_target_id', 'course_basic-group_admin');
+
+    $query->join('group_relationship_field_data', 'grfd', 'grfd.id = gcgr.entity_id');
+
+    $sandbox['ids'] = $query->execute()->fetchAllAssoc('entity_id');
+
+    $sandbox['max'] = count($sandbox['ids']);
+    $sandbox['progress'] = 0;
+  }
+  $items = array_slice($sandbox['ids'], $sandbox['progress'], 25);
+  foreach ($items as $item) {
+    $updated = FALSE;
+    $account = User::load($item->uid);
+    $group = Group::load($item->gid);
+    $manager_role = 'course_basic-group_manager';
+
+    /** @var \Drupal\group\GroupMembership $membership */
+    $membership = $group->getMember($account);
+
+    if (
+      $membership instanceof GroupMembership &&
+      $account instanceof UserInterface &&
+      $group instanceof GroupInterface
+    ) {
+      $group_relationship = $membership->getGroupRelationship();
+      $member_assigned_roles = array_column($group_relationship->get('group_roles')->getValue(), 'target_id');
+
+      // Apply group role update only for SM/CM role.
+      if ($account->hasRole('sitemanager') || $account->hasRole('contentmanager')) {
+
+        // Assign owner a GM role group.
+        if ($account->id() === $group->getOwnerId()) {
+          // Only if it doesn't assigned yet.
+          if (!in_array($manager_role, $member_assigned_roles)) {
+            $member_assigned_roles[] = $manager_role;
+            $member_assigned_roles = array_map(function ($member_assigned_role) {
+              return ['target_id' => $member_assigned_role];
+            }, $member_assigned_roles);
+            $updated = TRUE;
+          }
+        }
+      }
+      // Remove deprecated Group Admin role.
+      $admin_role = 'course_basic-group_admin';
+      if (in_array($admin_role, $member_assigned_roles)) {
+        $key = array_search($admin_role, $member_assigned_roles);
+        unset($member_assigned_roles[$key]);
+
+        $member_assigned_roles = array_map(function ($member_assigned_role) {
+          return ['target_id' => $member_assigned_role];
+        }, $member_assigned_roles);
+        $updated = TRUE;
+      }
+
+      // Save updated assigned roles.
+      if ($updated) {
+        $group_relationship->set('group_roles', $member_assigned_roles);
+        $group_relationship->save();
+      }
+    }
+    $sandbox['progress']++;
+  }
+  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+  // Show a status update for the current progress.
+  return t("Checked @progress from @max users.", [
+    '@progress' => $sandbox['progress'],
+    '@max' => $sandbox['max'],
+  ]);
+}
+
+/**
+ * Create Admin/CM/CS insider roles and delete "group admin" role.
+ */
+function social_course_basic_update_13003(): string {
+  $config_factory = \Drupal::configFactory();
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_course_basic') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  // Created new roles.
+  foreach (['admin', 'cm', 'sm'] as $id) {
+    $config_name = "group.role.course_basic-{$id}-insider";
+    $data = $source->read($config_name);
+    if (is_array($data)) {
+      $config_factory->getEditable($config_name)
+        ->setData($data)
+        ->save();
+    }
+  }
+
+  // Delete deprecated role.
+  $config_factory->getEditable('group.role.course_basic-group_admin')->delete();
+
+  // Update CM role and related configs.
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_course_basic', __FUNCTION__);
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
+
+/**
+ * Allow course leaders to perform CRUD operations on "Article" and "Video".
+ */
+function social_course_basic_update_13004(): void {
+  /** @var \Drupal\group\Entity\GroupRole $course_leader */
+  $course_leader = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->load('course_basic-group_manager');
+  $course_leader->grantPermissions([
+    'create course_article',
+    'view course_article',
+    'update course_article',
+    'delete course_article',
+    'create course_video',
+    'view course_video',
+    'update course_video',
+    'delete course_video',
+  ]);
+  $course_leader->save();
+}
+
+/**
+ * Add 'Verified' group role.
+ */
+function social_course_basic_update_13005(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_course_basic', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Improve "Small teaser" view mode.
+ */
+function social_course_basic_update_13006(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_course_basic', __FUNCTION__);
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Revoke "Join Group" permission for Authenticated (outsider) group role.
+ */
+function social_course_basic_update_13007(): void {
+  $group_authenticated_role = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->load('course_basic-outsider');
+
+  if ($group_authenticated_role instanceof GroupRoleInterface) {
+    $group_authenticated_role->revokePermissions([
+      'join group',
+      'request group membership',
+    ])->save();
+  }
+
+}
+
+/**
+ * Grant permissions for Verified (outsider) group role.
+ */
+function social_course_basic_update_13008(): void {
+  $group_verified_role = \Drupal::entityTypeManager()
+    ->getStorage('group_role')
+    ->load('course_basic-verified');
+
+  if ($group_verified_role instanceof GroupRoleInterface) {
+    $group_verified_role->grantPermissions([
+      'join group',
+      'request group membership',
+    ])->save();
+  }
+
+}
+
+/**
+ * Grant permissions for Anonymous group role.
+ */
+function social_course_basic_update_13009(): void {
+  $roles_permissions = [
+    'course_basic-anonymous' => [
+      'view group_node:course_section entity',
+      'view group_node:course_section relationship',
+    ],
+  ];
+
+  foreach ($roles_permissions as $role => $permissions) {
+    $role = \Drupal::entityTypeManager()
+      ->getStorage('group_role')
+      ->load($role);
+
+    if ($role instanceof GroupRoleInterface) {
+      $role->grantPermissions($permissions)->save();
+    }
+  }
+
+}
+
+/**
+ * Enable Social Group Default Route module if it exists.
+ */
+function social_course_basic_update_13010(): void {
+  if (!(\Drupal::moduleHandler()->moduleExists('social_group_default_route'))) {
+    \Drupal::service('module_installer')->install(['social_group_default_route']);
+  }
+}
+
+/**
+ * Grant new permissions to access to Basic Courses.
+ */
+function social_course_basic_update_13011(): void {
+  $permissions[RoleInterface::ANONYMOUS_ID] =
+  $permissions[RoleInterface::AUTHENTICATED_ID] = ['view public course_basic group'];
+  $permissions['verified'] = [
+    ...$permissions[RoleInterface::AUTHENTICATED_ID],
+    ...[
+      'view community course_basic group',
+      'view members course_basic group',
+    ],
+  ];
+  $permissions['contentmanager'] = $permissions['sitemanager'] = $permissions['verified'];
+
+  foreach ($permissions as $rid => $new_permissions) {
+    user_role_grant_permissions($rid, $new_permissions);
+  }
+}
+
+/**
+ * Update the new hubs view.
+ */
+function social_course_basic_update_13012(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+  $update_helper->executeUpdate('social_course_basic', __FUNCTION__);
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Update the group visibility field description.
+ */
+function social_course_basic_update_13013(): void {
+  $field_config = \Drupal::configFactory()
+    ->getEditable('field.field.group.course_basic.field_flexible_group_visibility');
+
+  $field_config->set('label', 'Visibility');
+  $field_config->set('description', 'Who can find and view your course');
+  $field_config->save();
+}
+
+/**
+ * Add third_party_settings for basic course group roles.
+ */
+function social_course_basic_update_13014(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+  $update_helper->executeUpdate('social_course_basic', __FUNCTION__);
+  return $update_helper->logger()->output();
+}

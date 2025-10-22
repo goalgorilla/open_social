@@ -1,0 +1,39 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group.course_advanced.field_course_opening_date
+    - field.field.group.course_advanced.field_course_opening_status
+    - field.field.group.course_advanced.field_course_order
+    - field.field.group.course_advanced.field_course_redirect_url
+    - field.field.group.course_advanced.field_course_related_courses
+    - field.field.group.course_advanced.field_course_type
+    - field.field.group.course_advanced.field_group_description
+    - field.field.group.course_advanced.field_group_image
+    - group.type.course_advanced
+  module:
+    - text
+id: group.course_advanced.default
+targetEntityType: group
+bundle: course_advanced
+mode: default
+content:
+  field_group_description:
+    weight: 0
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+hidden:
+  changed: true
+  created: true
+  field_course_opening_date: true
+  field_course_opening_status: true
+  field_course_order: true
+  field_course_redirect_url: true
+  field_course_related_courses: true
+  field_course_type: true
+  field_group_image: true
+  label: true
+  uid: true

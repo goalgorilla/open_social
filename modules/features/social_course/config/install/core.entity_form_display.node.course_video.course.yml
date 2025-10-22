@@ -1,0 +1,47 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.node.course
+    - field.field.node.course_video.field_course_video_description
+    - field.field.node.course_video.field_course_video_video
+    - node.type.course_video
+  module:
+    - text
+    - video_embed_field
+id: node.course_video.course
+targetEntityType: node
+bundle: course_video
+mode: course
+content:
+  field_course_video_description:
+    weight: 2
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_course_video_video:
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+    type: video_embed_field_textfield
+    region: content
+  title:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  groups: true
+  path: true
+  promote: true
+  social_tagging: true
+  status: true
+  sticky: true
+  uid: true

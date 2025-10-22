@@ -1,0 +1,20 @@
+{
+    "name": "drupal/social_course",
+    "type": "drupal-module",
+    "require": {
+        "php": "^8.0",
+        "drupal/group": "^2.2",
+        "drupal/inline_entity_form": "~1.0",
+        "drupal/video_embed_field": "^2.4",
+        "drupal/weight": "^3.0",
+        "goalgorilla/open_social": "^13.0.0-beta1 || ^2025.19"
+    },
+    "extra": {
+        "enable-patching": true,
+        "patches": {
+            "drupal/inline_entity_form": {
+                "Issue #2903964: Nesting Paragraph into a IEF then translating makes Paragraph field disappear": "https://www.drupal.org/files/issues/2020-01-23/enable-translatable-references-2903964-23.patch"
+            }
+        }
+    }
+}

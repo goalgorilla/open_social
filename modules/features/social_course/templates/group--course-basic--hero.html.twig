@@ -1,0 +1,78 @@
+{{ attach_library('socialbase/hero')}}
+{{ attach_library('social_course/social_course_hero')}}
+
+{%
+set cover_classes = [
+'cover',
+'cover--course',
+'cover--' ~ group.type.0.target_id | clean_class,
+'brand-bg-primary',
+group_hero_styled_image_url ? 'cover-img cover-img-gradient',
+]
+%}
+
+<div{{ attributes.addClass(cover_classes) }} {% if group_hero_styled_image_url %} style="background-image: url('{{ group_hero_styled_image_url }}');" {% endif %}>
+  <div class="hero__bgimage-overlay"></div>
+    {% if group_edit_url or statistics_ulr %}
+        <div class="hero-action-button">
+            {% if statistics_ulr %}
+              <a href="{{ statistics_ulr }}" aria-hidden="true" title="{% trans %}Statistics{% endtrans %}" class="btn btn-default btn-floating waves-effect waves-circle">
+                <svg class="icon-gray icon-medium">
+                  <title>{% trans %}Statistics{% endtrans %}</title>
+                  <use xlink:href="#icon-bar_chart"></use>
+                </svg>
+              </a>
+            {% endif %}
+
+            <a href="{{ group_edit_url }}" aria-hidden="true" title="{% trans %}Edit course{% endtrans %}" class="btn btn-default btn-floating waves-effect waves-circle">
+              <svg class="icon-gray icon-medium">
+                <title>{% trans %}Edit course{% endtrans %}</title>
+                    <use xlink:href="#icon-edit"></use>
+                </svg>
+            </a>
+        </div>
+    {% endif %}
+    <div class="cover-wrap">
+      {% block hero_title %}
+        <h4 class="hero__network">{{ content.field_course_type }}</h4>
+        <h1 class="page-title"> {{ content.label }}</h1>
+      {% endblock %}
+
+      {% block hero_footer %}
+        <div class="hero-footer">
+          <div class="hero-footer__text">
+            {% if content.field_course_opening_date|render %}
+              {% if content.field_course_opening_status['#items'].getString() == 0 %}
+                <span class="badge-default badge--large badge">
+                  {% trans %}Starts at{% endtrans %} {{ content.field_course_opening_date }}
+                </span>
+              {% endif %}
+            {% endif %}
+          </div>
+        {% endblock %}
+
+          {% block hero_footer_cta %}
+            {% if group_operations_url %}
+                <div class="hero-footer__cta">
+                    <div class="btn-group">
+                        {% if joined %}
+                            <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle brand-bg-accent">{% trans %}Enrolled{% endtrans %}<span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><a href="{{ group_operations_url }}">{% trans %}Cancel enrollment{% endtrans %}</a></li>
+                            </ul>
+                        {% else %}
+                            <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle brand-bg-accent" title="Join">{% trans %}Enroll{% endtrans %}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="hero-footer__cta">
+                    <div class="btn-group">
+                        <div class="btn btn-accent btn-lg btn-raised is-disabled dropdown-toggle brand-bg-accent" disabled="disabled"  title="Enrollment is closed">{% trans %}Enrollment is closed{% endtrans %}</div>
+                    </div>
+                </div>
+            {% endif %}
+          {% endblock %}
+        </div>
+    </div> {# cover-wrap #}
+</div> {# cover #}

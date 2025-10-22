@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_section_content
+    - node.type.course_article
+    - node.type.course_section
+    - node.type.course_video
+id: node.course_section.field_course_section_content
+field_name: field_course_section_content
+entity_type: node
+bundle: course_section
+label: Parts
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      course_article: course_article
+      course_video: course_video
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: course_article
+field_type: entity_reference

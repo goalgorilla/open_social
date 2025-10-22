@@ -1,0 +1,206 @@
+field.field.node.course_section.field_course_section_description:
+  expected_config: {  }
+  update_actions:
+    change:
+      translatable: TRUE
+field.field.node.course_section.field_course_section_redirect:
+  expected_config: {  }
+  update_actions:
+    change:
+      translatable: TRUE
+field.field.node.course_video.field_course_video_description:
+  expected_config: {  }
+  update_actions:
+    change:
+      translatable: TRUE
+field.field.node.course_video.field_course_video_video:
+  expected_config: {  }
+  update_actions:
+    change:
+      translatable: TRUE
+field.field.paragraph.attachment.field_files:
+  expected_config: {  }
+  update_actions:
+    change:
+      translatable: TRUE
+field.field.paragraph.image_text.field_image:
+  expected_config: {  }
+  update_actions:
+    change:
+      translatable: TRUE
+field.field.paragraph.images.field_images:
+  expected_config: {  }
+  update_actions:
+    change:
+      translatable: TRUE
+field.field.paragraph.text.field_text:
+  expected_config: {  }
+  update_actions:
+    change:
+      translatable: TRUE
+views.view.course:
+  expected_config: {  }
+  update_actions:
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              default_langcode:
+                id: default_langcode
+                table: node_field_data
+                field: default_langcode
+                relationship: none
+                group_type: group
+                admin_label: ''
+                operator: '='
+                value: '1'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+                entity_type: node
+                entity_field: default_langcode
+                plugin_id: boolean
+        course_sections_block:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
+views.view.courses_overview:
+  expected_config: {  }
+  update_actions:
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              default_langcode:
+                id: default_langcode
+                table: groups_field_data
+                field: default_langcode
+                relationship: none
+                group_type: group
+                admin_label: ''
+                operator: '='
+                value: '1'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: {  }
+                  group_items: {  }
+                entity_type: group
+                entity_field: default_langcode
+                plugin_id: boolean
+        block:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
+        page:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
+views.view.courses_user:
+  expected_config: {  }
+  update_actions:
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              default_langcode:
+                id: default_langcode
+                table: groups_field_data
+                field: default_langcode
+                relationship: none
+                group_type: group
+                admin_label: ''
+                operator: '='
+                value: '1'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: {  }
+                  group_items: {  }
+                entity_type: group
+                entity_field: default_langcode
+                plugin_id: boolean
+        block:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
+        page:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
+block.block.socialblue_course_material_pager:
+  expected_config: { }
+  update_actions:
+    change:
+      visibility:
+        request_path:
+          pages: "/node/*/edit\r\n/node/*/delete\r\n/node/*/translations*"

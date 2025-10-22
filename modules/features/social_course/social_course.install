@@ -1,0 +1,775 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_course module.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_course.
+ */
+function social_course_install(): void {
+  // Set some default permissions.
+  _social_course_set_permissions();
+  // Add All courses menu link.
+  _social_course_create_menu_links();
+  // Hide unnecessary blocks.
+  _social_course_course_blocks_fix();
+  // Publish all groups.
+  $storage = \Drupal::entityTypeManager()->getStorage('group');
+
+  /** @var \Drupal\group\Entity\GroupInterface $entity */
+  foreach ($storage->loadMultiple() as $entity) {
+    if ($entity->hasField('status')) {
+      $entity->get('status')->setValue(TRUE);
+      $entity->save();
+    }
+  }
+  // Set module weight higher as the weight of the "Social Flexible Group"
+  // module because needs have a few hooks executed first.
+  module_set_weight('social_course', 6);
+
+  $block = \Drupal::service('config.factory')
+    ->getEditable('block.block.socialblue_pagetitleblock_content');
+  if (!$block->isNew()) {
+    $pages = $block->get('visibility.request_path.pages');
+    if (!str_contains($pages, '/user/*/courses')) {
+      $block->set('visibility.request_path.pages', $pages .= "\r\n/user/*/courses");
+      $block->save();
+    }
+  }
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_course_update_dependencies(): array {
+  // See social_course_update_9504 description for info.
+  $dependencies['social_group'][13001] = [
+    'social_course' => 9504,
+  ];
+
+  // We need to run hook 13017, to install the new view.
+  $dependencies['social_course'][13001] = [
+    'social_group' => 13017,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_course_set_permissions(): void {
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_course_get_permissions((string) $role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * Return the permissions per role.
+ *
+ * @param string $role
+ *   The role to get the permissions for.
+ *
+ * @return array
+ *   A list of permissions.
+ */
+function _social_course_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = [
+    'access course overview',
+  ];
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+    'use courses feature',
+  ]);
+
+  // Authenticated.
+  $permissions['verified'] = array_merge($permissions['authenticated'], []);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+    'create course_article content',
+    'delete own course_article content',
+    'edit own course_article content',
+    'override course_article published option',
+    'create course_video content',
+    'delete own course_video content',
+    'edit own course_video content',
+    'override course_video published option',
+    'create course_section content',
+    'delete own course_section content',
+    'edit own course_section content',
+    'override course_section published option',
+    'delete any course_article content',
+    'edit any course_article content',
+    'revert course_article revisions',
+    'delete course_article revisions',
+    'view course_article revisions',
+    'override course_article authored by option',
+    'override course_article authored on option',
+    'override course_article promote to front page option',
+    'override course_article revision option',
+    'override course_article sticky option',
+    'delete any course_video content',
+    'edit any course_video content',
+    'revert course_video revisions',
+    'delete course_video revisions',
+    'view course_video revisions',
+    'override course_video authored by option',
+    'override course_video authored on option',
+    'override course_video promote to front page option',
+    'override course_video revision option',
+    'override course_video sticky option',
+    'delete any course_section content',
+    'edit any course_section content',
+    'revert course_section revisions',
+    'delete course_section revisions',
+    'view course_section revisions',
+    'override course_section authored by option',
+    'override course_section authored on option',
+    'override course_section promote to front page option',
+    'override course_section revision option',
+    'override course_section sticky option',
+    'view unpublished groups',
+  ]);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
+
+  return $permissions[$role] ?? [];
+}
+
+/**
+ * Function to create menu items.
+ */
+function _social_course_create_menu_links(): void {
+  $menu_links = MenuLinkContent::loadMultiple();
+  $parent = NULL;
+  /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
+  foreach ($menu_links as $menu_link) {
+    if ($menu_link->label() === 'Explore' && $menu_link->isExpanded()) {
+      $parent = 'menu_link_content:' . $menu_link->uuid();
+    }
+  }
+
+  if (!is_null($parent)) {
+    MenuLinkContent::create([
+      'title' => t('All courses'),
+      'link' => ['uri' => 'internal:/all-courses'],
+      'menu_name' => 'main',
+      'expanded' => FALSE,
+      'weight' => 19,
+      'parent' => $parent,
+    ])->save();
+  }
+}
+
+/**
+ * Hide unnecessary blocks.
+ */
+function _social_course_course_blocks_fix(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('block');
+  $plugin_ids = [
+    'views_block:latest_topics-group_topics_block',
+    'views_block:upcoming_events-upcoming_events_group',
+  ];
+
+  foreach ($plugin_ids as $plugin_id) {
+    $blocks = $storage->loadByProperties([
+      'plugin' => $plugin_id,
+    ]);
+
+    if ($block = current($blocks)) {
+      $visibility = $block->get('visibility');
+      $visibility['group_type'] = [
+        'id' => 'group_type',
+        'group_types' => [
+          'course_advanced' => 'course_advanced',
+        ],
+        'negate' => FALSE,
+        'context_mapping' => [
+          'group' => '@group.group_route_context:group',
+        ],
+      ];
+      $block->set('visibility', $visibility);
+      $block->save();
+    }
+  }
+}
+
+/**
+ * Allow users to use courses.
+ */
+function social_course_update_8001(): void {
+  user_role_grant_permissions('authenticated', ['use courses feature']);
+}
+
+/**
+ * Add "Status" field to "group" entity type.
+ */
+function social_course_update_8002(): void {
+  $definition = BaseFieldDefinition::create('boolean')
+    ->setLabel(t('Published'))
+    ->setRevisionable(TRUE)
+    ->setTranslatable(TRUE)
+    ->setDefaultValue(TRUE)
+    ->setDisplayOptions('view', [
+      'label' => 'hidden',
+      'type' => 'string',
+      'weight' => -5,
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'default_widget',
+      'weight' => -5,
+    ])
+    ->setDisplayConfigurable('form', TRUE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('status', 'group', 'group', $definition);
+}
+
+/**
+ * Publish all groups.
+ */
+function social_course_update_8003(array &$sandbox): void {
+  $database = \Drupal::database();
+  if (!isset($sandbox['progress'])) {
+    $sandbox['progress'] = 0;
+    $sandbox['current_id'] = 0;
+    $sandbox['max'] = 0;
+    $result = $database->select('groups_field_data')
+      ->countQuery()
+      ->execute();
+    if ($result !== NULL) {
+      $sandbox['max'] = $result->fetchField() - 1;
+    }
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('group');
+  $ids = [];
+  $result = $database
+    ->select('groups_field_data', 'gfd')
+    ->fields('gfd', ['id'])
+    ->condition('gfd.id', $sandbox['current_id'], '>')
+    ->range(0, 10)
+    ->orderBy('gfd.id', 'ASC')
+    ->execute();
+  if ($result !== NULL) {
+    $ids = $result->fetchCol();
+  }
+
+  /** @var \Drupal\group\Entity\GroupInterface[] $groups */
+  $groups = $storage->loadMultiple($ids);
+
+  if (empty($groups)) {
+    return;
+  }
+
+  foreach ($groups as $group) {
+    $group->get('status')->setValue($group);
+    $group->save();
+
+    $sandbox['progress']++;
+    $sandbox['current_id'] = $group->id();
+  }
+
+  $sandbox['#finished'] = $sandbox['max'] < 1 ? 1 : ($sandbox['progress'] / $sandbox['max']);
+}
+
+/**
+ * Add permission to view unpublished groups for the content manager role.
+ */
+function social_course_update_8004(): void {
+  user_role_grant_permissions('contentmanager', ['view unpublished groups']);
+}
+
+/**
+ * Open all courses.
+ */
+function social_course_update_8005(array &$sandbox): void {
+  /** @var \Drupal\social_course\CourseWrapperInterface $course_wrapper */
+  $course_wrapper = \Drupal::service('social_course.course_wrapper');
+  $database = \Drupal::database();
+
+  if (!isset($sandbox['progress'])) {
+    $sandbox['progress'] = 0;
+    $sandbox['current_id'] = 0;
+    $query = $database
+      ->select('groups_field_data', 'gfd');
+    $query->addExpression('COUNT(id)');
+    $query->condition('gfd.type', $course_wrapper->getAvailableBundles(), 'IN');
+
+    $sandbox['max'] = 0;
+    $results = $query->execute();
+    if ($results !== NULL) {
+      $sandbox['max'] = $results->fetchField() - 1;
+    }
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('group');
+  $ids = [];
+  $result = $database
+    ->select('groups_field_data', 'gfd')
+    ->fields('gfd', ['id'])
+    ->condition('gfd.type', $course_wrapper->getAvailableBundles(), 'IN')
+    ->condition('gfd.id', $sandbox['current_id'], '>')
+    ->range(0, 10)
+    ->orderBy('gfd.id', 'ASC')
+    ->execute();
+  if ($result !== NULL) {
+    $ids = $result->fetchCol();
+  }
+
+  /** @var \Drupal\group\Entity\GroupInterface[] $groups */
+  $groups = $storage->loadMultiple($ids);
+
+  if (empty($groups)) {
+    return;
+  }
+
+  foreach ($groups as $group) {
+    $time = \Drupal::time()->getCurrentTime();
+    $date = \Drupal::service('date.formatter')->format($time, 'custom', "Y-m-d\TH:i:00");
+    $group->get('field_course_opening_date')->value = $date;
+    $group->save();
+    $sandbox['progress']++;
+    $sandbox['current_id'] = $group->id();
+  }
+
+  $sandbox['#finished'] = $sandbox['max'] < 1 ? 1 : ($sandbox['progress'] / $sandbox['max']);
+}
+
+/**
+ * Allow users to use courses.
+ */
+function social_course_update_8006(): void {
+  user_role_grant_permissions('authenticated', ['use courses feature']);
+}
+
+/**
+ * Delete course_section_navigation and course_material_navigation blocks.
+ */
+function social_course_update_8007(): void {
+  $block_ids = [
+    'course_section_navigation',
+    'course_material_navigation',
+    'course_material_hero',
+  ];
+  $entity_type_manager = \Drupal::entityTypeManager();
+  if ($entity_type_manager->hasDefinition('block')) {
+    $blocks = $entity_type_manager->getStorage('block')->loadByProperties(['plugin' => $block_ids]);
+    foreach ($blocks as $block) {
+      /** @var \Drupal\block\Entity\Block $block */
+      $block->delete();
+    }
+  }
+}
+
+/**
+ * Show profile hero block on My courses page.
+ */
+function social_course_update_8008(): void {
+  $config_name = 'block.block.socialblue_profile_hero_block';
+  $config = \Drupal::service('config.factory')->getEditable($config_name);
+  if (!empty($config->getRawData())) {
+    $pages = $config->get('visibility.request_path.pages');
+    $pages .= "\r\n/user/*/courses";
+    $config->set('visibility.request_path.pages', $pages);
+    $config->save();
+  }
+}
+
+/**
+ * Hide page title block from the user courses profile.
+ */
+function social_course_update_8009(): void {
+  $configFactory = \Drupal::service('config.factory');
+  $config_names = [
+    'block.block.socialblue_pagetitleblock_content',
+    'block.block.socialblue_profile_statistic_block',
+  ];
+  foreach ($config_names as $config_name) {
+    $config = $configFactory->getEditable($config_name);
+    if (!empty($config->getRawData())) {
+      $pages = sprintf("%s\r\n/user/*/courses", $config->get('visibility.request_path.pages'));
+      $config->set('visibility.request_path.pages', $pages);
+      $config->save();
+    }
+  }
+}
+
+/**
+ * Configuration update: change Course Section form display.
+ */
+function social_course_update_8301(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_course', 'social_course_update_8010');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Change weight for "Social Course" module.
+ */
+function social_course_update_8302(): void {
+  // Set module weight higher as the weight of the "Social Flexible Group"
+  // module because needs have a few hooks executed first.
+  module_set_weight('social_course', 6);
+}
+
+/**
+ * Add infinite scroll to show all sections on one page when visiting courses.
+ */
+function social_course_update_8303(): void {
+  $view = \Drupal::configFactory()
+    ->getEditable('views.view.course');
+  // Get the config of the filters.
+  $display_options = $view->get('display.default.display_options');
+  $display_options['pager'] = [
+    'type' => 'infinite_scroll',
+    'options' => [
+      'items_per_page' => 25,
+      'views_infinite_scroll' => [
+        'button_text' => 'Load more',
+        'automatically_load_content' => FALSE,
+      ],
+    ],
+  ];
+  $display_options['use_ajax'] = TRUE;
+  // Set the display options in the config.
+  $view->set('display.default.display_options', $display_options)->save();
+}
+
+/**
+ * Set the amount of items in the courses block to 25.
+ */
+function social_course_update_8304(): void {
+  $config_file = \Drupal::service('extension.list.module')->getPath('module', 'social_course') . '/config/static/block.block.socialblue_views_block__course_sections_block_8011.yml';
+
+  if (is_file($config_file) && $data = file_get_contents($config_file)) {
+    $settings = Yaml::parse($data);
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('block.block.socialblue_views_block__course_sections_block');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Add translations support for "Course" content.
+ */
+function social_course_update_8305(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_course', 'social_course_update_8305');
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Set missed permissions for OS roles ("Site manager" && "Content manager").
+ */
+function social_course_update_8306(): void {
+  foreach (['sitemanager', 'contentmanager'] as $role_id) {
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = Role::load($role_id);
+    $permissions = _social_course_get_permissions($role_id);
+    foreach ($permissions as $permission) {
+      if (!$role->hasPermission($permission)) {
+        $role->grantPermission($permission);
+      }
+    }
+    $role->save();
+  }
+}
+
+/**
+ * Hide "Course Section block" if empty.
+ */
+function social_course_update_8307(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_course', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Hide blocks on translations add/edit pages.
+ */
+function social_course_update_8308(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_course', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update course form displays.
+ */
+function social_course_update_8309(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_course', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Grants permission for the verified role.
+ */
+function social_course_update_8310(): void {
+  user_role_grant_permissions('verified', ['use courses feature']);
+}
+
+/**
+ * Hide page title block from the user courses profile.
+ */
+function social_course_update_9401(): void {
+  // Moved to social_course_update_9402().
+}
+
+/**
+ * Hide page title block from the user courses profile.
+ */
+function social_course_update_9402(): void {
+  $config = \Drupal::service('config.factory')->getEditable('block.block.socialblue_pagetitleblock_content');
+  if ($config->isNew()) {
+    return;
+  }
+
+  $pages = $config->get('visibility.request_path.pages');
+  if (str_contains($pages, "/user/*/courses")) {
+    return;
+  }
+
+  $config->set('visibility.request_path.pages', $pages .= "\r\n/user/*/courses");
+  $config->save();
+}
+
+/**
+ * Remove deprecated permissions.
+ *
+ * Deprecated permissions:
+ * - "override course_article revision log entry",
+ * - "override course_section revision log entry",
+ * - "override course_video revision log entry".
+ */
+function social_course_update_9501(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
+
+  $deprecated_permissions = [
+    'override course_article revision log entry',
+    'override course_section revision log entry',
+    'override course_video revision log entry',
+  ];
+
+  foreach ($deprecated_permissions as $deprecated_permission) {
+    foreach ($roles as $role) {
+      if ($role->hasPermission($deprecated_permission)) {
+        $role->revokePermission($deprecated_permission);
+        $role->save();
+      }
+    }
+  }
+}
+
+/**
+ * Remove unneeded "use text format text_only_html" permission.
+ */
+function social_course_update_9502(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $all_permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
+
+  $permission_to_check = 'use text format text_only_html';
+
+  // If permission is not valid (is not on the list of all permissions),
+  // we need to revoke it from all existing roles.
+  if (!in_array($permission_to_check, $all_permissions)) {
+    foreach ($roles as $role) {
+      if ($role->hasPermission($permission_to_check)) {
+        $role->revokePermission($permission_to_check);
+        $role->save();
+      }
+    }
+  }
+}
+
+/**
+ * Search for invalid permission(s) and remove them from existing roles.
+ *
+ * Permissions to check:
+ *
+ * - "create course_advanced group",
+ * - "create course_basic group",
+ * - "translate course_article node",
+ * - "translate course_section node",
+ * - "translate course_video node".
+ */
+function social_course_update_9503(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $all_permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
+
+  $permissions_to_check = [
+    'create course_advanced group',
+    'create course_basic group',
+    'translate course_article node',
+    'translate course_section node',
+    'translate course_video node',
+  ];
+
+  // If permission is not valid (is not on the list of all permissions),
+  // we need to revoke it from all existing roles.
+  foreach ($permissions_to_check as $permission_to_check) {
+    if (!in_array($permission_to_check, $all_permissions)) {
+      foreach ($roles as $role) {
+        if ($role->hasPermission($permission_to_check)) {
+          $role->revokePermission($permission_to_check);
+          $role->save();
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Remove group type config override from the database if it exists.
+ *
+ * Social courses has overrides which might have accidentally been added to
+ * the database due to not using getOrginal which is breaking OS-13 update hook
+ * social_group_13001.
+ */
+function social_course_update_9504(): void {
+  $config = \Drupal::configFactory()
+    ->getEditable('views.view.groups');
+
+  $displays = $config->getOriginal('display');
+  foreach ($displays as $key => $display) {
+    if (!empty($display['display_options']['filters']['type'])) {
+      unset($displays[$key]['display_options']['filters']['type']);
+    }
+  }
+
+  $config->set('display', $displays);
+  $config->save();
+}
+
+/**
+ * Create entity-form-display or hidden path field from Course Type taxonomy.
+ */
+function social_course_update_9505(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
+  $form_display = $storage->load('taxonomy_term.course_type.default');
+
+  // When entity-form-display isn't be created,
+  // it'll create from install folder.
+  if (empty($form_display)) {
+    // Get file from install folder and check if it exists.
+    $config_file = \Drupal::service('extension.list.module')->getPath('social_course') . '/config/install/core.entity_form_display.taxonomy_term.course_type.default.yml';
+    if (file_exists($config_file) === FALSE) {
+      \Drupal::logger('social_course')->error('Configuration file for entity-form-display "course_type" not found.');
+      return;
+    }
+
+    // Apply the configuration to create entity-form-display.
+    $view_config = Yaml::parseFile($config_file);
+    \Drupal::configFactory()->getEditable('core.entity_form_display.taxonomy_term.course_type.default')
+      ->setData($view_config)
+      ->save();
+  }
+  else {
+    // Get fields from entity-form-display and check if path already be hidden.
+    $hidden = $form_display->get('hidden');
+    $content = $form_display->get('content');
+    if (in_array('path', array_keys($hidden))) {
+      \Drupal::logger('social_course')->info('The path field already is hidden on Course Type taxonomy.');
+      return;
+    }
+
+    // Manipulate path field to be hidden and save.
+    $hidden['path'] = TRUE;
+    unset($content['path']);
+    $form_display->set('hidden', $hidden)
+      ->set('content', $content)
+      ->save();
+  }
+}
+
+/**
+ * Restrict AU access to other users courses list page.
+ */
+function social_course_update_9506(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+  $update_helper->executeUpdate('social_course', __FUNCTION__);
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Update the new hub view.
+ */
+function social_course_update_13001(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+  $update_helper->executeUpdate('social_course', __FUNCTION__);
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Grant access course overview permission to anonymous role and update views.
+ */
+function social_course_update_13002(): string {
+  // Grant permission to anonymous role.
+  user_role_grant_permissions('anonymous', ['access course overview']);
+
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_course', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}

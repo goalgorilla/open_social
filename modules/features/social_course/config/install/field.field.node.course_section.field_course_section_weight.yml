@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_section_weight
+    - node.type.course_section
+  module:
+    - weight
+id: node.course_section.field_course_section_weight
+field_name: field_course_section_weight
+entity_type: node
+bundle: course_section
+label: Weight
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: '0'
+default_value_callback: ''
+settings:
+  range: '50'
+field_type: weight

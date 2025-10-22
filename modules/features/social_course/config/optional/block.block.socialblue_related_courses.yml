@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - group
+    - social_course
+    - system
+  theme:
+    - socialblue
+id: socialblue_related_courses
+theme: socialblue
+region: complementary_top
+weight: 0
+provider: null
+plugin: related_courses
+settings:
+  id: related_courses
+  label: Related
+  provider: social_course
+  label_display: visible
+  context_mapping:
+    group: '@group.group_route_context:group'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/group/*/about'
+    negate: false
+    context_mapping: {  }
+  group_type:
+    id: group_type
+    group_types:
+      course_advanced: course_advanced
+      course_basic: course_basic
+    negate: false
+    context_mapping:
+      group: '@group.group_route_context:group'

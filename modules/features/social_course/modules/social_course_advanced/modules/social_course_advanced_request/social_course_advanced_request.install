@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Update and install hooks for Social Course Advanced Request.
+ */
+
+/**
+ * Update membership request form display.
+ */
+function social_course_advanced_request_update_13001(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_course_advanced_request', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}

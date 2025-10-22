@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_course_statistics module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_course_statistics.
+ */
+function social_course_statistics_install(): void {
+  _social_course_statistics_update_group_manager();
+}
+
+/**
+ * Add permission to view statistics page for "Course Leader" group role.
+ */
+function social_course_statistics_update_13001(): string {
+  _social_course_statistics_update_group_manager();
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_course_statistics', __FUNCTION__);
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Helper callback to update permission for "Course Leader" group role.
+ */
+function _social_course_statistics_update_group_manager(): void {
+  foreach (['course_basic', 'course_advanced'] as $course_type) {
+    $config_name = "group.role.{$course_type}-group_manager";
+    $config = \Drupal::configFactory()->getEditable($config_name);
+    $permissions = $config->get('permissions');
+    $permissions[] = 'view course statistics';
+    $config->set('permissions', $permissions)->save();
+  }
+}

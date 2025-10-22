@@ -1,0 +1,22 @@
+{% extends "group--statistic.html.twig" %}
+
+{% block group_statistics %}
+  <div class="card__counter">
+    <ul>
+      <li>
+        <span class="card__counter-quantity">{{ group_members }}</span>
+        <span class="card__counter-text">{% trans %}member{% plural group_members %}members{% endtrans %}</span>
+      </li>
+      <li>
+        <span class="card__counter-quantity">{{ course_sections }}</span>
+        <span class="card__counter-text">{% trans %}section{% plural course_sections %}sections{% endtrans %}</span>
+      </li>
+      <li>
+        <span class="card__counter-quantity">{{ finished_sections }}</span>
+        <span class="card__counter-text">{% trans %}finished{% plural finished_sections %}finished{% endtrans %}</span>
+      </li>
+    </ul>
+  </div>
+{% endblock %}
+{% block group_statistics_footer %}
+{% endblock %}

@@ -1,0 +1,36 @@
+core.entity_view_display.group.course_advanced.small_teaser:
+  expected_config:
+    content:
+      label:
+        type: string
+        weight: 0
+        region: content
+        label: hidden
+        settings:
+          link_to_entity: false
+        third_party_settings: {  }
+  update_actions:
+    add:
+      content:
+        field_group_image:
+          type: image
+          label: hidden
+          settings:
+            image_link: content
+            image_style: social_medium
+            image_loading:
+              attribute: lazy
+          third_party_settings:
+            lazy:
+              lazy_image: '0'
+              placeholder_style: ''
+              data_uri: false
+          weight: 0
+          region: content
+    change:
+      content:
+        label:
+          weight: 1
+    delete:
+      hidden:
+        field_group_image: TRUE

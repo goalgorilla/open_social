@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.course_section.field_course_section_content
+    - field.field.node.course_section.field_course_section_description
+    - field.field.node.course_section.field_course_section_weight
+    - image.style.social_xx_large
+    - node.type.course_section
+  module:
+    - image
+    - text
+    - user
+id: node.course_section.teaser
+targetEntityType: node
+bundle: course_section
+mode: teaser
+content:
+  field_course_section_description:
+    type: text_default
+    weight: 1
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  links:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_course_section_content: true
+  field_course_section_weight: true
+  flag_follow_content: true

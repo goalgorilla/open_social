@@ -1,0 +1,4 @@
+services:
+  social_course_statistics.course_statistics:
+    class: Drupal\social_course_statistics\CourseStatistics
+    arguments: ['@database', '@social_course.course_wrapper', '@current_route_match']

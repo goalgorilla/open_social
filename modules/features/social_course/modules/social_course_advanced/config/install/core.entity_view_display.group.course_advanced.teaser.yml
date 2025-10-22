@@ -1,0 +1,57 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group.teaser
+    - field.field.group.course_advanced.field_course_opening_date
+    - field.field.group.course_advanced.field_course_opening_status
+    - field.field.group.course_advanced.field_course_order
+    - field.field.group.course_advanced.field_course_redirect_url
+    - field.field.group.course_advanced.field_course_related_courses
+    - field.field.group.course_advanced.field_course_type
+    - field.field.group.course_advanced.field_group_description
+    - field.field.group.course_advanced.field_group_image
+    - group.type.course_advanced
+    - image.style.social_x_large
+  module:
+    - image
+id: group.course_advanced.teaser
+targetEntityType: group
+bundle: course_advanced
+mode: teaser
+content:
+  field_course_type:
+    type: entity_reference_label
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+  field_group_image:
+    type: image
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      image_style: social_x_large
+      image_link: content
+    third_party_settings: {  }
+  label:
+    type: string
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden:
+  changed: true
+  created: true
+  field_course_opening_date: true
+  field_course_opening_status: true
+  field_course_order: true
+  field_course_redirect_url: true
+  field_course_related_courses: true
+  field_group_description: true
+  uid: true

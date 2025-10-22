@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_course_redirect_url
+    - group.type.course_basic
+  module:
+    - link
+id: group.course_basic.field_course_redirect_url
+field_name: field_course_redirect_url
+entity_type: group
+bundle: course_basic
+label: 'Course completion page'
+description: 'The URL where user will be redirected when he finished the course.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 0
+field_type: link

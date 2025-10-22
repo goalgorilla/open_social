@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.course_basic
+id: course_basic-member
+label: Member
+weight: -100
+internal: true
+admin: false
+scope: insider
+global_role: authenticated
+group_type: course_basic
+third_party_settings:
+  social_group:
+    hubs_filter: true
+    full_label: 'Basic Course member'
+permissions:
+  - 'update own group_membership relationship'
+  - 'leave group'
+  - 'view group'
+  - 'view group_node:course_section entity'
+  - 'view group_node:course_section relationship'

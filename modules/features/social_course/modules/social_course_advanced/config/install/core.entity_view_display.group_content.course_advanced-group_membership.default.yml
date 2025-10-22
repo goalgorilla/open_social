@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group_content.course_advanced-group_membership.group_roles
+    - group.content_type.course_advanced-group_membership
+id: group_content.course_advanced-group_membership.default
+targetEntityType: group_content
+bundle: course_advanced-group_membership
+mode: default
+content:
+  group_roles:
+    label: above
+    type: entity_reference_label
+    settings:
+      link: false
+    weight: -4
+    third_party_settings: {  }
+    region: content
+hidden:
+  entity_id: true
+  uid: true

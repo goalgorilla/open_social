@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_course_opening_status
+    - group.type.course_basic
+id: group.course_basic.field_course_opening_status
+field_name: field_course_opening_status
+entity_type: group
+bundle: course_basic
+label: 'Opening status'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Opened
+  off_label: Closed
+field_type: boolean

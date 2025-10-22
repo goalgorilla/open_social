@@ -1,0 +1,83 @@
+<div class="card__block card__block--list">
+  {% for course_section in course_sections %}
+    <div {{ course_section.attributes.addClass('course__list-item') }}>
+      <div class="course__items-header">
+        <span class="list-item__section">
+          {% trans %}Section{% endtrans %} {{ course_section.number }}
+        </span>
+        <span>|</span>
+        <span class="exist-parts"> {{ course_section.parts_finished }} / {{ course_section.parts_count }} {% trans %}completed{% endtrans %}</span>
+
+        <span class='section__status'>
+          {% if course_section.section_status == "not-started" and allowed_start  %}
+            <span class="badge badge-start teaser__badge badge--section-not-started"></span>
+          {% elseif course_section.section_status == "in-progress" %}
+            <span class="badge teaser__badge badge-warning">
+              <span class="badge__container">
+                <svg class="badge__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <title>{{ 'Course status' }}</title>
+                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                  <path d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+              </span>
+            </span>
+          {% elseif course_section.section_status == "finished" %}
+            <span class="badge teaser__badge badge-success">
+              <span class="badge__container">
+                <svg class="badge__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <title>{{ 'Course status' }}</title>
+                  <path d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+              </span>
+            </span>
+          {% endif %}
+        </span>
+      </div>
+
+      <div class="list-item__text">
+            {{ course_section.label }}
+      </div>
+
+      {% if course_section.parent %}
+        <div class="list-items">
+          {% for item in items %}
+            {% if item.active %}
+              <span class="list-item active" title="{{ 'Current page'|t }}">
+            {% elseif item.url == false %}
+              <span class="list-item not-allowed">
+            {% else %}
+              <span class="list-item">
+            {% endif %}
+
+                <span class="list-item__avatar">
+                  {% if item.finished %}
+                    <span class="badge badge-success">
+                      <span class="badge__container">
+                        <svg class="course-material-navigation__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <title>{{ 'Course finished'|t }}</title>
+                          <path d="M0 0h24v24H0z" fill="none"/><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                      </span>
+                    </span>
+                  {% else %}
+                    <span class="not-finished"></span>
+                  {% endif %}
+                </span>
+
+                <span class="list-item__text">
+                  {% if item.url %}
+                    {{ link(item.label, item.url) }}
+                  {% else %}
+                    {{ item.label }}
+                  {% endif %}
+                </span>
+              </span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+

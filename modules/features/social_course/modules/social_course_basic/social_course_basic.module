@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * The social_course_basic module.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_form_alter().
+ */
+function social_course_basic_form_group_course_advanced_edit_form_alter(array &$form): void {
+  // Lets remove group type from flexible group.
+  // Editing is useless since the options are all in there.
+  if (isset($form['group_type']) && $form['group_type']['#disabled']) {
+    // Remove all the options.
+    // @see social_group_form_alter().
+    unset($form['group_type']);
+    unset($form['#fieldgroups']['group_settings']->children['group_type']);
+    unset($form['#group_children']['group_type']);
+  }
+  $form['field_flexible_group_visibility']['#prefix'] = t('Altering the visibility options could result in changes in access for content within this group and the group itself.');
+
+  $form['actions']['submit']['#submit'][] = '_social_flexible_group_edit_submit';
+}
+
+/**
+ * Implements hook_social_group_settings_alter().
+ */
+function social_course_basic_social_group_settings_alter(array &$group_types): void {
+  $group_types[] = 'course_basic';
+}
+
+/**
+ * Implements hook_social_tagging_type_alter().
+ */
+function social_course_basic_social_tagging_type_alter(array &$items): void {
+  $items['group']['sets'][0]['bundles'][] = 'course_basic';
+}
+
+/**
+ * Implements hook_social_group_default_route_group_types().
+ */
+function social_course_basic_social_group_default_route_group_types(): array {
+  return [
+    'course_basic' => [
+      'member' => 'view.group_information.page_group_about',
+      'non-member' => 'view.group_information.page_group_about',
+    ],
+  ];
+}

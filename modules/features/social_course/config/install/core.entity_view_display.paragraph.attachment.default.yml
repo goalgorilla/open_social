@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.attachment.field_files
+    - paragraphs.paragraphs_type.attachment
+  module:
+    - file
+id: paragraph.attachment.default
+targetEntityType: paragraph
+bundle: attachment
+mode: default
+content:
+  field_files:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: file_default
+    region: content
+hidden: {  }

@@ -1,0 +1,18 @@
+items:
+  views.view.group_per_type:
+    expected_config: { }
+    update_actions:
+      add:
+        dependencies:
+          config:
+            - group.type.course_basic
+        display:
+          course_group:
+            display_options:
+              filters:
+                type:
+                  value:
+                    course_basic: course_basic
+                type_1:
+                  value:
+                    course_basic: course_basic

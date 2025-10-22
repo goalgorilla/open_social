@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group.stream
+    - field.field.group.course_basic.field_course_opening_date
+    - field.field.group.course_basic.field_course_opening_status
+    - field.field.group.course_basic.field_course_order
+    - field.field.group.course_basic.field_course_redirect_url
+    - field.field.group.course_basic.field_course_related_courses
+    - field.field.group.course_basic.field_course_type
+    - field.field.group.course_basic.field_group_description
+    - field.field.group.course_basic.field_group_image
+    - group.type.course_basic
+id: group.course_basic.stream
+targetEntityType: group
+bundle: course_basic
+mode: stream
+content: {  }
+hidden:
+  changed: true
+  created: true
+  field_course_opening_date: true
+  field_course_opening_status: true
+  field_course_order: true
+  field_course_redirect_url: true
+  field_course_related_courses: true
+  field_course_type: true
+  field_group_description: true
+  field_group_image: true
+  label: true
+  uid: true

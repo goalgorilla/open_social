@@ -1,0 +1,41 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.course_advanced
+id: course_advanced-member
+label: Member
+weight: -100
+admin: false
+scope: insider
+global_role: authenticated
+group_type: course_advanced
+third_party_settings:
+  social_group:
+    hubs_filter: true
+    full_label: 'Advanced Course member'
+permissions:
+  - 'update own group_membership relationship'
+  - 'leave group'
+  - 'view group_membership relationship'
+  - 'view group'
+  - 'view group_node:course_section entity'
+  - 'view group_node:course_section relationship'
+  - 'enroll to events in groups'
+  - 'access posts in group'
+  - 'add post entities in group'
+  - 'create group_node:event entity'
+  - 'delete own group_node:event entity'
+  - 'update own group_node:event entity'
+  - 'view group_node:event entity'
+  - 'view group_node:event relationship'
+  - 'create group_node:topic entity'
+  - 'delete own group_node:topic entity'
+  - 'update own group_node:topic entity'
+  - 'view group_node:topic entity'
+  - 'view group_node:topic relationship'
+  - 'post comments'
+  - 'access comments'
+  - 'view group stream page'
+  - 'view group invitations'
+  - 'view group_membership_request relationship'

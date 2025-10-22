@@ -1,0 +1,39 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group.statistics
+    - field.field.group.course_basic.field_course_opening_date
+    - field.field.group.course_basic.field_course_opening_status
+    - field.field.group.course_basic.field_course_order
+    - field.field.group.course_basic.field_course_redirect_url
+    - field.field.group.course_basic.field_course_related_courses
+    - field.field.group.course_basic.field_course_type
+    - field.field.group.course_basic.field_group_description
+    - field.field.group.course_basic.field_group_image
+    - group.type.course_basic
+id: group.course_basic.statistics
+targetEntityType: group
+bundle: course_basic
+mode: statistics
+content:
+  label:
+    type: string
+    weight: 0
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden:
+  changed: true
+  created: true
+  field_course_opening_date: true
+  field_course_opening_status: true
+  field_course_order: true
+  field_course_redirect_url: true
+  field_course_related_courses: true
+  field_course_type: true
+  field_group_description: true
+  field_group_image: true
+  uid: true

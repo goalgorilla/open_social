@@ -1,0 +1,134 @@
+$gray-light: lighten(#000, 46.7%);
+$gray-lighter: #e6e6e6;
+
+.teaser--course {
+  padding: 1rem 0;
+  position: relative;
+  .section__status {
+    margin-bottom: 0.5rem;
+    @media (min-width: 900px) {
+      float: right;
+      margin-bottom: 0;
+    }
+  }
+  .section__title {
+    margin: 0;
+    @media (min-width: 900px) {
+      max-width: 75%;
+    }
+  }
+  &:not(:last-child) {
+    border-bottom: 1px solid $gray-lighter;
+  }
+  .exist-parts {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: $gray-light;
+  }
+  .hero-action-button {
+    @media (min-width: 900px) {
+      right: auto;
+      left: -35px;
+      .btn-floating {
+        width: 30px;
+        height: 30px;
+        .icon-medium {
+          width: 18px;
+          height: 18px;
+          display: block;
+        }
+      }
+    }
+  }
+  &.not-allowed,
+  &.not-allowed * {
+    color: #e0e0e0;
+  }
+}
+
+.teaser,
+.teaser--course {
+  .badge-start {
+    background-color: #fff;
+    color: $gray-light;
+    transition: 0.3s;
+
+    &[href] {
+      &:hover,
+      &:focus {
+        background-color: darken(#fff, 10%);
+      }
+    }
+    border: 1px solid $gray-light;
+  }
+  .badge-warning,
+  .badge-success {
+    .badge__icon {
+      fill: #fff;
+    }
+  }
+}
+
+.view-course {
+  .view-header {
+    text-align: center;
+    line-height: 1;
+    font-size: 0.875rem;
+    color: #777;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-top: -5px;
+    @media (min-width: 900px) {
+      margin-top: -25px;
+    }
+  }
+}
+
+.card--body {
+  position: relative;
+  padding: 1.25rem;
+
+  @media (min-width: 900px) {
+    padding: 2.5rem;
+  }
+}
+
+.parent-course {
+  position: relative;
+  top: 0;
+  border-bottom: 1px solid #e6e6e6;
+  margin-left: -1.25rem;
+  margin-top: -1rem;
+  margin-right: -1.25rem;
+  left: 0;
+  right: 0;
+  padding: 15px 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  svg {
+    margin-top: -2px;
+  }
+  @media (min-width: 900px) {
+    margin-left: -2.5rem;
+    margin-top: -2.2rem;
+    margin-right: -2.5rem;
+    margin-bottom: 2.5rem;
+    padding-left: 2.2rem;
+  }
+}
+
+.list-item {
+  &.active {
+    color: #29abe2;
+    fill: #29abe2;
+  }
+  &.not-allowed {
+    color: #e0e0e0;
+    fill: #e0e0e0;
+  }
+}
+
+.course-full {
+  overflow: hidden;
+}

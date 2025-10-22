@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_section_redirect
+    - node.type.course_section
+  module:
+    - link
+id: node.course_section.field_course_section_redirect
+field_name: field_course_section_redirect
+entity_type: node
+bundle: course_section
+label: 'Redirect URL'
+description: "Redirect people to this URL after they finished a section. Text of the next button may be customized.\r\nWorks only for non-sequential courses."
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 1
+field_type: link

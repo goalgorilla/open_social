@@ -1,0 +1,92 @@
+core.entity_form_display.group.course_basic.default:
+  expected_config: { }
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_related_courses:
+            children:
+              - field_course_related_courses
+      hidden:
+        field_flexible_group_visibility: true
+        field_group_allowed_visibility: true
+    add:
+      content:
+        field_flexible_group_visibility:
+          region: content
+          settings: { }
+          third_party_settings: { }
+          type: options_buttons
+          weight: 100
+        field_group_allowed_visibility:
+          weight: 101
+          settings: { }
+          third_party_settings: { }
+          type: options_buttons
+          region: content
+      third_party_settings:
+        field_group:
+          group_additional_details:
+            children:
+              - field_course_related_courses
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              id: ''
+              open: false
+              required_fields: true
+            format_type: details
+            label: 'Additional information'
+            parent_name: ''
+            region: content
+            weight: 2
+          group_access_permissions:
+            children:
+              - field_flexible_group_visibility
+              - field_group_allowed_visibility
+            format_settings:
+              classes: ''
+              description: ''
+              id: ''
+              required_fields: true
+            format_type: fieldset
+            label: 'Access permissions'
+            parent_name: ''
+            region: content
+            weight: 1
+          group_settings:
+            children:
+              - group_date_and_time
+            format_settings:
+              open: false
+    change:
+      content:
+        field_course_order:
+          weight: 3
+        field_course_redirect_url:
+          weight: 4
+        field_course_type:
+          type: options_buttons
+        field_group_description:
+          weight: 7
+        field_group_image:
+          weight: 6
+        field_course_related_courses:
+          weight: 51
+      third_party_settings:
+        field_group:
+          group_settings:
+            format_settings:
+              classes: social-collapsible-fieldset
+            format_type: details
+          group_information:
+            label: 'Basic information'
+          group_date_and_time:
+            parent_name: group_settings
+            format_type: details
+            label: 'Course starting time'
+field.field.group.course_basic.field_course_redirect_url:
+  expected_config: { }
+  update_actions:
+    change:
+      label: 'Course completion page'

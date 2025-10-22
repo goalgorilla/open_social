@@ -1,0 +1,6 @@
+services:
+  social_course_basic_request.overrider:
+    class: Drupal\social_course_basic_request\SocialCourseBasicRequestOverrides
+    arguments: ['@config.factory']
+    tags:
+      - { name: config.factory.override, priority: 5 }

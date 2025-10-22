@@ -1,0 +1,299 @@
+<?php
+
+/**
+ * @file
+ * The Social course statistics module.
+ */
+
+use Drupal\Core\Link;
+use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\node\Entity\Node;
+use Drupal\social_course\Entity\CourseEnrollmentInterface;
+use Drupal\social_group\Entity\Group;
+
+/**
+ * Implements hook_theme().
+ */
+function social_course_statistics_theme(): array {
+  return [
+    'group__course_basic__statistics' => [
+      'base hook' => 'group',
+    ],
+    'group__course_basic__statistics__sky' => [
+      'base hook' => 'group',
+    ],
+    'group__course_advanced__statistics' => [
+      'base hook' => 'group',
+    ],
+    'group__course_advanced__statistics__sky' => [
+      'base hook' => 'group',
+    ],
+    'profile__profile__statistics' => [
+      'base hook' => 'profile',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_course_statistics_preprocess_group(array &$variables): void {
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = $variables['group'];
+
+  /** @var \Drupal\social_course\CourseWrapperInterface $course_wrapper */
+  $course_wrapper = \Drupal::service('social_course.course_wrapper');
+  $bundles = $course_wrapper->getAvailableBundles();
+
+  if (in_array($group->bundle(), $bundles)) {
+    $course_wrapper->setCourse($group);
+
+    // Display course statistics icon only to CM+.
+    $account = \Drupal::currentUser();
+
+    /** @var \Drupal\social_course_statistics\CourseStatistics $course_statistics */
+    $course_statistics = \Drupal::service('social_course_statistics.course_statistics');
+    $entity_type_manager = \Drupal::entityTypeManager();
+
+    /** @var \Drupal\user\UserStorageInterface $user_storage */
+    $user_storage = $entity_type_manager->getStorage('user');
+
+    if ($group->hasPermission('view course statistics', $account)) {
+      $variables['#cache']['contexts'][] = 'url';
+
+      $variables['statistics_ulr'] = Url::fromRoute('view.course_statistics.page_course_statistics', ['group' => $group->id()])->toString();
+      $variables['statistics'] = \Drupal::moduleHandler()->moduleExists('social_course_statistics') ? 'Show Icon' : 'Not Show Icon';
+
+      // Add variables for needed views only.
+      $parameters = \Drupal::routeMatch()->getParameters();
+      if (empty($view_id = $parameters->get('view_id'))) {
+        return;
+      }
+
+      switch ($view_id) {
+        case 'course_statistics':
+          // Back link.
+          $variables['back_link_title'] = t('Course information');
+          $variables['back_link_url'] = $group->toUrl()->setAbsolute()->toString();
+
+          $members_uids = $course_statistics->getCourseMembers($group);
+
+          $course_done = 0;
+          foreach ($members_uids as $uid) {
+            /** @var \Drupal\user\UserInterface $account */
+            $account = $user_storage->load($uid);
+            if ($course_wrapper->getCourseStatus($account) == CourseEnrollmentInterface::FINISHED) {
+              $course_done++;
+            }
+          }
+
+          // Participants.
+          $members_count = count($members_uids);
+
+          $variables['participants'] = $members_count;
+          // Percent done.
+          $percent_done = !$members_count ?: (($course_done * 100) / $members_count);
+          $percent_done = round((float) $percent_done);
+          $variables['percent_done'] = $percent_done . '%';
+          break;
+
+        case 'course_sections_statistics':
+          $uid = $parameters->get('user');
+          /** @var \Drupal\user\UserInterface $account */
+          $account = $user_storage->load($uid);
+
+          // Back link.
+          $variables['back_link_title'] = t('Course statistics');
+          $variables['back_link_url'] = Url::fromRoute('view.course_statistics.page_course_statistics', ['group' => $group->id()], ['absolute' => TRUE]);
+
+          // Show user specific hero.
+          /** @var \Drupal\profile\ProfileStorageInterface $storage */
+          $storage = $entity_type_manager->getStorage('profile');
+          if ($user_profile = $storage->loadByUser($account, 'profile')) {
+            // Load compact notification view mode of the attached profile.
+            $variables['user_picture'] = $entity_type_manager
+              ->getViewBuilder('profile')
+              ->view($user_profile, 'statistics');
+          }
+
+          // Count number of course sections.
+          $variables['sections_status'] = $course_statistics->getCourseSectionsStatus($group, $account);
+
+          if ($course_start_date = $course_statistics->getCourseStartDatePerUser($group, $account)) {
+            $variables['course_start_date'] = date('F j, Y', $course_start_date);
+          }
+
+          if ($course_last_active = $course_statistics->getCourseLastActivePerUser($group, $account)) {
+            $variables['course_last_active'] = date('m/d/Y - H:i', $course_last_active);
+          }
+          break;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view_field().
+ */
+function social_course_statistics_preprocess_views_view_field(array &$vars): void {
+  $needed_fields = [
+    'status',
+    'nothing',
+    'changed',
+  ];
+
+  if (!in_array($vars['field']->options['id'], $needed_fields) || !isset($vars['view'])) {
+    return;
+  }
+
+  /** @var \Drupal\social_course_statistics\CourseStatistics $course_statistics */
+  $course_statistics = \Drupal::service('social_course_statistics.course_statistics');
+
+  /** @var \Drupal\user\UserStorageInterface $user_storage */
+  $user_storage = \Drupal::entityTypeManager()->getStorage('user');
+
+  if (($vars['view']->id() == 'course_statistics') && ($vars['view']->current_display == 'page_course_statistics')) {
+    $group_content = $vars['row']->_entity;
+    // Grab the group from the group_invite.
+    if ($group_content instanceof GroupRelationship) {
+      $group = $group_content->getGroup();
+      if ($group instanceof Group) {
+        // Getting account by UID.
+        $uid = $group_content->get('entity_id')->getString();
+        /** @var \Drupal\user\UserInterface $account */
+        $account = $user_storage->load($uid);
+
+        switch ($vars['field']->options['id']) {
+          case 'status':
+            $vars['output'] = $course_statistics->getCourseSectionsStatus($group, $account);
+            break;
+
+          case 'nothing':
+            // The output of the two links is due to different
+            // views on the desktop and mobile devices.
+            $route_parameters = [
+              'group' => $group->id(),
+              'user' => $uid,
+            ];
+            $options = [
+              'attributes' => [
+                'class' => [
+                  'btn-link',
+                ],
+              ],
+            ];
+            $url = Url::fromRoute('view.course_sections_statistics.page_1', $route_parameters);
+            $url->setOptions($options);
+            $links = Link::fromTextAndUrl(t('See section progress'), $url)->toString();
+
+            $options['attributes']['class'] = [
+              'btn',
+              'btn-default',
+            ];
+            $url->setOptions($options);
+            $links .= Link::fromTextAndUrl(t('See section progress'), $url)->toString();
+
+            $vars['output'] = [
+              '#markup' => $links,
+            ];
+            break;
+        }
+      }
+    }
+  }
+
+  if (($vars['view']->id() == 'course_sections_statistics') && ($vars['view']->current_display == 'page_1')) {
+    $node = $vars['row']->_entity;
+    if ($node instanceof Node) {
+      switch ($vars['field']->options['id']) {
+        case 'status':
+          /** @var \Drupal\social_course\CourseWrapper $course_wrapper */
+          $course_wrapper = \Drupal::service('social_course.course_wrapper');
+          $course_wrapper->setCourseFromSection($node);
+
+          $parameters = \Drupal::routeMatch()->getParameters();
+          // We need UID for getting the user's section progress.
+          // Leave the progress blank if it is not possible to get an UID.
+          if (empty($uid = $parameters->get('user'))) {
+            return;
+          }
+          /** @var \Drupal\user\UserInterface $account */
+          $account = $user_storage->load($uid);
+
+          $parts_count = count($course_wrapper->getMaterials($node));
+          $parts_finished = count($course_wrapper->getFinishedMaterials($node, $account));
+
+          $progress = t('@parts_finished/@parts_count parts finished', [
+            '@parts_finished' => $parts_finished,
+            '@parts_count' => $parts_count,
+          ]);
+          if ($parts_count && ($parts_count == $parts_finished)) {
+            $progress = $course_statistics->getStatusWithIcon();
+          }
+
+          // Count number of course sections.
+          $vars['output'] = $progress;
+          break;
+
+        case 'changed':
+          $text_value = t('Last active')->render();
+          $vars['output'] = [
+            'text' => [
+              '#type' => 'html_tag',
+              '#tag' => 'span',
+              '#value' => $text_value . ': ',
+              '#attributes' => [
+                'class' => [
+                  'text-info-changed',
+                ],
+              ],
+            ],
+            'value' => [
+              '#type' => 'html_tag',
+              '#tag' => 'span',
+              '#value' => $vars['output'],
+            ],
+          ];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_course_statistics_preprocess_html(array &$variables): void {
+  /** @var \Drupal\social_course_statistics\CourseStatistics $course_statistics */
+  $course_statistics = \Drupal::service('social_course_statistics.course_statistics');
+  if (!$course_statistics->isCourseStatisticsRoute()) {
+    return;
+  }
+
+  // Since for statistics we have the same design for all themes
+  // then adding a common class.
+  $attributes = $variables['attributes'] instanceof Attribute ? $variables['attributes'] : new Attribute();
+  $attributes->addClass('socialblue--sky');
+  $variables['attributes'] = $attributes;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_course_statistics_preprocess_page(array &$variables): void {
+  /** @var \Drupal\social_course_statistics\CourseStatistics $course_statistics */
+  $course_statistics = \Drupal::service('social_course_statistics.course_statistics');
+  if (!$course_statistics->isCourseStatisticsRoute()) {
+    return;
+  }
+
+  // Add a class for content attributes.
+  $attributes = $variables['content_attributes'] instanceof Attribute ? $variables['content_attributes'] : new Attribute();
+  $attributes->addClass('layout--full');
+  $variables['content_attributes'] = $attributes;
+
+  // We need to hide the complementary region since course statistics
+  // must have full width.
+  $variables['page']['complementary_top'] = [];
+}

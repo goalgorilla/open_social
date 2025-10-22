@@ -1,0 +1,40 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.course
+  module:
+    - group
+    - system
+    - views
+  theme:
+    - socialblue
+id: socialblue_views_block__course_sections_block
+theme: socialblue
+region: content
+weight: 0
+provider: null
+plugin: 'views_block:course-course_sections_block'
+settings:
+  id: 'views_block:course-course_sections_block'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: '25'
+  type: none
+  context_mapping: {  }
+visibility:
+  group_type:
+    id: group_type
+    group_types:
+      course_advanced: course_advanced
+      course_basic: course_basic
+    negate: false
+    context_mapping:
+      group: '@group.group_route_context:group'
+  request_path:
+    id: request_path
+    pages: '/group/*/about'
+    negate: false
+    context_mapping: {  }

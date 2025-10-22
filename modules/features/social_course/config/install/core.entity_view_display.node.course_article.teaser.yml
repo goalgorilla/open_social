@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.course_article.field_course_article_content
+    - node.type.course_article
+  module:
+    - user
+id: node.course_article.teaser
+targetEntityType: node
+bundle: course_article
+mode: teaser
+content: {  }
+hidden:
+  field_course_article_content: true
+  flag_follow_content: true
+  links: true

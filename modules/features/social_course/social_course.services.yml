@@ -1,0 +1,61 @@
+services:
+  social_course.route_subscriber:
+    class: Drupal\social_course\Routing\RouteSubscriber
+    arguments: ['@social_course.course_wrapper']
+    tags:
+      - { name: event_subscriber }
+  social_course.access_checker:
+    class: Drupal\social_course\Access\ContentAccessCheck
+    arguments: ['@entity_type.manager', '@module_handler']
+    tags:
+      - { name: access_check, applies_to: _course_content_add_access }
+  social_course.enroll_access_checker:
+    class: Drupal\social_course\Access\EnrollAccessCheck
+    tags:
+      - { name: access_check, applies_to: _course_enroll_access }
+  social_course.course_wrapper:
+    class: Drupal\social_course\CourseWrapper
+    arguments: ['@entity_type.manager', '@entity.repository', '@current_user', '@module_handler']
+  social_course.overrider:
+    class: Drupal\social_course\SocialCourseOverrides
+    arguments: [ '@module_handler', '@config.factory' ]
+    tags:
+      - { name: config.factory.override, priority: 5 }
+  social_course.event_subscriber:
+    class: Drupal\social_course\EventSubscriber\SocialCourseSubscriber
+    arguments:
+      - '@social_course.course_wrapper'
+      - '@current_route_match'
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@messenger'
+    tags:
+      - {name: event_subscriber}
+  social_course.translation_defaults:
+    class: Drupal\social_course\ContentTranslationDefaultsConfigOverride
+    arguments: ['@module_handler']
+    tags:
+      - { name: config.factory.override, priority: 5 }
+      - { name: social_language_defaults }
+
+  # Group relation plugin handlers decorators.
+  social_course.group.relation_handler.permission_provider.group_node:
+    class: Drupal\social_course\Plugin\Group\RelationHandler\SocialCourseNodePermissionProvider
+    public: false
+    decorates: group.relation_handler.permission_provider.group_node
+    arguments:
+      - '@social_course.group.relation_handler.permission_provider.group_node.inner'
+      - '@entity_type.bundle.info'
+
+  social_course.access_service:
+    class: Drupal\social_course\Service\SocialCourseAccessService
+    arguments:
+      - '@current_user'
+
+  Drupal\social_course\EventSubscriber\NodeQueryAccessAlterSubscriber:
+    arguments:
+      - '@entity_type.manager'
+      - '@group_relation_type.manager'
+      - '@current_user'
+    tags:
+      - { name: event_subscriber }

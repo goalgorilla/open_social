@@ -1,0 +1,29 @@
+{{ attach_library('socialbase/hero')}}
+<div class="cover">
+
+  {% if node_edit_url %}
+    <div class="hero-action-button">
+      <a aria-hidden="true" href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
+        <svg class="icon-gray icon-medium">
+          <title>{% trans %}Edit content{% endtrans %}</title>
+          <use xlink:href="#icon-edit"></use>
+        </svg>
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="cover-wrap">
+
+    <h4 class="hero__network">{{ parent_course_type }}</h4>
+
+    {{ title_prefix }}
+
+    {% if title %}
+        <h1{{ title_attributes.addClass(section_class) }}>{{ parent_section.title }}</h1>
+    {% endif %}
+
+    {{ title_suffix }}
+
+  </div>
+
+</div>

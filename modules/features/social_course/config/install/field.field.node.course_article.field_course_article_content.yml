@@ -1,0 +1,64 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_article_content
+    - node.type.course_article
+    - paragraphs.paragraphs_type.attachment
+    - paragraphs.paragraphs_type.image_text
+    - paragraphs.paragraphs_type.images
+    - paragraphs.paragraphs_type.text
+    - paragraphs.paragraphs_type.text_image
+  module:
+    - entity_reference_revisions
+id: node.course_article.field_course_article_content
+field_name: field_course_article_content
+entity_type: node
+bundle: course_article
+label: Content
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      attachment: attachment
+      image_text: image_text
+      images: images
+      text: text
+      text_image: text_image
+    target_bundles_drag_drop:
+      paragraph_image:
+        weight: 5
+        enabled: false
+      paragraph_attachments:
+        weight: 7
+        enabled: false
+      paragraph_text:
+        weight: 8
+        enabled: false
+      attachment:
+        enabled: true
+        weight: 11
+      image_text:
+        enabled: true
+        weight: 12
+      images:
+        enabled: true
+        weight: 13
+      nested_content:
+        weight: 14
+        enabled: false
+      text:
+        enabled: true
+        weight: 18
+      text_image:
+        enabled: true
+        weight: 19
+      user:
+        weight: 20
+        enabled: false
+field_type: entity_reference_revisions

@@ -1,0 +1,44 @@
+{% extends 'group--course-basic--hero.html.twig' %}
+
+{% block hero_title %}
+  <header class="page-title">
+    {% if group_type %}
+      <div class="badge badge-primary">
+        {{ group_type }}
+      </div>
+    {% endif %}
+    {% if content.field_course_type|render %}
+      <div class="badge badge-accent">
+        {{ content.field_course_type }}
+      </div>
+    {% endif %}
+    {% if course_status == 'finished' %}
+      <div class="badge badge-success">
+        <span class="badge__container">
+          <svg class="badge__icon">
+            <title>{{ 'The current course was finished'|t }}</title>
+            <use xlink:href="#icon-finished"></use>
+          </svg>
+          <span class="badge__label">
+            {% set finished_string = certificate_link ? 'You have finished.'|t : 'You have finished'|t %}
+            {{ finished_string }}
+            {% if certificate_link %}
+              {{ certificate_link }}
+            {% endif %}
+          </span>
+        </span>
+      </div>
+    {% endif %}
+    <div class="group-hero--wrapper">
+      <h1>{{ content.label }}</h1>
+      {% if group_settings_help %}
+        <span>
+          {{ group_settings_help }}
+        </span>
+      {% endif %}
+    </div>
+  </header>
+{% endblock %}
+
+{% block hero_footer_cta %}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% for item in items %}
+    {% if item.active %}
+        <span class="list-item active" title="{{ 'Current page'|t }}">
+    {% elseif item.url == false %}
+        <span class="list-item not-allowed">
+    {% else %}
+        <span class="list-item">
+    {% endif %}
+        <span class="list-item__avatar">
+            {% if item.finished %}
+                <svg class="course-material-navigation__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <title>{{ 'Finished'|t }}</title>
+                    <path d="M0 0h24v24H0z" fill="none"/><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+            {% elseif item.type == "course_video" %}
+                <svg class="course-material-navigation__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <title>{{ 'Video'|t }}</title>
+                    <path d="M0 0h24v24H0z" fill="none"/><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                </svg>
+            {% elseif item.type == "course_article" %}
+                <svg class="course-material-navigation__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <title>{{ 'Article'|t }}</title>
+                    <path d="M14 17H4v2h10v-2zm6-8H4v2h16V9zM4 15h16v-2H4v2zM4 5v2h16V5H4z"/><path d="M0 0h24v24H0z" fill="none"/>
+                </svg>
+            {% elseif item.type == "topic" %}
+                <svg class="course-material-navigation__icon" viewBox="0 0 24 24" width="24" height="24">
+                    <title>{{ 'Topic'|t }}</title>
+                    <path d="M0 0h24v24H0z" fill="none"></path><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"></path>
+                </svg>
+            {% endif %}
+        </span>
+        <span class="list-item__text">
+            {% if item.url %}
+                <a href="{{ item.url }}">
+            {% endif %}
+            {{ item.label }}
+            {% if item.url %}
+                </a>
+            {% endif %}
+        </span>
+    </span>
+{% endfor %}

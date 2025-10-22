@@ -1,0 +1,13 @@
+dependencies:
+  module:
+    - social_content_translation
+    - content_translation
+    - social_course_advanced
+items:
+  user.role.contentmanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'translate course_advanced group'
