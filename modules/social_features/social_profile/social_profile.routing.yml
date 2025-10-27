@@ -12,3 +12,16 @@ social_profile.edit_profile:
     _controller: '\Drupal\social_profile\Controller\SocialProfileEditProfileRedirectController::editProfileRedirect'
   requirements:
     _user_is_logged_in: 'TRUE'
+
+social_profile.preview:
+  path: '/profile/{profile}/preview'
+  defaults:
+    _entity_view: 'profile.preview'
+    _title: 'Profile preview'
+  requirements:
+    _entity_access: 'profile.view'
+    profile: \d+
+  options:
+    parameters:
+      profile:
+        type: 'entity:profile'

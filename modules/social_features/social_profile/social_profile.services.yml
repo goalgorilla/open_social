@@ -38,3 +38,7 @@ services:
       - '@social_profile.automatic_group_affiliations'
     tags:
       - { name: event_subscriber }
+
+  Drupal\social_profile\Service\SocialProfilePreviewHelper:
+    class: Drupal\social_profile\Service\SocialProfilePreviewHelper
+    arguments: ['@config.factory', '@theme.manager', '@module_handler']

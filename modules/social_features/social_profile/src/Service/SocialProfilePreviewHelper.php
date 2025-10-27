@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_profile_preview\Service;
+namespace Drupal\social_profile\Service;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -86,7 +86,7 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
         $attributes['class'][] = 'preview-popup-link--text';
       }
 
-      $preview_url = Url::fromRoute('social_profile_preview.canonical', [
+      $preview_url = Url::fromRoute('social_profile.preview', [
         'profile' => $profile->get('profile_id')->value,
       ])->getInternalPath();
       $attributes['data-preview-url'] = $preview_url;

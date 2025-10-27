@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_profile_preview\Service;
+namespace Drupal\social_profile\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;

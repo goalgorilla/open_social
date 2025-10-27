@@ -6,6 +6,7 @@
  */
 
 use Drupal\block\Entity\Block;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
@@ -31,6 +32,8 @@ use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
+use Drupal\social_profile\Service\SocialProfileMarkupHelper;
+use Drupal\social_profile\Service\SocialProfilePreviewHelper;
 use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -321,6 +324,10 @@ function social_profile_theme(): array {
       'template' => 'big-pipe-interface-preview--views_block--newest-users-block-newest-users',
       'base hook' => 'big_pipe_interface_preview',
     ],
+    'profile__profile__preview' => [
+      'render element' => 'elements',
+      'base hook' => 'profile',
+    ],
   ];
 }
 
@@ -347,6 +354,36 @@ function social_profile_preprocess_field__field_profile_image(array &$variables)
     }
 
     $element['#item_attributes']['alt'] = $name;
+  }
+
+  $element = $variables['element'];
+
+  /** @var \Drupal\Core\Routing\CurrentRouteMatch $current_route */
+  $current_route = \Drupal::service('current_route_match');
+
+  // Disable modal preview profile in the popup window of notification center.
+  if ($current_route->getRouteName() === 'activity_creator.stream.notifications') {
+    return;
+  }
+
+  if (in_array($element['#view_mode'], ['compact', 'compact_notification'])) {
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $element['#object'];
+
+    $helper = \Drupal::service(SocialProfilePreviewHelper::class);
+
+    $helper->alter(
+      $profile,
+      $variables,
+      ['items', 0, 'content', '#item_attributes'],
+    );
+
+    // For node pages, this is the element that needs to be altered.
+    $helper->alter(
+      $profile,
+      $variables,
+      ['items', 0, 'content', '0', '#item_attributes'],
+    );
   }
 }
 
@@ -442,6 +479,27 @@ function social_profile_preprocess_profile(array &$variables) {
   if (!$profile->get('field_profile_profile_tag')->isEmpty()) {
     $tags = $profile->get('field_profile_profile_tag')->getValue();
     $variables['profile_tagging_hierarchy'] = $tag_service->buildHierarchy($tags);
+  }
+
+  // Handle preview functionality for compact_teaser and small_teaser view
+  // modes.
+  $view_mode = $variables['elements']['#view_mode'];
+
+  if (in_array($view_mode, ['compact_teaser', 'small_teaser'])) {
+    $helper = \Drupal::service(SocialProfilePreviewHelper::class);
+
+    $helper->alter(
+      $profile,
+      $variables,
+      'link_attributes',
+      TRUE,
+      'profile_name',
+      'profile_name_extra',
+    );
+
+    if ($view_mode === 'compact_teaser') {
+      $helper->alter($profile, $variables, 'avatar_attributes', TRUE);
+    }
   }
 }
 
@@ -736,6 +794,49 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
         $build['field_profile_image'][0]['#item'] = $image_item;
       }
     }
+  }
+
+  // Code from the previous social_profile_preview module.
+  if (
+    $build['#view_mode'] === 'preview' &&
+    $entity->bundle() === 'profile' &&
+    $display->getComponent('private_message_link') !== NULL
+  ) {
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $entity;
+
+    $account = $profile->getOwner();
+
+    if (
+      isset($build['private_message_link']) &&
+      $account->hasPermission('use private messaging system') &&
+      $account->hasPermission('create private messages thread')
+    ) {
+      $element = &$build['private_message_link'];
+
+      $url = $element['#url'];
+
+      if ($url instanceof Url) {
+        $url->mergeOptions([
+          'attributes' => [
+            'class' => [
+              'btn',
+              'btn-default',
+              'waves-effect',
+              'waves-btn',
+            ],
+          ],
+        ]);
+
+        $element['#title'] = t('Message');
+
+        unset($element['#prefix'], $element['#suffix']);
+
+        return;
+      }
+    }
+
+    unset($build['private_message_link']);
   }
 }
 
@@ -1061,6 +1162,143 @@ function social_profile_social_core_default_main_menu_links_alter(array &$links)
  */
 function social_profile_social_tagging_type(): string {
   return 'profile';
+}
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function social_profile_entity_base_field_info_alter(array &$fields, EntityTypeInterface $entity_type): void {
+  if ($entity_type->id() === 'profile') {
+    /** @var \Drupal\Core\Field\BaseFieldDefinition[] $fields */
+    $fields['uid']->setDisplayConfigurable('view', TRUE);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preprocess_field__field_activity_output_text(array &$variables): void {
+  /** @var \Drupal\activity_creator\ActivityInterface $activity */
+  $activity = $variables['element']['#object'];
+
+  $account = $activity->getOwner();
+
+  /** @var \Drupal\profile\ProfileStorageInterface $profileStorage */
+  $profileStorage = \Drupal::entityTypeManager()->getStorage('profile');
+
+  $profile = $profileStorage->loadByUser($account, 'profile');
+  if ($profile !== NULL) {
+    $helper = \Drupal::service(SocialProfilePreviewHelper::class);
+
+    $helper->alter($profile, $variables, 'temp_attributes');
+
+    if (isset($variables['temp_attributes'])) {
+      $url = $account->toUrl()->setAbsolute()->toString();
+
+      $old_markup = SocialProfileMarkupHelper::generateProfileLinkPrefix($url) .
+        SocialProfileMarkupHelper::SUFFIX;
+      $new_markup = SocialProfileMarkupHelper::generateProfileLinkPrefix($url) .
+        SocialProfileMarkupHelper::generateProfileLinkTagProperties($variables) .
+        SocialProfileMarkupHelper::SUFFIX;
+
+      unset($variables['temp_attributes']);
+
+      /** @var \Drupal\Core\Render\RendererInterface $renderer */
+      $renderer = \Drupal::service('renderer');
+
+      foreach ($variables['items'] as &$item) {
+        $rendered_content = $renderer->renderInIsolation($item['content']);
+        // Use regex to match the link tag with optional space before closing >.
+        // Escape special regex characters in the URL.
+        $escaped_url = preg_quote($url, '/');
+        $old_pattern = '/<a href="' . $escaped_url . '"\s*>/';
+        $item['content'] = [
+          '#markup' => preg_replace(
+            $old_pattern,
+            $new_markup,
+            $rendered_content,
+          ),
+        ];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preprocess_profile__profile__name_raw(array &$variables): void {
+  if ($variables['profile'] instanceof ProfileInterface) {
+    $profile = $variables['profile'];
+
+    // Get & attach modal attributes.
+    \Drupal::service(SocialProfilePreviewHelper::class)
+      ->alter($profile, $variables, 'temp_attributes');
+
+    $profile_name = \Drupal::service('social_profile.name_service')
+      ->getProfileName($profile);
+
+    // Override profile name to display modal window on hover.
+    if (isset($variables['temp_attributes'])) {
+      $variables['temp_attributes']['class'][] = 'notranslate';
+      $variables['profile_name'] = [
+        '#markup' => '<span ' . SocialProfileMarkupHelper::generateProfileLinkTagProperties($variables) . '>' . Html::escape($profile_name) . '</span>',
+      ];
+      unset($variables['temp_attributes']);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preprocess_flag(array &$variables): void {
+  if (\Drupal::routeMatch()->getRouteName() === 'social_profile.preview') {
+    $variables['attributes']['class'][] = 'btn-primary';
+    $classes = &$variables['attributes']['class'];
+
+    if (($delta = array_search('btn-default', $classes)) !== FALSE) {
+      unset($classes[$delta]);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preprocess_username(array &$variables): void {
+  /** @var \Drupal\user\UserInterface|Null $account */
+  $account = $variables['account'];
+  if ($account === NULL) {
+    return;
+  }
+
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $profile = $storage->loadByUser($account, 'profile');
+  if ($profile !== NULL) {
+    $helper = \Drupal::service(SocialProfilePreviewHelper::class);
+
+    $helper->alter(
+      $profile,
+      $variables,
+      'attributes',
+      FALSE,
+      'name',
+      'extra',
+    );
+  }
+}
+
+/**
+ * Implements hook_social_follow_user_profile_modes_alter().
+ *
+ * Allows seeing the "Follow" button in a modal window.
+ *
+ * @see social_follow_user_entity_view_display_alter()
+ */
+function social_profile_social_follow_user_profile_modes_alter(array &$displays): void {
+  $displays[] = 'preview';
 }
 
 /**

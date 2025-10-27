@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_profile_preview\Plugin\Field\FieldFormatter;
+namespace Drupal\social_profile\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
