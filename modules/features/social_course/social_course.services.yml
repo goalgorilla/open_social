@@ -3,7 +3,9 @@ services:
     class: Drupal\social_course\Routing\RouteSubscriber
     arguments: ['@social_course.course_wrapper']
     tags:
-      - { name: event_subscriber }
+      # Set the priority to 3 to ensure that this route subscriber is executed
+      #  after the "\Drupal\social_group\Routing\RouteSubscriber".
+      - { name: event_subscriber, priority: 3 }
   social_course.access_checker:
     class: Drupal\social_course\Access\ContentAccessCheck
     arguments: ['@entity_type.manager', '@module_handler']

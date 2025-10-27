@@ -2,9 +2,9 @@
 
 namespace Drupal\social_course\Routing;
 
+use Drupal\Core\Routing\RouteSubscriberBase;
 use Drupal\Core\Url;
 use Drupal\social_course\CourseWrapperInterface;
-use Drupal\social_group\Routing\RouteSubscriber as RouteSubscriberBase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -35,7 +35,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
     if ($route = $collection->get('node.add')) {
       $route->setRequirements([
         '_course_content_add_access' => 'node:{node_type}',
@@ -45,8 +45,6 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('node.add_page')) {
       $route->setDefault('_controller', '\Drupal\social_course\Controller\NodeController::addPage');
     }
-
-    parent::alterRoutes($collection);
 
     $paths = [
       '/group/{group}/stream',
@@ -84,7 +82,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * Redirect Course Section node.
    */
-  public function redirectSectionNode(RequestEvent $event) {
+  public function redirectSectionNode(RequestEvent $event): void {
     $request = $event->getRequest();
 
     if ($request->attributes->get('_route') !== 'entity.node.canonical') {
