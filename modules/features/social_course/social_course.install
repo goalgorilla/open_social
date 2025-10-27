@@ -773,3 +773,10 @@ function social_course_update_13002(): string {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Grant access course overview permission to the authenticated role.
+ */
+function social_course_update_13003(): void {
+  user_role_grant_permissions('authenticated', ['access course overview']);
+}
