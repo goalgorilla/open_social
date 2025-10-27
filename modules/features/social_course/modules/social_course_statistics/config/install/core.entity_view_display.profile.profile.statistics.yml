@@ -7,11 +7,9 @@ dependencies:
     - field.field.profile.profile.field_profile_banner_image
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
-    - field.field.profile.profile.field_profile_function
     - field.field.profile.profile.field_profile_image
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
-    - field.field.profile.profile.field_profile_organization
     - field.field.profile.profile.field_profile_phone_number
     - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
@@ -25,14 +23,16 @@ targetEntityType: profile
 bundle: profile
 mode: statistics
 content:
-  field_profile_function:
-    type: string
+  primary_affiliation_function:
+    settings: {  }
+    third_party_settings: {  }
     weight: 2
     region: content
-    label: hidden
-    settings:
-      link_to_entity: false
+  primary_affiliation_name:
+    settings: {  }
     third_party_settings: {  }
+    weight: 3
+    region: content
   field_profile_image:
     type: image
     weight: 1
@@ -41,14 +41,6 @@ content:
     settings:
       image_style: social_large
       image_link: ''
-    third_party_settings: {  }
-  field_profile_organization:
-    type: string
-    weight: 3
-    region: content
-    label: hidden
-    settings:
-      link_to_entity: false
     third_party_settings: {  }
 hidden:
   field_profile_address: true
