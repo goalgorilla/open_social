@@ -3,10 +3,13 @@
 namespace Drupal\social_profile\Hooks;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\hux\Attribute\Alter;
 use Drupal\hux\Attribute\Hook;
@@ -34,10 +37,16 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
    *   Group affiliation service.
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack service.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
    */
   public function __construct(
     protected GroupAffiliation $groupAffiliation,
     protected RequestStack $requestStack,
+    protected Connection $database,
+    protected EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -47,6 +56,63 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
     return new static(
       $container->get('social_profile.group_affiliation'),
       $container->get('request_stack'),
+      $container->get('database'),
+      $container->get('entity_type.manager'),
+    );
+  }
+
+  /**
+   * Cleans up profile group affiliation field values when a group is deleted.
+   *
+   * This method removes all references to the deleted group from profile
+   * affiliation fields to maintain data integrity.
+   *
+   * It performs the following:
+   * - Identifies all profiles that have the deleted group as an affiliation
+   * - Removes the group reference from both base and revision field tables
+   * - Clears entity storage cache to ensure fresh data on the next load
+   * - Invalidates render cache tags for all affected profiles
+   *
+   * This cleanup is necessary because group affiliation references in profiles
+   * should not point to non-existent groups after deletion preventing errors.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group entity being deleted.
+   *
+   * @throws \Exception
+   *
+   * @see hook_ENTITY_TYPE_delete()
+   */
+  #[Hook('group_delete')]
+  public function cleanGroupAffiliationFieldValues(GroupInterface $group): void {
+    // Select profile ids from "field_group_affiliation" with reference to
+    // the current deleted group.
+    $affected_profile_ids = $this->database->select('profile__field_group_affiliation', 'pgf')
+      ->fields('pgf', ['entity_id'])
+      ->condition('pgf.field_group_affiliation_target_id', $group->id())
+      ->execute()
+      ?->fetchCol();
+
+    if (empty($affected_profile_ids)) {
+      return;
+    }
+
+    foreach (['profile', 'profile_revision'] as $prefix) {
+      // Delete all records from base and revision profile tables
+      // for affected profiles and deleted group.
+      $this->database->delete($prefix . '__field_group_affiliation')
+        ->condition('entity_id', $affected_profile_ids, 'IN')
+        ->condition('field_group_affiliation_target_id', $group->id())
+        ->execute();
+    }
+
+    // Reset entity storage cache to clear loaded profile entities from memory.
+    $this->entityTypeManager->getStorage('profile')
+      ->resetCache($affected_profile_ids);
+
+    // Invalidate render cache tags for affected profiles.
+    Cache::invalidateTags(
+      Cache::buildTags('profile', $affected_profile_ids),
     );
   }
 
