@@ -17,6 +17,7 @@ use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile\Entity\ProfileAffiliationInterface;
+use Drupal\social_profile\Form\SocialProfileSettingsForm;
 use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -552,4 +553,18 @@ function social_profile_update_250007(): string {
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
+}
+
+/**
+ * Make the affiliation enabled by default.
+ */
+function social_profile_update_250008(): void {
+  if (\Drupal::service('social_profile.group_affiliation')
+    ->isAffiliationFeatureEnabled()) {
+    return;
+  }
+
+  $config = \Drupal::configFactory()->getEditable(SocialProfileSettingsForm::SETTINGS);
+  $config->set('group_affiliation_status', TRUE);
+  $config->save();
 }
