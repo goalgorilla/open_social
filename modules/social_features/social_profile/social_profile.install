@@ -544,3 +544,12 @@ function social_profile_update_250006(): string {
   $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Make the none-platform affiliation "Organization Name" optional.
+ */
+function social_profile_update_250007(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+  return $updater->logger()->output();
+}
