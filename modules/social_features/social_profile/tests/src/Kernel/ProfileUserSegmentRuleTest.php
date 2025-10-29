@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\your_module\Kernel;
+namespace Drupal\Tests\social_profile\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\social_profile\Plugin\UserSegmentRule\ProfileUserSegmentRule;
