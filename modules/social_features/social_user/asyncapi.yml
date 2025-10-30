@@ -119,17 +119,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   profileUpdate:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -250,17 +243,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   userLogin:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -326,17 +312,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   userLogout:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -402,17 +381,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   userBlock:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -478,17 +450,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   userUnblock:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -554,17 +519,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   userDelete:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -630,17 +588,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   userEmailUpdate:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -704,17 +655,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   userLocaleUpdate:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -778,17 +722,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
 
 operations:
   onUserCreate:

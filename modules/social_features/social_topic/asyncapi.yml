@@ -66,16 +66,9 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                         author:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the author.
-                            displayName:
-                              type: string
-                              description: The display name of the author.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The author reference.
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
@@ -92,17 +85,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   topicPublish:
     address: com.getopensocial.cms.topic.v1
     messages:
@@ -169,16 +155,9 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                         author:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the author.
-                            displayName:
-                              type: string
-                              description: The display name of the author.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The author reference.
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
@@ -195,17 +174,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   topicUnpublish:
     address: com.getopensocial.cms.topic.v1
     messages:
@@ -272,16 +244,9 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                         author:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the author.
-                            displayName:
-                              type: string
-                              description: The display name of the author.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The author reference.
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
@@ -298,17 +263,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   topicUpdate:
     address: com.getopensocial.cms.topic.v1
     messages:
@@ -376,16 +334,9 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                         author:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the author.
-                            displayName:
-                              type: string
-                              description: The display name of the author.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The author reference.
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
@@ -402,17 +353,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   topicDelete:
     address: com.getopensocial.cms.topic.v1
     messages:
@@ -479,16 +423,9 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                         author:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the author.
-                            displayName:
-                              type: string
-                              description: The display name of the author.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The author reference.
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
@@ -505,17 +442,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
 operations:
   onTopicCreate:
     action: 'receive'

@@ -67,16 +67,9 @@ channels:
                                   format: uri
                                   description: Canonical URL of the group.
                         author:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the author.
-                            displayName:
-                              type: string
-                              description: The display name of the author.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The author reference.
                         allDay:
                           type: boolean
                           description: Indicates if the event lasts all day.
@@ -154,17 +147,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventDelete:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -232,16 +218,9 @@ channels:
                                   format: uri
                                   description: Canonical URL of the group.
                         author:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the author.
-                            displayName:
-                              type: string
-                              description: The display name of the author.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The author reference.
                         allDay:
                           type: boolean
                           description: Indicates if the event lasts all day.
@@ -319,17 +298,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventPublish:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -397,16 +369,9 @@ channels:
                                   format: uri
                                   description: Canonical URL of the group.
                         author:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the author.
-                            displayName:
-                              type: string
-                              description: The display name of the author.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The author reference.
                         allDay:
                           type: boolean
                           description: Indicates if the event lasts all day.
@@ -484,17 +449,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventUnpublish:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -562,16 +520,9 @@ channels:
                                   format: uri
                                   description: Canonical URL of the group.
                         author:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the author.
-                            displayName:
-                              type: string
-                              description: The display name of the author.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The author reference.
                         allDay:
                           type: boolean
                           description: Indicates if the event lasts all day.
@@ -649,17 +600,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventUpdate:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -719,16 +663,9 @@ channels:
                                   format: uri
                                   description: Canonical URL of the group.
                         author:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the author.
-                            displayName:
-                              type: string
-                              description: The display name of the author.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The author reference.
                         allDay:
                           type: boolean
                           description: Indicates if the event lasts all day.
@@ -806,17 +743,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventEnrollmentCreate:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -913,21 +843,9 @@ channels:
                                       format: uri
                                       description: Canonical URL of the group.
                             author:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the author.
-                                displayName:
-                                  type: string
-                                  description: The display name of the author.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the author.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.UserRef'
+                              description: The author reference.
                             allDay:
                               type: boolean
                               description: Indicates if the event lasts all day.
@@ -1018,17 +936,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventEnrollmentCancel:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1125,21 +1036,9 @@ channels:
                                       format: uri
                                       description: Canonical URL of the group.
                             author:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the author.
-                                displayName:
-                                  type: string
-                                  description: The display name of the author.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the author.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.UserRef'
+                              description: The author reference.
                             allDay:
                               type: boolean
                               description: Indicates if the event lasts all day.
@@ -1230,17 +1129,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventEnrollmentRequestToJoin:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1337,21 +1229,9 @@ channels:
                                       format: uri
                                       description: Canonical URL of the group.
                             author:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the author.
-                                displayName:
-                                  type: string
-                                  description: The display name of the author.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the author.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.UserRef'
+                              description: The author reference.
                             allDay:
                               type: boolean
                               description: Indicates if the event lasts all day.
@@ -1442,17 +1322,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventEnrollmentRequestToJoinCancel:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1549,21 +1422,9 @@ channels:
                                       format: uri
                                       description: Canonical URL of the group.
                             author:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the author.
-                                displayName:
-                                  type: string
-                                  description: The display name of the author.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the author.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.UserRef'
+                              description: The author reference.
                             allDay:
                               type: boolean
                               description: Indicates if the event lasts all day.
@@ -1654,17 +1515,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventEnrollmentRequestToJoinAccept:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1761,21 +1615,9 @@ channels:
                                       format: uri
                                       description: Canonical URL of the group.
                             author:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the author.
-                                displayName:
-                                  type: string
-                                  description: The display name of the author.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the author.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.UserRef'
+                              description: The author reference.
                             allDay:
                               type: boolean
                               description: Indicates if the event lasts all day.
@@ -1866,17 +1708,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventEnrollmentRequestToJoinDecline:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1973,21 +1808,9 @@ channels:
                                       format: uri
                                       description: Canonical URL of the group.
                             author:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the author.
-                                displayName:
-                                  type: string
-                                  description: The display name of the author.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the author.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.UserRef'
+                              description: The author reference.
                             allDay:
                               type: boolean
                               description: Indicates if the event lasts all day.
@@ -2078,17 +1901,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventEnrollmentInviteToJoin:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2185,21 +2001,9 @@ channels:
                                       format: uri
                                       description: Canonical URL of the group.
                             author:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the author.
-                                displayName:
-                                  type: string
-                                  description: The display name of the author.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the author.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.UserRef'
+                              description: The author reference.
                             allDay:
                               type: boolean
                               description: Indicates if the event lasts all day.
@@ -2290,17 +2094,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventEnrollmentInviteToJoinCancel:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2397,21 +2194,9 @@ channels:
                                       format: uri
                                       description: Canonical URL of the group.
                             author:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the author.
-                                displayName:
-                                  type: string
-                                  description: The display name of the author.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the author.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.UserRef'
+                              description: The author reference.
                             allDay:
                               type: boolean
                               description: Indicates if the event lasts all day.
@@ -2502,17 +2287,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventEnrollmentInviteToJoinAccept:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2609,21 +2387,9 @@ channels:
                                       format: uri
                                       description: Canonical URL of the group.
                             author:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the author.
-                                displayName:
-                                  type: string
-                                  description: The display name of the author.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the author.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.UserRef'
+                              description: The author reference.
                             allDay:
                               type: boolean
                               description: Indicates if the event lasts all day.
@@ -2714,17 +2480,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   eventEnrollmentInviteToJoinDecline:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2821,21 +2580,9 @@ channels:
                                       format: uri
                                       description: Canonical URL of the group.
                             author:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the author.
-                                displayName:
-                                  type: string
-                                  description: The display name of the author.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the author.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.UserRef'
+                              description: The author reference.
                             allDay:
                               type: boolean
                               description: Indicates if the event lasts all day.
@@ -2926,17 +2673,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
 operations:
   onEventCreate:
     action: 'receive'

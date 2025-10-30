@@ -29,27 +29,13 @@ channels:
                           format: date-time
                           description: The last updated time of the follow relationship.
                         target:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the target user being followed.
-                            displayName:
-                              type: string
-                              description: The display name of the target user.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The target user reference.
                         follower:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the user who is following.
-                            displayName:
-                              type: string
-                              description: The display name of the follower user.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The follower reference.
                     actor:
                       type: object
                       properties:
@@ -64,17 +50,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
   followUserDelete:
     address: com.getopensocial.cms.follow.v1
     messages:
@@ -105,27 +84,13 @@ channels:
                           format: date-time
                           description: The last updated time of the follow relationship.
                         target:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the target user being followed.
-                            displayName:
-                              type: string
-                              description: The display name of the target user.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The target user reference.
                         follower:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the user who is following.
-                            displayName:
-                              type: string
-                              description: The display name of the follower user.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
+                          description: The follower reference.
                     actor:
                       type: object
                       properties:
@@ -140,17 +105,10 @@ channels:
                               type: string
                               description: Name of the application
                         user:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.UserRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Actor user ID (UUIDv4)
-                            displayName:
-                              type: string
-                              description: Display name of the actor user
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The actor user reference.
 operations:
   onFollowUserCreate:
     action: 'receive'
