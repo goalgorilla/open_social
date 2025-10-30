@@ -64,12 +64,7 @@ channels:
                               type: string
                               description: The label of the group.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the group.
+                              $ref: '#/components/schemas/Common.Href'
                         author:
                           type: object
                           properties:
@@ -80,19 +75,9 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the topic.
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -117,12 +102,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   topicPublish:
     address: com.getopensocial.cms.topic.v1
     messages:
@@ -187,12 +167,7 @@ channels:
                               type: string
                               description: The label of the group.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the group.
+                              $ref: '#/components/schemas/Common.Href'
                         author:
                           type: object
                           properties:
@@ -203,19 +178,9 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the topic.
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -240,12 +205,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   topicUnpublish:
     address: com.getopensocial.cms.topic.v1
     messages:
@@ -310,12 +270,7 @@ channels:
                               type: string
                               description: The label of the group.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the group.
+                              $ref: '#/components/schemas/Common.Href'
                         author:
                           type: object
                           properties:
@@ -326,19 +281,9 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the topic.
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -363,12 +308,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   topicUpdate:
     address: com.getopensocial.cms.topic.v1
     messages:
@@ -434,12 +374,7 @@ channels:
                               type: string
                               description: The label of the group.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the group.
+                              $ref: '#/components/schemas/Common.Href'
                         author:
                           type: object
                           properties:
@@ -450,19 +385,9 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the topic.
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -487,12 +412,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   topicDelete:
     address: com.getopensocial.cms.topic.v1
     messages:
@@ -557,12 +477,7 @@ channels:
                               type: string
                               description: The label of the group.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the group.
+                              $ref: '#/components/schemas/Common.Href'
                         author:
                           type: object
                           properties:
@@ -573,19 +488,9 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the topic.
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -610,12 +515,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
 operations:
   onTopicCreate:
     action: 'receive'

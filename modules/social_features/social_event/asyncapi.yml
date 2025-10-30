@@ -76,12 +76,7 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         allDay:
                           type: boolean
                           description: Indicates if the event lasts all day.
@@ -140,12 +135,7 @@ channels:
                                 - invite
                                 - request
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the event.
+                          $ref: '#/components/schemas/Common.Href'
                         type:
                           type: string
                           nullable: true
@@ -174,12 +164,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventDelete:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -256,12 +241,7 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         allDay:
                           type: boolean
                           description: Indicates if the event lasts all day.
@@ -320,12 +300,7 @@ channels:
                                 - invite
                                 - request
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the event.
+                          $ref: '#/components/schemas/Common.Href'
                         type:
                           type: string
                           nullable: true
@@ -354,12 +329,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventPublish:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -436,12 +406,7 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         allDay:
                           type: boolean
                           description: Indicates if the event lasts all day.
@@ -500,12 +465,7 @@ channels:
                                 - invite
                                 - request
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the event.
+                          $ref: '#/components/schemas/Common.Href'
                         type:
                           type: string
                           nullable: true
@@ -534,12 +494,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventUnpublish:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -616,12 +571,7 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         allDay:
                           type: boolean
                           description: Indicates if the event lasts all day.
@@ -680,12 +630,7 @@ channels:
                                 - invite
                                 - request
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the event.
+                          $ref: '#/components/schemas/Common.Href'
                         type:
                           type: string
                           nullable: true
@@ -714,12 +659,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventUpdate:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -788,12 +728,7 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         allDay:
                           type: boolean
                           description: Indicates if the event lasts all day.
@@ -852,12 +787,7 @@ channels:
                                 - invite
                                 - request
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the event.
+                          $ref: '#/components/schemas/Common.Href'
                         type:
                           type: string
                           nullable: true
@@ -886,12 +816,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventEnrollmentCreate:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1061,12 +986,7 @@ channels:
                                     - invite
                                     - request
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the event.
+                              $ref: '#/components/schemas/Common.Href'
                         user:
                           type: object
                           properties:
@@ -1083,12 +1003,7 @@ channels:
                               nullable: true
                               description: The email of the user (present if anonymous).
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1113,12 +1028,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventEnrollmentCancel:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1288,12 +1198,7 @@ channels:
                                     - invite
                                     - request
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the event.
+                              $ref: '#/components/schemas/Common.Href'
                         user:
                           type: object
                           properties:
@@ -1310,12 +1215,7 @@ channels:
                               nullable: true
                               description: The email of the user (present if anonymous).
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1340,12 +1240,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventEnrollmentRequestToJoin:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1515,12 +1410,7 @@ channels:
                                     - invite
                                     - request
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the event.
+                              $ref: '#/components/schemas/Common.Href'
                         user:
                           type: object
                           properties:
@@ -1537,12 +1427,7 @@ channels:
                               nullable: true
                               description: The email of the user (present if anonymous).
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1567,12 +1452,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventEnrollmentRequestToJoinCancel:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1742,12 +1622,7 @@ channels:
                                     - invite
                                     - request
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the event.
+                              $ref: '#/components/schemas/Common.Href'
                         user:
                           type: object
                           properties:
@@ -1764,12 +1639,7 @@ channels:
                               nullable: true
                               description: The email of the user (present if anonymous).
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1794,12 +1664,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventEnrollmentRequestToJoinAccept:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1969,12 +1834,7 @@ channels:
                                     - invite
                                     - request
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the event.
+                              $ref: '#/components/schemas/Common.Href'
                         user:
                           type: object
                           properties:
@@ -1991,12 +1851,7 @@ channels:
                               nullable: true
                               description: The email of the user (present if anonymous).
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -2021,12 +1876,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventEnrollmentRequestToJoinDecline:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2196,12 +2046,7 @@ channels:
                                     - invite
                                     - request
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the event.
+                              $ref: '#/components/schemas/Common.Href'
                         user:
                           type: object
                           properties:
@@ -2218,12 +2063,7 @@ channels:
                               nullable: true
                               description: The email of the user (present if anonymous).
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -2248,12 +2088,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventEnrollmentInviteToJoin:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2423,12 +2258,7 @@ channels:
                                     - invite
                                     - request
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the event.
+                              $ref: '#/components/schemas/Common.Href'
                         user:
                           type: object
                           properties:
@@ -2445,12 +2275,7 @@ channels:
                               nullable: true
                               description: The email of the user (present if anonymous).
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -2475,12 +2300,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventEnrollmentInviteToJoinCancel:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2650,12 +2470,7 @@ channels:
                                     - invite
                                     - request
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the event.
+                              $ref: '#/components/schemas/Common.Href'
                         user:
                           type: object
                           properties:
@@ -2672,12 +2487,7 @@ channels:
                               nullable: true
                               description: The email of the user (present if anonymous).
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -2702,12 +2512,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventEnrollmentInviteToJoinAccept:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2877,12 +2682,7 @@ channels:
                                     - invite
                                     - request
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the event.
+                              $ref: '#/components/schemas/Common.Href'
                         user:
                           type: object
                           properties:
@@ -2899,12 +2699,7 @@ channels:
                               nullable: true
                               description: The email of the user (present if anonymous).
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -2929,12 +2724,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   eventEnrollmentInviteToJoinDecline:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -3104,12 +2894,7 @@ channels:
                                     - invite
                                     - request
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the event.
+                              $ref: '#/components/schemas/Common.Href'
                         user:
                           type: object
                           properties:
@@ -3126,12 +2911,7 @@ channels:
                               nullable: true
                               description: The email of the user (present if anonymous).
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -3156,12 +2936,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
 operations:
   onEventCreate:
     action: 'receive'

@@ -28,12 +28,7 @@ channels:
                             type: string
                             description: The type of the target entity.
                           href:
-                            type: object
-                            properties:
-                              canonical:
-                                type: string
-                                format: uri
-                                description: Canonical URL of the target entity.
+                            $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -58,12 +53,7 @@ channels:
                               type: string
                               description: The display name of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the user profile.
+                              $ref: '#/components/schemas/Common.Href'
 
 operations:
   onPageView:

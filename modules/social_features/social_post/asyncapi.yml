@@ -48,19 +48,9 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the post.
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -85,12 +75,7 @@ channels:
                               type: string
                               description: The display name of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
 
   postPublish:
     address: com.getopensocial.cms.post.v1
@@ -140,19 +125,9 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the post.
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -177,12 +152,7 @@ channels:
                               type: string
                               description: The display name of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
 
   postUnpublish:
     address: com.getopensocial.cms.post.v1
@@ -232,19 +202,9 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the post.
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -269,12 +229,7 @@ channels:
                               type: string
                               description: The display name of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
 
   postUpdate:
     address: com.getopensocial.cms.post.v1
@@ -325,19 +280,9 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the post.
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -362,12 +307,7 @@ channels:
                               type: string
                               description: The display name of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
 
   postDelete:
     address: com.getopensocial.cms.post.v1
@@ -417,19 +357,9 @@ channels:
                               type: string
                               description: The display name of the author.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL of the post.
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -454,12 +384,7 @@ channels:
                               type: string
                               description: The display name of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the author.
+                              $ref: '#/components/schemas/Common.Href'
 
 operations:
   onPostCreate:
@@ -586,11 +511,6 @@ components:
                   type: string
                   description: The display name of the user.
                 href:
-                  type: object
-                  properties:
-                    canonical:
-                      type: string
-                      format: uri
-                      description: Canonical URL of the group.
+                  $ref: '#/components/schemas/Common.Href'
               required: [id, displayName, href]
           required: [type, user]

@@ -110,12 +110,7 @@ channels:
                               nullable: true
                               description: Address line 2 (optional)
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL for the group
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -140,12 +135,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupUnpublish:
     address: com.getopensocial.cms.group.v1
     messages:
@@ -257,12 +247,7 @@ channels:
                               nullable: true
                               description: Address line 2 (optional)
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL for the group
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -287,12 +272,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupPublish:
     address: com.getopensocial.cms.group.v1
     messages:
@@ -404,12 +384,7 @@ channels:
                               nullable: true
                               description: Address line 2 (optional)
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL for the group
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -434,12 +409,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
 
   groupUpdate:
     address: com.getopensocial.cms.group.v1
@@ -552,12 +522,7 @@ channels:
                               nullable: true
                               description: Address line 2 (optional)
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL for the group
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -582,12 +547,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupDelete:
     address: com.getopensocial.cms.group.v1
     messages:
@@ -699,12 +659,7 @@ channels:
                               nullable: true
                               description: Address line 2 (optional)
                         href:
-                          type: object
-                          properties:
-                            canonical:
-                              type: string
-                              format: uri
-                              description: Canonical URL for the group
+                          $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -729,12 +684,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupMembershipCreate:
     address: com.getopensocial.cms.group_membership.v1
     messages:
@@ -805,12 +755,7 @@ channels:
                               nullable: true
                               description: The email address of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the user profile
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -835,12 +780,7 @@ channels:
                               type: string
                               description: The display name of the actor user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupMembershipDelete:
     address: com.getopensocial.cms.group_membership.v1
     messages:
@@ -911,12 +851,7 @@ channels:
                               nullable: true
                               description: The email address of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the user profile
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -941,12 +876,7 @@ channels:
                               type: string
                               description: The display name of the actor user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupMembershipRequestCreate:
     address: com.getopensocial.cms.group_membership.v1
     messages:
@@ -1017,12 +947,7 @@ channels:
                               nullable: true
                               description: The email address of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the user profile
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1047,12 +972,7 @@ channels:
                               type: string
                               description: The display name of the actor user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupMembershipRequestDelete:
     address: com.getopensocial.cms.group_membership.v1
     messages:
@@ -1123,12 +1043,7 @@ channels:
                               nullable: true
                               description: The email address of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the user profile
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1153,12 +1068,7 @@ channels:
                               type: string
                               description: The display name of the actor user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupMembershipRequestAccept:
     address: com.getopensocial.cms.group_membership.v1
     messages:
@@ -1229,12 +1139,7 @@ channels:
                               nullable: true
                               description: The email address of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the user profile
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1259,12 +1164,7 @@ channels:
                               type: string
                               description: The display name of the actor user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupMembershipRequestDecline:
     address: com.getopensocial.cms.group_membership.v1
     messages:
@@ -1335,12 +1235,7 @@ channels:
                               nullable: true
                               description: The email address of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the user profile
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1365,12 +1260,7 @@ channels:
                               type: string
                               description: The display name of the actor user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupMembershipInviteCreate:
     address: com.getopensocial.cms.group_membership.v1
     messages:
@@ -1441,12 +1331,7 @@ channels:
                               nullable: true
                               description: The email address of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the user profile
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1471,12 +1356,7 @@ channels:
                               type: string
                               description: The display name of the actor user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupMembershipInviteDelete:
     address: com.getopensocial.cms.group_membership.v1
     messages:
@@ -1546,12 +1426,7 @@ channels:
                               format: email
                               description: The email address of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the user profile
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1576,12 +1451,7 @@ channels:
                               type: string
                               description: The display name of the actor user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupMembershipInviteAccept:
     address: com.getopensocial.cms.group_membership.v1
     messages:
@@ -1652,12 +1522,7 @@ channels:
                               nullable: true
                               description: The email address of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the user profile
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1682,12 +1547,7 @@ channels:
                               type: string
                               description: The display name of the actor user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   groupMembershipInviteDecline:
     address: com.getopensocial.cms.group_membership.v1
     messages:
@@ -1758,12 +1618,7 @@ channels:
                               nullable: true
                               description: The email address of the user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the user profile
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -1788,12 +1643,7 @@ channels:
                               type: string
                               description: The display name of the actor user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
 operations:
   onGroupCreate:
     action: 'receive'

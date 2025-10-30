@@ -38,12 +38,7 @@ channels:
                               type: string
                               description: The display name of the target user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the target user profile.
+                              $ref: '#/components/schemas/Common.Href'
                         follower:
                           type: object
                           properties:
@@ -54,12 +49,7 @@ channels:
                               type: string
                               description: The display name of the follower user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the follower user profile.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -84,12 +74,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
   followUserDelete:
     address: com.getopensocial.cms.follow.v1
     messages:
@@ -129,12 +114,7 @@ channels:
                               type: string
                               description: The display name of the target user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the target user profile.
+                              $ref: '#/components/schemas/Common.Href'
                         follower:
                           type: object
                           properties:
@@ -145,12 +125,7 @@ channels:
                               type: string
                               description: The display name of the follower user.
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the follower user profile.
+                              $ref: '#/components/schemas/Common.Href'
                     actor:
                       type: object
                       properties:
@@ -175,12 +150,7 @@ channels:
                               type: string
                               description: Display name of the actor user
                             href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL for the actor profile
+                              $ref: '#/components/schemas/Common.Href'
 operations:
   onFollowUserCreate:
     action: 'receive'
