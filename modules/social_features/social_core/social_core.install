@@ -8,7 +8,6 @@
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\File\FileExists;
-use Drupal\crop\Entity\CropType;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
@@ -161,7 +160,7 @@ function _social_core_create_an_homepage_block() {
   $crop_type = \Drupal::entityTypeManager()
     ->getStorage('crop_type')
     ->load('hero_an');
-  if (!empty($crop_type) && $crop_type instanceof CropType) {
+  if (!empty($crop_type)) {
     $image_widget_crop_manager = \Drupal::service('image_widget_crop.manager');
     $image_widget_crop_manager->applyCrop($data, [
       'file-uri' => $uri,

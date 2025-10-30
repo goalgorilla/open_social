@@ -794,9 +794,6 @@ function social_group_update_13001() : void {
   $group_type_storage = \Drupal::entityTypeManager()
     ->getStorage("group_type");
   foreach ($group_type_storage->loadMultiple(["closed_group", "open_group", "public_group"]) as $group_type) {
-    if (!$group_type instanceof GroupType) {
-      continue;
-    }
     $group_type->delete();
   }
 }

@@ -291,22 +291,22 @@ class SocialGroupSettings extends ConfigFormBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getGroupTypePermissionsFoVu(): array {
+    $role = $this->entityTypeManager->getStorage('user_role')
+      ->load('verified');
+
+    if ($role === NULL) {
+      return [];
+    }
+
     $group_types = $this->entityTypeManager->getStorage('group_type')
       ->getQuery()
       ->accessCheck()
       ->execute();
 
     $default_types = [];
-
-    if (is_array($group_types)) {
-      /** @var \Drupal\user\RoleInterface $role */
-      $role = $this->entityTypeManager->getStorage('user_role')
-        ->load('verified');
-
-      foreach ($group_types as $group_type) {
-        if ($role->hasPermission('create ' . $group_type . ' group')) {
-          $default_types[$group_type] = $group_type;
-        }
+    foreach ($group_types as $group_type) {
+      if ($role->hasPermission('create ' . $group_type . ' group')) {
+        $default_types[$group_type] = $group_type;
       }
     }
 
@@ -346,33 +346,31 @@ class SocialGroupSettings extends ConfigFormBase {
       '#weight' => 15,
     ];
 
-    if (is_array($group_types)) {
-      foreach ($group_types as $group_type) {
-        // Check if current user (SM) has access to create group types to
-        // alter the settings for the group type.
-        $access = $this->entityTypeManager
-          ->getAccessControlHandler('group')
-          ->createAccess($group_type, NULL, [], TRUE);
+    foreach ($group_types as $group_type) {
+      // Check if current user (SM) has access to create group types to
+      // alter the settings for the group type.
+      $access = $this->entityTypeManager
+        ->getAccessControlHandler('group')
+        ->createAccess($group_type, NULL, [], TRUE);
 
-        // If we have access, make sure we render the checkboxes.
-        if ($access instanceof AccessResultInterface
-          && $access->isAllowed()
-          && ($group_entity_type = $storage->load($group_type))
-        ) {
-          $title = $this->t('Allow verified users to create <b>@label</b>', [
-            '@label' => $group_entity_type->label() . 's',
-          ]);
+      // If we have access, make sure we render the checkboxes.
+      if ($access instanceof AccessResultInterface
+        && $access->isAllowed()
+        && ($group_entity_type = $storage->load($group_type))
+      ) {
+        $title = $this->t('Allow verified users to create <b>@label</b>', [
+          '@label' => $group_entity_type->label() . 's',
+        ]);
 
-          $group_types_options[$group_type] = $title;
-        }
-
-        $this->renderer->addCacheableDependency($element, $access);
+        $group_types_options[$group_type] = $title;
       }
 
-      arsort($group_types_options);
-
-      $element['#options'] = $group_types_options;
+      $this->renderer->addCacheableDependency($element, $access);
     }
+
+    arsort($group_types_options);
+
+    $element['#options'] = $group_types_options;
 
     // Check if authenticated user can actually create the group already
     // to pre-fill the default value.
