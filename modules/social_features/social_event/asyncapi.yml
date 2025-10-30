@@ -134,23 +134,7 @@ channels:
                           nullable: true
                           description: The type of the event.
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventDelete:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -285,23 +269,7 @@ channels:
                           nullable: true
                           description: The type of the event.
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventPublish:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -436,23 +404,7 @@ channels:
                           nullable: true
                           description: The type of the event.
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventUnpublish:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -587,23 +539,7 @@ channels:
                           nullable: true
                           description: The type of the event.
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventUpdate:
     address: com.getopensocial.cms.event.v1
     messages:
@@ -730,23 +666,7 @@ channels:
                           nullable: true
                           description: The type of the event.
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventEnrollmentCreate:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -923,23 +843,7 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventEnrollmentCancel:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1116,23 +1020,7 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventEnrollmentRequestToJoin:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1309,23 +1197,7 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventEnrollmentRequestToJoinCancel:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1502,23 +1374,7 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventEnrollmentRequestToJoinAccept:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1695,23 +1551,7 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventEnrollmentRequestToJoinDecline:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -1888,23 +1728,7 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventEnrollmentInviteToJoin:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2081,23 +1905,7 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventEnrollmentInviteToJoinCancel:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2274,23 +2082,7 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventEnrollmentInviteToJoinAccept:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2467,23 +2259,7 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   eventEnrollmentInviteToJoinDecline:
     address: com.getopensocial.cms.event_enrollment.v1
     messages:
@@ -2660,23 +2436,7 @@ channels:
                             href:
                               $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
 operations:
   onEventCreate:
     action: 'receive'

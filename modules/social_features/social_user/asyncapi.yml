@@ -106,23 +106,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   profileUpdate:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -230,23 +214,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   userLogin:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -299,23 +267,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   userLogout:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -368,23 +320,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   userBlock:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -437,23 +373,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   userUnblock:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -506,23 +426,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   userDelete:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -575,23 +479,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   userEmailUpdate:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -642,23 +530,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   userLocaleUpdate:
     address: com.getopensocial.cms.user.v1
     messages:
@@ -709,23 +581,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
 
 operations:
   onUserCreate:

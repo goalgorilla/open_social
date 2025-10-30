@@ -30,30 +30,7 @@ channels:
                           href:
                             $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Application name
-                        user:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the user.
-                            displayName:
-                              type: string
-                              description: The display name of the user.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                      $ref: '#/components/schemas/Common.Actor'
 
 operations:
   onPageView:

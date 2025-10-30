@@ -65,23 +65,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   commentPublish:
     address: com.getopensocial.cms.comment.v1
     messages:
@@ -147,23 +131,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   commentUnpublish:
     address: com.getopensocial.cms.comment.v1
     messages:
@@ -229,23 +197,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   commentUpdate:
     address: com.getopensocial.cms.comment.v1
     messages:
@@ -312,23 +264,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   commentDelete:
     address: com.getopensocial.cms.comment.v1
     messages:
@@ -394,23 +330,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
 operations:
   onCommentCreate:
     action: 'receive'

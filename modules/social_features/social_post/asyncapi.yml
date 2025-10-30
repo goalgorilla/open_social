@@ -45,23 +45,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Application name
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
 
   postPublish:
     address: com.getopensocial.cms.post.v1
@@ -108,23 +92,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Application name
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
 
   postUnpublish:
     address: com.getopensocial.cms.post.v1
@@ -171,23 +139,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Application name
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
 
   postUpdate:
     address: com.getopensocial.cms.post.v1
@@ -235,23 +187,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Application name
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
 
   postDelete:
     address: com.getopensocial.cms.post.v1
@@ -298,23 +234,7 @@ channels:
                         href:
                           $ref: '#/components/schemas/Common.Href'
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Application name
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
 
 operations:
   onPostCreate:

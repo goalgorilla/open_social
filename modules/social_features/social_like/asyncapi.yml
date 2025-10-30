@@ -44,23 +44,7 @@ channels:
                             - $ref: '#/components/schemas/Common.UserRef'
                           description: The user who liked reference.
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
   likeDelete:
     address: com.getopensocial.cms.like.v1
     messages:
@@ -106,23 +90,7 @@ channels:
                             - $ref: '#/components/schemas/Common.UserRef'
                           description: The user who liked reference.
                     actor:
-                      type: object
-                      properties:
-                        application:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: Application ID (UUIDv4)
-                            name:
-                              type: string
-                              description: Name of the application
-                        user:
-                          allOf:
-                            - $ref: '#/components/schemas/Common.UserRef'
-                          nullable: true
-                          description: The actor user reference.
+                      $ref: '#/components/schemas/Common.Actor'
 operations:
   onLikeCreate:
     action: 'receive'
