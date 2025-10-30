@@ -1,6 +1,6 @@
 channels:
   eventCreate:
-    address: com.getopensocial.cms.event.create
+    address: com.getopensocial.cms.event.v1
     messages:
       eventCreate:
         payload:
@@ -8,6 +8,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event.create
                 data:
                   type: object
                   properties:
@@ -178,7 +181,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventDelete:
-    address: com.getopensocial.cms.event.delete
+    address: com.getopensocial.cms.event.v1
     messages:
       eventDelete:
         payload:
@@ -186,6 +189,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event.delete
                 data:
                   type: object
                   properties:
@@ -355,7 +361,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventPublish:
-    address: com.getopensocial.cms.event.publish
+    address: com.getopensocial.cms.event.v1
     messages:
       eventPublish:
         payload:
@@ -363,6 +369,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event.publish
                 data:
                   type: object
                   properties:
@@ -532,7 +541,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventUnpublish:
-    address: com.getopensocial.cms.event.unpublish
+    address: com.getopensocial.cms.event.v1
     messages:
       eventUnpublish:
         payload:
@@ -540,6 +549,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event.unpublish
                 data:
                   type: object
                   properties:
@@ -709,7 +721,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventUpdate:
-    address: com.getopensocial.cms.event.update
+    address: com.getopensocial.cms.event.v1
     messages:
       eventUpdate:
         payload:
@@ -717,6 +729,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event.update
                 data:
                   type: object
                   properties:
@@ -878,7 +893,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventEnrollmentCreate:
-    address: com.getopensocial.cms.event_enrollment.create
+    address: com.getopensocial.cms.event_enrollment.v1
     messages:
       eventEnrollmentCreate:
         payload:
@@ -886,6 +901,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event_enrollment.create
                 data:
                   type: object
                   properties:
@@ -1102,7 +1120,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventEnrollmentCancel:
-    address: com.getopensocial.cms.event_enrollment.delete
+    address: com.getopensocial.cms.event_enrollment.v1
     messages:
       eventEnrollmentCancel:
         payload:
@@ -1110,6 +1128,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event_enrollment.delete
                 data:
                   type: object
                   properties:
@@ -1326,7 +1347,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventEnrollmentRequestToJoin:
-    address: com.getopensocial.cms.event_enrollment.request.create
+    address: com.getopensocial.cms.event_enrollment.v1
     messages:
       eventEnrollmentRequestToJoin:
         payload:
@@ -1334,6 +1355,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event_enrollment.request.create
                 data:
                   type: object
                   properties:
@@ -1550,7 +1574,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventEnrollmentRequestToJoinCancel:
-    address: com.getopensocial.cms.event_enrollment.request.delete
+    address: com.getopensocial.cms.event_enrollment.v1
     messages:
       eventEnrollmentRequestToJoinCancel:
         payload:
@@ -1558,6 +1582,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event_enrollment.request.delete
                 data:
                   type: object
                   properties:
@@ -1774,7 +1801,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventEnrollmentRequestToJoinAccept:
-    address: com.getopensocial.cms.event_enrollment.request.accept
+    address: com.getopensocial.cms.event_enrollment.v1
     messages:
       eventEnrollmentRequestToJoinAccept:
         payload:
@@ -1782,6 +1809,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event_enrollment.request.accept
                 data:
                   type: object
                   properties:
@@ -1998,7 +2028,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventEnrollmentRequestToJoinDecline:
-    address: com.getopensocial.cms.event_enrollment.request.decline
+    address: com.getopensocial.cms.event_enrollment.v1
     messages:
       eventEnrollmentRequestToJoinDecline:
         payload:
@@ -2006,6 +2036,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event_enrollment.request.decline
                 data:
                   type: object
                   properties:
@@ -2222,7 +2255,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventEnrollmentInviteToJoin:
-    address: com.getopensocial.cms.event_enrollment.invite.create
+    address: com.getopensocial.cms.event_enrollment.v1
     messages:
       eventEnrollmentInviteToJoin:
         payload:
@@ -2230,6 +2263,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event_enrollment.invite.create
                 data:
                   type: object
                   properties:
@@ -2446,7 +2482,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventEnrollmentInviteToJoinCancel:
-    address: com.getopensocial.cms.event_enrollment.invite.delete
+    address: com.getopensocial.cms.event_enrollment.v1
     messages:
       eventEnrollmentInviteToJoinCancel:
         payload:
@@ -2454,6 +2490,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event_enrollment.invite.delete
                 data:
                   type: object
                   properties:
@@ -2670,7 +2709,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventEnrollmentInviteToJoinAccept:
-    address: com.getopensocial.cms.event_enrollment.invite.accept
+    address: com.getopensocial.cms.event_enrollment.v1
     messages:
       eventEnrollmentInviteToJoinAccept:
         payload:
@@ -2678,6 +2717,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event_enrollment.invite.accept
                 data:
                   type: object
                   properties:
@@ -2894,7 +2936,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   eventEnrollmentInviteToJoinDecline:
-    address: com.getopensocial.cms.event_enrollment.invite.decline
+    address: com.getopensocial.cms.event_enrollment.v1
     messages:
       eventEnrollmentInviteToJoinDecline:
         payload:
@@ -2902,6 +2944,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.event_enrollment.invite.decline
                 data:
                   type: object
                   properties:

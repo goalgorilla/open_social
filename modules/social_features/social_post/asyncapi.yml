@@ -1,6 +1,6 @@
 channels:
   postCreate:
-    address: com.getopensocial.cms.post.create
+    address: com.getopensocial.cms.post.v1
     messages:
       postCreate:
         payload:
@@ -8,6 +8,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.post.create
                 data:
                   type: object
                   properties:
@@ -90,7 +93,7 @@ channels:
                                   description: Canonical URL of the author.
 
   postPublish:
-    address: com.getopensocial.cms.post.publish
+    address: com.getopensocial.cms.post.v1
     messages:
       postPublish:
         payload:
@@ -98,6 +101,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.post.publish
                 data:
                   type: object
                   properties:
@@ -179,7 +185,7 @@ channels:
                                   description: Canonical URL of the author.
 
   postUnpublish:
-    address: com.getopensocial.cms.post.unpublish
+    address: com.getopensocial.cms.post.v1
     messages:
       postUnpublish:
         payload:
@@ -187,6 +193,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.post.unpublish
                 data:
                   type: object
                   properties:
@@ -268,7 +277,7 @@ channels:
                                   description: Canonical URL of the author.
 
   postUpdate:
-    address: com.getopensocial.cms.post.update
+    address: com.getopensocial.cms.post.v1
     messages:
       postUpdate:
         payload:
@@ -276,6 +285,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.post.update
                 data:
                   type: object
                   properties:
@@ -358,7 +370,7 @@ channels:
                                   description: Canonical URL of the author.
 
   postDelete:
-    address: com.getopensocial.cms.post.delete
+    address: com.getopensocial.cms.post.v1
     messages:
       postDelete:
         payload:
@@ -366,6 +378,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.post.delete
                 data:
                   type: object
                   properties:

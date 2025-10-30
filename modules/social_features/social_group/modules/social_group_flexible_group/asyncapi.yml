@@ -1,6 +1,6 @@
 channels:
   groupCreate:
-    address: com.getopensocial.cms.group.create
+    address: com.getopensocial.cms.group.v1
     messages:
       groupCreate:
         payload:
@@ -8,6 +8,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group.create
                 data:
                   type: object
                   properties:
@@ -144,7 +147,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupUnpublish:
-    address: com.getopensocial.cms.group.unpublish
+    address: com.getopensocial.cms.group.v1
     messages:
       groupUnpublish:
         payload:
@@ -152,6 +155,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group.unpublish
                 data:
                   type: object
                   properties:
@@ -288,7 +294,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupPublish:
-    address: com.getopensocial.cms.group.unpublish
+    address: com.getopensocial.cms.group.v1
     messages:
       groupPublish:
         payload:
@@ -296,6 +302,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group.publish
                 data:
                   type: object
                   properties:
@@ -433,7 +442,7 @@ channels:
                                   description: Canonical URL for the actor profile
 
   groupUpdate:
-    address: com.getopensocial.cms.group.update
+    address: com.getopensocial.cms.group.v1
     messages:
       groupUpdate:
         payload:
@@ -441,6 +450,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group.update
                 data:
                   type: object
                   properties:
@@ -577,7 +589,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupDelete:
-    address: com.getopensocial.cms.group.delete
+    address: com.getopensocial.cms.group.v1
     messages:
       groupDelete:
         payload:
@@ -585,6 +597,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group.delete
                 data:
                   type: object
                   properties:
@@ -721,7 +736,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupMembershipCreate:
-    address: com.getopensocial.cms.group_membership.create
+    address: com.getopensocial.cms.group_membership.v1
     messages:
       groupMembershipCreate:
         payload:
@@ -729,6 +744,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group_membership.create
                 data:
                   type: object
                   properties:
@@ -824,7 +842,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupMembershipDelete:
-    address: com.getopensocial.cms.group_membership.delete
+    address: com.getopensocial.cms.group_membership.v1
     messages:
       groupMembershipDelete:
         payload:
@@ -832,6 +850,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group_membership.delete
                 data:
                   type: object
                   properties:
@@ -927,7 +948,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupMembershipRequestCreate:
-    address: com.getopensocial.cms.group_membership.request.create
+    address: com.getopensocial.cms.group_membership.v1
     messages:
       groupMembershipRequestCreate:
         payload:
@@ -935,6 +956,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group_membership.request.create
                 data:
                   type: object
                   properties:
@@ -1030,7 +1054,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupMembershipRequestDelete:
-    address: com.getopensocial.cms.group_membership.request.delete
+    address: com.getopensocial.cms.group_membership.v1
     messages:
       groupMembershipRequestDelete:
         payload:
@@ -1038,6 +1062,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group_membership.request.delete
                 data:
                   type: object
                   properties:
@@ -1133,7 +1160,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupMembershipRequestAccept:
-    address: com.getopensocial.cms.group_membership.request.accept
+    address: com.getopensocial.cms.group_membership.v1
     messages:
       groupMembershipRequestAccept:
         payload:
@@ -1141,6 +1168,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group_membership.request.accept
                 data:
                   type: object
                   properties:
@@ -1236,7 +1266,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupMembershipRequestDecline:
-    address: com.getopensocial.cms.group_membership.request.decline
+    address: com.getopensocial.cms.group_membership.v1
     messages:
       groupMembershipRequestDecline:
         payload:
@@ -1244,6 +1274,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group_membership.request.decline
                 data:
                   type: object
                   properties:
@@ -1339,7 +1372,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupMembershipInviteCreate:
-    address: com.getopensocial.cms.group_membership.invite.create
+    address: com.getopensocial.cms.group_membership.v1
     messages:
       groupMembershipInviteCreate:
         payload:
@@ -1347,6 +1380,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group_membership.invite.create
                 data:
                   type: object
                   properties:
@@ -1442,7 +1478,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupMembershipInviteDelete:
-    address: com.getopensocial.cms.group_membership.invite.delete
+    address: com.getopensocial.cms.group_membership.v1
     messages:
       groupMembershipInviteDelete:
         payload:
@@ -1450,6 +1486,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group_membership.invite.delete
                 data:
                   type: object
                   properties:
@@ -1544,7 +1583,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupMembershipInviteAccept:
-    address: com.getopensocial.cms.group_membership.invite.accept
+    address: com.getopensocial.cms.group_membership.v1
     messages:
       groupMembershipInviteAccept:
         payload:
@@ -1552,6 +1591,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group_membership.invite.accept
                 data:
                   type: object
                   properties:
@@ -1647,7 +1689,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   groupMembershipInviteDecline:
-    address: com.getopensocial.cms.group_membership.invite.decline
+    address: com.getopensocial.cms.group_membership.v1
     messages:
       groupMembershipInviteDecline:
         payload:
@@ -1655,6 +1697,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.group_membership.invite.decline
                 data:
                   type: object
                   properties:

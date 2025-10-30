@@ -1,6 +1,6 @@
 channels:
   topicCreate:
-    address: com.getopensocial.cms.topic.create
+    address: com.getopensocial.cms.topic.v1
     messages:
       topicCreate:
         payload:
@@ -8,6 +8,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.topic.create
                 data:
                   type: object
                   properties:
@@ -121,7 +124,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   topicPublish:
-    address: com.getopensocial.cms.topic.publish
+    address: com.getopensocial.cms.topic.v1
     messages:
       topicPublish:
         payload:
@@ -129,6 +132,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.topic.publish
                 data:
                   type: object
                   properties:
@@ -241,7 +247,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   topicUnpublish:
-    address: com.getopensocial.cms.topic.unpublish
+    address: com.getopensocial.cms.topic.v1
     messages:
       topicUnpublish:
         payload:
@@ -249,6 +255,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.topic.unpublish
                 data:
                   type: object
                   properties:
@@ -361,7 +370,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   topicUpdate:
-    address: com.getopensocial.cms.topic.update
+    address: com.getopensocial.cms.topic.v1
     messages:
       topicUpdate:
         payload:
@@ -369,6 +378,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.topic.update
                 data:
                   type: object
                   properties:
@@ -482,7 +494,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   topicDelete:
-    address: com.getopensocial.cms.topic.delete
+    address: com.getopensocial.cms.topic.v1
     messages:
       topicDelete:
         payload:
@@ -490,6 +502,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.topic.delete
                 data:
                   type: object
                   properties:

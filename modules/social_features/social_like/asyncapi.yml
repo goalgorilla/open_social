@@ -1,6 +1,6 @@
 channels:
   likeCreate:
-    address: com.getopensocial.cms.like.create
+    address: com.getopensocial.cms.like.v1
     messages:
       likeCreate:
         payload:
@@ -8,6 +8,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.like.create
                 data:
                   type: object
                   properties:
@@ -88,7 +91,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   likeDelete:
-    address: com.getopensocial.cms.like.delete
+    address: com.getopensocial.cms.like.v1
     messages:
       likeDelete:
         payload:
@@ -96,6 +99,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.like.delete
                 data:
                   type: object
                   properties:

@@ -1,6 +1,6 @@
 channels:
   commentCreate:
-    address: com.getopensocial.cms.comment.create
+    address: com.getopensocial.cms.comment.v1
     messages:
       commentCreate:
         payload:
@@ -8,6 +8,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.comment.create
                 data:
                   type: object
                   properties:
@@ -114,7 +117,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   commentPublish:
-    address: com.getopensocial.cms.comment.publish
+    address: com.getopensocial.cms.comment.v1
     messages:
       commentPublish:
         payload:
@@ -122,6 +125,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.comment.publish
                 data:
                   type: object
                   properties:
@@ -227,7 +233,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   commentUnpublish:
-    address: com.getopensocial.cms.comment.unpublish
+    address: com.getopensocial.cms.comment.v1
     messages:
       commentUnpublish:
         payload:
@@ -235,6 +241,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.comment.unpublish
                 data:
                   type: object
                   properties:
@@ -340,7 +349,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   commentUpdate:
-    address: com.getopensocial.cms.comment.update
+    address: com.getopensocial.cms.comment.v1
     messages:
       commentUpdate:
         payload:
@@ -348,6 +357,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.comment.update
                 data:
                   type: object
                   properties:
@@ -454,7 +466,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   commentDelete:
-    address: com.getopensocial.cms.comment.delete
+    address: com.getopensocial.cms.comment.v1
     messages:
       commentDelete:
         payload:
@@ -462,6 +474,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.comment.delete
                 data:
                   type: object
                   properties:

@@ -1,6 +1,6 @@
 channels:
   userCreate:
-    address: com.getopensocial.cms.user.create
+    address: com.getopensocial.cms.user.v1
     messages:
       userCreate:
         payload:
@@ -8,6 +8,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.user.create
                 data:
                   type: object
                   properties:
@@ -138,7 +141,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   profileUpdate:
-    address: com.getopensocial.cms.user.profile.update
+    address: com.getopensocial.cms.user.v1
     messages:
       profileUpdate:
         payload:
@@ -146,6 +149,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.user.profile.update
                 data:
                   type: object
                   properties:
@@ -276,7 +282,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   userLogin:
-    address: com.getopensocial.cms.user.login
+    address: com.getopensocial.cms.user.v1
     messages:
       userLogin:
         payload:
@@ -284,6 +290,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.user.login
                 data:
                   type: object
                   properties:
@@ -359,7 +368,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   userLogout:
-    address: com.getopensocial.cms.user.logout
+    address: com.getopensocial.cms.user.v1
     messages:
       userLogout:
         payload:
@@ -367,6 +376,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.user.logout
                 data:
                   type: object
                   properties:
@@ -442,7 +454,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   userBlock:
-    address: com.getopensocial.cms.user.block
+    address: com.getopensocial.cms.user.v1
     messages:
       userBlock:
         payload:
@@ -450,6 +462,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.user.block
                 data:
                   type: object
                   properties:
@@ -525,7 +540,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   userUnblock:
-    address: com.getopensocial.cms.user.unblock
+    address: com.getopensocial.cms.user.v1
     messages:
       userUnblock:
         payload:
@@ -533,6 +548,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.user.unblock
                 data:
                   type: object
                   properties:
@@ -608,7 +626,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   userDelete:
-    address: com.getopensocial.cms.user.delete
+    address: com.getopensocial.cms.user.v1
     messages:
       userDelete:
         payload:
@@ -616,6 +634,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.user.delete
                 data:
                   type: object
                   properties:
@@ -691,7 +712,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   userEmailUpdate:
-    address: com.getopensocial.cms.user.settings.email
+    address: com.getopensocial.cms.user.v1
     messages:
       userEmailUpdate:
         payload:
@@ -699,6 +720,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.user.settings.email
                 data:
                   type: object
                   properties:
@@ -772,7 +796,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   userLocaleUpdate:
-    address: com.getopensocial.cms.user.settings.locale
+    address: com.getopensocial.cms.user.v1
     messages:
       userLocaleUpdate:
         payload:
@@ -780,6 +804,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.user.settings.locale
                 data:
                   type: object
                   properties:

@@ -1,6 +1,6 @@
 channels:
   followUserCreate:
-    address: com.getopensocial.follow.user.create
+    address: com.getopensocial.cms.follow.v1
     messages:
       followUserCreate:
         payload:
@@ -8,6 +8,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.follow.user.create
                 data:
                   type: object
                   properties:
@@ -88,7 +91,7 @@ channels:
                                   format: uri
                                   description: Canonical URL for the actor profile
   followUserDelete:
-    address: com.getopensocial.follow.user.delete
+    address: com.getopensocial.cms.follow.v1
     messages:
       followUserDelete:
         payload:
@@ -96,6 +99,9 @@ channels:
             - $ref: '#/components/schemas/cloudEventsSchema'
             - type: object
               properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.follow.user.delete
                 data:
                   type: object
                   properties:
