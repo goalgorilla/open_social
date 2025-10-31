@@ -35,16 +35,7 @@ channels:
                             - published
                             - unpublished
                         target:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the target entity.
-                            type:
-                              type: string
-                              description: The type of the target entity.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          $ref: '#/components/schemas/Common.TargetRef'
                         thread:
                           type: object
                           properties:
@@ -101,16 +92,7 @@ channels:
                           enum:
                             - published
                         target:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the target entity.
-                            type:
-                              type: string
-                              description: The type of the target entity.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          $ref: '#/components/schemas/Common.TargetRef'
                         thread:
                           type: object
                           properties:
@@ -167,16 +149,7 @@ channels:
                           enum:
                             - unpublished
                         target:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the target entity.
-                            type:
-                              type: string
-                              description: The type of the target entity.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          $ref: '#/components/schemas/Common.TargetRef'
                         thread:
                           type: object
                           properties:
@@ -234,16 +207,7 @@ channels:
                             - published
                             - unpublished
                         target:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the target entity.
-                            type:
-                              type: string
-                              description: The type of the target entity.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          $ref: '#/components/schemas/Common.TargetRef'
                         thread:
                           type: object
                           properties:
@@ -300,16 +264,7 @@ channels:
                           enum:
                             - removed
                         target:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the target entity.
-                            type:
-                              type: string
-                              description: The type of the target entity.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          $ref: '#/components/schemas/Common.TargetRef'
                         thread:
                           type: object
                           properties:

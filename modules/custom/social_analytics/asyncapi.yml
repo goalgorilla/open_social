@@ -19,16 +19,7 @@ channels:
                       type: array
                       nullable: true
                       items:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                            description: The UUID of the target entity.
-                          type:
-                            type: string
-                            description: The type of the target entity.
-                          href:
-                            $ref: '#/components/schemas/Common.Href'
+                        $ref: '#/components/schemas/Common.TargetRef'
                     actor:
                       $ref: '#/components/schemas/Common.Actor'
 
