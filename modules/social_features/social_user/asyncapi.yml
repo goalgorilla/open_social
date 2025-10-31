@@ -61,36 +61,10 @@ channels:
                           type: string
                           description: The preferred language of the user.
                         address:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.Address'
                           nullable: true
-                          properties:
-                            label:
-                              type: string
-                              description: The label of the user address.
-                            countryCode:
-                              type: string
-                              description: The country code of the user address.
-                            administrativeArea:
-                              type: string
-                              description: The administrative area of the user address.
-                            locality:
-                              type: string
-                              description: The locality of the user address.
-                            dependentLocality:
-                              type: string
-                              description: The dependent locality of the user address.
-                            postalCode:
-                              type: string
-                              description: The postal code of the user address.
-                            sortingCode:
-                              type: string
-                              description: The sorting code of the user address.
-                            addressLine1:
-                              type: string
-                              description: The first address line of the user address.
-                            addressLine2:
-                              type: string
-                              description: The second address line of the user address.
+                          description: The user address.
                         phone:
                           type: string
                           nullable: true
@@ -169,36 +143,10 @@ channels:
                           type: string
                           description: The preferred language of the user.
                         address:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.Address'
                           nullable: true
-                          properties:
-                            label:
-                              type: string
-                              description: The label of the user address.
-                            countryCode:
-                              type: string
-                              description: The country code of the user address.
-                            administrativeArea:
-                              type: string
-                              description: The administrative area of the user address.
-                            locality:
-                              type: string
-                              description: The locality of the user address.
-                            dependentLocality:
-                              type: string
-                              description: The dependent locality of the user address.
-                            postalCode:
-                              type: string
-                              description: The postal code of the user address.
-                            sortingCode:
-                              type: string
-                              description: The sorting code of the user address.
-                            addressLine1:
-                              type: string
-                              description: The first address line of the user address.
-                            addressLine2:
-                              type: string
-                              description: The second address line of the user address.
+                          description: The user address.
                         phone:
                           type: string
                           nullable: true

@@ -63,35 +63,10 @@ channels:
                           type: string
                           description: The timezone of the event.
                         address:
-                          type: object
-                          properties:
-                            label:
-                              type: string
-                              description: The label of the event location.
-                            countryCode:
-                              type: string
-                              description: The country code of the event location.
-                            administrativeArea:
-                              type: string
-                              description: The administrative area of the event location.
-                            locality:
-                              type: string
-                              description: The locality of the event location.
-                            dependentLocality:
-                              type: string
-                              description: The dependent locality of the event location.
-                            postalCode:
-                              type: string
-                              description: The postal code of the event location.
-                            sortingCode:
-                              type: string
-                              description: The sorting code of the event location.
-                            addressLine1:
-                              type: string
-                              description: The first address line of the event location.
-                            addressLine2:
-                              type: string
-                              description: The second address line of the event location.
+                          allOf:
+                            - $ref: '#/components/schemas/Common.Address'
+                          nullable: true
+                          description: The address of the event.
                         enrollment:
                           type: object
                           properties:
@@ -176,35 +151,10 @@ channels:
                           type: string
                           description: The timezone of the event.
                         address:
-                          type: object
-                          properties:
-                            label:
-                              type: string
-                              description: The label of the event location.
-                            countryCode:
-                              type: string
-                              description: The country code of the event location.
-                            administrativeArea:
-                              type: string
-                              description: The administrative area of the event location.
-                            locality:
-                              type: string
-                              description: The locality of the event location.
-                            dependentLocality:
-                              type: string
-                              description: The dependent locality of the event location.
-                            postalCode:
-                              type: string
-                              description: The postal code of the event location.
-                            sortingCode:
-                              type: string
-                              description: The sorting code of the event location.
-                            addressLine1:
-                              type: string
-                              description: The first address line of the event location.
-                            addressLine2:
-                              type: string
-                              description: The second address line of the event location.
+                          allOf:
+                            - $ref: '#/components/schemas/Common.Address'
+                          nullable: true
+                          description: The address of the event.
                         enrollment:
                           type: object
                           properties:
@@ -289,35 +239,10 @@ channels:
                           type: string
                           description: The timezone of the event.
                         address:
-                          type: object
-                          properties:
-                            label:
-                              type: string
-                              description: The label of the event location.
-                            countryCode:
-                              type: string
-                              description: The country code of the event location.
-                            administrativeArea:
-                              type: string
-                              description: The administrative area of the event location.
-                            locality:
-                              type: string
-                              description: The locality of the event location.
-                            dependentLocality:
-                              type: string
-                              description: The dependent locality of the event location.
-                            postalCode:
-                              type: string
-                              description: The postal code of the event location.
-                            sortingCode:
-                              type: string
-                              description: The sorting code of the event location.
-                            addressLine1:
-                              type: string
-                              description: The first address line of the event location.
-                            addressLine2:
-                              type: string
-                              description: The second address line of the event location.
+                          allOf:
+                            - $ref: '#/components/schemas/Common.Address'
+                          nullable: true
+                          description: The address of the event.
                         enrollment:
                           type: object
                           properties:
@@ -402,35 +327,10 @@ channels:
                           type: string
                           description: The timezone of the event.
                         address:
-                          type: object
-                          properties:
-                            label:
-                              type: string
-                              description: The label of the event location.
-                            countryCode:
-                              type: string
-                              description: The country code of the event location.
-                            administrativeArea:
-                              type: string
-                              description: The administrative area of the event location.
-                            locality:
-                              type: string
-                              description: The locality of the event location.
-                            dependentLocality:
-                              type: string
-                              description: The dependent locality of the event location.
-                            postalCode:
-                              type: string
-                              description: The postal code of the event location.
-                            sortingCode:
-                              type: string
-                              description: The sorting code of the event location.
-                            addressLine1:
-                              type: string
-                              description: The first address line of the event location.
-                            addressLine2:
-                              type: string
-                              description: The second address line of the event location.
+                          allOf:
+                            - $ref: '#/components/schemas/Common.Address'
+                          nullable: true
+                          description: The address of the event.
                         enrollment:
                           type: object
                           properties:
@@ -516,35 +416,7 @@ channels:
                           type: string
                           description: The timezone of the event.
                         address:
-                          type: object
-                          properties:
-                            label:
-                              type: string
-                              description: The label of the event location.
-                            countryCode:
-                              type: string
-                              description: The country code of the event location.
-                            administrativeArea:
-                              type: string
-                              description: The administrative area of the event location.
-                            locality:
-                              type: string
-                              description: The locality of the event location.
-                            dependentLocality:
-                              type: string
-                              description: The dependent locality of the event location.
-                            postalCode:
-                              type: string
-                              description: The postal code of the event location.
-                            sortingCode:
-                              type: string
-                              description: The sorting code of the event location.
-                            addressLine1:
-                              type: string
-                              description: The first address line of the event location.
-                            addressLine2:
-                              type: string
-                              description: The second address line of the event location.
+                          $ref: '#/components/schemas/Common.Address'
                         enrollment:
                           type: object
                           properties:
@@ -653,35 +525,7 @@ channels:
                               type: string
                               description: The timezone of the event.
                             address:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                  description: The label of the event location.
-                                countryCode:
-                                  type: string
-                                  description: The country code of the event location.
-                                administrativeArea:
-                                  type: string
-                                  description: The administrative area of the event location.
-                                locality:
-                                  type: string
-                                  description: The locality of the event location.
-                                dependentLocality:
-                                  type: string
-                                  description: The dependent locality of the event location.
-                                postalCode:
-                                  type: string
-                                  description: The postal code of the event location.
-                                sortingCode:
-                                  type: string
-                                  description: The sorting code of the event location.
-                                addressLine1:
-                                  type: string
-                                  description: The first address line of the event location.
-                                addressLine2:
-                                  type: string
-                                  description: The second address line of the event location.
+                              $ref: '#/components/schemas/Common.Address'
                             enrollment:
                               type: object
                               properties:
@@ -803,35 +647,7 @@ channels:
                               type: string
                               description: The timezone of the event.
                             address:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                  description: The label of the event location.
-                                countryCode:
-                                  type: string
-                                  description: The country code of the event location.
-                                administrativeArea:
-                                  type: string
-                                  description: The administrative area of the event location.
-                                locality:
-                                  type: string
-                                  description: The locality of the event location.
-                                dependentLocality:
-                                  type: string
-                                  description: The dependent locality of the event location.
-                                postalCode:
-                                  type: string
-                                  description: The postal code of the event location.
-                                sortingCode:
-                                  type: string
-                                  description: The sorting code of the event location.
-                                addressLine1:
-                                  type: string
-                                  description: The first address line of the event location.
-                                addressLine2:
-                                  type: string
-                                  description: The second address line of the event location.
+                              $ref: '#/components/schemas/Common.Address'
                             enrollment:
                               type: object
                               properties:
@@ -953,35 +769,10 @@ channels:
                               type: string
                               description: The timezone of the event.
                             address:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                  description: The label of the event location.
-                                countryCode:
-                                  type: string
-                                  description: The country code of the event location.
-                                administrativeArea:
-                                  type: string
-                                  description: The administrative area of the event location.
-                                locality:
-                                  type: string
-                                  description: The locality of the event location.
-                                dependentLocality:
-                                  type: string
-                                  description: The dependent locality of the event location.
-                                postalCode:
-                                  type: string
-                                  description: The postal code of the event location.
-                                sortingCode:
-                                  type: string
-                                  description: The sorting code of the event location.
-                                addressLine1:
-                                  type: string
-                                  description: The first address line of the event location.
-                                addressLine2:
-                                  type: string
-                                  description: The second address line of the event location.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.Address'
+                              nullable: true
+                              description: The address of the event.
                             enrollment:
                               type: object
                               properties:
@@ -1103,35 +894,10 @@ channels:
                               type: string
                               description: The timezone of the event.
                             address:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                  description: The label of the event location.
-                                countryCode:
-                                  type: string
-                                  description: The country code of the event location.
-                                administrativeArea:
-                                  type: string
-                                  description: The administrative area of the event location.
-                                locality:
-                                  type: string
-                                  description: The locality of the event location.
-                                dependentLocality:
-                                  type: string
-                                  description: The dependent locality of the event location.
-                                postalCode:
-                                  type: string
-                                  description: The postal code of the event location.
-                                sortingCode:
-                                  type: string
-                                  description: The sorting code of the event location.
-                                addressLine1:
-                                  type: string
-                                  description: The first address line of the event location.
-                                addressLine2:
-                                  type: string
-                                  description: The second address line of the event location.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.Address'
+                              nullable: true
+                              description: The address of the event.
                             enrollment:
                               type: object
                               properties:
@@ -1253,35 +1019,10 @@ channels:
                               type: string
                               description: The timezone of the event.
                             address:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                  description: The label of the event location.
-                                countryCode:
-                                  type: string
-                                  description: The country code of the event location.
-                                administrativeArea:
-                                  type: string
-                                  description: The administrative area of the event location.
-                                locality:
-                                  type: string
-                                  description: The locality of the event location.
-                                dependentLocality:
-                                  type: string
-                                  description: The dependent locality of the event location.
-                                postalCode:
-                                  type: string
-                                  description: The postal code of the event location.
-                                sortingCode:
-                                  type: string
-                                  description: The sorting code of the event location.
-                                addressLine1:
-                                  type: string
-                                  description: The first address line of the event location.
-                                addressLine2:
-                                  type: string
-                                  description: The second address line of the event location.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.Address'
+                              nullable: true
+                              description: The address of the event.
                             enrollment:
                               type: object
                               properties:
@@ -1403,35 +1144,10 @@ channels:
                               type: string
                               description: The timezone of the event.
                             address:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                  description: The label of the event location.
-                                countryCode:
-                                  type: string
-                                  description: The country code of the event location.
-                                administrativeArea:
-                                  type: string
-                                  description: The administrative area of the event location.
-                                locality:
-                                  type: string
-                                  description: The locality of the event location.
-                                dependentLocality:
-                                  type: string
-                                  description: The dependent locality of the event location.
-                                postalCode:
-                                  type: string
-                                  description: The postal code of the event location.
-                                sortingCode:
-                                  type: string
-                                  description: The sorting code of the event location.
-                                addressLine1:
-                                  type: string
-                                  description: The first address line of the event location.
-                                addressLine2:
-                                  type: string
-                                  description: The second address line of the event location.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.Address'
+                              nullable: true
+                              description: The address of the event.
                             enrollment:
                               type: object
                               properties:
@@ -1553,35 +1269,10 @@ channels:
                               type: string
                               description: The timezone of the event.
                             address:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                  description: The label of the event location.
-                                countryCode:
-                                  type: string
-                                  description: The country code of the event location.
-                                administrativeArea:
-                                  type: string
-                                  description: The administrative area of the event location.
-                                locality:
-                                  type: string
-                                  description: The locality of the event location.
-                                dependentLocality:
-                                  type: string
-                                  description: The dependent locality of the event location.
-                                postalCode:
-                                  type: string
-                                  description: The postal code of the event location.
-                                sortingCode:
-                                  type: string
-                                  description: The sorting code of the event location.
-                                addressLine1:
-                                  type: string
-                                  description: The first address line of the event location.
-                                addressLine2:
-                                  type: string
-                                  description: The second address line of the event location.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.Address'
+                              nullable: true
+                              description: The address of the event.
                             enrollment:
                               type: object
                               properties:
@@ -1703,35 +1394,10 @@ channels:
                               type: string
                               description: The timezone of the event.
                             address:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                  description: The label of the event location.
-                                countryCode:
-                                  type: string
-                                  description: The country code of the event location.
-                                administrativeArea:
-                                  type: string
-                                  description: The administrative area of the event location.
-                                locality:
-                                  type: string
-                                  description: The locality of the event location.
-                                dependentLocality:
-                                  type: string
-                                  description: The dependent locality of the event location.
-                                postalCode:
-                                  type: string
-                                  description: The postal code of the event location.
-                                sortingCode:
-                                  type: string
-                                  description: The sorting code of the event location.
-                                addressLine1:
-                                  type: string
-                                  description: The first address line of the event location.
-                                addressLine2:
-                                  type: string
-                                  description: The second address line of the event location.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.Address'
+                              nullable: true
+                              description: The address of the event.
                             enrollment:
                               type: object
                               properties:
@@ -1853,35 +1519,10 @@ channels:
                               type: string
                               description: The timezone of the event.
                             address:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                  description: The label of the event location.
-                                countryCode:
-                                  type: string
-                                  description: The country code of the event location.
-                                administrativeArea:
-                                  type: string
-                                  description: The administrative area of the event location.
-                                locality:
-                                  type: string
-                                  description: The locality of the event location.
-                                dependentLocality:
-                                  type: string
-                                  description: The dependent locality of the event location.
-                                postalCode:
-                                  type: string
-                                  description: The postal code of the event location.
-                                sortingCode:
-                                  type: string
-                                  description: The sorting code of the event location.
-                                addressLine1:
-                                  type: string
-                                  description: The first address line of the event location.
-                                addressLine2:
-                                  type: string
-                                  description: The second address line of the event location.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.Address'
+                              nullable: true
+                              description: The address of the event.
                             enrollment:
                               type: object
                               properties:
@@ -2003,35 +1644,10 @@ channels:
                               type: string
                               description: The timezone of the event.
                             address:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                  description: The label of the event location.
-                                countryCode:
-                                  type: string
-                                  description: The country code of the event location.
-                                administrativeArea:
-                                  type: string
-                                  description: The administrative area of the event location.
-                                locality:
-                                  type: string
-                                  description: The locality of the event location.
-                                dependentLocality:
-                                  type: string
-                                  description: The dependent locality of the event location.
-                                postalCode:
-                                  type: string
-                                  description: The postal code of the event location.
-                                sortingCode:
-                                  type: string
-                                  description: The sorting code of the event location.
-                                addressLine1:
-                                  type: string
-                                  description: The first address line of the event location.
-                                addressLine2:
-                                  type: string
-                                  description: The second address line of the event location.
+                              allOf:
+                                - $ref: '#/components/schemas/Common.Address'
+                              nullable: true
+                              description: The address of the event.
                             enrollment:
                               type: object
                               properties:
