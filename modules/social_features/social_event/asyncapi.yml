@@ -50,22 +50,10 @@ channels:
                               type: array
                               description: The list of roles ids.
                         group:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.GroupRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the group.
-                            label:
-                              type: string
-                              description: The label of the group.
-                            href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the group.
+                          description: The group reference.
                         author:
                           allOf:
                             - $ref: '#/components/schemas/Common.UserRef'
@@ -185,22 +173,10 @@ channels:
                               type: array
                               description: The list of roles ids.
                         group:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.GroupRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the group.
-                            label:
-                              type: string
-                              description: The label of the group.
-                            href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the group.
+                          description: The group reference.
                         author:
                           allOf:
                             - $ref: '#/components/schemas/Common.UserRef'
@@ -320,22 +296,10 @@ channels:
                               type: array
                               description: The list of roles ids.
                         group:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.GroupRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the group.
-                            label:
-                              type: string
-                              description: The label of the group.
-                            href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the group.
+                          description: The group reference.
                         author:
                           allOf:
                             - $ref: '#/components/schemas/Common.UserRef'
@@ -455,22 +419,10 @@ channels:
                               type: array
                               description: The list of roles ids.
                         group:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.GroupRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the group.
-                            label:
-                              type: string
-                              description: The label of the group.
-                            href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the group.
+                          description: The group reference.
                         author:
                           allOf:
                             - $ref: '#/components/schemas/Common.UserRef'
@@ -582,22 +534,10 @@ channels:
                           type: string
                           description: The visibility of the event content.
                         group:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.GroupRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the group.
-                            label:
-                              type: string
-                              description: The label of the group.
-                            href:
-                              type: object
-                              properties:
-                                canonical:
-                                  type: string
-                                  format: uri
-                                  description: Canonical URL of the group.
+                          description: The group reference.
                         author:
                           allOf:
                             - $ref: '#/components/schemas/Common.UserRef'
@@ -746,22 +686,10 @@ channels:
                               nullable: true
                               description: The type of the event.
                             group:
-                              type: object
+                              allOf:
+                                - $ref: '#/components/schemas/Common.GroupRef'
                               nullable: true
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the group.
-                                label:
-                                  type: string
-                                  description: The label of the group.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the group.
+                              description: The group reference.
                             author:
                               allOf:
                                 - $ref: '#/components/schemas/Common.UserRef'
@@ -923,22 +851,10 @@ channels:
                               nullable: true
                               description: The type of the event.
                             group:
-                              type: object
+                              allOf:
+                                - $ref: '#/components/schemas/Common.GroupRef'
                               nullable: true
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the group.
-                                label:
-                                  type: string
-                                  description: The label of the group.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the group.
+                              description: The group reference.
                             author:
                               allOf:
                                 - $ref: '#/components/schemas/Common.UserRef'
@@ -1100,22 +1016,10 @@ channels:
                               nullable: true
                               description: The type of the event.
                             group:
-                              type: object
+                              allOf:
+                                - $ref: '#/components/schemas/Common.GroupRef'
                               nullable: true
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the group.
-                                label:
-                                  type: string
-                                  description: The label of the group.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the group.
+                              description: The group reference.
                             author:
                               allOf:
                                 - $ref: '#/components/schemas/Common.UserRef'
@@ -1277,22 +1181,10 @@ channels:
                               nullable: true
                               description: The type of the event.
                             group:
-                              type: object
+                              allOf:
+                                - $ref: '#/components/schemas/Common.GroupRef'
                               nullable: true
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the group.
-                                label:
-                                  type: string
-                                  description: The label of the group.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the group.
+                              description: The group reference.
                             author:
                               allOf:
                                 - $ref: '#/components/schemas/Common.UserRef'
@@ -1454,22 +1346,10 @@ channels:
                               nullable: true
                               description: The type of the event.
                             group:
-                              type: object
+                              allOf:
+                                - $ref: '#/components/schemas/Common.GroupRef'
                               nullable: true
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the group.
-                                label:
-                                  type: string
-                                  description: The label of the group.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the group.
+                              description: The group reference.
                             author:
                               allOf:
                                 - $ref: '#/components/schemas/Common.UserRef'
@@ -1631,22 +1511,10 @@ channels:
                               nullable: true
                               description: The type of the event.
                             group:
-                              type: object
+                              allOf:
+                                - $ref: '#/components/schemas/Common.GroupRef'
                               nullable: true
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the group.
-                                label:
-                                  type: string
-                                  description: The label of the group.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the group.
+                              description: The group reference.
                             author:
                               allOf:
                                 - $ref: '#/components/schemas/Common.UserRef'
@@ -1808,22 +1676,10 @@ channels:
                               nullable: true
                               description: The type of the event.
                             group:
-                              type: object
+                              allOf:
+                                - $ref: '#/components/schemas/Common.GroupRef'
                               nullable: true
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the group.
-                                label:
-                                  type: string
-                                  description: The label of the group.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the group.
+                              description: The group reference.
                             author:
                               allOf:
                                 - $ref: '#/components/schemas/Common.UserRef'
@@ -1985,22 +1841,10 @@ channels:
                               nullable: true
                               description: The type of the event.
                             group:
-                              type: object
+                              allOf:
+                                - $ref: '#/components/schemas/Common.GroupRef'
                               nullable: true
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the group.
-                                label:
-                                  type: string
-                                  description: The label of the group.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the group.
+                              description: The group reference.
                             author:
                               allOf:
                                 - $ref: '#/components/schemas/Common.UserRef'
@@ -2162,22 +2006,10 @@ channels:
                               nullable: true
                               description: The type of the event.
                             group:
-                              type: object
+                              allOf:
+                                - $ref: '#/components/schemas/Common.GroupRef'
                               nullable: true
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the group.
-                                label:
-                                  type: string
-                                  description: The label of the group.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the group.
+                              description: The group reference.
                             author:
                               allOf:
                                 - $ref: '#/components/schemas/Common.UserRef'
@@ -2339,22 +2171,10 @@ channels:
                               nullable: true
                               description: The type of the event.
                             group:
-                              type: object
+                              allOf:
+                                - $ref: '#/components/schemas/Common.GroupRef'
                               nullable: true
-                              properties:
-                                id:
-                                  type: string
-                                  description: The UUID of the group.
-                                label:
-                                  type: string
-                                  description: The label of the group.
-                                href:
-                                  type: object
-                                  properties:
-                                    canonical:
-                                      type: string
-                                      format: uri
-                                      description: Canonical URL of the group.
+                              description: The group reference.
                             author:
                               allOf:
                                 - $ref: '#/components/schemas/Common.UserRef'

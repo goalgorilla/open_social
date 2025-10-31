@@ -329,21 +329,7 @@ components:
               type: string
               enum: [group]
             group:
-              type: object
-              properties:
-                id:
-                  type: string
-                  description: The UUID of the group.
-                label:
-                  type: string
-                  description: The label of the group.
-                href:
-                  type: object
-                  properties:
-                    canonical:
-                      type: string
-                      format: uri
-                      description: Canonical URL of the group.
+              $ref: '#/components/schemas/Common.GroupRef'
               required: [id, label, href]
           required: [type, group]
         - type: object

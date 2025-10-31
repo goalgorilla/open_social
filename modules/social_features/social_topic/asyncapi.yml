@@ -54,17 +54,10 @@ channels:
                           nullable: true
                           description: The type of the topic.
                         group:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.GroupRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the group.
-                            label:
-                              type: string
-                              description: The label of the group.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The group reference.
                         author:
                           allOf:
                             - $ref: '#/components/schemas/Common.UserRef'
@@ -127,17 +120,10 @@ channels:
                           nullable: true
                           description: The type of the topic.
                         group:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.GroupRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the group.
-                            label:
-                              type: string
-                              description: The label of the group.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The group reference.
                         author:
                           allOf:
                             - $ref: '#/components/schemas/Common.UserRef'
@@ -200,17 +186,10 @@ channels:
                           nullable: true
                           description: The type of the topic.
                         group:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.GroupRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the group.
-                            label:
-                              type: string
-                              description: The label of the group.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The group reference.
                         author:
                           allOf:
                             - $ref: '#/components/schemas/Common.UserRef'
@@ -274,17 +253,10 @@ channels:
                           nullable: true
                           description: The type of the topic.
                         group:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.GroupRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the group.
-                            label:
-                              type: string
-                              description: The label of the group.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The group reference.
                         author:
                           allOf:
                             - $ref: '#/components/schemas/Common.UserRef'
@@ -347,17 +319,10 @@ channels:
                           nullable: true
                           description: The type of the topic.
                         group:
-                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/Common.GroupRef'
                           nullable: true
-                          properties:
-                            id:
-                              type: string
-                              description: The UUID of the group.
-                            label:
-                              type: string
-                              description: The label of the group.
-                            href:
-                              $ref: '#/components/schemas/Common.Href'
+                          description: The group reference.
                         author:
                           allOf:
                             - $ref: '#/components/schemas/Common.UserRef'
