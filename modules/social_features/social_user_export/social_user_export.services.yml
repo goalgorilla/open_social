@@ -7,3 +7,22 @@ services:
       - '@module_handler'
       - '@theme_handler'
       - '@config.factory'
+
+  logger.channel.user_segments:
+    parent: logger.channel_base
+    arguments: ['user_segments']
+
+  user_segments.export:
+    class: Drupal\social_user_export\UserSegmentExportService
+    arguments:
+      - '@file_system'
+      - '@file.repository'
+      - '@plugin.manager.user_export_plugin'
+      - '@logger.channel.user_segments'
+
+  social_user_export.route_subscriber:
+    class: Drupal\social_user_export\Routing\RouteSubscriber
+    arguments:
+      - '@entity_type.manager'
+    tags:
+      - { name: event_subscriber }
