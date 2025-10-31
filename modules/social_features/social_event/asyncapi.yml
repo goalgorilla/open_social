@@ -38,17 +38,7 @@ channels:
                           type: string
                           description: The label of the event.
                         visibility:
-                          type: object
-                          properties:
-                            type:
-                              type: string
-                              description: The visibility type.
-                            groups:
-                              type: array
-                              description: The list of groups.
-                            roles:
-                              type: array
-                              description: The list of roles ids.
+                          $ref: '#/components/schemas/Common.Visibility'
                         group:
                           allOf:
                             - $ref: '#/components/schemas/Common.GroupRef'
@@ -161,17 +151,7 @@ channels:
                           type: string
                           description: The label of the event.
                         visibility:
-                          type: object
-                          properties:
-                            type:
-                              type: string
-                              description: The visibility type.
-                            groups:
-                              type: array
-                              description: The list of groups.
-                            roles:
-                              type: array
-                              description: The list of roles ids.
+                          $ref: '#/components/schemas/Common.Visibility'
                         group:
                           allOf:
                             - $ref: '#/components/schemas/Common.GroupRef'
@@ -284,17 +264,7 @@ channels:
                           type: string
                           description: The label of the event.
                         visibility:
-                          type: object
-                          properties:
-                            type:
-                              type: string
-                              description: The visibility type.
-                            groups:
-                              type: array
-                              description: The list of groups.
-                            roles:
-                              type: array
-                              description: The list of roles ids.
+                          $ref: '#/components/schemas/Common.Visibility'
                         group:
                           allOf:
                             - $ref: '#/components/schemas/Common.GroupRef'
@@ -407,17 +377,7 @@ channels:
                           type: string
                           description: The label of the event.
                         visibility:
-                          type: object
-                          properties:
-                            type:
-                              type: string
-                              description: The visibility type.
-                            groups:
-                              type: array
-                              description: The list of groups.
-                            roles:
-                              type: array
-                              description: The list of roles ids.
+                          $ref: '#/components/schemas/Common.Visibility'
                         group:
                           allOf:
                             - $ref: '#/components/schemas/Common.GroupRef'
@@ -531,8 +491,7 @@ channels:
                           type: string
                           description: The label of the event.
                         visibility:
-                          type: string
-                          description: The visibility of the event content.
+                          $ref: '#/components/schemas/Common.Visibility'
                         group:
                           allOf:
                             - $ref: '#/components/schemas/Common.GroupRef'
@@ -665,22 +624,7 @@ channels:
                               type: string
                               description: The label of the event.
                             visibility:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                  description: The visibility type.
-                                  enum:
-                                    - public
-                                    - community
-                                    - groups
-                                    - roles
-                                groups:
-                                  type: array
-                                  description: List of group UUIDs (only applicable for "groups" visibility).
-                                roles:
-                                  type: array
-                                  description: List of role IDs (only applicable for "roles" visibility).
+                              $ref: '#/components/schemas/Common.Visibility'
                             type:
                               type: string
                               nullable: true
@@ -830,22 +774,7 @@ channels:
                               type: string
                               description: The label of the event.
                             visibility:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                  description: The visibility type.
-                                  enum:
-                                    - public
-                                    - community
-                                    - groups
-                                    - roles
-                                groups:
-                                  type: array
-                                  description: List of group UUIDs (only applicable for "groups" visibility).
-                                roles:
-                                  type: array
-                                  description: List of role IDs (only applicable for "roles" visibility).
+                              $ref: '#/components/schemas/Common.Visibility'
                             type:
                               type: string
                               nullable: true
@@ -995,22 +924,7 @@ channels:
                               type: string
                               description: The label of the event.
                             visibility:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                  description: The visibility type.
-                                  enum:
-                                    - public
-                                    - community
-                                    - groups
-                                    - roles
-                                groups:
-                                  type: array
-                                  description: List of group UUIDs (only applicable for "groups" visibility).
-                                roles:
-                                  type: array
-                                  description: List of role IDs (only applicable for "roles" visibility).
+                              $ref: '#/components/schemas/Common.Visibility'
                             type:
                               type: string
                               nullable: true
@@ -1160,22 +1074,7 @@ channels:
                               type: string
                               description: The label of the event.
                             visibility:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                  description: The visibility type.
-                                  enum:
-                                    - public
-                                    - community
-                                    - groups
-                                    - roles
-                                groups:
-                                  type: array
-                                  description: List of group UUIDs (only applicable for "groups" visibility).
-                                roles:
-                                  type: array
-                                  description: List of role IDs (only applicable for "roles" visibility).
+                              $ref: '#/components/schemas/Common.Visibility'
                             type:
                               type: string
                               nullable: true
@@ -1325,22 +1224,7 @@ channels:
                               type: string
                               description: The label of the event.
                             visibility:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                  description: The visibility type.
-                                  enum:
-                                    - public
-                                    - community
-                                    - groups
-                                    - roles
-                                groups:
-                                  type: array
-                                  description: List of group UUIDs (only applicable for "groups" visibility).
-                                roles:
-                                  type: array
-                                  description: List of role IDs (only applicable for "roles" visibility).
+                              $ref: '#/components/schemas/Common.Visibility'
                             type:
                               type: string
                               nullable: true
@@ -1490,22 +1374,7 @@ channels:
                               type: string
                               description: The label of the event.
                             visibility:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                  description: The visibility type.
-                                  enum:
-                                    - public
-                                    - community
-                                    - groups
-                                    - roles
-                                groups:
-                                  type: array
-                                  description: List of group UUIDs (only applicable for "groups" visibility).
-                                roles:
-                                  type: array
-                                  description: List of role IDs (only applicable for "roles" visibility).
+                              $ref: '#/components/schemas/Common.Visibility'
                             type:
                               type: string
                               nullable: true
@@ -1655,22 +1524,7 @@ channels:
                               type: string
                               description: The label of the event.
                             visibility:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                  description: The visibility type.
-                                  enum:
-                                    - public
-                                    - community
-                                    - groups
-                                    - roles
-                                groups:
-                                  type: array
-                                  description: List of group UUIDs (only applicable for "groups" visibility).
-                                roles:
-                                  type: array
-                                  description: List of role IDs (only applicable for "roles" visibility).
+                              $ref: '#/components/schemas/Common.Visibility'
                             type:
                               type: string
                               nullable: true
@@ -1820,22 +1674,7 @@ channels:
                               type: string
                               description: The label of the event.
                             visibility:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                  description: The visibility type.
-                                  enum:
-                                    - public
-                                    - community
-                                    - groups
-                                    - roles
-                                groups:
-                                  type: array
-                                  description: List of group UUIDs (only applicable for "groups" visibility).
-                                roles:
-                                  type: array
-                                  description: List of role IDs (only applicable for "roles" visibility).
+                              $ref: '#/components/schemas/Common.Visibility'
                             type:
                               type: string
                               nullable: true
@@ -1985,22 +1824,7 @@ channels:
                               type: string
                               description: The label of the event.
                             visibility:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                  description: The visibility type.
-                                  enum:
-                                    - public
-                                    - community
-                                    - groups
-                                    - roles
-                                groups:
-                                  type: array
-                                  description: List of group UUIDs (only applicable for "groups" visibility).
-                                roles:
-                                  type: array
-                                  description: List of role IDs (only applicable for "roles" visibility).
+                              $ref: '#/components/schemas/Common.Visibility'
                             type:
                               type: string
                               nullable: true
@@ -2150,22 +1974,7 @@ channels:
                               type: string
                               description: The label of the event.
                             visibility:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                  description: The visibility type.
-                                  enum:
-                                    - public
-                                    - community
-                                    - groups
-                                    - roles
-                                groups:
-                                  type: array
-                                  description: List of group UUIDs (only applicable for "groups" visibility).
-                                roles:
-                                  type: array
-                                  description: List of role IDs (only applicable for "roles" visibility).
+                              $ref: '#/components/schemas/Common.Visibility'
                             type:
                               type: string
                               nullable: true
