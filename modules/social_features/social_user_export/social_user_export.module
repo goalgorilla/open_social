@@ -15,12 +15,12 @@ function social_user_export_file_download(string $uri) {
   $scheme = StreamWrapperManager::getScheme($uri);
   $target = StreamWrapperManager::getTarget($uri);
 
-  // In the following circumstances this hook doesn't care about the file and
+  // In the following circumstances, this hook doesn't care about the file, and
   // other modules should control access:
   // - The private filesystem is not being used.
   // - There is no target in the uri.
-  // - The file doesn't match our CSV export file pattern.
-  if ($scheme !== 'private' || $target === FALSE || !preg_match('/^csv\/export-(users|enrollments|members)-([a-f0-9]{16})\.csv$/i', $target)) {
+  // - The file doesn't match our CSV export file patterns.
+  if ($scheme !== 'private' || $target === FALSE || !preg_match('/^csv\/export-(users|enrollments|members|segment-users)-([a-f0-9]{16})\.csv$/i', $target, $matches)) {
     return NULL;
   }
 
@@ -29,17 +29,42 @@ function social_user_export_file_download(string $uri) {
   $query->condition('uri', $uri);
   $fid = $query->execute();
 
-  /** @var \Drupal\file\FileInterface $file */
+  // Check if file exists.
+  if (empty($fid)) {
+    return -1;
+  }
+
+  /** @var \Drupal\file\FileInterface|null $file */
   $file = File::load(reset($fid));
 
-  $access = FALSE;
+  if (!$file) {
+    return -1;
+  }
 
-  // Allow access to users with correct permission or file owner.
-  if (\Drupal::currentUser()->hasPermission('administer users') || (string) \Drupal::currentUser()->id() === $file->get('uid')->getString()) {
+  $access = FALSE;
+  $current_user = \Drupal::currentUser();
+
+  // Determine permission based on an export type.
+  // $matches[1] contains the export type (users, enrollments, members or
+  // segment-users).
+  if ($matches[1] === 'segment-users') {
+    // For user segment exports, check 'administer user_segment' permission
+    // (if user_segments module is installed) or fall back to
+    // 'administer users'.
+    $has_permission = $current_user->hasPermission('administer user_segment') ||
+      $current_user->hasPermission('administer users');
+  }
+  else {
+    // For standard exports, check 'administer users' permission.
+    $has_permission = $current_user->hasPermission('administer users');
+  }
+
+  // Allow access to users with the correct permission or file owner.
+  if ($has_permission || (string) $current_user->id() === $file->get('uid')->getString()) {
     $access = TRUE;
   }
 
-  // In case the user has access we send them the file.
+  // In case the user has access, we send them the file.
   if ($access) {
     return [
       'Content-disposition' => 'attachment; filename="' . basename($target) . '"',

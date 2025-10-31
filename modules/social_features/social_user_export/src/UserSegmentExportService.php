@@ -25,12 +25,12 @@ final class UserSegmentExportService {
    *
    * This is relative to the private:// stream wrapper.
    */
-  public const string EXPORT_DIRECTORY = 'csv/user_segments_export';
+  public const string EXPORT_DIRECTORY = 'csv';
 
   /**
    * The full URI for the user segment export directory.
    */
-  public const string EXPORT_DIRECTORY_URI = 'private://csv/user_segments_export';
+  public const string EXPORT_DIRECTORY_URI = 'private://csv';
 
   /**
    * Constructs a UserSegmentExportService.
@@ -52,23 +52,22 @@ final class UserSegmentExportService {
   ) {}
 
   /**
-   * Generates a unique filename for the export.
+   * Returns a unique file path for this export.
    *
-   * Format: user_segment_{id}_{timestamp}_{hash}.csv.
+   * The returned path is relative to getBaseOutputDirectory(). This allows it
+   * to work on distributed systems where the temporary file path may change
+   * in between batch ticks.
    *
-   * @param \Drupal\user_segments\Entity\UserSegment $segment
-   *   The user segment entity.
+   * To make sure the file can be downloaded, the path must be declared in the
+   * download pattern of the social user export module.
+   *
+   * @see social_user_export_file_download()
    *
    * @return string
-   *   The generated filename.
+   *   The path to the file.
    */
-  public function generateFilename(UserSegment $segment): string {
-    return sprintf(
-      'user_segment_%s_%s_%s.csv',
-      $segment->id(),
-      date('Y-m-d_H-i-s'),
-      bin2hex(random_bytes(4))
-    );
+  public function generateFilePath(): string {
+    return 'export-segment-users-' . bin2hex(random_bytes(8)) . '.csv';
   }
 
   /**
@@ -97,8 +96,8 @@ final class UserSegmentExportService {
    *   Batch array suitable for batch_set().
    */
   public function createBatch(UserSegment $segment, array $user_ids): array {
-    $filename = $this->generateFilename($segment);
     $plugin_definitions = $this->getExportPluginDefinitions();
+    $filename = $this->generateFilePath();
 
     // Create batch operations (50 users per batch).
     $operations = [];

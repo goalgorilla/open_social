@@ -63,7 +63,7 @@ final class RouteSubscriber extends RouteSubscriberBase {
         '_title' => 'Export User Segment to CSV',
       ],
       [
-        '_permission' => 'administer user_segment',
+        '_entity_access' => 'user_segment.export',
         'user_segment' => '\d+',
       ],
       [

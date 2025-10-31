@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\social_user_export\Hooks;
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\hux\Attribute\Hook;
 use Drupal\user_segments\Entity\UserSegment;
@@ -18,6 +21,7 @@ final class SocialUserExportHooks {
    * Implements hook_entity_operation().
    *
    * Adds CSV export operation to user segment entities.
+   * Only shows the operation if the user has access to export the segment.
    */
   #[Hook('entity_operation')]
   public function entityOperation(EntityInterface $entity): array {
@@ -26,17 +30,57 @@ final class SocialUserExportHooks {
     // User segments are lists of users, these can be exported using this module
     // if the user_segment module is installed.
     if (class_exists(UserSegment::class) && $entity instanceof UserSegment) {
-      $operations['export_csv'] = [
-        'title' => t('Export CSV'),
-        'weight' => 15,
-        'url' => Url::fromRoute('entity.user_segment.export_csv', [
-          'user_segment' => $entity->id(),
-        ]),
-      ];
+      // Check access before adding the operation.
+      // This ensures disabled segments don't show the export action.
+      $access = $entity->access('export', NULL, TRUE);
+      if ($access->isAllowed()) {
+        $operations['export_csv'] = [
+          'title' => t('Export CSV'),
+          'weight' => 15,
+          'url' => Url::fromRoute('entity.user_segment.export_csv', [
+            'user_segment' => $entity->id(),
+          ]),
+        ];
+      }
     }
 
     return $operations;
   }
 
-}
+  /**
+   * Implements hook_user_segment_access().
+   *
+   * Controls access to user segment export operation.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The user segment entity.
+   * @param string $operation
+   *   The operation being performed.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user account to check access for.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  #[Hook('user_segment_access')]
+  public function userSegmentAccess(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
+    // Only handle the 'export' operation.
+    if ($operation !== 'export') {
+      return AccessResult::neutral();
+    }
 
+    // Check if the entity is a UserSegment.
+    if (!($entity instanceof UserSegment)) {
+      return AccessResult::neutral();
+    }
+
+    // Check permission and entity status.
+    // UserSegment uses a boolean 'status' field where TRUE means enabled.
+    $isEnabled = (bool) $entity->get('status')->value;
+    $access = AccessResult::allowedIfHasPermission($account, 'administer user_segment')
+      ->andIf(AccessResult::allowedIf($isEnabled)->addCacheableDependency($entity));
+
+    return $access;
+  }
+
+}

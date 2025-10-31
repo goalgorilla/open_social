@@ -57,6 +57,9 @@ final class UserSegmentExportController extends ControllerBase {
    * and saves it to the private file system for secure, access-controlled
    * download.
    *
+   * Access control is handled at the route level via entity access check,
+   * so disabled segments are already filtered out before reaching this method.
+   *
    * @param \Drupal\user_segments\Entity\UserSegment $user_segment
    *   The user segment entity.
    *
@@ -64,15 +67,6 @@ final class UserSegmentExportController extends ControllerBase {
    *   A redirect response or batch processing response.
    */
   public function exportCsv(UserSegment $user_segment): RedirectResponse|Response {
-    // Validate segment.
-    $validation = $this->exportService->validateSegment($user_segment);
-    if (!$validation['valid']) {
-      $this->messenger()->addError($validation['message']);
-      return $this->redirect('entity.user_segment.canonical', [
-        'user_segment' => $user_segment->id(),
-      ]);
-    }
-
     try {
       // Get user IDs from the segment using the storage API.
       $user_ids = $this->entityTypeManager()->getStorage('user_segment')->getUserIdsInSegment($user_segment);
