@@ -83,9 +83,9 @@ final class UserSegmentExportController extends ControllerBase {
       return $batch_response ?? $this->redirect('entity.user_segment.collection');
     }
     catch (\Exception $e) {
-      $this->logger->error('Error exporting user segment @id: @message', [
+      $this->logger->error('Error exporting user segment @id', [
         '@id' => $user_segment->id(),
-        '@message' => $e->getMessage(),
+        'exception' => $e,
       ]);
       $this->messenger()->addError($this->t('An error occurred while exporting the user segment.'));
       return $this->redirect('entity.user_segment.canonical', [

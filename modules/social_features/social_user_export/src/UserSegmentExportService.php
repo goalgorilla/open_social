@@ -472,8 +472,8 @@ final class UserSegmentExportService {
       return $file;
     }
     catch (\Exception $e) {
-      $this->logger->error('Failed to save export file: @message', [
-        '@message' => $e->getMessage(),
+      $this->logger->error('Failed to save export file', [
+        'exception' => $e,
       ]);
       return NULL;
     }
