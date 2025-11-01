@@ -21,16 +21,23 @@ final class SocialUserExportHooks {
    * Implements hook_entity_operation().
    *
    * Adds CSV export operation to user segment entities.
-   * Only shows the operation if the user has access to export the segment.
+   * Uses entity access check to ensure the user can export the specific segment
+   * (checks both permission and entity state, e.g., whether segment is enabled).
+   *
+   * User segments are one example of a trigger that provides a list of user IDs.
+   * The same export functionality could be added for groups, roles, events, etc.
+   * - each would be a different trigger, but all would use the same generic
+   * ExportUser action once they have the list of user IDs.
    */
   #[Hook('entity_operation')]
   public function entityOperation(EntityInterface $entity): array {
     $operations = [];
 
-    // User segments are lists of users, these can be exported using this module
-    // if the user_segment module is installed.
+    // User segments are one type of trigger that provides a list of user IDs.
+    // Once we have the IDs, the export is handled by the ExportUser action.
+    // The same pattern could be used for groups, roles, events, etc.
     if (class_exists(UserSegment::class) && $entity instanceof UserSegment) {
-      // Check access before adding the operation.
+      // Check entity access (checks permission AND entity state).
       // This ensures disabled segments don't show the export action.
       $access = $entity->access('export', NULL, TRUE);
       if ($access->isAllowed()) {
@@ -51,6 +58,7 @@ final class SocialUserExportHooks {
    * Implements hook_user_segment_access().
    *
    * Controls access to user segment export operation.
+   * Checks both permission and entity state (e.g., whether segment is enabled).
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The user segment entity.

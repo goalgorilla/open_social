@@ -12,15 +12,6 @@ services:
     parent: logger.channel_base
     arguments: ['user_segments']
 
-  user_segments.export:
-    class: Drupal\social_user_export\UserSegmentExportService
-    arguments:
-      - '@file_system'
-      - '@file.repository'
-      - '@plugin.manager.user_export_plugin'
-      - '@logger.channel.user_segments'
-      - '@entity_type.manager'
-
   social_user_export.route_subscriber:
     class: Drupal\social_user_export\Routing\RouteSubscriber
     arguments:
