@@ -21,13 +21,14 @@ final class SocialUserExportHooks {
    * Implements hook_entity_operation().
    *
    * Adds CSV export operation to user segment entities.
-   * Uses entity access check to ensure the user can export the specific segment
-   * (checks both permission and entity state, e.g., whether segment is enabled).
+   * Uses entity access check to ensure the user can export the specific
+   * segment (checks both permission and entity state, e.g., whether segment
+   * is enabled).
    *
-   * User segments are one example of a trigger that provides a list of user IDs.
-   * The same export functionality could be added for groups, roles, events, etc.
-   * - each would be a different trigger, but all would use the same generic
-   * ExportUser action once they have the list of user IDs.
+   * User segments are one example of a trigger that provides a list of user
+   * IDs. The same export functionality could be added for groups, roles,
+   * events, etc. - each would be a different trigger, but all would use the
+   * same generic ExportUser action once they have the list of user IDs.
    */
   #[Hook('entity_operation')]
   public function entityOperation(EntityInterface $entity): array {

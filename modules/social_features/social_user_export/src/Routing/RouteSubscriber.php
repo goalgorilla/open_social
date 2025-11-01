@@ -30,16 +30,14 @@ final class RouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection): void {
-    // Add conditional routes using helper methods.
-    // Each method handles its own conditions independently.
-    $this->addUserSegmentExportRoute($collection);
-
-    // Future dynamic routes can be added here:
-    // $this->addAnotherConditionalRoute($collection);
+    // Only add the route if the user_segment entity type exists.
+    if ($this->entityTypeManager->hasDefinition('user_segment')) {
+      $this->addUserSegmentRoute($collection);
+    }
   }
 
   /**
-   * Adds user segment CSV export route if the user_segments module is enabled.
+   * Adds user segment CSV export route.
    *
    * This provides loose coupling between social_user_export and the open
    * source user_segments module. The route is only registered when the
@@ -50,12 +48,7 @@ final class RouteSubscriber extends RouteSubscriberBase {
    * @param \Symfony\Component\Routing\RouteCollection $collection
    *   The route collection.
    */
-  private function addUserSegmentExportRoute(RouteCollection $collection): void {
-    // Only add the route if the user_segment entity type exists.
-    if (!$this->entityTypeManager->hasDefinition('user_segment')) {
-      return;
-    }
-
+  private function addUserSegmentRoute(RouteCollection $collection): void {
     $route = new Route(
       '/admin/people/segment/{user_segment}/export/csv',
       [

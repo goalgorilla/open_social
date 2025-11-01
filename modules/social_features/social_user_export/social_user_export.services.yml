@@ -8,9 +8,9 @@ services:
       - '@theme_handler'
       - '@config.factory'
 
-  logger.channel.user_segments:
+  logger.channel.social_user_export:
     parent: logger.channel_base
-    arguments: ['user_segments']
+    arguments: ['social_user_export']
 
   social_user_export.route_subscriber:
     class: Drupal\social_user_export\Routing\RouteSubscriber
@@ -18,3 +18,17 @@ services:
       - '@entity_type.manager'
     tags:
       - { name: event_subscriber }
+
+  social_user_export.user_export:
+    class: Drupal\social_user_export\UserExportService
+    arguments:
+      - '@plugin.manager.user_export_plugin'
+      - '@current_user'
+      - '@config.factory'
+      - '@file_url_generator'
+      - '@file.repository'
+      - '@messenger'
+      - '@logger.channel.social_user_export'
+      - '@module_handler'
+      - '@file_system'
+      - '@entity_type.manager'

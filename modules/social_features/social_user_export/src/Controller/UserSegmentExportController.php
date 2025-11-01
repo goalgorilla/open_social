@@ -6,7 +6,9 @@ namespace Drupal\social_user_export\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Logger\LoggerChannelInterface;
-use Drupal\social_user_export\Plugin\Action\ExportUser;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Url;
+use Drupal\social_user_export\UserExportService;
 use Drupal\user_segments\Entity\UserSegment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -15,9 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Controller for exporting user segments to CSV.
  *
- * Uses ExportUser action instance to handle the export, similar to how
- * ExportMember exports group members. Gets user IDs from the segment and
- * delegates export processing to ExportUser.
+ * Uses UserExportService to handle the export. Gets user IDs from the segment
+ * and delegates export processing to the VBO-agnostic export service.
  */
 final class UserSegmentExportController extends ControllerBase {
 
@@ -26,28 +27,36 @@ final class UserSegmentExportController extends ControllerBase {
    *
    * @param \Drupal\Core\Logger\LoggerChannelInterface $logger
    *   The logger service.
+   * @param \Drupal\social_user_export\UserExportService $exportService
+   *   The user export service.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
    */
   public function __construct(
     protected LoggerChannelInterface $logger,
-  ) {}
+    protected UserExportService $exportService,
+    MessengerInterface $messenger,
+  ) {
+    // Set messenger from MessengerTrait used by parent ControllerBase.
+    $this->setMessenger($messenger);
+  }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): self {
-    $instance = new self(
-      $container->get('logger.factory')->get('user_segments')
+    return new self(
+      $container->get('logger.channel.social_user_export'),
+      $container->get('social_user_export.user_export'),
+      $container->get('messenger')
     );
-    // Set messenger from parent ControllerBase.
-    $instance->setMessenger($container->get('messenger'));
-    return $instance;
   }
 
   /**
    * Exports a user segment to CSV.
    *
-   * Gets user IDs from the segment and uses ExportUser instance to process
-   * the export through batch operations.
+   * Gets user IDs from the segment and uses UserExportService to process
+   * the export through Drupal's Batch API.
    *
    * @param \Drupal\user_segments\Entity\UserSegment $user_segment
    *   The user segment entity.
@@ -69,36 +78,11 @@ final class UserSegmentExportController extends ControllerBase {
         ]);
       }
 
-      // Load all users.
-      $user_storage = $this->entityTypeManager()->getStorage('user');
-      $users = $user_storage->loadMultiple($user_ids);
-
-      // Create ExportUser action instance.
-      $plugin_manager = \Drupal::service('plugin.manager.action');
-      $action_configuration = [];
-      $plugin_id = 'social_user_export_user_action';
-      $plugin_definition = $plugin_manager->getDefinition($plugin_id);
-      $export_user = ExportUser::create(\Drupal::getContainer(), $action_configuration, $plugin_id, $plugin_definition);
-
-      // Set up VBO-style context (ExportUser expects this structure).
-      $batch_size = 50;
-      $total = count($users);
-      $context = [
-        'sandbox' => [
-          'current_batch' => 1,
-          'batch_size' => $batch_size,
-          'total' => $total,
-          'results' => [],
-        ],
-      ];
-      $export_user->setContext($context);
-
-      // Delegate to ExportUser - it handles CSV creation, headers, writing,
-      // and file saving.
-      $export_user->executeMultiple($users);
-
-      // ExportUser displays the success message, so just redirect.
-      return $this->redirect('entity.user_segment.collection');
+      // Delegate to the VBO-agnostic export service. It handles CSV creation,
+      // batch processing, and file saving. Do NOT load entities into memory -
+      // the service will load users in batches.
+      $redirectUrl = Url::fromRoute('entity.user_segment.collection');
+      return $this->exportService->exportUsers($user_ids, $redirectUrl) ?? $this->redirect('entity.user_segment.collection');
     }
     catch (\Exception $e) {
       $this->logger->error('Error exporting user segment @id', [
