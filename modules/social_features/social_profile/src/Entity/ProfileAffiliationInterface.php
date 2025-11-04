@@ -320,6 +320,14 @@ interface ProfileAffiliationInterface extends ProfileInterface {
   public function getPrimaryAffiliationFunction(): string|MarkupInterface;
 
   /**
+   * Retrieves the primary affiliation type for the current entity.
+   *
+   * @return string|MarkupInterface
+   *   The primary affiliation type, or an empty string if not available.
+   */
+  public function getPrimaryAffiliationType(): string|MarkupInterface;
+
+  /**
    * Adds a non-platform affiliation to the entity if it does not already exist.
    *
    * @param string|null $affiliation_name

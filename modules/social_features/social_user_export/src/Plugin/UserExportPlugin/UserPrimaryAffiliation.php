@@ -2,38 +2,34 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 
 /**
- * Provides a 'UserOrganization' user export row.
+ * Provides a 'UserPrimaryAffiliation' user export row.
  *
  * @UserExportPlugin(
- *  id = "user_organization",
+ *  id = "user_primary_affiliation",
  *  label = @Translation("Primary affiliation"),
  *  weight = -320,
  * )
  */
-class UserOrganization extends UserExportPluginBase {
+class UserPrimaryAffiliation extends UserExportPluginBase {
 
   /**
    * {@inheritdoc}
    */
-  public function getHeader() {
+  public function getHeader(): TranslatableMarkup {
     return $this->t('Primary affiliation');
   }
 
   /**
-   * Returns the value.
-   *
-   * @param \Drupal\user\UserInterface $entity
-   *   The User entity to get the value from.
-   *
-   * @return string
-   *   The value.
+   * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): MarkupInterface|string {
     $profile = $this->getProfile($entity);
 
     return $profile instanceof ProfileAffiliationInterface

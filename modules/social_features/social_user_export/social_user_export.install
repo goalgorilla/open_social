@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_user_export module.
  */
 
+use Drupal\social_user_export\Form\SocialUserExportSettingsForm;
+
 /**
  * Implements hook_install().
  *
@@ -36,4 +38,33 @@ function social_user_export_update_last_removed() : int {
  */
 function social_user_export_update_11003(): void {
   user_role_grant_permissions('sitemanager', ['administer social_user_export']);
+}
+
+/**
+ * Replace legacy profile fields with affiliation.
+ */
+function social_user_export_update_25000(): void {
+  $settings = \Drupal::configFactory()->getEditable(SocialUserExportSettingsForm::SETTINGS);
+  $plugins = $settings->get('plugins');
+
+  // Add affiliation plugins.
+  if (isset($plugins['user_organization'])) {
+    $plugins['user_primary_affiliation'] = 'user_primary_affiliation';
+    $plugins['user_primary_affiliation_type'] = 'user_primary_affiliation_type';
+  }
+  if (isset($plugins['user_function'])) {
+    $plugins['user_primary_affiliation_function'] = 'user_primary_affiliation_function';
+  }
+
+  // Remove legacy profile plugins.
+  unset(
+    $plugins['user_organization'],
+    $plugins['user_function'],
+  );
+
+  // Save only if changed.
+  if ($plugins !== $settings->get('plugins')) {
+    $settings->set('plugins', $plugins);
+    $settings->save();
+  }
 }

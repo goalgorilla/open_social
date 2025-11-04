@@ -229,6 +229,9 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
       assert($group instanceof GroupInterface);
       $value['affiliation_name'] = $group->label();
 
+      // Additionally, add the group type id to the affiliation.
+      $value['affiliation_type'] = $group->getGroupType()->label();
+
       $account = $this->getOwner();
       $membership = GroupMembership::loadSingle($group, $account);
       if (
@@ -250,6 +253,7 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
           $value = [
             'affiliation_name' => $paragraph->get('field_affiliation_org_name')->getString(),
             'affiliation_function' => $paragraph->get('field_affiliation_org_function')->getString(),
+            'affiliation_type' => 'non-platform affiliation',
           ];
         }
       }
@@ -271,6 +275,13 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
    */
   public function getPrimaryAffiliationFunction(): string|MarkupInterface {
     return $this->getPrimaryAffiliation()['affiliation_function'] ?? '';
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getPrimaryAffiliationType(): string|MarkupInterface {
+    return $this->getPrimaryAffiliation()['affiliation_type'] ?? '';
   }
 
   /**

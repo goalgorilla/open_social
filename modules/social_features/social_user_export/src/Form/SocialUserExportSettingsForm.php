@@ -15,6 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SocialUserExportSettingsForm extends ConfigFormBase {
 
+  const string SETTINGS = 'social_user_export.settings';
+
   /**
    * The plugin manager for export plugins.
    *
@@ -51,7 +53,7 @@ class SocialUserExportSettingsForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'social_user_export.settings',
+      self::SETTINGS,
     ];
   }
 
@@ -74,6 +76,9 @@ class SocialUserExportSettingsForm extends ConfigFormBase {
     foreach ($export_plugins as $plugin) {
       $options[$plugin['id']] = $plugin['label'];
     }
+
+    // Sort the plugins alphabetically.
+    asort($options);
 
     // Show a list of plugins that can be enabled or disabled for user
     // exporting.
