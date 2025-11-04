@@ -5,6 +5,7 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
+use Drupal\comment\CommentInterface;
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatter;
@@ -77,14 +78,14 @@ class Node extends PreprocessBase implements ContainerFactoryPluginInterface {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     ConfigFactoryInterface $config,
     EntityTypeManagerInterface $entity_type_manager,
     RendererInterface $renderer,
     EntityRepository $entity_repository,
     AccountProxyInterface $account_proxy,
-    DateFormatter $date_formatter
+    DateFormatter $date_formatter,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->config = $config;
@@ -270,6 +271,22 @@ class Node extends PreprocessBase implements ContainerFactoryPluginInterface {
       // comment count, and add the comment count to the node.
       if ($node->$comment_field_name->status != CommentItemInterface::HIDDEN) {
         $comment_count = (int) $node->get($comment_field_name)->comment_count;
+
+        // For a discussion, the count depends on your role within the
+        // discussion, therefore, the count needs to be evaluated on the fly.
+        if ($node->bundle() === 'discussion') {
+          $field_name = 'field_discussion_comments';
+          $field_definition = $node->getFieldDefinition($field_name);
+          $mode = $field_definition?->getSetting('default_mode');
+          $comment_storage = $this->entityTypeManager->getStorage('comment');
+          $comments = $comment_storage->loadThread($node, $field_name, $mode);
+
+          $published_comments = array_filter($comments, static function ($comment) {
+            return $comment instanceof CommentInterface && $comment->isPublished();
+          });
+          $comment_count = count($published_comments);
+        }
+
         $variables['below_content'][$comment_field_name]['#title'] = $comment_count === 0 ? $this->t('Be the first one to comment') : $this->t('Comments');
 
         // If it's closed, we only show the comment section when there are
