@@ -254,15 +254,15 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
       $default_value = $group_type->getThirdPartySetting('social_profile', GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY, FALSE);
 
       $form['third_party_settings']['social_profile_affiliation'] = [
-        "#type" => "details",
-        "#title" => "Affiliation",
-        "#description" => "Allow members to determine which organization they represent in your community. This can be made through the profile settings. This group type is eligible for user affiliation.",
-        "#open" => FALSE,
+        '#type' => 'details',
+        '#title' => $this->t('Affiliation setting'),
+        '#description' => $this->t('Allow members to select which group(s) they represent in your community. Users can configure this in their profile settings and the information is displayed in teasers across the platform next to the user name.'),
+        '#open' => FALSE,
       ];
 
       $form['third_party_settings']['social_profile_affiliation'][GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY] = [
         '#type' => 'checkbox',
-        '#title' => t('Enable affiliation for this group type'),
+        '#title' => t('Enable affiliation for Groups'),
         '#default_value' => $default_value,
       ];
     }
