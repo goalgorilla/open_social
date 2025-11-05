@@ -1,0 +1,43 @@
+values:
+  type: kpi_analytics
+  info: 'KPI Analytics: Tag Followers'
+  uuid: 9ce7d46c-f028-4ff7-9433-50f6fd9441e8
+fields:
+  field_kpi_datasource: drupal_kpi_term_datasource
+  field_kpi_query: >
+    SELECT tid,
+           SUM(current)                as current,
+           SUM(current) - SUM(previous) as difference
+    FROM (
+             SELECT f.entity_id as tid,
+                    COUNT(*)    as previous,
+                    'current'   as current
+             FROM flagging f
+             WHERE f.entity_type = 'taxonomy_term'
+               AND f.entity_id IN (:term_ids[])
+               AND MONTH(FROM_UNIXTIME(f.created)) < MONTH(NOW())
+             GROUP BY f.entity_id
+             UNION ALL
+             SELECT f.entity_id as tid,
+                    'current'   as previous,
+                    COUNT(*)    as current
+             FROM flagging f
+             WHERE f.entity_type = 'taxonomy_term'
+               AND f.entity_id IN (:term_ids[])
+             GROUP BY f.entity_id
+         ) AS source
+    GROUP BY tid
+  field_kpi_data_formatter:
+    -
+      value: tags_follow_kpi_data_formatter
+  field_kpi_visualization: morris_tag_follow_graph_kpi_visualization
+  field_kpi_chart_labels:
+    -
+      value: 'Total followers'
+  field_kpi_chart_colors:
+    -
+      value: '#398eb2'
+  body:
+    -
+      format: basic_html
+      value: ''

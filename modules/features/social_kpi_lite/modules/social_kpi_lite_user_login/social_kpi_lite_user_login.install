@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * @file
+ * Social KPI lite User Logins.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_kpi_lite_user_login_install() {
+  $blocks = _social_kpi_lite_user_login_get_blocks_list();
+  _social_kpi_lite_user_login_create_blocks($blocks);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_kpi_lite_user_login_uninstall() {
+  $blocks = _social_kpi_lite_user_login_get_blocks_list();
+  _social_kpi_lite_user_login_delete_blocks($blocks);
+}
+
+/**
+ * For getting block listing.
+ */
+function _social_kpi_lite_user_login_get_blocks_list() {
+  return [
+    'social_kpi_lite_user_logins',
+  ];
+}
+
+/**
+ * Create block content.
+ */
+function _social_kpi_lite_user_login_create_blocks($blocks) {
+  $path = \Drupal::service('extension.list.module')->getPath('social_kpi_lite_user_login');
+  $block_content_path = "{$path}/content/block_content";
+  $block_path = "{$path}/content/block";
+  /** @var \Drupal\kpi_analytics\BlockContentCreator $block_content_creator */
+  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+
+  foreach ($blocks as $block_id) {
+    $block_content_creator->setSource($block_content_path, $block_id);
+
+    if ($block_content_creator->create()) {
+      $block_content_creator->createBlockInstance($block_path, $block_id);
+    }
+  }
+}
+
+/**
+ * Delete block content.
+ */
+function _social_kpi_lite_user_login_delete_blocks($blocks) {
+  $path = \Drupal::service('extension.list.module')->getPath('social_kpi_lite_user_login');
+  $block_content_path = "{$path}/content/block_content";
+  $block_path = "{$path}/content/block";
+
+  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+  $block_creator = \Drupal::service('kpi_analytics.block_creator');
+
+  foreach ($blocks as $block_id) {
+    $block_creator->setSource($block_path, $block_id);
+    $block_creator->delete();
+
+    $block_content_creator->setSource($block_content_path, $block_id);
+    $block_content_creator->delete();
+  }
+}
+
+/**
+ * Update User logins block content with the latest changes in yml file.
+ */
+function social_kpi_lite_user_login_update_8901() {
+  $path = \Drupal::service('extension.list.module')->getPath('social_kpi_lite_user_login');
+  $block_content_path = "{$path}/content/block_content";
+  $block_id = 'social_kpi_lite_user_logins';
+  /** @var \Drupal\kpi_analytics\BlockContentCreator $block_content_creator */
+  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+
+  $block_content_creator->setSource($block_content_path, $block_id);
+  $block_content_creator->update();
+}

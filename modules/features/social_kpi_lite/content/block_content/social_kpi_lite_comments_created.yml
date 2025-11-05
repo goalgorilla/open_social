@@ -1,0 +1,46 @@
+values:
+  type: kpi_analytics
+  info: 'KPI Analytics: Comments created'
+  uuid: 86ad925a-0513-4881-bfe4-6a9be1a01550
+fields:
+  field_kpi_datasource: drupal_kpi_datasource
+  field_kpi_query: >
+    SELECT created, count_cm, count_lu FROM
+    (
+        SELECT
+            FROM_UNIXTIME(cfd.created, '%Y-%m') AS created,
+            COUNT(ur.entity_id) AS count_cm,
+            (COUNT(cfd.cid) - COUNT(ur.entity_id)) AS count_lu
+
+        FROM comment_field_data cfd
+
+        LEFT OUTER JOIN user__roles ur ON ur.entity_id = cfd.uid AND ur.roles_target_id IN ('contentmanager', 'sitemanager')
+        WHERE FROM_UNIXTIME(cfd.created, '%Y-%m')
+            BETWEEN
+                FROM_UNIXTIME(UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 3 MONTH)), '%Y-%m')
+            AND
+                FROM_UNIXTIME(UNIX_TIMESTAMP(CURDATE()), '%Y-%m')
+            AND cfd.status = 1
+
+        GROUP BY FROM_UNIXTIME(cfd.created, '%Y-%m')
+    ) AS source
+    GROUP BY created, count_cm, count_lu;
+  field_kpi_data_formatter:
+    -
+      value: three_months_timeline_kpi_data_formatter
+  field_kpi_visualization: morris_bar_graph_kpi_visualization
+  field_kpi_chart_labels:
+    -
+      value: 'Comments by Community Managers'
+    -
+      value: 'Comments by Community'
+  field_kpi_chart_colors:
+    -
+      value: '#398eb2'
+    -
+      value: '#29abe2'
+  body:
+    -
+      format: basic_html
+      value: >
+        Distinguish comments created by content managers and site managers versus comments created by the community (e.g. users without a special role in the community).

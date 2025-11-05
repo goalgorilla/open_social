@@ -1,0 +1,185 @@
+<?php
+
+use Drupal\Core\Extension\ModuleInstallerInterface;
+/**
+ * @file
+ * Social KPI Lite.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_kpi_lite_install() {
+  $blocks = _social_kpi_lite_get_blocks_list();
+  _social_kpi_lite_create_blocks($blocks);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_kpi_lite_uninstall() {
+  $blocks = _social_kpi_lite_get_blocks_list();
+  _social_kpi_lite_delete_blocks($blocks);
+}
+
+/**
+ * For getting block listing.
+ */
+function _social_kpi_lite_get_blocks_list() {
+  return [
+    'social_kpi_lite_users_active',
+    'social_kpi_lite_events_created',
+    'social_kpi_lite_comments_created',
+    'social_kpi_lite_posts_created',
+    'social_kpi_lite_posts_engagement',
+    'social_kpi_lite_topics_created',
+    'social_kpi_lite_groups_created',
+    'social_kpi_lite_events_engagement',
+    'social_kpi_lite_topics_engagement',
+  ];
+}
+
+/**
+ * Create block content.
+ */
+function _social_kpi_lite_create_blocks($blocks) {
+  $path = \Drupal::service('extension.list.module')->getPath('social_kpi_lite');
+  $block_content_path = "{$path}/content/block_content";
+  $block_path = "{$path}/content/block";
+  /** @var \Drupal\kpi_analytics\BlockContentCreator $block_content_creator */
+  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+
+  foreach ($blocks as $block_id) {
+    $block_content_creator->setSource($block_content_path, $block_id);
+
+    if ($block_content_creator->create()) {
+      $block_content_creator->createBlockInstance($block_path, $block_id);
+    }
+  }
+}
+
+/**
+ * Update block content.
+ */
+function _social_kpi_lite_update_blocks($blocks) {
+  $path = \Drupal::service('extension.list.module')->getPath('social_kpi_lite');
+  $block_content_path = "{$path}/content/block_content";
+  /** @var \Drupal\kpi_analytics\BlockContentCreator $block_content_creator */
+  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+
+  foreach ($blocks as $block_id) {
+    $block_content_creator->setSource($block_content_path, $block_id);
+    $block_content_creator->update();
+  }
+}
+
+/**
+ * Delete block content.
+ */
+function _social_kpi_lite_delete_blocks($blocks) {
+  $path = \Drupal::service('extension.list.module')->getPath('social_kpi_lite');
+  $block_content_path = "{$path}/content/block_content";
+  $block_path = "{$path}/content/block";
+
+  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+  $block_creator = \Drupal::service('kpi_analytics.block_creator');
+
+  foreach ($blocks as $block_id) {
+    $block_creator->setSource($block_path, $block_id);
+    $block_creator->delete();
+
+    $block_content_creator->setSource($block_content_path, $block_id);
+    $block_content_creator->delete();
+  }
+}
+
+/**
+ * Update Social KPI Lite blocks.
+ */
+function social_kpi_lite_update_8001() {
+  // Update existing blocks.
+  $blocks_update = [
+    'social_kpi_lite_events_created',
+    'social_kpi_lite_comments_created',
+    'social_kpi_lite_posts_created',
+    'social_kpi_lite_posts_engagement',
+    'social_kpi_lite_topics_created',
+    'social_kpi_lite_groups_created',
+  ];
+  _social_kpi_lite_update_blocks($blocks_update);
+
+  // Create missing blocks.
+  $blocks_create = [
+    'social_kpi_lite_events_engagement',
+    'social_kpi_lite_topics_engagement',
+  ];
+  _social_kpi_lite_create_blocks($blocks_create);
+
+  // Delete nodes engagement block and block_content.
+  $block_id = 'social_kpi_lite_nodes_engagement';
+  $block_uuid = '1f2f4ffe-7095-4af3-98eb-71c7c09e4606';
+  $entity_type_manager = \Drupal::entityTypeManager();
+  if ($block = $entity_type_manager->getStorage('block')->load($block_id)) {
+    $block->delete();
+  }
+  if ($block_content = $entity_type_manager->getStorage('block_content')
+    ->loadByProperties(['uuid' => $block_uuid])) {
+    current($block_content)->delete();
+  }
+}
+
+/**
+ * Enable User login analytics data sub module.
+ */
+function social_kpi_lite_update_8002() {
+  $modules = [
+    'social_kpi_lite_user_login',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Update users block to exclude blocked users from the totals.
+ */
+function social_kpi_lite_update_8003() {
+  $blocks_update = [
+    'social_kpi_lite_users_active',
+  ];
+  _social_kpi_lite_update_blocks($blocks_update);
+}
+
+/**
+ * Update groups created block to exclude challenges.
+ */
+function social_kpi_lite_update_8004() {
+  $blocks_update = [
+    'social_kpi_lite_groups_created',
+  ];
+  _social_kpi_lite_update_blocks($blocks_update);
+}
+
+/**
+ * Use another KPI follow tag submodule.
+ */
+function social_kpi_lite_update_8901() {
+  $module_handler = \Drupal::moduleHandler();
+  /** @var ModuleInstallerInterface $module_installer */
+  $module_installer = Drupal::service('module_installer');
+  if ($module_handler->moduleExists('social_kpi_light_tag_followers')) {
+    $module_installer->uninstall(['social_kpi_light_tag_followers']);
+    $module_installer->install(['social_kpi_lite_tag_followers']);
+  }
+}
+
+/**
+ * Update events engagement block to fix broken data.
+ */
+function social_kpi_lite_update_8902() {
+  $blocks_update = [
+    'social_kpi_lite_events_engagement',
+    'social_kpi_lite_users_active',
+  ];
+  _social_kpi_lite_update_blocks($blocks_update);
+}
+

@@ -1,0 +1,45 @@
+values:
+  type: kpi_analytics
+  info: 'User logins'
+  uuid: c51ea439-31a6-49b3-b28f-706567d3efda
+fields:
+  field_kpi_datasource: drupal_kpi_datasource
+  field_kpi_query: >
+    SELECT created, COUNT(DISTINCT uid) AS count_unique,
+        (
+          SELECT COUNT(lt.uid)
+          FROM login_tracker lt
+          WHERE FROM_UNIXTIME(lt.login_timestamp, '%Y-%m') = source.created
+        ) AS total_logins
+        FROM (
+            SELECT
+                FROM_UNIXTIME(lt.login_timestamp, '%Y-%m') AS created,
+                lt.uid AS uid
+            FROM login_tracker lt
+            WHERE FROM_UNIXTIME(lt.login_timestamp, '%Y-%m')
+                BETWEEN
+                    FROM_UNIXTIME(UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 3 MONTH)), '%Y-%m')
+                AND
+                    FROM_UNIXTIME(UNIX_TIMESTAMP(CURDATE()), '%Y-%m')
+            GROUP BY uid, FROM_UNIXTIME(lt.login_timestamp, '%Y-%m')
+        ) AS source
+     GROUP BY created;
+  field_kpi_data_formatter:
+  -
+    value: three_months_timeline_kpi_data_formatter
+  field_kpi_visualization: morris_line_graph_kpi_visualization
+  field_kpi_chart_labels:
+  -
+    value: 'Amount of people who logged in'
+  -
+    value: 'Total amount of logins'
+  field_kpi_chart_colors:
+  -
+    value: '#ffc142'
+  -
+    value: '#29abe2'
+  body:
+  -
+    format: basic_html
+    value: >
+      The amount of people who logged in shows the amount of unique users that logged in over the period. The total amount of logins shows the total, including users that logged in multiple times.

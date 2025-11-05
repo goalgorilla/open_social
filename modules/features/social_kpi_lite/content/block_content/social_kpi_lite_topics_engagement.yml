@@ -1,0 +1,70 @@
+values:
+  type: kpi_analytics
+  info: 'KPI Analytics: Topics engagement'
+  uuid: 1f2f4ffe-7095-4af3-98eb-71c7c09e4607
+fields:
+  field_kpi_datasource: drupal_kpi_datasource
+  field_kpi_query: >
+    SELECT created, SUM(count_votes) AS count_votes, SUM(count_comments) AS count_comments
+    FROM
+    (
+    	SELECT
+    		FROM_UNIXTIME(vv.timestamp, '%Y-%m') as created,
+    		SUM(vv.value) AS count_votes,
+    		0 AS count_comments
+    	FROM votingapi_vote vv
+    	LEFT OUTER JOIN node_field_data nfd ON vv.entity_id = nfd.nid
+    	WHERE
+    		FROM_UNIXTIME(vv.timestamp, '%Y-%m')
+    		BETWEEN
+    			FROM_UNIXTIME(UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 3 MONTH)), '%Y-%m')
+    		AND
+    			FROM_UNIXTIME(UNIX_TIMESTAMP(CURDATE()), '%Y-%m')
+    		AND
+    			vv.entity_type = 'node'
+    		AND
+    			vv.type = 'like'
+    		AND
+    			nfd.type = 'topic'
+    	GROUP BY FROM_UNIXTIME(vv.timestamp, '%Y-%m')
+
+    	UNION ALL
+
+    	SELECT
+    		FROM_UNIXTIME(cfd.created, '%Y-%m') as created,
+    		0 AS count_votes,
+    		COUNT(cfd.cid) AS count_comments
+    	FROM comment_field_data cfd
+    	WHERE
+    		FROM_UNIXTIME(cfd.created, '%Y-%m')
+    		BETWEEN
+    			FROM_UNIXTIME(UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 3 MONTH)), '%Y-%m')
+    		AND
+    			FROM_UNIXTIME(UNIX_TIMESTAMP(CURDATE()), '%Y-%m')
+    		AND
+    			cfd.entity_type = 'node'
+    		AND
+    			cfd.field_name = 'field_topic_comments'
+    	GROUP BY FROM_UNIXTIME(cfd.created, '%Y-%m')
+    ) AS source
+    GROUP BY created
+    ORDER BY created ASC;
+  field_kpi_data_formatter:
+    -
+      value: three_months_timeline_kpi_data_formatter
+  field_kpi_visualization: morris_bar_graph_kpi_visualization
+  field_kpi_chart_labels:
+    -
+      value: 'Likes on topics'
+    -
+      value: 'Comments on topics'
+  field_kpi_chart_colors:
+    -
+      value: '#ffc142'
+    -
+      value: '#fe8a71'
+  body:
+    -
+      format: basic_html
+      value: >
+        Distinguish between the types of engagement on topics.

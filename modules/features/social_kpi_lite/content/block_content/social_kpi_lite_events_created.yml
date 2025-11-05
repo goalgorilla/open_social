@@ -1,0 +1,46 @@
+values:
+  type: kpi_analytics
+  info: 'KPI Analytics: Events created'
+  uuid: 94255f19-275e-4f61-8305-01fa30b0fadc
+fields:
+  field_kpi_datasource: drupal_kpi_datasource
+  field_kpi_query: >
+    SELECT created, count_cm, count_lu FROM
+    (
+    	SELECT
+    		FROM_UNIXTIME(nfd.created, '%Y-%m') AS created,
+    		COUNT(ur.entity_id) AS count_cm,
+    		(COUNT(nfd.nid) - COUNT(ur.entity_id)) AS count_lu
+
+    	FROM node_field_data nfd
+
+    	LEFT OUTER JOIN user__roles ur ON ur.entity_id = nfd.uid AND ur.roles_target_id IN ('contentmanager', 'sitemanager')
+    	WHERE FROM_UNIXTIME(nfd.created, '%Y-%m')
+    		BETWEEN
+    			FROM_UNIXTIME(UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 3 MONTH)), '%Y-%m')
+    		AND
+    			FROM_UNIXTIME(UNIX_TIMESTAMP(CURDATE()), '%Y-%m')
+    		AND nfd.type = 'event'
+    		AND nfd.status = 1
+    	GROUP BY FROM_UNIXTIME(nfd.created, '%Y-%m')
+    ) AS source
+    GROUP BY created, count_cm, count_lu;
+  field_kpi_data_formatter:
+    -
+      value: three_months_timeline_kpi_data_formatter
+  field_kpi_visualization: morris_bar_graph_kpi_visualization
+  field_kpi_chart_labels:
+    -
+      value: 'Events by Community Managers'
+    -
+      value: 'Events by Community'
+  field_kpi_chart_colors:
+    -
+      value: '#398eb2'
+    -
+      value: '#29abe2'
+  body:
+    -
+      format: basic_html
+      value: >
+        Distinguish events created by content managers and site managers versus events created by the community (e.g. users without a special role in the community).

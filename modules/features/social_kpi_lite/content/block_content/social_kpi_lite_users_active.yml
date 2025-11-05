@@ -1,0 +1,81 @@
+values:
+  type: kpi_analytics
+  info: 'KPI Analytics: user activity'
+  uuid: 04538321-c195-4327-bae0-e82365382836
+fields:
+  field_kpi_datasource: drupal_kpi_datasource
+  field_kpi_query: >
+    SELECT created, COUNT(DISTINCT uid) AS active,
+    (
+      SELECT COUNT(ufd.uid)
+      FROM users_field_data ufd
+      WHERE ufd.status = 1 AND FROM_UNIXTIME(ufd.created, '%Y-%m') <= source.created
+    ) AS total
+    FROM (
+      -- Users.
+      SELECT
+          FROM_UNIXTIME(ufd.created, '%Y-%m') AS created,
+          NULL AS uid
+      FROM users_field_data ufd
+      WHERE ufd.uid > 0 AND ufd.status = 1 AND FROM_UNIXTIME(ufd.created, '%Y') >= YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+      GROUP BY uid, FROM_UNIXTIME(created, '%Y-%m')
+
+      -- Nodes.
+      UNION ALL
+      SELECT
+          FROM_UNIXTIME(nfd.created, '%Y-%m') AS created,
+          nfd.uid AS uid
+      FROM node_field_data nfd
+      WHERE FROM_UNIXTIME(nfd.created, '%Y') >= YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+      GROUP BY uid, FROM_UNIXTIME(created, '%Y-%m')
+
+      -- Comments.
+      UNION ALL
+      SELECT
+          FROM_UNIXTIME(cfd.created, '%Y-%m') AS created,
+          cfd.uid AS uid
+      FROM comment_field_data cfd
+      WHERE FROM_UNIXTIME(cfd.created, '%Y') >= YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+      GROUP BY uid, FROM_UNIXTIME(created, '%Y-%m')
+
+      -- Posts.
+      UNION ALL
+      SELECT
+          FROM_UNIXTIME(pfd.created, '%Y-%m') AS created,
+          pfd.user_id AS uid
+      FROM post_field_data pfd
+      WHERE FROM_UNIXTIME(pfd.created, '%Y') >= YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+      GROUP BY uid, FROM_UNIXTIME(created, '%Y-%m')
+
+      -- Event enrollment.
+      UNION ALL
+      SELECT
+          FROM_UNIXTIME(eefd.created, '%Y-%m') AS created,
+          eefd.user_id AS uid
+      FROM event_enrollment_field_data eefd
+        LEFT OUTER JOIN `event_enrollment__field_enrollment_status` eefes ON eefd.id = eefes.entity_id
+      WHERE FROM_UNIXTIME(eefd.created, '%Y') >= YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+        AND eefes.`field_enrollment_status_value` IN (1,5)
+      GROUP BY uid, FROM_UNIXTIME(created, '%Y-%m')
+    ) AS source
+    GROUP BY created
+    ORDER BY created ASC;
+  field_kpi_data_formatter:
+    -
+      value: year_timeline_kpi_data_formatter
+  field_kpi_visualization: morris_line_graph_kpi_visualization
+  field_kpi_chart_labels:
+    -
+      value: 'Contributing users'
+    -
+      value: 'All users'
+  field_kpi_chart_colors:
+    -
+      value: '#29abe2'
+    -
+      value: '#ffc142'
+  body:
+    -
+      format: basic_html
+      value: >
+        A user is considered a contributing user when the user: created a topic or event; created a post; commented on topics; events or posts; or enrolled to an event in a given month.

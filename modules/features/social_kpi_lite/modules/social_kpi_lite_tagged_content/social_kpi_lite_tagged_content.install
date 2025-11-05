@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * @file
+ * Install, update functions for the social_kpi_lite_tagged_content module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_kpi_lite_tagged_content_install() {
+  // Add KPI blocks.
+  $blocks = _social_kpi_lite_tagged_content_get_blocks_list();
+  _social_kpi_lite_tagged_content_create_blocks($blocks);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_kpi_lite_tagged_uninstall() {
+  // Remove KPI blocks.
+  $blocks = _social_kpi_lite_tagged_content_get_blocks_list();
+  _social_kpi_lite_tagged_delete_blocks($blocks);
+}
+
+/**
+ * Gets the list of block configs.
+ *
+ * @returns array
+ *   List of block IDs.
+ */
+function _social_kpi_lite_tagged_content_get_blocks_list() {
+  return [
+    'social_kpi_lite_group_with_content_tag_created',
+    'social_kpi_lite_topic_with_tag_created',
+    'social_kpi_lite_event_with_tag_created',
+    'social_kpi_lite_topic_with_tag_engagement',
+    'social_kpi_lite_event_with_tag_engagement',
+  ];
+}
+
+/**
+ * Creates block content.
+ *
+ * @param array $blocks
+ *   List of block IDs.
+ */
+function _social_kpi_lite_tagged_content_create_blocks(array $blocks) {
+  $path = \Drupal::service('extension.list.module')->getPath('social_kpi_lite_tagged_content');
+  $block_content_path = "{$path}/content/block_content";
+  /** @var \Drupal\kpi_analytics\BlockContentCreator $block_content_creator */
+  $block_content_creator = Drupal::service('kpi_analytics.block_content_creator');
+
+  // Creat blocks.
+  foreach ($blocks as $block_id) {
+    $block_content_creator->setSource($block_content_path, $block_id);
+    $block_content_creator->create();
+  }
+}
+
+/**
+ * Removes block content.
+ *
+ * @param array $blocks
+ *   List of block IDs.
+ */
+function _social_kpi_lite_tagged_delete_blocks(array $blocks) {
+  $path = \Drupal::service('extension.list.module')->getPath('social_kpi_lite_tagged_content');
+  $block_content_path = "{$path}/content/block_content";
+  /** @var \Drupal\kpi_analytics\BlockContentCreator $block_content_creator */
+  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+
+  foreach ($blocks as $block_id) {
+    $block_content_creator->setSource($block_content_path, $block_id);
+    $block_content_creator->delete();
+  }
+}

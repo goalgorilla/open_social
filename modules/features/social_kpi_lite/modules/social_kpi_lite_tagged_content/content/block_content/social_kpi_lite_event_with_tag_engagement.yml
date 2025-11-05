@@ -1,0 +1,101 @@
+values:
+  type: kpi_analytics
+  info: 'KPI Analytics: Events with tags engagement'
+  uuid: e16e0f9b-f7e5-416c-b2ef-c5d696521873
+fields:
+  field_kpi_datasource: drupal_kpi_term_datasource
+  field_kpi_query: >
+    SELECT created, SUM(count_votes) AS count_votes, SUM(count_comments) AS count_comments
+        FROM
+        (
+        	SELECT
+        		FROM_UNIXTIME(vv.timestamp, '%Y-%m') as created,
+                SUM(vv.value) AS count_votes,
+                0 AS count_comments,
+                0 AS count_enrollments
+        	FROM votingapi_vote vv
+        	LEFT OUTER JOIN node_field_data nfd ON vv.entity_id = nfd.nid
+            LEFT OUTER JOIN taxonomy_index ti ON nfd.nid = ti.nid
+        	WHERE
+        		FROM_UNIXTIME(vv.timestamp, '%Y-%m')
+        		BETWEEN
+        			FROM_UNIXTIME(UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 3 MONTH)), '%Y-%m')
+        		AND
+        			FROM_UNIXTIME(UNIX_TIMESTAMP(CURDATE()), '%Y-%m')
+        		AND
+        			vv.entity_type = 'node'
+        		AND
+        			vv.type = 'like'
+        		AND
+        			nfd.type = 'event'
+                AND
+                    ti.tid IN (:term_ids[])
+        	GROUP BY FROM_UNIXTIME(vv.timestamp, '%Y-%m')
+
+        	UNION ALL
+
+        	SELECT
+        		FROM_UNIXTIME(cfd.created, '%Y-%m') as created,
+        		0 AS count_votes,
+                COUNT(cfd.cid) AS count_comments,
+                0 AS count_enrollments
+        	FROM comment_field_data cfd
+            LEFT OUTER JOIN taxonomy_index ti ON cfd.entity_id = ti.nid
+        	WHERE
+        		FROM_UNIXTIME(cfd.created, '%Y-%m')
+        		BETWEEN
+        			FROM_UNIXTIME(UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 3 MONTH)), '%Y-%m')
+        		AND
+        			FROM_UNIXTIME(UNIX_TIMESTAMP(CURDATE()), '%Y-%m')
+        		AND
+        			cfd.entity_type = 'node'
+        		AND
+        			cfd.field_name = 'field_event_comments'
+                AND
+                    ti.tid IN (:term_ids[])
+        	GROUP BY FROM_UNIXTIME(cfd.created, '%Y-%m')
+            UNION ALL
+
+            SELECT
+                FROM_UNIXTIME(eefd.created, '%Y-%m') as created,
+                0 AS count_votes,
+                0 AS count_comments,
+                COUNT(eefd.id) AS count_enrollments
+            FROM event_enrollment_field_data eefd
+                LEFT OUTER JOIN event_enrollment__field_event eefe ON eefd.id = eefe.entity_id
+                LEFT OUTER JOIN taxonomy_index ti ON eefe.field_event_target_id = ti.nid
+            WHERE
+                FROM_UNIXTIME(eefd.created, '%Y-%m')
+                BETWEEN
+                    FROM_UNIXTIME(UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 3 MONTH)), '%Y-%m')
+                AND
+                    FROM_UNIXTIME(UNIX_TIMESTAMP(CURDATE()), '%Y-%m')
+                AND
+                    ti.tid IN (:term_ids[])
+            GROUP BY FROM_UNIXTIME(eefd.created, '%Y-%m')
+        ) AS source
+        GROUP BY created
+        ORDER BY created ASC;
+  field_kpi_data_formatter:
+    -
+      value: three_months_timeline_kpi_data_formatter
+  field_kpi_visualization: morris_bar_graph_kpi_visualization
+  field_kpi_chart_labels:
+    -
+      value: 'Likes on events'
+    -
+      value: 'Comments on events'
+    -
+      value: 'Enrollments on events'
+  field_kpi_chart_colors:
+    -
+      value: '#ffc142'
+    -
+      value: '#fe8a71'
+    -
+      value: '#db4242'
+  body:
+    -
+      format: basic_html
+      value: >
+        Distinguish between the types of engagement on events.
