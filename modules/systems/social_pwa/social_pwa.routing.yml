@@ -1,0 +1,43 @@
+social_pwa.settings:
+  path: '/admin/config/opensocial/pwa'
+  defaults:
+    _form: '\Drupal\social_pwa\Form\ManifestSettingsForm'
+    _title: 'Progressive Web App Settings'
+  requirements:
+    _permission: 'administer pwa settings'
+
+social_pwa.send-push-notification:
+  path: '/admin/config/opensocial/pwa/notification'
+  defaults:
+    _form: '\Drupal\social_pwa\Form\PushNotificationForm'
+    _title: 'Broadcast Push Notification'
+  requirements:
+    _permission: 'broadcast push notification'
+
+social_pwa.manifest:
+  path: '/manifest.json'
+  defaults:
+    _controller: '\Drupal\social_pwa\Controller\ManifestOutputController::generateManifest'
+  requirements:
+    _permission: 'access content'
+
+social_pwa.service-worker:
+  path: '/sw.js'
+  defaults:
+    _controller: '\Drupal\social_pwa\Controller\ServiceWorkerController::serviceWorker'
+  requirements:
+    _permission: 'access content'
+
+social_pwa.save-subscription:
+  path: '/sw-subscription'
+  defaults:
+    _controller: '\Drupal\social_pwa\Controller\UserSubscriptionController::saveSubscription'
+  requirements:
+    _permission: 'access content'
+
+social_pwa.remove-subscription:
+  path: '/sw-subscription/remove'
+  defaults:
+    _controller: '\Drupal\social_pwa\Controller\UserSubscriptionController::removeSubscription'
+  requirements:
+    _permission: 'access content'

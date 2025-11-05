@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * The activity_send_push module file.
+ */
+
+use Drupal\activity_creator\ActivityInterface;
+
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function activity_send_push_activity_insert(ActivityInterface $activity) {
+  $destinations = $activity->getDestinations();
+
+  // Check whether this is a destination that this module is interested in.
+  if (in_array('push', $destinations, TRUE)) {
+    /* @var $activity_send_factory Drupal\activity_send\Plugin\ActivitySendManager */
+    $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
+    // Trigger the create action for entities.
+    /* @var $create_action \Drupal\activity_send_push\Plugin\ActivitySend\PushActivitySend */
+    $create_action = $activity_send_factory->createInstance('push_activity_send');
+    $create_action->process($activity);
+  }
+}

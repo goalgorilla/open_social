@@ -1,0 +1,170 @@
+<?php
+
+/**
+ * @file
+ * Generates and attaches the <meta> and <link> tags needed for the PWA.
+ */
+
+use Drupal\Core\Url;
+use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\user\Entity\User;
+
+/**
+ * Implements hook_page_attachments().
+ */
+function social_pwa_page_attachments(array &$page) {
+  /** @var \Drupal\Core\Render\RendererInterface $renderer */
+  $renderer = \Drupal::service('renderer');
+  $settings = \Drupal::config('social_pwa.settings');
+  $account = \Drupal::currentUser();
+
+  // Fix cache metadata for this page.
+  $page['#cache']['contexts'][] = 'user';
+  $renderer->addCacheableDependency($page, $settings);
+  $renderer->addCacheableDependency($page, User::load($account->id()));
+
+  // Check first if sending push notifications is enabled.
+  $pwa_enabled = $settings->get('status.all');
+  if (!$pwa_enabled) {
+    return;
+  }
+
+  // Get the uploaded icon.
+  $icon = $settings->get('icons.icon');
+
+  if ($icon === NULL || !isset($icon[0])) {
+    return;
+  }
+
+  // Get the file id and path.
+  $fid = $icon[0];
+  /** @var \Drupal\file\Entity\File $file */
+  $file = File::load($fid);
+  $path = $file->getFileUri();
+
+  // LINK: Provide the icons.
+  $page['#attached']['html_head_link'][][] = [
+    // Icon support for Chrome on Android.
+    'rel' => 'icon',
+    'sizes' => '256x256',
+    'href' => \Drupal::service('file_url_generator')->transformRelative(ImageStyle::load('social_pwa_icon_256')->buildUrl($path)),
+  ];
+  $page['#attached']['html_head_link'][][] = [
+    // Icon support for Safari on iOS.
+    'rel' => 'apple-touch-icon',
+    'sizes' => '180x180',
+    'href' => \Drupal::service('file_url_generator')->transformRelative(ImageStyle::load('social_pwa_icon_180')->buildUrl($path)),
+  ];
+
+  // Attach the main.js and sw.js in the render array.
+  $page['#attached']['library'][] = 'social_pwa/main-js';
+  $page['#attached']['library'][] = 'social_pwa/service-worker';
+
+  // Add the public VAPID key.
+  $vapid_keys = \Drupal::state()->get('social_pwa.vapid_keys');
+
+  // Set up the social_pwa settings for all users.
+  $page['#attached']['drupalSettings']['social_pwa'] = [
+    'vapidPublicKey' => $vapid_keys['public'],
+    'serviceWorkerUrl' => Url::fromRoute('social_pwa.service-worker')->toString(),
+    'subscriptionAddUrl' => Url::fromRoute('social_pwa.save-subscription')->toString(),
+    'subscriptionRemoveUrl' => Url::fromRoute('social_pwa.remove-subscription')->toString(),
+  ];
+
+  // Attach the generated data from /manifest.json.
+  $page['#attached']['html_head_link'][][] = [
+    // Get the contents of the Manifest.
+    'rel' => 'manifest',
+    'href' => '/manifest.json',
+  ];
+
+  // META: Attach the meta tags.
+  $meta_pwa = [
+    // Chrome and Android Support: Add to home screen for Chrome on Android.
+    'mobile-web-app-capable' => [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'name' => 'mobile-web-app-capable',
+        'content' => 'yes',
+      ],
+    ],
+    'application-name' => [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'name' => 'application-name',
+        'content' => $settings->get('short_name'),
+      ],
+    ],
+    // iOS Support: Add to home screen for Safari on iOS
+    // content is set to 'no' to allow cookies.
+    'apple-mobile-web-app-capable' => [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'name' => 'apple-mobile-web-app-capable',
+        'content' => 'no',
+      ],
+    ],
+    'apple-mobile-web-app-status-bar-style' => [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'name' => 'apple-mobile-web-app-status-bar-style',
+        'content' => $settings->get('theme_color'),
+      ],
+    ],
+    'apple-mobile-web-app-title' => [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'name' => 'apple-mobile-web-app-title',
+        'content' => $settings->get('short_name'),
+      ],
+    ],
+    // Windows Mobile Support: Tile icon and color for Windows Mobile.
+    'msapplication-TileImage' => [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'name' => 'msapplication-TileImage',
+        'content' => \Drupal::service('file_url_generator')->transformRelative(ImageStyle::load('social_pwa_icon_144')->buildUrl($path)),
+      ],
+    ],
+    'msapplication-TileColor' => [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'name' => 'msapplication-TileColor',
+        'content' => $settings->get('theme_color'),
+      ],
+    ],
+    // Color the status bar on mobile devices.
+    'theme-color' => [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'name' => 'theme-color',
+        'content' => $settings->get('theme_color'),
+      ],
+    ],
+  ];
+  // Generate all of the above.
+  foreach ($meta_pwa as $key => $value) {
+    $page['#attached']['html_head'][] = [$value, $key];
+  }
+
+  // Push notification support is only available to authenticated users.
+  if ($account->isAuthenticated()) {
+    // Get all the subscriptions for this user and attach them to the page.
+    $user_subscriptions = \Drupal::service('user.data')
+      ->get('social_pwa', $account->id(), 'subscription');
+    $page['#attached']['drupalSettings']['social_pwa']['pushNotificationSubscriptions'] = !empty($user_subscriptions) ? array_keys($user_subscriptions) : [];
+
+    // Check if we need to show a prompt for the user to accept push
+    // notifications.
+    $route = \Drupal::routeMatch()->getRouteObject();
+
+    // Show the dialog only when we're not on an admin page.
+    if (\Drupal::service('router.admin_context')->isAdminRoute($route) !== TRUE) {
+      $prompt_time = \Drupal::config('social_pwa.settings')->get('prompt_timing');
+      $page['#attached']['library'][] = 'core/drupal.dialog.ajax';
+      $page['#attached']['library'][] = 'social_pwa/push-notification';
+      $page['#attached']['drupalSettings']['social_pwa']['pushNotificationPromptTime'] = (isset($prompt_time) && is_numeric($prompt_time)) ? $prompt_time : 3;
+    }
+  }
+}

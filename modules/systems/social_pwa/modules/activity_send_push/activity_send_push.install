@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the activity_send_push module.
+ */
+
+use Drupal\message\Entity\MessageTemplate;
+
+/**
+ * Implements hook_uninstall().
+ */
+function activity_send_push_install(): void {
+  // Add push destination to message templates with notifications destination.
+  _activity_send_push_update_destinations();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function activity_send_push_uninstall(): void {
+  // Remove "push" destination from message templates.
+  _activity_send_push_update_destinations(TRUE);
+}
+
+function _activity_send_push_update_destinations($delete = FALSE): void {
+  $message_templates = array_keys(MessageTemplate::loadMultiple());
+
+  // Get all existing message templates.
+  foreach ($message_templates as $message_template) {
+    /* @var \Drupal\Core\Config\Config $config */
+    $config = \Drupal::configFactory()->getEditable('message.template.' . $message_template);
+    $destinations = $config->get('third_party_settings.activity_logger.activity_destinations');
+
+    // New "push" destination should be added only if there is
+    // already "notifications" destination.
+    if (!isset($destinations['notifications'])) {
+      continue;
+    }
+
+    if (!$delete) {
+      $destinations['push'] = 'push';
+    }
+    elseif (isset($destinations['push'])) {
+      unset($destinations['push']);
+    }
+
+    $config->set('third_party_settings.activity_logger.activity_destinations', $destinations);
+    $config->save();
+  }
+}
+
+/**
+ * Add "push" destination to message templates with "notifications" destination.
+ */
+function activity_send_push_update_10001(): void {
+  _activity_send_push_update_destinations();
+}
