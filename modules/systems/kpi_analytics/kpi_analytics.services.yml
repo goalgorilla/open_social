@@ -1,0 +1,28 @@
+services:
+  plugin.manager.kpi_datasource.processor:
+    class: Drupal\kpi_analytics\Plugin\KPIDatasourceManager
+    parent: default_plugin_manager
+  plugin.manager.kpi_data_formatter.processor:
+    class: Drupal\kpi_analytics\Plugin\KPIDataFormatterManager
+    parent: default_plugin_manager
+  plugin.manager.kpi_visualization.processor:
+    class: Drupal\kpi_analytics\Plugin\KPIVisualizationManager
+    parent: default_plugin_manager
+  kpi_analytics.kpi_builder:
+    class: Drupal\kpi_analytics\KPIBuilder
+    arguments: [ '@entity.repository', '@entity_type.manager', '@plugin.manager.kpi_datasource.processor', '@plugin.manager.kpi_data_formatter.processor', '@plugin.manager.kpi_visualization.processor', '@plugin.manager.layout_builder.section_storage', '@current_route_match' ]
+  kpi_analytics.block_creator:
+    class: Drupal\kpi_analytics\BlockCreator
+    arguments: [ '@entity_type.manager', '@config.factory' ]
+  kpi_analytics.block_content_creator:
+    class: Drupal\kpi_analytics\BlockContentCreator
+    arguments: [ '@entity_type.manager', '@kpi_analytics.block_creator' ]
+  kpi_analytics.layout_builder_render.subscriber:
+    class: Drupal\kpi_analytics\EventSubscriber\KPIAnalyticsEventSubscriber
+    arguments: [ '@entity_type.manager' ]
+    tags:
+      - { name: 'event_subscriber' }
+  kpi_analytics.translation_defaults:
+    class: Drupal\kpi_analytics\ContentTranslationDefaultsConfigOverride
+    tags:
+      - { name: config.factory.override, priority: 5 }

@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the KPI Analytics module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Perform actions related to the de-installation of social_event_type.
+ */
+function kpi_analytics_uninstall() {
+  $config_factory = Drupal::configFactory();
+  // Remove the fields and block type related to KPI analytics.
+  $config_factory->getEditable('block_content.type.kpi_analytics')->delete();
+  $config_factory->getEditable('core.entity_form_display.block_content.kpi_analytics.default')->delete();
+  $config_factory->getEditable('core.entity_view_display.block_content.kpi_analytics.default')->delete();
+  $config_factory->getEditable('field.field.block_content.kpi_analytics.body')->delete();
+  $config_factory->getEditable('field.field.block_content.kpi_analytics.field_kpi_data_formatter')->delete();
+  $config_factory->getEditable('field.field.block_content.kpi_analytics.field_kpi_datasource')->delete();
+  $config_factory->getEditable('field.field.block_content.kpi_analytics.field_kpi_query')->delete();
+  $config_factory->getEditable('field.field.block_content.kpi_analytics.field_kpi_visualization')->delete();
+  $config_factory->getEditable('field.storage.block_content.field_kpi_data_formatter')->delete();
+  $config_factory->getEditable('field.storage.block_content.field_kpi_datasource')->delete();
+  $config_factory->getEditable('field.storage.block_content.field_kpi_query')->delete();
+  $config_factory->getEditable('field.storage.block_content.field_kpi_visualization')->delete();
+}
+
+/**
+ * Install default configurations.
+ */
+function kpi_analytics_update_8801() {
+  Drupal::service('config.installer')->installDefaultConfig('module', 'kpi_analytics');
+}
+
+/**
+ * Install the 'layout_builder' module.
+ */
+function kpi_analytics_update_8802() {
+  Drupal::service('module_installer')->install(['layout_builder']);
+}
+
+/**
+ * Add translations support for custom block fields.
+ */
+function kpi_analytics_update_8803() {
+  $config_factory = \Drupal::configFactory();
+  // Make "KPI Chart labels" field translatable.
+  $config = $config_factory->getEditable('field.field.block_content.kpi_analytics.field_kpi_chart_labels');
+  $config->set('translatable', TRUE);
+  $config->save();
+  // Make "Body" field translatable.
+  $config = $config_factory->getEditable('field.field.block_content.kpi_analytics.body');
+  $config->set('translatable', TRUE);
+  $config->save();
+}

@@ -1,0 +1,10 @@
+<div id="{{ uuid }}" class="morris_chart morris_{{ type }}"></div>
+
+<div class="morris-legend">
+    {% for key, label in labels %}
+        <div class="morris-legend-point">
+            <span class="morris-legend-marker" style="background-color: {{ colors[key] }};"></span>
+            {{ label }}
+        </div>
+    {% endfor %}
+</div>

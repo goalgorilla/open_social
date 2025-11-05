@@ -1,0 +1,168 @@
+<?php
+
+/**
+ * @file
+ * The KPI Analytics module.
+ */
+
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\kpi_analytics\Plugin\Block\KPIBlockContentBlock;
+
+/**
+ * Implements hook_help().
+ */
+function kpi_analytics_help($route_name) {
+  if ($route_name === 'help.page.kpi_analytics') {
+    $output = '';
+    $output .= '<h3>' . t('About') . '</h3>';
+    $output .= '<p>' . t('Architecture for making Key Performance Indicators for your website.') . '</p>';
+    return $output;
+  }
+}
+
+/**
+ * Retrieve the Datasource plugins.
+ */
+function _kpi_datasource_allowed_values(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL) {
+  return \Drupal::service('plugin.manager.kpi_datasource.processor')->getOptionsList();
+}
+
+/**
+ * Retrieve the Data formatter plugins.
+ */
+function _kpi_data_formatter_allowed_values(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL) {
+  return \Drupal::service('plugin.manager.kpi_data_formatter.processor')->getOptionsList();
+}
+
+/**
+ * Retrieve the Data visualization plugins.
+ */
+function _kpi_visualization_allowed_values(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL) {
+  return \Drupal::service('plugin.manager.kpi_visualization.processor')->getOptionsList();
+}
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function kpi_analytics_preprocess_block(&$variables) {
+  if (
+    isset($variables['content']['#block_content']) &&
+    $variables['base_plugin_id'] === 'block_content' &&
+    $variables['content']['#block_content']->bundle() === 'kpi_analytics'
+  ) {
+    // @todo Work on caching and preferable use the hook below for render.
+    // @todo See how we can render this in the template without moving this.
+    if (isset($variables['elements']['kpi_analytics']) && !isset($variables['content']['kpi_analytics'])) {
+      $variables['content']['kpi_analytics'] = $variables['elements']['kpi_analytics'];
+    }
+    elseif (isset($variables['content']['kpi_analytics']) && !isset($variables['elements']['kpi_analytics'])) {
+      $variables['elements']['kpi_analytics'] = $variables['content']['kpi_analytics'];
+    }
+  }
+}
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ */
+function kpi_analytics_block_view_block_content_alter(&$build, BlockPluginInterface $block_plugin) {
+  if ($block_entity = _kpi_analytics_is_kpi_block($block_plugin)) {
+    $build['kpi_analytics'] = [
+      '#lazy_builder' => [
+        'kpi_analytics.kpi_builder:build',
+        [
+          $block_entity->getEntityTypeId(),
+          $block_entity->id(),
+          $build['#id'],
+        ],
+      ],
+      '#create_placeholder' => TRUE,
+    ];
+  }
+}
+
+/**
+ * Checks if a block is a kpi analytics block.
+ */
+function _kpi_analytics_is_kpi_block(BlockPluginInterface $block) {
+  if ($block->getBaseId() === 'block_content') {
+    $uuid = preg_replace('/^block_content:/', '', $block->getPluginId());
+    // Load the block entity.
+    $block_entities = \Drupal::entityTypeManager()
+      ->getStorage('block_content')
+      ->loadByProperties(['uuid' => $uuid]);
+    if (($block_entity = array_pop($block_entities)) && $block_entity->bundle() === 'kpi_analytics') {
+      return $block_entity;
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function kpi_analytics_theme($existing, $type, $theme, $path): array {
+  return [
+    'kpi_analytics_morris_chart' => [
+      'template' => 'morris-chart',
+      'path' => $path . '/templates',
+      'variables' => [
+        'type' => NULL,
+        'uuid' => NULL,
+        'labels' => [],
+        'colors' => [],
+      ],
+    ],
+    'kpi_analytics_morris_tag_follow_chart' => [
+      'base hook' => 'kpi_analytics_morris_chart',
+      'template' => 'morris-chart--tag-follow',
+      'variables' => [
+        'type' => NULL,
+        'uuid' => NULL,
+        'labels' => [],
+        'colors' => [],
+        'followers' => NULL,
+        'difference' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_block_alter().
+ */
+function kpi_analytics_block_alter(array &$definitions) {
+  $block_content_definitions = array_filter(
+    $definitions,
+    static fn($key): bool => strpos($key, 'block_content') === 0,
+    ARRAY_FILTER_USE_KEY
+  );
+  $block_content_ids = array_keys($block_content_definitions);
+
+  // KPIDatasource plugins for which need add taxonomy filtering.
+  $datasource_with_terms = [
+    'drupal_kpi_term_datasource',
+  ];
+
+  $bc_storage = Drupal::entityTypeManager()->getStorage('block_content');
+  foreach ($block_content_ids as $block_content_id) {
+    if (empty($definitions[$block_content_id])) {
+      continue;
+    }
+
+    $uuid = explode(':', $block_content_id)[1];
+    $block_contents = $bc_storage->loadByProperties([
+      'uuid' => $uuid,
+    ]);
+
+    $block_content = reset($block_contents);
+    if ($block_content->bundle() !== 'kpi_analytics') {
+      continue;
+    }
+
+    if (in_array($block_content->field_kpi_datasource->value, $datasource_with_terms, TRUE)) {
+      $definitions[$block_content_id]['class'] = KPIBlockContentBlock::class;
+    }
+  }
+}

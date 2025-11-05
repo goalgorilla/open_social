@@ -1,0 +1,115 @@
+.morris-hover.morris-default-style {
+
+  .morris-hover-point {
+    color: inherit !important;
+    text-align: left;
+
+    &-marker {
+      border-radius: 50%;
+      display: inline-block;
+      height: 8px;
+      margin-right: 3px;
+      width: 8px;
+    }
+
+  }
+
+}
+
+.morris-legend {
+  margin-left: 1em;
+  margin-top: 0.5em;
+
+  &-point {
+    display: inline-block;
+    font-size: 0.75rem;
+    margin-right: 10px;
+    vertical-align: top;
+
+  }
+
+  &-marker {
+    border-radius: 50%;
+    display: inline-block;
+    height: 9px;
+    margin-right: 3px;
+    width: 9px;
+  }
+
+}
+
+text.morris-label-highlight {
+  fill: #000;
+  font-weight: 700 !important;
+}
+
+div.morris-label-highlight {
+  color: #000;
+  font-weight: 700 !important;
+}
+
+.follow-changes {
+  font-size: 13px;
+  color: #777777;
+
+  &-period {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  &-data {
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+    padding: 5px 10px 5px 35px;
+    border-radius: 5px;
+    border: 1px solid;
+    font-weight: bold;
+    font-family: sans-serif;
+
+    &-increase {
+      color: #3c763d;
+      background-color: #dff0d8;
+      border-color: #d6e9c6;
+
+      &:before {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 10px;
+        border: 6px solid transparent;
+        border-bottom: 7px solid #3c763d;
+      }
+    }
+
+    &-decrease {
+      color: #a94442;
+      background-color: #f2dede;
+      border-color: #ebccd1;
+
+      &:before {
+        content: '';
+        position: absolute;
+        top: 9px;
+        left: 10px;
+        border: 6px solid transparent;
+        border-top: 7px solid #a94442;
+      }
+    }
+
+    &-no-change {
+      padding-left: 10px;
+      color: #777;
+      background-color: #f3f3f3;
+      border-color: #e6e6e6;
+    }
+  }
+}
+
+.chart-block {
+  &:not(.mCustomScrollbar) {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+}

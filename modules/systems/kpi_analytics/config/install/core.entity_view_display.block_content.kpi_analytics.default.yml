@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.kpi_analytics
+    - field.field.block_content.kpi_analytics.body
+    - field.field.block_content.kpi_analytics.field_kpi_configuration
+    - field.field.block_content.kpi_analytics.field_kpi_data_formatter
+    - field.field.block_content.kpi_analytics.field_kpi_datasource
+    - field.field.block_content.kpi_analytics.field_kpi_query
+    - field.field.block_content.kpi_analytics.field_kpi_visualization
+    - field.field.block_content.kpi_analytics.field_kpi_chart_labels
+    - field.field.block_content.kpi_analytics.field_kpi_chart_colors
+  module:
+    - text
+id: block_content.kpi_analytics.default
+targetEntityType: block_content
+bundle: kpi_analytics
+mode: default
+content:
+  body:
+    type: text_default
+    weight: 0
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_kpi_configuration: true
+  field_kpi_data_formatter: true
+  field_kpi_datasource: true
+  field_kpi_query: true
+  field_kpi_visualization: true
+  field_kpi_chart_labels: true
+  field_kpi_chart_colors: true

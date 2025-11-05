@@ -1,0 +1,37 @@
+{{ attach_library('kpi_analytics/custom_scrollbar_plugin') }}
+
+<h6 class="text-align-center">
+  {{ 'Total followers:'|t }}
+  {{ followers }}
+</h6>
+
+<div class="follow-changes text-align-center">
+  {{ 'New followers'|t }}
+  <span class="follow-changes-period">{{ 'this month'|t }}</span>
+  {% if difference == 0 %}
+    <span class="follow-changes-data follow-changes-data-no-change">{{ 'no change'|t }}</span>
+  {% elseif difference > 0 %}
+    <span class="follow-changes-data follow-changes-data-increase">{{ difference }}</span>
+  {% else %}
+    <span class="follow-changes-data follow-changes-data-decrease">{{ difference }}</span>
+  {% endif %}
+</div>
+
+<div class="chart-block">
+  <div class="chart-block--wrapper">
+    <div id="{{ uuid }}" class="morris_chart morris_{{ type }}"
+         style="min-height: 500px"></div>
+
+    {% if labels %}
+      <div class="morris-legend">
+        {% for key, label in labels %}
+          <div class="morris-legend-point">
+            <span class="morris-legend-marker"
+                  style="background-color: {{ colors[key] }};"></span>
+            {{ label }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
