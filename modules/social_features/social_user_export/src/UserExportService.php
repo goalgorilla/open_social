@@ -148,6 +148,10 @@ final class UserExportService {
    *   Optional redirect URL after batch completion. If provided, batch
    *   processing starts immediately and returns a RedirectResponse. If NULL,
    *   the batch is set up but processing starts on the next HTTP request.
+   * @param string $export_type
+   *   The export type (users, enrollments, members, or segment-users).
+   *   Defaults to 'users'. This determines the filename pattern and permission
+   *   checks in hook_file_download().
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse|null
    *   Redirect response if $redirectUrl is provided (starts batch processing),
@@ -161,9 +165,13 @@ final class UserExportService {
    *   // From a controller in an HTTP request:
    *   $user_ids = $storage->getUserIdsInSegment($segment);
    *   $redirectUrl = Url::fromRoute('entity.user_segment.collection');
-   *   return $this->exportService->exportUsers($user_ids, $redirectUrl);
+   *   return $this->exportService->exportUsers(
+   *     $user_ids,
+   *     $redirectUrl,
+   *     'segment-users'
+   *   );
    */
-  public function exportUsers(array $user_ids, ?Url $redirectUrl = NULL): ?RedirectResponse {
+  public function exportUsers(array $user_ids, ?Url $redirectUrl = NULL, string $export_type = 'users'): ?RedirectResponse {
     if (empty($user_ids)) {
       $this->messenger->addWarning(t('No users to export.'));
       return NULL;
@@ -180,7 +188,7 @@ final class UserExportService {
     }
 
     // Generate a unique file path.
-    $filePath = $this->generateFilePath();
+    $filePath = $this->generateFilePath($export_type);
     $baseDirectory = $this->getBaseOutputDirectory();
     $fullPath = $baseDirectory . DIRECTORY_SEPARATOR . $filePath;
 
@@ -497,13 +505,17 @@ final class UserExportService {
    * To make sure the file can be downloaded, the path must be declared in the
    * download pattern of the social user export module.
    *
-   * @see social_user_export_file_download()
+   * @param string $export_type
+   *   The export type (users, enrollments, members, or segment-users).
+   *   Defaults to 'users'.
    *
    * @return string
    *   The path to the file.
+   *
+   * @see social_user_export_file_download()
    */
-  protected function generateFilePath(): string {
-    return 'export-users-' . bin2hex(random_bytes(8)) . '.csv';
+  protected function generateFilePath(string $export_type = 'users'): string {
+    return 'export-' . $export_type . '-' . bin2hex(random_bytes(8)) . '.csv';
   }
 
   /**

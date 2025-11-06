@@ -81,8 +81,10 @@ final class UserSegmentExportController extends ControllerBase {
       // Delegate to the VBO-agnostic export service. It handles CSV creation,
       // batch processing, and file saving. Do NOT load entities into memory -
       // the service will load users in batches.
+      // Pass 'segment-users' as an export type so the filename matches the
+      // permission check pattern in hook_file_download().
       $redirectUrl = Url::fromRoute('entity.user_segment.collection');
-      return $this->exportService->exportUsers($user_ids, $redirectUrl) ?? $this->redirect('entity.user_segment.collection');
+      return $this->exportService->exportUsers($user_ids, $redirectUrl, 'segment-users') ?? $this->redirect('entity.user_segment.collection');
     }
     catch (\Exception $e) {
       $this->logger->error('Error exporting user segment @id', [
