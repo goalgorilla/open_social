@@ -26,7 +26,6 @@ use Drupal\social_eda\Types\DateTime;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use Drupal\votingapi\VoteInterface;
-use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -42,15 +41,10 @@ class EdaHandlerTest extends UnitTestCase {
 
   /**
    * Mocked dispatcher service for sending CloudEvents.
-   */
-  protected DispatcherInterface $dispatcher;
-
-  /**
-   * The prophesized dispatcher for expectations.
    *
-   * @var \Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\social_eda\DispatcherInterface
    */
-  protected $dispatcherProphecy;
+  protected $dispatcher;
 
   /**
    * Handles UUID generation.
@@ -147,51 +141,41 @@ class EdaHandlerTest extends UnitTestCase {
     parent::setUp();
 
     // Mock the language_manager service.
-    $languageManagerMock = $this->prophesize(LanguageManagerInterface::class);
-    $languageMock = $this->prophesize(LanguageInterface::class);
-    $languageMock->getId()->willReturn('en');
-    $languageManagerMock->getCurrentLanguage()
-      ->willReturn($languageMock->reveal());
+    $languageMock = $this->createMock(LanguageInterface::class);
+    $languageMock->method('getId')->willReturn('en');
+    $languageManagerMock = $this->createMock(LanguageManagerInterface::class);
+    $languageManagerMock->method('getCurrentLanguage')->willReturn($languageMock);
 
     // Mock the configuration for `social_eda.settings.namespaces`.
-    $configMock = $this->prophesize(ImmutableConfig::class);
-    $configMock->get('namespace')->willReturn('com.getopensocial');
+    $configMock = $this->createMock(ImmutableConfig::class);
+    $configMock->method('get')->with('namespace')->willReturn('com.getopensocial');
 
-    $configFactoryMock = $this->prophesize(ConfigFactoryInterface::class);
-    $configFactoryMock->get('social_eda.settings')->willReturn($configMock->reveal());
-    $this->configFactory = $configFactoryMock->reveal();
+    $this->configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $this->configFactory->method('get')->with('social_eda.settings')->willReturn($configMock);
 
     $container = new ContainerBuilder();
-    $container->set('config.factory', $configFactoryMock->reveal());
-
-    // Mock Drupal's container.
-    $container = new ContainerBuilder();
-    $container->set('language_manager', $languageManagerMock->reveal());
+    $container->set('config.factory', $this->configFactory);
+    $container->set('language_manager', $languageManagerMock);
     \Drupal::setContainer($container);
 
-    // Prophesize the module handler and ensure `social_eda` is enabled.
-    $moduleHandlerProphecy = $this->prophesize(ModuleHandlerInterface::class);
-    $moduleHandlerProphecy->moduleExists('social_eda')->willReturn(TRUE);
-    $this->moduleHandler = $moduleHandlerProphecy->reveal();
+    // Mock the module handler and ensure `social_eda` is enabled.
+    $this->moduleHandler = $this->createMock(ModuleHandlerInterface::class);
+    $this->moduleHandler->method('moduleExists')->with('social_eda')->willReturn(TRUE);
 
-    // Prophesize the Dispatcher service.
-    $this->dispatcherProphecy = $this->prophesize(DispatcherInterface::class);
-    $this->dispatcher = $this->dispatcherProphecy->reveal();
+    // Mock the Dispatcher service.
+    $this->dispatcher = $this->createMock(DispatcherInterface::class);
 
-    // Prophesize the AccountProxyInterface.
-    $accountMock = $this->prophesize(AccountProxyInterface::class);
-    $accountMock->id()->willReturn(1);
-    $this->account = $accountMock->reveal();
+    // Mock the AccountProxyInterface.
+    $this->account = $this->createMock(AccountProxyInterface::class);
+    $this->account->method('id')->willReturn(1);
 
-    // Prophesize the RouteMatchInterface.
-    $routeMatchMock = $this->prophesize(RouteMatchInterface::class);
-    $routeMatchMock->getRouteName()->willReturn('entity.node.canonical');
-    $this->routeMatch = $routeMatchMock->reveal();
+    // Mock the RouteMatchInterface.
+    $this->routeMatch = $this->createMock(RouteMatchInterface::class);
+    $this->routeMatch->method('getRouteName')->willReturn('entity.node.canonical');
 
-    // Prophesize the UUID.
-    $uuidMock = $this->prophesize(UuidInterface::class);
-    $uuidMock->generate()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $this->uuid = $uuidMock->reveal();
+    // Mock the UUID.
+    $this->uuid = $this->createMock(UuidInterface::class);
+    $this->uuid->method('generate')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
 
     // Create a real Symfony Request instance.
     $this->request = Request::create(
@@ -203,76 +187,86 @@ class EdaHandlerTest extends UnitTestCase {
       ['HTTP_REFERER' => 'http://example.com/node/1']
     );
 
-    $requestStackMock = $this->prophesize(RequestStack::class);
-    $requestStackMock->getCurrentRequest()->willReturn($this->request);
-    $this->requestStack = $requestStackMock->reveal();
+    $this->requestStack = $this->createMock(RequestStack::class);
+    $this->requestStack->method('getCurrentRequest')->willReturn($this->request);
 
-    // Prophesize the URL object.
-    $urlMock = $this->prophesize(Url::class);
-    $urlMock->toString()->willReturn('http://example.com');
-    $this->url = $urlMock->reveal();
+    // Mock the URL object.
+    $this->url = $this->createMock(Url::class);
+    $this->url->method('toString')->willReturn('http://example.com');
 
-    // Prophesize the EntityInterface.
-    $entityMock = $this->prophesize(EntityInterface::class);
-    $entityMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+    // Mock the EntityInterface.
+    $this->entityInterface = $this->createMock(EntityInterface::class);
+    $this->entityInterface->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
       ->willReturn($this->url);
-    $entityMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $entityMock->label()->willReturn('Test Entity');
-    $this->entityInterface = $entityMock->reveal();
+    $this->entityInterface->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $this->entityInterface->method('label')->willReturn('Test Entity');
 
-    // Prophesize the UserInterface.
-    $userMock = $this->prophesize(UserInterface::class);
-    $userMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $userMock->getDisplayName()->willReturn('User name');
-    $userMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $this->userInterface = $userMock->reveal();
+    // Mock the UserInterface.
+    $this->userInterface = $this->createMock(UserInterface::class);
+    $this->userInterface->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $this->userInterface->method('getDisplayName')->willReturn('User name');
+    $this->userInterface->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
 
-    // Prophesize the Node.
-    $nodeMock = $this->prophesize(NodeInterface::class);
-    $nodeMock->label()->willReturn('Event Title');
-    $nodeMock->getCreatedTime()->willReturn(1692614400);
-    $nodeMock->getChangedTime()->willReturn(1692618000);
-    $nodeMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $nodeMock->get('uuid')
-      ->willReturn((object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af']);
-    $nodeMock->get('status')->willReturn((object) ['value' => 1]);
-    $nodeMock->get('uid')
-      ->willReturn((object) ['entity' => $this->userInterface]);
-    $nodeMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $nodeMock->getEntityTypeId()->willReturn('node');
-    $nodeMock->bundle()->willReturn('event');
-    $this->node = $nodeMock->reveal();
+    // Mock the Node.
+    $this->node = $this->createMock(NodeInterface::class);
+    $this->node->method('label')->willReturn('Event Title');
+    $this->node->method('getCreatedTime')->willReturn(1692614400);
+    $this->node->method('getChangedTime')->willReturn(1692618000);
+    $this->node->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $this->node->method('get')
+      ->willReturnCallback(function ($field_name) {
+        if ($field_name === 'uuid') {
+          return (object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af'];
+        }
+        if ($field_name === 'status') {
+          return (object) ['value' => 1];
+        }
+        if ($field_name === 'uid') {
+          return (object) ['entity' => $this->userInterface];
+        }
+        return NULL;
+      });
+    $this->node->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
+    $this->node->method('getEntityTypeId')->willReturn('node');
+    $this->node->method('bundle')->willReturn('event');
 
-    // Prophesize the Vote (like).
-    $voteMock = $this->prophesize(VoteInterface::class);
-    $voteMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $voteMock->getCreatedTime()->willReturn(1692614400);
-    $voteMock->getVotedEntityType()->willReturn('node');
-    $voteMock->getVotedEntityId()->willReturn(1);
-    $voteMock->bundle()->willReturn('like');
-    $voteMock->getOwner()->willReturn($this->userInterface);
-    $this->vote = $voteMock->reveal();
+    // Mock the Vote (like).
+    $this->vote = $this->createMock(VoteInterface::class);
+    $this->vote->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $this->vote->method('getCreatedTime')->willReturn(1692614400);
+    $this->vote->method('getVotedEntityType')->willReturn('node');
+    $this->vote->method('getVotedEntityId')->willReturn(1);
+    $this->vote->method('bundle')->willReturn('like');
+    $this->vote->method('getOwner')->willReturn($this->userInterface);
 
-    // Prophesize the EntityTypeManagerInterface and the corresponding storage.
-    $userStorageMock = $this->prophesize(EntityStorageInterface::class);
-    $nodeStorageMock = $this->prophesize(EntityStorageInterface::class);
-    $nodeStorageMock->load(1)->willReturn($this->node);
+    // Mock the EntityTypeManagerInterface and the corresponding storage.
+    $userStorageMock = $this->createMock(EntityStorageInterface::class);
+    $nodeStorageMock = $this->createMock(EntityStorageInterface::class);
+    $nodeStorageMock->method('load')->with(1)->willReturn($this->node);
 
-    $entityTypeManagerMock = $this->prophesize(EntityTypeManagerInterface::class);
-    $entityTypeManagerMock->getStorage('user')
-      ->willReturn($userStorageMock->reveal());
-    $entityTypeManagerMock->getStorage('node')
-      ->willReturn($nodeStorageMock->reveal());
-    $this->entityTypeManager = $entityTypeManagerMock->reveal();
+    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $this->entityTypeManager->method('getStorage')
+      ->willReturnCallback(function ($entity_type) use ($userStorageMock, $nodeStorageMock) {
+        if ($entity_type === 'user') {
+          return $userStorageMock;
+        }
+        if ($entity_type === 'node') {
+          return $nodeStorageMock;
+        }
+        return NULL;
+      });
 
-    // Prophesize the CloudEvent class.
-    $cloudEventMock = $this->prophesize(CloudEventInterface::class);
-    $this->cloudEvent = $cloudEventMock->reveal();
+    // Mock the CloudEvent class.
+    $this->cloudEvent = $this->createMock(CloudEventInterface::class);
 
     // Initialize the time service.
-    $timeMock = $this->prophesize(TimeInterface::class);
-    $timeMock->getRequestTime()->willReturn(1234567890);
-    $this->time = $timeMock->reveal();
+    $this->time = $this->createMock(TimeInterface::class);
+    $this->time->method('getRequestTime')->willReturn(1234567890);
 
     // Initialize the logger.
     $this->logger = $this->createMock(LoggerChannelInterface::class);
@@ -311,12 +305,14 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Expect the dispatch method in the dispatcher to be called with correct
     // topic and event type.
-    $this->dispatcherProphecy->dispatch(
-      'com.getopensocial.cms.like.v1',
-      Argument::that(function ($event) {
-        return $event->getType() === 'com.getopensocial.cms.like.create';
-      })
-    )->shouldBeCalled();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.like.v1'),
+        $this->callback(function ($event) {
+          return $event->getType() === 'com.getopensocial.cms.like.create';
+        })
+      );
 
     // Call the likeCreate method.
     $handler->likeCreate($this->vote);
@@ -336,12 +332,14 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Expect the dispatch method in the dispatcher to be called with correct
     // topic and event type.
-    $this->dispatcherProphecy->dispatch(
-      'com.getopensocial.cms.like.v1',
-      Argument::that(function ($event) {
-        return $event->getType() === 'com.getopensocial.cms.like.delete';
-      })
-    )->shouldBeCalled();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.like.v1'),
+        $this->callback(function ($event) {
+          return $event->getType() === 'com.getopensocial.cms.like.delete';
+        })
+      );
 
     // Call the likeDelete method.
     $handler->likeDelete($this->vote);
@@ -357,13 +355,13 @@ class EdaHandlerTest extends UnitTestCase {
    */
   public function testNoDispatchWhenModuleDisabled(): void {
     // Create a new handler with module disabled.
-    $moduleHandlerProphecy = $this->prophesize(ModuleHandlerInterface::class);
-    $moduleHandlerProphecy->moduleExists('social_eda')->willReturn(FALSE);
+    $moduleHandlerMock = $this->createMock(ModuleHandlerInterface::class);
+    $moduleHandlerMock->method('moduleExists')->with('social_eda')->willReturn(FALSE);
 
     $handler = new EdaHandler(
       $this->uuid,
       $this->requestStack,
-      $moduleHandlerProphecy->reveal(),
+      $moduleHandlerMock,
       $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
@@ -374,10 +372,8 @@ class EdaHandlerTest extends UnitTestCase {
     );
 
     // Expect dispatcher NOT to be called.
-    $this->dispatcherProphecy->dispatch(
-      'com.getopensocial.cms.like.v1',
-      Argument::any()
-    )->shouldNotBeCalled();
+    $this->dispatcher->expects($this->never())
+      ->method('dispatch');
 
     // Call the method.
     $handler->likeCreate($this->vote);

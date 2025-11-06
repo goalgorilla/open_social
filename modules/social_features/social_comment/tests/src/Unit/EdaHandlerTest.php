@@ -137,119 +137,100 @@ class EdaHandlerTest extends UnitTestCase {
     parent::setUp();
 
     // Mock the language_manager service.
-    $languageManagerMock = $this->prophesize(LanguageManagerInterface::class);
-    $languageMock = $this->prophesize(LanguageInterface::class);
-    $languageMock->getId()->willReturn('en');
-    $languageManagerMock->getCurrentLanguage()
-      ->willReturn($languageMock->reveal());
+    $languageMock = $this->createMock(LanguageInterface::class);
+    $languageMock->method('getId')->willReturn('en');
+    $languageManagerMock = $this->createMock(LanguageManagerInterface::class);
+    $languageManagerMock->method('getCurrentLanguage')->willReturn($languageMock);
 
     // Mock the configuration for `social_eda.settings.namespaces`.
-    $configMock = $this->prophesize(ImmutableConfig::class);
-    $configMock->get('namespace')->willReturn('com.getopensocial');
+    $configMock = $this->createMock(ImmutableConfig::class);
+    $configMock->method('get')->with('namespace')->willReturn('com.getopensocial');
 
-    $configFactoryMock = $this->prophesize(ConfigFactoryInterface::class);
-    $configFactoryMock->get('social_eda.settings')->willReturn($configMock->reveal());
-    $this->configFactory = $configFactoryMock->reveal();
+    $this->configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $this->configFactory->method('get')->with('social_eda.settings')->willReturn($configMock);
 
     $container = new ContainerBuilder();
-    $container->set('config.factory', $configFactoryMock->reveal());
-
-    // Mock Drupal's container.
-    $container = new ContainerBuilder();
-    $container->set('language_manager', $languageManagerMock->reveal());
+    $container->set('config.factory', $this->configFactory);
+    $container->set('language_manager', $languageManagerMock);
     \Drupal::setContainer($container);
 
-    // Prophesize the module handler and ensure `social_eda` is enabled.
-    $moduleHandlerProphecy = $this->prophesize(ModuleHandlerInterface::class);
-    $moduleHandlerProphecy->moduleExists('social_eda')->willReturn(TRUE);
-    $this->moduleHandler = $moduleHandlerProphecy->reveal();
+    // Mock the module handler and ensure `social_eda` is enabled.
+    $this->moduleHandler = $this->createMock(ModuleHandlerInterface::class);
+    $this->moduleHandler->method('moduleExists')->with('social_eda')->willReturn(TRUE);
 
-    // Prophesize the Dispatcher service.
-    $this->dispatcher = $this->getMockBuilder(DispatcherInterface::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    // Mock the Dispatcher service.
+    $this->dispatcher = $this->createMock(DispatcherInterface::class);
 
-    // Prophesize the EntityTypeManagerInterface and the corresponding storage.
-    $entityStorageMock = $this->prophesize(EntityStorageInterface::class);
-    $entityTypeManagerMock = $this->prophesize(EntityTypeManagerInterface::class);
-    $entityTypeManagerMock->getStorage('user')
-      ->willReturn($entityStorageMock->reveal());
-    $this->entityTypeManager = $entityTypeManagerMock->reveal();
+    // Mock the EntityTypeManagerInterface and the corresponding storage.
+    $entityStorageMock = $this->createMock(EntityStorageInterface::class);
+    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $this->entityTypeManager->method('getStorage')->with('user')->willReturn($entityStorageMock);
 
-    // Prophesize the AccountProxyInterface.
-    $accountMock = $this->prophesize(AccountProxyInterface::class);
-    $accountMock->id()->willReturn(1);
-    $this->account = $accountMock->reveal();
+    // Mock the AccountProxyInterface.
+    $this->account = $this->createMock(AccountProxyInterface::class);
+    $this->account->method('id')->willReturn(1);
 
-    // Prophesize the RouteMatchInterface.
-    $routeMatchMock = $this->prophesize(RouteMatchInterface::class);
-    $routeMatchMock->getRouteName()->willReturn('entity.comment.edit_form');
-    $this->routeMatch = $routeMatchMock->reveal();
+    // Mock the RouteMatchInterface.
+    $this->routeMatch = $this->createMock(RouteMatchInterface::class);
+    $this->routeMatch->method('getRouteName')->willReturn('entity.comment.edit_form');
 
-    // Prophesize the UUID.
-    $uuidMock = $this->prophesize(UuidInterface::class);
-    $uuidMock->generate()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $this->uuid = $uuidMock->reveal();
+    // Mock the UUID.
+    $this->uuid = $this->createMock(UuidInterface::class);
+    $this->uuid->method('generate')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
 
-    // Prophesize the Request.
-    $requestMock = $this->prophesize(Request::class);
-    $requestMock->getUri()->willReturn('http://example.com/comment/1');
-    $requestMock->getPathInfo()->willReturn('/comment/1');
+    // Mock the Request.
+    $headersMock = $this->createMock(HeaderBag::class);
+    $headersMock->method('get')->with('referer')->willReturn('http://example.com/stream');
+    $this->request = $this->createMock(Request::class);
+    $this->request->method('getUri')->willReturn('http://example.com/comment/1');
+    $this->request->method('getPathInfo')->willReturn('/comment/1');
+    $this->request->headers = $headersMock;
 
-    // Mock the headers to return a referrer.
-    $headersMock = $this->prophesize(HeaderBag::class);
-    $headersMock->get('referer')->willReturn('http://example.com/stream');
-    $requestMock->headers = $headersMock->reveal();
+    $this->requestStack = $this->createMock(RequestStack::class);
+    $this->requestStack->method('getCurrentRequest')->willReturn($this->request);
 
-    $this->request = $requestMock->reveal();
+    // Mock the URL object.
+    $this->url = $this->createMock(Url::class);
+    $this->url->method('toString')->willReturn('http://example.com');
 
-    $requestStackMock = $this->prophesize(RequestStack::class);
-    $requestStackMock->getCurrentRequest()->willReturn($this->request);
-    $this->requestStack = $requestStackMock->reveal();
-
-    // Prophesize the URL object.
-    $urlMock = $this->prophesize(Url::class);
-    $urlMock->toString()->willReturn('http://example.com');
-    $this->url = $urlMock->reveal();
-
-    // Prophesize the EntityInterface (commented node).
-    $entityMock = $this->prophesize(NodeInterface::class);
-    $entityMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+    // Mock the EntityInterface (commented node).
+    $this->commentedNode = $this->createMock(NodeInterface::class);
+    $this->commentedNode->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
       ->willReturn($this->url);
-    $entityMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $entityMock->label()->willReturn('Test Node');
-    $entityMock->getEntityTypeId()->willReturn('node');
-    $entityMock->bundle()->willReturn('topic');
-    $this->commentedNode = $entityMock->reveal();
+    $this->commentedNode->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $this->commentedNode->method('label')->willReturn('Test Node');
+    $this->commentedNode->method('getEntityTypeId')->willReturn('node');
+    $this->commentedNode->method('bundle')->willReturn('topic');
 
-    // Prophesize the UserInterface.
-    $userMock = $this->prophesize(UserInterface::class);
-    $userMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $userMock->getDisplayName()->willReturn('User name');
-    $userMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $this->userInterface = $userMock->reveal();
+    // Mock the UserInterface.
+    $this->userInterface = $this->createMock(UserInterface::class);
+    $this->userInterface->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $this->userInterface->method('getDisplayName')->willReturn('User name');
+    $this->userInterface->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
 
-    // Prophesize the Comment.
-    $commentMock = $this->prophesize(CommentInterface::class);
-    $commentMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $commentMock->getCreatedTime()->willReturn(1692614400);
-    $commentMock->getChangedTime()->willReturn(1692618000);
-    $commentMock->isPublished()->willReturn(TRUE);
-    $commentMock->getOwner()->willReturn($this->userInterface);
-    $commentMock->getCommentedEntity()->willReturn($this->commentedNode);
-    $commentMock->getCommentedEntityTypeId()->willReturn('node');
-    $commentMock->hasParentComment()->willReturn(FALSE);
-    $commentMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $this->comment = $commentMock->reveal();
+    // Mock the Comment.
+    $this->comment = $this->createMock(CommentInterface::class);
+    $this->comment->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $this->comment->method('getCreatedTime')->willReturn(1692614400);
+    $this->comment->method('getChangedTime')->willReturn(1692618000);
+    $this->comment->method('isPublished')->willReturn(TRUE);
+    $this->comment->method('getOwner')->willReturn($this->userInterface);
+    $this->comment->method('getCommentedEntity')->willReturn($this->commentedNode);
+    $this->comment->method('getCommentedEntityTypeId')->willReturn('node');
+    $this->comment->method('hasParentComment')->willReturn(FALSE);
+    $this->comment->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
 
-    // Prophesize the CloudEvent class.
-    $cloudEventMock = $this->prophesize(CloudEventInterface::class);
-    $this->cloudEvent = $cloudEventMock->reveal();
+    // Mock the CloudEvent class.
+    $this->cloudEvent = $this->createMock(CloudEventInterface::class);
 
     // Initialize the time service.
-    $timeMock = $this->prophesize(TimeInterface::class);
-    $timeMock->getRequestTime()->willReturn(1234567890);
-    $this->time = $timeMock->reveal();
+    $this->time = $this->createMock(TimeInterface::class);
+    $this->time->method('getRequestTime')->willReturn(1234567890);
 
     // Initialize the logger.
     $this->logger = $this->createMock(LoggerChannelInterface::class);
@@ -438,28 +419,30 @@ class EdaHandlerTest extends UnitTestCase {
    */
   public function testThreadCalculationReply(): void {
     // Create a parent comment mock.
-    $parentCommentMock = $this->prophesize(CommentInterface::class);
-    $parentCommentMock->uuid()->willReturn('parent-comment-uuid');
-    $parentCommentMock->hasParentComment()->willReturn(FALSE);
-    $parentCommentMock->getParentComment()->willReturn(NULL);
-    $parentCommentMock->getEntityTypeId()->willReturn('comment');
-    $parentCommentMock->getCommentedEntity()->willReturn($this->nodeInterface);
-    $parentCommentMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $parentComment = $parentCommentMock->reveal();
+    $parentComment = $this->createMock(CommentInterface::class);
+    $parentComment->method('uuid')->willReturn('parent-comment-uuid');
+    $parentComment->method('hasParentComment')->willReturn(FALSE);
+    $parentComment->method('getParentComment')->willReturn(NULL);
+    $parentComment->method('getEntityTypeId')->willReturn('comment');
+    $parentComment->method('getCommentedEntity')->willReturn($this->commentedNode);
+    $parentComment->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
 
     // Update the comment mock to have a parent.
-    $commentMock = $this->prophesize(CommentInterface::class);
-    $commentMock->uuid()->willReturn('reply-comment-uuid');
-    $commentMock->getCreatedTime()->willReturn(1692614400);
-    $commentMock->getChangedTime()->willReturn(1692618000);
-    $commentMock->isPublished()->willReturn(TRUE);
-    $commentMock->getOwner()->willReturn($this->userInterface);
-    $commentMock->getCommentedEntity()->willReturn($parentComment);
-    $commentMock->getCommentedEntityTypeId()->willReturn('comment');
-    $commentMock->hasParentComment()->willReturn(TRUE);
-    $commentMock->getParentComment()->willReturn($parentComment);
-    $commentMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $replyComment = $commentMock->reveal();
+    $replyComment = $this->createMock(CommentInterface::class);
+    $replyComment->method('uuid')->willReturn('reply-comment-uuid');
+    $replyComment->method('getCreatedTime')->willReturn(1692614400);
+    $replyComment->method('getChangedTime')->willReturn(1692618000);
+    $replyComment->method('isPublished')->willReturn(TRUE);
+    $replyComment->method('getOwner')->willReturn($this->userInterface);
+    $replyComment->method('getCommentedEntity')->willReturn($parentComment);
+    $replyComment->method('getCommentedEntityTypeId')->willReturn('comment');
+    $replyComment->method('hasParentComment')->willReturn(TRUE);
+    $replyComment->method('getParentComment')->willReturn($parentComment);
+    $replyComment->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
 
     // Create the handler instance.
     $handler = $this->getMockedHandler();

@@ -155,126 +155,134 @@ class EdaHandlerTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
 
-    // Mock the language_manager service using Prophecy.
-    $languageManagerMock = $this->prophesize(LanguageManagerInterface::class);
-    $languageMock = $this->prophesize(LanguageInterface::class);
-    $languageMock->getId()->willReturn('en');
-    $languageManagerMock->getCurrentLanguage()->willReturn($languageMock->reveal());
+    // Mock the language_manager service.
+    $languageMock = $this->createMock(LanguageInterface::class);
+    $languageMock->method('getId')->willReturn('en');
+    $languageManagerMock = $this->createMock(LanguageManagerInterface::class);
+    $languageManagerMock->method('getCurrentLanguage')->willReturn($languageMock);
 
     // Mock the configuration for `social_eda.settings.namespaces`.
-    $configSocialEdaMock = $this->prophesize(ConfigInterface::class);
-    $configSocialEdaMock->get('namespace')->willReturn('com.getopensocial');
+    $configSocialEdaMock = $this->createMock(ConfigInterface::class);
+    $configSocialEdaMock->method('get')->with('namespace')->willReturn('com.getopensocial');
 
     // Mock the configuration for `user.settings.register`.
-    $configUserSettingsMock = $this->prophesize(ConfigInterface::class);
-    $configUserSettingsMock->get('register')->willReturn('visitors_admin_approval');
+    $configUserSettingsMock = $this->createMock(ConfigInterface::class);
+    $configUserSettingsMock->method('get')->with('register')->willReturn('visitors_admin_approval');
 
-    $configFactoryMock = $this->prophesize(ConfigFactoryInterface::class);
-    $configFactoryMock->get('social_eda.settings')->willReturn($configSocialEdaMock->reveal());
-    $configFactoryMock->get('user.settings')->willReturn($configUserSettingsMock->reveal());
-    $this->configFactory = $configFactoryMock->reveal();
+    $this->configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $this->configFactory->method('get')->willReturnCallback(function ($config_name) use ($configSocialEdaMock, $configUserSettingsMock) {
+      if ($config_name === 'social_eda.settings') {
+        return $configSocialEdaMock;
+      }
+      if ($config_name === 'user.settings') {
+        return $configUserSettingsMock;
+      }
+      return NULL;
+    });
 
     // Set up Drupal's container.
     $container = new ContainerBuilder();
-    $container->set('language_manager', $languageManagerMock->reveal());
+    $container->set('language_manager', $languageManagerMock);
     \Drupal::setContainer($container);
 
-    // Prophesize the module handler and ensure `social_eda` is enabled.
-    $moduleHandlerProphecy = $this->prophesize(ModuleHandlerInterface::class);
-    $moduleHandlerProphecy->moduleExists('social_eda')->willReturn(TRUE);
-    $moduleHandlerProphecy->moduleExists('social_eda_dispatcher')->willReturn(TRUE);
-    $this->moduleHandler = $moduleHandlerProphecy->reveal();
+    // Mock the module handler and ensure `social_eda` is enabled.
+    $this->moduleHandler = $this->createMock(ModuleHandlerInterface::class);
+    $this->moduleHandler->method('moduleExists')->willReturnCallback(function ($module) {
+      return in_array($module, ['social_eda', 'social_eda_dispatcher']);
+    });
 
-    // Prophesize the Dispatcher service.
-    $this->dispatcher = $this->getMockBuilder(DispatcherInterface::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    // Mock the Dispatcher service.
+    $this->dispatcher = $this->createMock(DispatcherInterface::class);
 
-    // Resolve UUID.
-    $uuidMock = $this->prophesize(UuidInterface::class);
-    $uuidMock->generate()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $this->uuid = $uuidMock->reveal();
+    // Mock UUID.
+    $this->uuid = $this->createMock(UuidInterface::class);
+    $this->uuid->method('generate')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
 
     // Mock the URL object.
-    $urlMock = $this->prophesize(Url::class);
-    $urlMock->toString()->willReturn('http://example.com');
-    $this->url = $urlMock->reveal();
-
-    // Mock the EntityTypeManagerInterface and ProfileStorageInterface.
-    $profileStorage = $this->prophesize(ProfileStorageInterface::class);
-
-    // Mock the User entity using Prophecy.
-    $user = $this->prophesize(UserInterface::class);
-    $user->get('uuid')->willReturn((object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af']);
-    $user->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $user->id()->willReturn(1);
-    $user->getCreatedTime()->willReturn(1692614400);
-    $user->getChangedTime()->willReturn(1692618000);
-    $user->isActive()->willReturn(TRUE);
-    $user->getDisplayName()->willReturn('User Name');
-    $user->getEmail()->willReturn('user@example.com');
-    $user->getRoles()->willReturn(['authenticated']);
-    $user->getPreferredLangcode()->willReturn('en');
-    $user->getTimeZone()->willReturn('UTC');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $userMock = $user->reveal();
-    $this->user = $userMock;
-
-    $userStorage = $this->prophesize(EntityStorageInterface::class);
-    $userStorage->load(1)->willReturn($userMock);
-
-    // Mock the Profile entity using Prophecy.
-    $profile = $this->prophesize(ProfileInterface::class);
-    $profile->get('field_profile_first_name')->willReturn((object) ['value' => 'First']);
-    $profile->get('field_profile_last_name')->willReturn((object) ['value' => 'Last']);
-    $profile->get('field_profile_phone_number')->willReturn((object) ['value' => '123456789']);
-    $profile->get('field_profile_function')->willReturn((object) ['value' => 'Developer']);
-    $profile->get('field_profile_organization')->willReturn((object) ['value' => 'Organization']);
-    $profile->get('field_profile_address')->willReturn($this->addressItemList);
-    $profileMock = $profile->reveal();
-    $this->profile = $profileMock;
-
-    // Mock the EntityTypeManagerInterface.
-    $entityTypeManagerMock = $this->prophesize(EntityTypeManagerInterface::class);
-    $entityTypeManagerMock->getStorage('profile')->willReturn($profileStorage->reveal());
-    $entityTypeManagerMock->getStorage('user')->willReturn($userStorage->reveal());
-    $this->entityTypeManager = $entityTypeManagerMock->reveal();
-
-    // Mock the AccountProxyInterface.
-    $accountMock = $this->prophesize(AccountProxyInterface::class);
-    $accountMock->id()->willReturn(1);
-    $this->account = $accountMock->reveal();
-
-    // Mock the RouteMatchInterface.
-    $routeMatchMock = $this->prophesize(RouteMatchInterface::class);
-    $routeMatchMock->getRouteName()->willReturn('entity.node.edit_form');
-    $this->routeMatch = $routeMatchMock->reveal();
-
-    // Mock the Request and RequestStack using Prophecy.
-    $requestMock = $this->prophesize(Request::class);
-    $requestMock->getUri()->willReturn('http://example.com/user/register');
-    $requestMock->getPathInfo()->willReturn('/user/register');
-    $this->request = $requestMock->reveal();
-
-    $requestStackMock = $this->prophesize(RequestStack::class);
-    $requestStackMock->getCurrentRequest()->willReturn($this->request);
-    $this->requestStack = $requestStackMock->reveal();
+    $this->url = $this->createMock(Url::class);
+    $this->url->method('toString')->willReturn('http://example.com');
 
     // Mock the Address field.
-    $addressItemMock = $this->prophesize(AddressItem::class);
-    $this->addressItem = $addressItemMock->reveal();
+    $this->addressItem = $this->createMock(AddressItem::class);
+    $this->addressItemList = $this->createMock(AddressFieldItemList::class);
+    $this->addressItemList->method('first')->willReturn($this->addressItem);
 
-    $addressItemListMock = $this->prophesize(AddressFieldItemList::class);
-    $addressItemListMock->first()->willReturn($this->addressItem);
-    $this->addressItemList = $addressItemListMock->reveal();
+    // Mock the Profile entity.
+    $this->profile = $this->createMock(ProfileInterface::class);
+    $this->profile->method('get')->willReturnCallback(function ($field_name) {
+      if ($field_name === 'field_profile_first_name') {
+        return (object) ['value' => 'First'];
+      }
+      if ($field_name === 'field_profile_last_name') {
+        return (object) ['value' => 'Last'];
+      }
+      if ($field_name === 'field_profile_phone_number') {
+        return (object) ['value' => '123456789'];
+      }
+      if ($field_name === 'field_profile_function') {
+        return (object) ['value' => 'Developer'];
+      }
+      if ($field_name === 'field_profile_organization') {
+        return (object) ['value' => 'Organization'];
+      }
+      if ($field_name === 'field_profile_address') {
+        return $this->addressItemList;
+      }
+      return NULL;
+    });
 
-    // Finally, reveal the entity type manager.
-    $this->entityTypeManager = $entityTypeManagerMock->reveal();
+    // Mock the User entity.
+    $this->user = $this->createMock(UserInterface::class);
+    $this->user->method('get')->with('uuid')->willReturn((object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af']);
+    $this->user->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $this->user->method('id')->willReturn(1);
+    $this->user->method('getCreatedTime')->willReturn(1692614400);
+    $this->user->method('getChangedTime')->willReturn(1692618000);
+    $this->user->method('isActive')->willReturn(TRUE);
+    $this->user->method('getDisplayName')->willReturn('User Name');
+    $this->user->method('getEmail')->willReturn('user@example.com');
+    $this->user->method('getRoles')->willReturn(['authenticated']);
+    $this->user->method('getPreferredLangcode')->willReturn('en');
+    $this->user->method('getTimeZone')->willReturn('UTC');
+    $this->user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
+
+    // Mock the EntityTypeManagerInterface and ProfileStorageInterface.
+    $profileStorage = $this->createMock(ProfileStorageInterface::class);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(1)->willReturn($this->user);
+
+    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $this->entityTypeManager->method('getStorage')->willReturnCallback(function ($entity_type) use ($profileStorage, $userStorage) {
+      if ($entity_type === 'profile') {
+        return $profileStorage;
+      }
+      if ($entity_type === 'user') {
+        return $userStorage;
+      }
+      return NULL;
+    });
+
+    // Mock the AccountProxyInterface.
+    $this->account = $this->createMock(AccountProxyInterface::class);
+    $this->account->method('id')->willReturn(1);
+
+    // Mock the RouteMatchInterface.
+    $this->routeMatch = $this->createMock(RouteMatchInterface::class);
+    $this->routeMatch->method('getRouteName')->willReturn('entity.node.edit_form');
+
+    // Mock the Request and RequestStack.
+    $this->request = $this->createMock(Request::class);
+    $this->request->method('getUri')->willReturn('http://example.com/user/register');
+    $this->request->method('getPathInfo')->willReturn('/user/register');
+
+    $this->requestStack = $this->createMock(RequestStack::class);
+    $this->requestStack->method('getCurrentRequest')->willReturn($this->request);
 
     // Initialize the time service.
-    $timeMock = $this->prophesize(TimeInterface::class);
-    $timeMock->getRequestTime()->willReturn(1234567890);
-    $this->time = $timeMock->reveal();
+    $this->time = $this->createMock(TimeInterface::class);
+    $this->time->method('getRequestTime')->willReturn(1234567890);
 
     // Initialize the logger.
     $this->logger = $this->createMock(LoggerChannelInterface::class);

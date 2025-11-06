@@ -135,114 +135,114 @@ class EdaHandlerTest extends UnitTestCase {
     parent::setUp();
 
     // Mock the language_manager service.
-    $languageManagerMock = $this->prophesize(LanguageManagerInterface::class);
-    $languageMock = $this->prophesize(LanguageInterface::class);
-    $languageMock->getId()->willReturn('en');
-    $languageManagerMock->getCurrentLanguage()
-      ->willReturn($languageMock->reveal());
+    $languageMock = $this->createMock(LanguageInterface::class);
+    $languageMock->method('getId')->willReturn('en');
+    $languageManagerMock = $this->createMock(LanguageManagerInterface::class);
+    $languageManagerMock->method('getCurrentLanguage')->willReturn($languageMock);
 
     // Mock the configuration for `social_eda.settings.namespaces`.
-    $configMock = $this->prophesize(ConfigInterface::class);
-    $configMock->get('namespace')->willReturn('com.getopensocial');
+    $configMock = $this->createMock(ConfigInterface::class);
+    $configMock->method('get')->with('namespace')->willReturn('com.getopensocial');
 
-    $configFactoryMock = $this->prophesize(ConfigFactoryInterface::class);
-    $configFactoryMock->get('social_eda.settings')->willReturn($configMock->reveal());
-    $this->configFactory = $configFactoryMock->reveal();
+    $this->configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $this->configFactory->method('get')->with('social_eda.settings')->willReturn($configMock);
 
-    // Mock Drupal's container.
     $container = new ContainerBuilder();
-    $container->set('language_manager', $languageManagerMock->reveal());
+    $container->set('config.factory', $this->configFactory);
+    $container->set('language_manager', $languageManagerMock);
     \Drupal::setContainer($container);
 
-    // Prophesize the module handler and ensure `social_eda` is enabled.
-    $moduleHandlerProphecy = $this->prophesize(ModuleHandlerInterface::class);
-    $moduleHandlerProphecy->moduleExists('social_eda')->willReturn(TRUE);
-    $this->moduleHandler = $moduleHandlerProphecy->reveal();
+    // Mock the module handler and ensure `social_eda` is enabled.
+    $this->moduleHandler = $this->createMock(ModuleHandlerInterface::class);
+    $this->moduleHandler->method('moduleExists')->with('social_eda')->willReturn(TRUE);
 
-    // Prophesize the Dispatcher service.
-    $this->dispatcher = $this->getMockBuilder(DispatcherInterface::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    // Mock the Dispatcher service.
+    $this->dispatcher = $this->createMock(DispatcherInterface::class);
 
-    // Prophesize the EntityTypeManagerInterface and the corresponding storage.
-    $entityStorageMock = $this->prophesize(EntityStorageInterface::class);
-    $entityTypeManagerMock = $this->prophesize(EntityTypeManagerInterface::class);
-    $entityTypeManagerMock->getStorage('user')
-      ->willReturn($entityStorageMock->reveal());
-    $this->entityTypeManager = $entityTypeManagerMock->reveal();
+    // Mock the EntityTypeManagerInterface and the corresponding storage.
+    $entityStorageMock = $this->createMock(EntityStorageInterface::class);
+    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $this->entityTypeManager->method('getStorage')->with('user')->willReturn($entityStorageMock);
 
-    // Prophesize the AccountProxyInterface.
-    $accountMock = $this->prophesize(AccountProxyInterface::class);
-    $accountMock->id()->willReturn(1);
-    $this->account = $accountMock->reveal();
+    // Mock the AccountProxyInterface.
+    $this->account = $this->createMock(AccountProxyInterface::class);
+    $this->account->method('id')->willReturn(1);
 
-    // Prophesize the RouteMatchInterface.
-    $routeMatchMock = $this->prophesize(RouteMatchInterface::class);
-    $routeMatchMock->getRouteName()->willReturn('entity.post.canonical');
-    $this->routeMatch = $routeMatchMock->reveal();
+    // Mock the RouteMatchInterface.
+    $this->routeMatch = $this->createMock(RouteMatchInterface::class);
+    $this->routeMatch->method('getRouteName')->willReturn('entity.post.canonical');
 
-    // Prophesize the UUID.
-    $uuidMock = $this->prophesize(UuidInterface::class);
-    $uuidMock->generate()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $this->uuid = $uuidMock->reveal();
+    // Mock the UUID.
+    $this->uuid = $this->createMock(UuidInterface::class);
+    $this->uuid->method('generate')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
 
-    // Prophesize the Request.
-    $requestMock = $this->prophesize(Request::class);
-    $requestMock->getUri()->willReturn('http://example.com/post/1');
-    $requestMock->getPathInfo()->willReturn('/post/1');
-    $this->request = $requestMock->reveal();
+    // Mock the Request.
+    $this->request = $this->createMock(Request::class);
+    $this->request->method('getUri')->willReturn('http://example.com/post/1');
+    $this->request->method('getPathInfo')->willReturn('/post/1');
 
-    $requestStackMock = $this->prophesize(RequestStack::class);
-    $requestStackMock->getCurrentRequest()->willReturn($this->request);
-    $this->requestStack = $requestStackMock->reveal();
+    $this->requestStack = $this->createMock(RequestStack::class);
+    $this->requestStack->method('getCurrentRequest')->willReturn($this->request);
 
-    // Prophesize the URL object.
-    $urlMock = $this->prophesize(Url::class);
-    $urlMock->toString()->willReturn('http://example.com');
-    $this->url = $urlMock->reveal();
+    // Mock the URL object.
+    $this->url = $this->createMock(Url::class);
+    $this->url->method('toString')->willReturn('http://example.com');
 
-    // Prophesize the UserInterface.
-    $userMock = $this->prophesize(UserInterface::class);
-    $userMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $userMock->getDisplayName()->willReturn('User name');
-    $userMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $this->userInterface = $userMock->reveal();
+    // Mock the UserInterface.
+    $this->userInterface = $this->createMock(UserInterface::class);
+    $this->userInterface->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $this->userInterface->method('getDisplayName')->willReturn('User name');
+    $this->userInterface->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
 
-    // Prophesize the GroupInterface.
-    $groupMock = $this->prophesize(GroupInterface::class);
-    $groupMock->uuid()->willReturn('group-uuid-1234');
-    $groupMock->label()->willReturn('Test Group');
-    $groupMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $this->groupInterface = $groupMock->reveal();
+    // Mock the GroupInterface.
+    $this->groupInterface = $this->createMock(GroupInterface::class);
+    $this->groupInterface->method('uuid')->willReturn('group-uuid-1234');
+    $this->groupInterface->method('label')->willReturn('Test Group');
+    $this->groupInterface->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
 
-    // Prophesize the Post.
-    $postMock = $this->prophesize(PostInterface::class);
-    $postMock->getCreatedTime()->willReturn(1692614400);
-    $postMock->getChangedTime()->willReturn(1692618000);
-    $postMock->get('uuid')
-      ->willReturn((object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af']);
-    $postMock->get('status')->willReturn((object) ['value' => 1]);
-    $postMock->get('field_visibility')
-      ->willReturn((object) ['value' => '1']);
-    $postMock->hasField('field_visibility')->willReturn(TRUE);
-    $postMock->hasField('field_recipient_group')->willReturn(TRUE);
-    $postMock->hasField('field_recipient_user')->willReturn(TRUE);
-    $postMock->get('field_recipient_group')->willReturn($this->createEmptyField());
-    $postMock->get('field_recipient_user')->willReturn($this->createEmptyField());
-    $postMock->get('user_id')
-      ->willReturn((object) ['entity' => $this->userInterface]);
-    $postMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $postMock->getEntityTypeId()->willReturn('post');
-    $this->post = $postMock->reveal();
+    // Mock the Post.
+    $this->post = $this->createMock(PostInterface::class);
+    $this->post->method('getCreatedTime')->willReturn(1692614400);
+    $this->post->method('getChangedTime')->willReturn(1692618000);
+    $this->post->method('hasField')->willReturnCallback(function ($field_name) {
+      return in_array($field_name, ['field_visibility', 'field_recipient_group', 'field_recipient_user']);
+    });
+    $this->post->method('get')->willReturnCallback(function ($field_name) {
+      if ($field_name === 'uuid') {
+        return (object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af'];
+      }
+      if ($field_name === 'status') {
+        return (object) ['value' => 1];
+      }
+      if ($field_name === 'field_visibility') {
+        return (object) ['value' => '1'];
+      }
+      if ($field_name === 'field_recipient_group') {
+        return $this->createEmptyField();
+      }
+      if ($field_name === 'field_recipient_user') {
+        return $this->createEmptyField();
+      }
+      if ($field_name === 'user_id') {
+        return (object) ['entity' => $this->userInterface];
+      }
+      return NULL;
+    });
+    $this->post->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
+    $this->post->method('getEntityTypeId')->willReturn('post');
 
-    // Prophesize the CloudEvent class.
-    $cloudEventMock = $this->prophesize(CloudEventInterface::class);
-    $this->cloudEvent = $cloudEventMock->reveal();
+    // Mock the CloudEvent class.
+    $this->cloudEvent = $this->createMock(CloudEventInterface::class);
 
     // Initialize the time service.
-    $timeMock = $this->prophesize(TimeInterface::class);
-    $timeMock->getRequestTime()->willReturn(1234567890);
-    $this->time = $timeMock->reveal();
+    $this->time = $this->createMock(TimeInterface::class);
+    $this->time->method('getRequestTime')->willReturn(1234567890);
 
     // Initialize the logger.
     $this->logger = $this->createMock(LoggerChannelInterface::class);
@@ -253,19 +253,19 @@ class EdaHandlerTest extends UnitTestCase {
   /**
    * Creates an empty field item list for testing.
    *
-   * @return \Drupal\Core\Field\EntityReferenceFieldItemListInterface
+   * @return \Drupal\Core\Field\EntityReferenceFieldItemListInterface<\Drupal\Core\Entity\EntityInterface>
    *   The empty field item list.
    */
   protected function createEmptyField(): EntityReferenceFieldItemListInterface {
-    $fieldMock = $this->prophesize(EntityReferenceFieldItemListInterface::class);
-    $fieldMock->isEmpty()->willReturn(TRUE);
-    return $fieldMock->reveal();
+    $fieldMock = $this->createMock(EntityReferenceFieldItemListInterface::class);
+    $fieldMock->method('isEmpty')->willReturn(TRUE);
+    return $fieldMock;
   }
 
   /**
    * Creates a group field item list for testing.
    *
-   * @return \Drupal\Core\Field\EntityReferenceFieldItemListInterface
+   * @return \Drupal\Core\Field\EntityReferenceFieldItemListInterface<\Drupal\Core\Entity\EntityInterface>
    *   The group field item list.
    */
   protected function createGroupField(): EntityReferenceFieldItemListInterface {
@@ -279,7 +279,7 @@ class EdaHandlerTest extends UnitTestCase {
   /**
    * Creates a user field item list for testing.
    *
-   * @return \Drupal\Core\Field\EntityReferenceFieldItemListInterface
+   * @return \Drupal\Core\Field\EntityReferenceFieldItemListInterface<\Drupal\Core\Entity\EntityInterface>
    *   The user field item list.
    */
   protected function createUserField(): EntityReferenceFieldItemListInterface {
@@ -452,24 +452,37 @@ class EdaHandlerTest extends UnitTestCase {
    */
   public function testFromEntityGroupStream(): void {
     // Create a post with group recipient.
-    $postMock = $this->prophesize(PostInterface::class);
-    $postMock->getCreatedTime()->willReturn(1692614400);
-    $postMock->getChangedTime()->willReturn(1692618000);
-    $postMock->get('uuid')
-      ->willReturn((object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af']);
-    $postMock->get('status')->willReturn((object) ['value' => 1]);
-    $postMock->get('field_visibility')
-      ->willReturn((object) ['value' => '1']);
-    $postMock->hasField('field_visibility')->willReturn(TRUE);
-    $postMock->hasField('field_recipient_group')->willReturn(TRUE);
-    $postMock->hasField('field_recipient_user')->willReturn(TRUE);
-    $postMock->get('field_recipient_group')->willReturn($this->createGroupField());
-    $postMock->get('field_recipient_user')->willReturn($this->createEmptyField());
-    $postMock->get('user_id')
-      ->willReturn((object) ['entity' => $this->userInterface]);
-    $postMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $postMock->getEntityTypeId()->willReturn('post');
-    $post = $postMock->reveal();
+    $post = $this->createMock(PostInterface::class);
+    $post->method('getCreatedTime')->willReturn(1692614400);
+    $post->method('getChangedTime')->willReturn(1692618000);
+    $post->method('hasField')->willReturnCallback(function ($field_name) {
+      return in_array($field_name, ['field_visibility', 'field_recipient_group', 'field_recipient_user']);
+    });
+    $post->method('get')->willReturnCallback(function ($field_name) {
+      if ($field_name === 'uuid') {
+        return (object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af'];
+      }
+      if ($field_name === 'status') {
+        return (object) ['value' => 1];
+      }
+      if ($field_name === 'field_visibility') {
+        return (object) ['value' => '1'];
+      }
+      if ($field_name === 'field_recipient_group') {
+        return $this->createGroupField();
+      }
+      if ($field_name === 'field_recipient_user') {
+        return $this->createEmptyField();
+      }
+      if ($field_name === 'user_id') {
+        return (object) ['entity' => $this->userInterface];
+      }
+      return NULL;
+    });
+    $post->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
+    $post->method('getEntityTypeId')->willReturn('post');
 
     // Create the handler instance.
     $handler = $this->getMockedHandler();
@@ -491,24 +504,37 @@ class EdaHandlerTest extends UnitTestCase {
    */
   public function testFromEntityUserStream(): void {
     // Create a post with user recipient.
-    $postMock = $this->prophesize(PostInterface::class);
-    $postMock->getCreatedTime()->willReturn(1692614400);
-    $postMock->getChangedTime()->willReturn(1692618000);
-    $postMock->get('uuid')
-      ->willReturn((object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af']);
-    $postMock->get('status')->willReturn((object) ['value' => 1]);
-    $postMock->get('field_visibility')
-      ->willReturn((object) ['value' => '1']);
-    $postMock->hasField('field_visibility')->willReturn(TRUE);
-    $postMock->hasField('field_recipient_group')->willReturn(TRUE);
-    $postMock->hasField('field_recipient_user')->willReturn(TRUE);
-    $postMock->get('field_recipient_group')->willReturn($this->createEmptyField());
-    $postMock->get('field_recipient_user')->willReturn($this->createUserField());
-    $postMock->get('user_id')
-      ->willReturn((object) ['entity' => $this->userInterface]);
-    $postMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $postMock->getEntityTypeId()->willReturn('post');
-    $post = $postMock->reveal();
+    $post = $this->createMock(PostInterface::class);
+    $post->method('getCreatedTime')->willReturn(1692614400);
+    $post->method('getChangedTime')->willReturn(1692618000);
+    $post->method('hasField')->willReturnCallback(function ($field_name) {
+      return in_array($field_name, ['field_visibility', 'field_recipient_group', 'field_recipient_user']);
+    });
+    $post->method('get')->willReturnCallback(function ($field_name) {
+      if ($field_name === 'uuid') {
+        return (object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af'];
+      }
+      if ($field_name === 'status') {
+        return (object) ['value' => 1];
+      }
+      if ($field_name === 'field_visibility') {
+        return (object) ['value' => '1'];
+      }
+      if ($field_name === 'field_recipient_group') {
+        return $this->createEmptyField();
+      }
+      if ($field_name === 'field_recipient_user') {
+        return $this->createUserField();
+      }
+      if ($field_name === 'user_id') {
+        return (object) ['entity' => $this->userInterface];
+      }
+      return NULL;
+    });
+    $post->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
+    $post->method('getEntityTypeId')->willReturn('post');
 
     // Create the handler instance.
     $handler = $this->getMockedHandler();
@@ -530,9 +556,8 @@ class EdaHandlerTest extends UnitTestCase {
    */
   public function testDispatchSkippedWhenModuleNotEnabled(): void {
     // Mock module handler to return FALSE for social_eda.
-    $moduleHandlerMock = $this->prophesize(ModuleHandlerInterface::class);
-    $moduleHandlerMock->moduleExists('social_eda')->willReturn(FALSE);
-    $moduleHandler = $moduleHandlerMock->reveal();
+    $moduleHandler = $this->createMock(ModuleHandlerInterface::class);
+    $moduleHandler->method('moduleExists')->with('social_eda')->willReturn(FALSE);
 
     // Create the handler instance with disabled module.
     $handler = new EdaHandler(

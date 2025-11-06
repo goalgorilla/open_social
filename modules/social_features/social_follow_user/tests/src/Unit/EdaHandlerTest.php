@@ -26,7 +26,6 @@ use Drupal\social_eda\DispatcherInterface;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
-use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -42,15 +41,10 @@ class EdaHandlerTest extends UnitTestCase {
 
   /**
    * Mocked dispatcher service for sending CloudEvents.
-   */
-  protected DispatcherInterface $dispatcher;
-
-  /**
-   * The prophesized dispatcher for expectations.
    *
-   * @var \Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\social_eda\DispatcherInterface
    */
-  protected $dispatcherProphecy;
+  protected $dispatcher;
 
   /**
    * Handles UUID generation.
@@ -152,51 +146,41 @@ class EdaHandlerTest extends UnitTestCase {
     parent::setUp();
 
     // Mock the language_manager service.
-    $languageManagerMock = $this->prophesize(LanguageManagerInterface::class);
-    $languageMock = $this->prophesize(LanguageInterface::class);
-    $languageMock->getId()->willReturn('en');
-    $languageManagerMock->getCurrentLanguage()
-      ->willReturn($languageMock->reveal());
+    $languageMock = $this->createMock(LanguageInterface::class);
+    $languageMock->method('getId')->willReturn('en');
+    $languageManagerMock = $this->createMock(LanguageManagerInterface::class);
+    $languageManagerMock->method('getCurrentLanguage')->willReturn($languageMock);
 
     // Mock the configuration for `social_eda.settings.namespaces`.
-    $configMock = $this->prophesize(ImmutableConfig::class);
-    $configMock->get('namespace')->willReturn('com.getopensocial');
+    $configMock = $this->createMock(ImmutableConfig::class);
+    $configMock->method('get')->with('namespace')->willReturn('com.getopensocial');
 
-    $configFactoryMock = $this->prophesize(ConfigFactoryInterface::class);
-    $configFactoryMock->get('social_eda.settings')->willReturn($configMock->reveal());
-    $this->configFactory = $configFactoryMock->reveal();
+    $this->configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $this->configFactory->method('get')->with('social_eda.settings')->willReturn($configMock);
 
     $container = new ContainerBuilder();
-    $container->set('config.factory', $configFactoryMock->reveal());
-
-    // Mock Drupal's container.
-    $container = new ContainerBuilder();
-    $container->set('language_manager', $languageManagerMock->reveal());
+    $container->set('config.factory', $this->configFactory);
+    $container->set('language_manager', $languageManagerMock);
     \Drupal::setContainer($container);
 
-    // Prophesize the module handler and ensure `social_eda` is enabled.
-    $moduleHandlerProphecy = $this->prophesize(ModuleHandlerInterface::class);
-    $moduleHandlerProphecy->moduleExists('social_eda')->willReturn(TRUE);
-    $this->moduleHandler = $moduleHandlerProphecy->reveal();
+    // Mock the module handler and ensure `social_eda` is enabled.
+    $this->moduleHandler = $this->createMock(ModuleHandlerInterface::class);
+    $this->moduleHandler->method('moduleExists')->with('social_eda')->willReturn(TRUE);
 
-    // Prophesize the Dispatcher service.
-    $this->dispatcherProphecy = $this->prophesize(DispatcherInterface::class);
-    $this->dispatcher = $this->dispatcherProphecy->reveal();
+    // Mock the Dispatcher service.
+    $this->dispatcher = $this->createMock(DispatcherInterface::class);
 
-    // Prophesize the AccountProxyInterface.
-    $accountMock = $this->prophesize(AccountProxyInterface::class);
-    $accountMock->id()->willReturn(1);
-    $this->account = $accountMock->reveal();
+    // Mock the AccountProxyInterface.
+    $this->account = $this->createMock(AccountProxyInterface::class);
+    $this->account->method('id')->willReturn(1);
 
-    // Prophesize the RouteMatchInterface.
-    $routeMatchMock = $this->prophesize(RouteMatchInterface::class);
-    $routeMatchMock->getRouteName()->willReturn('entity.profile.canonical');
-    $this->routeMatch = $routeMatchMock->reveal();
+    // Mock the RouteMatchInterface.
+    $this->routeMatch = $this->createMock(RouteMatchInterface::class);
+    $this->routeMatch->method('getRouteName')->willReturn('entity.profile.canonical');
 
-    // Prophesize the UUID.
-    $uuidMock = $this->prophesize(UuidInterface::class);
-    $uuidMock->generate()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $this->uuid = $uuidMock->reveal();
+    // Mock the UUID.
+    $this->uuid = $this->createMock(UuidInterface::class);
+    $this->uuid->method('generate')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
 
     // Create a real Symfony Request instance.
     $this->request = Request::create(
@@ -208,78 +192,71 @@ class EdaHandlerTest extends UnitTestCase {
       ['HTTP_REFERER' => 'http://example.com/profile/1']
     );
 
-    $requestStackMock = $this->prophesize(RequestStack::class);
-    $requestStackMock->getCurrentRequest()->willReturn($this->request);
-    $this->requestStack = $requestStackMock->reveal();
+    $this->requestStack = $this->createMock(RequestStack::class);
+    $this->requestStack->method('getCurrentRequest')->willReturn($this->request);
 
-    // Prophesize the URL object.
-    $urlMock = $this->prophesize(Url::class);
-    $urlMock->toString()->willReturn('http://example.com');
-    $this->url = $urlMock->reveal();
+    // Mock the URL object.
+    $this->url = $this->createMock(Url::class);
+    $this->url->method('toString')->willReturn('http://example.com');
 
-    // Prophesize the EntityInterface.
-    $entityMock = $this->prophesize(EntityInterface::class);
-    $entityMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+    // Mock the EntityInterface.
+    $this->entityInterface = $this->createMock(EntityInterface::class);
+    $this->entityInterface->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
       ->willReturn($this->url);
-    $entityMock->uuid()->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
-    $entityMock->label()->willReturn('Test Entity');
-    $this->entityInterface = $entityMock->reveal();
+    $this->entityInterface->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $this->entityInterface->method('label')->willReturn('Test Entity');
 
-    // Prophesize the target user (being followed).
-    $targetUserMock = $this->prophesize(UserInterface::class);
-    $targetUserMock->uuid()->willReturn('target-user-uuid-123');
-    $targetUserMock->getDisplayName()->willReturn('Target User');
-    $targetUserMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $this->targetUser = $targetUserMock->reveal();
+    // Mock the target user (being followed).
+    $this->targetUser = $this->createMock(UserInterface::class);
+    $this->targetUser->method('uuid')->willReturn('target-user-uuid-123');
+    $this->targetUser->method('getDisplayName')->willReturn('Target User');
+    $this->targetUser->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
 
-    // Prophesize the follower user.
-    $followerUserMock = $this->prophesize(UserInterface::class);
-    $followerUserMock->uuid()->willReturn('follower-user-uuid-456');
-    $followerUserMock->getDisplayName()->willReturn('Follower User');
-    $followerUserMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $this->followerUser = $followerUserMock->reveal();
+    // Mock the follower user.
+    $this->followerUser = $this->createMock(UserInterface::class);
+    $this->followerUser->method('uuid')->willReturn('follower-user-uuid-456');
+    $this->followerUser->method('getDisplayName')->willReturn('Follower User');
+    $this->followerUser->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
 
-    // Prophesize the Profile.
-    $profileMock = $this->prophesize(ProfileInterface::class);
-    $profileMock->getOwner()->willReturn($this->targetUser);
-    $profileMock->uuid()->willReturn('profile-uuid-789');
-    $profileMock->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->url);
-    $this->profile = $profileMock->reveal();
+    // Mock the Profile.
+    $this->profile = $this->createMock(ProfileInterface::class);
+    $this->profile->method('getOwner')->willReturn($this->targetUser);
+    $this->profile->method('uuid')->willReturn('profile-uuid-789');
+    $this->profile->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
 
-    // Prophesize the Flagging (follow relationship).
-    $flaggingMock = $this->prophesize(FlaggingInterface::class);
-    $flaggingMock->uuid()->willReturn('flagging-uuid-abc');
-    $flaggingMock->getCreatedTime()->willReturn(1692614400);
-    $flaggingMock->getFlagId()->willReturn('follow_user');
-    $flaggingMock->getOwner()->willReturn($this->followerUser);
-    $flaggingMock->getFlaggable()->willReturn($this->profile);
-    $this->flagging = $flaggingMock->reveal();
+    // Mock the Flagging (follow relationship).
+    $this->flagging = $this->createMock(FlaggingInterface::class);
+    $this->flagging->method('uuid')->willReturn('flagging-uuid-abc');
+    $this->flagging->method('getCreatedTime')->willReturn(1692614400);
+    $this->flagging->method('getFlagId')->willReturn('follow_user');
+    $this->flagging->method('getOwner')->willReturn($this->followerUser);
+    $this->flagging->method('getFlaggable')->willReturn($this->profile);
 
-    // Prophesize the EntityTypeManagerInterface and the corresponding storage.
-    $userStorageMock = $this->prophesize(EntityStorageInterface::class);
-    $userStorageMock->load(1)->willReturn($this->targetUser);
+    // Mock the EntityTypeManagerInterface and the corresponding storage.
+    $userStorageMock = $this->createMock(EntityStorageInterface::class);
+    $userStorageMock->method('load')->with(1)->willReturn($this->targetUser);
 
-    $entityTypeManagerMock = $this->prophesize(EntityTypeManagerInterface::class);
-    $entityTypeManagerMock->getStorage('user')
-      ->willReturn($userStorageMock->reveal());
-    $this->entityTypeManager = $entityTypeManagerMock->reveal();
+    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $this->entityTypeManager->method('getStorage')->with('user')->willReturn($userStorageMock);
 
-    // Prophesize the CloudEvent class.
-    $cloudEventMock = $this->prophesize(CloudEventInterface::class);
-    $this->cloudEvent = $cloudEventMock->reveal();
+    // Mock the CloudEvent class.
+    $this->cloudEvent = $this->createMock(CloudEventInterface::class);
 
     // Initialize the time service.
-    $timeMock = $this->prophesize(TimeInterface::class);
-    $timeMock->getRequestTime()->willReturn(1234567890);
-    $this->time = $timeMock->reveal();
+    $this->time = $this->createMock(TimeInterface::class);
+    $this->time->method('getRequestTime')->willReturn(1234567890);
 
     // Initialize the logger.
-    $loggerMock = $this->prophesize(LoggerChannelInterface::class);
-    $this->logger = $loggerMock->reveal();
-
-    $loggerFactoryMock = $this->prophesize(LoggerChannelFactoryInterface::class);
-    $loggerFactoryMock->get('social_follow_user')->willReturn($this->logger);
-    $this->loggerFactory = $loggerFactoryMock->reveal();
+    $this->logger = $this->createMock(LoggerChannelInterface::class);
+    $this->loggerFactory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $this->loggerFactory->method('get')->with('social_follow_user')->willReturn($this->logger);
   }
 
   /**
@@ -313,12 +290,14 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Expect the dispatch method in the dispatcher to be called with correct
     // topic and event type.
-    $this->dispatcherProphecy->dispatch(
-      'com.getopensocial.cms.follow.v1',
-      Argument::that(function ($event) {
-        return $event->getType() === 'com.getopensocial.follow.user.create';
-      })
-    )->shouldBeCalled();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.follow.v1'),
+        $this->callback(function ($event) {
+          return $event->getType() === 'com.getopensocial.follow.user.create';
+        })
+      );
 
     // Call the followUserCreate method.
     $handler->followUserCreate($this->flagging);
@@ -338,12 +317,14 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Expect the dispatch method in the dispatcher to be called with correct
     // topic and event type.
-    $this->dispatcherProphecy->dispatch(
-      'com.getopensocial.cms.follow.v1',
-      Argument::that(function ($event) {
-        return $event->getType() === 'com.getopensocial.follow.user.delete';
-      })
-    )->shouldBeCalled();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.follow.v1'),
+        $this->callback(function ($event) {
+          return $event->getType() === 'com.getopensocial.follow.user.delete';
+        })
+      );
 
     // Call the followUserDelete method.
     $handler->followUserDelete($this->flagging);
@@ -359,13 +340,13 @@ class EdaHandlerTest extends UnitTestCase {
    */
   public function testNoDispatchWhenModuleDisabled(): void {
     // Create a new handler with module disabled.
-    $moduleHandlerProphecy = $this->prophesize(ModuleHandlerInterface::class);
-    $moduleHandlerProphecy->moduleExists('social_eda')->willReturn(FALSE);
+    $moduleHandlerMock = $this->createMock(ModuleHandlerInterface::class);
+    $moduleHandlerMock->method('moduleExists')->with('social_eda')->willReturn(FALSE);
 
     $handler = new EdaHandler(
       $this->uuid,
       $this->requestStack,
-      $moduleHandlerProphecy->reveal(),
+      $moduleHandlerMock,
       $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
@@ -376,10 +357,8 @@ class EdaHandlerTest extends UnitTestCase {
     );
 
     // Expect dispatcher NOT to be called.
-    $this->dispatcherProphecy->dispatch(
-      'com.getopensocial.cms.follow.v1',
-      Argument::any()
-    )->shouldNotBeCalled();
+    $this->dispatcher->expects($this->never())
+      ->method('dispatch');
 
     // Call the method.
     $handler->followUserCreate($this->flagging);

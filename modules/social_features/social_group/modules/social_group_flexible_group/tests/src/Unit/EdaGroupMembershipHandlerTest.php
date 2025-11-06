@@ -27,8 +27,6 @@ use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\social_eda\DispatcherInterface;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -49,79 +47,79 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
   /**
    * The UUID service.
    *
-   * @var \Drupal\Component\Uuid\UuidInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Component\Uuid\UuidInterface
    */
-  protected ObjectProphecy $uuid;
+  protected $uuid;
 
   /**
    * The request stack.
    *
-   * @var \Symfony\Component\HttpFoundation\RequestStack|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Symfony\Component\HttpFoundation\RequestStack
    */
-  protected ObjectProphecy $requestStack;
+  protected $requestStack;
 
   /**
    * The module handler.
    *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected ObjectProphecy $moduleHandler;
+  protected $moduleHandler;
 
   /**
    * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected ObjectProphecy $entityTypeManager;
+  protected $entityTypeManager;
 
   /**
    * The current user account.
    *
-   * @var \Drupal\Core\Session\AccountProxyInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Session\AccountProxyInterface
    */
-  protected ObjectProphecy $account;
+  protected $account;
 
   /**
    * The route match.
    *
-   * @var \Drupal\Core\Routing\RouteMatchInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Routing\RouteMatchInterface
    */
-  protected ObjectProphecy $routeMatch;
+  protected $routeMatch;
 
   /**
    * The config factory.
    *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected ObjectProphecy $configFactory;
+  protected $configFactory;
 
   /**
    * The time service.
    *
-   * @var \Drupal\Component\Datetime\TimeInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Component\Datetime\TimeInterface
    */
-  protected ObjectProphecy $time;
+  protected $time;
 
   /**
    * The EDA dispatcher.
    *
-   * @var \Drupal\social_eda\DispatcherInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\social_eda\DispatcherInterface
    */
-  protected ObjectProphecy $dispatcher;
+  protected $dispatcher;
 
   /**
    * The logger factory.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
-  protected ObjectProphecy $loggerFactory;
+  protected $loggerFactory;
 
   /**
    * The logger channel.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Logger\LoggerChannelInterface
    */
-  protected ObjectProphecy $logger;
+  protected $logger;
 
   /**
    * {@inheritdoc}
@@ -130,66 +128,65 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     parent::setUp();
 
     // Mock the language_manager service.
-    $languageManagerMock = $this->prophesize(LanguageManagerInterface::class);
-    $languageMock = $this->prophesize(LanguageInterface::class);
-    $languageMock->getId()->willReturn('en');
-    $languageManagerMock->getCurrentLanguage()
-      ->willReturn($languageMock->reveal());
+    $languageMock = $this->createMock(LanguageInterface::class);
+    $languageMock->method('getId')->willReturn('en');
+    $languageManagerMock = $this->createMock(LanguageManagerInterface::class);
+    $languageManagerMock->method('getCurrentLanguage')->willReturn($languageMock);
 
     // Mock Drupal's container.
     $container = new ContainerBuilder();
-    $container->set('language_manager', $languageManagerMock->reveal());
+    $container->set('language_manager', $languageManagerMock);
     \Drupal::setContainer($container);
 
-    $this->uuid = $this->prophesize(UuidInterface::class);
-    $this->requestStack = $this->prophesize(RequestStack::class);
-    $this->moduleHandler = $this->prophesize(ModuleHandlerInterface::class);
-    $this->entityTypeManager = $this->prophesize(EntityTypeManagerInterface::class);
-    $userStorage = $this->prophesize(EntityStorageInterface::class);
-    $this->entityTypeManager->getStorage('user')->willReturn($userStorage->reveal());
-    $this->account = $this->prophesize(AccountProxyInterface::class);
-    $this->routeMatch = $this->prophesize(RouteMatchInterface::class);
-    $this->configFactory = $this->prophesize(ConfigFactoryInterface::class);
-    $this->time = $this->prophesize(TimeInterface::class);
-    $this->dispatcher = $this->prophesize(DispatcherInterface::class);
-    $this->loggerFactory = $this->prophesize(LoggerChannelFactoryInterface::class);
-    $this->logger = $this->prophesize(LoggerChannelInterface::class);
+    $this->uuid = $this->createMock(UuidInterface::class);
+    $this->requestStack = $this->createMock(RequestStack::class);
+    $this->moduleHandler = $this->createMock(ModuleHandlerInterface::class);
+    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $this->entityTypeManager->method('getStorage')->with('user')->willReturn($userStorage);
+    $this->account = $this->createMock(AccountProxyInterface::class);
+    $this->routeMatch = $this->createMock(RouteMatchInterface::class);
+    $this->configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $this->time = $this->createMock(TimeInterface::class);
+    $this->dispatcher = $this->createMock(DispatcherInterface::class);
+    $this->loggerFactory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $this->logger = $this->createMock(LoggerChannelInterface::class);
 
     // Set up basic mocks.
-    $this->uuid->generate()->willReturn('test-uuid-123');
-    $this->time->getRequestTime()->willReturn(1234567890);
-    $this->account->id()->willReturn(1);
+    $this->uuid->method('generate')->willReturn('test-uuid-123');
+    $this->time->method('getRequestTime')->willReturn(1234567890);
+    $this->account->method('id')->willReturn(1);
 
     // Set up request stack.
-    $request = $this->prophesize(Request::class);
-    $request->getPathInfo()->willReturn('/group/1/join');
-    $this->requestStack->getCurrentRequest()->willReturn($request->reveal());
+    $request = $this->createMock(Request::class);
+    $request->method('getPathInfo')->willReturn('/group/1/join');
+    $this->requestStack->method('getCurrentRequest')->willReturn($request);
 
     // Set up route match.
-    $this->routeMatch->getRouteName()->willReturn('entity.group.join');
+    $this->routeMatch->method('getRouteName')->willReturn('entity.group.join');
 
     // Set up config factory.
-    $config = $this->prophesize(ImmutableConfig::class);
-    $config->get('namespace')->willReturn('com.getopensocial');
-    $this->configFactory->get('social_eda.settings')->willReturn($config->reveal());
+    $config = $this->createMock(ImmutableConfig::class);
+    $config->method('get')->with('namespace')->willReturn('com.getopensocial');
+    $this->configFactory->method('get')->with('social_eda.settings')->willReturn($config);
 
     // Set up module handler.
-    $this->moduleHandler->moduleExists('social_eda')->willReturn(TRUE);
+    $this->moduleHandler->method('moduleExists')->with('social_eda')->willReturn(TRUE);
 
     // Set up logger factory.
-    $this->loggerFactory->get('social_group_flexible_group')->willReturn($this->logger->reveal());
+    $this->loggerFactory->method('get')->with('social_group_flexible_group')->willReturn($this->logger);
 
     $this->edaHandler = new EdaGroupMembershipHandler(
-      $this->uuid->reveal(),
-      $this->requestStack->reveal(),
-      $this->moduleHandler->reveal(),
-      $this->entityTypeManager->reveal(),
-      $this->account->reveal(),
-      $this->routeMatch->reveal(),
-      $this->configFactory->reveal(),
-      $this->time->reveal(),
-      $this->loggerFactory->reveal(),
-      $this->dispatcher->reveal()
+      $this->uuid,
+      $this->requestStack,
+      $this->moduleHandler,
+      $this->entityTypeManager,
+      $this->account,
+      $this->routeMatch,
+      $this->configFactory,
+      $this->time,
+      $this->loggerFactory,
+      $this->dispatcher
     );
   }
 
@@ -201,28 +198,36 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $membership->getGroup()->willReturn($group->reveal());
-    $membership->getEntity()->willReturn($user->reveal());
-    $membership->uuid()->willReturn('membership-uuid');
-    $membership->getCreatedTime()->willReturn(1234567890);
-    $membership->getChangedTime()->willReturn(1234567890);
-    $membership->hasField('group_roles')->willReturn(TRUE);
-    $membership->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $membership->id()->willReturn(123);
+    $membership->method('getGroup')->willReturn($group);
+    $membership->method('getEntity')->willReturn($user);
+    $membership->method('uuid')->willReturn('membership-uuid');
+    $membership->method('getCreatedTime')->willReturn(1234567890);
+    $membership->method('getChangedTime')->willReturn(1234567890);
+    $membership->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $membership->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $membership->method('id')->willReturn(123);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->shouldBeCalledOnce();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      );
 
-    $this->edaHandler->groupMembershipCreate($membership->reveal());
+    $this->edaHandler->groupMembershipCreate($membership);
   }
 
   /**
@@ -233,28 +238,36 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $membership->getGroup()->willReturn($group->reveal());
-    $membership->getEntity()->willReturn($user->reveal());
-    $membership->uuid()->willReturn('membership-uuid');
-    $membership->getCreatedTime()->willReturn(1234567890);
-    $membership->getChangedTime()->willReturn(1234567890);
-    $membership->hasField('group_roles')->willReturn(TRUE);
-    $membership->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $membership->id()->willReturn(123);
+    $membership->method('getGroup')->willReturn($group);
+    $membership->method('getEntity')->willReturn($user);
+    $membership->method('uuid')->willReturn('membership-uuid');
+    $membership->method('getCreatedTime')->willReturn(1234567890);
+    $membership->method('getChangedTime')->willReturn(1234567890);
+    $membership->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $membership->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $membership->method('id')->willReturn(123);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->shouldBeCalledOnce();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      );
 
-    $this->edaHandler->groupMembershipDelete($membership->reveal());
+    $this->edaHandler->groupMembershipDelete($membership);
   }
 
   /**
@@ -265,29 +278,37 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $request->getGroup()->willReturn($group->reveal());
-    $request->getEntity()->willReturn($user->reveal());
-    $request->uuid()->willReturn('request-uuid');
-    $request->getCreatedTime()->willReturn(1234567890);
-    $request->getChangedTime()->willReturn(1234567890);
-    $request->label()->willReturn('Request to join group');
-    $request->hasField('group_roles')->willReturn(TRUE);
-    $request->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $request->id()->willReturn(456);
+    $request->method('getGroup')->willReturn($group);
+    $request->method('getEntity')->willReturn($user);
+    $request->method('uuid')->willReturn('request-uuid');
+    $request->method('getCreatedTime')->willReturn(1234567890);
+    $request->method('getChangedTime')->willReturn(1234567890);
+    $request->method('label')->willReturn('Request to join group');
+    $request->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $request->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $request->method('id')->willReturn(456);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->shouldBeCalledOnce();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      );
 
-    $this->edaHandler->groupMembershipRequestCreate($request->reveal());
+    $this->edaHandler->groupMembershipRequestCreate($request);
   }
 
   /**
@@ -298,29 +319,37 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $request->getGroup()->willReturn($group->reveal());
-    $request->getEntity()->willReturn($user->reveal());
-    $request->uuid()->willReturn('request-uuid');
-    $request->getCreatedTime()->willReturn(1234567890);
-    $request->getChangedTime()->willReturn(1234567890);
-    $request->label()->willReturn('Request to join group');
-    $request->hasField('group_roles')->willReturn(TRUE);
-    $request->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $request->id()->willReturn(456);
+    $request->method('getGroup')->willReturn($group);
+    $request->method('getEntity')->willReturn($user);
+    $request->method('uuid')->willReturn('request-uuid');
+    $request->method('getCreatedTime')->willReturn(1234567890);
+    $request->method('getChangedTime')->willReturn(1234567890);
+    $request->method('label')->willReturn('Request to join group');
+    $request->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $request->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $request->method('id')->willReturn(456);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->shouldBeCalledOnce();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      );
 
-    $this->edaHandler->groupMembershipRequestDelete($request->reveal());
+    $this->edaHandler->groupMembershipRequestDelete($request);
   }
 
   /**
@@ -331,29 +360,37 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $request->getGroup()->willReturn($group->reveal());
-    $request->getEntity()->willReturn($user->reveal());
-    $request->uuid()->willReturn('request-uuid');
-    $request->getCreatedTime()->willReturn(1234567890);
-    $request->getChangedTime()->willReturn(1234567890);
-    $request->label()->willReturn('Request to join group');
-    $request->hasField('group_roles')->willReturn(TRUE);
-    $request->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $request->id()->willReturn(456);
+    $request->method('getGroup')->willReturn($group);
+    $request->method('getEntity')->willReturn($user);
+    $request->method('uuid')->willReturn('request-uuid');
+    $request->method('getCreatedTime')->willReturn(1234567890);
+    $request->method('getChangedTime')->willReturn(1234567890);
+    $request->method('label')->willReturn('Request to join group');
+    $request->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $request->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $request->method('id')->willReturn(456);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->shouldBeCalledOnce();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      );
 
-    $this->edaHandler->groupMembershipRequestAccept($request->reveal());
+    $this->edaHandler->groupMembershipRequestAccept($request);
   }
 
   /**
@@ -364,29 +401,37 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $request->getGroup()->willReturn($group->reveal());
-    $request->getEntity()->willReturn($user->reveal());
-    $request->uuid()->willReturn('request-uuid');
-    $request->getCreatedTime()->willReturn(1234567890);
-    $request->getChangedTime()->willReturn(1234567890);
-    $request->label()->willReturn('Request to join group');
-    $request->hasField('group_roles')->willReturn(TRUE);
-    $request->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $request->id()->willReturn(456);
+    $request->method('getGroup')->willReturn($group);
+    $request->method('getEntity')->willReturn($user);
+    $request->method('uuid')->willReturn('request-uuid');
+    $request->method('getCreatedTime')->willReturn(1234567890);
+    $request->method('getChangedTime')->willReturn(1234567890);
+    $request->method('label')->willReturn('Request to join group');
+    $request->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $request->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $request->method('id')->willReturn(456);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->shouldBeCalledOnce();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      );
 
-    $this->edaHandler->groupMembershipRequestDecline($request->reveal());
+    $this->edaHandler->groupMembershipRequestDecline($request);
   }
 
   /**
@@ -397,29 +442,37 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $invitation->getGroup()->willReturn($group->reveal());
-    $invitation->getEntity()->willReturn($user->reveal());
-    $invitation->uuid()->willReturn('invitation-uuid');
-    $invitation->getCreatedTime()->willReturn(1234567890);
-    $invitation->getChangedTime()->willReturn(1234567890);
-    $invitation->label()->willReturn('Invitation to join group');
-    $invitation->hasField('group_roles')->willReturn(TRUE);
-    $invitation->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $invitation->id()->willReturn(789);
+    $invitation->method('getGroup')->willReturn($group);
+    $invitation->method('getEntity')->willReturn($user);
+    $invitation->method('uuid')->willReturn('invitation-uuid');
+    $invitation->method('getCreatedTime')->willReturn(1234567890);
+    $invitation->method('getChangedTime')->willReturn(1234567890);
+    $invitation->method('label')->willReturn('Invitation to join group');
+    $invitation->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $invitation->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $invitation->method('id')->willReturn(789);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->shouldBeCalledOnce();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      );
 
-    $this->edaHandler->groupMembershipInviteCreate($invitation->reveal());
+    $this->edaHandler->groupMembershipInviteCreate($invitation);
   }
 
   /**
@@ -430,29 +483,37 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $invitation->getGroup()->willReturn($group->reveal());
-    $invitation->getEntity()->willReturn($user->reveal());
-    $invitation->uuid()->willReturn('invitation-uuid');
-    $invitation->getCreatedTime()->willReturn(1234567890);
-    $invitation->getChangedTime()->willReturn(1234567890);
-    $invitation->label()->willReturn('Invitation to join group');
-    $invitation->hasField('group_roles')->willReturn(TRUE);
-    $invitation->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $invitation->id()->willReturn(789);
+    $invitation->method('getGroup')->willReturn($group);
+    $invitation->method('getEntity')->willReturn($user);
+    $invitation->method('uuid')->willReturn('invitation-uuid');
+    $invitation->method('getCreatedTime')->willReturn(1234567890);
+    $invitation->method('getChangedTime')->willReturn(1234567890);
+    $invitation->method('label')->willReturn('Invitation to join group');
+    $invitation->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $invitation->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $invitation->method('id')->willReturn(789);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->shouldBeCalledOnce();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      );
 
-    $this->edaHandler->groupMembershipInviteDelete($invitation->reveal());
+    $this->edaHandler->groupMembershipInviteDelete($invitation);
   }
 
   /**
@@ -463,29 +524,37 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $invitation->getGroup()->willReturn($group->reveal());
-    $invitation->getEntity()->willReturn($user->reveal());
-    $invitation->uuid()->willReturn('invitation-uuid');
-    $invitation->getCreatedTime()->willReturn(1234567890);
-    $invitation->getChangedTime()->willReturn(1234567890);
-    $invitation->label()->willReturn('Invitation to join group');
-    $invitation->hasField('group_roles')->willReturn(TRUE);
-    $invitation->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $invitation->id()->willReturn(789);
+    $invitation->method('getGroup')->willReturn($group);
+    $invitation->method('getEntity')->willReturn($user);
+    $invitation->method('uuid')->willReturn('invitation-uuid');
+    $invitation->method('getCreatedTime')->willReturn(1234567890);
+    $invitation->method('getChangedTime')->willReturn(1234567890);
+    $invitation->method('label')->willReturn('Invitation to join group');
+    $invitation->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $invitation->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $invitation->method('id')->willReturn(789);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->shouldBeCalledOnce();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      );
 
-    $this->edaHandler->groupMembershipInviteAccept($invitation->reveal());
+    $this->edaHandler->groupMembershipInviteAccept($invitation);
   }
 
   /**
@@ -496,79 +565,88 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $invitation->getGroup()->willReturn($group->reveal());
-    $invitation->getEntity()->willReturn($user->reveal());
-    $invitation->uuid()->willReturn('invitation-uuid');
-    $invitation->getCreatedTime()->willReturn(1234567890);
-    $invitation->getChangedTime()->willReturn(1234567890);
-    $invitation->label()->willReturn('Invitation to join group');
-    $invitation->hasField('group_roles')->willReturn(TRUE);
-    $invitation->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $invitation->id()->willReturn(789);
+    $invitation->method('getGroup')->willReturn($group);
+    $invitation->method('getEntity')->willReturn($user);
+    $invitation->method('uuid')->willReturn('invitation-uuid');
+    $invitation->method('getCreatedTime')->willReturn(1234567890);
+    $invitation->method('getChangedTime')->willReturn(1234567890);
+    $invitation->method('label')->willReturn('Invitation to join group');
+    $invitation->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $invitation->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $invitation->method('id')->willReturn(789);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->shouldBeCalledOnce();
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      );
 
-    $this->edaHandler->groupMembershipInviteDecline($invitation->reveal());
+    $this->edaHandler->groupMembershipInviteDecline($invitation);
   }
 
   /**
    * Tests that no dispatch occurs when module is not enabled.
    */
   public function testNoDispatchWhenModuleNotEnabled(): void {
-    $this->moduleHandler->moduleExists('social_eda')->willReturn(FALSE);
+    $this->moduleHandler->method('moduleExists')->with('social_eda')->willReturn(FALSE);
 
     $edaHandler = new EdaGroupMembershipHandler(
-      $this->uuid->reveal(),
-      $this->requestStack->reveal(),
-      $this->moduleHandler->reveal(),
-      $this->entityTypeManager->reveal(),
-      $this->account->reveal(),
-      $this->routeMatch->reveal(),
-      $this->configFactory->reveal(),
-      $this->time->reveal(),
-      $this->loggerFactory->reveal(),
-      $this->dispatcher->reveal()
+      $this->uuid,
+      $this->requestStack,
+      $this->moduleHandler,
+      $this->entityTypeManager,
+      $this->account,
+      $this->routeMatch,
+      $this->configFactory,
+      $this->time,
+      $this->loggerFactory,
+      $this->dispatcher
     );
 
     $membership = $this->createMembershipMock();
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $membership->getGroup()->willReturn($group->reveal());
-    $membership->getEntity()->willReturn($user->reveal());
+    $membership->method('getGroup')->willReturn($group);
+    $membership->method('getEntity')->willReturn($user);
 
-    $this->dispatcher->dispatch(Argument::any(), Argument::any())
-      ->shouldNotBeCalled();
+    $this->dispatcher->expects($this->never())
+      ->method('dispatch')
+      ->with($this->isType('string'), $this->anything());
 
-    $edaHandler->groupMembershipCreate($membership->reveal());
+    $edaHandler->groupMembershipCreate($membership);
   }
 
   /**
    * Tests that no dispatch occurs when dispatcher is not available.
    */
   public function testNoDispatchWhenDispatcherNotAvailable(): void {
-    $this->moduleHandler->moduleExists('social_eda')->willReturn(TRUE);
+    $this->moduleHandler->method('moduleExists')->with('social_eda')->willReturn(TRUE);
 
     $edaHandler = new EdaGroupMembershipHandler(
-      $this->uuid->reveal(),
-      $this->requestStack->reveal(),
-      $this->moduleHandler->reveal(),
-      $this->entityTypeManager->reveal(),
-      $this->account->reveal(),
-      $this->routeMatch->reveal(),
-      $this->configFactory->reveal(),
-      $this->time->reveal(),
-      $this->loggerFactory->reveal(),
+      $this->uuid,
+      $this->requestStack,
+      $this->moduleHandler,
+      $this->entityTypeManager,
+      $this->account,
+      $this->routeMatch,
+      $this->configFactory,
+      $this->time,
+      $this->loggerFactory,
       NULL
     );
 
@@ -576,11 +654,11 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $membership->getGroup()->willReturn($group->reveal());
-    $membership->getEntity()->willReturn($user->reveal());
+    $membership->method('getGroup')->willReturn($group);
+    $membership->method('getEntity')->willReturn($user);
 
     // Should not throw an error when dispatcher is NULL.
-    $edaHandler->groupMembershipCreate($membership->reveal());
+    $edaHandler->groupMembershipCreate($membership);
   }
 
   /**
@@ -591,86 +669,120 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $group = $this->createGroupMock();
     $user = $this->createUserMock();
 
-    $membership->getGroup()->willReturn($group->reveal());
-    $membership->getEntity()->willReturn($user->reveal());
-    $membership->uuid()->willReturn('membership-uuid');
-    $membership->getCreatedTime()->willReturn(1234567890);
-    $membership->getChangedTime()->willReturn(1234567890);
-    $membership->hasField('group_roles')->willReturn(TRUE);
-    $membership->get('group_roles')->willReturn($this->createFieldItemListMock([]));
-    $membership->id()->willReturn(123);
+    $membership->method('getGroup')->willReturn($group);
+    $membership->method('getEntity')->willReturn($user);
+    $membership->method('uuid')->willReturn('membership-uuid');
+    $membership->method('getCreatedTime')->willReturn(1234567890);
+    $membership->method('getChangedTime')->willReturn(1234567890);
+    $membership->method('hasField')->with('group_roles')->willReturn(TRUE);
+    $membership->method('get')->with('group_roles')->willReturn($this->createFieldItemListMock([]));
+    $membership->method('id')->willReturn(123);
 
-    $group->uuid()->willReturn('group-uuid');
-    $group->label()->willReturn('Test Group');
-    $group->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/group/1'));
+    $group->method('uuid')->willReturn('group-uuid');
+    $group->method('label')->willReturn('Test Group');
+    $group->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/group/1'));
 
-    $user->uuid()->willReturn('user-uuid');
-    $user->getDisplayName()->willReturn('Test User');
-    $user->toUrl('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])->willReturn($this->createUrlMock('https://example.com/user/1'));
-    $user->isAnonymous()->willReturn(FALSE);
+    $user->method('uuid')->willReturn('user-uuid');
+    $user->method('getDisplayName')->willReturn('Test User');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->createUrlMock('https://example.com/user/1'));
+    $user->method('isAnonymous')->willReturn(FALSE);
 
     // Make the dispatcher throw an exception.
-    $this->dispatcher->dispatch('com.getopensocial.cms.group_membership.v1', Argument::any())
-      ->willThrow(new \Exception('Test dispatch error'));
+    $this->dispatcher->expects($this->once())
+      ->method('dispatch')
+      ->with(
+        $this->equalTo('com.getopensocial.cms.group_membership.v1'),
+        $this->anything()
+      )
+      ->willThrowException(new \Exception('Test dispatch error'));
 
     // Expect error logging with the actual error that occurs.
-    $this->logger->error('Failed to dispatch EDA event for group membership. Topic: @topic, Event type: @event_type, Group Membership ID: @membership_id, Error: @error', Argument::type('array'))
-      ->shouldBeCalledOnce();
+    $this->logger->expects($this->once())
+      ->method('error')
+      ->with(
+        $this->equalTo('Failed to dispatch EDA event for group membership. Topic: @topic, Event type: @event_type, Group Membership ID: @membership_id, Error: @error'),
+        $this->isType('array')
+      );
 
     // This should not throw an exception due to the try-catch block.
-    $this->edaHandler->groupMembershipCreate($membership->reveal());
+    $this->edaHandler->groupMembershipCreate($membership);
   }
 
   /**
    * Creates a mock GroupMembershipInterface.
+   *
+   * @return \PHPUnit\Framework\MockObject\MockObject&\Drupal\group\Entity\GroupMembershipInterface
+   *   A mocked GroupMembershipInterface instance.
    */
-  protected function createMembershipMock(): ObjectProphecy {
-    return $this->prophesize(GroupMembershipInterface::class);
+  protected function createMembershipMock() {
+    return $this->createMock(GroupMembershipInterface::class);
   }
 
   /**
    * Creates a mock GroupRelationshipInterface for requests.
+   *
+   * @return \PHPUnit\Framework\MockObject\MockObject&\Drupal\group\Entity\GroupRelationshipInterface
+   *   A mocked GroupRelationshipInterface instance for requests.
    */
-  protected function createRequestMock(): ObjectProphecy {
-    return $this->prophesize(GroupRelationshipInterface::class);
+  protected function createRequestMock() {
+    return $this->createMock(GroupRelationshipInterface::class);
   }
 
   /**
    * Creates a mock GroupRelationshipInterface for invitations.
+   *
+   * @return \PHPUnit\Framework\MockObject\MockObject&\Drupal\group\Entity\GroupRelationshipInterface
+   *   A mocked GroupRelationshipInterface instance for invitations.
    */
-  protected function createInvitationMock(): ObjectProphecy {
-    return $this->prophesize(GroupRelationshipInterface::class);
+  protected function createInvitationMock() {
+    return $this->createMock(GroupRelationshipInterface::class);
   }
 
   /**
    * Creates a mock GroupInterface.
+   *
+   * @return \PHPUnit\Framework\MockObject\MockObject&\Drupal\group\Entity\GroupInterface
+   *   A mocked GroupInterface instance.
    */
-  protected function createGroupMock(): ObjectProphecy {
-    return $this->prophesize(GroupInterface::class);
+  protected function createGroupMock() {
+    return $this->createMock(GroupInterface::class);
   }
 
   /**
    * Creates a mock UserInterface.
+   *
+   * @return \PHPUnit\Framework\MockObject\MockObject&\Drupal\user\UserInterface
+   *   A mocked UserInterface instance.
    */
-  protected function createUserMock(): ObjectProphecy {
-    return $this->prophesize(UserInterface::class);
+  protected function createUserMock() {
+    return $this->createMock(UserInterface::class);
   }
 
   /**
    * Creates a mock field item list.
+   *
+   * @return \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   A mocked FieldItemListInterface instance.
    */
-  protected function createFieldItemListMock(array $values): ObjectProphecy {
-    $fieldItemList = $this->prophesize(FieldItemListInterface::class);
-    $fieldItemList->getValue()->willReturn($values);
+  protected function createFieldItemListMock(array $values) {
+    $fieldItemList = $this->createMock(FieldItemListInterface::class);
+    $fieldItemList->method('getValue')->willReturn($values);
     return $fieldItemList;
   }
 
   /**
    * Creates a mock URL object.
+   *
+   * @return \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Url
+   *   A mocked Url instance.
    */
-  protected function createUrlMock(string $url): ObjectProphecy {
-    $urlObject = $this->prophesize(Url::class);
-    $urlObject->toString()->willReturn($url);
+  protected function createUrlMock(string $url) {
+    $urlObject = $this->createMock(Url::class);
+    $urlObject->method('toString')->willReturn($url);
     return $urlObject;
   }
 
