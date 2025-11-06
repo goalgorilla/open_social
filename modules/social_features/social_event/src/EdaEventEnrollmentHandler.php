@@ -8,6 +8,7 @@ use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_eda\Types\Address;
@@ -82,6 +83,7 @@ final class EdaEventEnrollmentHandler {
     private readonly RouteMatchInterface $routeMatch,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TimeInterface $time,
+    private readonly LoggerChannelFactoryInterface $loggerFactory,
     private readonly ?DispatcherInterface $dispatcher = NULL,
   ) {
     // Load the full user entity if the account is authenticated.
@@ -413,11 +415,22 @@ final class EdaEventEnrollmentHandler {
       return;
     }
 
-    // Build the event.
-    $event = $this->fromEntity($event_enrollment, $event_type);
+    try {
+      // Build the event.
+      $event = $this->fromEntity($event_enrollment, $event_type);
 
-    // Dispatch to message broker.
-    $this->dispatcher->dispatch($topic_name, $event);
+      // Dispatch to message broker.
+      $this->dispatcher->dispatch($topic_name, $event);
+    }
+    catch (\Throwable $e) {
+      // Log error but don't break the event enrollment operation flow.
+      $this->loggerFactory->get('social_event')->error('Failed to dispatch EDA event for event enrollment action. Topic: @topic, Event type: @event_type, Event Enrollment ID: @enrollment_id, Error: @error', [
+        '@topic' => $topic_name,
+        '@event_type' => $event_type,
+        '@enrollment_id' => $event_enrollment->id(),
+        '@error' => $e->getMessage(),
+      ]);
+    }
   }
 
 }

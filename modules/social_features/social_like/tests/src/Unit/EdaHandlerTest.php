@@ -275,12 +275,9 @@ class EdaHandlerTest extends UnitTestCase {
     $this->time = $timeMock->reveal();
 
     // Initialize the logger.
-    $loggerMock = $this->prophesize(LoggerChannelInterface::class);
-    $this->logger = $loggerMock->reveal();
-
-    $loggerFactoryMock = $this->prophesize(LoggerChannelFactoryInterface::class);
-    $loggerFactoryMock->get('social_like')->willReturn($this->logger);
-    $this->loggerFactory = $loggerFactoryMock->reveal();
+    $this->logger = $this->createMock(LoggerChannelInterface::class);
+    $this->loggerFactory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $this->loggerFactory->method('get')->with('social_like')->willReturn($this->logger);
   }
 
   /**

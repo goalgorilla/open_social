@@ -8,6 +8,7 @@ use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_eda\DispatcherInterface;
@@ -81,6 +82,7 @@ final class EdaHandler {
     private readonly RouteMatchInterface $routeMatch,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TimeInterface $time,
+    private readonly LoggerChannelFactoryInterface $loggerFactory,
     private readonly ?DispatcherInterface $dispatcher = NULL,
   ) {
     // Load the full user entity if the account is authenticated.
@@ -255,11 +257,22 @@ final class EdaHandler {
       return;
     }
 
-    // Build the event.
-    $event = $this->fromEntity($post, $event_type, $op);
+    try {
+      // Build the event.
+      $event = $this->fromEntity($post, $event_type, $op);
 
-    // Dispatch to message broker.
-    $this->dispatcher->dispatch($topic_name, $event);
+      // Dispatch to message broker.
+      $this->dispatcher->dispatch($topic_name, $event);
+    }
+    catch (\Throwable $e) {
+      // Log error but don't break the post operation flow.
+      $this->loggerFactory->get('social_post')->error('Failed to dispatch EDA event for post action. Topic: @topic, Event type: @event_type, Post ID: @post_id, Error: @error', [
+        '@topic' => $topic_name,
+        '@event_type' => $event_type,
+        '@post_id' => $post->id(),
+        '@error' => $e->getMessage(),
+      ]);
+    }
   }
 
 }

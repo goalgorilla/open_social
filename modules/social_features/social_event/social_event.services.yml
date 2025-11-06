@@ -30,6 +30,7 @@ services:
       - '@current_route_match'
       - '@config.factory'
       - '@datetime.time'
+      - '@logger.factory'
       - '@?social_eda.dispatcher'
     tags:
       - { name: social.eda.handler }
@@ -44,6 +45,7 @@ services:
       - '@current_route_match'
       - '@config.factory'
       - '@datetime.time'
+      - '@logger.factory'
       - '@?social_eda.dispatcher'
     tags:
       - { name: social.eda.handler }

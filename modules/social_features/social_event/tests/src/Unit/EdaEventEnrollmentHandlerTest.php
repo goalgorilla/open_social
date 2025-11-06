@@ -17,6 +17,8 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
@@ -141,6 +143,20 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
   protected TimeInterface $time;
 
   /**
+   * The logger channel factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected LoggerChannelFactoryInterface $loggerFactory;
+
+  /**
+   * The logger channel.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
+  protected LoggerChannelInterface $logger;
+
+  /**
    * {@inheritDoc}
    */
   protected function setUp(): void {
@@ -195,6 +211,11 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $timeMock = $this->prophesize(TimeInterface::class);
     $timeMock->getRequestTime()->willReturn(1234567890);
     $this->time = $timeMock->reveal();
+
+    // Initialize the logger.
+    $this->logger = $this->createMock(LoggerChannelInterface::class);
+    $this->loggerFactory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $this->loggerFactory->method('get')->with('social_event')->willReturn($this->logger);
 
     // Prophesize the Request.
     $requestMock = $this->prophesize(Request::class);
@@ -597,6 +618,7 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
       $this->routeMatch,
       $this->configFactory,
       $this->time,
+      $this->loggerFactory,
       $this->dispatcher
     );
   }
