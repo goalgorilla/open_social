@@ -86,10 +86,20 @@ final class SocialUserExportHooks {
     // Check permission and entity status.
     // UserSegment uses a boolean 'status' field where TRUE means enabled.
     $isEnabled = (bool) $entity->get('status')->value;
-    $access = AccessResult::allowedIfHasPermission($account, 'administer user_segment')
-      ->andIf(AccessResult::allowedIf($isEnabled)->addCacheableDependency($entity));
+    $hasPermission = $account->hasPermission('administer user_segment');
 
-    return $access;
+    // Explicitly forbid access if a user doesn't have permission or a segment
+    // is disabled. We must use forbidden() instead of neutral() because the
+    // default checkAccess() grants access to users with admin_permission, and
+    // orIf() would combine neutral + allowed = allowed, which is incorrect.
+    if (!$hasPermission || !$isEnabled) {
+      return AccessResult::forbidden('Export access denied: user lacks permission or segment is disabled.')
+        ->addCacheableDependency($entity);
+    }
+
+    // User has permission and segment is enabled.
+    return AccessResult::allowed()
+      ->addCacheableDependency($entity);
   }
 
 }
