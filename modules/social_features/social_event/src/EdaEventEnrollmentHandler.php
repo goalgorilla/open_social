@@ -11,8 +11,8 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\Address;
-use Drupal\social_eda\Types\Application;
 use Drupal\social_eda\Types\ContentVisibility;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Entity;
@@ -229,9 +229,6 @@ final class EdaEventEnrollmentHandler {
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function fromEntity(EventEnrollmentInterface $event_enrollment, string $event_type): CloudEvent {
-    // Determine actors.
-    [$actor_application, $actor_user] = $this->determineActors();
-
     // List enrollment methods.
     $enrollment_methods = ['open', 'request', 'invite'];
 
@@ -353,40 +350,13 @@ final class EdaEventEnrollmentHandler {
           ),
           'user' => $enrollee_data,
         ],
-        'actor' => [
-          'application' => $actor_application ? Application::fromId($actor_application) : NULL,
-          'user' => $actor_user ? User::fromEntity($actor_user) : NULL,
-        ],
+        'actor' => Actor::fromContext($this->currentUser, $this->routeName),
       ],
       dataContentType: 'application/json',
       dataSchema: NULL,
       subject: NULL,
       time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
     );
-  }
-
-  /**
-   * Determines the actor (application and user) for the CloudEvent.
-   *
-   * @return array
-   *   An array with two elements: the application and the user.
-   */
-  private function determineActors(): array {
-    $application = NULL;
-    $user = NULL;
-
-    if ($this->currentUser instanceof UserInterface) {
-      $user = $this->currentUser;
-    }
-
-    if ($this->routeName == 'entity.ultimate_cron_job.run') {
-      $application = 'cron';
-    }
-
-    return [
-      $application,
-      $user,
-    ];
   }
 
   /**

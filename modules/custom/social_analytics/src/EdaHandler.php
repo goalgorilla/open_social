@@ -14,10 +14,9 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_eda\DispatcherInterface;
-use Drupal\social_eda\Types\Application;
+use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\EntityReference;
-use Drupal\social_eda\Types\User;
 use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -137,9 +136,6 @@ final class EdaHandler {
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function fromPageView(Request $request, string $event_type): CloudEvent {
-    // Determine actors.
-    [$actor_application, $actor_user] = $this->determineActors();
-
     // Get entity and canonical URL if available.
     $entity = $this->getEntityFromRoute();
 
@@ -150,10 +146,7 @@ final class EdaHandler {
       data: [
         'url' => $request->getUri(),
         'target' => $entity ? [EntityReference::fromEntity($entity)] : NULL,
-        'actor' => [
-          'application' => $actor_application ? Application::fromId($actor_application) : NULL,
-          'user' => $actor_user ? User::fromEntity($actor_user) : NULL,
-        ],
+        'actor' => Actor::fromContext($this->currentUser, $this->routeMatch->getRouteName() ?: ''),
       ],
       time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
     );
@@ -188,30 +181,6 @@ final class EdaHandler {
     }
 
     return NULL;
-  }
-
-  /**
-   * Determines the actor (application and user) for the CloudEvent.
-   *
-   * @return array
-   *   An array with two elements: the application and the user.
-   */
-  private function determineActors(): array {
-    $application = NULL;
-    $user = NULL;
-
-    if ($this->currentUser instanceof UserInterface) {
-      $user = $this->currentUser;
-    }
-
-    if ($this->routeMatch->getRouteName() == 'entity.ultimate_cron_job.run') {
-      $application = 'cron';
-    }
-
-    return [
-      $application,
-      $user,
-    ];
   }
 
   /**

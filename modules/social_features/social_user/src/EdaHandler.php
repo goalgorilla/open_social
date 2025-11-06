@@ -12,11 +12,10 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\Address;
-use Drupal\social_eda\Types\Application;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Href;
-use Drupal\social_eda\Types\User;
 use Drupal\social_user\Event\UserEventData;
 use Drupal\social_user\Event\UserEventDataLite;
 use Drupal\social_user\Event\UserEventEmailData;
@@ -225,9 +224,6 @@ final class EdaHandler {
    * Transforms a NodeInterface into a CloudEvent.
    */
   public function fromEntity(UserInterface $user, string $event_type): CloudEvent {
-    // Determine actors.
-    [$actor_application, $actor_user] = $this->determineActors();
-
     // Query for the user's profile based on the user ID and profile type.
     $profileStorage = $this->entityTypeManager->getStorage('profile');
 
@@ -321,36 +317,13 @@ final class EdaHandler {
       type: $event_type,
       data: [
         'user' => $user_data,
-        'actor' => [
-          'application' => $actor_application ? Application::fromId($actor_application) : NULL,
-          'user' => $actor_user ? User::fromEntity($actor_user) : NULL,
-        ],
+        'actor' => Actor::fromContext($this->currentUser, $this->routeName),
       ],
       dataContentType: 'application/json',
       dataSchema: NULL,
       subject: NULL,
       time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
     );
-  }
-
-  /**
-   * Determines the actor (application and user) for the CloudEvent.
-   *
-   * @return array
-   *   An array with two elements: the application and the user.
-   */
-  private function determineActors(): array {
-    $application = NULL;
-    $user = NULL;
-
-    if ($this->currentUser instanceof UserInterface) {
-      $user = $this->currentUser;
-    }
-
-    return [
-      $application,
-      $user,
-    ];
   }
 
   /**

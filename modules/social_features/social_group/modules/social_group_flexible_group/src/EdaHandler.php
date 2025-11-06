@@ -13,8 +13,8 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\Address;
-use Drupal\social_eda\Types\Application;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Href;
 use Drupal\social_eda\Types\User;
@@ -174,9 +174,6 @@ final class EdaHandler {
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function fromEntity(GroupInterface $group, string $event_type, string $op = ''): CloudEvent {
-    // Determine actors.
-    [$actor_application, $actor_user] = $this->determineActors();
-
     // Determine status.
     if ($op == 'delete') {
       $status = 'removed';
@@ -209,40 +206,13 @@ final class EdaHandler {
           ),
           href: Href::fromEntity($group),
         ),
-        'actor' => [
-          'application' => $actor_application ? Application::fromId($actor_application) : NULL,
-          'user' => $actor_user ? User::fromEntity($actor_user) : NULL,
-        ],
+        'actor' => Actor::fromContext($this->currentUser, $this->routeName),
       ],
       dataContentType: 'application/json',
       dataSchema: NULL,
       subject: NULL,
       time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
     );
-  }
-
-  /**
-   * Determines the actor (application and user) for the CloudEvent.
-   *
-   * @return array
-   *   An array with two elements: the application and the user.
-   */
-  private function determineActors(): array {
-    $application = NULL;
-    $user = NULL;
-
-    if ($this->currentUser instanceof UserInterface) {
-      $user = $this->currentUser;
-    }
-
-    if ($this->routeName == 'entity.ultimate_cron_job.run') {
-      $application = 'cron';
-    }
-
-    return [
-      $application,
-      $user,
-    ];
   }
 
   /**

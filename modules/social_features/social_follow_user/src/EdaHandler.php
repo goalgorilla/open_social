@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\flag\FlaggingInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_eda\DispatcherInterface;
-use Drupal\social_eda\Types\Application;
+use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\User;
 use Drupal\user\UserInterface;
@@ -169,9 +169,6 @@ final class EdaHandler {
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function fromEntity(FlaggingInterface $flagging, string $event_type): CloudEvent {
-    // Determine actors.
-    [$actor_application, $actor_user] = $this->determineActors();
-
     // Get the target user (the user being followed).
     $target_user = NULL;
     $follower_user = $flagging->getOwner();
@@ -193,40 +190,13 @@ final class EdaHandler {
           'target' => $target_user ? User::fromEntity($target_user) : NULL,
           'follower' => User::fromEntity($follower_user),
         ],
-        'actor' => [
-          'application' => $actor_application ? Application::fromId($actor_application) : NULL,
-          'user' => $actor_user ? User::fromEntity($actor_user) : NULL,
-        ],
+        'actor' => Actor::fromContext($this->currentUser, $this->routeName),
       ],
       dataContentType: 'application/json',
       dataSchema: NULL,
       subject: NULL,
       time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
     );
-  }
-
-  /**
-   * Determines the actor (application and user) for the CloudEvent.
-   *
-   * @return array
-   *   An array with two elements: the application and the user.
-   */
-  private function determineActors(): array {
-    $application = NULL;
-    $user = NULL;
-
-    if ($this->currentUser instanceof UserInterface) {
-      $user = $this->currentUser;
-    }
-
-    if ($this->routeName == 'entity.ultimate_cron_job.run') {
-      $application = 'cron';
-    }
-
-    return [
-      $application,
-      $user,
-    ];
   }
 
   /**

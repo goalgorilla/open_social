@@ -14,11 +14,10 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupMembershipInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_eda\DispatcherInterface;
-use Drupal\social_eda\Types\Application;
+use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Entity;
 use Drupal\social_eda\Types\Href;
-use Drupal\social_eda\Types\User;
 use Drupal\social_group_flexible_group\Event\GroupMembershipEntityData;
 use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -228,9 +227,6 @@ final class EdaGroupMembershipHandler {
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function fromEntity(GroupMembershipInterface|GroupRelationshipInterface $entity, string $event_type): CloudEvent {
-    // Determine actors.
-    [$actor_application, $actor_user] = $this->determineActors();
-
     // Define all status mappings.
     $status_mappings = [
       // Direct membership statuses.
@@ -326,40 +322,13 @@ final class EdaGroupMembershipHandler {
           group: Entity::fromEntity($group),
           user: $user_data,
         ),
-        'actor' => [
-          'application' => $actor_application ? Application::fromId($actor_application) : NULL,
-          'user' => $actor_user ? User::fromEntity($actor_user) : NULL,
-        ],
+        'actor' => Actor::fromContext($this->currentUser, $this->routeName),
       ],
       dataContentType: 'application/json',
       dataSchema: NULL,
       subject: NULL,
       time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
     );
-  }
-
-  /**
-   * Determines the actor (application and user) for the CloudEvent.
-   *
-   * @return array
-   *   An array with two elements: the application and the user.
-   */
-  private function determineActors(): array {
-    $application = NULL;
-    $user = NULL;
-
-    if ($this->currentUser instanceof UserInterface) {
-      $user = $this->currentUser;
-    }
-
-    if ($this->routeName == 'entity.ultimate_cron_job.run') {
-      $application = 'cron';
-    }
-
-    return [
-      $application,
-      $user,
-    ];
   }
 
   /**
