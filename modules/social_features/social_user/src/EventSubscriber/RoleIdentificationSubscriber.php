@@ -8,6 +8,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -27,7 +28,7 @@ class RoleIdentificationSubscriber implements EventSubscriberInterface {
   protected ConfigFactoryInterface $configFactory;
 
   /**
-   * The private tempstore factory.
+   * The private tempStore factory.
    */
   protected PrivateTempStoreFactory $tempStoreFactory;
 
@@ -49,9 +50,9 @@ class RoleIdentificationSubscriber implements EventSubscriberInterface {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
-   *   The private tempstore factory.
+   *   The private tempStore factory.
    * @param \Drupal\Core\Routing\CurrentRouteMatch $current_route_match
-   *   The current route match.
+   *   The current route match service.
    */
   public function __construct(
     AccountProxyInterface $current_user,
@@ -81,6 +82,8 @@ class RoleIdentificationSubscriber implements EventSubscriberInterface {
    *
    * @param \Symfony\Component\HttpKernel\Event\ResponseEvent $event
    *   The response event.
+   *
+   * @throws \Drupal\Core\TempStore\TempStoreException
    */
   public function onKernelResponse(ResponseEvent $event): void {
     if (!$event->isMainRequest()) {
@@ -108,10 +111,10 @@ class RoleIdentificationSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $tempstore = $this->tempStoreFactory->get('social_user');
+    $tempStore = $this->tempStoreFactory->get('social_user');
 
     // Handle login.
-    if ($tempstore->get('role_identification_login')) {
+    if ($tempStore->get('role_identification_login')) {
       // Get the tracked roles from configuration.
       $tracked_roles = $this->configFactory->get('social_user.settings')->get('tracked_roles') ?? [];
 
@@ -119,10 +122,12 @@ class RoleIdentificationSubscriber implements EventSubscriberInterface {
         // Find roles that are both in user's roles and tracked roles.
         $applicable_roles = array_intersect($this->currentUser->getRoles(), $tracked_roles);
 
-        if (!empty($applicable_roles)) {
+        // Skip cookie setting during batch processing to avoid session
+        // regeneration that causes CSRF token mismatches.
+        if (!empty($applicable_roles) && !$this->isBatchPage($event->getRequest())) {
           // Create the cookie value with roles prefixed with 'cms' and base64
           // encoded individually.
-          $role_values = array_map(function ($role) {
+          $role_values = array_map(static function ($role) {
             return base64_encode('cms' . $role);
           }, $applicable_roles);
 
@@ -146,9 +151,30 @@ class RoleIdentificationSubscriber implements EventSubscriberInterface {
         }
       }
 
-      // Clean up tempstore.
-      $tempstore->delete('role_identification_login');
+      // Clean up tempStore.
+      $tempStore->delete('role_identification_login');
     }
+  }
+
+  /**
+   * Checks if the current request is a batch page.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
+   *
+   * @return bool
+   *   TRUE if this is a batch page, FALSE otherwise.
+   */
+  private function isBatchPage(Request $request): bool {
+    $path = $request->getPathInfo();
+    $query = $request->query;
+
+    // Check if this is a batch page by checking the path and query parameters.
+    $pathIsBatch = $path === '/batch';
+    $queryHasId = $query->has('id');
+    $queryHasOp = $query->has('op');
+
+    return $pathIsBatch && $queryHasId && $queryHasOp;
   }
 
 }

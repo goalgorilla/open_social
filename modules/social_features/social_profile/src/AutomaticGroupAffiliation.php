@@ -311,6 +311,10 @@ class AutomaticGroupAffiliation {
     /** @var \Drupal\user\Entity\User $user */
     $user = $group_membership->getEntity();
 
+    if ($user === NULL) {
+      return;
+    }
+
     $user_profiles = $this->entityTypeManager
       ->getStorage('profile')
       ->loadByProperties(['uid' => $user->id()]);
