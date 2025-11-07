@@ -148,6 +148,14 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
       'visible' => FALSE,
     ];
 
+    $extra['profile']['profile']['display']['groups_affiliation_list'] = [
+      'label' => $this->t('Group Affiliations'),
+      // By default, please it at the bottom of the profile view mode.
+      'weight' => 100,
+      // Hidden by default.
+      'visible' => FALSE,
+    ];
+
     return $extra;
   }
 
@@ -176,6 +184,8 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
       ['config:' . SocialProfileSettingsForm::SETTINGS]
     );
 
+    $build['#cache']['contexts'][] = 'user';
+
     if (!$profile instanceof ProfileAffiliationInterface) {
       return;
     }
@@ -191,6 +201,19 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
       $build['primary_affiliation_function'] = [
         '#type' => 'markup',
         '#markup' => trim(strip_tags($profile->getPrimaryAffiliationFunction())),
+      ];
+    }
+
+    if ($display->getComponent('groups_affiliation_list')) {
+      $build['groups_affiliation_list'] = [
+        '#theme' => 'item_list',
+        '#items' => array_map(
+          callback: fn ($label) => ['#plain_text' => $label],
+          array: $profile->getAllUserAffiliationGroupLabels(),
+        ),
+        '#attributes' => [
+          'class' => ['list-style-type-none'],
+        ],
       ];
     }
   }

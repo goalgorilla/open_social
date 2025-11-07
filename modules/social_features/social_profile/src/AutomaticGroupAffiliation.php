@@ -565,8 +565,13 @@ class AutomaticGroupAffiliation {
       // Process only group types that have affiliation enabled.
       if (in_array($selector['type'], array_keys($affiliation_enabled_group_types), TRUE)) {
         $and_group = $query->andConditionGroup()
-          ->condition('group_type', $selector['type'])
-          ->condition('group_roles', $selector['role']);
+          ->condition('group_type', $selector['type']);
+
+        // Conditionally filter by role.
+        if (isset($selector['role'])) {
+          $and_group->condition('group_roles', $selector['role']);
+        }
+
         $or_group->condition($and_group);
         $allowed_group_types = TRUE;
       }

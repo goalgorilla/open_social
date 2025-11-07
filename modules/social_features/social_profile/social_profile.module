@@ -29,6 +29,7 @@ use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
+use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\user\Entity\User;
@@ -1060,4 +1061,30 @@ function social_profile_social_core_default_main_menu_links_alter(array &$links)
  */
 function social_profile_social_tagging_type(): string {
   return 'profile';
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preprocess_node(array &$variables): void {
+  /** @var \Drupal\node\Entity\Node $node */
+  $node = $variables['node'];
+  $author = $node->getOwner();
+
+  $profile = \Drupal::entityTypeManager()
+    ->getStorage('profile')
+    ->loadByProperties([
+      'uid' => $author->id(),
+      'type' => 'profile',
+    ]);
+  $profile = reset($profile);
+
+  if ($profile instanceof ProfileAffiliationInterface) {
+    $variables['author_organization'] = $profile->getPrimaryAffiliationName();
+    $variables['#cache']['contexts'][] = 'user';
+    $variables['#cache']['tags'] = Cache::mergeTags(
+      $variables['#cache']['tags'] ?? [],
+      Cache::mergeTags($profile->getCacheTags())
+    );
+  }
 }

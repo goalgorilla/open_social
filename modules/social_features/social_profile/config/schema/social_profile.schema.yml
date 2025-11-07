@@ -112,3 +112,38 @@ field.widget.settings.social_group_selector_widget:
       type: boolean
       label: 'Autocomplete'
 
+social_profile.automatic_group_affiliations.*:
+  type: config_object
+  label: 'Automatic group affiliation rules'
+  mapping:
+    rules:
+      type: sequence
+      label: 'Automatic affiliation rules'
+      sequence:
+        type: mapping
+        mapping:
+          weight:
+            type: integer
+            label: 'Weight'
+          sort:
+            type: mapping
+            label: 'Sort'
+            mapping:
+              by:
+                type: string
+                label: 'Property to sort by'
+              direction:
+                type: string
+                label: 'Sort direction'
+          selectors:
+            type: sequence
+            sequence:
+              type: mapping
+              mapping:
+                type:
+                  type: string
+                  label: 'Group type'
+                role:
+                  type: string
+                  label: 'Group role'
+

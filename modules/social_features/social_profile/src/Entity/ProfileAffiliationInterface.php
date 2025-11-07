@@ -38,6 +38,21 @@ interface ProfileAffiliationInterface extends ProfileInterface {
   public function getAllUserAffiliationGroupIds(): array;
 
   /**
+   * Retrieves the labels of all user affiliation groups the user has access to.
+   *
+   * Uses a static cache to store the results and avoid recalculating
+   * the affiliation group labels repeatedly within the same object instance.
+   *
+   * @return array
+   *   An array of group labels the user is affiliated with
+   *   and has view access to.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getAllUserAffiliationGroupLabels(): array;
+
+  /**
    * Gets user owned affiliation count value.
    *
    * If the user owned affiliation count value is not defined, return default

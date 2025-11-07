@@ -6,6 +6,8 @@
  */
 
 use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Site\Settings;
@@ -567,4 +569,50 @@ function social_profile_update_250008(): void {
   $config = \Drupal::configFactory()->getEditable(SocialProfileSettingsForm::SETTINGS);
   $config->set('group_affiliation_status', TRUE);
   $config->save();
+}
+
+/**
+ * Add a "groups_affiliation_list" extra field to the default profile view mode.
+ */
+function social_profile_update_250009(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
+ * Automatically add affiliation when a member joins a Flexible group.
+ */
+function social_profile_update_250010(): void {
+  $affiliation_rules = 'social_profile.automatic_group_affiliations.profile';
+
+  $config = \Drupal::configFactory()->getEditable($affiliation_rules);
+
+  if ($config->isNew()) {
+    $config_path = \Drupal::service('extension.list.module')->getPath('social_profile')
+      . '/' . InstallStorage::CONFIG_INSTALL_DIRECTORY;
+    $source = new FileStorage($config_path);
+
+    \Drupal::service('config.storage')->write(
+      name: $affiliation_rules,
+      data: (array) $source->read($affiliation_rules)
+    );
+  }
+  else {
+    // If the config exists, just append new data.
+    $rules = $config->get('rules');
+    $rules[] = [
+      'weight' => 20,
+      'sort' => [
+        'by' => 'created',
+        'direction' => 'ASC',
+      ],
+      'selectors' => [
+        ['type' => 'flexible_group'],
+      ],
+    ];
+
+    $config->set('rules', $rules);
+    $config->save();
+  }
 }

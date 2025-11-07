@@ -54,6 +54,42 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
   /**
    * {@inheritDoc}
    */
+  public function getAllUserAffiliationGroupLabels(): array {
+    // Use a static cache to avoid re-calculating the method results.
+    // It's cached per object instance.
+    $labels = &drupal_static(__METHOD__ . ':' . $this->uuid());
+    if (is_array($labels)) {
+      return $labels;
+    }
+
+    $ids = $this->getAllUserAffiliationGroupIds();
+    if (empty($ids)) {
+      return $labels = [];
+    }
+
+    $groups = \Drupal::entityTypeManager()
+      ->getStorage('group')
+      ->loadMultiple($ids);
+
+    $labels = [];
+    foreach ($groups as $group) {
+      // Get the translation of the group.
+      $group = \Drupal::service('entity.repository')
+        ->getTranslationFromContext($group);
+
+      if (!$group->access('view')) {
+        continue;
+      }
+
+      $labels[] = $group->label();
+    }
+
+    return $labels;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public function getUserOwnedAffiliationsCount(): int {
     return !$this->get(AutomaticGroupAffiliation::AFFILIATION_OWNED_COUNT_FILED_NAME)->isEmpty() ?
       (int) $this->{AutomaticGroupAffiliation::AFFILIATION_OWNED_COUNT_FILED_NAME}->value :

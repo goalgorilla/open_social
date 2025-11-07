@@ -106,10 +106,10 @@
       </div>
     {% endif %}
 
-    {% if social_organization_affiliation_list %}
+    {% if content.groups_affiliation_list %}
       <div class="list-item card--content-merged__list">
         <div class="list-item__label">{% trans %}Affiliation{% endtrans %}</div>
-        <div class="list-item__text">{{ social_organization_affiliation_list }}</div>
+        <div class="list-item__text">{{ content.groups_affiliation_list }}</div>
       </div>
     {% endif %}
 
@@ -201,7 +201,7 @@
 
     {{  content|without('field_profile_phone_number', 'user_mail', 'field_profile_address',
       'field_profile_self_introduction', 'field_profile_interests', 'field_profile_expertise',
-      'field_profile_profile_tag', 'field_manager_notes', 'social_tagging', 'user_lang') }}
+      'field_profile_profile_tag', 'field_manager_notes', 'social_tagging', 'user_lang', 'groups_affiliation_list') }}
 
     {% if (content|render is empty and user_mail is empty and user_lang is empty)%}
         {% trans %}{{ profile_name }} {{ profile_name_extra }} has not shared profile information.{% endtrans %}
