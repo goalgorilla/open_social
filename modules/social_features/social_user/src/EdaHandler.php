@@ -115,7 +115,7 @@ final class EdaHandler {
   public function userCreate(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.user.create",
+      event_type: "com.getopensocial.cms.user.create",
       user: $user,
     );
   }
@@ -126,7 +126,7 @@ final class EdaHandler {
   public function userPending(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.user.pending",
+      event_type: "com.getopensocial.cms.user.pending",
       user: $user,
     );
   }
@@ -137,7 +137,7 @@ final class EdaHandler {
   public function profileUpdate(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.user.profile.update",
+      event_type: "com.getopensocial.cms.user.profile.update",
       user: $user,
     );
   }
@@ -148,7 +148,7 @@ final class EdaHandler {
   public function userLogin(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.user.login",
+      event_type: "com.getopensocial.cms.user.login",
       user: $user,
     );
   }
@@ -159,7 +159,7 @@ final class EdaHandler {
   public function userLogout(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.user.logout",
+      event_type: "com.getopensocial.cms.user.logout",
       user: $user,
     );
   }
@@ -170,7 +170,7 @@ final class EdaHandler {
   public function userBlock(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.user.block",
+      event_type: "com.getopensocial.cms.user.block",
       user: $user,
     );
   }
@@ -181,7 +181,7 @@ final class EdaHandler {
   public function userUnblock(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.user.unblock",
+      event_type: "com.getopensocial.cms.user.unblock",
       user: $user,
     );
   }
@@ -192,7 +192,7 @@ final class EdaHandler {
   public function userEmailUpdate(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.user.settings.email",
+      event_type: "com.getopensocial.cms.user.settings.email",
       user: $user,
     );
   }
@@ -203,7 +203,7 @@ final class EdaHandler {
   public function userDelete(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.user.delete",
+      event_type: "com.getopensocial.cms.user.delete",
       user: $user,
     );
   }
@@ -214,7 +214,7 @@ final class EdaHandler {
   public function userLocaleInformationUpdate(UserInterface $user): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.user.settings.locale",
+      event_type: "com.getopensocial.cms.user.settings.locale",
       user: $user,
     );
   }

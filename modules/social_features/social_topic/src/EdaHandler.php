@@ -115,7 +115,7 @@ final class EdaHandler {
   public function topicCreate(NodeInterface $node): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.topic.create",
+      event_type: "com.getopensocial.cms.topic.create",
       node: $node
     );
   }
@@ -126,7 +126,7 @@ final class EdaHandler {
   public function topicPublish(NodeInterface $node): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.topic.publish",
+      event_type: "com.getopensocial.cms.topic.publish",
       node: $node
     );
   }
@@ -137,7 +137,7 @@ final class EdaHandler {
   public function topicUnpublish(NodeInterface $node): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.topic.unpublish",
+      event_type: "com.getopensocial.cms.topic.unpublish",
       node: $node
     );
   }
@@ -148,7 +148,7 @@ final class EdaHandler {
   public function topicUpdate(NodeInterface $node): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.topic.update",
+      event_type: "com.getopensocial.cms.topic.update",
       node: $node
     );
   }
@@ -159,7 +159,7 @@ final class EdaHandler {
   public function topicDelete(NodeInterface $node): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.topic.delete",
+      event_type: "com.getopensocial.cms.topic.delete",
       node: $node,
       op: 'delete');
   }

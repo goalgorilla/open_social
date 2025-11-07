@@ -116,7 +116,7 @@ final class EdaEventEnrollmentHandler {
   public function eventEnrollmentCreate(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.create",
+      event_type: "com.getopensocial.cms.event_enrollment.create",
       event_enrollment: $event_enrollment,
     );
   }
@@ -127,7 +127,7 @@ final class EdaEventEnrollmentHandler {
   public function eventEnrollmentCancel(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.delete",
+      event_type: "com.getopensocial.cms.event_enrollment.delete",
       event_enrollment: $event_enrollment,
     );
   }
@@ -138,7 +138,7 @@ final class EdaEventEnrollmentHandler {
   public function eventRequestToJoin(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.request.create",
+      event_type: "com.getopensocial.cms.event_enrollment.request.create",
       event_enrollment: $event_enrollment,
     );
   }
@@ -149,7 +149,7 @@ final class EdaEventEnrollmentHandler {
   public function eventRequestToJoinCancelled(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.request.delete",
+      event_type: "com.getopensocial.cms.event_enrollment.request.delete",
       event_enrollment: $event_enrollment,
     );
   }
@@ -160,7 +160,7 @@ final class EdaEventEnrollmentHandler {
   public function eventRequestToJoinAccepted(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.request.accept",
+      event_type: "com.getopensocial.cms.event_enrollment.request.accept",
       event_enrollment: $event_enrollment,
     );
   }
@@ -171,7 +171,7 @@ final class EdaEventEnrollmentHandler {
   public function eventRequestToJoinDeclined(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.request.decline",
+      event_type: "com.getopensocial.cms.event_enrollment.request.decline",
       event_enrollment: $event_enrollment,
     );
   }
@@ -182,7 +182,7 @@ final class EdaEventEnrollmentHandler {
   public function eventInviteToJoin(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.invite.create",
+      event_type: "com.getopensocial.cms.event_enrollment.invite.create",
       event_enrollment: $event_enrollment,
     );
   }
@@ -193,7 +193,7 @@ final class EdaEventEnrollmentHandler {
   public function eventInviteToJoinCancelled(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.invite.delete",
+      event_type: "com.getopensocial.cms.event_enrollment.invite.delete",
       event_enrollment: $event_enrollment,
     );
   }
@@ -204,7 +204,7 @@ final class EdaEventEnrollmentHandler {
   public function eventInviteToJoinAccepted(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.invite.accept",
+      event_type: "com.getopensocial.cms.event_enrollment.invite.accept",
       event_enrollment: $event_enrollment,
     );
   }
@@ -215,7 +215,7 @@ final class EdaEventEnrollmentHandler {
   public function eventInviteToJoinDeclined(EventEnrollmentInterface $event_enrollment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.event_enrollment.invite.decline",
+      event_type: "com.getopensocial.cms.event_enrollment.invite.decline",
       event_enrollment: $event_enrollment,
     );
   }
@@ -235,16 +235,16 @@ final class EdaEventEnrollmentHandler {
 
     // List enrollment statuses.
     $enrollment_status = [
-      "{$this->namespace}.cms.event_enrollment.create" => 'active',
-      "{$this->namespace}.cms.event_enrollment.delete" => 'removed',
-      "{$this->namespace}.cms.event_enrollment.request.create" => 'request_pending',
-      "{$this->namespace}.cms.event_enrollment.request.delete" => 'request_cancelled',
-      "{$this->namespace}.cms.event_enrollment.request.accept" => 'active',
-      "{$this->namespace}.cms.event_enrollment.request.decline" => 'request_declined',
-      "{$this->namespace}.cms.event_enrollment.invite.create" => 'invite_pending',
-      "{$this->namespace}.cms.event_enrollment.invite.delete" => 'invite_cancelled',
-      "{$this->namespace}.cms.event_enrollment.invite.accept" => 'active',
-      "{$this->namespace}.cms.event_enrollment.invite.decline" => 'invite_declined',
+      "com.getopensocial.cms.event_enrollment.create" => 'active',
+      "com.getopensocial.cms.event_enrollment.delete" => 'removed',
+      "com.getopensocial.cms.event_enrollment.request.create" => 'request_pending',
+      "com.getopensocial.cms.event_enrollment.request.delete" => 'request_cancelled',
+      "com.getopensocial.cms.event_enrollment.request.accept" => 'active',
+      "com.getopensocial.cms.event_enrollment.request.decline" => 'request_declined',
+      "com.getopensocial.cms.event_enrollment.invite.create" => 'invite_pending',
+      "com.getopensocial.cms.event_enrollment.invite.delete" => 'invite_cancelled',
+      "com.getopensocial.cms.event_enrollment.invite.accept" => 'active',
+      "com.getopensocial.cms.event_enrollment.invite.decline" => 'invite_declined',
     ];
 
     // Get event.

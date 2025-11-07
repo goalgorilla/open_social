@@ -116,7 +116,7 @@ final class EdaHandler {
   public function groupCreate(GroupInterface $group): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.group.create",
+      event_type: "com.getopensocial.cms.group.create",
       group: $group
     );
   }
@@ -127,7 +127,7 @@ final class EdaHandler {
   public function groupPublish(GroupInterface $group): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.group.publish",
+      event_type: "com.getopensocial.cms.group.publish",
       group: $group
     );
   }
@@ -138,7 +138,7 @@ final class EdaHandler {
   public function groupUnpublish(GroupInterface $group): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.group.unpublish",
+      event_type: "com.getopensocial.cms.group.unpublish",
       group: $group
     );
   }
@@ -149,7 +149,7 @@ final class EdaHandler {
   public function groupUpdate(GroupInterface $group): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.group.update",
+      event_type: "com.getopensocial.cms.group.update",
       group: $group
     );
   }
@@ -160,7 +160,7 @@ final class EdaHandler {
   public function groupDelete(GroupInterface $group): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.group.delete",
+      event_type: "com.getopensocial.cms.group.delete",
       group: $group
     );
   }

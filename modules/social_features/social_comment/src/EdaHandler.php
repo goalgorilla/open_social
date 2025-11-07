@@ -131,7 +131,7 @@ final class EdaHandler {
   public function commentCreate(CommentInterface $comment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.comment.create",
+      event_type: "com.getopensocial.cms.comment.create",
       comment: $comment
     );
   }
@@ -142,7 +142,7 @@ final class EdaHandler {
   public function commentPublish(CommentInterface $comment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.comment.publish",
+      event_type: "com.getopensocial.cms.comment.publish",
       comment: $comment
     );
   }
@@ -153,7 +153,7 @@ final class EdaHandler {
   public function commentUnpublish(CommentInterface $comment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.comment.unpublish",
+      event_type: "com.getopensocial.cms.comment.unpublish",
       comment: $comment
     );
   }
@@ -164,7 +164,7 @@ final class EdaHandler {
   public function commentUpdate(CommentInterface $comment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.comment.update",
+      event_type: "com.getopensocial.cms.comment.update",
       comment: $comment
     );
   }
@@ -175,7 +175,7 @@ final class EdaHandler {
   public function commentDelete(CommentInterface $comment): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.comment.delete",
+      event_type: "com.getopensocial.cms.comment.delete",
       comment: $comment,
       op: 'delete'
     );

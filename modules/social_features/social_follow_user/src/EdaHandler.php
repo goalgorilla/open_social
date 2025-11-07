@@ -146,7 +146,7 @@ final class EdaHandler {
   public function followUserCreate(FlaggingInterface $flagging): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.follow.user.create",
+      event_type: "com.getopensocial.follow.user.create",
       flagging: $flagging
     );
   }
@@ -157,7 +157,7 @@ final class EdaHandler {
   public function followUserDelete(FlaggingInterface $flagging): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.follow.user.delete",
+      event_type: "com.getopensocial.follow.user.delete",
       flagging: $flagging
     );
   }

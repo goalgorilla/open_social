@@ -126,7 +126,7 @@ final class EdaHandler {
 
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.page_view",
+      event_type: "com.getopensocial.cms.page_view",
       request: $request,
     );
   }

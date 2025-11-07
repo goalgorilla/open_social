@@ -117,7 +117,7 @@ final class EdaGroupMembershipHandler {
   public function groupMembershipCreate(GroupMembershipInterface $membership): void {
     $this->dispatch(
       $this->topicName,
-      "{$this->namespace}.cms.group_membership.create",
+      "com.getopensocial.cms.group_membership.create",
       $membership
     );
   }
@@ -128,7 +128,7 @@ final class EdaGroupMembershipHandler {
   public function groupMembershipDelete(GroupMembershipInterface $membership): void {
     $this->dispatch(
       $this->topicName,
-      "{$this->namespace}.cms.group_membership.delete",
+      "com.getopensocial.cms.group_membership.delete",
       $membership
     );
   }
@@ -139,7 +139,7 @@ final class EdaGroupMembershipHandler {
   public function groupMembershipRequestCreate(GroupRelationshipInterface $request): void {
     $this->dispatch(
       $this->topicName,
-      "{$this->namespace}.cms.group_membership.request.create",
+      "com.getopensocial.cms.group_membership.request.create",
       $request
     );
   }
@@ -150,7 +150,7 @@ final class EdaGroupMembershipHandler {
   public function groupMembershipRequestDelete(GroupRelationshipInterface $request): void {
     $this->dispatch(
       $this->topicName,
-      "{$this->namespace}.cms.group_membership.request.delete",
+      "com.getopensocial.cms.group_membership.request.delete",
       $request
     );
   }
@@ -161,7 +161,7 @@ final class EdaGroupMembershipHandler {
   public function groupMembershipRequestAccept(GroupRelationshipInterface $request): void {
     $this->dispatch(
       $this->topicName,
-      "{$this->namespace}.cms.group_membership.request.accept",
+      "com.getopensocial.cms.group_membership.request.accept",
       $request
     );
   }
@@ -172,7 +172,7 @@ final class EdaGroupMembershipHandler {
   public function groupMembershipRequestDecline(GroupRelationshipInterface $request): void {
     $this->dispatch(
       $this->topicName,
-      "{$this->namespace}.cms.group_membership.request.decline",
+      "com.getopensocial.cms.group_membership.request.decline",
       $request
     );
   }
@@ -183,7 +183,7 @@ final class EdaGroupMembershipHandler {
   public function groupMembershipInviteCreate(GroupRelationshipInterface $invitation): void {
     $this->dispatch(
       $this->topicName,
-      "{$this->namespace}.cms.group_membership.invite.create",
+      "com.getopensocial.cms.group_membership.invite.create",
       $invitation
     );
   }
@@ -194,7 +194,7 @@ final class EdaGroupMembershipHandler {
   public function groupMembershipInviteDelete(GroupRelationshipInterface $invitation): void {
     $this->dispatch(
       $this->topicName,
-      "{$this->namespace}.cms.group_membership.invite.delete",
+      "com.getopensocial.cms.group_membership.invite.delete",
       $invitation
     );
   }
@@ -205,7 +205,7 @@ final class EdaGroupMembershipHandler {
   public function groupMembershipInviteAccept(GroupRelationshipInterface $invitation): void {
     $this->dispatch(
       $this->topicName,
-      "{$this->namespace}.cms.group_membership.invite.accept",
+      "com.getopensocial.cms.group_membership.invite.accept",
       $invitation
     );
   }
@@ -216,7 +216,7 @@ final class EdaGroupMembershipHandler {
   public function groupMembershipInviteDecline(GroupRelationshipInterface $invitation): void {
     $this->dispatch(
       $this->topicName,
-      "{$this->namespace}.cms.group_membership.invite.decline",
+      "com.getopensocial.cms.group_membership.invite.decline",
       $invitation
     );
   }
@@ -234,16 +234,16 @@ final class EdaGroupMembershipHandler {
     // Define all status mappings.
     $status_mappings = [
       // Direct membership statuses.
-      "{$this->namespace}.cms.group_membership.create" => 'active',
-      "{$this->namespace}.cms.group_membership.delete" => 'removed',
-      "{$this->namespace}.cms.group_membership.request.create" => 'request_pending',
-      "{$this->namespace}.cms.group_membership.request.delete" => 'request_cancelled',
-      "{$this->namespace}.cms.group_membership.request.accept" => 'active',
-      "{$this->namespace}.cms.group_membership.request.decline" => 'request_declined',
-      "{$this->namespace}.cms.group_membership.invite.create" => 'invite_pending',
-      "{$this->namespace}.cms.group_membership.invite.delete" => 'invite_cancelled',
-      "{$this->namespace}.cms.group_membership.invite.accept" => 'active',
-      "{$this->namespace}.cms.group_membership.invite.decline" => 'invite_declined',
+      "com.getopensocial.cms.group_membership.create" => 'active',
+      "com.getopensocial.cms.group_membership.delete" => 'removed',
+      "com.getopensocial.cms.group_membership.request.create" => 'request_pending',
+      "com.getopensocial.cms.group_membership.request.delete" => 'request_cancelled',
+      "com.getopensocial.cms.group_membership.request.accept" => 'active',
+      "com.getopensocial.cms.group_membership.request.decline" => 'request_declined',
+      "com.getopensocial.cms.group_membership.invite.create" => 'invite_pending',
+      "com.getopensocial.cms.group_membership.invite.delete" => 'invite_cancelled',
+      "com.getopensocial.cms.group_membership.invite.accept" => 'active',
+      "com.getopensocial.cms.group_membership.invite.decline" => 'invite_declined',
     ];
 
     // Get group and user.

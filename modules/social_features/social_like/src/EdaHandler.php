@@ -152,7 +152,7 @@ final class EdaHandler {
   public function likeCreate(VoteInterface $vote): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.like.create",
+      event_type: "com.getopensocial.cms.like.create",
       vote: $vote
     );
   }
@@ -163,7 +163,7 @@ final class EdaHandler {
   public function likeDelete(VoteInterface $vote): void {
     $this->dispatch(
       topic_name: $this->topicName,
-      event_type: "{$this->namespace}.cms.like.delete",
+      event_type: "com.getopensocial.cms.like.delete",
       vote: $vote
     );
   }
