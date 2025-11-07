@@ -137,6 +137,21 @@ class FileContext extends RawMinkContext {
    * @param string $link_text
    *   The link url.
    * @param string $contents
+   *   The text that should not be in the file.
+   *
+   * @Then the file downloaded from :link_text should not contain :contents
+   */
+  public function fileDownloadedShouldNotContain(string $link_text, string $contents): void {
+    $actual = trim($this->getDownloadedFileContent($link_text));
+    if (strpos($actual, $contents) !== FALSE) {
+      throw new \RuntimeException("File should not contain '{$contents}' but it was found in the file contents.");
+    }
+  }
+
+  /**
+   * @param string $link_text
+   *   The link url.
+   * @param string $contents
    *   The expected text.
    *
    * @Then the file downloaded from :link_text should contain individual lines:
