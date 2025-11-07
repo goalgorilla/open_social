@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupMembership;
+use Drupal\group\Entity\GroupMembershipInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_profile\Plugin\Field\FieldWidget\GroupAffiliationWidget;
@@ -221,7 +222,7 @@ class AutomaticGroupAffiliation {
       // Add affiliation to system added affiliations and re-calculate
       // positions for system added affiliations. Affiliation owned count
       // remains unchanged, as user-owned affiliations are not affected.
-      $this->updateSystemAddedAffiliations();
+      $this->updateSystemAddedAffiliations($group_membership);
     }
   }
 
@@ -284,7 +285,7 @@ class AutomaticGroupAffiliation {
       // their previous state. The result of the re-calculation may be that an
       // affiliation is added, removed, its position/order is updated, or
       // nothing changes.
-      $this->updateSystemAddedAffiliations();
+      $this->updateSystemAddedAffiliations($group_membership);
     }
   }
 
@@ -662,16 +663,47 @@ class AutomaticGroupAffiliation {
    *  - Removes any user-removed affiliation group IDs.
    *  - Ensures all returned IDs are integers.
    *
+   * @param \Drupal\group\Entity\GroupMembershipInterface|null $membership
+   *   (optional) The group membership entity.
+   *
    * @return array<int, int>
    *   A list of group IDs to be assigned as system-added affiliations.
    */
-  private function reCalculateSystemAddedAffiliations(): array {
+  private function reCalculateSystemAddedAffiliations(?GroupMembershipInterface $membership): array {
     $affiliation_group_ids = [];
     $rules = $this->getAutomaticGroupAffiliationRules($this->userProfile->bundle());
 
     foreach ($rules as $rule) {
       $user_memberships_per_rule = $this->getUserMemberships($this->user, $rule);
       $affiliated_group_ids_per_rule = $this->getGroupIdsFromGroupMemberships($user_memberships_per_rule);
+
+      // Handle the "retroactive" option:
+      // - When retroactive is TRUE: The rule applies to all matching group
+      //   memberships, including existing ones. This means affiliations will be
+      //   automatically added for all current group memberships that match the
+      //   rule's selectors, effectively backfilling affiliations for users who
+      //   were already members before the affiliation enabling.
+      // - When retroactive is FALSE: The rule only applies to groups that are
+      //   already in the user's current affiliations.
+      //   This prevents the rule from automatically adding affiliations
+      //   for existing memberships - it only works for new memberships going
+      //   forward. Use this when you want to avoid bulk-adding affiliations for
+      //   users who were already members before the affiliation enabling.
+      if (!$rule['retroactive']) {
+        // Get the user's current affiliations to filter against.
+        $current_affiliations = $this->userProfile->getAllUserAffiliationGroupIds();
+        // If a new membership is being added that matches this rule, include it
+        // in the current affiliations list so it gets processed.
+        if ($membership && in_array($membership->getGroupId(), $affiliated_group_ids_per_rule)) {
+          $current_affiliations[] = $membership->getGroupId();
+        }
+
+        // Only keep group IDs that are both matched by the rule AND already in
+        // the user's current affiliations.
+        // This filters out existing memberships that aren't yet affiliated.
+        $affiliated_group_ids_per_rule = array_intersect($affiliated_group_ids_per_rule, $current_affiliations);
+      }
+
       // Remove duplicates (higher rule has priority over lower rule)
       $affiliation_group_ids = array_unique(array_merge($affiliation_group_ids, $affiliated_group_ids_per_rule));
     }
@@ -748,12 +780,14 @@ class AutomaticGroupAffiliation {
    * Recalculates system-added affiliations by adding new ones, removing
    * outdated ones, and adjusting their order as needed.
    *
-   * @return void
-   *   Return void
+   * @param \Drupal\group\Entity\GroupMembershipInterface|null $group_membership
+   *   (optional) The group membership entity.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  private function updateSystemAddedAffiliations(): void {
+  private function updateSystemAddedAffiliations(?GroupMembershipInterface $group_membership): void {
     $user_owned_affiliations = $this->userProfile->getUserOwnedAffiliationGroupIds();
-    $new_system_added_affiliations = $this->reCalculateSystemAddedAffiliations();
+    $new_system_added_affiliations = $this->reCalculateSystemAddedAffiliations($group_membership);
 
     $this->userProfile->setAllUserAffiliationGroupIds(
       array_merge(
