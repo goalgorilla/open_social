@@ -1209,3 +1209,16 @@ function social_group_update_13024(): string {
   $updater->executeUpdate('social_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Group per type general alterations.
+ *
+ * - Show empty table for consistency with other views.
+ * - Add no result behaviour.
+ */
+function social_group_update_13025(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
+}

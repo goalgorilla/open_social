@@ -780,3 +780,60 @@ function social_course_update_13002(): string {
 function social_course_update_13003(): void {
   user_role_grant_permissions('authenticated', ['access course overview']);
 }
+
+/**
+ * Add complete fields and filters configuration to courses overview.
+ */
+function social_course_update_13004(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_course', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
+ * Reorder fields in courses overview to correct order.
+ */
+function social_course_update_13005(): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.group_per_type');
+
+  $current_fields = $config->get('display.course_group.display_options.fields') ?: [];
+  $field_order = [
+    'label',
+    'type',
+    'name',
+    'group_membership_count',
+    'created',
+    'field_course_type',
+    'field_flexible_group_visibility',
+    'field_group_allowed_visibility',
+    'field_group_allowed_join_method',
+    'status',
+    'operations'
+  ];
+
+  $ordered_fields = [];
+  foreach ($field_order as $field_id) {
+    if (isset($current_fields[$field_id])) {
+      $ordered_fields[$field_id] = $current_fields[$field_id];
+    }
+  }
+
+  $config->set('display.course_group.display_options.fields', $ordered_fields);
+
+  $config->set('display.course_group.display_options.style.options.columns', [
+    'label' => 'label',
+    'type' => 'type',
+    'name' => 'name',
+    'group_membership_count' => 'group_membership_count',
+    'created' => 'created',
+    'field_course_type' => 'field_course_type',
+    'field_flexible_group_visibility' => 'field_flexible_group_visibility',
+    'field_group_allowed_visibility' => 'field_group_allowed_visibility',
+    'field_group_allowed_join_method' => 'field_group_allowed_join_method',
+    'status' => 'status',
+    'operations' => 'operations',
+  ]);
+
+  $config->save();
+}
+
