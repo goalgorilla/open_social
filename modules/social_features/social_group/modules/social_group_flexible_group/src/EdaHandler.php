@@ -4,15 +4,16 @@ namespace Drupal\social_group_flexible_group;
 
 use CloudEvents\V1\CloudEvent;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\UuidNamespace;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\Address;
 use Drupal\social_eda\Types\DateTime;
@@ -22,6 +23,7 @@ use Drupal\social_group_flexible_group\Event\GroupEntityData;
 use Drupal\social_group_flexible_group\Types\GroupMembershipMethod;
 use Drupal\social_group_flexible_group\Types\GroupVisibility;
 use Drupal\user\UserInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -76,7 +78,6 @@ final class EdaHandler {
    */
   public function __construct(
     private readonly ?DispatcherInterface $dispatcher,
-    private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -168,6 +169,42 @@ final class EdaHandler {
   }
 
   /**
+   * Generates a deterministic UUIDv5 CloudEvent ID based on type and group.
+   *
+   * @param string $event_type
+   *   The event type (e.g., "com.getopensocial.cms.group.create").
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   *
+   * @return string
+   *   A UUIDv5 string.
+   */
+  private function generateEventId(string $event_type, GroupInterface $group): string {
+    $project_id = Settings::get('project_id');
+    if (empty($project_id)) {
+      throw new \RuntimeException('The project_id must be configured to ensure deterministic UUIDs.');
+    }
+    $uuid = $group->uuid();
+
+    // Build deterministic string using the full event type.
+    // For create and delete, use only event_type, project_id and uuid.
+    // For publish, unpublish, and update, include revision ID.
+    switch ($event_type) {
+      case "com.getopensocial.cms.group.create":
+      case "com.getopensocial.cms.group.delete":
+        $name = "$event_type:$project_id:$uuid";
+        break;
+
+      default:
+        $revision_id = $group->getRevisionId();
+        $name = "$event_type:$project_id:$uuid:$revision_id";
+        break;
+    }
+
+    return Uuid::uuid5(UuidNamespace::NAMESPACE_OPENSOCIAL, $name)->toString();
+  }
+
+  /**
    * Transforms a GroupInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -183,12 +220,12 @@ final class EdaHandler {
     }
 
     return new CloudEvent(
-      id: $this->uuid->generate(),
+      id: $this->generateEventId($event_type, $group),
       source: $this->source,
       type: $event_type,
       data: [
         'group' => new GroupEntityData(
-          id: $group->get('uuid')->value,
+          id: $group->uuid() ?? '',
           created: DateTime::fromTimestamp($group->getCreatedTime())->toString(),
           updated: DateTime::fromTimestamp($group->getChangedTime())->toString(),
           status: $status,
@@ -198,7 +235,7 @@ final class EdaHandler {
             'type' => $group->get('field_group_allowed_visibility')->value,
           ],
           membership: GroupMembershipMethod::fromEntity($group),
-          type: $group->getGroupType()->get('uuid'),
+          type: $group->getGroupType()->uuid(),
           author: User::fromEntity($group->get('uid')->entity),
           address: Address::fromFieldItem(
             item: $group->get('field_group_address')->first(),
