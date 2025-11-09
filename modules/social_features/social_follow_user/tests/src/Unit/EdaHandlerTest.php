@@ -4,7 +4,6 @@ namespace Drupal\Tests\social_follow_user\Unit;
 
 use CloudEvents\V1\CloudEventInterface;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -18,6 +17,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\flag\FlaggingInterface;
 use Drupal\profile\Entity\ProfileInterface;
@@ -47,14 +47,25 @@ class EdaHandlerTest extends UnitTestCase {
   protected $dispatcher;
 
   /**
-   * Handles UUID generation.
-   */
-  protected UuidInterface $uuid;
-
-  /**
    * Handles HTTP request stack operations.
    */
   protected RequestStack $requestStack;
+
+  /**
+   * The project ID for deterministic UUID generation.
+   */
+  protected string $projectId = 'test-project-id';
+
+  /**
+   * Original settings saved before test modifications.
+   *
+   * Stores the Settings singleton state at the start of setUp() so it can be
+   * restored in tearDown(). This ensures test isolation by preventing Settings
+   * changes from affecting other tests.
+   *
+   * @var array
+   */
+  protected array $originalSettings = [];
 
   /**
    * Represents the canonical URL of an entity.
@@ -145,6 +156,28 @@ class EdaHandlerTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
 
+    // Save current settings to restore in tearDown().
+    // The Settings class is a singleton, so we need to preserve the existing
+    // configuration before modifying it. This prevents test interference where
+    // one test's Settings changes affect other tests.
+    // Settings may not be initialized in unit tests, so handle that case.
+    try {
+      Settings::getInstance();
+      $this->originalSettings = Settings::getAll();
+    }
+    catch (\BadMethodCallException $e) {
+      // Settings not initialized yet, start with empty array.
+      $this->originalSettings = [];
+      new Settings([]);
+    }
+
+    // Merge project_id for deterministic UUID generation while preserving
+    // other settings. This ensures we only override the project_id setting
+    // needed for deterministic UUIDs, without losing any existing settings
+    // that other tests might depend on.
+    $mergedSettings = array_merge($this->originalSettings, ['project_id' => $this->projectId]);
+    new Settings($mergedSettings);
+
     // Mock the language_manager service.
     $languageMock = $this->createMock(LanguageInterface::class);
     $languageMock->method('getId')->willReturn('en');
@@ -177,10 +210,6 @@ class EdaHandlerTest extends UnitTestCase {
     // Mock the RouteMatchInterface.
     $this->routeMatch = $this->createMock(RouteMatchInterface::class);
     $this->routeMatch->method('getRouteName')->willReturn('entity.profile.canonical');
-
-    // Mock the UUID.
-    $this->uuid = $this->createMock(UuidInterface::class);
-    $this->uuid->method('generate')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
 
     // Create a real Symfony Request instance.
     $this->request = Request::create(
@@ -275,8 +304,34 @@ class EdaHandlerTest extends UnitTestCase {
     $this->assertEquals('1.0', $event->getSpecVersion());
     $this->assertEquals('com.getopensocial.follow.user.create', $event->getType());
     $this->assertEquals('/profile/1', $event->getSource());
-    $this->assertEquals('a5715874-5859-4d8a-93ba-9f8433ea44af', $event->getId());
+    $this->assertEquals('98d3c199-7e0b-5d58-9cf3-7aa1506f28c8', $event->getId());
     $this->assertEquals(DateTime::fromTimestamp(1234567890)->toImmutableDateTime(), $event->getTime());
+  }
+
+  /**
+   * Test generateEventId for create event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdCreate(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->flagging, 'com.getopensocial.follow.user.create');
+
+    $this->assertEquals('98d3c199-7e0b-5d58-9cf3-7aa1506f28c8', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for delete event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdDelete(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->flagging, 'com.getopensocial.follow.user.delete');
+
+    $this->assertEquals('188911c7-f35a-5429-8dd5-45b841001001', $event->getId());
   }
 
   /**
@@ -344,7 +399,6 @@ class EdaHandlerTest extends UnitTestCase {
     $moduleHandlerMock->method('moduleExists')->with('social_eda')->willReturn(FALSE);
 
     $handler = new EdaHandler(
-      $this->uuid,
       $this->requestStack,
       $moduleHandlerMock,
       $this->entityTypeManager,
@@ -372,7 +426,6 @@ class EdaHandlerTest extends UnitTestCase {
   public function testNoDispatchWhenDispatcherIsNull(): void {
     // Create handler without dispatcher.
     $handler = new EdaHandler(
-      $this->uuid,
       $this->requestStack,
       $this->moduleHandler,
       $this->entityTypeManager,
@@ -396,7 +449,6 @@ class EdaHandlerTest extends UnitTestCase {
    */
   protected function getMockedHandler(): EdaHandler {
     return new EdaHandler(
-      $this->uuid,
       $this->requestStack,
       $this->moduleHandler,
       $this->entityTypeManager,
@@ -407,6 +459,18 @@ class EdaHandlerTest extends UnitTestCase {
       $this->loggerFactory,
       $this->dispatcher,
     );
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function tearDown(): void {
+    // Restore original settings so other tests retain their configuration.
+    // This ensures that any Settings modifications made during this test
+    // don't leak into subsequent tests, maintaining test isolation.
+    new Settings($this->originalSettings);
+
+    parent::tearDown();
   }
 
 }

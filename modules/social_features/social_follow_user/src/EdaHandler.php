@@ -4,20 +4,22 @@ namespace Drupal\social_follow_user;
 
 use CloudEvents\V1\CloudEvent;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\flag\FlaggingInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\UuidNamespace;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\User;
 use Drupal\user\UserInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -71,7 +73,6 @@ final class EdaHandler {
    * {@inheritDoc}
    */
   public function __construct(
-    private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -163,6 +164,30 @@ final class EdaHandler {
   }
 
   /**
+   * Generates a deterministic UUIDv5 CloudEvent ID based on type and flagging.
+   *
+   * @param string $event_type
+   *   The event type (e.g., "com.getopensocial.follow.user.create").
+   * @param \Drupal\flag\FlaggingInterface $flagging
+   *   The flagging object.
+   *
+   * @return string
+   *   A UUIDv5 string.
+   */
+  private function generateEventId(string $event_type, FlaggingInterface $flagging): string {
+    $project_id = Settings::get('project_id');
+    if (empty($project_id)) {
+      throw new \RuntimeException('The project_id must be configured to ensure deterministic UUIDs.');
+    }
+    $uuid = $flagging->uuid();
+
+    // All follow user events use the format: {event_type}:{project_id}:{uuid}.
+    $name = "$event_type:$project_id:$uuid";
+
+    return Uuid::uuid5(UuidNamespace::NAMESPACE_OPENSOCIAL, $name)->toString();
+  }
+
+  /**
    * Transforms a FlaggingInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -179,7 +204,7 @@ final class EdaHandler {
     }
 
     return new CloudEvent(
-      id: $this->uuid->generate(),
+      id: $this->generateEventId($event_type, $flagging),
       source: $this->source,
       type: $event_type,
       data: [

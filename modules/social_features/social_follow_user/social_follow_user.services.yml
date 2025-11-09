@@ -12,7 +12,6 @@ services:
   social_follow_user.eda_handler:
     class: Drupal\social_follow_user\EdaHandler
     arguments:
-      - '@uuid'
       - '@request_stack'
       - '@module_handler'
       - '@entity_type.manager'
