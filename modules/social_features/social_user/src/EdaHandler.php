@@ -4,14 +4,15 @@ namespace Drupal\social_user;
 
 use CloudEvents\V1\CloudEvent;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\UuidNamespace;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\Address;
 use Drupal\social_eda\Types\DateTime;
@@ -20,6 +21,7 @@ use Drupal\social_user\Event\UserEventData;
 use Drupal\social_user\Event\UserEventDataLite;
 use Drupal\social_user\Event\UserEventEmailData;
 use Drupal\user\UserInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -74,7 +76,6 @@ final class EdaHandler {
    */
   public function __construct(
     private readonly ?DispatcherInterface $dispatcher,
-    private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -221,6 +222,57 @@ final class EdaHandler {
   }
 
   /**
+   * Generates a deterministic UUIDv5 CloudEvent ID based on type and user.
+   *
+   * @param string $event_type
+   *   The event type (e.g., "com.getopensocial.cms.user.create").
+   * @param \Drupal\user\UserInterface $user
+   *   The user object.
+   *
+   * @return string
+   *   A UUIDv5 string.
+   */
+  private function generateEventId(string $event_type, UserInterface $user): string {
+    $project_id = Settings::get('project_id');
+    if (empty($project_id)) {
+      throw new \RuntimeException('The project_id must be configured to ensure deterministic UUIDs.');
+    }
+    $uuid = $user->uuid();
+
+    // Build deterministic string using the full event type.
+    switch ($event_type) {
+      case "com.getopensocial.cms.user.create":
+      case "com.getopensocial.cms.user.delete":
+        $name = "$event_type:$project_id:$uuid";
+        break;
+
+      case "com.getopensocial.cms.user.login":
+      case "com.getopensocial.cms.user.logout":
+        // For login/logout, include session ID.
+        $request = $this->requestStack->getCurrentRequest();
+        // Use the session ID if available.
+        $session = $request?->getSession()?->getId();
+
+        // We fallback to the last login time.
+        if (!$session) {
+          $session = (string) $user->getLastLoginTime();
+        }
+
+        $name = "$event_type:$project_id:$uuid:$session";
+        break;
+
+      default:
+        // For other events (pending, profile.update, block, unblock,
+        // settings.email, settings.locale), include changed timestamp.
+        $changed = $user->getChangedTime();
+        $name = "$event_type:$project_id:$uuid:$changed";
+        break;
+    }
+
+    return Uuid::uuid5(UuidNamespace::NAMESPACE_OPENSOCIAL, $name)->toString();
+  }
+
+  /**
    * Transforms a NodeInterface into a CloudEvent.
    */
   public function fromEntity(UserInterface $user, string $event_type): CloudEvent {
@@ -264,7 +316,7 @@ final class EdaHandler {
     // Apply variant of the payload to some event types.
     if (preg_match('/\.cms\.user\.(login|logout|block|unblock|delete)$/', $event_type)) {
       $user_data = new UserEventDataLite(
-        id: $user->get('uuid')->value,
+        id: $user->uuid() ?? '',
         created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
         updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
         status: $status,
@@ -290,7 +342,7 @@ final class EdaHandler {
     }
     else {
       $user_data = new UserEventData(
-        id: $user->get('uuid')->value,
+        id: $user->uuid() ?? '',
         created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
         updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
         status: $status,
@@ -312,7 +364,7 @@ final class EdaHandler {
     }
 
     return new CloudEvent(
-      id: $this->uuid->generate(),
+      id: $this->generateEventId($event_type, $user),
       source: $this->source,
       type: $event_type,
       data: [

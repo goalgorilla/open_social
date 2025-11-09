@@ -6,7 +6,6 @@ use Consolidation\Config\ConfigInterface;
 use Drupal\address\Plugin\Field\FieldType\AddressFieldItemList;
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -18,6 +17,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\ProfileStorageInterface;
@@ -25,9 +25,9 @@ use Drupal\social_eda\DispatcherInterface;
 use Drupal\social_user\EdaHandler;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @coversDefaultClass \Drupal\social_user\EdaHandler
@@ -43,22 +43,33 @@ class EdaHandlerTest extends UnitTestCase {
 
   /**
    * Mocked dispatcher service for sending CloudEvents.
-   */
-  protected MockObject $dispatcher;
-
-  /**
-   * The UUID generator service.
    *
-   * @var \Drupal\Component\Uuid\UuidInterface
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\social_eda\DispatcherInterface
    */
-  protected $uuid;
+  protected $dispatcher;
 
   /**
    * The HTTP request stack service.
    *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
+
+  /**
+   * The project ID for deterministic UUID generation.
+   */
+  protected string $projectId = 'test-project-id';
+
+  /**
+   * Original settings saved before test modifications.
+   *
+   * Stores the Settings singleton state at the start of setUp() so it can be
+   * restored in tearDown(). This ensures test isolation by preventing Settings
+   * changes from affecting other tests.
+   *
+   * @var array
+   */
+  protected array $originalSettings = [];
 
   /**
    * The entity type manager service.
@@ -125,35 +136,59 @@ class EdaHandlerTest extends UnitTestCase {
 
   /**
    * Represents the ConfigFactoryInterface.
+   *
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected ConfigFactoryInterface $configFactory;
+  protected $configFactory;
 
   /**
    * The time service.
    *
-   * @var \Drupal\Component\Datetime\TimeInterface
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Component\Datetime\TimeInterface
    */
-  protected TimeInterface $time;
+  protected $time;
 
   /**
    * The logger channel factory.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
-  protected LoggerChannelFactoryInterface $loggerFactory;
+  protected $loggerFactory;
 
   /**
    * The logger channel.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Logger\LoggerChannelInterface
    */
-  protected LoggerChannelInterface $logger;
+  protected $logger;
 
   /**
    * Set up the test environment.
    */
   protected function setUp(): void {
     parent::setUp();
+
+    // Save current settings to restore in tearDown().
+    // The Settings class is a singleton, so we need to preserve the existing
+    // configuration before modifying it. This prevents test interference where
+    // one test's Settings changes affect other tests.
+    // Settings may not be initialized in unit tests, so handle that case.
+    try {
+      Settings::getInstance();
+      $this->originalSettings = Settings::getAll();
+    }
+    catch (\BadMethodCallException $e) {
+      // Settings not initialized yet, start with empty array.
+      $this->originalSettings = [];
+      new Settings([]);
+    }
+
+    // Merge project_id for deterministic UUID generation while preserving
+    // other settings. This ensures we only override the project_id setting
+    // needed for deterministic UUIDs, without losing any existing settings
+    // that other tests might depend on.
+    $mergedSettings = array_merge($this->originalSettings, ['project_id' => $this->projectId]);
+    new Settings($mergedSettings);
 
     // Mock the language_manager service.
     $languageMock = $this->createMock(LanguageInterface::class);
@@ -193,10 +228,6 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Mock the Dispatcher service.
     $this->dispatcher = $this->createMock(DispatcherInterface::class);
-
-    // Mock UUID.
-    $this->uuid = $this->createMock(UuidInterface::class);
-    $this->uuid->method('generate')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
 
     // Mock the URL object.
     $this->url = $this->createMock(Url::class);
@@ -238,6 +269,7 @@ class EdaHandlerTest extends UnitTestCase {
     $this->user->method('id')->willReturn(1);
     $this->user->method('getCreatedTime')->willReturn(1692614400);
     $this->user->method('getChangedTime')->willReturn(1692618000);
+    $this->user->method('getLastLoginTime')->willReturn(1692618000);
     $this->user->method('isActive')->willReturn(TRUE);
     $this->user->method('getDisplayName')->willReturn('User Name');
     $this->user->method('getEmail')->willReturn('user@example.com');
@@ -250,6 +282,7 @@ class EdaHandlerTest extends UnitTestCase {
 
     // Mock the EntityTypeManagerInterface and ProfileStorageInterface.
     $profileStorage = $this->createMock(ProfileStorageInterface::class);
+    $profileStorage->method('loadByProperties')->willReturn([$this->profile]);
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->method('load')->with(1)->willReturn($this->user);
 
@@ -276,6 +309,12 @@ class EdaHandlerTest extends UnitTestCase {
     $this->request = $this->createMock(Request::class);
     $this->request->method('getUri')->willReturn('http://example.com/user/register');
     $this->request->method('getPathInfo')->willReturn('/user/register');
+    // Mock session for login/logout events (returns empty string to use last
+    // login time fallback).
+    $session = $this->createMock(SessionInterface::class);
+    $session->method('getId')->willReturn('');
+    // getSession() can return null, so we'll make it return the session mock.
+    $this->request->method('getSession')->willReturn($session);
 
     $this->requestStack = $this->createMock(RequestStack::class);
     $this->requestStack->method('getCurrentRequest')->willReturn($this->request);
@@ -306,7 +345,219 @@ class EdaHandlerTest extends UnitTestCase {
     $this->assertEquals('1.0', $event->getSpecVersion());
     $this->assertEquals('com.getopensocial.cms.user.create', $event->getType());
     $this->assertEquals('/user/register', $event->getSource());
-    $this->assertEquals('a5715874-5859-4d8a-93ba-9f8433ea44af', $event->getId());
+    $this->assertEquals('ac632030-e33b-50d6-9bd1-3436127a2cd1', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for create event.
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdCreate(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.create');
+
+    $this->assertEquals('ac632030-e33b-50d6-9bd1-3436127a2cd1', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for delete event.
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdDelete(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.delete');
+
+    $this->assertEquals('7f20bf8c-1b9e-5fe5-97b7-3318bad7de32', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for login event with session ID.
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdLogin(): void {
+    // Mock session with a session ID.
+    $session = $this->createMock(SessionInterface::class);
+    $session->method('getId')->willReturn('test-session-id-12345');
+
+    // Create a new request with the session.
+    $request = $this->createMock(Request::class);
+    $request->method('getUri')->willReturn('http://example.com/user/register');
+    $request->method('getPathInfo')->willReturn('/user/register');
+    $request->method('getSession')->willReturn($session);
+
+    // Create a new request stack with the request.
+    $requestStack = $this->createMock(RequestStack::class);
+    $requestStack->method('getCurrentRequest')->willReturn($request);
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject&\Symfony\Component\HttpFoundation\RequestStack $requestStack */
+    $handler = new EdaHandler(
+      $this->dispatcher,
+      $requestStack,
+      $this->moduleHandler,
+      $this->entityTypeManager,
+      $this->account,
+      $this->routeMatch,
+      $this->configFactory,
+      $this->time,
+      $this->loggerFactory,
+    );
+
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.login');
+
+    $this->assertEquals('44a6bec6-2323-590f-85a7-fabc6c2282c9', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for login event with fallback to last login time.
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdLoginFallback(): void {
+    // The request is already set up in setUp() with an empty session ID,
+    // which triggers the fallback to last login time.
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.login');
+
+    $this->assertEquals('52c40fe8-4ca5-53c6-a381-3df93fbf344a', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for logout event with session ID.
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdLogout(): void {
+    // Mock session with a session ID.
+    $session = $this->createMock(SessionInterface::class);
+    $session->method('getId')->willReturn('test-session-id-12345');
+
+    // Create a new request with the session.
+    $request = $this->createMock(Request::class);
+    $request->method('getUri')->willReturn('http://example.com/user/register');
+    $request->method('getPathInfo')->willReturn('/user/register');
+    $request->method('getSession')->willReturn($session);
+
+    // Create a new request stack with the request.
+    $requestStack = $this->createMock(RequestStack::class);
+    $requestStack->method('getCurrentRequest')->willReturn($request);
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject&\Symfony\Component\HttpFoundation\RequestStack $requestStack */
+    $handler = new EdaHandler(
+      $this->dispatcher,
+      $requestStack,
+      $this->moduleHandler,
+      $this->entityTypeManager,
+      $this->account,
+      $this->routeMatch,
+      $this->configFactory,
+      $this->time,
+      $this->loggerFactory,
+    );
+
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.logout');
+
+    $this->assertEquals('7c3a9772-1562-56f8-a912-bb6059dda52d', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for logout event with fallback to last login time.
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdLogoutFallback(): void {
+    // The request is already set up in setUp() with an empty session ID,
+    // which triggers the fallback to last login time.
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.logout');
+
+    $this->assertEquals('87141117-6968-540e-b47c-903f0215e7b2', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for pending event (includes changed timestamp).
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdPending(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.pending');
+
+    $this->assertEquals('4b1acff8-d814-5434-92fd-42355d9b7ea0', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for profile.update event (includes changed timestamp).
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdProfileUpdate(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.profile.update');
+
+    $this->assertEquals('905d171a-029b-516e-94b9-e68b982b1f4b', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for block event (includes changed timestamp).
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdBlock(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.block');
+
+    $this->assertEquals('2e63c892-7a6a-51bd-9987-4387932e2c32', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for unblock event (includes changed timestamp).
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdUnblock(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.unblock');
+
+    $this->assertEquals('c79c4cd8-91b2-5d3e-9087-ad3584466151', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for settings.email event (includes changed timestamp).
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdSettingsEmail(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.settings.email');
+
+    $this->assertEquals('97706595-676b-58bc-813c-deb893c3560c', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for settings.locale event.
+   *
+   * @covers \Drupal\social_user\EdaHandler::fromEntity
+   * @covers \Drupal\social_user\EdaHandler::generateEventId
+   */
+  public function testGenerateEventIdSettingsLocale(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->user, 'com.getopensocial.cms.user.settings.locale');
+
+    $this->assertEquals('2cfaa05a-9041-5a5e-bc6d-35ae78acf0c6', $event->getId());
   }
 
   /**
@@ -587,9 +838,7 @@ class EdaHandlerTest extends UnitTestCase {
    */
   protected function getMockedHandler(): EdaHandler {
     return new EdaHandler(
-      // @phpstan-ignore-next-line
       $this->dispatcher,
-      $this->uuid,
       $this->requestStack,
       $this->moduleHandler,
       $this->entityTypeManager,
@@ -599,6 +848,18 @@ class EdaHandlerTest extends UnitTestCase {
       $this->time,
       $this->loggerFactory,
     );
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function tearDown(): void {
+    // Restore original settings so other tests retain their configuration.
+    // This ensures that any Settings modifications made during this test
+    // don't leak into subsequent tests, maintaining test isolation.
+    new Settings($this->originalSettings);
+
+    parent::tearDown();
   }
 
 }
