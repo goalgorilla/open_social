@@ -7,7 +7,6 @@ use Consolidation\Config\ConfigInterface;
 use Drupal\address\Plugin\Field\FieldType\AddressFieldItemList;
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityInterface;
@@ -21,6 +20,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_eda\DispatcherInterface;
@@ -51,14 +51,25 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
   protected $dispatcher;
 
   /**
-   * Handles UUID generation.
-   */
-  protected UuidInterface $uuid;
-
-  /**
    * Handles HTTP request stack operations.
    */
   protected RequestStack $requestStack;
+
+  /**
+   * The project ID for deterministic UUID generation.
+   */
+  protected string $projectId = 'test-project-id';
+
+  /**
+   * Original settings saved before test modifications.
+   *
+   * Stores the Settings singleton state at the start of setUp() so it can be
+   * restored in tearDown(). This ensures test isolation by preventing Settings
+   * changes from affecting other tests.
+   *
+   * @var array
+   */
+  protected array $originalSettings = [];
 
   /**
    * Represents the canonical URL of an entity.
@@ -166,6 +177,28 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
 
+    // Save current settings to restore in tearDown().
+    // The Settings class is a singleton, so we need to preserve the existing
+    // configuration before modifying it. This prevents test interference where
+    // one test's Settings changes affect other tests.
+    // Settings may not be initialized in unit tests, so handle that case.
+    try {
+      Settings::getInstance();
+      $this->originalSettings = Settings::getAll();
+    }
+    catch (\BadMethodCallException $e) {
+      // Settings not initialized yet, start with empty array.
+      $this->originalSettings = [];
+      new Settings([]);
+    }
+
+    // Merge project_id for deterministic UUID generation while preserving
+    // other settings. This ensures we only override the project_id setting
+    // needed for deterministic UUIDs, without losing any existing settings
+    // that other tests might depend on.
+    $mergedSettings = array_merge($this->originalSettings, ['project_id' => $this->projectId]);
+    new Settings($mergedSettings);
+
     // Mock the language_manager service.
     $languageMock = $this->createMock(LanguageInterface::class);
     $languageMock->method('getId')->willReturn('en');
@@ -198,10 +231,6 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     // Mock the RouteMatchInterface.
     $this->routeMatch = $this->createMock(RouteMatchInterface::class);
     $this->routeMatch->method('getRouteName')->willReturn('entity.node.edit_form');
-
-    // Mock the UUID.
-    $this->uuid = $this->createMock(UuidInterface::class);
-    $this->uuid->method('generate')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
 
     // Mock the TimeInterface.
     $this->time = $this->createMock(TimeInterface::class);
@@ -347,6 +376,7 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $this->eventEnrollment->method('getChangedTime')->willReturn(1692614400);
     $this->eventEnrollment->method('getEvent')->willReturn($nodeMock);
     $this->eventEnrollment->method('getAccountEntity')->willReturn($this->userInterface);
+    $this->eventEnrollment->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
 
     // Mock the CloudEvent class.
     $this->cloudEvent = $this->createMock(CloudEventInterface::class);
@@ -611,8 +641,138 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
     $this->assertEquals('1.0', $event->getSpecVersion());
     $this->assertEquals('com.getopensocial.cms.event_enrollment.create', $event->getType());
     $this->assertEquals('/node/add/event', $event->getSource());
-    $this->assertEquals('a5715874-5859-4d8a-93ba-9f8433ea44af', $event->getId());
+    $this->assertEquals('9fe3acb4-9884-59dc-8317-9ae3acd64648', $event->getId());
     $this->assertEquals(DateTime::fromTimestamp(1234567890)->toImmutableDateTime(), $event->getTime());
+  }
+
+  /**
+   * Test generateEventId for create event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdCreate(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.create');
+
+    $this->assertEquals('9fe3acb4-9884-59dc-8317-9ae3acd64648', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for delete event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdDelete(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.delete');
+
+    $this->assertEquals('b52cc6ea-aa31-517e-b11b-04cfb68fc9fb', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for request.create event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdRequestCreate(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.request.create');
+
+    $this->assertEquals('396f2ee9-6b41-5184-8382-194296601157', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for request.delete event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdRequestDelete(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.request.delete');
+
+    $this->assertEquals('fd691dd7-463e-5f5f-8bef-33f705582f78', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for request.accept event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdRequestAccept(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.request.accept');
+
+    $this->assertEquals('24d4a7f3-b2a0-5359-9175-63158d8cb525', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for request.decline event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdRequestDecline(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.request.decline');
+
+    $this->assertEquals('e7aa9fc7-e616-55b7-91af-4a22eafca7f8', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for invite.create event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdInviteCreate(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.invite.create');
+
+    $this->assertEquals('33345ebd-d16e-5ac4-8159-3e8070dac395', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for invite.delete event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdInviteDelete(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.invite.delete');
+
+    $this->assertEquals('8ca87e4c-2922-5433-b963-fb15eca47be2', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for invite.accept event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdInviteAccept(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.invite.accept');
+
+    $this->assertEquals('ecf68658-117c-5b06-bc13-57d8542b734b', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for invite.decline event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdInviteDecline(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->eventEnrollment, 'com.getopensocial.cms.event_enrollment.invite.decline');
+
+    $this->assertEquals('2036006e-0358-567b-81e6-a2c059464060', $event->getId());
   }
 
   /**
@@ -623,7 +783,6 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
    */
   protected function getMockedHandler(): EdaEventEnrollmentHandler {
     return new EdaEventEnrollmentHandler(
-      $this->uuid,
       $this->requestStack,
       $this->moduleHandler,
       $this->entityTypeManager,
@@ -634,6 +793,18 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
       $this->loggerFactory,
       $this->dispatcher
     );
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function tearDown(): void {
+    // Restore original settings so other tests retain their configuration.
+    // This ensures that any Settings modifications made during this test
+    // don't leak into subsequent tests, maintaining test isolation.
+    new Settings($this->originalSettings);
+
+    parent::tearDown();
   }
 
 }

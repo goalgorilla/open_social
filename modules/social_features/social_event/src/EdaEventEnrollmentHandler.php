@@ -4,13 +4,15 @@ namespace Drupal\social_event;
 
 use CloudEvents\V1\CloudEvent;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Site\Settings;
+use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\UuidNamespace;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\Address;
 use Drupal\social_eda\Types\ContentVisibility;
@@ -21,7 +23,7 @@ use Drupal\social_eda\Types\User;
 use Drupal\social_event\Event\EventEntityData;
 use Drupal\user\UserInterface;
 use Drupal\node\NodeInterface;
-use Drupal\social_eda\DispatcherInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -75,7 +77,6 @@ final class EdaEventEnrollmentHandler {
    * {@inheritDoc}
    */
   public function __construct(
-    private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -223,6 +224,32 @@ final class EdaEventEnrollmentHandler {
   }
 
   /**
+   * Generates a deterministic UUIDv5 CloudEvent ID.
+   *
+   * @param string $event_type
+   *   The event type (e.g., "com.getopensocial.cms.event_enrollment.create").
+   * @param \Drupal\social_event\EventEnrollmentInterface $event_enrollment
+   *   The event enrollment object.
+   *
+   * @return string
+   *   A UUIDv5 string.
+   */
+  private function generateEventId(string $event_type, EventEnrollmentInterface $event_enrollment): string {
+    $project_id = Settings::get('project_id');
+    if (empty($project_id)) {
+      throw new \RuntimeException('The project_id must be configured to ensure deterministic UUIDs.');
+    }
+    $uuid = $event_enrollment->uuid();
+
+    // All event enrollment events use the format: event_type:project_id:uuid.
+    // The uuid is the same for enrollment_id, request_id, and invite_id
+    // as they all refer to the same event enrollment entity.
+    $name = "$event_type:$project_id:$uuid";
+
+    return Uuid::uuid5(UuidNamespace::NAMESPACE_OPENSOCIAL, $name)->toString();
+  }
+
+  /**
    * Transforms a EventEnrollment into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -315,17 +342,17 @@ final class EdaEventEnrollmentHandler {
     }
 
     return new CloudEvent(
-      id: $this->uuid->generate(),
+      id: $this->generateEventId($event_type, $event_enrollment),
       source: $this->source,
       type: $event_type,
       data: [
         'eventEnrollment' => [
-          'id' => $event_enrollment->get('uuid')->value,
+          'id' => $event_enrollment->uuid() ?? '',
           'created' => DateTime::fromTimestamp($event_enrollment->getCreatedTime())->toString(),
           'updated' => DateTime::fromTimestamp($event_enrollment->getChangedTime())->toString(),
           'status' => $enrollment_status[$event_type],
           'event' => new EventEntityData(
-            id: $event->get('uuid')->value,
+            id: $event->uuid() ?? '',
             created: DateTime::fromTimestamp($event->getCreatedTime())->toString(),
             updated: DateTime::fromTimestamp($event->getChangedTime())->toString(),
             status: $event->get('status')->value ? 'published' : 'unpublished',

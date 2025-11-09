@@ -36,7 +36,6 @@ services:
   social_event.eda_event_enrollment_handler:
     class: Drupal\social_event\EdaEventEnrollmentHandler
     arguments:
-      - '@uuid'
       - '@request_stack'
       - '@module_handler'
       - '@entity_type.manager'
