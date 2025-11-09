@@ -10,7 +10,6 @@ services:
   social_like.eda_handler:
     class: Drupal\social_like\EdaHandler
     arguments:
-      - '@uuid'
       - '@request_stack'
       - '@module_handler'
       - '@entity_type.manager'
