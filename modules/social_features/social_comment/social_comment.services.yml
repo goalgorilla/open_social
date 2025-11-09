@@ -18,7 +18,6 @@ services:
   social_comment.eda_handler:
     class: Drupal\social_comment\EdaHandler
     arguments:
-      - '@uuid'
       - '@request_stack'
       - '@module_handler'
       - '@entity_type.manager'

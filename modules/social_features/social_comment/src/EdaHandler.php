@@ -5,22 +5,24 @@ namespace Drupal\social_comment;
 use CloudEvents\V1\CloudEvent;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\social_comment\Event\CommentEntityData;
 use Drupal\social_comment\Event\Thread;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\UuidNamespace;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\EntityReference;
 use Drupal\social_eda\Types\Href;
 use Drupal\social_eda\Types\User;
 use Drupal\user\UserInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -74,7 +76,6 @@ final class EdaHandler {
    * {@inheritDoc}
    */
   public function __construct(
-    private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -184,6 +185,43 @@ final class EdaHandler {
   }
 
   /**
+   * Generates a deterministic UUIDv5 CloudEvent ID based on type and comment.
+   *
+   * @param string $event_type
+   *   The event type (e.g., "com.getopensocial.cms.comment.create").
+   * @param \Drupal\comment\CommentInterface $comment
+   *   The comment object.
+   *
+   * @return string
+   *   A UUIDv5 string.
+   */
+  private function generateEventId(string $event_type, CommentInterface $comment): string {
+    $project_id = Settings::get('project_id');
+    if (empty($project_id)) {
+      throw new \RuntimeException('The project_id must be configured to ensure deterministic UUIDs.');
+    }
+
+    $uuid = $comment->uuid();
+
+    // Build deterministic string using the full event type.
+    // For create and delete, use only event_type, project_id and uuid.
+    // For publish, unpublish, and update, include changed timestamp.
+    switch ($event_type) {
+      case "com.getopensocial.cms.comment.create":
+      case "com.getopensocial.cms.comment.delete":
+        $name = "$event_type:$project_id:$uuid";
+        break;
+
+      default:
+        $changed = $comment->getChangedTime();
+        $name = "$event_type:$project_id:$uuid:$changed";
+        break;
+    }
+
+    return Uuid::uuid5(UuidNamespace::NAMESPACE_OPENSOCIAL, $name)->toString();
+  }
+
+  /**
    * Transforms a CommentInterface into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -206,7 +244,7 @@ final class EdaHandler {
     $thread = $this->calculateThreadInfo($comment);
 
     return new CloudEvent(
-      id: $this->uuid->generate(),
+      id: $this->generateEventId($event_type, $comment),
       source: $this->source,
       type: $event_type,
       data: [
