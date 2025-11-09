@@ -7,7 +7,6 @@ use Drupal\Core\Config\ImmutableConfig;
 use Drupal\address\Plugin\Field\FieldType\AddressFieldItemList;
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityInterface;
@@ -21,6 +20,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_eda\DispatcherInterface;
@@ -49,14 +49,25 @@ class EdaHandlerTest extends UnitTestCase {
   protected MockObject $dispatcher;
 
   /**
-   * Handles UUID generation.
-   */
-  protected UuidInterface $uuid;
-
-  /**
    * Handles HTTP request stack operations.
    */
   protected RequestStack $requestStack;
+
+  /**
+   * The project ID for deterministic UUID generation.
+   */
+  protected string $projectId = 'test-project-id';
+
+  /**
+   * Original settings saved before test modifications.
+   *
+   * Stores the Settings singleton state at the start of setUp() so it can be
+   * restored in tearDown(). This ensures test isolation by preventing Settings
+   * changes from affecting other tests.
+   *
+   * @var array
+   */
+  protected array $originalSettings = [];
 
   /**
    * Represents the canonical URL of an entity.
@@ -166,6 +177,28 @@ class EdaHandlerTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
 
+    // Save current settings to restore in tearDown().
+    // The Settings class is a singleton, so we need to preserve the existing
+    // configuration before modifying it. This prevents test interference where
+    // one test's Settings changes affect other tests.
+    // Settings may not be initialized in unit tests, so handle that case.
+    try {
+      Settings::getInstance();
+      $this->originalSettings = Settings::getAll();
+    }
+    catch (\BadMethodCallException $e) {
+      // Settings not initialized yet, start with empty array.
+      $this->originalSettings = [];
+      new Settings([]);
+    }
+
+    // Merge project_id for deterministic UUID generation while preserving
+    // other settings. This ensures we only override the project_id setting
+    // needed for deterministic UUIDs, without losing any existing settings
+    // that other tests might depend on.
+    $mergedSettings = array_merge($this->originalSettings, ['project_id' => $this->projectId]);
+    new Settings($mergedSettings);
+
     // Mock the language_manager service.
     $languageMock = $this->createMock(LanguageInterface::class);
     $languageMock->method('getId')->willReturn('en');
@@ -203,10 +236,6 @@ class EdaHandlerTest extends UnitTestCase {
     // Mock the RouteMatchInterface.
     $this->routeMatch = $this->createMock(RouteMatchInterface::class);
     $this->routeMatch->method('getRouteName')->willReturn('entity.node.edit_form');
-
-    // Mock the UUID.
-    $this->uuid = $this->createMock(UuidInterface::class);
-    $this->uuid->method('generate')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
 
     // Mock the Request.
     $this->request = $this->createMock(Request::class);
@@ -264,6 +293,8 @@ class EdaHandlerTest extends UnitTestCase {
       return in_array($field_name, ['field_content_visibility', 'groups', 'field_event_type']);
     });
     $this->node->method('getChangedTime')->willReturn(1692618000);
+    $this->node->method('getRevisionId')->willReturn(1);
+    $this->node->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $this->node->method('get')->willReturnCallback(function ($field_name) {
       if ($field_name === 'groups') {
         return $this->fieldItemList;
@@ -339,8 +370,73 @@ class EdaHandlerTest extends UnitTestCase {
     $this->assertEquals('1.0', $event->getSpecVersion());
     $this->assertEquals('com.getopensocial.cms.event.create', $event->getType());
     $this->assertEquals('/node/add/event', $event->getSource());
-    $this->assertEquals('a5715874-5859-4d8a-93ba-9f8433ea44af', $event->getId());
+    $this->assertEquals('3fe76ad5-2f82-52e3-b240-9deb1abd2bf2', $event->getId());
     $this->assertEquals(DateTime::fromTimestamp(1234567890)->toImmutableDateTime(), $event->getTime());
+  }
+
+  /**
+   * Test generateEventId for create event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdCreate(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.create');
+
+    $this->assertEquals('3fe76ad5-2f82-52e3-b240-9deb1abd2bf2', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for delete event.
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdDelete(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.delete', 'delete');
+
+    $this->assertEquals('6344f84d-488c-5098-bbed-b0b71d717116', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for publish event (includes revision ID).
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdPublish(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.publish');
+
+    $this->assertEquals('7f0df8cd-70d9-5d57-87fb-226e190586b3', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for unpublish event (includes revision ID).
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdUnpublish(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.unpublish');
+
+    $this->assertEquals('34128b44-4f01-57a2-a3c4-257b27882a10', $event->getId());
+  }
+
+  /**
+   * Test generateEventId for update event (includes revision ID).
+   *
+   * @covers ::fromEntity
+   * @covers ::generateEventId
+   */
+  public function testGenerateEventIdUpdate(): void {
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($this->node, 'com.getopensocial.cms.event.update');
+
+    $this->assertEquals('c39f4e44-efb0-546d-9fa0-db63d94fd61a', $event->getId());
   }
 
   /**
@@ -483,7 +579,6 @@ class EdaHandlerTest extends UnitTestCase {
    */
   protected function getMockedHandler(): EdaHandler {
     return new EdaHandler(
-      $this->uuid,
       $this->requestStack,
       $this->moduleHandler,
       $this->entityTypeManager,
@@ -495,6 +590,18 @@ class EdaHandlerTest extends UnitTestCase {
       // @phpstan-ignore-next-line
       $this->dispatcher
     );
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function tearDown(): void {
+    // Restore original settings so other tests retain their configuration.
+    // This ensures that any Settings modifications made during this test
+    // don't leak into subsequent tests, maintaining test isolation.
+    new Settings($this->originalSettings);
+
+    parent::tearDown();
   }
 
 }
