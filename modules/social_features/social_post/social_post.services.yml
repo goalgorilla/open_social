@@ -26,7 +26,6 @@ services:
   social_post.eda_handler:
     class: Drupal\social_post\EdaHandler
     arguments:
-      - '@uuid'
       - '@request_stack'
       - '@module_handler'
       - '@entity_type.manager'
