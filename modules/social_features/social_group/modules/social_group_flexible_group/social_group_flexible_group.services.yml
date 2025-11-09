@@ -40,7 +40,6 @@ services:
   social_group_flexible_group.group_membership.eda_handler:
     class: Drupal\social_group_flexible_group\EdaGroupMembershipHandler
     arguments:
-      - '@uuid'
       - '@request_stack'
       - '@module_handler'
       - '@entity_type.manager'

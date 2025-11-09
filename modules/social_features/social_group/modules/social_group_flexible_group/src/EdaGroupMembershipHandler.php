@@ -4,22 +4,24 @@ namespace Drupal\social_group_flexible_group;
 
 use CloudEvents\V1\CloudEvent;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupMembershipInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\UuidNamespace;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Entity;
 use Drupal\social_eda\Types\Href;
 use Drupal\social_group_flexible_group\Event\GroupMembershipEntityData;
 use Drupal\user\UserInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -73,7 +75,6 @@ final class EdaGroupMembershipHandler {
    * {@inheritDoc}
    */
   public function __construct(
-    private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -221,6 +222,32 @@ final class EdaGroupMembershipHandler {
   }
 
   /**
+   * Generates a deterministic UUIDv5 CloudEvent ID based on type and entity.
+   *
+   * @param string $event_type
+   *   The event type (e.g., "com.getopensocial.cms.group_membership.create").
+   * @param \Drupal\group\Entity\GroupMembershipInterface|\Drupal\group\Entity\GroupRelationshipInterface $entity
+   *   The entity object (membership, request, or invitation).
+   *
+   * @return string
+   *   A UUIDv5 string.
+   */
+  private function generateEventId(string $event_type, GroupMembershipInterface|GroupRelationshipInterface $entity): string {
+    $project_id = Settings::get('project_id');
+    if (empty($project_id)) {
+      throw new \RuntimeException('The project_id must be configured to ensure deterministic UUIDs.');
+    }
+    $uuid = $entity->uuid();
+
+    // All group membership events use the format: event_type:project_id:uuid.
+    // The uuid is the same for membership_id, request_id, and invite_id
+    // as they all refer to the same entity (membership or relationship).
+    $name = "$event_type:$project_id:$uuid";
+
+    return Uuid::uuid5(UuidNamespace::NAMESPACE_OPENSOCIAL, $name)->toString();
+  }
+
+  /**
    * Transforms a group membership or request/invitation into a CloudEvent.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -309,12 +336,12 @@ final class EdaGroupMembershipHandler {
     }
 
     return new CloudEvent(
-      id: $this->uuid->generate(),
+      id: $this->generateEventId($event_type, $entity),
       source: $this->source,
       type: $event_type,
       data: [
         'groupMembership' => new GroupMembershipEntityData(
-          id: (string) $entity->uuid(),
+          id: $entity->uuid() ?? '',
           created: DateTime::fromTimestamp($entity->getCreatedTime())->toString(),
           updated: DateTime::fromTimestamp($entity->getChangedTime())->toString(),
           status: $status_mappings[$event_type] ?? 'unknown',
