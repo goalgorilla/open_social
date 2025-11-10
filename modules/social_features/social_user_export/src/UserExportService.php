@@ -266,7 +266,7 @@ final class UserExportService {
 
     // Open CSV file in appended mode.
     // This is the copy of $csv = $this->openCsvForWriting($fullPath, 'a');.
-    $csv = Writer::createFromPath($fullPath, 'a');
+    $csv = Writer::from($fullPath, 'a');
     $csv->setDelimiter(',');
     $csv->setEnclosure('"');
     $csv->setEscape('\\');
@@ -298,6 +298,7 @@ final class UserExportService {
           $row[] = $value;
         }
       }
+      /** @var \League\Csv\Writer $csv */
       $csv->insertOne($row);
       $written++;
     }
@@ -458,14 +459,17 @@ final class UserExportService {
    *
    * @param string $filePath
    *   Full path to the CSV file.
-   * @param string $mode
+   * @param non-empty-string $mode
    *   File mode ('w' for write, 'a' for append).
    *
    * @return \League\Csv\Writer
    *   Configured CSV writer instance.
+   *
+   * @throws \League\Csv\InvalidArgument
+   * @throws \League\Csv\UnavailableStream
    */
   private function openCsvForWriting(string $filePath, string $mode = 'w'): Writer {
-    $csv = Writer::createFromPath($filePath, $mode);
+    $csv = Writer::from($filePath, $mode);
     $csv->setDelimiter(',');
     $csv->setEnclosure('"');
     $csv->setEscape('\\');
