@@ -48,15 +48,15 @@
     </header>
 
 
-  {% if (content.primary_affiliation_function['#markup'] or content.primary_affiliation_name['#markup']) or profile_contact_label == 'private_message' %}
+  {% if (content.primary_affiliation_function|render or content.primary_affiliation_name|render) or profile_contact_label == 'private_message' %}
     <footer class="hero-footer">
   {% endif %}
 
     <div class="hero-footer__text">
-      {% if content.primary_affiliation_function['#markup'] %}
+      {% if content.primary_affiliation_function|render %}
         <strong>{{ content.primary_affiliation_function }}</strong>
       {% endif %}
-      {% if (content.primary_affiliation_function['#markup'] and content.primary_affiliation_name['#markup']) %}
+      {% if (content.primary_affiliation_function|render and content.primary_affiliation_name|render) %}
       &nbsp;-&nbsp;
       {% endif %}
         {{ content.primary_affiliation_name }}
@@ -70,7 +70,7 @@
       </div>
     {% endif %}
 
-  {% if (content.primary_affiliation_function['#markup'] or content.primary_affiliation_name['#markup']) or profile_contact_label == 'private_message' %}
+  {% if (content.primary_affiliation_function|render or content.primary_affiliation_name|render) or profile_contact_label == 'private_message' %}
     </footer>
   {% endif %}
 

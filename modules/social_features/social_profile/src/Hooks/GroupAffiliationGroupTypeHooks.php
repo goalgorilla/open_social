@@ -192,15 +192,13 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
 
     if ($display->getComponent('primary_affiliation_name')) {
       $build['primary_affiliation_name'] = [
-        '#type' => 'markup',
-        '#markup' => trim(strip_tags($profile->getPrimaryAffiliationName())),
+        '#plain_text' => $profile->getPrimaryAffiliationName(),
       ];
     }
 
     if ($display->getComponent('primary_affiliation_function')) {
       $build['primary_affiliation_function'] = [
-        '#type' => 'markup',
-        '#markup' => trim(strip_tags($profile->getPrimaryAffiliationFunction())),
+        '#plain_text' => $profile->getPrimaryAffiliationFunction(),
       ];
     }
 

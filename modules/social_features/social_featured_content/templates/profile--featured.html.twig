@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block card_body %}
-  {% if content.primary_affiliation_function or content.primary_affiliation_name %}
+  {% if content.primary_affiliation_function|render or content.primary_affiliation_name|render %}
     <div class="teaser__content-line">
       <span class="teaser__content-text">
         <span>{{ content.primary_affiliation_function }}</span>

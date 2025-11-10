@@ -9,7 +9,7 @@
   <div class="card__info-user--about">
     <div class="card__info-user--about-job">{{ content.primary_affiliation_function }}</div>
     <div class="card__info-user--about-organization" translate="no">
-      {% if content.primary_affiliation_name['#markup'] %}
+      {% if content.primary_affiliation_name|render %}
         {{ content.primary_affiliation_name }}
       {% endif %}
     </div>

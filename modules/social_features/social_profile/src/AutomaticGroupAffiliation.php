@@ -647,7 +647,9 @@ class AutomaticGroupAffiliation {
     // Sort rules by weight in case properties are not listed by weight order.
     usort($rules, fn($a, $b) => $a['weight'] <=> $b['weight']);
 
-    $this->cacheBackend->set($cache_id, $rules, Cache::PERMANENT);
+    $this->cacheBackend->set($cache_id, $rules, Cache::PERMANENT, [
+      'config:social_profile.automatic_group_affiliations.' . $profile_type,
+    ]);
 
     return $rules;
   }
@@ -689,7 +691,8 @@ class AutomaticGroupAffiliation {
       //   for existing memberships - it only works for new memberships going
       //   forward. Use this when you want to avoid bulk-adding affiliations for
       //   users who were already members before the affiliation enabling.
-      if (!$rule['retroactive']) {
+      $is_retroactive = $rule['retroactive'] ?? TRUE;
+      if (!$is_retroactive) {
         // Get the user's current affiliations to filter against.
         $current_affiliations = $this->userProfile->getAllUserAffiliationGroupIds();
         // If a new membership is being added that matches this rule, include it
@@ -697,7 +700,6 @@ class AutomaticGroupAffiliation {
         if ($membership && in_array($membership->getGroupId(), $affiliated_group_ids_per_rule)) {
           $current_affiliations[] = $membership->getGroupId();
         }
-
         // Only keep group IDs that are both matched by the rule AND already in
         // the user's current affiliations.
         // This filters out existing memberships that aren't yet affiliated.

@@ -16,3 +16,14 @@ Feature: Profile information
     # And I should not see "user_1" in the "Hero block"
     And I should see the link "Edit profile information"
     # @TODO: Add scenario about view profile information of other user when Search Users will be ready
+
+  Scenario: Successfully see non-platform affiliation in profile page
+    Given users:
+      | name        | mail              | status | field_profile_first_name | field_profile_last_name |
+      | marie_curie | marie@example.com | 1      | Marie                    | Curie                   |
+    And The user "marie_curie" has non-platform affiliation "University of Paris" with function "Professor"
+    And I am logged in as "marie_curie"
+    And I am on "/user"
+    # Affiliation information is displaying the statistic bock.
+    And I should see "Professor" in the "#block-socialblue-profile-statistic-block" element
+    And I should see "University of Paris" in the "#block-socialblue-profile-statistic-block" element

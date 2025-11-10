@@ -55,14 +55,14 @@
       {% endblock %}
 
       {% block card_body %}
-        {% if content.primary_affiliation_function['#markup'] or content.primary_affiliation_name['#markup'] %}
+        {% if content.primary_affiliation_function|render or content.primary_affiliation_name|render %}
           <div class="teaser__content-line">
             <svg class="teaser__content-type-icon">
               <title>{% trans %}User function and organization{% endtrans %}</title>
               <use xlink:href="#icon-business_center"></use>
             </svg>
             <span class="teaser__content-text">
-              {% if content.primary_affiliation_function['#markup'] and content.primary_affiliation_name['#markup'] %}
+              {% if content.primary_affiliation_function|render and content.primary_affiliation_name|render %}
                 {{ '@affiliation_function at @affiliation_name'|t({'@affiliation_function': content.primary_affiliation_function|render, '@affiliation_name': content.primary_affiliation_name|render}) }}
               {% else %}
                 {{ content.primary_affiliation_function }}

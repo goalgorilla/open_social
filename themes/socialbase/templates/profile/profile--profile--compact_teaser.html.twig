@@ -36,10 +36,10 @@
     <div class="list-item__text">
       <a href="{{ profile_home }}" title="{{ 'View Profile'|t }}"{{ link_attributes }}>{{ profile_name }}</a>
 
-      {% if content.primary_affiliation_function['#markup'] and content.primary_affiliation_function['#markup'] %} <br /> {% endif %}
+      {% if content.primary_affiliation_function|render and content.primary_affiliation_name|render %} <br /> {% endif %}
       {{content.primary_affiliation_function}}
 
-      {% if content.primary_affiliation_function['#markup'] and content.primary_affiliation_name['#markup'] %} &bullet; {% endif %}
+      {% if content.primary_affiliation_function|render and content.primary_affiliation_name|render %} &bullet; {% endif %}
       {{ content.primary_affiliation_name }}
 
     </div>

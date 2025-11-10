@@ -14,7 +14,7 @@ use Drupal\user\UserInterface;
  * @UserExportPlugin(
  *  id = "user_primary_affiliation_type",
  *  label = @Translation("Primary affiliation type"),
- *  weight = -320,
+ *  weight = -319,
  * )
  */
 class UserPrimaryAffiliationType extends UserExportPluginBase {

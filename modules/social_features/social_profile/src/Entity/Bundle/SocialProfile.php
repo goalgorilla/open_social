@@ -57,7 +57,8 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
   public function getAllUserAffiliationGroupLabels(): array {
     // Use a static cache to avoid re-calculating the method results.
     // It's cached per object instance.
-    $labels = &drupal_static(__METHOD__ . ':' . $this->uuid());
+    $labels = &drupal_static(sprintf('%s:%s:%s', __METHOD__, $this->uuid(), $this->language()->getId()));
+
     if (is_array($labels)) {
       return $labels;
     }
@@ -242,8 +243,8 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
    */
   public function getPrimaryAffiliation(): array {
     // Use a static cache to avoid re-calculating the affiliation.
-    // It's cached per object instance.
-    $affiliation = &drupal_static(__METHOD__ . ':' . $this->uuid());
+    // It's cached per object (translation) instance.
+    $affiliation = &drupal_static(sprintf('%s:%s:%s', __METHOD__, $this->uuid(), $this->language()->getId()));
     if (isset($affiliation)) {
       return $affiliation;
     }
@@ -262,19 +263,20 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
       !$this->get('field_group_affiliation')->isEmpty()
     ) {
       $group = $this->get('field_group_affiliation')->entity;
-      assert($group instanceof GroupInterface);
-      $value['affiliation_name'] = $group->label();
+      if ($group instanceof GroupInterface) {
+        $value['affiliation_name'] = $group->label();
 
-      // Additionally, add the group type id to the affiliation.
-      $value['affiliation_type'] = $group->getGroupType()->label();
+        // Additionally, add the group type id to the affiliation.
+        $value['affiliation_type'] = $group->getGroupType()->label();
 
-      $account = $this->getOwner();
-      $membership = GroupMembership::loadSingle($group, $account);
-      if (
-        $membership instanceof GroupMembership &&
-        $membership->hasField('field_affiliation_function')
-      ) {
-        $value['affiliation_function'] = $membership->get('field_affiliation_function')->getString();
+        $account = $this->getOwner();
+        $membership = GroupMembership::loadSingle($group, $account);
+        if (
+          $membership instanceof GroupMembership &&
+          $membership->hasField('field_affiliation_function')
+        ) {
+          $value['affiliation_function'] = $membership->get('field_affiliation_function')->getString();
+        }
       }
     }
 

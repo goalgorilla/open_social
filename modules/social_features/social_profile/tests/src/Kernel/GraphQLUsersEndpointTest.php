@@ -63,7 +63,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    */
   protected function setUp() : void {
     parent::setUp();
-    // Paragraphs needs for getting affiliation data.
+    // Paragraph schema is needed for affiliation data.
     $this->installEntitySchema('paragraph');
 
     $this->installEntitySchema('profile_type');

@@ -19,9 +19,9 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
-use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\ProfileStorageInterface;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_user\EdaHandler;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
@@ -239,7 +239,7 @@ class EdaHandlerTest extends UnitTestCase {
     $this->addressItemList->method('first')->willReturn($this->addressItem);
 
     // Mock the Profile entity.
-    $this->profile = $this->createMock(ProfileInterface::class);
+    $this->profile = $this->createMock(ProfileAffiliationInterface::class);
     $this->profile->method('get')->willReturnCallback(function ($field_name) {
       if ($field_name === 'field_profile_first_name') {
         return (object) ['value' => 'First'];

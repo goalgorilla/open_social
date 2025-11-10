@@ -31,14 +31,14 @@
       <h4 class="teaser__title">
         {{ profile_name }} {{ profile_name_extra }}
       </h4>
-      {% if content.primary_affiliation_function['#markup'] or content.primary_affiliation_name['#markup'] %}
+      {% if content.primary_affiliation_function|render or content.primary_affiliation_name|render %}
         <div class="teaser__content-line">
           <svg class="teaser__content-type-icon">
             <title>{% trans %}User function/organization{% endtrans %}</title>
             <use xlink:href="#icon-business_center"></use>
           </svg>
           <span class="teaser__content-text">
-            {% if content.primary_affiliation_name['#markup'] %}
+            {% if content.primary_affiliation_name|render %}
               {{ '@function at @organization'|t({'@function': content.primary_affiliation_function|render, '@organization': content.primary_affiliation_name|render}) }}
             {% else %}
               {{ content.primary_affiliation_function }}

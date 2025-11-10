@@ -11,6 +11,7 @@ use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Defines test steps around user profiles and profile management.
@@ -181,6 +182,30 @@ class ProfileContext extends RawMinkContext {
     if ($expectedState !== $actualState) {
       throw new \RuntimeException("Expected unique nicknames to be $state but got '" . ($actualState ? "enabled" : "disabled") . "'");
     }
+  }
+
+  /**
+   * Navigate to a user's information page.
+   *
+   * Example:
+   * Given I go to "Test User" information page
+   *
+   * @Given /^I go to "([^"]+)" information page$/
+   *
+   * @param string $username
+   *   The username of the user whose information page is to navigate to.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function goToUserInformationPage(string $username): void {
+    $users = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['name' => $username]);
+    $user = reset($users);
+    if (!$user instanceof UserInterface) {
+      throw new \InvalidArgumentException(sprintf('User %s not found.', $username));
+    }
+
+    $this->visitPath('/user/' . $user->id() . '/information');
   }
 
   /**
