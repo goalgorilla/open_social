@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.post_comment
+    - field.storage.comment.field_human_relevancy_score
+  module:
+    - gaia_content_relevancy
+id: comment.post_comment.field_human_relevancy_score
+field_name: field_human_relevancy_score
+entity_type: comment
+bundle: post_comment
+label: 'New relevancy score'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 100
+  prefix: ''
+  suffix: ''
+field_type: integer
+

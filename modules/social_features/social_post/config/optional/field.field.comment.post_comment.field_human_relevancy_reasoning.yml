@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.post_comment
+    - field.storage.comment.field_human_relevancy_reasoning
+  module:
+    - gaia_content_relevancy
+id: comment.post_comment.field_human_relevancy_reasoning
+field_name: field_human_relevancy_reasoning
+entity_type: comment
+bundle: post_comment
+label: 'Reason for re-evaluation'
+description: '0-10 spam, get hidden<br/>11-20 low relevancy<br/>21-40 doesn''t fit the purpose<br/>41-60 somehow useful<br/>61-80 drives engagement<br/>81-100 highly valuable'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
+
