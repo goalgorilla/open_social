@@ -333,6 +333,7 @@ final class EdaHandler {
     }
     elseif (preg_match('/\.cms\.user\.settings\.(email|locale)$/', $event_type)) {
       $user_data = new UserEventEmailData(
+        id: $user->uuid() ?? '',
         created: DateTime::fromTimestamp($user->getCreatedTime())->toString(),
         updated: DateTime::fromTimestamp($user->getChangedTime())->toString(),
         status: $status,

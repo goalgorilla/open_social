@@ -13,6 +13,7 @@ class UserEventEmailData {
    * {@inheritDoc}
    */
   public function __construct(
+    public readonly string $id,
     public readonly string $created,
     public readonly string $updated,
     public readonly string $status,
