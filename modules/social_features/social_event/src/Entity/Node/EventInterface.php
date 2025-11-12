@@ -88,6 +88,40 @@ interface EventInterface extends NodeInterface {
   public function getMeeting(): ?Meeting;
 
   /**
+   * Check if the event has a valid meeting link available for the account.
+   *
+   * This method determines whether a meeting link is available for an online
+   * event.
+   * The availability depends on:
+   * - The event being configured as an online event.
+   * - The account having participation in the event.
+   * - The meeting type and its configuration.
+   *
+   * For BigBlueButton meetings, this method returns TRUE by default since
+   * there is no way to verify meeting availability until the meeting starts.
+   * For custom link meetings, it verifies that a valid URL is configured.
+   *
+   * @param \Drupal\Core\Session\AccountInterface|\Drupal\user\UserInterface|null $account
+   *   The account to check meeting link availability for.
+   *   If NULL, the current user account will be used.
+   *   If an AccountInterface is provided, it will be converted to a
+   *   UserInterface entity.
+   *
+   * @return bool
+   *   TRUE if a meeting link is available for the account, FALSE otherwise.
+   *   Returns FALSE if:
+   *   - The event is not online
+   *   - The account cannot be loaded or is invalid
+   *   - The account does not have participation in the event
+   *   - No meeting entity is associated with the event
+   *   - For custom_link meetings: the URL is missing or invalid
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function hasMeetingLink(AccountInterface|UserInterface|null $account = NULL): bool;
+
+  /**
    * Retrieve the meeting link associated with an online event.
    *
    * @return string|null

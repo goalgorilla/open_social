@@ -250,7 +250,7 @@ class EnrollActionForm extends FormBase {
           // the submitting text accordingly.
           // Make sure the meeting isn't finished.
           if ($node->isOnline() && !$node->isEnded()) {
-            $has_meeting_link = $node->getMeetingLink();
+            $has_meeting_link = $node->hasMeetingLink();
 
             // Meeting has not been started yet.
             // We want to display a different button text if the meeting URL
@@ -360,7 +360,7 @@ class EnrollActionForm extends FormBase {
 
     // If the event is online and the meeting is open, we need to display a
     // button with a link to join without a dropdown.
-    if ($node->isOnline() && $node->joiningMeetingIsOpen() && $node->getMeetingLink()) {
+    if ($node->isOnline() && $node->joiningMeetingIsOpen() && $node->hasMeetingLink()) {
       return $form;
     }
 
@@ -425,14 +425,12 @@ class EnrollActionForm extends FormBase {
     $event = $this->entityTypeManager->getStorage('node')->load($nid);
     assert($event instanceof EventInterface);
 
-    if ($event->isOnline()) {
-      if ($event->joiningMeetingIsOpen()) {
-        // We should redirect the user to the meeting page.
-        if ($redirect_link = $event->getMeetingLink()) {
-          $response->addCommand(new RedirectCommand($redirect_link));
+    if ($event->isOnline() && $event->joiningMeetingIsOpen()) {
+      // We should redirect the user to the meeting page.
+      if ($redirect_link = $event->getMeetingLink()) {
+        $response->addCommand(new RedirectCommand($redirect_link));
 
-          return $response;
-        }
+        return $response;
       }
     }
 

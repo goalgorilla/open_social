@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
 use Drupal\hux\Attribute\Hook;
+use Drupal\meeting_api\MeetingEntityInterface;
 use Drupal\social_event\Form\EventSettingsForm;
 use Drupal\social_event\PluginForm\ManualMeetingConfigurationForm;
 use Drupal\social_event\Service\EventOnline as EventOnlineService;
@@ -29,8 +30,13 @@ final class EventOnline implements ContainerInjectionInterface {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory.
+   * @param \Drupal\social_event\Service\EventOnline $eventOnlineService
+   *   The event online service.
    */
-  public function __construct(protected ConfigFactoryInterface $configFactory) {}
+  public function __construct(
+    protected ConfigFactoryInterface $configFactory,
+    private readonly EventOnlineService $eventOnlineService,
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -38,6 +44,7 @@ final class EventOnline implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
+      $container->get(EventOnlineService::class),
     );
   }
 
@@ -196,6 +203,47 @@ final class EventOnline implements ContainerInjectionInterface {
   public function eventFormAlter(array &$form, FormStateInterface $form_state): void {
     if (isset($form['field_event_address'], $form['field_event_meeting'])) {
       $form['field_event_address']['#element_validate'][] = [static::class, 'validateAddress'];
+    }
+  }
+
+  /**
+   * Converts specific backend settings to their proper data types.
+   *
+   * This is a workaround for a bug in the BigBlueButton meetings.
+   * It converts the scalar values of the backend settings to boolean values.
+   *
+   * @param \Drupal\meeting_api\MeetingEntityInterface $meeting
+   *   The meeting entity.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *
+   * @see \Drupal\meeting_api_bbb\PluginForm\BigBlueButtonMeetingConfigurationForm::submitConfigurationForm()
+   * @see hook_ENTITY_TYPE_presave()
+   */
+  #[Hook('meeting_api_meeting_presave')]
+  public function convertBackendSettingsToProperTypes(MeetingEntityInterface $meeting): void {
+    $server_backend_id = $this->eventOnlineService->getMeetingBackendId($meeting);
+    // We want to check the BigBlueButton meetings only.
+    if ($server_backend_id !== 'bigbluebutton') {
+      return;
+    }
+
+    // Convert all settings with the "allow" prefix to boolean.
+    $settings = $meeting->getSettings();
+    foreach ($settings as $key => $value) {
+      // Value should be either 0 or 1.
+      $value_is_valid = $key === 0 || $key === 1;
+      // Key should start with "allow_" or be "auto_start_recording".
+      $key_is_valid = str_starts_with($key, 'allow_') || $key === 'auto_start_recording';
+      if ($key_is_valid && $value_is_valid) {
+        $settings[$key] = (bool) $value;
+        $is_changed = TRUE;
+      }
+    }
+
+    if ($is_changed ?? FALSE) {
+      $meeting->set('backend_settings', $settings);
     }
   }
 

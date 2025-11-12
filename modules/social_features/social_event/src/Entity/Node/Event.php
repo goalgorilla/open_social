@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Entity\Node;
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\meeting_api\Entity\Meeting;
@@ -223,6 +224,52 @@ class Event extends Node implements EventInterface {
     $participation[$event_id][$uid] = $enrollment->isEnrolled();
 
     return $participation[$event_id][$uid];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasMeetingLink(AccountInterface|UserInterface|null $account = NULL): bool {
+    if (!$this->isOnline()) {
+      return FALSE;
+    }
+
+    if (!$account instanceof UserInterface) {
+      $account = $account instanceof AccountInterface
+        ? $account
+        : \Drupal::currentUser();
+
+      $account = \Drupal::entityTypeManager()->getStorage('user')
+        ->load($account->id());
+    }
+
+    if (!$account instanceof UserInterface) {
+      return FALSE;
+    }
+
+    // @todo This check could be redundant check with meeting entity
+    //   will be able to detect the attendees list.
+    if (!$this->getParticipation($account)) {
+      return FALSE;
+    }
+
+    if (!$meeting = $this->getMeeting()) {
+      return FALSE;
+    }
+
+    if ($meeting->bundle() === 'big_blue_button') {
+      // There is no way to check if the BBB meeting is available to join
+      // until the meeting starts.
+      // Return true by default.
+      return TRUE;
+    }
+
+    if ($meeting->bundle() === 'custom_link') {
+      $backend_settings = $meeting->getSettings();
+      return !empty($backend_settings['url']) && UrlHelper::isValid($backend_settings['url']);
+    }
+
+    return FALSE;
   }
 
   /**
