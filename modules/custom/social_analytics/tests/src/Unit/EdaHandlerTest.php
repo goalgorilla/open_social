@@ -145,8 +145,8 @@ class EdaHandlerTest extends UnitTestCase {
           $this->assertCount(1, $event->getData()['target']);
           $this->assertEquals('group-uuid-123', $event->getData()['target'][0]->id);
           $this->assertArrayHasKey('actor', $event->getData());
-          $this->assertArrayHasKey('user', $event->getData()['actor']);
-          $this->assertNotNull($event->getData()['actor']['user']);
+          $this->assertObjectHasProperty('user', $event->getData()['actor']);
+          $this->assertNotNull($event->getData()['actor']->user);
           return TRUE;
         })
       );
@@ -172,8 +172,8 @@ class EdaHandlerTest extends UnitTestCase {
           $this->assertCount(1, $event->getData()['target']);
           $this->assertEquals('user-uuid-123', $event->getData()['target'][0]->id);
           $this->assertArrayHasKey('actor', $event->getData());
-          $this->assertArrayHasKey('user', $event->getData()['actor']);
-          $this->assertNotNull($event->getData()['actor']['user']);
+          $this->assertObjectHasProperty('user', $event->getData()['actor']);
+          $this->assertNotNull($event->getData()['actor']->user);
           return TRUE;
         })
       );
@@ -199,8 +199,8 @@ class EdaHandlerTest extends UnitTestCase {
           $this->assertCount(1, $event->getData()['target']);
           $this->assertEquals('post-uuid-123', $event->getData()['target'][0]->id);
           $this->assertArrayHasKey('actor', $event->getData());
-          $this->assertArrayHasKey('user', $event->getData()['actor']);
-          $this->assertNotNull($event->getData()['actor']['user']);
+          $this->assertObjectHasProperty('user', $event->getData()['actor']);
+          $this->assertNotNull($event->getData()['actor']->user);
           return TRUE;
         })
       );
@@ -226,8 +226,8 @@ class EdaHandlerTest extends UnitTestCase {
           $this->assertCount(1, $event->getData()['target']);
           $this->assertEquals('comment-uuid-123', $event->getData()['target'][0]->id);
           $this->assertArrayHasKey('actor', $event->getData());
-          $this->assertArrayHasKey('user', $event->getData()['actor']);
-          $this->assertNotNull($event->getData()['actor']['user']);
+          $this->assertObjectHasProperty('user', $event->getData()['actor']);
+          $this->assertNotNull($event->getData()['actor']->user);
           return TRUE;
         })
       );
@@ -251,8 +251,8 @@ class EdaHandlerTest extends UnitTestCase {
           // No target entity for overview pages.
           $this->assertNull($event->getData()['target']);
           $this->assertArrayHasKey('actor', $event->getData());
-          $this->assertArrayHasKey('user', $event->getData()['actor']);
-          $this->assertNotNull($event->getData()['actor']['user']);
+          $this->assertObjectHasProperty('user', $event->getData()['actor']);
+          $this->assertNotNull($event->getData()['actor']->user);
           return TRUE;
         })
       );
@@ -276,11 +276,11 @@ class EdaHandlerTest extends UnitTestCase {
           // No target entity for cron routes.
           $this->assertNull($event->getData()['target']);
           $this->assertArrayHasKey('actor', $event->getData());
-          $this->assertArrayHasKey('application', $event->getData()['actor']);
+          $this->assertObjectHasProperty('application', $event->getData()['actor']);
           // Application actor for cron.
-          $this->assertNotNull($event->getData()['actor']['application']);
-          $this->assertArrayHasKey('user', $event->getData()['actor']);
-          $this->assertNotNull($event->getData()['actor']['user']);
+          $this->assertNotNull($event->getData()['actor']->application);
+          $this->assertObjectHasProperty('user', $event->getData()['actor']);
+          $this->assertNotNull($event->getData()['actor']->user);
           return TRUE;
         })
       );
@@ -304,8 +304,8 @@ class EdaHandlerTest extends UnitTestCase {
           // Profile entities are excluded from tracking.
           $this->assertNull($event->getData()['target']);
           $this->assertArrayHasKey('actor', $event->getData());
-          $this->assertArrayHasKey('user', $event->getData()['actor']);
-          $this->assertNotNull($event->getData()['actor']['user']);
+          $this->assertObjectHasProperty('user', $event->getData()['actor']);
+          $this->assertNotNull($event->getData()['actor']->user);
           return TRUE;
         })
       );
