@@ -56,3 +56,14 @@ function activity_send_schema() {
 function activity_send_update_last_removed() : int {
   return 8002;
 }
+
+/**
+ * Set activity_send_offline_window from 90 to 0 seconds as a new default value.
+ */
+function activity_send_update_8003(): void {
+  $config = \Drupal::configFactory()->getEditable('activity_send.settings');
+  if ($config->get('activity_send_offline_window') == 90) {
+    $config->set('activity_send_offline_window', 0);
+    $config->save();
+  }
+}

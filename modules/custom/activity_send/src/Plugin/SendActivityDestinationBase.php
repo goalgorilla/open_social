@@ -187,15 +187,27 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
   /**
    * Check if user last activity was more than few minutes ago.
    *
+   * When offline_window is 0, this method always returns TRUE to indicate
+   * that emails should be sent regardless of the user's actual online status.
+   *
    * @param \Drupal\user\Entity\User $account
    *   The account to check.
    *
    * @return bool
-   *   Status of user.
+   *   TRUE if user should receive emails (offline or offline_window is 0),
+   *   FALSE if user is online and offline_window > 0.
    *
    * @throws \Exception
    */
   public static function isUserOffline(User $account): bool {
+    $offline_window = \Drupal::config('activity_send.settings')->get('activity_send_offline_window');
+
+    // When offline_window is 0, emails should always be sent regardless of
+    // user's online status. Return TRUE to bypass the online check.
+    if ($offline_window === 0) {
+      return TRUE;
+    }
+
     // When the session table doesn't exist, the user is off.
     $session_exist = \Drupal::database()->schema()->tableExists('sessions');
     if (!$session_exist && PHP_SAPI === 'cli') {
@@ -207,7 +219,6 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $query->condition('s.uid', $account->id());
     $last_activity_time = $query->execute()->fetchField();
 
-    $offline_window = \Drupal::config('activity_send.settings')->get('activity_send_offline_window');
     $current_time = \Drupal::time()->getRequestTime() - $offline_window;
 
     return (empty($last_activity_time) || $last_activity_time < $current_time);
