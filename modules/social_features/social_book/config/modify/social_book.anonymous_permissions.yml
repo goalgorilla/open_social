@@ -1,0 +1,11 @@
+dependencies:
+  config:
+    - node.type.book
+items:
+  user.role.anonymous:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'view node.book.field_content_visibility:public content'

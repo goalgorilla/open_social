@@ -1,0 +1,29 @@
+dependencies:
+  config:
+    - node.type.book
+items:
+  user.role.sitemanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'create new books'
+          - 'add content to books'
+          - 'create book content'
+          - 'delete any book content'
+          - 'delete own book content'
+          - 'delete book revisions'
+          - 'revert book revisions'
+          - 'edit any book content'
+          - 'edit own book content'
+          - 'view book revisions'
+          - 'administer visibility settings'
+          - 'view node.book.field_content_visibility:community content'
+          - 'view node.book.field_content_visibility:group content'
+          - 'override book authored by option'
+          - 'override book authored on option'
+          - 'override book promote to front page option'
+          - 'override book published option'
+          - 'override book revision option'
+          - 'override book sticky option'
