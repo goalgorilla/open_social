@@ -141,4 +141,21 @@ interface EventInterface extends NodeInterface {
    */
   public function getParticipation(?AccountInterface $account = NULL): bool;
 
+  /**
+   * Checks if the given account or the current user is an event manager.
+   *
+   * This method determines whether the provided account or, if no account is
+   * passed, the currently authenticated user is listed as an event manager
+   * for the entity.
+   * The check also includes verifying ownership of the entity.
+   *
+   * @param \Drupal\Core\Session\AccountInterface|\Drupal\user\UserInterface|null $account
+   *   The account to check.
+   *
+   * @return bool
+   *   TRUE if the account is an event manager or the owner of the entity,
+   *   FALSE otherwise.
+   */
+  public function isEventManager(AccountInterface|UserInterface|null $account = NULL): bool;
+
 }

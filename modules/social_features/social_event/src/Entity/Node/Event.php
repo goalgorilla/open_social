@@ -305,12 +305,36 @@ class Event extends Node implements EventInterface {
 
     // @todo Probably, this would be a part of meeting_api module
     //   but for the moment we need to wrap the user to attendee class.
-    $attendee = new MeetingAttendee($account, MeetingAttendeeInterface::ATTENDEE_ROLE);
+    $meeting_role = $this->isEventManager($account)
+      ? MeetingAttendeeInterface::MODERATOR_ROLE
+      : MeetingAttendeeInterface::ATTENDEE_ROLE;
+
+    $attendee = new MeetingAttendee($account, $meeting_role);
 
     /** @var \Drupal\meeting_api\MeetingManagerInterface $meeting_api_manager */
     $meeting_api_manager = \Drupal::service(MeetingManagerInterface::class);
 
     return $meeting_api_manager->joinMeeting($meeting, $attendee);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isEventManager(AccountInterface|UserInterface|null $account = NULL): bool {
+    $account = $account ?: \Drupal::currentUser();
+    $is_manager = FALSE;
+    if (
+      // @todo This field provided by "social_event_managers" module.
+      $this->hasField('field_event_managers') &&
+      !$this->get('field_event_managers')->isEmpty()
+    ) {
+      $is_manager = in_array(
+        needle: $account->id(),
+        haystack: array_column($this->get('field_event_managers')->getValue(), 'target_id'),
+      );
+    }
+
+    return $is_manager ?: $account->id() === $this->getOwnerId();
   }
 
 }

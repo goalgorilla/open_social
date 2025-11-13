@@ -233,7 +233,7 @@ final class EventOnline implements ContainerInjectionInterface {
     $settings = $meeting->getSettings();
     foreach ($settings as $key => $value) {
       // Value should be either 0 or 1.
-      $value_is_valid = $key === 0 || $key === 1;
+      $value_is_valid = $value === 0 || $value === 1;
       // Key should start with "allow_" or be "auto_start_recording".
       $key_is_valid = str_starts_with($key, 'allow_') || $key === 'auto_start_recording';
       if ($key_is_valid && $value_is_valid) {
