@@ -297,7 +297,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     parent::submitConfigurationForm($form, $form_state);
     // Clean form values.
     $form_state->cleanValues();

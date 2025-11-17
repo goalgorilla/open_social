@@ -334,7 +334,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  public function viewsFormValidate(&$form, FormStateInterface $form_state) {
+  public function viewsFormValidate(&$form, FormStateInterface $form_state): void {
     if ($this->view->id() === 'event_manage_enrollments') {
       $user_input = $form_state->getUserInput();
       $available_options = $this->getBulkOptions();

@@ -931,3 +931,53 @@ function social_core_update_130024(): string {
   // Output logged messages to a related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Replace entity:delete_action:node with views_bulk_operations_delete_entity.
+ *
+ * After updating Views Bulk Operations to 4.4.4, the old core delete action
+ * should be replaced with the VBO delete action for better functionality.
+ */
+function social_core_update_130026(): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.content');
+  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
+
+  if (empty($selected_actions)) {
+    return;
+  }
+
+  $updated = false;
+  $new_actions = [];
+  $has_vbo_delete = false;
+
+  foreach ($selected_actions as $action) {
+    // Replace old core delete action with VBO delete action.
+    if ($action['action_id'] === 'entity:delete_action:node') {
+      $new_actions[] = [
+        'action_id' => 'views_bulk_operations_delete_entity',
+      ];
+      $updated = true;
+    }
+    // Skip if VBO delete action already exists.
+    elseif ($action['action_id'] === 'views_bulk_operations_delete_entity') {
+      $has_vbo_delete = true;
+      $new_actions[] = $action;
+    }
+    else {
+      $new_actions[] = $action;
+    }
+  }
+
+  // If old action wasn't found but VBO delete doesn't exist, add it.
+  if (!$updated && !$has_vbo_delete) {
+    $new_actions[] = [
+      'action_id' => 'views_bulk_operations_delete_entity',
+    ];
+    $updated = true;
+  }
+
+  if ($updated) {
+    $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $new_actions);
+    $config->save();
+  }
+}

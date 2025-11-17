@@ -17,7 +17,7 @@ class GroupViewsBulkOperationsConfigureAction extends ConfigureAction {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     $form_data = $form_state->get('views_bulk_operations');

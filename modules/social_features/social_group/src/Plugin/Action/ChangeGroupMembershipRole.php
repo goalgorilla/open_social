@@ -216,7 +216,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     parent::submitConfigurationForm($form, $form_state);
 
     $this->configuration['is_member'] = $this->configuration['role'] === $form_state->get('member_role');

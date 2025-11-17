@@ -118,7 +118,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
             $social_user_settings = $this->configFactory->get('social_user_export.settings');
             $social_user_settings_plugins = array_filter($social_user_settings->get('plugins'));
 
-            if (!$this->currentUser()->hasPermission('administer social_user_export') && empty($social_user_settings_plugins)) {
+            if (!$this->currentUser->hasPermission('administer social_user_export') && empty($social_user_settings_plugins)) {
               unset($this->options['selected_actions'][$key]);
               unset($bulk_options[$key]);
               unset($this->bulkOptions[$key]);
@@ -315,7 +315,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   /**
    * {@inheritdoc}
    */
-  public function viewsFormValidate(&$form, FormStateInterface $form_state) {
+  public function viewsFormValidate(&$form, FormStateInterface $form_state): void {
     if ($this->view->id() === 'group_manage_members') {
       $user_input = $form_state->getUserInput();
       $available_options = $this->getBulkOptions();
