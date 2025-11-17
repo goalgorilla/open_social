@@ -11,6 +11,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\social_group\Traits\ViewsBulkOperationsTempstoreUpdateTrait;
 use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
@@ -27,6 +28,8 @@ use Drupal\node\NodeInterface;
  * @ViewsField("social_views_bulk_operations_bulk_form_enrollments")
  */
 class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
+
+  use ViewsBulkOperationsTempstoreUpdateTrait;
 
   /**
    * The entity type manager.
@@ -138,7 +141,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
         $social_user_settings = $this->configFactory->get('social_user_export.settings');
         $social_user_settings_plugins = array_filter($social_user_settings->get('plugins'));
 
-        if (!$this->currentUser()->hasPermission('administer social_user_export') && empty($social_user_settings_plugins)) {
+        if (!$this->currentUser->hasPermission('administer social_user_export') && empty($social_user_settings_plugins)) {
           unset($this->options['selected_actions'][$key]);
           unset($bulk_options[$key]);
           unset($this->bulkOptions[$key]);
@@ -199,31 +202,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       // Since we don't want to mess with cached date.
       $this->deleteTempstoreData($this->view->id(), $this->view->current_display);
 
-      // Calculate bulk form keys.
-      $bulk_form_keys = [];
-      if (!empty($this->view->result)) {
-        $base_field = $this->view->storage->get('base_field');
-        foreach ($this->view->result as $row_index => $row) {
-          if ($entity = $this->getEntity($row)) {
-            $bulk_form_keys[$row_index] = self::calculateEntityBulkFormKey(
-              $entity,
-              $row->{$base_field}
-            );
-          }
-        }
-      }
-      // Reset initial values.
-      if (
-        empty($form_state->getUserInput()['op']) &&
-        !empty($bulk_form_keys)
-      ) {
-        $this->updateTempstoreData($bulk_form_keys);
-      }
-      else {
-        $this->updateTempstoreData();
-      }
-
-      // Initialize it again.
+      // Reset initial values using trait methods.
+      $this->updateTempstoreDataUsingTrait($form_state);
       $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
       // Add the Event ID to the data.
       $tempstoreData['event_id'] = $event->id();
@@ -312,7 +292,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
       $items = [];
       foreach ($wrapper['action']['#options'] as $key => $value) {
-        if ($key !== '' && array_key_exists($key, $this->bulkOptions)) {
+        if ($key !== '' && \is_array($this->bulkOptions) && \array_key_exists($key, $this->bulkOptions)) {
           $items[] = [
             '#type' => 'submit',
             '#value' => $value,
@@ -489,7 +469,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
     // Get the user enrollment.
     $eventEnrollment = $this->entityTypeManager->getStorage('event_enrollment')->loadByProperties([
-      'user_id' => $this->currentUser()->id(),
+      'user_id' => $this->currentUser->id(),
       'field_event' => $event->id(),
     ]);
     $eventEnrollment = end($eventEnrollment);

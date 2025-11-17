@@ -946,9 +946,9 @@ function social_core_update_130026(): void {
     return;
   }
 
-  $updated = false;
+  $updated = FALSE;
   $new_actions = [];
-  $has_vbo_delete = false;
+  $has_vbo_delete = FALSE;
 
   foreach ($selected_actions as $action) {
     // Replace old core delete action with VBO delete action.
@@ -956,11 +956,11 @@ function social_core_update_130026(): void {
       $new_actions[] = [
         'action_id' => 'views_bulk_operations_delete_entity',
       ];
-      $updated = true;
+      $updated = TRUE;
     }
     // Skip if VBO delete action already exists.
     elseif ($action['action_id'] === 'views_bulk_operations_delete_entity') {
-      $has_vbo_delete = true;
+      $has_vbo_delete = TRUE;
       $new_actions[] = $action;
     }
     else {
@@ -973,7 +973,7 @@ function social_core_update_130026(): void {
     $new_actions[] = [
       'action_id' => 'views_bulk_operations_delete_entity',
     ];
-    $updated = true;
+    $updated = TRUE;
   }
 
   if ($updated) {

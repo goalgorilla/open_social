@@ -9,6 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\Traits\ViewsBulkOperationsTempstoreUpdateTrait;
 use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
@@ -24,6 +25,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * @ViewsField("social_views_bulk_operations_bulk_form_group")
  */
 class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
+
+  use ViewsBulkOperationsTempstoreUpdateTrait;
 
   /**
    * The config factory.
@@ -174,31 +177,8 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
         // Since we don't want to mess with cached date.
         $this->deleteTempstoreData($this->view->id(), $this->view->current_display);
 
-        // Calculate bulk form keys.
-        $bulk_form_keys = [];
-        if (!empty($this->view->result)) {
-          $base_field = $this->view->storage->get('base_field');
-          foreach ($this->view->result as $row_index => $row) {
-            if ($entity = $this->getEntity($row)) {
-              $bulk_form_keys[$row_index] = self::calculateEntityBulkFormKey(
-                $entity,
-                $row->{$base_field}
-              );
-            }
-          }
-        }
-        // Reset initial values.
-        if (
-          empty($form_state->getUserInput()['op']) &&
-          !empty($bulk_form_keys)
-        ) {
-          $this->updateTempstoreData($bulk_form_keys);
-        }
-        else {
-          $this->updateTempstoreData();
-        }
-
-        // Initialize it again.
+        // Reset initial values using trait methods.
+        $this->updateTempstoreDataUsingTrait($form_state);
         $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
       }
       // Add the Group ID to the data.
@@ -293,7 +273,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
 
       $items = [];
       foreach ($wrapper['action']['#options'] as $key => $value) {
-        if ($key !== '' && array_key_exists($key, $this->bulkOptions)) {
+        if ($key !== '' && \is_array($this->bulkOptions) && \array_key_exists($key, $this->bulkOptions)) {
           $items[] = [
             '#type' => 'submit',
             '#value' => $value,

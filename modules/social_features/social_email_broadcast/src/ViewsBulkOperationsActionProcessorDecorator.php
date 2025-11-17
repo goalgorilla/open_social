@@ -21,7 +21,12 @@ class ViewsBulkOperationsActionProcessorDecorator extends Inner {
       return $count;
     }
 
-    if (!method_exists($this->action, $method = $this->bulkFormData['validate_email_subscriptions_callback'])) {
+    if ($this->action === NULL) {
+      return $count;
+    }
+
+    $method = $this->bulkFormData['validate_email_subscriptions_callback'];
+    if (!method_exists($this->action, $method)) {
       return $count;
     }
 
