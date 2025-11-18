@@ -192,10 +192,24 @@ function social_profile_fields_update_130002(): void {
 }
 
 /**
- * Remove deprecated fields from "social_profile_fields.settings".
+ * Replace deprecated profile fields with affiliation.
  */
-function social_profile_fields_update_130003(): string {
-  $updater = \Drupal::service('update_helper.updater');
-  $updater->executeUpdate('social_profile_fields', __FUNCTION__);
-  return $updater->logger()->output();
+function social_profile_fields_update_130003(): void {
+  $settings = \Drupal::configFactory()
+    ->getEditable('social_profile_fields.settings');
+
+  // We should keep affiliation fields visible only in case if both
+  // "organization" and "function" fields are visible.
+  $is_enabled = $settings->get('profile_profile_field_profile_organization') &&
+    $settings->get('profile_profile_field_profile_function');
+
+  // Remove the old profile fields.
+  $settings->clear('profile_profile_field_profile_organization');
+  $settings->clear('profile_profile_field_profile_function');
+
+  // Add affiliation fields.
+  $settings->set('profile_profile_field_group_affiliation', $is_enabled);
+  $settings->set('profile_profile_field_other_affiliations', $is_enabled);
+
+  $settings->save();
 }

@@ -37,10 +37,12 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
       // For the profile image field we have an exception. We'll fix it before
       // display.
       if ($setting_name === 'profile_profile_field_profile_image' && $operation === 'view') {
-        $access_result = AccessResult::neutral();
+        $access_result = AccessResult::neutral()
+          ->addCacheableDependency($config);
       }
       else {
-        $access_result = AccessResult::forbidden();
+        $access_result = AccessResult::forbidden()
+          ->addCacheableDependency($config);
       }
     }
   }
@@ -88,6 +90,19 @@ function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterf
       'type' => 'entity_reference_label',
       'region' => 'content',
     ]);
+  }
+
+  if ($context['entity_type'] === 'profile') {
+    // Hide groups affiliation list.
+    if (!_social_profile_fields_get_setting('profile_profile_field_group_affiliation')) {
+      $display->removeComponent('groups_affiliation_list');
+      // If both affiliation fields are disabled, we should hide all primary
+      // affiliation-related fields from display as well.
+      if (!_social_profile_fields_get_setting('profile_profile_field_other_affiliations')) {
+        $display->removeComponent('primary_affiliation_name');
+        $display->removeComponent('primary_affiliation_function');
+      }
+    }
   }
 }
 
@@ -268,6 +283,8 @@ function social_profile_fields_censor_full_name_suggestion(array &$suggestions, 
  * Implements hook_ENTITY_TYPE_view_alter().
  */
 function social_profile_fields_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display) {
+  $build['#cache']['tags'][] = 'config:social_profile_fields.settings';
+
   // Check if profile image is unset.
   if (!_social_profile_fields_get_setting('profile_profile_field_profile_image') && isset($display->get('content')['field_profile_image'])) {
     // Load default data.
@@ -295,14 +312,16 @@ function social_profile_fields_profile_view_alter(array &$build, EntityInterface
  * @return bool
  *   If the field is enabled or disabled.
  */
-function _social_profile_fields_get_setting($key) {
-  $config = \Drupal::config('social_profile_fields.settings');
-  $setting_value = $config->get($key);
+function _social_profile_fields_get_setting(string $key): bool {
+  $static = &drupal_static(__FUNCTION__, []);
 
-  if (!isset($setting_value) || $setting_value == TRUE) {
-    return TRUE;
+  if (!isset($static[$key])) {
+    $config = \Drupal::config('social_profile_fields.settings');
+    $setting_value = $config->get($key);
+    $static[$key] = !isset($setting_value) || $setting_value == TRUE;
   }
-  return FALSE;
+
+  return $static[$key];
 }
 
 /**

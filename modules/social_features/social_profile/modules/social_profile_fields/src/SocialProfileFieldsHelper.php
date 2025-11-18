@@ -74,6 +74,8 @@ class SocialProfileFieldsHelper {
       ];
     }
 
+    $fields = $this->excludeFromSettings($fields);
+
     // Return the array of fields.
     return $fields;
   }
@@ -123,6 +125,33 @@ class SocialProfileFieldsHelper {
     $this->moduleHandler->alter('profile_field_export_mapping', $mapping);
 
     return $mapping;
+  }
+
+  /**
+   * Excludes specific fields from the settings.
+   *
+   * Certain profile fields should not be configurable through the settings
+   * interface because they are either computed fields, internal
+   * tracking fields, or have special handling logic elsewhere in the system.
+   * This method filters out these fields from the list of configurable options.
+   *
+   * @param array $allowed_fields
+   *   An array of field machine names.
+   *
+   * @return array
+   *   The filtered array of field machine names with excluded
+   *   fields is removed.
+   */
+  private function excludeFromSettings(array $allowed_fields): array {
+    $excluded = [
+      // Exclude all profile affiliation fields except
+      // "field_other_affiliations" and "field_group_affiliation".
+      'affiliation_owned_count',
+      'user_removed_affiliations',
+      'field_enable_other_affiliations',
+    ];
+
+    return array_filter($allowed_fields, fn ($field) => isset($field['name']) && !in_array($field['name'], $excluded));
   }
 
 }
