@@ -56,6 +56,7 @@ Feature: Event bulk actions
     And I should see "Manage enrollments"
     And I click "Manage enrollments"
     And I check the box "edit-select-all"
+    And I wait for AJAX to finish
     And I should see the button "Actions"
     And I click the xth "0" element with the css "#vbo-action-form-wrapper .dropdown .dropdown-toggle"
     And I should see the link "Email selected enrollees"

@@ -326,4 +326,143 @@ class SocialMinkContext extends MinkContext {
     }
   }
 
+  /**
+   * Override iWaitForAjaxToFinish to handle redirects and VBO operations.
+   * 
+   * This override is more lenient than the parent implementation:
+   * 1. Returns immediately if page content indicates navigation occurred.
+   * 2. Handles VBO operations with button state checks.
+   * 3. Uses a reduced timeout to fail faster on actual AJAX issues.
+   */
+  public function iWaitForAjaxToFinish($event = null) {
+    $session = $this->getSession();
+    $page = $session->getPage();
+    
+    // For clicks/submits that might redirect, check if navigation occurred.
+    // Some redirects are so fast that by the time this hook runs,
+    // we're already on the new page.
+    if ($event) {
+      $stepText = $event->getStep()->getText();
+      // If this was a click/follow action, check if page navigated.
+      if (preg_match('/\b(click|follow)\b/i', $stepText)) {
+        // Give page a moment to stabilize after navigation.
+        usleep(100000); // 100ms
+        
+        // Check if document indicates it just loaded.
+        try {
+          $justLoaded = $session->evaluateScript(<<<JS
+            (function() {
+              // If page just loaded, performance.timing will show recent load.
+              if (typeof performance !== 'undefined' && performance.timing) {
+                var loadTime = performance.timing.loadEventEnd;
+                var now = Date.now();
+                // If page loaded in last 2 seconds, likely a redirect.
+                return loadTime > 0 && (now - loadTime) < 2000;
+              }
+              return false;
+            })();
+JS
+          );
+          
+          if ($justLoaded) {
+            // Page recently loaded - this was likely a redirect.
+            // Wait for full readiness and return.
+            $session->wait(2000, "document.readyState === 'complete'");
+            return;
+          }
+        } catch (\Exception $e) {
+          // Script evaluation failed, possibly navigating.
+          usleep(500000);
+          return;
+        }
+      }
+    }
+    
+    // Check if we're dealing with VBO by looking for VBO forms.
+    $hasVboForm = FALSE;
+    try {
+      $hasVboForm = $session->evaluateScript(<<<JS
+        (function() {
+          return document.querySelectorAll('.vbo-view-form').length > 0;
+        })()
+JS
+      );
+    } catch (\Exception $e) {
+      // If we can't evaluate, assume no VBO form.
+    }
+    
+    $condition = <<<JS
+    (function() {
+      try {
+        function isAjaxing(instance) {
+          return instance && instance.ajaxing === true;
+        }
+        var d7_not_ajaxing = true;
+        if (typeof Drupal !== 'undefined' && typeof Drupal.ajax !== 'undefined' && typeof Drupal.ajax.instances === 'undefined') {
+          for(var i in Drupal.ajax) { if (isAjaxing(Drupal.ajax[i])) { d7_not_ajaxing = false; } }
+        }
+        var d8_not_ajaxing = (typeof Drupal === 'undefined' || typeof Drupal.ajax === 'undefined' || typeof Drupal.ajax.instances === 'undefined' || !Drupal.ajax.instances.some(isAjaxing));
+        
+        // For VBO operations, check if the Actions button is enabled.
+        // This indicates VBO AJAX completed.
+        var vbo_complete = true;
+        var vboForms = document.querySelectorAll('.vbo-view-form');
+        if (vboForms.length > 0) {
+          var actionsButton = document.querySelector('button[data-vbo="vbo-action"], input[data-vbo="vbo-action"]');
+          if (actionsButton && actionsButton.disabled) {
+            vbo_complete = false;
+          }
+        }
+        
+        return (
+          // Assert no AJAX request is running and no animation is running.
+          (typeof jQuery === 'undefined' || jQuery.hasOwnProperty('active') === false || (jQuery.active === 0 && jQuery(':animated').length === 0)) &&
+          d7_not_ajaxing && d8_not_ajaxing && vbo_complete
+        );
+      } catch (e) {
+        // If any error occurs, assume AJAX is not running.
+        // This handles page navigation scenarios.
+        return true;
+      }
+    }());
+JS;
+    $ajax_timeout = $this->getMinkParameter('ajax_timeout');
+    
+    // For VBO operations, use a shorter timeout with fallback check.
+    $timeout = $hasVboForm ? min($ajax_timeout, 15) : $ajax_timeout;
+    
+    // Use standard wait with the condition.
+    $result = $session->wait(1000 * $timeout, $condition);
+    
+    if (!$result) {
+      // Wait timed out. Perform final checks before throwing exception.
+      
+      // Check if Actions button is enabled for VBO forms.
+      if ($hasVboForm) {
+        usleep(500000);
+        $actionsButton = $page->findButton('Actions');
+        if ($actionsButton && !$actionsButton->hasAttribute('disabled')) {
+          // Button is enabled, VBO completed successfully - continue.
+          return;
+        }
+      }
+      
+      if ($ajax_timeout === null) {
+        throw new \Exception('No AJAX timeout has been defined. Please verify that "Drupal\MinkExtension" is configured in behat.yml (and not "Behat\MinkExtension").');
+      }
+      if ($event) {
+        /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
+        $event_data = ' ' . json_encode([
+          'name' => $event->getName(),
+          'feature' => $event->getFeature()->getTitle(),
+          'step' => $event->getStep()->getText(),
+          'suite' => $event->getSuite()->getName(),
+        ]);
+      } else {
+        $event_data = '';
+      }
+      throw new \RuntimeException('Unable to complete AJAX request.' . $event_data);
+    }
+  }
+
 }
