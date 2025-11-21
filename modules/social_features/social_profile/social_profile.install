@@ -5,20 +5,16 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
-use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Site\Settings;
 use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
-use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_profile\Form\SocialProfileSettingsForm;
 use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -430,122 +426,16 @@ function social_profile_update_250004(): void {
 
 /**
  * Migrates affiliation fields from profile entities into paragraph entities.
- *
- * This function moves data from the 'field_profile_function' and
- * 'field_profile_organization' fields of profile entities into a new
- * paragraph type 'other_affiliations', associating these paragraphs with
- * the corresponding profiles.
- *
- * @param array $sandbox
- *   A reference to the sandbox array used for batch processing.
- *
- * @return \Drupal\Component\Render\MarkupInterface
- *   A message indicating the number of profiles updated in the current batch
- *   out of the total profiles to process.
- *
- * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
- * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
- * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function social_profile_update_250005(array &$sandbox): MarkupInterface {
-  if (!isset($sandbox['total'])) {
-    // Count profiles that have at least one of the two fields populated.
-    $count_query = \Drupal::entityQuery('profile')
-      ->accessCheck(FALSE)
-      ->condition('type', 'profile');
-    $or = $count_query->orConditionGroup()
-      ->exists('field_profile_function')
-      ->exists('field_profile_organization');
-    $sandbox['total'] = $count_query->condition($or)->count()->execute();
-
-    $sandbox['processed'] = 0;
-    $sandbox['last'] = 0;
-
-    // Explicitly process 25 items per batch as requested.
-    $sandbox['limit'] = Settings::get('entity_update_batch_size', 25);
-  }
-
-  // Fetch the next batch of profile IDs.
-  $query = \Drupal::entityQuery('profile')
-    ->accessCheck(FALSE)
-    ->condition('type', 'profile')
-    ->condition('profile_id', $sandbox['last'], '>');
-  $or = $query->orConditionGroup()
-    ->exists('field_profile_function')
-    ->exists('field_profile_organization');
-  $ids = (array) $query
-    ->condition($or)
-    ->sort('profile_id')
-    ->range(0, $sandbox['limit'])
-    ->execute();
-
-  if (!$ids) {
-    $sandbox['#finished'] = 1;
-    return t('No profiles to process!');
-  }
-
-  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
-  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-  $profiles = $profile_storage->loadMultiple($ids);
-
-  foreach ($profiles as $profile) {
-    if (!$profile instanceof ProfileAffiliationInterface) {
-      continue;
-    }
-
-    $function_value = trim((string) ($profile->get('field_profile_function')->value ?? NULL));
-    $organization_value = trim((string) ($profile->get('field_profile_organization')->value ?? NULL));
-
-    // Only create a paragraph if at least one value is non-empty.
-    if (!$function_value && !$organization_value) {
-      continue;
-    }
-
-    $original = $profile->get('field_other_affiliations')->getValue();
-    $profile->addNonPlatformAffiliation($organization_value, $function_value);
-    // Set an affiliation checkbox as well.
-    $profile->set('field_enable_other_affiliations', TRUE);
-
-    $is_changed = $profile->get('field_other_affiliations')->getValue() !== $original;
-    if ($is_changed) {
-      $profile->save();
-    }
-  }
-
-  $sandbox['processed'] += count($ids);
-  $sandbox['last'] = end($ids);
-  $sandbox['#finished'] = $sandbox['total'] > 0 ? $sandbox['processed'] / $sandbox['total'] : 1;
-
-  return t('Updated affiliations for @count of @total profiles', [
-    '@count' => $sandbox['processed'],
-    '@total' => $sandbox['total'],
-  ]);
+function social_profile_update_250005(): void {
+  // @todo We need to think how execute the migration for community.
 }
 
 /**
  * Uninstall deprecated 'field_profile_organization' from profiles.
  */
-function social_profile_update_250006(): string {
-  $deprecated_fields = [
-    'field_profile_function',
-    'field_profile_organization',
-  ];
-
-  foreach ($deprecated_fields as $name) {
-    // Remove field instance if exists.
-    /** @var \Drupal\field\Entity\FieldConfig|null $field */
-    $field = FieldConfig::load("profile.profile.$name");
-    $field?->delete();
-
-    // Remove field storage if exists and unused.
-    /** @var \Drupal\field\Entity\FieldStorageConfig|null $storage */
-    $storage = FieldStorageConfig::load("profile.$name");
-    $storage?->delete();
-  }
-
-  $updater = \Drupal::service('update_helper.updater');
-  $updater->executeUpdate('social_profile', __FUNCTION__);
-  return $updater->logger()->output();
+function social_profile_update_250006(): void {
+  // Postponed to v2025.23.0 release.
 }
 
 /**
