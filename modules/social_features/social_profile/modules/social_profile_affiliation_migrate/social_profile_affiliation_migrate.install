@@ -1,0 +1,165 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for module.
+ */
+
+use Drupal\Core\Site\Settings;
+use Drupal\social_profile\Entity\ProfileAffiliationInterface;
+
+/**
+ * Implements hook_install().
+ */
+function social_profile_affiliation_migrate_install(): void {
+  // Set up and execute the batch migration.
+  $batch = [
+    'title' => t('Migrating legacy profile fields to affiliation'),
+    'operations' => [
+      ['_social_profile_affiliation_migrate_process_batch', []],
+    ],
+    'finished' => '_social_profile_affiliation_migrate_finished',
+    'error_message' => t('An error occurred during the migration.'),
+    'file' => \Drupal::service('extension.list.module')->getPath('social_profile_affiliation_migrate') . '/social_profile_affiliation_migrate.install',
+  ];
+
+  batch_set($batch);
+}
+
+/**
+ * Batch operation callback to process profiles.
+ *
+ * @param array $context
+ *   The batch context array.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function _social_profile_affiliation_migrate_process_batch(array &$context): void {
+  if (!isset($context['sandbox']['total'])) {
+    // Initialize the batch.
+    $count_query = \Drupal::entityQuery('profile')
+      ->accessCheck(FALSE)
+      ->condition('type', 'profile');
+    $or = $count_query->orConditionGroup()
+      ->exists('field_profile_function')
+      ->exists('field_profile_organization');
+    $context['sandbox']['total'] = $count_query->condition($or)->count()->execute();
+
+    $context['sandbox']['processed'] = 0;
+    $context['sandbox']['last'] = 0;
+    $context['sandbox']['limit'] = Settings::get('entity_update_batch_size', 25);
+
+    $context['results']['total'] = $context['sandbox']['total'];
+    $context['results']['processed'] = 0;
+    $context['results']['updated'] = 0;
+    $context['results']['skipped'] = 0;
+  }
+
+  // Suppress warnings during batch processing.
+  $original_error_reporting = error_reporting();
+  error_reporting($original_error_reporting & ~E_WARNING);
+
+  // Fetch the next batch of profile IDs.
+  $query = \Drupal::entityQuery('profile')
+    ->accessCheck(FALSE)
+    ->condition('type', 'profile')
+    ->condition('profile_id', $context['sandbox']['last'], '>');
+  $or = $query->orConditionGroup()
+    ->exists('field_profile_function')
+    ->exists('field_profile_organization');
+  $ids = (array) $query
+    ->condition($or)
+    ->sort('profile_id')
+    ->range(0, $context['sandbox']['limit'])
+    ->execute();
+
+  if (!$ids) {
+    $context['finished'] = 1;
+    return;
+  }
+
+  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $profiles = $profile_storage->loadMultiple($ids);
+
+  foreach ($profiles as $profile) {
+    if (!$profile instanceof ProfileAffiliationInterface) {
+      $context['results']['skipped']++;
+      continue;
+    }
+
+    $function_value = trim((string) ($profile->get('field_profile_function')->value ?? NULL));
+    $organization_value = trim((string) ($profile->get('field_profile_organization')->value ?? NULL));
+
+    // Only create a paragraph if at least one value is non-empty.
+    if (!$function_value && !$organization_value) {
+      $context['results']['skipped']++;
+      continue;
+    }
+
+    $original = $profile->get('field_other_affiliations')->getValue();
+    $profile->addNonPlatformAffiliation($organization_value, $function_value);
+    // Set an affiliation checkbox as well.
+    $profile->set('field_enable_other_affiliations', TRUE);
+
+    $is_changed = $profile->get('field_other_affiliations')->getValue() !== $original;
+    if ($is_changed) {
+      $profile->save();
+      $context['results']['updated']++;
+    }
+    else {
+      $context['results']['skipped']++;
+    }
+  }
+
+  $context['sandbox']['processed'] += count($ids);
+  $context['sandbox']['last'] = end($ids);
+  $context['results']['processed'] = $context['sandbox']['processed'];
+
+  // Update progress.
+  $context['finished'] = $context['sandbox']['total'] > 0
+    ? $context['sandbox']['processed'] / $context['sandbox']['total']
+    : 1;
+
+  // Update the message.
+  $context['message'] = t('Processed @count of @total profiles (@updated updated, @skipped skipped)', [
+    '@count' => $context['sandbox']['processed'],
+    '@total' => $context['sandbox']['total'],
+    '@updated' => $context['results']['updated'],
+    '@skipped' => $context['results']['skipped'],
+  ]);
+
+  error_reporting($original_error_reporting);
+}
+
+/**
+ * Batch finished callback.
+ *
+ * @param bool $success
+ *   TRUE if the batch completed successfully.
+ * @param array $results
+ *   The results array from the batch context.
+ * @param array $operations
+ *   The operations that were executed.
+ */
+function _social_profile_affiliation_migrate_finished(bool $success, array $results, array $operations): void {
+  if ($success) {
+    $message = t('Successfully migrated affiliations for @updated of @total profiles (@skipped skipped).', [
+      '@updated' => $results['updated'] ?? 0,
+      '@total' => $results['total'] ?? 0,
+      '@skipped' => $results['skipped'] ?? 0,
+    ]);
+    \Drupal::messenger()->addStatus($message);
+    \Drupal::logger('social_profile_affiliation_migrate')->info((string) $message);
+  }
+  else {
+    $message = t('An error occurred during the migration process.');
+    \Drupal::messenger()->addError($message);
+  }
+
+  // Automatically uninstall the module after successful migration.
+  \Drupal::service('module_installer')->uninstall(['social_profile_affiliation_migrate']);
+  \Drupal::messenger()->addStatus(t('The social_profile_affiliation_migrate module has been uninstalled.'));
+}
