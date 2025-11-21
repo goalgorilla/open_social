@@ -112,6 +112,7 @@ function social_core_post_update_move_file_locations(array &$sandbox): void {
       if ($result) {
         $fids = $result->fetchAllAssoc('fid');
         if ($fids) {
+          assert(is_array($sandbox['file_ids']), "The file_ids sandbox entry should remain an array.");
           $sandbox['file_ids'] = array_merge($sandbox['file_ids'], array_keys($fids));
         }
       }
