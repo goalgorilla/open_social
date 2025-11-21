@@ -403,6 +403,11 @@ function social_profile_update_250003(): string {
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function social_profile_update_250004(array &$sandbox): MarkupInterface {
+  if (\Drupal::state()->get('social_profile_migrate_affiliation_opt_out', FALSE)) {
+    \Drupal::logger('social_profile')->info('Platform has opted out of profile fields migration to affiliation.');
+    return t('Platform has opted out of profile fields migration to affiliation.');
+  }
+
   if (!isset($sandbox['total'])) {
     // Count profiles that have at least one of the two fields populated.
     $count_query = \Drupal::entityQuery('profile')
