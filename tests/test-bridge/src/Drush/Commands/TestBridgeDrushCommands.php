@@ -11,25 +11,35 @@ use Drush\Commands\DrushCommands;
 use OpenSocial\TestBridge\CommandInstantiator;
 use Psr\Container\ContainerInterface;
 
+/**
+ * Provides a bridge between the Drupal installation and an external program.
+ *
+ * The bridge communicates in JSON using STDIN/STDOUT. Each JSON object should
+ * be on its own line, terminated by a newline. A command object should contain
+ * at least `{ "command": "<command>" }`. The other properties in the object
+ * should be the arguments that get passed to the command.
+ */
 final class TestBridgeDrushCommands extends DrushCommands implements StdinAwareInterface {
 
   use StdinAwareTrait;
 
   protected function __construct(
-    protected array $commands,
+    protected CommandInstantiator $commandInstantiator,
   ) {}
 
   /**
    * Use container injection to be able to auto-wire bridge command classes.
    *
    * @param \Psr\Container\ContainerInterface $container
+   *   The container for the application.
    *
    * @return self
+   *   A new command instance.
    */
   public static function create(ContainerInterface $container): self {
-    $commands = self::autoWireCommands($container);
-
-    return new self($commands);
+    return new self(
+      new CommandInstantiator($container),
+    );
   }
 
   /**
@@ -42,7 +52,12 @@ final class TestBridgeDrushCommands extends DrushCommands implements StdinAwareI
       $this->stderr()->writeln("Could not read from input.");
     }
 
-    while($input = fgets(STDIN)){
+    $this->commandInstantiator->discoverCommands(
+      "OpenSocial\\TestBridge\\Bridge\\",
+      __DIR__ . "/../../Bridge"
+    );
+
+    while ($input = fgets(STDIN)) {
       if (!json_validate($input)) {
         $this->stderr()->writeln("Invalid JSON input, expected one valid JSON object per line.");
         break;
@@ -62,84 +77,41 @@ final class TestBridgeDrushCommands extends DrushCommands implements StdinAwareI
         break;
       }
 
-      if (!isset($this->commands[$commandName])) {
-        $this->signalError("Command '$commandName' not found");
+      try {
+        $this->outputJson(
+          $this->commandInstantiator->callCommand($commandName, $commandObject)
+        );
+      }
+      catch (\Exception $exception) {
+        $this->signalError($exception->getMessage());
         break;
       }
-
-      $command = $this->commands[$commandName];
-      $errors = $this->validateCommand($command, $commandObject);
-      if ($errors !== []) {
-        $this->signalError(implode(", ", $errors));
-        break;
-      }
-
-      $arguments = array_intersect_key($commandObject, $command['parameters']);
-      $this->outputJson(call_user_func_array([$command['instance'], $command['method']], $arguments));
     }
-  }
-
-  protected static function autowireCommands(ContainerInterface $container) : array {
-    return (new CommandInstantiator($container))->autowireCommands(
-      "OpenSocial\\TestBridge\\Bridge\\",
-      __DIR__ . "/../../Bridge"
-    );
   }
 
   /**
-   * Validate that needed data for the command is provided.
-   *
-   * Does not check for data that's provided but that's not needed. This allows
-   * applications to provide data which may be valid in different versions of
-   * an implementation.
-   *
-   * @param array{
-   *   class: class-string<T>,
-   *   method: string,
-   *   instance: T,
-   *   parameters: array<string, array{ type: ?string, nullable: bool }>
-   * } $command
-   * @param array $commandObject
-   *
-   * @return array
-   *
-   * @template T
+   * Provide a response that the previous command is ok without output.
    */
-  protected function validateCommand(array $command, array $commandObject) : array {
-    $errors = [];
-
-    foreach ($command['parameters'] as $name => $parameter) {
-      if (!isset($commandObject[$name])) {
-        // Allow nullable parameters to be omitted.
-        if ($parameter['nullable']) {
-          continue;
-        }
-
-        $errors[] = "Missing required argument '$name' of type '{$parameter['type']}'.";
-        continue;
-      }
-      // If the type is null we don't need to validate it.
-      if ($parameter['type'] === NULL) {
-        continue;
-      }
-
-      $actual = get_debug_type($commandObject[$name]);
-      if ($actual !== $parameter['type']) {
-        $errors[] = "Expected '$name' to be of type '{$parameter['type']}' but received '$actual'.";
-      }
-    }
-
-    return $errors;
-  }
-
   protected function signalOk() : void {
     $this->outputJson(["status" => "ok"]);
   }
 
+  /**
+   * Provide a response that the previous command errored.
+   *
+   * @param string $error
+   *   The error.
+   */
   protected function signalError(string $error) : void {
     $this->outputJson(["status" => "error", "error" => $error]);
   }
 
+  /**
+   * Provide a response.
+   *
+   * @param mixed $output
+   *   The output to send.
+   */
   protected function outputJson(mixed $output) : void {
     echo json_encode($output) . "\n";
   }
