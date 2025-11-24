@@ -52,6 +52,7 @@ Feature: A group can be configured to require membership to be requested
 
     When I am viewing the about page of group "Test group"
     And I click "Request to join"
+    And I wait for AJAX to finish
 
     Then I should see "Request to join"
     And I should see "In order to send your request, please first sign up or log in."

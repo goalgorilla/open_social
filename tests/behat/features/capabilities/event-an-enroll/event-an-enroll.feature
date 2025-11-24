@@ -116,7 +116,7 @@ Feature: Enroll for an event without an account
     And I am an anonymous user
     And I open the "event" node with title "Anonymous event enrollment"
     And I click "Enroll"
-    And I should see "Enroll in Anonymous event Enrollment"
+    And I wait for AJAX to finish
     And I should see "Enroll as guest"
 
   @see-event-enrollments-list

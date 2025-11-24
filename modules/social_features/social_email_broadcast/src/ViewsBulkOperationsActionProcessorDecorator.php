@@ -13,6 +13,13 @@ class ViewsBulkOperationsActionProcessorDecorator extends Inner {
    * {@inheritdoc}
    */
   public function populateQueue(array $data, array &$context = []): int {
+    // Ensure batch_size is an integer to prevent TypeError in array_slice()
+    // when PHP 8.3+ strict typing is enforced. The value may come as a string
+    // from Drupal's configuration system.
+    if (isset($data['batch_size'])) {
+      $data['batch_size'] = (int) $data['batch_size'];
+    }
+
     $count = parent::populateQueue($data, $context);
 
     // Check if action has validation callback that checks if user is subscribed

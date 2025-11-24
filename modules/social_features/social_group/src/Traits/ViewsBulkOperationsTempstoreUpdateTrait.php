@@ -53,7 +53,8 @@ trait ViewsBulkOperationsTempstoreUpdateTrait {
 
     $variable = [
       'batch' => $this->options['batch'],
-      'batch_size' => $this->options['batch'] ? $this->options['batch_size'] : 0,
+      // Cast to int to prevent TypeError in array_slice() with PHP 8.3+.
+      'batch_size' => $this->options['batch'] ? (int) $this->options['batch_size'] : 0,
       'total_results' => $this->viewData->getTotalResults($this->options['clear_on_exposed']),
       'relationship_id' => $this->options['relationship'],
       'arguments' => $this->view->args,
