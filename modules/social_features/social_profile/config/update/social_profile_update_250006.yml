@@ -5,3 +5,17 @@ core.entity_form_display.profile.profile.default:
       content:
         field_profile_function: ~
         field_profile_organization: ~
+
+core.entity_view_display.profile.profile.preview:
+  expected_config: { }
+  update_actions:
+    delete:
+      content:
+        field_profile_organization: ~
+    add:
+      content:
+        primary_affiliation_name:
+          settings: { }
+          third_party_settings: { }
+          weight: 3
+          region: content

@@ -6,8 +6,8 @@ form.profile-form .field--name-field-group-affiliation .table-responsive,
 form.profile-form .field--name-field-other-affiliations .table-responsive {
   overflow: hidden;
 }
-form.profile-form .field--name-field-group-affiliation .btn.tabledrag-toggle-weight,
-form.profile-form .field--name-field-other-affiliations .btn.tabledrag-toggle-weight {
+form.profile-form .field--name-field-group-affiliation .tabledrag-toggle-weight,
+form.profile-form .field--name-field-other-affiliations .tabledrag-toggle-weight {
   display: none;
 }
 form.profile-form .field--name-field-group-affiliation .clearfix,
@@ -144,6 +144,14 @@ form.profile-form .field--name-field-other-affiliations table tbody td.field-mul
   padding: 0;
   margin: 0 auto;
 }
+form.profile-form .field--name-field-group-affiliation table tbody td.field-multiple-drag .tabledrag-handle .handle,
+form.profile-form .field--name-field-other-affiliations table tbody td.field-multiple-drag .tabledrag-handle .handle {
+  margin: 0;
+  padding: 0;
+  width: 22px;
+  height: 22px;
+  background-position-y: 0;
+}
 form.profile-form .field--name-field-group-affiliation table tbody td.field-multiple-drag .tabledrag-handle span:before,
 form.profile-form .field--name-field-other-affiliations table tbody td.field-multiple-drag .tabledrag-handle span:before {
   top: auto;
@@ -241,7 +249,7 @@ form.profile-form .field--name-field-affiliation-org-function .form-type-textfie
   padding-left: 40px;
   position: relative;
 }
-form.profile-form .field--name-field-affiliation-org-function .form-type-textfield:before {
+form.profile-form .field--name-field-affiliation-org-name .form-type-textfield:before {
   background-image: url("../images/sign.svg");
 }
 form.profile-form .field--name-field-affiliation-org-name .form-type-textfield {

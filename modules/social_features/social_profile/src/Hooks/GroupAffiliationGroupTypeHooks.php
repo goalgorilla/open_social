@@ -175,6 +175,9 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
    * @param string $view_mode
    *   The view mode.
    *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *
    * @see hook_ENTITY_TYPE_view()
    */
   #[Hook(hook: 'profile_view', priority: 100)]
@@ -207,12 +210,34 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
         '#theme' => 'item_list',
         '#items' => array_map(
           callback: fn ($label) => ['#plain_text' => $label],
-          array: $profile->getAllUserAffiliationGroupLabels(),
+          array: $profile->getAllAffiliationNames(),
         ),
         '#attributes' => [
           'class' => ['list-style-type-none'],
         ],
       ];
+    }
+  }
+
+  /**
+   * Replaces the label for the non-platform affiliation field widget.
+   *
+   * This alters the label specifically for forms that include the
+   * "field_other_affiliations" to use a consistent and clear text for adding
+   * additional items.
+   *
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  #[
+    Alter('form_profile_profile_add_form'),
+    Alter('form_profile_profile_edit_form'),
+  ]
+  public function replaceNonPlatformAffiliationLabel(array &$form, FormStateInterface $form_state): void {
+    if (isset($form['field_other_affiliations']['widget']['add_more']['add_more_button_other_affiliations'])) {
+      $form['field_other_affiliations']['widget']['add_more']['add_more_button_other_affiliations']['#value'] = $this->t('Add another item');
     }
   }
 

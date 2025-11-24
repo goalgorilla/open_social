@@ -53,6 +53,51 @@ interface ProfileAffiliationInterface extends ProfileInterface {
   public function getAllUserAffiliationGroupLabels(): array;
 
   /**
+   * Retrieves the names of all non-platform (external) affiliations.
+   *
+   * This method returns a list of affiliation organization names that are not
+   * part of the platform's group system. These are external affiliations
+   * manually entered by users through the "Other affiliations" field.
+   *
+   * Uses a static cache to store the results and avoid recalculating
+   * the affiliation names repeatedly within the same object instance.
+   *
+   * @return array
+   *   An array of affiliation organization names from the "Other affiliations"
+   *   field.
+   *   Returns an empty array if:
+   *    - The "Other affiliations" feature is not enabled.
+   *    - The "field_enable_other_affiliations" field does not exist.
+   *    - The "field_other_affiliations" field is empty.
+   */
+  public function getAllNonPlatformAffiliationNames(): array;
+
+  /**
+   * Retrieves all affiliation names for the user profile.
+   *
+   * This method combines both platform-based affiliation names (from user
+   * affiliation groups) and non-platform affiliation names (from external
+   * organizations entered in the "Other affiliations" field) into a single
+   * consolidated array.
+   *
+   * Platform affiliations are listed first, followed by non-platform
+   * affiliations, maintaining the order in which they appear in their
+   * respective sources.
+   *
+   * @return array
+   *   A combined array containing:
+   *   - Group labels from platform affiliations the user has access to view.
+   *   - Organization names from non-platform (external) affiliations.
+   *   Returns an empty array if no affiliations exist.
+   *
+   * @see getAllUserAffiliationGroupLabels()
+   *   For platform-based group affiliation labels.
+   * @see getAllNonPlatformAffiliationNames()
+   *   For non-platform external affiliation names.
+   */
+  public function getAllAffiliationNames(): array;
+
+  /**
    * Gets user owned affiliation count value.
    *
    * If the user owned affiliation count value is not defined, return default

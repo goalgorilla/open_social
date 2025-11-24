@@ -211,6 +211,7 @@ abstract class DemoUser extends DemoContent {
   protected function fillProfile(ProfileInterface $profile, array $item) {
     // Add affiliation.
     $profile->addNonPlatformAffiliation($item['organization'], $item['function']);
+    $profile->set('field_enable_other_affiliations', TRUE);
 
     $profile->field_profile_image = $item['image'];
     $profile->field_profile_first_name = $item['first_name'];

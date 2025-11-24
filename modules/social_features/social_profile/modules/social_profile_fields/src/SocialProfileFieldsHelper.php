@@ -74,7 +74,7 @@ class SocialProfileFieldsHelper {
       ];
     }
 
-    $fields = $this->excludeFromSettings($fields);
+    $fields = $this->excludeFields($fields);
 
     // Return the array of fields.
     return $fields;
@@ -142,7 +142,7 @@ class SocialProfileFieldsHelper {
    *   The filtered array of field machine names with excluded
    *   fields is removed.
    */
-  private function excludeFromSettings(array $allowed_fields): array {
+  private function excludeFields(array $allowed_fields): array {
     $excluded = [
       // Exclude all profile affiliation fields except
       // "field_other_affiliations" and "field_group_affiliation".

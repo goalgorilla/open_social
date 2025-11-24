@@ -11,18 +11,15 @@
 {% block preview_popup_user_number %}{% endblock %}
 
 {% block preview_popup_type %}
+  {% if content.primary_affiliation_function|render %}
+    <div class="preview-popup-types--wrapper">
+      <span>
+        {{ content.primary_affiliation_function }}
+      </span>
+    </div>
+  {% endif %}
   {% if content.primary_affiliation_name|render %}
-    {{ content.primary_affiliation_name }}
-  {% else %}
-    {% if content.primary_affiliation_function|render %}
-      <div class="preview-popup-types--wrapper">
-        <div class="item">
-          <span>
-            {{ content.primary_affiliation_function }}
-          </span>
-        </div>
-      </div>
-    {% endif %}
+    {{ '@' ~ content.primary_affiliation_name|render }}
   {% endif %}
 {% endblock %}
 

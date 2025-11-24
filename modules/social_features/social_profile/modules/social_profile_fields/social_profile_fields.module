@@ -31,6 +31,12 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
   if ($field_definition->getTargetEntityTypeId() === 'profile') {
     $config = \Drupal::config('social_profile_fields.settings');
     $setting_name = $field_definition->getTargetEntityTypeId() . '_' . $field_definition->getTargetBundle() . '_' . $field_definition->getName();
+
+    // This field depends on the separate setting.
+    if ($field_definition->getName() === 'field_enable_other_affiliations') {
+      $setting_name = 'profile_profile_field_other_affiliations';
+    }
+
     $setting_value = $config->get($setting_name);
 
     if (isset($setting_value) && !$setting_value) {

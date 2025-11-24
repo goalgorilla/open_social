@@ -91,6 +91,55 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
   /**
    * {@inheritDoc}
    */
+  public function getAllNonPlatformAffiliationNames(): array {
+    // Use a static cache to avoid re-calculating the method results.
+    // It's cached per object instance.
+    $names = &drupal_static(sprintf('%s:%s:%s', __METHOD__, $this->uuid(), $this->language()->getId()));
+    if (is_array($names)) {
+      return $names;
+    }
+
+    // Early declare the variable to have it statically cached.
+    $names = [];
+
+    // Make sure the "Other affiliations" field is enabled.
+    if (
+      !$this->hasField('field_enable_other_affiliations') ||
+      !$this->get('field_enable_other_affiliations')->getString()
+    ) {
+      return $names;
+    }
+
+    // Make sure the "Other affiliations" field has a value.
+    if (
+      !$this->hasField('field_other_affiliations') ||
+      $this->get('field_other_affiliations')->isEmpty()
+    ) {
+      return $names;
+    }
+
+    // Get the first paragraph entity.
+    foreach ($this->get('field_other_affiliations')->referencedEntities() as $paragraph) {
+      assert($paragraph instanceof ParagraphInterface);
+      $names[] = $paragraph->get('field_affiliation_org_name')->getString();
+    }
+
+    return $names;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getAllAffiliationNames(): array {
+    return [
+      ...$this->getAllUserAffiliationGroupLabels(),
+      ...$this->getAllNonPlatformAffiliationNames(),
+    ];
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public function getUserOwnedAffiliationsCount(): int {
     return !$this->get(AutomaticGroupAffiliation::AFFILIATION_OWNED_COUNT_FILED_NAME)->isEmpty() ?
       (int) $this->{AutomaticGroupAffiliation::AFFILIATION_OWNED_COUNT_FILED_NAME}->value :
@@ -283,15 +332,20 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
     // 2. Get an affiliation function from the "field_other_affiliations" field.
     if (empty($value)) {
       if (
+        // Make sure the "Other affiliations" field is enabled.
+        $this->hasField('field_enable_other_affiliations') &&
+        $this->get('field_enable_other_affiliations')->getString() &&
+        // Make sure the "Other affiliations" field has a value.
         $this->hasField('field_other_affiliations') &&
         !$this->get('field_other_affiliations')->isEmpty()
       ) {
+        // Get the first paragraph entity.
         $paragraph = $this->get('field_other_affiliations')->entity;
         if ($paragraph instanceof ParagraphInterface) {
           $value = [
             'affiliation_name' => $paragraph->get('field_affiliation_org_name')->getString(),
             'affiliation_function' => $paragraph->get('field_affiliation_org_function')->getString(),
-            'affiliation_type' => 'non-platform affiliation',
+            'affiliation_type' => 'External',
           ];
         }
       }

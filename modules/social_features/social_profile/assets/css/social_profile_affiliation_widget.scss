@@ -12,7 +12,7 @@ form.profile-form {
     }
 
     // Hide weight button.
-    .btn.tabledrag-toggle-weight {
+    .tabledrag-toggle-weight {
       display: none;
     }
 
@@ -154,6 +154,14 @@ form.profile-form {
               span:before {
                 top: auto;
               }
+
+              .handle {
+                margin: 0;
+                padding: 0;
+                width: 22px;
+                height: 22px;
+                background-position-y: 0;
+              }
             }
 
             + td {
@@ -274,17 +282,13 @@ form.profile-form {
     }
   }
 
-  .field--name-field-affiliation-org-function {
-    .form-type-textfield {
-      &:before {
-        background-image: url('../images/sign.svg');
-      }
-    }
-  }
-
   .field--name-field-affiliation-org-name {
     .form-type-textfield {
       margin-bottom: 8px;
+
+      &:before {
+        background-image: url('../images/sign.svg');
+      }
     }
   }
 

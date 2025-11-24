@@ -5,6 +5,7 @@ namespace Drupal\social_profile\Hooks;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupMembershipTrait;
@@ -32,11 +33,14 @@ class GroupAffiliationCacheInvalidationHooks implements ContainerInjectionInterf
    *   Cache backend instance to use.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cacheTagsInvalidator
    *   The cache tags invalidator.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
    */
   public function __construct(
     protected GroupAffiliation $groupAffiliation,
     protected CacheBackendInterface $cacheBackend,
     protected CacheTagsInvalidatorInterface $cacheTagsInvalidator,
+    protected EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -47,6 +51,7 @@ class GroupAffiliationCacheInvalidationHooks implements ContainerInjectionInterf
       $container->get('social_profile.group_affiliation'),
       $container->get('cache.default'),
       $container->get('cache_tags.invalidator'),
+      $container->get('entity_type.manager'),
     );
   }
 
@@ -139,12 +144,24 @@ class GroupAffiliationCacheInvalidationHooks implements ContainerInjectionInterf
   public function groupTypeChange(GroupTypeInterface $group_type): void {
     // Invalidate cache only for group types that are eligible for affiliation.
     $group_type_is_affiliation_candidate = $group_type->getThirdPartySetting('social_profile', GroupAffiliation::AFFILIATION_CANDIDATE_CONFIG_KEY);
-    if ($group_type_is_affiliation_candidate) {
-      // Invalidate general cache tag group_affiliation_options_by_user.
+    $original = $group_type->original;
+
+    // No need to invalidate cache if the group type is new or if affiliation
+    // settings are not changed.
+    $is_changed = $group_type->isNew() ||
+      !$original instanceof GroupTypeInterface ||
+      $group_type->getThirdPartySettings('social_profile') !== $original->getThirdPartySettings('social_profile');
+
+    if ($group_type_is_affiliation_candidate && $is_changed) {
+      // Invalidate the general cache tag group_affiliation_options_by_user.
       $this->cacheTagsInvalidator->invalidateTags([
         GroupAffiliation::GENERAL_CACHE_TAG,
         'group_affiliation_candidates',
       ]);
+
+      // Invalidate cache for profiles.
+      // @todo Make this more granular (only profiles affected by affiliation).
+      $this->entityTypeManager->getStorage('profile')->resetCache();
     }
   }
 

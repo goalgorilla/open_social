@@ -157,6 +157,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
         ['format' => 'basic_html', 'value' => $this->randomString()]
       )
       ->set('field_profile_phone_number', $this->randomString())
+      ->set('field_enable_other_affiliations', TRUE)
       ->addNonPlatformAffiliation($this->randomString(), $this->randomString())
       ->save();
 
