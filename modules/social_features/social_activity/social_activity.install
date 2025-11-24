@@ -169,3 +169,37 @@ function social_activity_update_13003(): void {
     }
   }
 }
+
+/**
+ * Fix message template text values with literal \r\n escape sequences.
+ *
+ * When message templates use single quotes in YAML, \r\n is stored as literal
+ * characters instead of escape sequences, causing them to appear in emails.
+ * This update converts those literal strings to actual newline characters.
+ */
+function social_activity_update_13004(): void {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('message.template.create_content_in_joined_group');
+
+  // Only process if the config exists.
+  if ($config->isNew()) {
+    return;
+  }
+
+  $texts = $config->get('text');
+  $updated = FALSE;
+
+  // Check if any text values contain literal \r\n (from single quotes in YAML).
+  foreach ($texts as $key => $text) {
+    if (isset($text['value']) && strpos($text['value'], '\r\n') !== FALSE) {
+      // Replace literal \r\n with actual newline characters.
+      $texts[$key]['value'] = str_replace('\r\n', "\r\n", $text['value']);
+      $updated = TRUE;
+    }
+  }
+
+  // Save the config if we made changes.
+  if ($updated) {
+    $config->set('text', $texts)->save();
+  }
+}
