@@ -250,29 +250,19 @@ final class UserExportService {
   public static function processBatch(array $userIds, array $pluginDefinitions, string $filePath, int $total, array &$context): void {
     $pluginManager = \Drupal::service('plugin.manager.user_export_plugin');
     $userStorage = \Drupal::entityTypeManager()->getStorage('user');
+    $fileSystem = \Drupal::service('file_system');
 
-    // Initialize sandbox on the first run.
-    if (!isset($context['sandbox']['file_path'])) {
-      $context['sandbox']['file_path'] = $filePath;
-      $context['sandbox']['processed'] = 0;
-      $context['sandbox']['total'] = $total;
-      // Store file path in results for batch finished callback.
-      // This only needs to happen once during the initial setup since the file
-      // path doesn't change.
+    // Initialize global results if necessary.
+    if (!isset($context['results']['processed'])) {
+      $context['results']['processed'] = 0;
+    }
+    if (!isset($context['results']['file_path'])) {
+      // Store the filepath in results to be used later.
       $context['results']['file_path'] = $filePath;
     }
 
-    // Load users for this batch.
-    $users = $userStorage->loadMultiple($userIds);
-
-    // Get file path.
-    // Note: We can't call $this->getBaseOutputDirectory() in a static method,
-    // so we need to use the service directly. The method exists for
-    // extensibility in non-static contexts (VBO batch processing via
-    // processVboBatch).
-    $fileSystem = \Drupal::service('file_system');
     $baseDirectory = $fileSystem->getTempDirectory();
-    $fullPath = $baseDirectory . DIRECTORY_SEPARATOR . $context['sandbox']['file_path'];
+    $fullPath = $baseDirectory . DIRECTORY_SEPARATOR . $context['results']['file_path'];
 
     // Open CSV file in appended mode.
     // This is the copy of $csv = $this->openCsvForWriting($fullPath, 'a');.
@@ -282,7 +272,10 @@ final class UserExportService {
     $csv->setEscape('\\');
     $csv->addFormatter([new CsvEncoder(), 'formatRow']);
 
-    // Process each user in this batch.
+    // Load only require users.
+    $users = $userStorage->loadMultiple($userIds);
+
+    $written = 0;
     foreach ($users as $user) {
       $row = [];
       foreach ($pluginDefinitions as $plugin) {
@@ -306,15 +299,20 @@ final class UserExportService {
         }
       }
       $csv->insertOne($row);
-      $context['sandbox']['processed']++;
+      $written++;
     }
 
-    // Update progress.
-    $context['finished'] = $context['sandbox']['processed'] >= $context['sandbox']['total'] ? 1 : ($context['sandbox']['processed'] / $context['sandbox']['total']);
+    // Update the global counter.
+    $context['results']['processed'] += $written;
+
+    // Update user message with the processed amount.
     $context['message'] = \Drupal::translation()->translate('Processing user @current of @total', [
-      '@current' => $context['sandbox']['processed'],
-      '@total' => $context['sandbox']['total'],
+      '@current' => $context['results']['processed'],
+      '@total' => $total,
     ]);
+
+    // Finishes current operation to avoid double executions.
+    $context['finished'] = 1;
   }
 
   /**
