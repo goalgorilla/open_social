@@ -2,9 +2,11 @@ name: 'Social Activity'
 description: 'Provides activity stream for Open Social.'
 type: module
 core_version_requirement: ^9 || ^10
+configure: social_activity.filter_settings
 dependencies:
   - social:activity_basics
   - social:activity_send_email
+  - config_modify:config_modify
   - drupal:block
   - drupal:block_content
   - drupal:comment

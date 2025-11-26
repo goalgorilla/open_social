@@ -1,7 +1,11 @@
+# The route for activity filter settings is now provided by social_activity.
+# This file is kept for backward compatibility but the route
+# social_activity_filter.settings now redirects to social_activity.filter_settings.
+
 social_activity_filter.settings:
-  path: '/admin/config/opensocial/activity-filter-settings'
+  path: '/admin/config/opensocial/activity-filter-settings-deprecated'
   defaults:
-    _form: '\Drupal\social_activity_filter\Form\FilterSettingsForm'
-    _title: 'Activity filter settings'
+    _controller: '\Drupal\Core\Controller\ControllerResolver::getControllerFromDefinition'
+    _title: 'Activity filter settings (Deprecated)'
   requirements:
-    _permission: 'administer social_activity_filter'
+    _access: 'FALSE'
