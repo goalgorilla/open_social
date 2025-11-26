@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.topic
+    - field.storage.node.field_human_relevancy_score
+  module:
+    - gaia_content_relevancy
+id: node.topic.field_human_relevancy_score
+field_name: field_human_relevancy_score
+entity_type: node
+bundle: topic
+label: 'New relevancy score'
+description: 'This field is automatically populated by Gaia AI.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 100
+  prefix: ''
+  suffix: ''
+field_type: integer

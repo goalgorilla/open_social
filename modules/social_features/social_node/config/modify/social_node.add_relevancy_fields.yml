@@ -1,0 +1,51 @@
+dependencies:
+  config:
+    - field.field.node.topic.field_relevancy_score
+    - field.field.node.topic.field_human_relevancy_score
+    - field.field.node.topic.field_human_relevancy_reasoning
+items:
+  core.entity_form_display.node.topic.default:
+    expected_config: { }
+    update_actions:
+      add:
+        content:
+          field_relevancy_score:
+            weight: 0
+            settings: { }
+            third_party_settings: { }
+            type: number
+            region: content
+          field_human_relevancy_score:
+            weight: 1
+            settings: { }
+            third_party_settings: { }
+            type: number
+            region: content
+          field_human_relevancy_reasoning:
+            weight: 2
+            settings:
+              rows: 3
+            third_party_settings: { }
+            type: string_textarea
+            region: content
+        third_party_settings:
+          field_group:
+            group_relevancy_score:
+              children:
+                - field_relevancy_score
+                - field_human_relevancy_score
+                - field_human_relevancy_reasoning
+              label: 'Relevancy score'
+              region: content
+              parent_name: ''
+              weight: 10
+              format_type: details
+              format_settings:
+                classes: social-collapsible-fieldset
+                show_empty_fields: false
+                id: relevancy
+                label_as_html: false
+                open: false
+                description: ''
+                required_fields: true
+
