@@ -28,4 +28,13 @@ function social_profile_views_data_alter(array &$data) {
       'id' => 'social_split_profile_terms',
     ],
   ];
+
+  $data['users_field_data']['primary_affiliation'] = [
+    'title' => t('Primary affiliation'),
+    'field' => [
+      'title' => t('Primary affiliation'),
+      'help' => t('Get primary affiliation of user.'),
+      'id' => 'primary_affiliation',
+    ],
+  ];
 }
