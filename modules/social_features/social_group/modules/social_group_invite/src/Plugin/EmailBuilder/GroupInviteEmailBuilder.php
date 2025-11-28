@@ -119,8 +119,6 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
     $this->token = $token;
     $this->languageManager = $language_manager;
     $this->tempStore = $temp_store_factory->get('social_group_invite');
-    $this->languageManager = $language_manager;
-    $this->tempStore = $temp_store_factory->get('social_group_invite');
     $this->currentUser = $current_user;
     $this->userStorage = $user_storage;
   }
@@ -144,68 +142,79 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
     /* @see ginvite_group_content_insert() */
     $invite = $params['group_content'] ?? NULL;
 
-    // If nothing custom has been configured just proceed with default.
+    if (!$invite instanceof GroupRelationshipInterface || $invite->getPluginId() !== 'group_invitation') {
+      $language_manager->setConfigOverrideLanguage($original_language);
+      return;
+    }
+
+    $is_existing_user = !empty($params['existing_user']);
+    $overridden_body = NULL;
+
+    // Check if the invitation is resent and site managers decided to change
+    // the invitation email text.
+    if (!empty($invite_settings['invite_resend_message'])) {
+      $resent_invites = (array) $this->tempStore->get(SocialGroupInviteResend::TEMP_STORE_ID);
+      if (!empty($resent_invites) && in_array($invite->uuid(), $resent_invites)) {
+        $overridden_body = $invite_settings['invite_resend_message'];
+        // Remove handled resent invite from list.
+        unset($resent_invites[$invite->uuid()]);
+        $this->tempStore->set(SocialGroupInviteResend::TEMP_STORE_ID, $resent_invites);
+      }
+    }
+
+    // Get invitation templates from plugin configuration.
+    $plugin_config = $this->getInvitationTemplates($invite, $is_existing_user);
+
+    // Determine which templates to use.
     if (is_null($invite_settings)) {
-      if ($invite->getPluginId() === 'group_invitation') {
-        /** @var \Drupal\group\Plugin\Group\Relation\GroupRelationInterface $group_content_plugin */
-        $group_content_plugin = $invite->getPlugin();
-        $configuration = $group_content_plugin->getConfiguration();
-        $invitation_subject = (!$params['existing_user']) ? $configuration['invitation_subject'] : $configuration['existing_user_invitation_subject'];
-        $invitation_body = (!$params['existing_user']) ? $configuration['invitation_body'] : $configuration['existing_user_invitation_body'];
-
-        $email->setSubject($this->token->replace($invitation_subject, $params));
-        $email->setBody(Markup::create($this->token->replace($invitation_body, $params)));
-      }
+      // No custom settings: use plugin configuration directly.
+      $invitation_subject = $plugin_config['subject'];
+      $invitation_body = $plugin_config['body'];
+    }
+    elseif (isset($invite_settings['invite_subject'], $invite_settings['invite_message'])) {
+      // If custom settings: use plugin config, otherwise fall back to custom.
+      $invitation_subject = $plugin_config['subject'] ?: $invite_settings['invite_subject'];
+      $invitation_body = $overridden_body ?? ($plugin_config['body'] ?: $invite_settings['invite_message']);
+    }
+    else {
+      // Invalid custom settings: use plugin configuration.
+      $invitation_subject = $plugin_config['subject'];
+      $invitation_body = $plugin_config['body'];
     }
 
-    // Alter message and subject if it configured.
-    if (
-      !is_null($invite_settings) &&
-      isset($invite_settings['invite_subject'], $invite_settings['invite_message'])
-    ) {
-      // Check if the invitation is resent and site managers decided to change
-      // the invitation email text.
-      if ($invite_settings['invite_resend_message']) {
-        $resent_invites = (array) $this->tempStore->get(SocialGroupInviteResend::TEMP_STORE_ID);
-        if (!empty($resent_invites)) {
+    $email->setSubject($this->token->replace($invitation_subject, $params));
+    $email->setBody(Markup::create($this->token->replace($invitation_body, $params)));
 
-          if (
-            $invite instanceof GroupRelationshipInterface &&
-            in_array($invite->uuid(), $resent_invites)
-          ) {
-            $overridden_body = $invite_settings['invite_resend_message'];
-            // Remove handled resent invite from list.
-            unset($resent_invites[$params['group_content']->uuid()]);
-            $this->tempStore->set(SocialGroupInviteResend::TEMP_STORE_ID, $resent_invites);
-          }
-        }
-      }
-
-      if ($invite instanceof GroupRelationshipInterface) {
-        // Allows to have different invite message per group type by replacing
-        // default global message.
-        if ($invite->getPluginId() === 'group_invitation') {
-          /** @var \Drupal\group\Plugin\Group\Relation\GroupRelationInterface $group_content_plugin */
-          $group_content_plugin = $invite->getPlugin();
-          $configuration = $group_content_plugin->getConfiguration();
-
-          if ($subject = $configuration['invitation_subject'] ?? '') {
-            $invite_settings['invite_subject'] = $subject;
-          }
-          if ($body = $configuration['invitation_body'] ?? '') {
-            $invite_settings['invite_message'] = $body;
-          }
-        }
-      }
-
-      $invitation_subject = $invite_settings['invite_subject'];
-      $invitation_body = $overridden_body ?? $invite_settings['invite_message'];
-
-      $email->setSubject($this->token->replace($invitation_subject, $params));
-      $email->setBody(Markup::create($this->token->replace($invitation_body, $params)));
-
-    }
     $language_manager->setConfigOverrideLanguage($original_language);
+  }
+
+  /**
+   * Gets the invitation templates from plugin configuration.
+   *
+   * @param \Drupal\group\Entity\GroupRelationshipInterface $invite
+   *   The group invitation entity.
+   * @param bool $is_existing_user
+   *   Whether the invitee is an existing user.
+   *
+   * @return array
+   *   An array with 'subject' and 'body' keys containing the template strings.
+   */
+  protected function getInvitationTemplates(GroupRelationshipInterface $invite, bool $is_existing_user): array {
+    /** @var \Drupal\group\Plugin\Group\Relation\GroupRelationInterface $group_content_plugin */
+    $group_content_plugin = $invite->getPlugin();
+    $configuration = $group_content_plugin->getConfiguration();
+
+    if ($is_existing_user) {
+      return [
+        'subject' => $configuration['existing_user_invitation_subject'] ?? '',
+        'body' => $configuration['existing_user_invitation_body'] ?? '',
+      ];
+    }
+
+    return [
+      'subject' => $configuration['invitation_subject'] ?? '',
+      'body' => $configuration['invitation_body'] ?? '',
+    ];
   }
 
   /**
