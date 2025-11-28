@@ -144,13 +144,15 @@ class GroupAffiliationCacheInvalidationHooks implements ContainerInjectionInterf
   public function groupTypeChange(GroupTypeInterface $group_type): void {
     // Invalidate cache only for group types that are eligible for affiliation.
     $group_type_is_affiliation_candidate = $group_type->getThirdPartySetting('social_profile', GroupAffiliation::AFFILIATION_CANDIDATE_CONFIG_KEY);
-    $original = $group_type->original;
 
     // No need to invalidate cache if the group type is new or if affiliation
     // settings are not changed.
-    $is_changed = $group_type->isNew() ||
-      !$original instanceof GroupTypeInterface ||
-      $group_type->getThirdPartySettings('social_profile') !== $original->getThirdPartySettings('social_profile');
+    $is_changed = $group_type->isNew();
+    if (!$is_changed) {
+      $original = isset($group_type->original) && $group_type->original instanceof GroupTypeInterface ? $group_type->original : NULL;
+      $is_changed = !$original instanceof GroupTypeInterface ||
+        $group_type->getThirdPartySettings('social_profile') !== $original->getThirdPartySettings('social_profile');
+    }
 
     if ($group_type_is_affiliation_candidate && $is_changed) {
       // Invalidate the general cache tag group_affiliation_options_by_user.
