@@ -11,6 +11,7 @@ use Drupal\Core\File\FileExists;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\social_core\SocialCoreInstallHelper;
 use Drupal\user\RoleInterface;
 use Drupal\views\Entity\View;
 
@@ -980,4 +981,20 @@ function social_core_update_130026(): void {
     $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $new_actions);
     $config->save();
   }
+}
+
+/**
+ * Prepare VBO actions in the content view.
+ *
+ * - Removes duplicate actions (e.g. follow/unfollow added twice).
+ * - Removes unwanted actions (promote/demote, save, sticky/unsticky).
+ * - Renames "Delete selected entities / translations" to "Delete selected
+ *   content".
+ * - Renames "Publish content item" to "Publish selected content".
+ * - Renames "Unpublish content item" to "Unpublish selected content".
+ */
+function social_core_update_130027(): void {
+  /** @var \Drupal\social_core\SocialCoreInstallHelper $helper */
+  $helper = \Drupal::classResolver(SocialCoreInstallHelper::class);
+  $helper->prepareContentViewVboActions();
 }
