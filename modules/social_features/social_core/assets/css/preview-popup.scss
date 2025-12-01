@@ -217,11 +217,6 @@
   }
 
   .preview-popup-description {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-
     &:not(:empty) {
       margin-top: 20px;
     }
@@ -235,6 +230,14 @@
         &:last-child {
           margin-bottom: 0;
         }
+      }
+
+      &:not(.field--name-field-profile-summary) .field--item,
+      &.field--item {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
       }
     }
   }
