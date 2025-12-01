@@ -1099,4 +1099,42 @@ class FeatureContext extends RawMinkContext {
       }
     }
 
+    /**
+     * Checks that the number of elements matching a CSS selector equals the expected count.
+     *
+     * @Then I should see :count elements matching css :selector
+     */
+    public function theNumberOfElementsMatchingCssShouldBe(string $selector, int $count): void {
+      $elements = $this->getSession()->getPage()->findAll('css', $selector);
+      $actualCount = count($elements);
+
+      if ($actualCount !== $count) {
+        throw new \RuntimeException(sprintf(
+          'Expected %d element(s) matching CSS selector "%s", but found %d.',
+          $count,
+          $selector,
+          $actualCount
+        ));
+      }
+    }
+
+    /**
+     * Checks that the number of elements matching a CSS selector does not equal the specified count.
+     *
+     * @Then I should not see :count elements matching css :selector
+     */
+    public function theNumberOfElementsMatchingCssShouldNotBe(string $selector, int $count): void {
+      $elements = $this->getSession()->getPage()->findAll('css', $selector);
+      $actualCount = count($elements);
+
+      if ($actualCount === $count) {
+        throw new \RuntimeException(sprintf(
+          'Expected NOT to find %d element(s) matching CSS selector "%s", but found exactly %d.',
+          $count,
+          $selector,
+          $actualCount
+        ));
+      }
+    }
+
 }
