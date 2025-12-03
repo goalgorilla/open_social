@@ -5,6 +5,8 @@
  * Installation file for social_group_default_route module.
  */
 
+use Drupal\social_group_default_route\GroupPathAliasFixService;
+
 /**
  * Implements hook_install().
  */
@@ -15,4 +17,11 @@ function social_group_default_route_install() {
   $this_module = $group_weight + 1;
   // Set the weight of this module.
   module_set_weight('social_group_default_route', $this_module);
+
+  // This module updates the group’s canonical route from group/{id}/stream to
+  // group/{id}/home. This means all existing group canonical aliases must
+  // be migrated; otherwise, saving will result in duplicate aliases.
+  /** @var \Drupal\social_group_default_route\GroupPathAliasFixService $service */
+  $service = \Drupal::service(GroupPathAliasFixService::class);
+  $service->fixAllGroups();
 }
