@@ -1,6 +1,12 @@
 form.profile-form .field--name-field-group-affiliation .alert-success,
-form.profile-form .field--name-field-other-affiliations .alert-success {
+form.profile-form .field--name-field-group-affiliation .tabledrag-changed-warning,
+form.profile-form .field--name-field-other-affiliations .alert-success,
+form.profile-form .field--name-field-other-affiliations .tabledrag-changed-warning {
   display: none !important;
+}
+form.profile-form .field--name-field-group-affiliation .tabledrag-changed,
+form.profile-form .field--name-field-other-affiliations .tabledrag-changed {
+  display: none;
 }
 form.profile-form .field--name-field-group-affiliation .table-responsive,
 form.profile-form .field--name-field-other-affiliations .table-responsive {
@@ -144,6 +150,10 @@ form.profile-form .field--name-field-other-affiliations table tbody td.field-mul
   padding: 0;
   margin: 0 auto;
 }
+form.profile-form .field--name-field-group-affiliation table tbody td.field-multiple-drag .tabledrag-handle span:before,
+form.profile-form .field--name-field-other-affiliations table tbody td.field-multiple-drag .tabledrag-handle span:before {
+  top: auto;
+}
 form.profile-form .field--name-field-group-affiliation table tbody td.field-multiple-drag .tabledrag-handle .handle,
 form.profile-form .field--name-field-other-affiliations table tbody td.field-multiple-drag .tabledrag-handle .handle {
   margin: 0;
@@ -151,10 +161,6 @@ form.profile-form .field--name-field-other-affiliations table tbody td.field-mul
   width: 22px;
   height: 22px;
   background-position-y: 0;
-}
-form.profile-form .field--name-field-group-affiliation table tbody td.field-multiple-drag .tabledrag-handle span:before,
-form.profile-form .field--name-field-other-affiliations table tbody td.field-multiple-drag .tabledrag-handle span:before {
-  top: auto;
 }
 form.profile-form .field--name-field-group-affiliation table tbody td.field-multiple-drag + td,
 form.profile-form .field--name-field-other-affiliations table tbody td.field-multiple-drag + td {
@@ -249,11 +255,11 @@ form.profile-form .field--name-field-affiliation-org-function .form-type-textfie
   padding-left: 40px;
   position: relative;
 }
-form.profile-form .field--name-field-affiliation-org-name .form-type-textfield:before {
-  background-image: url("../images/sign.svg");
-}
 form.profile-form .field--name-field-affiliation-org-name .form-type-textfield {
   margin-bottom: 8px;
+}
+form.profile-form .field--name-field-affiliation-org-name .form-type-textfield:before {
+  background-image: url("../images/sign.svg");
 }
 form.profile-form .field--name-field-affiliation-function {
   margin-top: 8px;

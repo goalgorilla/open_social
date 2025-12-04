@@ -3,8 +3,14 @@ form.profile-form {
   .field--name-field-group-affiliation,
   .field--name-field-other-affiliations {
     // Hide a misplaced success msg from Drupal not related to this field.
-    .alert-success {
+    // Hide warning message  on drag.
+    .alert-success,
+    .tabledrag-changed-warning {
       display: none !important;
+    }
+
+    .tabledrag-changed {
+      display: none;
     }
 
     .table-responsive {
