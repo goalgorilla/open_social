@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for Social EDA.
+ */
+
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Import the social_eda_backfill AdvancedQueue queue configuration.
+ */
+function social_eda_update_25001(): void {
+  // Ensure advancedqueue module is available.
+  if (!\Drupal::moduleHandler()->moduleExists('advancedqueue')) {
+    return;
+  }
+
+  try {
+    $queue_storage = \Drupal::entityTypeManager()->getStorage('advancedqueue_queue');
+    $queue = $queue_storage->load('social_eda_backfill');
+
+    // Only import if the queue doesn't already exist.
+    if ($queue === NULL) {
+      $module_path = \Drupal::service('extension.list.module')->getPath('social_eda');
+      $config_path = $module_path . '/config/static';
+      $source_storage = new FileStorage($config_path);
+
+      $config_name = 'advancedqueue_queue.social_eda_backfill';
+      $config_data = $source_storage->read($config_name);
+
+      if ($config_data) {
+        // Create the queue entity from the config data.
+        $queue = $queue_storage->create($config_data);
+        $queue->save();
+      }
+      else {
+        \Drupal::logger('social_eda')->warning('Backfill queue configuration file not found at @path', ['@path' => $config_path . '/' . $config_name . '.yml']);
+      }
+    }
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('social_eda')->error('Failed to import backfill queue: @message', ['@message' => $e->getMessage()]);
+  }
+}

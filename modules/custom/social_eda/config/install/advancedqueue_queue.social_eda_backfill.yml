@@ -1,0 +1,16 @@
+langcode: en
+status: true
+dependencies: {  }
+id: social_eda_backfill
+label: 'Social EDA Backfill'
+backend: database
+backend_configuration:
+  lease_time: 300
+processor: cron
+processing_time: 90
+locked: false
+stop_when_empty: true
+threshold:
+  type: 0
+  limit: 0
+  state: all
