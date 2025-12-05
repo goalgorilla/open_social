@@ -1,0 +1,10 @@
+services:
+  social_eda.backfill_commands:
+    class: Drupal\social_eda\Commands\BackfillCommands
+    arguments:
+      - '@plugin.manager.social_eda.backfill_handler'
+      - '@entity_type.manager'
+    lazy: true
+    tags:
+      - { name: drush.command }
+
