@@ -260,7 +260,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
       $query->leftJoin('group_relationship_field_data', 'gcfd', "gcfd.entity_id = nfd.nid AND gcfd.type LIKE '%-group_node-%'");
       $or = $query->orConditionGroup();
-      if ($user->isAuthenticated()) {
+      if (in_array('verified', $user->getRoles())) {
         // Nodes community visibility.
         $community_access = $or->andConditionGroup()
           ->condition('nfcv.field_content_visibility_value', ['community', 'public'], 'IN')
@@ -318,8 +318,8 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     $query->leftJoin('post__field_visibility', 'pfv', 'pfv.entity_id = pfd.id');
     $query->leftJoin('post__field_recipient_group', 'pfrg', 'pfrg.entity_id = pfd.id');
     $or = $query->orConditionGroup();
-    if ($user->isAuthenticated()) {
-      // Posts for authenticated users if has permission.
+    if (in_array('verified', $user->getRoles())) {
+      // Posts for verified users if has permission.
       if ($user->hasPermission('view community posts')) {
         // Posts community visibility.
         $community_access = $or->andConditionGroup()

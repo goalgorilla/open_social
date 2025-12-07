@@ -100,7 +100,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    * system when this is implemented.
    * See https://www.drupal.org/node/777578
    */
-  public function query():void {
+  public function query(): void {
     $account = $this->view->getUser();
 
     if ($this->moduleHandler->moduleExists('social_group')) {
@@ -169,7 +169,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $and_wrapper = new Condition('AND');
     $or = new Condition('OR');
 
-    $node_access = $this->query->getConnection()->select('node_field_data', 'node_field_data');
+    $node_access = $this->query->getConnection()
+      ->select('node_field_data', 'node_field_data');
     $node_access->addField('afae', 'entity_id');
     $node_access->join('activity__field_activity_entity', 'afae', 'node_field_data.nid = afae.field_activity_entity_target_id');
     $node_access->condition('afae.field_activity_entity_target_type', 'node');
@@ -187,7 +188,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $or->condition('activity_field_data.id', $node_access, 'IN');
 
     // Posts: retrieve all the posts in groups the user is a member of.
-    if ($account->isAuthenticated() && count($groups_unique) > 0) {
+    if (in_array('verified', $account->getRoles()) && count($groups_unique) > 0) {
       $posts_in_groups = new Condition('AND');
       $posts_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post');
       $posts_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
@@ -227,8 +228,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $post_status->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '!=');
     $and_wrapper->condition($post_status);
 
-    // Comments: retrieve comments the user has access to.
-    if ($account->hasPermission('access comments')) {
+    // Non-verified users should not see comment activities.
+    if ($account->hasPermission('access comments') && in_array('verified', $account->getRoles())) {
       // For comments in groups, the user must be a member of at least 1 group.
       if (count($groups_unique) > 0) {
         $comments_on_content_in_groups = new Condition('AND');

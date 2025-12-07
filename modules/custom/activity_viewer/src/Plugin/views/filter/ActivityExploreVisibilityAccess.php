@@ -66,7 +66,7 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
    * content also from unrelated content. So content from groups you are
    * not a member of. So in this case we can:
    * 1. Show content from groups you are not a member off.
-   * Only when that content visibility is set to community or public for LU.
+   * Only when that content visibility is set to community or public for VU.
    * 2. OR the content is NOT placed in a group at all
    * 3. OR the content is not a Node, we don't care about that here.
    * This translates to code as follows:
@@ -110,9 +110,9 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
     $node_condition = new Condition('OR');
     $node_condition->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node', '!=');
 
-    // OR for LU it's a node and it doesn't have group member visibility.
+    // OR for VU it's a node and it doesn't have group member visibility.
     // so only Community and Public is shown.
-    if ($account->isAuthenticated()) {
+    if (in_array('verified', $account->getRoles())) {
       // Remove all content from groups I am a member of.
       $nodes_not_in_groups = new Condition('OR');
       $new_and = new Condition('AND');
@@ -140,7 +140,7 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
     }
     else {
       // OR we remove activities related to nodes with community and group
-      // visibility for AN.
+      // visibility for AN and LU.
       $nodes_not_in_groups = new Condition('OR');
       $new_and = new Condition('AND');
       $nodes_not_in_groups->condition($new_and
