@@ -377,3 +377,13 @@ function social_event_update_130010(): string {
   $updater->executeUpdate('social_event', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Reorder event field groups.
+ */
+function social_event_update_130011(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_event', __FUNCTION__);
+  return $updater->logger()->output();
+}

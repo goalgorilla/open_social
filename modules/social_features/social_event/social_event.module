@@ -1595,7 +1595,14 @@ function social_event_social_core_default_main_menu_links_alter(array &$links) {
  * Implements hook_social_tagging_type_alter().
  */
 function social_event_social_tagging_type_alter(array &$items): void {
-  $items['node']['sets'][0]['bundles'][] = 'event';
+  if (isset($items['node']['sets'][0])) {
+    $node_set = &$items['node']['sets'][0];
+    if (!in_array('event', $node_set['bundles'] ?? [], TRUE)) {
+      $node_set['bundles'][] = 'event';
+    }
+    // Ensure the Tags group is placed before "Additional information".
+    $node_set['weight'] = 4;
+  }
 }
 
 /**
