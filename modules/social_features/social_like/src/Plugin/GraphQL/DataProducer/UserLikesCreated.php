@@ -2,8 +2,6 @@
 
 namespace Drupal\social_like\Plugin\GraphQL\DataProducer;
 
-use Drupal\Core\Cache\Cache;
-use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
@@ -30,8 +28,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class UserLikesCreated extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
-  const string CID_BASE = 'social_like:user_likes_created:';
-
   /**
    * {@inheritdoc}
    */
@@ -40,7 +36,6 @@ class UserLikesCreated extends DataProducerPluginBase implements ContainerFactor
     string $plugin_id,
     array $plugin_definition,
     protected Connection $database,
-    protected CacheBackendInterface $cacheBackend,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -54,7 +49,6 @@ class UserLikesCreated extends DataProducerPluginBase implements ContainerFactor
       $plugin_id,
       $plugin_definition,
       $container->get('database'),
-      $container->get('cache.default'),
     );
   }
 
@@ -66,12 +60,6 @@ class UserLikesCreated extends DataProducerPluginBase implements ContainerFactor
     // But "type", condition was added.
     // Get likes count for the user.
     $user_id = $entity->id();
-    $cid = self::CID_BASE . $user_id;
-
-    // Check if the result is already cached.
-    if ($cache_data = $this->cacheBackend->get($cid)) {
-      return (int) $cache_data->data;
-    }
 
     $query = $this->database->select('votingapi_vote', 'v');
     $query->condition('v.type', 'like');
@@ -83,12 +71,7 @@ class UserLikesCreated extends DataProducerPluginBase implements ContainerFactor
 
     // Calculate the result.
     // Cast to int to satisfy the user GraphQL interface.
-    $result = (int) $result?->fetchField();
-
-    // Cache the result.
-    $this->cacheBackend->set($cid, $result, Cache::PERMANENT, [$cid]);
-
-    return $result;
+    return (int) $result?->fetchField();
   }
 
 }

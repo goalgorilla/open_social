@@ -2,10 +2,8 @@
 
 namespace Drupal\Tests\social_private_message\Kernel\GraphQL;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\private_message\Entity\PrivateMessage;
-use Drupal\social_private_message\Plugin\GraphQL\DataProducer\PrivateMessageSent;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\user\UserInterface;
 
@@ -156,36 +154,6 @@ class PrivateMessagesCountTest extends SocialGraphQLTestBase {
       $this->createMetadataForprivateMessageSent($user)
     );
 
-  }
-
-  /**
-   * Test that the database not called if cache is set .
-   */
-  public function testUserCreatedPostsCached(): void {
-    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
-    // Set custom cache result.
-    $new_result = 35;
-    $cid = PrivateMessageSent::CID_BASE . $user->id();
-    \Drupal::service('cache.default')
-      ->set($cid, $new_result, Cache::PERMANENT, [$cid]);
-
-    // Update expected counter.
-    // Set expected array.
-    $expected_data = [
-      'user' => [
-        'id' => $user->uuid(),
-        'privateMessageSent' => $new_result,
-      ],
-    ];
-
-    // Scenario: Requesting the same statistic twice should not trigger
-    // multiple database queries, the database not called if cache is set.
-    $this->assertResults(
-      $this->getQueryForprivateMessageSent(),
-      ['id' => $user->uuid()],
-      $expected_data,
-      $this->createMetadataForprivateMessageSent($user)
-    );
   }
 
 }

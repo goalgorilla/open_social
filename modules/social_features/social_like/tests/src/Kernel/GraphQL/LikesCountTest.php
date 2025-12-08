@@ -2,9 +2,7 @@
 
 namespace Drupal\Tests\social_like\Kernel\GraphQL;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\social_like\Plugin\GraphQL\DataProducer\UserLikesCreated;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\user\UserInterface;
 use Drupal\votingapi\Entity\Vote;
@@ -158,37 +156,6 @@ class LikesCountTest extends SocialGraphQLTestBase {
 
     // Scenario: Deleting a like is reflected in the number of Likes created
     // by the user.
-    $this->assertResults(
-      $this->getQueryForLikes(),
-      ['id' => $user->uuid()],
-      $expected_data,
-      $this->createMetadataForLikes($user)
-    );
-
-  }
-
-  /**
-   * Test that the database not called if cache is set.
-   */
-  public function testUserCreatedLikesCached(): void {
-    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
-    // Set custom cache result.
-    $new_result = 35;
-    $cid = UserLikesCreated::CID_BASE . $user->id();
-    \Drupal::service('cache.default')
-      ->set($cid, $new_result, Cache::PERMANENT, [$cid]);
-
-    // Update expected counter.
-    // Set expected array.
-    $expected_data = [
-      'user' => [
-        'id' => $user->uuid(),
-        'likes' => $new_result,
-      ],
-    ];
-
-    // Scenario: Requesting the same statistic twice should not trigger
-    // multiple database queries, the database not called if cache is set.
     $this->assertResults(
       $this->getQueryForLikes(),
       ['id' => $user->uuid()],

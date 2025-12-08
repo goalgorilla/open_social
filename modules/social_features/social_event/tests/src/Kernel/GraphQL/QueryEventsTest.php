@@ -2,10 +2,8 @@
 
 namespace Drupal\Tests\social_event\Kernel\GraphQL;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\node\NodeInterface;
-use Drupal\social_event\Plugin\GraphQL\DataProducer\EventsCreated;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
@@ -369,37 +367,6 @@ class QueryEventsTest extends SocialGraphQLTestBase {
 
     // Scenario: Deleting an event is reflected in the number of events created
     // by the user.
-    $this->assertResults(
-      $this->getQueryForEventsCreated(),
-      ['id' => $user->uuid()],
-      $expected_data,
-      $this->createMetadataForEventsCreated($user)
-    );
-
-  }
-
-  /**
-   * Test that the database not called if cache is set .
-   */
-  public function testUserCreatedEventsCached(): void {
-    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
-    // Set custom cache result.
-    $new_result = 35;
-    $cid = EventsCreated::CID_BASE . $user->id();
-    \Drupal::service('cache.default')
-      ->set($cid, $new_result, Cache::PERMANENT, [$cid]);
-
-    // Update expected counter.
-    // Set expected array.
-    $expected_data = [
-      'user' => [
-        'id' => $user->uuid(),
-        'eventsCreated' => $new_result,
-      ],
-    ];
-
-    // Scenario: Requesting the same statistic twice should not trigger
-    // multiple database queries, the database not called if cache is set.
     $this->assertResults(
       $this->getQueryForEventsCreated(),
       ['id' => $user->uuid()],

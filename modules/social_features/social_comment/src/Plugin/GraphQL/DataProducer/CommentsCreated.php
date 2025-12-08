@@ -2,8 +2,6 @@
 
 namespace Drupal\social_comment\Plugin\GraphQL\DataProducer;
 
-use Drupal\Core\Cache\Cache;
-use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
@@ -30,8 +28,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class CommentsCreated extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
-  const string CID_BASE = 'social_comments:user_comments_created:';
-
   /**
    * {@inheritdoc}
    */
@@ -40,7 +36,6 @@ class CommentsCreated extends DataProducerPluginBase implements ContainerFactory
     string $plugin_id,
     array $plugin_definition,
     protected Connection $database,
-    protected CacheBackendInterface $cacheBackend,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -53,8 +48,7 @@ class CommentsCreated extends DataProducerPluginBase implements ContainerFactory
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('database'),
-      $container->get('cache.default')
+      $container->get('database')
     );
   }
 
@@ -63,12 +57,6 @@ class CommentsCreated extends DataProducerPluginBase implements ContainerFactory
    */
   public function resolve(EntityInterface $entity, RefinableCacheableDependencyInterface $metadata): int {
     $user_id = $entity->id();
-    $cid = self::CID_BASE . $user_id;
-
-    // Check if the result is already cached.
-    if ($cache_data = $this->cacheBackend->get($cid)) {
-      return (int) $cache_data->data;
-    }
 
     // The query is copy/paste of 'user_comments_created' user export plugin.
     // Get comments count for the user.
@@ -81,12 +69,7 @@ class CommentsCreated extends DataProducerPluginBase implements ContainerFactory
       ->execute();
     // Calculate the result.
     // Cast to int to satisfy the user GraphQL interface.
-    $result = (int) $result?->fetchField();
-
-    // Cache the result.
-    $this->cacheBackend->set($cid, $result, Cache::PERMANENT, [$cid]);
-
-    return $result;
+    return (int) $result?->fetchField();
   }
 
 }

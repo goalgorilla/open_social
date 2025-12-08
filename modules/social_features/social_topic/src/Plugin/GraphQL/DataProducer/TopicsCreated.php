@@ -2,8 +2,6 @@
 
 namespace Drupal\social_topic\Plugin\GraphQL\DataProducer;
 
-use Drupal\Core\Cache\Cache;
-use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
@@ -29,8 +27,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class TopicsCreated extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
-  const string CID_BASE = 'social_topic:user_topics_created:';
-
   /**
    * {@inheritdoc}
    */
@@ -39,7 +35,6 @@ class TopicsCreated extends DataProducerPluginBase implements ContainerFactoryPl
     string $plugin_id,
     array $plugin_definition,
     protected Connection $database,
-    protected CacheBackendInterface $cacheBackend,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -53,7 +48,6 @@ class TopicsCreated extends DataProducerPluginBase implements ContainerFactoryPl
       $plugin_id,
       $plugin_definition,
       $container->get('database'),
-      $container->get('cache.default'),
     );
   }
 
@@ -62,12 +56,6 @@ class TopicsCreated extends DataProducerPluginBase implements ContainerFactoryPl
    */
   public function resolve(EntityInterface $entity, RefinableCacheableDependencyInterface $metadata): int {
     $user_id = $entity->id();
-    $cid = self::CID_BASE . $user_id;
-
-    // Check if the result is already cached.
-    if ($cache_data = $this->cacheBackend->get($cid)) {
-      return (int) $cache_data->data;
-    }
 
     // The query is copy/paste of 'user_topics_created' user export plugin.
     // Get discussions count for the user.
@@ -83,12 +71,7 @@ class TopicsCreated extends DataProducerPluginBase implements ContainerFactoryPl
 
     // Calculate the result.
     // Cast to int to satisfy the user GraphQL interface.
-    $result = (int) $result?->fetchField();
-
-    // Cache the result.
-    $this->cacheBackend->set($cid, $result, Cache::PERMANENT, [$cid]);
-
-    return $result;
+    return (int) $result?->fetchField();
   }
 
 }

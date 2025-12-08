@@ -2,9 +2,7 @@
 
 namespace Drupal\social_group_flexible_group\tests\Kernel;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\group\Entity\Group;
-use Drupal\social_group_flexible_group\Plugin\GraphQL\DataProducer\UserFlexibleGroupMemberships;
 use Drupal\Tests\iata_graphql_user\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\iata_graphql_user\Kernel\OAuthTestTrait;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -283,37 +281,6 @@ class SocialGroupMembershipsCount extends SocialGraphQLTestBase {
 
     // Scenario: Deleting an event is reflected in the number of events created
     // by the user.
-    $this->assertResults(
-      $this->getQueryForEventsCreated(),
-      ['id' => $user->uuid()],
-      $expected_data,
-      $this->createMetadataForEventsCreated($user)
-    );
-
-  }
-
-  /**
-   * Test that the database not called if cache is set .
-   */
-  public function testUserMembershipCached(): void {
-    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
-    // Set custom cache result.
-    $new_result = 35;
-    $cid = UserFlexibleGroupMemberships::CID_BASE . $user->id();
-    \Drupal::service('cache.default')
-      ->set($cid, $new_result, Cache::PERMANENT, [$cid]);
-
-    // Update expected counter.
-    // Set expected array.
-    $expected_data = [
-      'user' => [
-        'id' => $user->uuid(),
-        'flexibleGroupMembership' => $new_result,
-      ],
-    ];
-
-    // Scenario: Requesting the same statistic twice should not trigger
-    // multiple database queries, the database not called if cache is set.
     $this->assertResults(
       $this->getQueryForEventsCreated(),
       ['id' => $user->uuid()],
