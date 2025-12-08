@@ -8,6 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
@@ -32,10 +33,13 @@ final class EventOnline implements ContainerInjectionInterface {
    *   The config factory.
    * @param \Drupal\social_event\Service\EventOnline $eventOnlineService
    *   The event online service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler service.
    */
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
     private readonly EventOnlineService $eventOnlineService,
+    private readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
   /**
@@ -45,6 +49,7 @@ final class EventOnline implements ContainerInjectionInterface {
     return new static(
       $container->get('config.factory'),
       $container->get(EventOnlineService::class),
+      $container->get('module_handler'),
     );
   }
 
@@ -201,9 +206,16 @@ final class EventOnline implements ContainerInjectionInterface {
   #[Alter('form_node_event_form')]
   #[Alter('form_node_event_edit_form')]
   public function eventFormAlter(array &$form, FormStateInterface $form_state): void {
-    if (isset($form['field_event_address'], $form['field_event_meeting'])) {
-      $form['field_event_address']['#element_validate'][] = [static::class, 'validateAddress'];
+    // Only require Address if the Events map is enabled.
+    if (!$this->isEventsMapEnabled()) {
+      return;
     }
+
+    if (!isset($form['field_event_address'], $form['field_event_meeting'])) {
+      return;
+    }
+
+    $form['field_event_address']['#element_validate'][] = [$this, 'validateAddress'];
   }
 
   /**
@@ -251,19 +263,31 @@ final class EventOnline implements ContainerInjectionInterface {
    * Validates the event address field.
    *
    * Make the "field_event_address" form element required
-   * if the event is offline.
+   * if the event is not online and the events map is enabled.
    *
    * @param array $element
    *   The event address form element.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state of the entire form.
    */
-  public static function validateAddress(array $element, FormStateInterface $form_state): void {
+  public function validateAddress(array $element, FormStateInterface $form_state): void {
     $is_online = $form_state->getValue(['field_event_meeting', 'meeting_form', 'is_online']);
     $country_code = $form_state->getValue(['field_event_address', 0, 'address', 'country_code']);
     if (!$is_online && !$country_code) {
       $form_state->setErrorByName('field_event_address', t('The country is required.'));
     }
+  }
+
+  /**
+   * Determines whether the events map feature is enabled.
+   */
+  private function isEventsMapEnabled(): bool {
+    if (!$this->moduleHandler->moduleExists('social_geolocation_maps')) {
+      return FALSE;
+    }
+
+    $maps_config = $this->configFactory->get('social_geolocation_maps.settings');
+    return (bool) ($maps_config->get('events_map') ?? FALSE);
   }
 
 }
