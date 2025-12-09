@@ -669,3 +669,16 @@ function social_profile_update_250012() : string {
   $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Update field_profile_self_introduction formatter.
+ *
+ * Update field_profile_self_introduction formatter to use smart_trim with
+ * 140 chars for profile_preview.
+ */
+function social_profile_update_250013(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_profile', 'social_profile_update_250013');
+  return $updater->logger()->output();
+}

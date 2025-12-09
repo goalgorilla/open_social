@@ -781,7 +781,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
 
   $account_id = \Drupal::currentUser()->id();
   $account = User::load($account_id);
-  assert($account instanceof VerifyableUserInterface);
+  // assert($account instanceof VerifyableUserInterface);
 
   if (!$account->isAnonymous()) {
     // Don't trigger page cache, this will cache it for AN

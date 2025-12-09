@@ -234,10 +234,11 @@
 
       &:not(.field--name-field-profile-summary) .field--item,
       &.field--item {
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
+         // Removed line-clamp to allow backend trim_length (140 chars) to control truncation.
+         //overflow: hidden;
+         //display: -webkit-box;
+         //-webkit-line-clamp: 6;
+         //-webkit-box-orient: vertical;
       }
     }
   }

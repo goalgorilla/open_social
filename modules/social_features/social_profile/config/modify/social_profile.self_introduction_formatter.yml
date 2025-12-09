@@ -1,0 +1,31 @@
+dependencies:
+  module:
+    - smart_trim
+items:
+  core.entity_view_display.profile.profile.preview:
+    expected_config:
+      content:
+        field_profile_self_introduction:
+          type: text_trimmed
+    update_actions:
+      change:
+        content:
+          field_profile_self_introduction:
+            type: smart_trim
+            settings:
+              trim_length: '140'
+              trim_type: chars
+              trim_suffix: '...'
+              wrap_output: false
+              wrap_class: trimmed
+              more:
+                display_link: false
+                class: more-link
+                link_trim_only: false
+                target_blank: false
+                text: More
+                aria_label: 'Read more'
+              summary_handler: full
+              trim_options:
+                text: true
+
