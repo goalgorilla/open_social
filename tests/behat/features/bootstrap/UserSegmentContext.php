@@ -335,6 +335,62 @@ class UserSegmentContext extends RawMinkContext {
   }
 
   /**
+   * Update an existing user segment.
+   *
+   * Updates user segments provided in the form:
+   * | label            | outcome                    |
+   * | Airline Partners | request_access_to_iata_iar |
+   * | Airline Partners |                            | (empty outcome clears it)
+   *
+   * @Given I update user segments:
+   */
+  public function updateUserSegments(TableNode $userSegmentsTable): void {
+    foreach ($userSegmentsTable->getHash() as $userSegmentHash) {
+      if (!isset($userSegmentHash['label'])) {
+        throw new \RuntimeException("You must specify a 'label' when updating a user segment.");
+      }
+
+      $segment = $this->getUserSegmentByLabel($userSegmentHash['label']);
+      if ($segment === NULL) {
+        throw new \RuntimeException(sprintf("User segment '%s' does not exist.", $userSegmentHash['label']));
+      }
+
+      // Handle outcome field - convert string to array if needed.
+      if (isset($userSegmentHash['outcome'])) {
+        if (is_string($userSegmentHash['outcome'])) {
+          // Single outcome as string - convert to array.
+          // Empty string means clear outcomes.
+          $outcomes = $userSegmentHash['outcome'] === '' ? [] : [$userSegmentHash['outcome']];
+        }
+        elseif (is_array($userSegmentHash['outcome']) && empty($userSegmentHash['outcome'])) {
+          // Empty array means clear outcomes.
+          $outcomes = [];
+        }
+        else {
+          // Already an array with values.
+          $outcomes = $userSegmentHash['outcome'];
+        }
+        $segment->setOutcomes($outcomes);
+      }
+
+      // Handle other fields that can be updated.
+      foreach ($userSegmentHash as $field => $value) {
+        if ($field === 'label' || $field === 'outcome') {
+          // Already handled above.
+          continue;
+        }
+        $segment->set($field, $value);
+      }
+
+      $violations = $segment->validate();
+      if ($violations->count() !== 0) {
+        throw new \RuntimeException("The user segment you tried to update is invalid: $violations");
+      }
+      $segment->save();
+    }
+  }
+
+  /**
    * Create a user segment.
    *
    * @param array $userSegment
@@ -357,6 +413,18 @@ class UserSegmentContext extends RawMinkContext {
     $userSegment['uid'] = $account->id();
     unset($userSegment['author']);
 
+    // Handle outcome field - convert string to array if needed.
+    if (isset($userSegment['outcome'])) {
+      if (is_string($userSegment['outcome'])) {
+        // Single outcome as string - convert to array.
+        $userSegment['outcome'] = [$userSegment['outcome']];
+      }
+      elseif (!is_array($userSegment['outcome'])) {
+        // Invalid format.
+        throw new \InvalidArgumentException("Outcome must be a string or an array.");
+      }
+    }
+
     // User segment rules are passed as JSON string from the test to the entity.
     if (isset($userSegment['rules']) && is_string($userSegment['rules'])) {
       $rules = json_decode($userSegment['rules'], TRUE, 512, JSON_THROW_ON_ERROR);
@@ -367,7 +435,7 @@ class UserSegmentContext extends RawMinkContext {
       };
     }
 
-    // Let's create some user segments.
+    // Create new segment.
     $this->validateEntityFields('user_segment', $userSegment);
     $userSegmentObject = UserSegment::create($userSegment);
     $violations = $userSegmentObject->validate();
