@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - social_post.post_type.photo
+    - field.storage.post.field_human_relevancy_score
+  module:
+    - gaia_content_relevancy
+id: post.photo.field_human_relevancy_score
+field_name: field_human_relevancy_score
+entity_type: post
+bundle: photo
+label: 'New relevancy score'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 100
+  prefix: ''
+  suffix: ''
+field_type: integer

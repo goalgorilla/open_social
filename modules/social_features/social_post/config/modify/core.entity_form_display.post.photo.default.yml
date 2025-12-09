@@ -1,0 +1,57 @@
+dependencies:
+  config:
+    - field.field.post.photo.field_relevancy_score
+    - field.field.post.photo.field_relevancy_reasoning
+    - field.field.post.photo.field_human_relevancy_score
+    - field.field.post.photo.field_human_relevancy_reasoning
+items:
+  core.entity_form_display.post.photo.default:
+    expected_config: { }
+    update_actions:
+      add:
+        content:
+          field_relevancy_score:
+            weight: 0
+            settings: {  }
+            third_party_settings: {  }
+            type: number
+            region: content
+          field_human_relevancy_score:
+            weight: 1
+            settings: {  }
+            third_party_settings: {  }
+            type: number
+            region: content
+          field_human_relevancy_reasoning:
+            weight: 2
+            settings:
+              rows: 3
+            third_party_settings: {  }
+            type: string_textarea
+            region: content
+        third_party_settings:
+          field_group:
+            group_relevancy_score:
+              children:
+                - field_relevancy_score
+                - field_human_relevancy_score
+                - field_human_relevancy_reasoning
+              label: 'Relevancy score'
+              region: content
+              parent_name: ''
+              weight: 10
+              format_type: html_element
+              format_settings:
+                classes: 'relevancy-score-group'
+                show_empty_fields: false
+                id: ''
+                label_as_html: true
+                element: div
+                show_label: false
+                label_element: h3
+                label_element_classes: ''
+                attributes: ''
+                effect: none
+                speed: fast
+                required_fields: false
+                description: ''
