@@ -126,8 +126,8 @@ class SocialProfileFormAlterHooks implements ContainerInjectionInterface {
     // feature is not enabled.
     if (!$this->groupAffiliation->isAffiliationFeatureEnabled()) {
       unset($form['#fieldgroups']['group_affiliation_representation']);
-      unset($form['field_enable_other_affiliations']);
-      unset($form['field_other_affiliations']);
+      $form['field_enable_other_affiliations']['#access'] = FALSE;
+      $form['field_other_affiliations']['#access'] = FALSE;
 
       // Early return.
       // No need to set conditional state on field that is removed.
@@ -143,11 +143,11 @@ class SocialProfileFormAlterHooks implements ContainerInjectionInterface {
     else {
       // 1. Remove "Organization tag" (field_profile_organization_tag) field.
       // Module: social_profile_organization_tag
-      unset($form['field_profile_organization_tag']);
+      $form['field_profile_organization_tag']['#access'] = FALSE;
 
       // 2. Remove "Organizations" (field_profile_org_details) field.
       // Module: social_organization
-      unset($form['field_profile_org_details']);
+      $form['field_profile_org_details']['#access'] = FALSE;
     }
 
     // Conditional state: Show other affiliations (paragraph field) if other
