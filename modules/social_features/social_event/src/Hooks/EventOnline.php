@@ -215,7 +215,7 @@ final class EventOnline implements ContainerInjectionInterface {
       return;
     }
 
-    $form['field_event_address']['#element_validate'][] = [$this, 'validateAddress'];
+    $form['field_event_address']['#element_validate'][] = [static::class, 'validateAddress'];
   }
 
   /**
@@ -270,7 +270,7 @@ final class EventOnline implements ContainerInjectionInterface {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state of the entire form.
    */
-  public function validateAddress(array $element, FormStateInterface $form_state): void {
+  public static function validateAddress(array $element, FormStateInterface $form_state): void {
     $is_online = $form_state->getValue(['field_event_meeting', 'meeting_form', 'is_online']);
     $country_code = $form_state->getValue(['field_event_address', 0, 'address', 'country_code']);
     if (!$is_online && !$country_code) {
