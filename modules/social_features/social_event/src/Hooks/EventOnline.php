@@ -10,10 +10,12 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
 use Drupal\hux\Attribute\Hook;
 use Drupal\meeting_api\MeetingEntityInterface;
+use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\Form\EventSettingsForm;
 use Drupal\social_event\PluginForm\ManualMeetingConfigurationForm;
 use Drupal\social_event\Service\EventOnline as EventOnlineService;
@@ -216,6 +218,50 @@ final class EventOnline implements ContainerInjectionInterface {
     }
 
     $form['field_event_address']['#element_validate'][] = [static::class, 'validateAddress'];
+    // Add after_build to set the required indicator on the Country field.
+    $form['field_event_address']['#after_build'][] = [static::class, 'setCountryRequired'];
+  }
+
+  /**
+   * After build callback to add required indicator to the Country field.
+   *
+   * @param array $element
+   *   The address field element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array
+   *   The modified element.
+   */
+  public static function setCountryRequired(array $element, FormStateInterface $form_state): array {
+    if (!isset($element['widget'][0]['address']['country_code']['country_code'])) {
+      return $element;
+    }
+
+    $country_select = &$element['widget'][0]['address']['country_code']['country_code'];
+    if (!isset($country_select['#title'])) {
+      return $element;
+    }
+
+    // Check initial online state to set correct visibility.
+    $user_input = $form_state->getUserInput();
+    $is_online = $user_input['field_event_meeting']['meeting_form']['is_online'] ?? NULL;
+
+    // For the initial form load, check if event is online.
+    if ($is_online === NULL) {
+      $form_object = $form_state->getFormObject();
+      if ($form_object instanceof EntityFormInterface) {
+        $event = $form_object->getEntity();
+        $is_online = $event instanceof Event && $event->isOnline();
+      }
+    }
+
+    // Add the required * marker. Visibility toggled by JS.
+    $hidden = $is_online ? ' hidden' : '';
+    $country_select['#title'] = Markup::create($country_select['#title'] . ' <span class="form-required country-required-marker' . $hidden . '">*</span>');
+    $element['#attached']['library'][] = 'social_event/event_meeting_widget';
+
+    return $element;
   }
 
   /**

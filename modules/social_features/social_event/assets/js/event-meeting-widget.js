@@ -8,10 +8,35 @@
   'use strict';
 
   /**
+   * Updates the visibility of the country required marker.
+   *
+   * @param {boolean} isOnline
+   *   Whether the event is online.
+   */
+  function updateCountryRequiredMarker(isOnline) {
+    const marker = document.querySelector('.country-required-marker');
+    if (marker) {
+      marker.classList.toggle('hidden', isOnline);
+    }
+  }
+
+  /**
    * Behaviors for Event Meeting Widget.
    */
   Drupal.behaviors.eventMeetingWidget = {
     attach: function (context, settings) {
+      // Toggle country required marker based on Online checkbox.
+      const onlineCheckbox = once(
+        'country-required-toggle',
+        'input[name="field_event_meeting[meeting_form][is_online]"]',
+        context
+      );
+      onlineCheckbox.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+          updateCountryRequiredMarker(checkbox.checked);
+        });
+      });
+
       // Process all spans with meeting type data attributes.
       const spans = once('event-meeting-widget-click', 'span[data-meeting-type]', context);
 
