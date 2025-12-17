@@ -237,21 +237,48 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
   }
 
   /**
-   * Tests getEntityIds() throws exception when bundle is missing.
+   * Tests getEntityIds() works when bundle is missing (optional).
    *
    * @covers ::getEntityIds
    */
   public function testGetEntityIdsMissingBundle(): void {
     $plugin_definition = [
       'entity_type' => 'node',
+      // Bundle is optional, so we can omit it.
     ];
 
+    $query = $this->createMock(QueryInterface::class);
+    $query->expects($this->once())
+      ->method('accessCheck')
+      ->with(FALSE)
+      ->willReturnSelf();
+    // No bundle condition should be added when bundle is missing.
+    $query->expects($this->never())
+      ->method('condition');
+    $query->expects($this->once())
+      ->method('execute')
+      ->willReturn(['1' => '1']);
+
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects($this->once())
+      ->method('getQuery')
+      ->willReturn($query);
+
+    $entity_type_definition = $this->createMock(EntityTypeInterface::class);
+    $entity_type_definition->expects($this->never())
+      ->method('hasKey');
+
+    $this->entityTypeManager->expects($this->once())
+      ->method('getStorage')
+      ->with('node')
+      ->willReturn($storage);
+    $this->entityTypeManager->expects($this->never())
+      ->method('getDefinition');
+
     $plugin = $this->createPlugin($plugin_definition);
+    $result = $plugin->getEntityIds();
 
-    $this->expectException(\RuntimeException::class);
-    $this->expectExceptionMessage('Plugin definition must contain "bundle" key');
-
-    $plugin->getEntityIds();
+    $this->assertEquals(['1' => '1'], $result);
   }
 
   /**

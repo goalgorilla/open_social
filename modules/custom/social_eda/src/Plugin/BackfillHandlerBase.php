@@ -7,6 +7,7 @@ namespace Drupal\social_eda\Plugin;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -69,6 +70,72 @@ abstract class BackfillHandlerBase extends PluginBase implements BackfillHandler
   }
 
   /**
+   * Builds the entity query with all conditions.
+   *
+   * Subclasses can override this method to add custom query conditions
+   * or modify the query building logic.
+   *
+   * @param string $entity_type
+   *   The entity type ID.
+   * @param string $bundle
+   *   The bundle name.
+   * @param int|null $from
+   *   Unix timestamp - entities created on or after this time.
+   * @param int|null $to
+   *   Unix timestamp - entities created on or before this time.
+   *
+   * @return \Drupal\Core\Entity\Query\QueryInterface
+   *   The configured entity query object.
+   */
+  protected function getQuery(string $entity_type, string $bundle, ?int $from = NULL, ?int $to = NULL): QueryInterface {
+    $storage = $this->entityTypeManager->getStorage($entity_type);
+    /** @var \Drupal\Core\Entity\Query\QueryInterface $query */
+    $query = $storage->getQuery();
+    $query->accessCheck(FALSE);
+
+    // Add bundle condition if bundle is provided and entity supports bundles.
+    if (!empty($bundle)) {
+      $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type);
+      if ($entity_type_definition->hasKey('bundle')) {
+        $bundle_key = $entity_type_definition->getKey('bundle');
+        $query->condition($bundle_key, $bundle);
+      }
+    }
+
+    // Check if date range filters are requested and entity type supports
+    // a timestamp field ('created' or 'timestamp').
+    if ($from !== NULL || $to !== NULL) {
+      $field_storage_definitions = $this->entityFieldManager->getFieldStorageDefinitions($entity_type);
+
+      // Try 'created' first, then fall back to 'timestamp' if 'created'
+      // doesn't exist.
+      $date_field = NULL;
+      if (isset($field_storage_definitions['created'])) {
+        $date_field = 'created';
+      }
+      elseif (isset($field_storage_definitions['timestamp'])) {
+        $date_field = 'timestamp';
+      }
+
+      if ($date_field === NULL) {
+        throw new \RuntimeException(sprintf(
+          'Entity type "%s" does not have a "created" or "timestamp" field. Date range filtering requires entities with a timestamp field.',
+          $entity_type
+        ));
+      }
+
+      if ($from !== NULL) {
+        $query->condition($date_field, $from, '>=');
+      }
+      if ($to !== NULL) {
+        $query->condition($date_field, $to, '<=');
+      }
+    }
+
+    return $query;
+  }
+
+  /**
    * Validates that the plugin definition is an array.
    *
    * @throws \RuntimeException
@@ -113,57 +180,10 @@ abstract class BackfillHandlerBase extends PluginBase implements BackfillHandler
       ));
     }
 
-    if (!isset($this->pluginDefinition['bundle'])) {
-      throw new \RuntimeException(sprintf(
-        'Plugin definition must contain "bundle" key for plugin "%s".',
-        $this->getPluginId()
-      ));
-    }
-
     $entity_type = $this->pluginDefinition['entity_type'];
-    $bundle = $this->pluginDefinition['bundle'];
+    $bundle = $this->pluginDefinition['bundle'] ?? '';
 
-    $storage = $this->entityTypeManager->getStorage($entity_type);
-    /** @var \Drupal\Core\Entity\Query\QueryInterface $query */
-    $query = $storage->getQuery();
-    $query->accessCheck(FALSE);
-
-    // Add bundle condition if the entity type supports bundles.
-    $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type);
-    if ($entity_type_definition->hasKey('bundle')) {
-      $bundle_key = $entity_type_definition->getKey('bundle');
-      $query->condition($bundle_key, $bundle);
-    }
-
-    // Check if date range filters are requested and entity type supports
-    // a timestamp field ('created' or 'timestamp').
-    if ($from !== NULL || $to !== NULL) {
-      $field_storage_definitions = $this->entityFieldManager->getFieldStorageDefinitions($entity_type);
-
-      // Try 'created' first, then fall back to 'timestamp' if 'created'
-      // doesn't exist.
-      $date_field = NULL;
-      if (isset($field_storage_definitions['created'])) {
-        $date_field = 'created';
-      }
-      elseif (isset($field_storage_definitions['timestamp'])) {
-        $date_field = 'timestamp';
-      }
-
-      if ($date_field === NULL) {
-        throw new \RuntimeException(sprintf(
-          'Entity type "%s" does not have a "created" or "timestamp" field. Date range filtering requires entities with a timestamp field.',
-          $entity_type
-        ));
-      }
-
-      if ($from !== NULL) {
-        $query->condition($date_field, $from, '>=');
-      }
-      if ($to !== NULL) {
-        $query->condition($date_field, $to, '<=');
-      }
-    }
+    $query = $this->getQuery($entity_type, $bundle, $from, $to);
 
     $result = $query->execute();
     if (!is_array($result)) {

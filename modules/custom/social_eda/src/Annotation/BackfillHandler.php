@@ -42,9 +42,11 @@ final class BackfillHandler extends Plugin {
   /**
    * The bundle (e.g., 'topic', 'post', 'comment').
    *
-   * @var string
+   * Optional. If empty or not provided, bundle filtering will be skipped.
+   *
+   * @var string|null
    */
-  public string $bundle;
+  public ?string $bundle = NULL;
 
   /**
    * The service ID of the EdaHandler to use.
