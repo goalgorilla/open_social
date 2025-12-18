@@ -304,6 +304,8 @@ function social_activity_update_13004(): void {
 function social_activity_update_13005(): string {
   $module_handler = \Drupal::moduleHandler();
   $messages = [];
+  $role_ids_with_permission = [];
+  $role_labels_with_permission = [];
 
   // Check if social_activity_filter is currently installed.
   $filter_was_enabled = $module_handler->moduleExists('social_activity_filter');
@@ -311,6 +313,24 @@ function social_activity_update_13005(): string {
   if ($filter_was_enabled) {
     // The module was installed, so configuration already exists.
     // We just need to uninstall the deprecated module.
+    // First, revoke the permission from all roles that have it to break the
+    // dependency and prevent roles from being deleted during uninstall.
+    $role_storage = \Drupal::entityTypeManager()->getStorage('user_role');
+    $roles = $role_storage->loadMultiple();
+    foreach ($roles as $role) {
+      if ($role->hasPermission('administer social_activity_filter')) {
+        user_role_revoke_permissions($role->id(), ['administer social_activity_filter']);
+        $role_ids_with_permission[] = $role->id();
+        $role_labels_with_permission[] = $role->label();
+      }
+    }
+    if (!empty($role_labels_with_permission)) {
+      $messages[] = t(
+        'Revoked activity filter permission from roles: @roles',
+        ['@roles' => implode(', ', $role_labels_with_permission)]
+      );
+    }
+
     /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
     $module_installer = \Drupal::service('module_installer');
 
@@ -338,9 +358,21 @@ function social_activity_update_13005(): string {
   _social_activity_sync_views_filter_settings();
   $messages[] = t('Synchronized activity filter settings with views.');
 
-  // Grant activity filter permissions to site managers if not already granted.
-  user_role_grant_permissions('sitemanager', ['administer social_activity_filter']);
-  $messages[] = t('Granted activity filter permissions to site managers.');
+  // Grant activity filter permissions back to all roles that had it previously.
+  if (!empty($role_ids_with_permission)) {
+    foreach ($role_ids_with_permission as $role_id) {
+      user_role_grant_permissions($role_id, ['administer social_activity_filter']);
+    }
+    $messages[] = t(
+      'Granted activity filter permissions back to roles: @roles',
+      ['@roles' => implode(', ', $role_labels_with_permission)]
+    );
+  }
+  else {
+    // If no roles had the permission before, grant it to site managers.
+    user_role_grant_permissions('sitemanager', ['administer social_activity_filter']);
+    $messages[] = t('Granted activity filter permissions to site managers.');
+  }
 
   return implode(' ', $messages);
 }
