@@ -677,8 +677,14 @@ function social_profile_update_250012() : string {
  * 140 chars for profile_preview.
  */
 function social_profile_update_250013(): string {
+  // Ensure smart_trim is installed.
+  $module = 'smart_trim';
+  if (\Drupal::moduleHandler()->moduleExists($module) === FALSE) {
+    \Drupal::service('module_installer')->install([$module]);
+  }
+
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
-  $updater->executeUpdate('social_profile', 'social_profile_update_250013');
+  $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
 }
