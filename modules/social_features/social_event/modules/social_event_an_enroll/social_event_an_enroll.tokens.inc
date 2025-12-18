@@ -5,6 +5,7 @@
  * Builds placeholder replacement tokens for Social Event AN Enroll module.
  */
 
+use Drupal\Core\Link;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
@@ -39,12 +40,14 @@ function social_event_an_enroll_tokens($type, $tokens, array $data, array $optio
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'enrolled_event':
-          // Returns url to event with token for anonymous enrollment.
+          // Returns HTML link to event with token for anonymous enrollment.
           $url_options = [
             'query' => ['token' => $data['token']],
             'absolute' => TRUE,
           ];
-          $replacements[$original] = $data['node']->toUrl('canonical', $url_options)->toString();
+          $url = $data['node']->toUrl('canonical', $url_options);
+          $link = Link::fromTextAndUrl($url->toString(), $url);
+          $replacements[$original] = $link->toString();
           break;
       }
     }

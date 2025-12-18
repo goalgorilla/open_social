@@ -3,6 +3,7 @@
 namespace Drupal\social_event_an_enroll\Plugin\EmailBuilder;
 
 use Drupal\Core\Render\Markup;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Utility\Token;
 use Drupal\symfony_mailer\EmailFactoryInterface;
 use Drupal\symfony_mailer\EmailInterface;
@@ -10,6 +11,7 @@ use Drupal\symfony_mailer\Processor\EmailBuilderBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\social_event\Entity\Node\EventInterface;
 
 /**
  * Defines the Email Builder plugin for the social_event_an_enroll module.
@@ -24,6 +26,8 @@ use Drupal\Core\Config\ConfigFactoryInterface;
  * )
  */
 class AnonymousEventEnrollEmailBuilder extends EmailBuilderBase implements ContainerFactoryPluginInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The config factory.
@@ -84,8 +88,21 @@ class AnonymousEventEnrollEmailBuilder extends EmailBuilderBase implements Conta
 
     $params = $email->getParam('params');
 
-    $email->setSubject($this->token->replace($subject, $params));
-    $email->setBody(Markup::create($this->token->replace($body, $params)));
+    // Replace tokens first.
+    $replaced_subject = $this->token->replace($subject, $params);
+    $replaced_body = $this->token->replace($body, $params);
+
+    // Check if the event is online and add additional information.
+    if (isset($params['node']) && $params['node'] instanceof EventInterface) {
+      $event = $params['node'];
+      if ($event->isOnline()) {
+        $additional_message = "<br>" . $this->t('This event will be held online. Contact an event manager to receive the link to the meeting.');
+        $replaced_body .= $additional_message;
+      }
+    }
+
+    $email->setSubject($replaced_subject);
+    $email->setBody(Markup::create($replaced_body));
   }
 
   /**
