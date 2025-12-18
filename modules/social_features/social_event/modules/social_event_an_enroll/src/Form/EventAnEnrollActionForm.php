@@ -108,9 +108,13 @@ class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInte
         '#value' => $nid,
       ];
 
+      $submit_text = $node->isOnline() && $node->isHappeningNow()
+        ? $this->t('Contact organizers to join')
+        : $this->t('Enrolled');
+
       $form['enroll_wrapper']['enroll_for_this_event'] = [
         '#type' => 'button',
-        '#value' => $this->t('Enrolled'),
+        '#value' => $submit_text,
         '#attributes' => [
           'class' => [
             'btn',

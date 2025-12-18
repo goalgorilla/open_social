@@ -207,9 +207,9 @@ class Event extends Node implements EventInterface {
       ->getStorage('event_enrollment');
 
     $eid = (array) $enrollments_storage->getQuery()
-      // @todo Not sure if we need to check the access here.
       ->accessCheck()
       ->condition('field_account', $uid)
+      ->condition('field_account', 0, '!=')
       ->condition('field_event', $event_id)
       ->execute();
 
