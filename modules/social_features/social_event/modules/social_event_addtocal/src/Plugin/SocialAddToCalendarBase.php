@@ -7,6 +7,7 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
@@ -47,6 +48,13 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   protected ModuleExtensionList $moduleExtensionList;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected AccountProxyInterface $currentUser;
+
+  /**
    * Constructs a SocialAddToCalendarBase object.
    *
    * @param array $configuration
@@ -57,10 +65,13 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
    *   The plugin implementation definition.
    * @param \Drupal\Core\Extension\ModuleExtensionList $extension_list_module
    *   The module extension list.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleExtensionList $extension_list_module) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleExtensionList $extension_list_module, AccountProxyInterface $current_user) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleExtensionList = $extension_list_module;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -72,6 +83,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
       $plugin_id,
       $plugin_definition,
       $container->get('extension.list.module'),
+      $container->get('current_user'),
     );
   }
 
@@ -168,13 +180,17 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
         return '';
       }
 
-      if ($node->isOnline()) {
-        $description = $this->t('You can enter the meeting by using the "Join now" button, which appears 10 minutes before the start time. The meeting might be recorded. For more information, view this <a href="@url">event</a> in your community.', ['@url' => $node->toUrl('canonical', ['absolute' => TRUE])->toString()]);
-      }
-      else {
-        $description = $this->t('For more information, view this <a href="@url">event</a> in your community.', ['@url' => $node->toUrl('canonical', ['absolute' => TRUE])->toString()]);
-      }
+      $event_url = $node->toUrl('canonical', ['absolute' => TRUE])->toString();
+      $url_placeholder = ['@url' => $event_url];
+      $description = $this->t('For more information, view this <a href="@url">event</a> in your community.', $url_placeholder);
 
+      if ($node->isOnline()) {
+        $description = $this->t('You can enter the meeting by using the "Join now" button, which appears 10 minutes before the start time. The meeting might be recorded. For more information, view this <a href="@url">event</a> in your community.', $url_placeholder);
+        // If event is open for anonymous and user is anonymous.
+        if (!empty($node->get('field_event_an_enroll')->value) && $this->currentUser->isAnonymous()) {
+          $description = $this->t('This event will be held online. Contact an event manager to receive the link to the meeting. For more information, view this <a href="@url">event</a> in your community.', $url_placeholder);
+        }
+      }
       // Update event description with adding an event link.
       return Unicode::truncate($description, 1000, TRUE, TRUE);
     }
