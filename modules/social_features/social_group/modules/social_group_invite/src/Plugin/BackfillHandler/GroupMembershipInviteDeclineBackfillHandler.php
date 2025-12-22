@@ -9,6 +9,7 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\ginvite\Plugin\Group\Relation\GroupInvitation;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
+use Drupal\user\UserInterface;
 
 /**
  * Backfill handler for group membership invite entities with declined status.
@@ -38,6 +39,18 @@ final class GroupMembershipInviteDeclineBackfillHandler extends BackfillHandlerB
     // Filter by invitation status to only get rejected invites.
     $query->condition('invitation_status', GroupInvitation::INVITATION_REJECTED);
     return $query;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+    // For group invite decline, the actor is the invitee declining the invite.
+    if ($entity instanceof GroupRelationshipInterface) {
+      $user = $entity->getEntity();
+      return $user instanceof UserInterface && !$user->isAnonymous() ? $user : NULL;
+    }
+    return parent::getActorFromEntity($entity);
   }
 
   /**

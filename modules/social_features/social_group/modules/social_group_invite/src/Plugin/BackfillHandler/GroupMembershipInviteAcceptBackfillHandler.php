@@ -9,6 +9,7 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\ginvite\Plugin\Group\Relation\GroupInvitation;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
+use Drupal\user\UserInterface;
 
 /**
  * Backfill handler for group membership invite entities with accepted status.
@@ -38,6 +39,18 @@ final class GroupMembershipInviteAcceptBackfillHandler extends BackfillHandlerBa
     // Filter by invitation status to only get accepted invites.
     $query->condition('invitation_status', GroupInvitation::INVITATION_ACCEPTED);
     return $query;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+    // For group invite accept, the actor is the invitee accepting the invite.
+    if ($entity instanceof GroupRelationshipInterface) {
+      $user = $entity->getEntity();
+      return $user instanceof UserInterface && !$user->isAnonymous() ? $user : NULL;
+    }
+    return parent::getActorFromEntity($entity);
   }
 
   /**
