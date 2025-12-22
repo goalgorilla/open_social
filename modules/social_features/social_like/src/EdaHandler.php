@@ -13,6 +13,8 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\Plugin\BackfillActorAwareInterface;
+use Drupal\social_eda\Traits\SetActorTrait;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\EntityReference;
@@ -26,14 +28,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Handles hook invocations for EDA related operations of the like entity.
  */
-final class EdaHandler {
+final class EdaHandler implements BackfillActorAwareInterface {
 
-  /**
-   * The current logged-in user.
-   *
-   * @var \Drupal\user\UserInterface|null
-   */
-  protected ?UserInterface $currentUser = NULL;
+  use SetActorTrait;
 
   /**
    * The source.
@@ -84,7 +81,8 @@ final class EdaHandler {
     private readonly LoggerChannelFactoryInterface $loggerFactory,
     private readonly ?DispatcherInterface $dispatcher = NULL,
   ) {
-    // Load the full user entity if the account is authenticated.
+    // Initialize $this->currentUser (from SetActorTrait) with
+    // the authenticated user entity. This can be overridden via setActor().
     $account_id = $this->account->id();
     if ($account_id > 0) {
       $user = $this->entityTypeManager->getStorage('user')->load($account_id);
