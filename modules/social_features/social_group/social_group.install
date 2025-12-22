@@ -1222,3 +1222,22 @@ function social_group_update_13025(): string {
   $updater->executeUpdate('social_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * New "Title with sorts" block and "all groups" views configuration.
+ */
+function social_group_update_13026(): string {
+  $block = \Drupal::service('config.factory')
+    ->getEditable('block.block.socialblue_pagetitleblock_content');
+
+  if (!$block->isNew()) {
+    $pages = $block->get('visibility.request_path.pages');
+    $block->set('visibility.request_path.pages', $pages .= "\r\n/all-groups");
+    $block->save();
+  }
+
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
+}

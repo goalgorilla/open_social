@@ -1,0 +1,157 @@
+__global_actions:
+  import_configs:
+    - block.block.socialblue_titlewithsortsblock
+
+views.view.newest_groups:
+  expected_config: { }
+  update_actions:
+    add:
+      dependencies:
+        module:
+          - better_exposed_filters
+      display:
+        default:
+          cache_metadata:
+            contexts:
+              - 'url.query_args:sort_by'
+              - 'url.query_args:sort_order'
+        page_all_groups:
+          display_options:
+            defaults:
+              use_ajax: false
+              exposed_form: false
+              sorts: false
+            use_ajax: true
+            display_extenders:
+              views_ef_fieldset:
+                views_ef_fieldset:
+                  enabled: false
+                  options:
+                    sort:
+                      root:
+                        container_type: details
+                        depth: '0'
+                        description: ''
+                        id: root
+                        open: true
+                        pid: ''
+                        title: Filters
+                        type: container
+                        weight: '0'
+                      sort_by:
+                        depth: '1'
+                        id: sort_by
+                        pid: root
+                        type: sort
+                        weight: '-11'
+                      field_group_allowed_join_method_value:
+                        depth: '1'
+                        id: field_group_allowed_join_method_value
+                        pid: root
+                        type: filter
+                        weight: '-10'
+                      field_group_type_target_id:
+                        depth: '1'
+                        id: field_group_type_target_id
+                        pid: root
+                        type: filter
+                        weight: '-10'
+                      submit:
+                        depth: '1'
+                        id: submit
+                        pid: root
+                        type: buttons
+                        weight: '-10'
+            exposed_form:
+              type: bef
+              options:
+                submit_button: Filter
+                reset_button: false
+                reset_button_label: Reset
+                exposed_sorts_label: 'Sort by:'
+                expose_sort_order: true
+                sort_asc_label: Asc
+                sort_desc_label: Desc
+                text_input_required: 'Select any filter and click on Apply to see results'
+                text_input_required_format: basic_html
+                bef:
+                  general:
+                    autosubmit: true
+                    autosubmit_exclude_textfield: false
+                    autosubmit_textfield_delay: 500
+                    autosubmit_textfield_minimum_length: 3
+                    autosubmit_hide: false
+                    input_required: false
+                    allow_secondary: false
+                    secondary_label: 'Advanced options'
+                    secondary_open: false
+                    reset_button_always_show: false
+                  sort:
+                    plugin_id: bef_sort_page_top
+                    advanced:
+                      combine: false
+                      combine_rewrite: ''
+                      reset: false
+                      reset_label: ''
+                      collapsible: false
+                      collapsible_label: 'Sort options'
+                      is_secondary: false
+                  filter:
+                    field_group_allowed_join_method_value:
+                      plugin_id: default
+                      advanced:
+                        sort_options: false
+                        rewrite:
+                          filter_rewrite_values: ''
+                          filter_rewrite_values_key: false
+                        collapsible: false
+                        collapsible_disable_automatic_open: false
+                        is_secondary: false
+                        hide_label: false
+                    field_group_type_target_id:
+                      plugin_id: default
+                      advanced:
+                        sort_options: false
+                        rewrite:
+                          filter_rewrite_values: ''
+                          filter_rewrite_values_key: false
+                        collapsible: false
+                        collapsible_disable_automatic_open: false
+                        is_secondary: false
+                        hide_label: false
+            sorts:
+              created:
+                id: created
+                table: groups_field_data
+                field: created
+                relationship: none
+                group_type: group
+                admin_label: ''
+                entity_type: group
+                entity_field: created
+                plugin_id: date
+                order: DESC
+                expose:
+                  label: 'Created'
+                  field_identifier: created
+                exposed: true
+                granularity: second
+              label:
+                id: label
+                table: groups_field_data
+                field: label
+                relationship: none
+                group_type: group
+                admin_label: ''
+                entity_type: group
+                entity_field: label
+                plugin_id: standard
+                order: ASC
+                expose:
+                  label: Name
+                  field_identifier: label
+                exposed: true
+          cache_metadata:
+            contexts:
+              - 'url.query_args:sort_by'
+              - 'url.query_args:sort_order'

@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_group
+    - system
+  theme:
+    - socialblue
+id: socialblue_titlewithsortsblock
+theme: socialblue
+region: content
+weight: -100
+provider: null
+plugin: title_with_sorts_block
+settings:
+  id: title_with_sorts_block
+  label: 'Title with sorts'
+  label_display: '0'
+  provider: social_group
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: "/all-groups"
