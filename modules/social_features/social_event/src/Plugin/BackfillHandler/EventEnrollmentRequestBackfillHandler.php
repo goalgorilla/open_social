@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
+use Drupal\user\UserInterface;
 
 /**
  * Backfill handler for event enrollment request entities with pending status.
@@ -31,6 +32,18 @@ final class EventEnrollmentRequestBackfillHandler extends BackfillHandlerBase {
     // Filter by joining status for enrollments with pending request status.
     $query->condition('field_request_or_invite_status', EventEnrollmentInterface::REQUEST_PENDING);
     return $query;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+    // For event enrollment requests, the actor is the user requesting.
+    if ($entity instanceof EventEnrollmentInterface) {
+      $account = $entity->getAccountEntity();
+      return $account instanceof UserInterface && !$account->isAnonymous() ? $account : NULL;
+    }
+    return parent::getActorFromEntity($entity);
   }
 
   /**

@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
+use Drupal\user\UserInterface;
 
 /**
  * Backfill handler for event enrollment request entities with approved status.
@@ -31,6 +32,19 @@ final class EventEnrollmentRequestAcceptBackfillHandler extends BackfillHandlerB
     // Filter by joining status for enrollments with approved request status.
     $query->condition('field_request_or_invite_status', EventEnrollmentInterface::REQUEST_APPROVED);
     return $query;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+    // For request accept, the actor is the user who approved (stored in owner).
+    // The owner is set to the approver in UpdateEnrollRequestController.
+    if ($entity instanceof EventEnrollmentInterface) {
+      $owner = $entity->getOwner();
+      return !$owner->isAnonymous() ? $owner : NULL;
+    }
+    return parent::getActorFromEntity($entity);
   }
 
   /**
