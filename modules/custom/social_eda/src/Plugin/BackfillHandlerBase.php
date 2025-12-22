@@ -10,6 +10,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\user\EntityOwnerInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
@@ -133,6 +135,26 @@ abstract class BackfillHandlerBase extends PluginBase implements BackfillHandler
     }
 
     return $query;
+  }
+
+  /**
+   * Determines the actor user from the entity for backfill operations.
+   *
+   * Subclasses can override this method to provide actor determination
+   * logic for their specific entity types.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity being processed.
+   *
+   * @return \Drupal\user\UserInterface|null
+   *   The user to use as the actor, or NULL if no actor can be determined.
+   */
+  protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+    if ($entity instanceof EntityOwnerInterface) {
+      $owner = $entity->getOwner();
+      return !$owner->isAnonymous() ? $owner : NULL;
+    }
+    return NULL;
   }
 
   /**
@@ -262,6 +284,16 @@ abstract class BackfillHandlerBase extends PluginBase implements BackfillHandler
         $handler_class,
         $handler_method
       ));
+    }
+
+    // Set the actor on the handler if it supports actor awareness and
+    // an actor is available.
+    // @phpstan-ignore-next-line
+    if ($handler instanceof BackfillActorAwareInterface) {
+      $actor = $this->getActorFromEntity($entity);
+      if ($actor instanceof UserInterface) {
+        $handler->setActor($actor);
+      }
     }
 
     $handler->{$handler_method}($entity);

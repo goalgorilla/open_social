@@ -11,8 +11,10 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\social_eda\Plugin\BackfillActorAwareInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
 use Drupal\Tests\UnitTestCase;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -107,6 +109,254 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
     $plugin->process($entity);
 
     $this->assertTrue($handler->called);
+  }
+
+  /**
+   * Tests process() sets actor when handler implements interface.
+   *
+   * @covers ::process
+   * @covers ::getActorFromEntity
+   */
+  public function testProcessSetsActorWhenHandlerIsActorAware(): void {
+    $plugin_definition = [
+      'handler_service' => 'test.handler',
+      'handler_method' => 'testMethod',
+    ];
+
+    $entity = $this->createMock(EntityInterface::class);
+    $actor = $this->createMock(UserInterface::class);
+
+    $handler = new class() implements BackfillActorAwareInterface {
+      /**
+       * Whether the handler method was called.
+       */
+      public bool $called = FALSE;
+
+      /**
+       * The actor that was set.
+       */
+      public ?UserInterface $setActor = NULL;
+
+      /**
+       * {@inheritdoc}
+       */
+      public function setActor(?UserInterface $user): void {
+        $this->setActor = $user;
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function getActor(): ?UserInterface {
+        return $this->setActor;
+      }
+
+      /**
+       * Test handler method.
+       */
+      public function testMethod(EntityInterface $entity): void {
+        $this->called = TRUE;
+      }
+
+    };
+
+    // Create a plugin that overrides getActorFromEntity to return the actor.
+    $plugin = new class(
+      [],
+      'test_plugin',
+      $plugin_definition,
+      $this->entityTypeManager,
+      $this->entityFieldManager,
+      $this->container,
+      $actor
+    ) extends BackfillHandlerBase {
+      /**
+       * The actor to return from getActorFromEntity.
+       */
+      private ?UserInterface $testActor;
+
+      /**
+       * Constructor.
+       */
+      public function __construct(
+        array $configuration,
+        string $plugin_id,
+        array $plugin_definition,
+        EntityTypeManagerInterface $entity_type_manager,
+        EntityFieldManagerInterface $entity_field_manager,
+        ContainerInterface $container,
+        ?UserInterface $testActor = NULL,
+      ) {
+        parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $container);
+        $this->testActor = $testActor;
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+        return $this->testActor;
+      }
+
+    };
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject $container_mock */
+    $container_mock = $this->container;
+    $container_mock->expects($this->once())
+      ->method('get')
+      ->with('test.handler')
+      ->willReturn($handler);
+
+    $plugin->process($entity);
+
+    $this->assertTrue($handler->called);
+    $this->assertSame($actor, $handler->setActor);
+  }
+
+  /**
+   * Tests process() does not set actor when getActorFromEntity returns NULL.
+   *
+   * @covers ::process
+   * @covers ::getActorFromEntity
+   */
+  public function testProcessDoesNotSetActorWhenActorIsNull(): void {
+    $plugin_definition = [
+      'handler_service' => 'test.handler',
+      'handler_method' => 'testMethod',
+    ];
+
+    $entity = $this->createMock(EntityInterface::class);
+
+    $handler = new class() implements BackfillActorAwareInterface {
+      /**
+       * Whether the handler method was called.
+       */
+      public bool $called = FALSE;
+
+      /**
+       * Whether setActor was called.
+       */
+      public bool $setActorCalled = FALSE;
+
+      /**
+       * {@inheritdoc}
+       */
+      public function setActor(?UserInterface $user): void {
+        $this->setActorCalled = TRUE;
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function getActor(): ?UserInterface {
+        return NULL;
+      }
+
+      /**
+       * Test handler method.
+       */
+      public function testMethod(EntityInterface $entity): void {
+        $this->called = TRUE;
+      }
+
+    };
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject $container_mock */
+    $container_mock = $this->container;
+    $container_mock->expects($this->once())
+      ->method('get')
+      ->with('test.handler')
+      ->willReturn($handler);
+
+    // Default implementation returns NULL, so setActor should not be called.
+    $plugin = $this->createPlugin($plugin_definition);
+    $plugin->process($entity);
+
+    $this->assertTrue($handler->called);
+    $this->assertFalse($handler->setActorCalled);
+  }
+
+  /**
+   * Tests process() does not set actor when handler is not actor aware.
+   *
+   * @covers ::process
+   */
+  public function testProcessDoesNotSetActorWhenHandlerIsNotActorAware(): void {
+    $plugin_definition = [
+      'handler_service' => 'test.handler',
+      'handler_method' => 'testMethod',
+    ];
+
+    $entity = $this->createMock(EntityInterface::class);
+    $handler = new class() {
+      /**
+       * Whether the handler method was called.
+       */
+      public bool $called = FALSE;
+
+      /**
+       * Test handler method.
+       */
+      public function testMethod(EntityInterface $entity): void {
+        $this->called = TRUE;
+      }
+
+    };
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject $container_mock */
+    $container_mock = $this->container;
+    $container_mock->expects($this->once())
+      ->method('get')
+      ->with('test.handler')
+      ->willReturn($handler);
+
+    // Create a plugin that overrides getActorFromEntity to return an actor,
+    // but handler doesn't implement BackfillActorAwareInterface.
+    $actor = $this->createMock(UserInterface::class);
+    $plugin = new class(
+      [],
+      'test_plugin',
+      $plugin_definition,
+      $this->entityTypeManager,
+      $this->entityFieldManager,
+      $this->container,
+      $actor
+    ) extends BackfillHandlerBase {
+      /**
+       * The actor to return from getActorFromEntity.
+       */
+      private ?UserInterface $testActor;
+
+      /**
+       * Constructor.
+       */
+      public function __construct(
+        array $configuration,
+        string $plugin_id,
+        array $plugin_definition,
+        EntityTypeManagerInterface $entity_type_manager,
+        EntityFieldManagerInterface $entity_field_manager,
+        ContainerInterface $container,
+        ?UserInterface $testActor = NULL,
+      ) {
+        parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $container);
+        $this->testActor = $testActor;
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+        return $this->testActor;
+      }
+
+    };
+
+    $plugin->process($entity);
+
+    $this->assertTrue($handler->called);
+    // Handler doesn't implement BackfillActorAwareInterface, so setActor
+    // should not be called (and wouldn't exist anyway).
   }
 
   /**
