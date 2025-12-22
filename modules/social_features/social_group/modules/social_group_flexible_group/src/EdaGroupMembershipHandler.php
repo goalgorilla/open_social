@@ -14,6 +14,8 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupMembershipInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_eda\DispatcherInterface;
+use Drupal\social_eda\Plugin\BackfillActorAwareInterface;
+use Drupal\social_eda\Traits\SetActorTrait;
 use Drupal\social_eda\UuidNamespace;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\DateTime;
@@ -27,14 +29,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Handles hook invocations for EDA related operations of group membership.
  */
-final class EdaGroupMembershipHandler {
+final class EdaGroupMembershipHandler implements BackfillActorAwareInterface {
 
-  /**
-   * The current logged-in user.
-   *
-   * @var \Drupal\user\UserInterface|null
-   */
-  protected ?UserInterface $currentUser = NULL;
+  use SetActorTrait;
 
   /**
    * The source.
@@ -85,9 +82,10 @@ final class EdaGroupMembershipHandler {
     private readonly LoggerChannelFactoryInterface $loggerFactory,
     private readonly ?DispatcherInterface $dispatcher = NULL,
   ) {
-    // Load the full user entity if the account is authenticated.
+    // Initialize $this->currentUser (from SetActorTrait) with
+    // the authenticated user entity. This can be overridden via setActor().
     $account_id = $this->account->id();
-    if ($account_id && $account_id > 0) {
+    if ($account_id > 0) {
       $user = $this->entityTypeManager->getStorage('user')->load($account_id);
       if ($user instanceof UserInterface) {
         $this->currentUser = $user;

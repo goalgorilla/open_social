@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\group\Entity\GroupMembershipInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
+use Drupal\user\UserInterface;
 
 /**
  * Backfill handler for group membership entities.
@@ -36,6 +37,18 @@ final class GroupMembershipBackfillHandler extends BackfillHandlerBase {
     // Filter by group type to only get flexible groups.
     $query->condition('group_type', 'flexible_group');
     return $query;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+    // For group memberships, the actor is the user joining.
+    if ($entity instanceof GroupMembershipInterface) {
+      $user = $entity->getEntity();
+      return $user instanceof UserInterface && !$user->isAnonymous() ? $user : NULL;
+    }
+    return parent::getActorFromEntity($entity);
   }
 
   /**
