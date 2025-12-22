@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
+use Drupal\user\UserInterface;
 
 /**
  * Backfill handler for event enrollment entities.
@@ -34,6 +35,18 @@ final class EventEnrollmentBackfillHandler extends BackfillHandlerBase {
     // Filter by enrollment status to only get enrolled enrollments.
     $query->condition('field_enrollment_status', EventEnrollmentInterface::STATUS_ENROLLED);
     return $query;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+    // For event enrollments, the actor is the user enrolling.
+    if ($entity instanceof EventEnrollmentInterface) {
+      $account = $entity->getAccountEntity();
+      return $account instanceof UserInterface && !$account->isAnonymous() ? $account : NULL;
+    }
+    return parent::getActorFromEntity($entity);
   }
 
   /**
