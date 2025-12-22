@@ -19,5 +19,4 @@ use Drupal\social_eda\Plugin\BackfillHandlerBase;
  * )
  */
 final class EventBackfillHandler extends BackfillHandlerBase {
-
 }
