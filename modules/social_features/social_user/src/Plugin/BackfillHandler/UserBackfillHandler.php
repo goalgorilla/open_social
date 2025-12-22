@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\social_user\Plugin\BackfillHandler;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
+use Drupal\user\UserInterface;
 
 /**
  * Backfill handler for user entities.
@@ -28,6 +30,17 @@ final class UserBackfillHandler extends BackfillHandlerBase {
     $ids = parent::getEntityIds($from, $to);
     unset($ids[0], $ids[1]);
     return $ids;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+    // For user creation, the actor is the user being created.
+    if ($entity instanceof UserInterface) {
+      return $entity;
+    }
+    return NULL;
   }
 
 }
