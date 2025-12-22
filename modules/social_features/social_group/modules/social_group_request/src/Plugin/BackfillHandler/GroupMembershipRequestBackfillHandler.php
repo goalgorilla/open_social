@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
+use Drupal\user\UserInterface;
 
 /**
  * Backfill handler for group membership request entities with pending status.
@@ -37,6 +38,18 @@ final class GroupMembershipRequestBackfillHandler extends BackfillHandlerBase {
     // Filter by request status to only get pending requests.
     $query->condition('grequest_status', 'pending');
     return $query;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+    // For group membership requests, the actor is the user requesting.
+    if ($entity instanceof GroupRelationshipInterface) {
+      $user = $entity->getEntity();
+      return $user instanceof UserInterface && !$user->isAnonymous() ? $user : NULL;
+    }
+    return parent::getActorFromEntity($entity);
   }
 
   /**

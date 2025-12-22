@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
+use Drupal\user\UserInterface;
 
 /**
  * Backfill handler for group membership request entities with approved status.
@@ -37,6 +38,20 @@ final class GroupMembershipRequestAcceptBackfillHandler extends BackfillHandlerB
     // Filter by request status to only get approved requests.
     $query->condition('grequest_status', 'approved');
     return $query;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
+    // For request accept, the actor is the user who approved (last updated).
+    if ($entity instanceof GroupRelationshipInterface) {
+      if ($entity->hasField('grequest_updated_by') && !$entity->get('grequest_updated_by')->isEmpty()) {
+        $updated_by = $entity->get('grequest_updated_by')->entity;
+        return $updated_by instanceof UserInterface && !$updated_by->isAnonymous() ? $updated_by : NULL;
+      }
+    }
+    return parent::getActorFromEntity($entity);
   }
 
   /**
