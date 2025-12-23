@@ -69,7 +69,7 @@
 
       const sortOrderInputs = newPlace.querySelectorAll('input[name="sort_order"]');
 
-      sortOrderInputs.forEach(function(input) {
+      sortOrderInputs.forEach(function (input) {
         const label = newPlace.querySelector('label[for="' + input.id + '"]');
         if (label && !isHidden) {
           if (input.getAttribute('value') === 'ASC' && ascLabel) {

@@ -69,8 +69,8 @@ class SortPageTop extends DefaultWidget {
       $asc_label = $desc_label = '';
 
       if ($key === 'created') {
-        $asc_label = $this->t('Last');
-        $desc_label = $this->t('First');
+        $asc_label = $this->t('First');
+        $desc_label = $this->t('Last');
       }
 
       if ($key === 'label') {
