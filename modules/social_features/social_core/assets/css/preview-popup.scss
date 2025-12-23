@@ -232,13 +232,14 @@
         }
       }
 
-      &:not(.field--name-field-profile-summary) .field--item,
+      // Profile summary should show full 140 characters.
+      // Profile self introduction field uses smart_trim field formatter to control character length.
+      &:not(.field--name-field-profile-summary):not(.field--name-field-profile-self-introduction) .field--item,
       &.field--item {
-         // Removed line-clamp to allow backend trim_length (140 chars) to control truncation.
-         //overflow: hidden;
-         //display: -webkit-box;
-         //-webkit-line-clamp: 6;
-         //-webkit-box-orient: vertical;
+         overflow: hidden;
+         display: -webkit-box;
+         -webkit-line-clamp: 3;
+         -webkit-box-orient: vertical;
       }
     }
   }
