@@ -45,6 +45,9 @@
         // Triggers auto-submit functionality on each change of a form element.
         self.autoSubmitForm(element);
       });
+
+      // Move results count from view header to extra area.
+      self.insertViewsResultCount(context);
     },
 
     /**
@@ -128,7 +131,48 @@
           }
         });
       });
-    }
+    },
+
+    /**
+     * Moves results count from view header to extra area with formatted plural.
+     */
+    insertViewsResultCount: function (context) {
+      const resultsCountElement = document.querySelector('.view-header .results-count');
+      const extraAreaElement = document.querySelector('.extra-area');
+
+      if (!resultsCountElement || !extraAreaElement) {
+        return;
+      }
+
+      // Get the count value from the result count element.
+      const countText = resultsCountElement.textContent.trim();
+      const count = parseInt(countText, 10);
+
+      if (isNaN(count)) {
+        return;
+      }
+
+      // Remove the original element from the view header.
+      resultsCountElement.remove();
+
+      // Create a themed span with formatted plural text.
+      const formattedText = Drupal.formatPlural(count, '1 member', '@count members');
+      // Insert into an extra area.
+      extraAreaElement.innerHTML = Drupal.theme('viewsResultCount', formattedText);
+    },
+  };
+
+  /**
+   * Theme function for views' result count.
+   *
+   * @param {string} text
+   *   The formatted plural text.
+   *
+   * @return {string}
+   *   The themed HTML string.
+   */
+  Drupal.theme.viewsResultCount = function (text) {
+    return '<span>' + text + '</span>';
   };
 
 })(Drupal, once);

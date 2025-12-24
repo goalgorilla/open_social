@@ -213,19 +213,21 @@ class Page extends PreprocessBase implements ContainerFactoryPluginInterface {
       $attributes->removeClass('row', 'layout--with-complementary');
     }
 
-    // Let's grab all entities available from the route params.
-    foreach ($this->routeMatch->getParameters() as $param) {
-      // If it is an Entity, lets see if layout_builder is enabled
-      // and remove or add necessary classes.
-      if ($param instanceof EntityInterface &&
-        $this->moduleHander->moduleExists('layout_builder') &&
-        $this->moduleHander->moduleExists('social_core')
-      ) {
-        if (\Drupal::hasService('social_core.layout') &&
-          \Drupal::service('social_core.layout')->isTrueLayoutCompatibleEntity($param)
+    if (!in_array($route, ['view.group_members.page_group_members'])) {
+      // Let's grab all entities available from the route params.
+      foreach ($this->routeMatch->getParameters() as $param) {
+        // If it is an Entity, lets see if layout_builder is enabled
+        // and remove or add necessary classes.
+        if ($param instanceof EntityInterface &&
+          $this->moduleHander->moduleExists('layout_builder') &&
+          $this->moduleHander->moduleExists('social_core')
         ) {
-          $attributes->removeClass('row', 'layout--with-complementary');
-          $attributes->addClass('layout--full');
+          if (\Drupal::hasService('social_core.layout') &&
+            \Drupal::service('social_core.layout')->isTrueLayoutCompatibleEntity($param)
+          ) {
+            $attributes->removeClass('row', 'layout--with-complementary');
+            $attributes->addClass('layout--full');
+          }
         }
       }
     }

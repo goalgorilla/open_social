@@ -6,7 +6,10 @@ namespace Drupal\social_group\Plugin\Block;
 
 use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
 use Drupal\Core\Block\Attribute\Block;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a block with a title and sorts functionality.
@@ -20,17 +23,69 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   id: "title_with_sorts_block",
   admin_label: new TranslatableMarkup("Title with sorts")
 )]
-class TitleWithSortsBlock extends PageTitleBlock {
+class TitleWithSortsBlock extends PageTitleBlock implements ContainerFactoryPluginInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    protected RouteMatchInterface $routeMatch,
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('current_route_match'),
+    );
+  }
 
   /**
    * {@inheritdoc}
    */
   public function build(): array {
-    $build = parent::build();
+    $title = [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      'title' => parent::build(),
+    ];
 
-    $build['#attributes']['class'][] = 'title-with-sorts';
-    $build['#attached']['library'][] = 'social_group/move-exposed-sort';
-    $build['#attached']['library'][] = 'socialbase/sort-filter';
+    $build = [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#attributes' => [
+        'class' => ['title-with-sorts'],
+      ],
+      '#attached' => [
+        'library' => [
+          'social_group/move-exposed-sort',
+          'socialbase/sort-filter',
+        ],
+      ],
+    ];
+
+    // We don't want to show title on "Group Members" page.
+    if ($this->routeMatch->getRouteName() === 'view.group_members.page_group_members') {
+      $title['#attributes']['class'][] = 'visually-hidden';
+    }
+
+    $build[] = $title;
+    $build[] = [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#attributes' => [
+        'class' => ['extra-area'],
+      ],
+    ];
 
     return $build;
   }

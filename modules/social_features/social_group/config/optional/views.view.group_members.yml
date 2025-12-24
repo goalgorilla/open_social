@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - better_exposed_filters
     - group
 id: group_members
 label: 'Group Members'
@@ -342,16 +343,77 @@ display:
     display_title: Page
     position: 1
     display_options:
-      display_extenders: {  }
+      exposed_form:
+        type: bef
+        options:
+          submit_button: Filter
+          reset_button: true
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by:'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: basic_html
+          bef:
+            general:
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_textfield_minimum_length: 3
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+              reset_button_always_show: false
+            sort:
+              plugin_id: bef_sort_page_top
+              advanced:
+                combine: false
+                combine_rewrite: ''
+                reset: false
+                reset_label: ''
+                collapsible: false
+                collapsible_label: 'Sort options'
+                is_secondary: false
+            filter:
+              group_roles_target_id:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                  hide_label: false
+              created:
+                plugin_id: bef_datepicker
+                advanced:
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                  hide_label: false
       path: group/%group/members
       sorts:
         created:
           id: created
           table: group_relationship_field_data
           field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
           entity_type: group_content
           entity_field: created
           plugin_id: date
+          order: ASC
+          expose:
+            label: Joined
+            field_identifier: created
+          exposed: true
+          granularity: second
         label:
           id: label
           table: group_relationship_field_data
@@ -359,15 +421,223 @@ display:
           relationship: none
           group_type: group
           admin_label: sort_title
-          order: ASC
-          exposed: false
-          expose:
-            label: ''
           entity_type: group_content
           entity_field: label
           plugin_id: standard
+          order: ASC
+          expose:
+            label: Name
+            field_identifier: label
+          exposed: true
+      filters:
+        status:
+          id: status
+          table: users_field_data
+          field: status
+          relationship: gc__user
+          group_type: group
+          admin_label: ''
+          entity_type: user
+          entity_field: status
+          plugin_id: boolean
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: { }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: { }
+            group_items: { }
+        group_roles_target_id:
+          id: group_roles_target_id
+          table: group_content__group_roles
+          field: group_roles_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: string
+          operator: '='
+          value: flexible_group-group_manager
+          group: 1
+          exposed: true
+          expose:
+            operator_id: group_roles_target_id_op
+            label: 'Roles (group_roles)'
+            description: ''
+            use_operator: false
+            operator: group_roles_target_id_op
+            operator_limit_selection: false
+            operator_list: { }
+            identifier: group_roles_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+          is_grouped: true
+          group_info:
+            label: Role
+            description: ''
+            identifier: group_role
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: { }
+            group_items:
+              1:
+                title: 'Group manager'
+                operator: contains
+                value: '-group_manager'
+              2:
+                title: Member
+                operator: empty
+                value: flexible_group-group_manager
+        created:
+          id: created
+          table: group_relationship_field_data
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: group_content
+          entity_field: created
+          plugin_id: date
+          operator: '<='
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: offset
+          group: 1
+          exposed: true
+          expose:
+            operator_id: created_op
+            label: Joined
+            description: ''
+            use_operator: true
+            operator: created_op
+            operator_limit_selection: true
+            operator_list:
+              '<=': '<='
+              '>=': '>='
+              between: between
+            identifier: created
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            min_placeholder: ''
+            max_placeholder: ''
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: { }
+            group_items: { }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
       defaults:
+        use_ajax: false
+        exposed_form: false
         sorts: false
+        filters: false
+        filter_groups: false
+        header: false
+      use_ajax: false
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: '<div class="results-count">[view:total-rows]</div>'
+          tokenize: false
+      exposed_block: true
+      display_extenders:
+        views_ef_fieldset:
+          views_ef_fieldset:
+            enabled: false
+            options:
+              sort:
+                root:
+                  container_type: details
+                  depth: '0'
+                  description: ''
+                  id: root
+                  open: true
+                  pid: ''
+                  title: Filters
+                  type: container
+                  weight: '0'
+                group_role:
+                  depth: '1'
+                  id: group_role
+                  pid: root
+                  type: filter
+                  weight: '-5'
+                sort_by:
+                  depth: '1'
+                  id: sort_by
+                  pid: root
+                  type: sort
+                  weight: '-4'
+                created:
+                  depth: '1'
+                  id: created
+                  pid: root
+                  type: filter
+                  weight: '-3'
+                created_op:
+                  depth: '1'
+                  id: created_op
+                  pid: root
+                  type: filter
+                  weight: '-2'
+                submit:
+                  depth: '1'
+                  id: submit
+                  pid: root
+                  type: buttons
+                  weight: '-1'
     cache_metadata:
       max-age: -1
       contexts:
@@ -377,5 +647,7 @@ display:
         - route.group
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user.group_permissions
       tags: {  }

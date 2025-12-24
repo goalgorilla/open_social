@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.group_members
+  module:
+    - system
+    - views
+  theme:
+    - socialblue
+id: socialblue_exposedformgroup_memberspage_group_members
+theme: socialblue
+region: complementary_top
+weight: 0
+provider: null
+plugin: 'views_exposed_filter_block:group_members-page_group_members'
+settings:
+  id: 'views_exposed_filter_block:group_members-page_group_members'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '/group/*/members'
