@@ -1,0 +1,130 @@
+.title-with-sorts {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 16px 0;
+  gap: 50px;
+}
+
+.title-with-sorts > div[data-contextual-token] {
+  position: absolute;
+}
+
+.title-with-sorts .section-title {
+  padding: 0;
+}
+
+.title-with-sorts .sorting-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.title-with-sorts .sorting-group .js-form-item-sort-by {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.title-with-sorts label {
+  margin: 0;
+}
+
+.title-with-sorts .form-item-sort-by label {
+  font-weight: 500;
+}
+
+.title-with-sorts select {
+  border-radius: 4px !important;
+  min-width: 130px;
+  padding: 8px 40px 8px 12px;
+  border: none;
+  background-image: url(../images/icons/icon-arrow-down-clean.svg);
+  background-repeat: no-repeat;
+  background-position: 90% center;
+}
+
+.title-with-sorts input[type="radio"] {
+  display: none;
+}
+
+.title-with-sorts input[type="radio"] + label {
+  padding: 6px;
+  color: #343434;
+  font-weight: normal;
+  min-width: 45px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.title-with-sorts input[type="radio"]:hover + label {
+  background-color: #ADADAD;
+  -webkit-transition: background-color 0.5s linear;
+  transition: background-color 0.5s linear;
+}
+
+.title-with-sorts input[type="radio"]:checked + label {
+  background: #F5F5F5;
+  color: #343434;
+  min-width: 62px;
+}
+
+.title-with-sorts input[type="radio"]:checked:hover + label {
+  background-color: #ADADAD;
+  -webkit-transition: background-color 0.5s linear;
+  transition: background-color 0.5s linear;
+}
+
+.title-with-sorts input[type="radio"]:checked.sb-radio--asc + label {
+  padding-left: 26px;
+  background-image: url(../images/icons/icon-ascending.svg);
+  background-repeat: no-repeat;
+  background-position: 6px center;
+}
+
+.title-with-sorts input[type="radio"]:checked.sb-radio--desc + label {
+  padding-left: 26px;
+  background-image: url(../images/icons/icon-descending.svg);
+  background-repeat: no-repeat;
+  background-position: 6px center;
+}
+
+.title-with-sorts .sorting-options {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 2px;
+  background: white;
+  border-radius: 4px;
+}
+
+@media (max-width: 599px) {
+  .title-with-sorts {
+    gap: 16px;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start;
+  }
+}

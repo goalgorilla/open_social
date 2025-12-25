@@ -1,0 +1,114 @@
+@import 'settings';
+
+.title-with-sorts {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 16px 0;
+  gap: 50px;
+
+  @include for-phone-only {
+    gap: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  &>div[data-contextual-token] {
+    position: absolute;
+  }
+
+  .section-title {
+    padding: 0;
+  }
+
+  .sorting-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+
+    .js-form-item-sort-by {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+  }
+
+  label {
+    margin: 0;
+  }
+
+  .form-item-sort-by {
+    label {
+      font-weight: 500;
+    }
+  }
+
+  select {
+    border-radius: 4px !important;
+    min-width: 130px;
+    padding: 8px 40px 8px 12px;
+    border: none;
+    background-image: url(../images/icons/icon-arrow-down-clean.svg);
+    background-repeat: no-repeat;
+    background-position: 90% center;
+  }
+
+  input[type="radio"] {
+    display: none;
+
+    &+label {
+      padding: 6px;
+      color: $text-color;
+      font-weight: normal;
+      min-width: 45px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    &:hover + label {
+      background-color: #ADADAD;
+      transition: background-color 0.5s linear;
+    }
+
+    &:checked {
+      &+label {
+        background: #F5F5F5;
+        color: $text-color;
+        min-width: 62px;
+      }
+
+      &:hover+label {
+        background-color: #ADADAD;
+        transition: background-color 0.5s linear;
+      }
+
+      &.sb-radio--asc {
+        &+label {
+          padding-left: 26px;
+          background-image: url(../images/icons/icon-ascending.svg);
+          background-repeat: no-repeat;
+          background-position: 6px center;
+        }
+      }
+
+      &.sb-radio--desc {
+        &+label {
+          padding-left: 26px;
+          background-image: url(../images/icons/icon-descending.svg);
+          background-repeat: no-repeat;
+          background-position: 6px center;
+        }
+      }
+    }
+  }
+
+  .sorting-options {
+    display: flex;
+    padding: 2px;
+    background: white;
+    border-radius: 4px;
+  }
+}

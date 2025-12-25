@@ -6,6 +6,8 @@ namespace Drupal\social_group\Plugin\better_exposed_filters\sort;
 
 use Drupal\better_exposed_filters\Plugin\better_exposed_filters\sort\DefaultWidget;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Component\Utility\Html;
 
 /**
  * Displays the sort widget on the page top.
@@ -52,6 +54,9 @@ class SortPageTop extends DefaultWidget {
       '#type' => 'radios',
       '#options' => $form['sort_order']['#options'],
       '#default_value' => $form['sort_order']['#default_value'],
+      '#prefix' => '<div class="sorting-options">',
+      '#suffix' => '</div>',
+      '#after_build' => [[static::class, 'processRadios']],
     ];
 
     // Add the form ID to the attributes to link with the form element.
@@ -86,6 +91,19 @@ class SortPageTop extends DefaultWidget {
         $field_group['sort_by']['#options_attributes'][$key]['data-sort-order-label-desc'] = $desc_label;
       }
     }
+
+    foreach ($field_group['sort_order']['#options'] as $key => $value) {
+      $field_group['sort_order']['#options_attributes'][$key]['class'] = $key;
+    }
+  }
+
+  public static function processRadios($element) {
+    foreach (Element::children($element) as $key) {
+      // Add the specific key (asc/desc) as a modifier class to add icon in styles.
+      $clean_key = Html::cleanCssIdentifier(strtolower((string) $key));
+      $element[$key]['#attributes']['class'][] = 'sb-radio--' . $clean_key;
+    }
+    return $element;
   }
 
 }

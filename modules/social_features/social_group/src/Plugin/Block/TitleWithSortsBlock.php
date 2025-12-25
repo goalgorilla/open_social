@@ -30,6 +30,7 @@ class TitleWithSortsBlock extends PageTitleBlock {
 
     $build['#attributes']['class'][] = 'title-with-sorts';
     $build['#attached']['library'][] = 'social_group/move-exposed-sort';
+    $build['#attached']['library'][] = 'socialbase/sort-filter';
 
     return $build;
   }
