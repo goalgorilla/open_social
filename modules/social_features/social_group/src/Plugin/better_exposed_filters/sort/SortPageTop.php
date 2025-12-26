@@ -91,18 +91,25 @@ class SortPageTop extends DefaultWidget {
         $field_group['sort_by']['#options_attributes'][$key]['data-sort-order-label-desc'] = $desc_label;
       }
     }
-
-    foreach ($field_group['sort_order']['#options'] as $key => $value) {
-      $field_group['sort_order']['#options_attributes'][$key]['class'] = $key;
-    }
   }
 
-  public static function processRadios($element) {
+  /**
+   * Processes radio button elements to add modifier classes for styling.
+   *
+   * @param array $element
+   *   The radio element array to process. This contains child elements
+   *   that will be modified with additional CSS classes.
+   *
+   * @return array
+   *   The processed radio element array with added classes.
+   */
+  public static function processRadios(array $element): array {
     foreach (Element::children($element) as $key) {
-      // Add the specific key (asc/desc) as a modifier class to add icon in styles.
-      $clean_key = Html::cleanCssIdentifier(strtolower((string) $key));
-      $element[$key]['#attributes']['class'][] = 'sb-radio--' . $clean_key;
+      // Add the specific key (asc/desc) as a modifier class
+      // to add icon in styles.
+      $element[$key]['#attributes']['class'][] = Html::getClass('sb-radio--' . $key);
     }
+
     return $element;
   }
 
