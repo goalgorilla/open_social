@@ -1251,3 +1251,13 @@ function social_group_update_13027(): string {
   $updater->executeUpdate('social_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Add filters and sort for user groups page.
+ */
+function social_group_update_13028(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
+}

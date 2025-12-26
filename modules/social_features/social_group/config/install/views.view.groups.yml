@@ -322,7 +322,46 @@ display:
     display_title: 'User Groups Page'
     position: 1
     display_options:
-      display_extenders: {  }
+      display_extenders:
+        views_ef_fieldset:
+          views_ef_fieldset:
+            enabled: false
+            options:
+              sort:
+                root:
+                  container_type: details
+                  depth: '0'
+                  description: ''
+                  id: root
+                  open: true
+                  pid: ''
+                  title: Filters
+                  type: container
+                  weight: '0'
+                flagged:
+                  depth: '1'
+                  id: flagged
+                  pid: root
+                  type: filter
+                  weight: '-8'
+                sort_by:
+                  depth: '1'
+                  id: sort_by
+                  pid: root
+                  type: sort
+                  weight: '-8'
+                submit:
+                  depth: '1'
+                  id: submit
+                  pid: root
+                  type: buttons
+                  weight: '-7'
+                reset:
+                  depth: '1'
+                  id: reset
+                  pid: root
+                  type: buttons
+                  weight: '-6'
       path: user/%user/groups
       display_description: ''
       menu:
@@ -344,6 +383,7 @@ display:
         filters: false
         group_by: false
         relationships: false
+        sorts: false
         use_ajax: false
       exposed_block: true
       exposed_form:
@@ -360,7 +400,7 @@ display:
           text_input_required_format: basic_html
           bef:
             general:
-              autosubmit: false
+              autosubmit: true
               autosubmit_exclude_textfield: false
               autosubmit_textfield_delay: 500
               autosubmit_hide: false
@@ -368,6 +408,17 @@ display:
               allow_secondary: false
               secondary_label: 'Advanced options'
               secondary_open: false
+              reset_button_always_show: false
+            sort:
+              plugin_id: bef_sort_page_top
+              advanced:
+                combine: false
+                combine_rewrite: ''
+                reset: false
+                reset_label: ''
+                collapsible: false
+                collapsible_label: 'Sort options'
+                is_secondary: false
             filter:
               flagged:
                 plugin_id: default
@@ -375,7 +426,9 @@ display:
                   sort_options: false
                   rewrite:
                     filter_rewrite_values: "- Any -|- Any -\r\nTrue|My muted groups\r\nFalse|My unmuted groups"
+                    filter_rewrite_values_key: false
                   collapsible: false
+                  collapsible_disable_automatic_open: false
                   is_secondary: false
             flagged:
               bef_format: bef_single
@@ -389,6 +442,38 @@ display:
       filter_groups:
         groups: {  }
         operator: AND
+      sorts:
+        created:
+          id: created
+          table: groups_field_data
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: group
+          entity_field: created
+          plugin_id: date
+          order: DESC
+          expose:
+            label: Created
+            field_identifier: created
+          exposed: true
+          granularity: second
+        label:
+          id: label
+          table: groups_field_data
+          field: label
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: group
+          entity_field: label
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: Name
+            field_identifier: label
+          exposed: true
       filters:
         flagged:
           admin_label: ''
@@ -448,7 +533,7 @@ display:
           required: false
           table: groups_field_data
           user_scope: current
-      use_ajax: false
+      use_ajax: true
       rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
@@ -456,5 +541,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user.permissions
       tags: {  }

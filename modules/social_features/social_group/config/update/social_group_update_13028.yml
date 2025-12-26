@@ -1,0 +1,109 @@
+views.view.groups:
+  expected_config: { }
+  update_actions:
+    add:
+      display:
+        page_user_groups:
+          display_options:
+            display_extenders:
+              views_ef_fieldset:
+                views_ef_fieldset:
+                  enabled: false
+                  options:
+                    sort:
+                      root:
+                        container_type: details
+                        depth: '0'
+                        description: ''
+                        id: root
+                        open: true
+                        pid: ''
+                        title: Filters
+                        type: container
+                        weight: '0'
+                      flagged:
+                        depth: '1'
+                        id: flagged
+                        pid: root
+                        type: filter
+                        weight: '-8'
+                      sort_by:
+                        depth: '1'
+                        id: sort_by
+                        pid: root
+                        type: sort
+                        weight: '-8'
+                      submit:
+                        depth: '1'
+                        id: submit
+                        pid: root
+                        type: buttons
+                        weight: '-7'
+                      reset:
+                        depth: '1'
+                        id: reset
+                        pid: root
+                        type: buttons
+                        weight: '-6'
+            defaults:
+              sorts: false
+            exposed_form:
+              options:
+                bef:
+                  sort:
+                    plugin_id: bef_sort_page_top
+                    advanced:
+                      combine: false
+                      combine_rewrite: ''
+                      reset: false
+                      reset_label: ''
+                      collapsible: false
+                      collapsible_label: 'Sort options'
+                      is_secondary: false
+            sorts:
+              created:
+                id: created
+                table: groups_field_data
+                field: created
+                relationship: none
+                group_type: group
+                admin_label: ''
+                entity_type: group
+                entity_field: created
+                plugin_id: date
+                order: DESC
+                expose:
+                  label: Created
+                  field_identifier: created
+                exposed: true
+                granularity: second
+              label:
+                id: label
+                table: groups_field_data
+                field: label
+                relationship: none
+                group_type: group
+                admin_label: ''
+                entity_type: group
+                entity_field: label
+                plugin_id: standard
+                order: ASC
+                expose:
+                  label: Name
+                  field_identifier: label
+                exposed: true
+
+          cache_metadata:
+            contexts:
+              - 'url.query_args:sort_by'
+              - 'url.query_args:sort_order'
+    change:
+      display:
+        page_user_groups:
+          display_options:
+            exposed_form:
+              options:
+                bef:
+                  general:
+                    autosubmit: true
+            use_ajax: true
