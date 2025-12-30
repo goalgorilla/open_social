@@ -99,6 +99,30 @@ views.view.groups:
               - 'url.query_args:sort_order'
     change:
       display:
+        default:
+          display_options:
+            pager:
+              type: full
+              options:
+                offset: 0
+                pagination_heading_level: h4
+                items_per_page: 6
+                total_pages: null
+                id: 0
+                tags:
+                  next: ››
+                  previous: ‹‹
+                  first: '« First'
+                  last: 'Last »'
+                expose:
+                  items_per_page: false
+                  items_per_page_label: 'Items per page'
+                  items_per_page_options: '5, 10, 25, 50'
+                  items_per_page_options_all: false
+                  items_per_page_options_all_label: '- All -'
+                  offset: false
+                  offset_label: Offset
+                quantity: 9
         page_user_groups:
           display_options:
             exposed_form:
