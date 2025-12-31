@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\social_group\Plugin\views\filter;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\views\Attribute\ViewsFilter;
 use Drupal\views\Plugin\views\filter\ManyToOne;
@@ -37,6 +39,7 @@ class GroupRoles extends ManyToOne {
     $plugin_id,
     $plugin_definition,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly RouteMatchInterface $routeMatch,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -50,6 +53,7 @@ class GroupRoles extends ManyToOne {
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -57,6 +61,30 @@ class GroupRoles extends ManyToOne {
    * {@inheritdoc}
    */
   public function getValueOptions() {
+    // Get the current group type from the view argument or route.
+    $group_type_id = NULL;
+    
+    // Try to get group from view argument first.
+    if (isset($this->view->argument['gid'])) {
+      $group_id = $this->view->argument['gid']->getValue();
+      if ($group_id) {
+        $group = $this->entityTypeManager
+          ->getStorage('group')
+          ->load($group_id);
+        if ($group instanceof GroupInterface) {
+          $group_type_id = $group->getGroupType()->id();
+        }
+      }
+    }
+    
+    // Fallback to route parameter if argument not available.
+    if (!$group_type_id) {
+      $group = $this->routeMatch->getParameter('group');
+      if ($group instanceof GroupInterface) {
+        $group_type_id = $group->getGroupType()->id();
+      }
+    }
+
     $group_role_ids = $this->entityTypeManager
       ->getStorage('group_role')
       ->getQuery()
@@ -76,16 +104,39 @@ class GroupRoles extends ManyToOne {
     // The role should have a "hubs_filter" property set to TRUE.
     $target_group_roles = array_filter(
       array: $group_roles,
-      callback: fn(GroupRoleInterface $role) => $role->getThirdPartySetting('social_group', 'hubs_filter')
-        && (
-          str_ends_with((string) $role->id(), '-member') ||
-          str_ends_with((string) $role->id(), '-group_manager')
-        )
+      callback: function (GroupRoleInterface $role) use ($group_type_id) {
+        // Check if role has hubs_filter enabled.
+        if (!$role->getThirdPartySetting('social_group', 'hubs_filter')) {
+          return FALSE;
+        }
+
+        // Check if it's a member or group_manager role.
+        $role_id = (string) $role->id();
+        if (!str_ends_with($role_id, '-member') && !str_ends_with($role_id, '-group_manager')) {
+          return FALSE;
+        }
+
+        // If we have a group type context, filter by it.
+        if ($group_type_id) {
+          $role_group_type = $role->getGroupType()->id();
+          return $role_group_type === $group_type_id;
+        }
+
+        return TRUE;
+      }
     );
 
     // Build options list.
     foreach ($target_group_roles as $role_id => $role) {
-      $options[$role_id] = $role->getThirdPartySetting('social_group', 'full_label') ?: $role->label();
+      $role_id_string = (string) $role_id;
+      // For member roles, always show just "Member" regardless of group type.
+      if (str_ends_with($role_id_string, '-member')) {
+        $options[$role_id] = 'Member';
+      }
+      else {
+        // For manager roles, use the full_label or label.
+        $options[$role_id] = $role->getThirdPartySetting('social_group', 'full_label') ?: $role->label();
+      }
     }
 
     $this->valueOptions = $options ?? [];
