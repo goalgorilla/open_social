@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the activity_send_email module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_uninstall().
  *
@@ -58,6 +60,10 @@ function activity_send_email_schema() {
       'uad_uid' => ['uid'],
       'uad_frequency' => ['frequency'],
     ],
+    [
+      'uid',
+      'activity',
+    ],
   ];
 
   return $schema;
@@ -68,4 +74,18 @@ function activity_send_email_schema() {
  */
 function activity_send_email_update_last_removed() : int {
   return 8001;
+}
+
+/**
+ * Set primary key for activity_notification_status table.
+ */
+function activity_send_email_update_13000() {
+  $fields = [
+    'uid',
+    'activity',
+  ];
+  $schema = Database::getConnection()->schema();
+
+  // Set primary key.
+  $schema->addPrimaryKey('user_activity_digest', $fields);
 }

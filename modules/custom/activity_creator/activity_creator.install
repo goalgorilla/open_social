@@ -5,6 +5,8 @@
  * Installation code for the activity_creator module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_schema().
  */
@@ -37,6 +39,10 @@ function activity_creator_schema() {
       'ans_uid_aid' => ['uid', 'aid'],
       'ans_status' => ['status'],
     ],
+    [
+      'uid',
+      'aid',
+    ],
   ];
 
   return $schema;
@@ -65,4 +71,18 @@ function activity_creator_update_13000() : string {
 
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
+}
+
+/**
+ * Set primary key for activity_notification_status table.
+ */
+function activity_creator_update_13001() {
+  $fields = [
+    'uid',
+    'aid',
+  ];
+  $schema = Database::getConnection()->schema();
+
+  // Set primary key.
+  $schema->addPrimaryKey('activity_notification_status', $fields);
 }
