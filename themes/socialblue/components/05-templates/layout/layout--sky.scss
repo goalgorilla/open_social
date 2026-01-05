@@ -86,6 +86,17 @@
       }
     }
 
+    // Organisation members page does not have hero block, so negative margin top is not needed.
+    &.organization--group-members {
+      .layout--with-complementary {
+        .region--secondary-navigation {
+          @include for-tablet-landscape-up {
+            margin-top: 0;
+          }
+        }
+      }
+    }
+
      .sidebar-left .region--complementary {
       position: relative;
       top: 1px;
