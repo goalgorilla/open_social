@@ -63,4 +63,17 @@ function social_group_views_data_alter(array &$data) {
       'id' => 'group_roles',
     ],
   ];
+
+  // Filter for searching members by username, first name, and last name.
+  // Attached to group_relationship_field_data to work with group member views.
+  $data['group_relationship_field_data']['combine_user_name_profile_name'] = [
+    'title' => t('Combine user name and profile name'),
+    'group' => t('Social'),
+    'filter' => [
+      'title' => t('Combine user name and profile name'),
+      'help' => t('Filter that combines user name and profile first/last name.'),
+      'id' => 'combine_user_name_profile_name',
+    ],
+  ];
+
 }

@@ -1253,19 +1253,19 @@ function social_group_update_13027(): string {
 }
 
 /**
- * Add filters and sort for user groups page.
+ * Combine filter to search by user:name, profile:first and last name.
  */
-function social_group_update_13028(): string {
+function social_group_update_13029(): string {
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
-  $updater->executeUpdate('social_group', __FUNCTION__);
+  $updater->executeUpdate('social_group', 'social_group_update_13029');
   return $updater->logger()->output();
 }
 
 /**
- * Change group members view label.
+ * Add filters and sort for user groups page.
  */
-function social_group_update_13029(): string {
+function social_group_update_13028(): string {
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_group', __FUNCTION__);

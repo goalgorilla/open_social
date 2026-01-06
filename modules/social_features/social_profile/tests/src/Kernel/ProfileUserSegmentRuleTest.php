@@ -60,6 +60,7 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     'user',
     'user_segments',
     'social_profile',
+    'views_ef_fieldset',
 
     // Required by social_organization.
     'social_group',
