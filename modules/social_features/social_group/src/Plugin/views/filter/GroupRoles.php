@@ -33,6 +33,8 @@ class GroupRoles extends ManyToOne {
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
+   *   The route match service.
    */
   public function __construct(
     array $configuration,
@@ -63,7 +65,7 @@ class GroupRoles extends ManyToOne {
   public function getValueOptions() {
     // Get the current group type from the view argument or route.
     $group_type_id = NULL;
-    
+
     // Try to get group from view argument first.
     if (isset($this->view->argument['gid'])) {
       $group_id = $this->view->argument['gid']->getValue();
@@ -76,7 +78,7 @@ class GroupRoles extends ManyToOne {
         }
       }
     }
-    
+
     // Fallback to route parameter if argument not available.
     if (!$group_type_id) {
       $group = $this->routeMatch->getParameter('group');
