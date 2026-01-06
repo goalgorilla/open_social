@@ -42,11 +42,15 @@ class Page extends PageBase {
     }
 
     $route_match = $this->routeMatch;
+    $route_name = $route_match->getRouteName();
+    $excluded_routes = self::ROUTE_NAMES;
 
-    foreach (self::ROUTE_NAMES as $parameter_name => $route_names) {
+    \Drupal::moduleHandler()->alter('socialblue_sidebar_left_exceptions', $excluded_routes, $route_match);
+
+    foreach ($excluded_routes as $parameter_name => $route_names) {
       if (
         $route_match->getParameter($parameter_name) &&
-        !in_array($route_match->getRouteName(), $route_names)
+        !in_array($route_name, $route_names)
       ) {
         $variables['content_attributes']->addClass(
           'sidebar-left',
