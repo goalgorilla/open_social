@@ -1261,3 +1261,13 @@ function social_group_update_13028(): string {
   $updater->executeUpdate('social_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Change group members view label.
+ */
+function social_group_update_13029(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
+}
