@@ -72,6 +72,17 @@ class SortPageTop extends DefaultWidget {
     // for each sort order option.
     foreach ($field_group['sort_by']['#options'] as $key => $value) {
       $asc_label = $desc_label = '';
+      $default_order = 'ASC';
+
+      // Get the default order from the view's sort handler.
+      foreach ($this->view->sort as $sort_id => $sort_handler) {
+        if ($sort_handler->isExposed()
+            && !empty($sort_handler->options['expose']['field_identifier'])
+            && $sort_handler->options['expose']['field_identifier'] === $key) {
+          $default_order = $sort_handler->options['order'] ?? 'ASC';
+          break;
+        }
+      }
 
       if ($key === 'created') {
         $asc_label = $this->t('First');
@@ -90,6 +101,9 @@ class SortPageTop extends DefaultWidget {
       if ($desc_label) {
         $field_group['sort_by']['#options_attributes'][$key]['data-sort-order-label-desc'] = $desc_label;
       }
+
+      // Add the default sort order attribute so JS can reset to default when switching sorts.
+      $field_group['sort_by']['#options_attributes'][$key]['data-sort-order-default'] = $default_order;
     }
   }
 
