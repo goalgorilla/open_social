@@ -80,13 +80,14 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
   if ($form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
     $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
     $form['#id'] === 'views-exposed-form-search-groups-page') {
-    // Hide the flexible group field group type if there is only the
-    // "All / any" option we hide it as well.
-    if (!empty($form['field_group_type_target_id']) &&
-      !empty($form['field_group_type_target_id']['#options']) &&
-      count($form['field_group_type_target_id']['#options']) === 1 &&
-      array_key_exists('All', $form['field_group_type_target_id']['#options'])) {
-      $form['field_group_type_target_id']['#type'] = 'hidden';
+    // Hide the flexible group field group type if there are no taxonomy terms.
+    if (!empty($form['field_group_type_target_id'])) {
+      $options = $form['field_group_type_target_id']['#options'] ?? [];
+      $has_valid_terms = !empty($options) && count($options) > 1;
+
+      if (!$has_valid_terms) {
+        $form['field_group_type_target_id']['#access'] = FALSE;
+      }
     }
   }
   // For adding or editing a flexible group, we alter the visibility fields.
