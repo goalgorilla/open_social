@@ -52,6 +52,7 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
     'field',
     'text',
     'options',
+    'smart_trim',
     'social_profile',
   ];
 

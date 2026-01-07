@@ -107,6 +107,7 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     'paragraphs',
     'entity_reference_revisions',
     'address',
+    'smart_trim',
 
     // Required by social_core.
     'field_group',

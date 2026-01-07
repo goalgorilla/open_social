@@ -75,6 +75,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
     'views_bulk_operations',
     'variationcache',
     'better_exposed_filters',
+    'smart_trim',
   ];
 
   /**

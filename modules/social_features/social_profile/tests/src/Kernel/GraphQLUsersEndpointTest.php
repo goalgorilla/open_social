@@ -45,6 +45,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     "hux",
     // The actual module under test.
     "social_profile",
+    "smart_trim",
     "social_profile_privacy",
   ];
 

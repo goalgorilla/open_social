@@ -34,6 +34,7 @@ class SocialUserEmbedTest extends KernelTestBase {
     'social_user',
     'social_profile',
     'social_embed',
+    'smart_trim',
   ];
 
   /**

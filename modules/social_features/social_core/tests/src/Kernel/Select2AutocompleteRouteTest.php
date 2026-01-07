@@ -54,6 +54,7 @@ class Select2AutocompleteRouteTest extends KernelTestBase {
     "paragraphs",
     "entity_reference_revisions",
     "views_bulk_operations",
+    "smart_trim",
   ];
 
   /**

@@ -76,6 +76,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
     'variationcache',
     'path_alias',
     'hux',
+    'smart_trim',
   ];
 
   /**
