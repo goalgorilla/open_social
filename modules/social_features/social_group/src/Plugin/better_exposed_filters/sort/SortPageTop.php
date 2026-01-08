@@ -102,7 +102,6 @@ class SortPageTop extends DefaultWidget {
         $field_group['sort_by']['#options_attributes'][$key]['data-sort-order-label-desc'] = $desc_label;
       }
 
-      // Add the default sort order attribute so JS can reset to default when switching sorts.
       $field_group['sort_by']['#options_attributes'][$key]['data-sort-order-default'] = $default_order;
     }
   }
