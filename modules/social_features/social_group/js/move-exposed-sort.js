@@ -46,7 +46,7 @@
         self.autoSubmitForm(element);
       });
 
-      // Move results count from view header to extra area.
+      // Update the title with the member count on initial load.
       const viewsInContext =
         (context.querySelectorAll && context.querySelectorAll('.view')) ||
         document.querySelectorAll('.view');
@@ -55,7 +55,7 @@
         self.insertViewsResultCount(viewElement);
       });
 
-      // Ensure result count updates after Views AJAX refresh (filters/pager).
+      // Update the title with the member count after AJAX search.
       once('move-exposed-sort-ajax', 'body', context).forEach(function () {
         // Uses global jQuery from Drupal core.
         if (typeof jQuery !== 'undefined') {
@@ -120,51 +120,87 @@
 
     /**
      * Automatically submits the form when a form element changes.
+     *
+     * For text inputs, uses debounced input event for real-time search.
+     * For select/radio elements, uses change event for immediate submit.
      */
     autoSubmitForm: function (element) {
+      const self = this;
       // Auto-submit functionality for all inputs and select elements
       // in a sorting-group.
       const formElements = element.querySelectorAll('input, select');
 
       formElements.forEach(function (formElement) {
+        // For text inputs, add debounced input event for real-time search.
+        if (formElement.type === 'text' || formElement.type === 'search') {
+          let debounceTimer;
+          const delay = 100;
+          const minLength = 1;
+
+          formElement.addEventListener('input', function (event) {
+            clearTimeout(debounceTimer);
+            const value = event.target.value;
+
+            // Only auto-submit if value is empty or meets minimum length.
+            if (value.length > 0 && value.length < minLength) {
+              return;
+            }
+
+            debounceTimer = setTimeout(function () {
+              self.submitForm(event.target);
+            }, delay);
+          });
+        }
+
+        // Keep change event for select/radio and as fallback for text inputs.
         formElement.addEventListener('change', function (event) {
-          const target = event.target;
-          const formId = target.getAttribute('form');
-          if (!formId) {
-            return;
-          }
-
-          // Find the form by ID.
-          const form = document.getElementById(formId);
-          if (!form) {
-            return;
-          }
-
-          // Make sure auto-submit is enabled.
-          if (!form.closest('.views-exposed-form').hasAttribute('data-bef-auto-submit-full-form')) {
-            return;
-          }
-
-          // Find the submitting button in the form and click it.
-          const submitButton = form.querySelector('input[type="submit"], button[type="submit"]');
-
-          if (submitButton) {
-            submitButton.click();
-          }
+          self.submitForm(event.target);
         });
       });
     },
 
     /**
-     * Moves results count from view header to extra area with formatted plural.
+     * Submits the form associated with the given element.
+     *
+     * @param {HTMLElement} target
+     *   The form element that triggered the submit.
+     */
+    submitForm: function (target) {
+      const formId = target.getAttribute('form');
+      if (!formId) {
+        return;
+      }
+
+      // Find the form by ID.
+      const form = document.getElementById(formId);
+      if (!form) {
+        return;
+      }
+
+      // Make sure auto-submit is enabled.
+      const exposedForm = form.closest('.views-exposed-form');
+      if (!exposedForm || !exposedForm.hasAttribute('data-bef-auto-submit-full-form')) {
+        return;
+      }
+
+      // Find the submitting button in the form and click it.
+      const submitButton = form.querySelector('input[type="submit"], button[type="submit"]');
+
+      if (submitButton) {
+        submitButton.click();
+      }
+    },
+
+    /**
+     * Updates the title with the member count from search results.
      *
      * @param {HTMLElement} viewElement
      *   The root element of the view.
      */
     insertViewsResultCount: function (viewElement) {
-      const extraAreaElement = document.querySelector('.extra-area');
+      const titleElement = document.querySelector('.sorting-group__title');
 
-      if (!extraAreaElement || !viewElement) {
+      if (!titleElement || !viewElement) {
         return;
       }
 
@@ -193,24 +229,12 @@
         count = rows.length;
       }
 
-      // Create a themed span with formatted plural text.
+      // Create formatted plural text and update the title element.
       const formattedText = Drupal.formatPlural(count, '1 member', '@count members');
-      // Insert into an extra area.
-      extraAreaElement.innerHTML = Drupal.theme('viewsResultCount', formattedText);
+      // Update the title with the count. Include the divider to maintain the
+      // visual separator between the count and the search field.
+      titleElement.innerHTML = formattedText + ' <span class="participants_title_divider">|</span>';
     },
-  };
-
-  /**
-   * Theme function for views' result count.
-   *
-   * @param {string} text
-   *   The formatted plural text.
-   *
-   * @return {string}
-   *   The themed HTML string.
-   */
-  Drupal.theme.viewsResultCount = function (text) {
-    return '<span>' + text + '</span>';
   };
 
 })(Drupal, once);

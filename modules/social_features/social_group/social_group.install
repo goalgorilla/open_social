@@ -1253,16 +1253,6 @@ function social_group_update_13027(): string {
 }
 
 /**
- * Combine filter to search by user:name, profile:first and last name.
- */
-function social_group_update_13029(): string {
-  /** @var \Drupal\update_helper\Updater $updater */
-  $updater = \Drupal::service('update_helper.updater');
-  $updater->executeUpdate('social_group', 'social_group_update_13029');
-  return $updater->logger()->output();
-}
-
-/**
  * Add filters and sort for user groups page.
  */
 function social_group_update_13028(): string {
@@ -1273,9 +1263,29 @@ function social_group_update_13028(): string {
 }
 
 /**
+ * Change group members view label.
+ */
+function social_group_update_13029(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
  * Import exposed filter block for group members view.
  */
 function social_group_update_13030(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
+ * Combine filter to search by user:name, profile:first and last name.
+ */
+function social_group_update_13031(): string {
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_group', __FUNCTION__);

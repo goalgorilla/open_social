@@ -1,0 +1,95 @@
+views.view.group_members:
+  expected_config: { }
+  update_actions:
+    add:
+      display:
+        page_group_members:
+          display_options:
+            filters:
+              combine_user_name_profile_name:
+                id: combine_user_name_profile_name
+                table: group_relationship_field_data
+                field: combine_user_name_profile_name
+                relationship: none
+                group_type: group
+                admin_label: ''
+                entity_type: group_content
+                plugin_id: combine_user_name_profile_name
+                operator: allwords
+                value: ''
+                group: 1
+                exposed: true
+                expose:
+                  operator_id: combine_user_name_profile_name_op
+                  label: 'Search for members'
+                  description: ''
+                  use_operator: false
+                  operator: combine_user_name_profile_name_op
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: combine_user_name_profile_name
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                    anonymous: '0'
+                    administrator: '0'
+                    contentmanager: '0'
+                    verified: '0'
+                    sitemanager: '0'
+                  placeholder: ''
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+
+    change:
+      status: true
+      display:
+        page_group_members:
+          display_options:
+            exposed_block: true
+            exposed_form:
+              options:
+                bef:
+                  general:
+                    autosubmit_hide: true
+                  filter:
+                    combine_user_name_profile_name:
+                      plugin_id: default
+                      advanced:
+                        sort_options: false
+                        rewrite:
+                          filter_rewrite_values: ''
+                          filter_rewrite_values_key: false
+                        collapsible: false
+                        collapsible_disable_automatic_open: false
+                        is_secondary: false
+                        hide_label: false
+                    group_roles:
+                      plugin_id: default
+                      advanced:
+                        sort_options: false
+                        rewrite:
+                          filter_rewrite_values: ''
+                          filter_rewrite_values_key: false
+                        collapsible: false
+                        collapsible_disable_automatic_open: false
+                        is_secondary: false
+                        hide_label: false
+                    created:
+                      plugin_id: bef_datepicker
+                      advanced:
+                        collapsible: false
+                        collapsible_disable_automatic_open: false
+                        is_secondary: false
+                        hide_label: false
