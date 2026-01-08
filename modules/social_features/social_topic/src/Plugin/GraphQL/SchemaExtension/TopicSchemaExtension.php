@@ -216,6 +216,11 @@ class TopicSchemaExtension extends SchemaExtensionPluginBase {
         ->map('parent', $builder->fromValue(0))
     );
 
+    $registry->addFieldResolver('Query', 'topicTagCategories',
+      $builder->produce('content_tag_categories_by_placement')
+        ->map('placement', $builder->fromValue('TOPIC'))
+    );
+
     // Add topicsCreated field to the user object.
     $registry->addFieldResolver('User', 'topicsCreated',
       $builder->produce('social_topics_created')

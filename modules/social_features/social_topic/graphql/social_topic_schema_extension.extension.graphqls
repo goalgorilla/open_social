@@ -57,6 +57,17 @@ extend type Query {
   List of all topic types on the platform.
   """
   topicTypes: [TopicType!]!
+  """
+  List of all content tag categories that are applicable to topics.
+  """
+  topicTagCategories: [ContentTagCategory!]!
+}
+
+extend enum ContentTagPlacement {
+  """
+  This content type can be placed on a Topic object.
+  """
+  TOPIC
 }
 
 extend type User {

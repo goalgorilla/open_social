@@ -1,7 +1,7 @@
 """
 A type of content on Open Social which allows users to organize, discuss topics, and join activities.
 """
-type Event implements Node & Commentable {
+type Event implements Node & Commentable & ContentTaggable {
   """
   The unique identifier for the event.
   """
@@ -18,6 +18,11 @@ type Event implements Node & Commentable {
   A hero image for the event.
   """
   heroImage: Image
+  """
+  The content tags this event is tagged with grouped by the categories they belong in.
+  Each event is classified with content tags to make it clear what this event is about.
+  """
+  contentTagCategories: [ContentTaggableSelectedTagCategories!]!
   """
   The message of the event as rendered HTML.
   """

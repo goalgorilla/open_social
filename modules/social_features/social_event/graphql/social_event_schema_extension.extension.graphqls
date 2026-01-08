@@ -33,6 +33,18 @@ extend type Query {
   List of all event types on the platform.
   """
   eventTypes: [EventType!]!
+
+  """
+  List of all content tag categories that are applicable to events.
+  """
+  eventTagCategories: [ContentTagCategory!]!
+}
+
+extend enum ContentTagPlacement {
+  """
+  This content type can be placed on an Event object.
+  """
+  EVENT
 }
 
 extend type User {

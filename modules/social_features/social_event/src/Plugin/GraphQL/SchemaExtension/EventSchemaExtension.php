@@ -169,6 +169,11 @@ class EventSchemaExtension extends SdlSchemaExtensionPluginBase {
         ->map('uuid', $builder->fromArgument('id'))
     );
 
+    $registry->addFieldResolver('Query', 'eventTagCategories',
+      $builder->produce('content_tag_categories_by_placement')
+        ->map('placement', $builder->fromValue('EVENT'))
+    );
+
     $registry->addFieldResolver('Query', 'eventTypes',
       $builder->produce('taxonomy_load_tree')
         ->map('vid', $builder->fromValue('event_types'))

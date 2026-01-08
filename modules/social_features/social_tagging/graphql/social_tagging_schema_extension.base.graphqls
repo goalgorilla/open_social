@@ -1,0 +1,117 @@
+"""
+Tags are used to classify and describe content.
+Each item is associated with one or more tags to clearly indicate its subject or purpose.
+A tag can reference any type of content defined by platform administrators, not being limited to a single content type.
+"""
+type ContentTag implements Node {
+  """
+  The unique identifier for the content.
+  """
+  id: ID!
+  """
+  The human readable name of the content.
+  """
+  label: String!
+  """
+  The parent category of which this tag belongs to.
+  """
+  parent: ContentTagCategory
+}
+
+type ContentTagCategory implements Node {
+  """
+  The unique identifier for the content tag category.
+  """
+  id: ID!
+  """
+  The human readable name of the content tag category.
+  """
+  label: String!
+  """
+  The types of content that this category can be placed in.
+  """
+  placement: [ContentTagPlacement!]!
+  """
+  The content tags contained in this category.
+  """
+  contentTags(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+  ): ContentTagCategoryContentTagConnection!
+}
+
+type ContentTagCategoryContentTagEdge implements Edge {
+  cursor: Cursor!
+  node: ContentTag!
+}
+
+type ContentTagCategoryContentTagConnection implements Connection {
+  edges: [ContentTagCategoryContentTagEdge!]!
+  nodes: [ContentTag!]!
+  pageInfo: PageInfo!
+}
+
+"""
+Things that can be tagged with content tags.
+"""
+interface ContentTaggable implements Node {
+  """
+  The unique identifier for the taggable content.
+  """
+  id: ID!
+  """
+  The list of tag categories this content has tags in.
+  """
+  contentTagCategories: [ContentTaggableSelectedTagCategories!]!
+}
+
+"""
+Provides information about the tags selected for a piece of content.
+Categories for content tags are configurable. This type groups the category together with the selected tags.
+"""
+type ContentTaggableSelectedTagCategories {
+  """
+  The category information in which the selected tags live.
+  """
+  category: ContentTagCategory!
+  """
+  The tags that are selected for the content within the category.
+  """
+  contentTags(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+  ): ContentTaggableSelectedTagConnection!
+}
+
+type ContentTaggableSelectedTagEdge implements Edge {
+  cursor: Cursor!
+  node: ContentTag!
+}
+
+type ContentTaggableSelectedTagConnection implements Connection {
+  edges: [ContentTaggableSelectedTagEdge!]!
+  nodes: [ContentTag!]!
+  pageInfo: PageInfo!
+}
+
+"""
+The objects that content tags can be applied to.
+This is a list of all types that implement the ContentTaggable interface.
+"""
+enum ContentTagPlacement

@@ -1,0 +1,10 @@
+extend type Query {
+  """
+  Get information about a content tag category.
+  """
+  contentTagCategory(id: ID!) : ContentTagCategory @allowBot(requiredScopes: ["content_tag:view"])
+  """
+  Get information about a specific content tag.
+  """
+  contentTag(id: ID!): ContentTag @allowBot(requiredScopes: ["content_tag:view"])
+}

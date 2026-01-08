@@ -5,7 +5,7 @@ or organise discussions.
 A topic can be a piece of news, blog, a document, or another type depending
 on the platform.
 """
-type Topic implements Node & Commentable {
+type Topic implements Node & Commentable & ContentTaggable {
   """
   The unique identifier for the topic.
   """
@@ -30,6 +30,11 @@ type Topic implements Node & Commentable {
   To get a list of the available topic types for a platform see `Query.topicTypes`.
   """
   type: TopicType!
+  """
+  The content tags this topic is tagged with grouped by the categories they belong in.
+  Each topic is classified with content tags to make it clear what this topic is about.
+  """
+  contentTagCategories: [ContentTaggableSelectedTagCategories!]!
   """
   The message of the topic as rendered HTML.
   """
