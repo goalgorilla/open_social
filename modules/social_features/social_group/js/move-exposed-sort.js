@@ -47,7 +47,29 @@
       });
 
       // Move results count from view header to extra area.
-      self.insertViewsResultCount(context);
+      const viewsInContext =
+        (context.querySelectorAll && context.querySelectorAll('.view')) ||
+        document.querySelectorAll('.view');
+
+      viewsInContext.forEach(function (viewElement) {
+        self.insertViewsResultCount(viewElement);
+      });
+
+      // Ensure result count updates after Views AJAX refresh (filters/pager).
+      once('move-exposed-sort-ajax', 'body', context).forEach(function () {
+        // Uses global jQuery from Drupal core.
+        if (typeof jQuery !== 'undefined') {
+          jQuery(document).ajaxComplete(function (event, xhr, settings) {
+            // Only react to Views AJAX requests.
+            if (settings && settings.extraData && settings.extraData.view_name) {
+              const views = document.querySelectorAll('.view');
+              views.forEach(function (viewElement) {
+                Drupal.behaviors.moveExposedSortToViewHeader.insertViewsResultCount(viewElement);
+              });
+            }
+          });
+        }
+      });
     },
 
     /**
@@ -135,25 +157,41 @@
 
     /**
      * Moves results count from view header to extra area with formatted plural.
+     *
+     * @param {HTMLElement} viewElement
+     *   The root element of the view.
      */
-    insertViewsResultCount: function (context) {
-      const resultsCountElement = document.querySelector('.view-header .results-count');
+    insertViewsResultCount: function (viewElement) {
       const extraAreaElement = document.querySelector('.extra-area');
 
-      if (!resultsCountElement || !extraAreaElement) {
+      if (!extraAreaElement || !viewElement) {
         return;
       }
 
-      // Get the count value from the result count element.
-      const countText = resultsCountElement.textContent.trim();
-      const count = parseInt(countText, 10);
+      let count = 0;
 
-      if (isNaN(count)) {
-        return;
+      // Try to find an existing results-count element within this view.
+      let resultsCountElement =
+        viewElement.querySelector('.view-header .results-count') ||
+        document.querySelector('.view-header .results-count');
+
+      if (resultsCountElement) {
+        // Get the count value from the result count element.
+        const countText = resultsCountElement.textContent.trim();
+        const parsedCount = parseInt(countText, 10);
+
+        if (!isNaN(parsedCount)) {
+          count = parsedCount;
+        }
+
+        // Remove the original element from the view header.
+        resultsCountElement.remove();
       }
-
-      // Remove the original element from the view header.
-      resultsCountElement.remove();
+      else {
+        // Fallback when there is no result.
+        const rows = viewElement.querySelectorAll('.view-content .views-row');
+        count = rows.length;
+      }
 
       // Create a themed span with formatted plural text.
       const formattedText = Drupal.formatPlural(count, '1 member', '@count members');
