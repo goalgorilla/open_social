@@ -114,10 +114,20 @@ class ActivityNotifications extends ControllerBase {
     $entity_id = $entity->id();
     $entity_type = $entity->getEntityTypeId();
     if ($entity instanceof UserInterface || $entity instanceof GroupInterface) {
-      $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
-      $entity_query->condition('field_activity_recipient_' . $entity_type, $entity_id, '=');
-      $entity_query->accessCheck();
-      $ids = $entity_query->execute();
+      $ids = $this->entityTypeManager()->getStorage('activity')->getQuery()
+        ->condition('field_activity_recipient_' . $entity_type, $entity_id, '=')
+        ->accessCheck(TRUE)
+        ->execute();
+
+      // Check activities where the group is the related entity.
+      if ($entity instanceof GroupInterface) {
+        $related_ids = $this->entityTypeManager()->getStorage('activity')->getQuery()
+          ->condition('field_activity_entity.target_id', $entity_id, '=')
+          ->condition('field_activity_entity.target_type', $entity_type, '=')
+          ->accessCheck(TRUE)
+          ->execute();
+        $ids = array_merge($ids, $related_ids);
+      }
     }
     elseif ($entity instanceof GroupRelationshipInterface) {
       $linked_entity = $entity->getEntity();
@@ -128,20 +138,20 @@ class ActivityNotifications extends ControllerBase {
       // types are correct.
       // See https://github.com/goalgorilla/open_social/pull/2948#issuecomment-1137102029
       if ($linked_entity !== NULL && $linked_entity->getEntityTypeId() === 'node' && $group->id()) {
-        $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
-        $entity_query->condition('field_activity_entity.target_id', $linked_entity->id(), '=');
-        $entity_query->condition('field_activity_entity.target_type', $linked_entity->getEntityTypeId(), '=');
-        $entity_query->condition('field_activity_recipient_group', $group->id(), '=');
-        $entity_query->accessCheck();
-        $ids = $entity_query->execute();
+        $ids = $this->entityTypeManager()->getStorage('activity')->getQuery()
+          ->condition('field_activity_entity.target_id', $linked_entity->id(), '=')
+          ->condition('field_activity_entity.target_type', $linked_entity->getEntityTypeId(), '=')
+          ->condition('field_activity_recipient_group', $group->id(), '=')
+          ->accessCheck(TRUE)
+          ->execute();
       }
     }
     elseif (!$entity instanceof ActivityInterface) {
-      $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
-      $entity_query->condition('field_activity_entity.target_id', $entity_id, '=');
-      $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
-      $entity_query->accessCheck();
-      $ids = $entity_query->execute();
+      $ids = $this->entityTypeManager()->getStorage('activity')->getQuery()
+        ->condition('field_activity_entity.target_id', $entity_id, '=')
+        ->condition('field_activity_entity.target_type', $entity_type, '=')
+        ->accessCheck(TRUE)
+        ->execute();
     }
 
     return $ids;
