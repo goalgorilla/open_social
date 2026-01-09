@@ -7,6 +7,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\user_segments\Attribute\UserSegmentRule;
 use Drupal\user_segments\DataObject\Condition;
@@ -409,6 +410,14 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase {
     $role_entities = $this->entityTypeManager
       ->getStorage('user_role')
       ->loadMultiple();
+
+    // Exclude system-level roles from user segment selection.
+    // Anonymous users are not actual user accounts and cannot be in segments.
+    // Authenticated is a default Drupal role that all logged-in users have,
+    // making it too broad for meaningful segment filtering. Only specific roles
+    // like sitemanager and contentmanager should be selectable for segments.
+    unset($role_entities[AccountInterface::ANONYMOUS_ROLE]);
+    unset($role_entities[AccountInterface::AUTHENTICATED_ROLE]);
 
     $roles = [];
     foreach ($role_entities as $role_entity) {
