@@ -24,9 +24,10 @@ function social_profile_organization_tag_form_alter(array &$form, FormStateInter
 
   if (in_array($form_id, $profile_forms)) {
     $user = \Drupal::currentUser();
-    // Check for permission on custom edit profile organization tags,
-    // only CM+ who can actually edit and add profile organization tags.
-    if (!$user->hasPermission('edit profile organization tags')) {
+    // Hide the organization tag field if the user is not a Content Manager+
+    // or if the social_organization module is enabled (to avoid conflicts).
+    if (!$user->hasPermission('edit profile organization tags')
+      || \Drupal::moduleHandler()->moduleExists('social_organization')) {
       $form['field_profile_organization_tag']['#access'] = FALSE;
     }
   }

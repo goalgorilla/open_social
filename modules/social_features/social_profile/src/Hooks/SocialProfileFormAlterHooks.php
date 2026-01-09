@@ -134,21 +134,6 @@ class SocialProfileFormAlterHooks implements ContainerInjectionInterface {
       return;
 
     }
-    // Hide any organization fields if affiliation feature is enabled, because
-    // affiliation feature is resolving the same business logic and both
-    // features can not co-exist.
-    // Fields to remove from UI:
-    // 1. field_profile_organization_tag
-    // 2. field_profile_org_details.
-    else {
-      // 1. Remove "Organization tag" (field_profile_organization_tag) field.
-      // Module: social_profile_organization_tag
-      $form['field_profile_organization_tag']['#access'] = FALSE;
-
-      // 2. Remove "Organizations" (field_profile_org_details) field.
-      // Module: social_organization
-      $form['field_profile_org_details']['#access'] = FALSE;
-    }
 
     // Conditional state: Show other affiliations (paragraph field) if other
     // affiliation (checkbox) is ticked.
