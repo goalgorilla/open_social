@@ -1181,44 +1181,47 @@ function social_profile_preprocess_field__field_activity_output_text(array &$var
   /** @var \Drupal\activity_creator\ActivityInterface $activity */
   $activity = $variables['element']['#object'];
 
+  /** @var \Drupal\user\UserInterface|null $account */
   $account = $activity->getOwner();
 
-  /** @var \Drupal\profile\ProfileStorageInterface $profileStorage */
-  $profileStorage = \Drupal::entityTypeManager()->getStorage('profile');
+  if ($account instanceof UserInterface) {
+    /** @var \Drupal\profile\ProfileStorageInterface $profileStorage */
+    $profileStorage = \Drupal::entityTypeManager()->getStorage('profile');
 
-  $profile = $profileStorage->loadByUser($account, 'profile');
-  if ($profile !== NULL) {
-    $helper = \Drupal::service(SocialProfilePreviewHelper::class);
+    $profile = $profileStorage->loadByUser($account, 'profile');
+    if ($profile !== NULL) {
+      $helper = \Drupal::service(SocialProfilePreviewHelper::class);
 
-    $helper->alter($profile, $variables, 'temp_attributes');
+      $helper->alter($profile, $variables, 'temp_attributes');
 
-    if (isset($variables['temp_attributes'])) {
-      $url = $account->toUrl()->setAbsolute()->toString();
+      if (isset($variables['temp_attributes'])) {
+        $url = $account->toUrl()->setAbsolute()->toString();
 
-      $old_markup = SocialProfileMarkupHelper::generateProfileLinkPrefix($url) .
-        SocialProfileMarkupHelper::SUFFIX;
-      $new_markup = SocialProfileMarkupHelper::generateProfileLinkPrefix($url) .
-        SocialProfileMarkupHelper::generateProfileLinkTagProperties($variables) .
-        SocialProfileMarkupHelper::SUFFIX;
+        $old_markup = SocialProfileMarkupHelper::generateProfileLinkPrefix($url) .
+          SocialProfileMarkupHelper::SUFFIX;
+        $new_markup = SocialProfileMarkupHelper::generateProfileLinkPrefix($url) .
+          SocialProfileMarkupHelper::generateProfileLinkTagProperties($variables) .
+          SocialProfileMarkupHelper::SUFFIX;
 
-      unset($variables['temp_attributes']);
+        unset($variables['temp_attributes']);
 
-      /** @var \Drupal\Core\Render\RendererInterface $renderer */
-      $renderer = \Drupal::service('renderer');
+        /** @var \Drupal\Core\Render\RendererInterface $renderer */
+        $renderer = \Drupal::service('renderer');
 
-      foreach ($variables['items'] as &$item) {
-        $rendered_content = $renderer->renderInIsolation($item['content']);
-        // Use regex to match the link tag with optional space before closing >.
-        // Escape special regex characters in the URL.
-        $escaped_url = preg_quote($url, '/');
-        $old_pattern = '/<a href="' . $escaped_url . '"\s*>/';
-        $item['content'] = [
-          '#markup' => preg_replace(
-            $old_pattern,
-            $new_markup,
-            $rendered_content,
-          ),
-        ];
+        foreach ($variables['items'] as &$item) {
+          $rendered_content = $renderer->renderInIsolation($item['content']);
+          // Regex to match the link tag with optional space before closing >.
+          // Escape special regex characters in the URL.
+          $escaped_url = preg_quote($url, '/');
+          $old_pattern = '/<a href="' . $escaped_url . '"\s*>/';
+          $item['content'] = [
+            '#markup' => preg_replace(
+              $old_pattern,
+              $new_markup,
+              $rendered_content,
+            ),
+          ];
+        }
       }
     }
   }
