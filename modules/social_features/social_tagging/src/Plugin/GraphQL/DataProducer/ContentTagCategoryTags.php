@@ -100,7 +100,7 @@ class ContentTagCategoryTags extends DataProducerPluginBase implements Container
   public function resolve(TermInterface $category, ?string $after, ?string $before, ?int $first, ?int $last, bool $reverse): EntityConnection {
     $query_helper = new ContentTagQueryHelper(
       (int) $category->id(),
-      'CREATED_AT',
+      'WEIGHT',
       $this->entityTypeManager,
       $this->graphqlEntityBuffer
     );

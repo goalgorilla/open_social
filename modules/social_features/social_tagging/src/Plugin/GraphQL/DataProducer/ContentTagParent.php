@@ -61,7 +61,11 @@ class ContentTagParent extends DataProducerPluginBase implements ContainerFactor
     $parents = $this->termStorage->loadParents((int) $tag->id());
 
     if (!empty($parents)) {
-      return reset($parents);
+      $parent = reset($parents);
+      // Only return the parent if it is published.
+      if ($parent->isPublished()) {
+        return $parent;
+      }
     }
 
     return NULL;

@@ -57,6 +57,8 @@ class ContentTaggableSelectedTagQueryHelper extends ConnectionQueryHelperBase {
    *   The GraphQL entity buffer.
    */
   public function __construct(ContentEntityInterface $entity, int $category_id, string $sort_key, EntityTypeManagerInterface $entity_type_manager, EntityBuffer $graphql_entity_buffer) {
+    parent::__construct($sort_key, $entity_type_manager, $graphql_entity_buffer);
+
     $this->entity = $entity;
     $this->categoryId = $category_id;
     $this->entityTypeManager = $entity_type_manager;
@@ -78,8 +80,7 @@ class ContentTaggableSelectedTagQueryHelper extends ConnectionQueryHelperBase {
 
     // If no tags are selected, return an empty query.
     if (empty($selected_tag_ids)) {
-      $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
-      $query = $term_storage->getQuery();
+      $query = $this->termStorage->getQuery();
       return $query
         ->condition('tid', NULL, 'IS NULL')
         ->accessCheck();
@@ -111,16 +112,14 @@ class ContentTaggableSelectedTagQueryHelper extends ConnectionQueryHelperBase {
 
     // If no tags match the category, return an empty query.
     if (empty($filtered_tag_ids)) {
-      $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
-      $query = $term_storage->getQuery();
+      $query = $this->termStorage->getQuery();
       return $query
         ->condition('tid', NULL, 'IS NULL')
         ->accessCheck();
     }
 
     // Query taxonomy terms that match the filtered IDs.
-    $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
-    $query = $term_storage->getQuery();
+    $query = $this->termStorage->getQuery();
     $query = $query
       ->condition('vid', 'social_tagging')
       ->condition('tid', $filtered_tag_ids, 'IN')

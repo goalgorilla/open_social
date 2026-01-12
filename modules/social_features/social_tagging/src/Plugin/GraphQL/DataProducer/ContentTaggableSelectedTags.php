@@ -108,7 +108,7 @@ class ContentTaggableSelectedTags extends DataProducerPluginBase implements Cont
     $query_helper = new ContentTaggableSelectedTagQueryHelper(
       $entity,
       (int) $category->id(),
-      'CREATED_AT',
+      'WEIGHT',
       $this->entityTypeManager,
       $this->graphqlEntityBuffer
     );

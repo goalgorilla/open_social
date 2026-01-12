@@ -39,6 +39,8 @@ class ContentTagQueryHelper extends ConnectionQueryHelperBase {
    *   The GraphQL entity buffer.
    */
   public function __construct(int $parent_id, string $sort_key, EntityTypeManagerInterface $entity_type_manager, EntityBuffer $graphql_entity_buffer) {
+    parent::__construct($sort_key, $entity_type_manager, $graphql_entity_buffer);
+
     $this->parentId = $parent_id;
     $this->entityTypeManager = $entity_type_manager;
     $this->graphqlEntityBuffer = $graphql_entity_buffer;
