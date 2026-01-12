@@ -359,3 +359,21 @@ Used on input fields that require discerning between not-updating the field valu
 input OptionalPhoneNumber {
   value: PhoneNumber
 }
+
+"""
+The visibility level of content on the platform.
+"""
+enum ContentVisibility {
+  """
+  Content is visible to all users, including anonymous visitors.
+  """
+  PUBLIC
+  """
+  Content is visible only to authenticated community members.
+  """
+  COMMUNITY
+  """
+  Content is visible only to members of the specific group.
+  """
+  GROUP_MEMBER
+}

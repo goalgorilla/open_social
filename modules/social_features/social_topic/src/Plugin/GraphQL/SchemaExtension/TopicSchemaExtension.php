@@ -4,7 +4,7 @@ namespace Drupal\social_topic\Plugin\GraphQL\SchemaExtension;
 
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
-use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
+use Drupal\social_graphql\Plugin\GraphQL\SchemaExtension\SchemaExtensionPluginBase;
 
 /**
  * Adds topic data to the Open Social GraphQL API.
@@ -16,7 +16,7 @@ use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
  *   schema = "open_social"
  * )
  */
-class TopicSchemaExtension extends SdlSchemaExtensionPluginBase {
+class TopicSchemaExtension extends SchemaExtensionPluginBase {
 
   /**
    * {@inheritdoc}
@@ -26,6 +26,25 @@ class TopicSchemaExtension extends SdlSchemaExtensionPluginBase {
 
     $this->addQueryFields($registry, $builder);
     $this->addTopicFields($registry, $builder);
+
+    // Register createTopic mutation using the trait method.
+    $this->registerMutationResolver($registry, $builder, 'createTopic');
+
+    // Register CreateTopicPayload resolvers.
+    $registry->addFieldResolver('CreateTopicPayload', 'clientMutationId',
+      $builder->produce('payload_client_mutation_id')
+        ->map('payload', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('CreateTopicPayload', 'errors',
+      $builder->produce('payload_violations')
+        ->map('payload', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('CreateTopicPayload', 'topic',
+      $builder->produce('payload_topic')
+        ->map('payload', $builder->fromParent())
+    );
   }
 
   /**
@@ -66,6 +85,14 @@ class TopicSchemaExtension extends SdlSchemaExtensionPluginBase {
       $builder->produce('field')
         ->map('entity', $builder->fromParent())
         ->map('field', $builder->fromValue('field_topic_image'))
+    );
+
+    $registry->addFieldResolver('Topic', 'visibility',
+      $builder->compose(
+        $builder->fromPath('entity:node', 'field_content_visibility.0.value'),
+        $builder->produce('content_visibility_mapper')
+          ->map('value', $builder->fromParent())
+      )
     );
 
     $registry->addFieldResolver('Topic', 'created',

@@ -66,3 +66,15 @@ extend type User {
   """
   topicsCreated: Int!
 }
+
+extend type Mutation {
+  """
+  Create a new topic on the platform.
+  """
+  createTopic(
+    """
+    Input data for creating the topic.
+    """
+    input: CreateTopicInput!
+  ): CreateTopicPayload @allowBot(requiredScopes: ["topic:write"])
+}

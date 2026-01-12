@@ -35,6 +35,10 @@ type Topic implements Node & Commentable {
   """
   bodyHtml: Html!
   """
+  The visibility of the topic content.
+  """
+  visibility: ContentVisibility!
+  """
   List of topic comments.
 
   If no limits are specified will limit to 10 results.
@@ -97,4 +101,45 @@ type TopicType {
   The human readable name of the topic type.
   """
   label: String
+}
+
+"""
+Input for creating a new topic.
+"""
+input CreateTopicInput {
+  """
+  A unique identifier for the client performing the mutation.
+  Must be a valid UUIDv4 format.
+  """
+  clientMutationId: UUIDv4
+  """
+  The type of the topic. Must be a valid topic type ID.
+  """
+  type: ID!
+  """
+  The title of the topic (max 255 characters).
+  """
+  title: String!
+  """
+  The visibility of the topic.
+  """
+  visibility: ContentVisibility!
+}
+
+"""
+Payload returned after creating a topic.
+"""
+type CreateTopicPayload {
+  """
+  The client mutation ID from the input.
+  """
+  clientMutationId: UUIDv4
+  """
+  List of validation errors, if any.
+  """
+  errors: [Violation!]
+  """
+  The created topic, if successful.
+  """
+  topic: Topic
 }

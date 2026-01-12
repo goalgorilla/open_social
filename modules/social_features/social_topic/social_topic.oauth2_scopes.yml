@@ -1,0 +1,25 @@
+# Topic scopes for GraphQL API access
+"topic":
+  description: 'Provides access to all topic data on the platform.'
+  umbrella: true
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read and write any topic information you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read and write any topic information on the platform.'
+
+"topic:write":
+  parent: topic
+  description: 'Provides the ability to create, update, and delete topics on the platform.'
+  umbrella: false
+  granularity: permission
+  permission: 'create topic content'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to create, update, and delete topics you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to create, update, and delete any topic on the platform.'
