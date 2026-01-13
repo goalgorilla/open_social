@@ -168,6 +168,7 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
     $this->installSchema('layout_builder', ['inline_block_usage']);
 
     $this->installConfig([
+      'social_tagging',
       'node',
       'user',
       'profile',

@@ -129,6 +129,11 @@ input CreateTopicInput {
   The visibility of the topic.
   """
   visibility: ContentVisibility!
+  """
+  Content tags associated with the topic (optional).
+  If provided, each tag ID must be valid.
+  """
+  contentTags: [ID!]
 }
 
 """

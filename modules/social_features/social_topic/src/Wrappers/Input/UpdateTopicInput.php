@@ -11,7 +11,6 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
-use Drupal\social_graphql\Wrappers\InputBase;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 
@@ -20,7 +19,7 @@ use Drupal\user\UserInterface;
  *
  * Provides validation and easy access to the input to update a topic.
  */
-class UpdateTopicInput extends InputBase {
+class UpdateTopicInput extends TopicInputBase {
 
   use VisibilityTrait;
 

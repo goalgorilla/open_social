@@ -164,6 +164,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     $this->installSchema('layout_builder', ['inline_block_usage']);
 
     $this->installConfig([
+      'social_tagging',
       'node',
       'user',
       'profile',
@@ -284,9 +285,9 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     $this->assertEquals('Test Topic', $result->data['createTopic']['topic']['title']);
     $this->assertEquals('PUBLIC', $result->data['createTopic']['topic']['visibility']);
 
+    // Verify the node was actually created.
     $topic_id = $result->data['createTopic']['topic']['id'];
     $node_storage = \Drupal::entityTypeManager()->getStorage('node');
-    $node_storage->resetCache();
     $entity_repository = \Drupal::service('entity.repository');
     $loaded_node = $entity_repository->loadEntityByUuid('node', $topic_id);
     if (empty($loaded_node)) {
@@ -559,6 +560,328 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     }
     $errorMessage = implode(' | ', $errorMessages);
     $this->assertStringContainsString("Missing scope 'topic:write'", $errorMessage, 'Expected error about missing topic:write scope');
+  }
+
+  /**
+   * Test creating a topic with content tags.
+   */
+  public function testCreateTopicWithTags(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Tutorial',
+    ]);
+    $topicType->save();
+
+    $tag1 = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Technology',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tag1->save();
+
+    $tag2 = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Education',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tag2->save();
+
+    $clientMutationId = '650e8400-e29b-41d4-a716-446655440001';
+
+    $query = <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          clientMutationId
+          errors
+          topic {
+            id
+            title
+          }
+        }
+      }
+      GQL;
+
+    $variables = [
+      'input' => [
+        'clientMutationId' => $clientMutationId,
+        'type' => $topicType->uuid(),
+        'title' => 'Tutorial: Getting Started',
+        'visibility' => 'COMMUNITY',
+        'contentTags' => [$tag1->uuid(), $tag2->uuid()],
+      ],
+    ];
+
+    // Execute the mutation.
+    $context = new RenderContext();
+    $renderer = \Drupal::service('renderer');
+    $result = $renderer->executeInRenderContext(
+      $context,
+      function () use ($query, $variables) {
+        return $this->server->executeOperation(
+          OperationParams::create([
+            'query' => $query,
+            'variables' => $variables,
+          ])
+        );
+      }
+    );
+
+    // Verify the result structure following assertResults pattern.
+    // Check for GraphQL errors (should be empty).
+    $this->assertEmpty($result->errors, 'No GraphQL errors expected');
+
+    // Verify the data structure matches expected format.
+    $data = $result->toArray();
+    $this->assertArrayHasKey('data', $data, 'No result data.');
+    $this->assertEquals($clientMutationId, $data['data']['createTopic']['clientMutationId']);
+    $this->assertEmpty($data['data']['createTopic']['errors']);
+    $this->assertNotNull($data['data']['createTopic']['topic']);
+    $this->assertEquals('Tutorial: Getting Started', $data['data']['createTopic']['topic']['title']);
+    $topic_id = $data['data']['createTopic']['topic']['id'];
+    $this->assertNotEmpty($topic_id, 'Topic ID should be returned');
+
+    // Verify the content tags were actually saved.
+    $entity_repository = \Drupal::service('entity.repository');
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $created_topic = $entity_repository->loadEntityByUuid('node', $topic_id);
+    $this->assertNotNull($created_topic, 'Topic should be created');
+    /** @var \Drupal\node\NodeInterface $created_topic */
+    $tag_values = $created_topic->get('social_tagging')->getValue();
+    $tag_ids = [];
+    foreach ($tag_values as $value) {
+      if (!empty($value['target_id'])) {
+        $term = $term_storage->load($value['target_id']);
+        if ($term !== NULL) {
+          $tag_ids[] = $term->id();
+        }
+      }
+    }
+    $this->assertContains($tag1->id(), $tag_ids, 'Tag 1 should be assigned to topic');
+    $this->assertContains($tag2->id(), $tag_ids, 'Tag 2 should be assigned to topic');
+  }
+
+  /**
+   * Test validation error for invalid content tag UUID.
+   */
+  public function testCreateTopicInvalidContentTag(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $fakeTagUuid = '12345678-1234-1234-1234-123456789999';
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'contentTags' => [$fakeTagUuid],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CONTENT_TAG_NOT_FOUND:' . $fakeTagUuid],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error for content tag with invalid usage (not for topics).
+   */
+  public function testCreateTopicWithInvalidContentTagUsage(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $tagA = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Tag',
+      'field_category_usage' => serialize(['node_event']),
+      'status' => 1,
+    ]);
+    $tagA->save();
+
+    $tagB = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Topic Tag',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tagB->save();
+
+    $tagC = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Shared Tag',
+      'field_category_usage' => serialize(['node_event', 'node_topic']),
+      'status' => 1,
+    ]);
+    $tagC->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'contentTags' => [$tagA->uuid(), $tagB->uuid(), $tagC->uuid()],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CONTENT_TAG_INVALID_USAGE:' . $tagA->uuid()],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $query = <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+            title
+          }
+        }
+      }
+      GQL;
+
+    $variables = [
+      'input' => [
+        'type' => $topicType->uuid(),
+        'title' => 'Test Topic With Valid Tags',
+        'visibility' => 'PUBLIC',
+        'contentTags' => [$tagB->uuid(), $tagC->uuid()],
+      ],
+    ];
+
+    $context = new RenderContext();
+    $renderer = \Drupal::service('renderer');
+    $result = $renderer->executeInRenderContext(
+      $context,
+      function () use ($query, $variables) {
+        return $this->server->executeOperation(
+          OperationParams::create([
+            'query' => $query,
+            'variables' => $variables,
+          ])
+        );
+      }
+    );
+
+    $this->assertEmpty($result->errors, 'No GraphQL errors expected');
+    $data = $result->toArray();
+    $this->assertArrayHasKey('data', $data, 'No result data.');
+    $this->assertEmpty($data['data']['createTopic']['errors']);
+    $this->assertNotNull($data['data']['createTopic']['topic']);
+    $this->assertEquals('Test Topic With Valid Tags', $data['data']['createTopic']['topic']['title']);
+    $topic_id = $data['data']['createTopic']['topic']['id'];
+    $this->assertNotEmpty($topic_id, 'Topic ID should be returned');
+
+    $entity_repository = \Drupal::service('entity.repository');
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $created_topic = $entity_repository->loadEntityByUuid('node', $topic_id);
+    $this->assertNotNull($created_topic, 'Topic should be created');
+    /** @var \Drupal\node\NodeInterface $created_topic */
+    $tag_values = $created_topic->get('social_tagging')->getValue();
+    $tag_ids = [];
+    foreach ($tag_values as $value) {
+      if (!empty($value['target_id'])) {
+        $term = $term_storage->load($value['target_id']);
+        if ($term !== NULL) {
+          $tag_ids[] = $term->id();
+        }
+      }
+    }
+    $this->assertContains($tagB->id(), $tag_ids, 'Tag B (topic-only) should be assigned to topic');
+    $this->assertContains($tagC->id(), $tag_ids, 'Tag C (shared) should be assigned to topic');
+    $this->assertNotContains($tagA->id(), $tag_ids, 'Tag A (event-only) should NOT be assigned to topic');
+  }
+
+  /**
+   * Test validation error when providing too many content tags.
+   */
+  public function testCreateTopicTooManyContentTags(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $fake_tag_uuids = [];
+    for ($i = 0; $i < 200; $i++) {
+      $fake_tag_uuids[] = sprintf('12345678-1234-1234-1234-%012d', $i);
+    }
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'contentTags' => $fake_tag_uuids,
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CONTENT_TAGS_LIMIT_EXCEEDED'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
   }
 
 }

@@ -130,6 +130,16 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
       'status' => 1,
     ];
 
+    // Add content tags if provided.
+    if (!empty($input->getContentTags())) {
+      // Convert TermInterface objects to target_id values.
+      $tag_ids = [];
+      foreach ($input->getContentTags() as $tag) {
+        $tag_ids[] = $tag->id();
+      }
+      $node_values['social_tagging'] = $tag_ids;
+    }
+
     /** @var \Drupal\node\NodeInterface $node */
     $node = $node_storage->create($node_values);
 

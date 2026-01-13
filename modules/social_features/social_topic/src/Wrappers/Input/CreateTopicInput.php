@@ -10,7 +10,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\social_graphql\GraphQL\Violation;
-use Drupal\social_graphql\Wrappers\InputBase;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 
@@ -19,7 +18,7 @@ use Drupal\user\UserInterface;
  *
  * Provides validation and easy access to the input to create a topic.
  */
-class CreateTopicInput extends InputBase {
+class CreateTopicInput extends TopicInputBase {
   use VisibilityTrait;
 
   /**
@@ -74,6 +73,13 @@ class CreateTopicInput extends InputBase {
    * The visibility setting.
    */
   protected ?string $visibility = NULL;
+
+  /**
+   * Content tags for the topic.
+   *
+   * @var \Drupal\taxonomy\TermInterface[]
+   */
+  protected array $contentTags = [];
 
   /**
    * Create a new Create Topic Input instance.
@@ -162,6 +168,21 @@ class CreateTopicInput extends InputBase {
         $this->visibility = $input['visibility'];
       }
     }
+
+    // Process content tags if provided.
+    if (array_key_exists('contentTags', $input)) {
+      $validation_result = $this->validateContentTags($input['contentTags']);
+
+      // Add all violations found during validation.
+      if (!empty($validation_result['violations'])) {
+        $this->violations = array_merge($this->violations, $validation_result['violations']);
+      }
+
+      // Only set content tags if all validations passed.
+      if (empty($validation_result['violations'])) {
+        $this->contentTags = $validation_result['valid_tags'];
+      }
+    }
   }
 
   /**
@@ -237,6 +258,16 @@ class CreateTopicInput extends InputBase {
   public function getVisibility(): string {
     assert($this->visibility !== NULL, __FUNCTION__ . " called but visibility was not set.");
     return $this->visibility;
+  }
+
+  /**
+   * Get content tags.
+   *
+   * @return \Drupal\taxonomy\TermInterface[]
+   *   Array of content tags.
+   */
+  public function getContentTags(): array {
+    return $this->contentTags;
   }
 
 }
