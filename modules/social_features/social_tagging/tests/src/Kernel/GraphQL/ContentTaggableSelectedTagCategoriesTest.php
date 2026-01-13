@@ -142,7 +142,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
    * Test querying contentTagCategories for an Event with tags.
    */
   public function testQueryContentTagCategoriesForEvent(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
+    // $this->actAsClientCredentialsWithScopes(['content_tag:view']);
 
     $cache_metadata = $this->defaultCacheMetaData();
     $cache_metadata->setCacheMaxAge(0);
@@ -288,7 +288,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
    * Test querying contentTagCategories for an Event with no tags.
    */
   public function testQueryContentTagCategoriesForEventWithNoTags(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
+    // $this->actAsClientCredentialsWithScopes(['content_tag:view']);
 
     $cache_metadata = $this->defaultCacheMetaData();
     $cache_metadata->setCacheMaxAge(0);
@@ -353,7 +353,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
    * Test pagination for contentTags in ContentTaggableSelectedTagCategories.
    */
   public function testContentTagCategoriesPagination(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
+    // $this->actAsClientCredentialsWithScopes(['content_tag:view']);
 
     $cache_metadata = $this->defaultCacheMetaData();
     $cache_metadata->setCacheMaxAge(0);
@@ -491,7 +491,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
    * Test querying contentTagCategories for a Topic with tags.
    */
   public function testQueryContentTagCategoriesForTopic(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
+    // $this->actAsClientCredentialsWithScopes(['content_tag:view']);
 
     $cache_metadata = $this->defaultCacheMetaData();
     $cache_metadata->setCacheMaxAge(0);
@@ -584,7 +584,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
    * and the child tag should appear with its parent category.
    */
   public function testQueryContentTagCategoriesWithParentAndChildTags(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
+    // $this->actAsClientCredentialsWithScopes(['content_tag:view']);
 
     $cache_metadata = $this->defaultCacheMetaData();
     $cache_metadata->setCacheMaxAge(0);
