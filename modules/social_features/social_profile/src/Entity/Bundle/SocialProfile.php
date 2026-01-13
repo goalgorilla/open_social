@@ -312,7 +312,16 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
       !$this->get('field_group_affiliation')->isEmpty()
     ) {
       $group = $this->get('field_group_affiliation')->entity;
-      if ($group instanceof GroupInterface) {
+      // @todo PROD-34701: Calling access here ensures that the current user is
+      // only shown group information if they're allowed to see it.
+      // However, it has the consequence that for users that are not allowed to
+      // see the group, the manual affiliation (field_other_affiliations) is
+      // shown instead.
+      // The desired outcome is probably that rendering of the field values is
+      // deferred and that the group is still the primary affiliation, but is
+      // just not output anywhere (in the UI or API).
+      // /endtodo.
+      if ($group instanceof GroupInterface && $group->access('view')) {
         $value['affiliation_name'] = $group->label();
 
         // Additionally, add the group type id to the affiliation.

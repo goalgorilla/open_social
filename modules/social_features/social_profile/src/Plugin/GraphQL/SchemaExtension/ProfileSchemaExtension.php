@@ -32,11 +32,21 @@ class ProfileSchemaExtension extends SchemaExtensionPluginBase {
 
     // Profile type fields.
     $registry->addFieldResolver('Profile', 'firstName',
-      $builder->fromPath('entity:profile', 'field_profile_first_name.0.value')
+      $builder->compose(
+        $builder->produce('field')
+          ->map('entity', $builder->fromParent())
+          ->map('field', $builder->fromValue('field_profile_first_name')),
+        $builder->fromPath('field:string', '0.value')
+      )
     );
 
     $registry->addFieldResolver('Profile', 'lastName',
-      $builder->fromPath('entity:profile', 'field_profile_last_name.0.value')
+      $builder->compose(
+        $builder->produce('field')
+          ->map('entity', $builder->fromParent())
+          ->map('field', $builder->fromValue('field_profile_last_name')),
+        $builder->fromPath('field:string', '0.value')
+      )
     );
 
     $registry->addFieldResolver('Profile', 'avatar',
@@ -53,7 +63,12 @@ class ProfileSchemaExtension extends SchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('Profile', 'phone',
-      $builder->fromPath('entity:profile', 'field_profile_phone_number.0.value')
+      $builder->compose(
+        $builder->produce('field')
+          ->map('entity', $builder->fromParent())
+          ->map('field', $builder->fromValue('field_profile_phone_number')),
+        $builder->fromPath('field:telephone', '0.value')
+      )
     );
 
     $registry->addFieldResolver('Profile', 'function',

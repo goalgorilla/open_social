@@ -5,6 +5,7 @@ namespace Drupal\Tests\social_profile\Kernel;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_profile\Entity\Bundle\SocialProfile;
+use Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelperInterface;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 
 /**
@@ -44,6 +45,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     "hux",
     // The actual module under test.
     "social_profile",
+    "social_profile_privacy",
   ];
 
   /**
@@ -131,6 +133,70 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     $result = $this->query($query);
     self::assertSame(200, $result->getStatusCode(), 'user fields are present');
     self::assertSame($expected_data, json_decode($result->getContent(), TRUE), 'user fields are present');
+  }
+
+  /**
+   * Test that field level access is properly applied for profile fields.
+   */
+  public function testFieldLevelAccess() : void {
+    // Test as a specific user with limited permissions so that they can not
+    // view the fields.
+    $this->setUpCurrentUser(
+      [], [
+        // The user is allowed to execute requests.
+        'execute open_social_graphql arbitrary graphql requests',
+        // They're also able to view basic user information.
+        'access user profiles',
+        // They're allowed to see the profiles of users.
+        'view any profile',
+      ]
+    );
+    // Ensure the firstName, lastName, and phone fields can not be seen.
+    $this
+      ->config('social_profile_privacy.settings')
+      ->set(
+        'fields',
+        [
+          'field_profile_first_name' => SocialProfilePrivacyHelperInterface::HIDE,
+          'field_profile_last_name' => SocialProfilePrivacyHelperInterface::HIDE,
+          'field_profile_phone_number' => SocialProfilePrivacyHelperInterface::HIDE,
+        ]
+      )
+      ->save(TRUE);
+
+    $test_user = $this->createUser();
+    assert($test_user !== FALSE, "Could not create test user");
+    $profile = $this->ensureTestProfile($test_user, 'profile');
+    assert($profile instanceof SocialProfile);
+    $query = "
+      query {
+        user(id: \"{$test_user->uuid()}\") {
+          profile {
+            firstName
+            lastName
+            phone
+          }
+        }
+      }
+    ";
+    $expected_data = [
+      'data' => [
+        'user' => [
+          'profile' => [
+            'firstName' => NULL,
+            'lastName' => NULL,
+            'phone' => NULL,
+          ],
+        ],
+      ],
+    ];
+
+    // @todo Move to QueryResultAssertionTrait::assertResults and add metadata.
+    $result = $this->query($query);
+    $response_body = $result->getContent();
+    assert($response_body !== FALSE);
+    self::assertSame(200, $result->getStatusCode(), 'Error executing the query');
+    self::assertSame($expected_data, json_decode($response_body, TRUE), 'Profile fields did not return NULL as they should');
   }
 
   /**

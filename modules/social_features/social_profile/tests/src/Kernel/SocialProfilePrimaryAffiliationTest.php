@@ -7,7 +7,9 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupMembership;
+use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
+use Drupal\group\PermissionScopeInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\profile\Entity\Profile;
@@ -15,6 +17,7 @@ use Drupal\social_profile\Entity\Bundle\SocialProfile;
 use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_profile\GroupAffiliation;
 use Drupal\Tests\user\Traits\UserCreationTrait;
+use Drupal\user\RoleInterface;
 
 /**
  * Tests the getPrimaryAffiliation() method of SocialProfile.
@@ -124,6 +127,8 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
       'Test Group Type',
       'Test Group'
     );
+    // We set the current user so that we have access to view the group.
+    $this->setCurrentUser($profile->getOwner());
 
     $affiliation = $profile->getPrimaryAffiliation();
 
@@ -156,6 +161,8 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
       'Test Function'
     );
 
+    // We set the current user so that we have access to view the group.
+    $this->setCurrentUser($profile->getOwner());
     $affiliation = $profile->getPrimaryAffiliation();
 
     // @phpstan-ignore-next-line method.alreadyNarrowedType
@@ -221,6 +228,18 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
       'field_other_affiliations' => $paragraph,
     ]);
     $profile->save();
+
+    // For some reason this test does not make the user a member, this means
+    // that the affiliation created is actually invalid. Upon fixing a security
+    // issue this test stopped working.
+    // Because the goal of this test is to test priority of the affiliation over
+    // the external affiliation, we fix this by adding the user. However, if you
+    // work on these tests in the future you should really think about what
+    // states of affiliation are actually allowed (i.e. a user being affiliated
+    // with a group but not a member is likely not one of them) and fix that.
+    $group->addMember($user);
+
+    $this->setCurrentUser($user);
 
     assert($profile instanceof ProfileAffiliationInterface);
     $affiliation = $profile->getPrimaryAffiliation();
@@ -441,6 +460,8 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
       $org_function
     );
 
+    $this->setCurrentUser($profile->getOwner());
+
     $result = $profile->$method();
 
     $this->assertEquals($expected, $result);
@@ -474,6 +495,18 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
       $group_type->setThirdPartySetting('social_profile', GroupAffiliation::AFFILIATION_CANDIDATE_CONFIG_KEY, TRUE);
       $group_type->setThirdPartySetting('social_profile', GroupAffiliation::AFFILIATION_ENABLED_CONFIG_KEY, TRUE);
       $group_type->save();
+
+      // Create a group role that grants 'view group' permission to members.
+      // This is required because getPrimaryAffiliation() checks group access.
+      $group_role = GroupRole::create([
+        'id' => $group_type_id . '-member',
+        'label' => 'Member',
+        'group_type' => $group_type_id,
+        'scope' => PermissionScopeInterface::INSIDER_ID,
+        'global_role' => RoleInterface::AUTHENTICATED_ID,
+        'permissions' => ['view group'],
+      ]);
+      $group_role->save();
     }
 
     $group = Group::create([
