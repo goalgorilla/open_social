@@ -34,17 +34,105 @@
     padding: 0;
   }
 
-  .sorting-group {
+  .sorting-group,
+  .sorting-group-wrapper {
     display: flex;
     align-items: center;
     gap: 8px;
     margin: 0;
+
+    @include for-tablet-portrait-up {
+      flex: 1;
+    }
+  }
+
+  .sorting-group {
+    flex-wrap: wrap;
 
     .js-form-item-sort-by {
       display: flex;
       align-items: center;
       gap: 8px;
       margin: 0;
+
+      @include for-tablet-portrait-up {
+        flex: 1;
+        justify-content: flex-end;
+      }
+    }
+
+    &__title {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      white-space: nowrap;
+
+      &:empty {
+        /* To fix extra spacing in the parent flex container when title is empty */
+        position: absolute;
+      }
+    }
+
+    .form-search {
+      padding-left: 1.75rem;
+      padding-right: 0.75rem;
+      height: 38px;
+      border: none;
+      border-radius: 4px;
+      background-color: #f3f3f3;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      [dir='rtl'] & {
+        padding-left: 0.75rem;
+        padding-right: 1.75rem;
+      }
+
+      &::placeholder {
+        color: rgb(52, 52, 52);
+        opacity: 1;
+      }
+
+      &:focus {
+        border-color: var(--brand-primary, #4a90d9);
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
+      }
+    }
+
+    .form-item-combine-user-name-profile-name::before {
+      content: '';
+      position: absolute;
+      left: 0.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      background-image: url(../images/icons/icon-search.svg);
+      background-repeat: no-repeat;
+      background-size: contain;
+      pointer-events: none;
+      z-index: 1;
+
+      [dir='rtl'] & {
+        left: auto;
+        right: 0.25rem;
+      }
+    }
+
+    .form-item-combine-user-name-profile-name {
+      position: relative;
+      margin: 0;
+    }
+
+    .participants_title_divider {
+      margin: 0 0 0 0.5rem;
+
+      [dir='rtl'] & {
+        margin-left: 0;
+        margin-right: 0.5rem;
+      }
     }
   }
 
@@ -66,6 +154,12 @@
     background-image: url(../images/icons/icon-arrow-down-clean.svg);
     background-repeat: no-repeat;
     background-position: 90% center;
+
+    [dir='rtl'] & {
+      padding-left: 40px;
+      padding-right: 12px;
+      background-position: 10% center;
+    }
   }
 
   input[type="radio"] {
@@ -87,7 +181,6 @@
 
     &:checked {
       &+label {
-        background: #F5F5F5;
         color: $text-color;
         min-width: 62px;
       }
@@ -97,21 +190,42 @@
         transition: background-color 0.5s linear;
       }
 
-      &.sb-radio--asc {
+      &.form-radio {
         &+label {
           padding-left: 26px;
-          background-image: url(../images/icons/icon-ascending.svg);
-          background-repeat: no-repeat;
-          background-position: 6px center;
+
+          [dir='rtl'] & {
+            padding-left: 6px;
+            padding-right: 26px;
+          }
+        }
+      }
+
+      &.sb-radio--asc {
+        &+label {
+          background: #F5F5F5 url("../images/icons/icon-ascending.svg") no-repeat 6px center;
+
+          [dir="rtl"] .form-search {
+            background-position: calc(100% - 6px) center;
+          }
+        }
+
+        &:hover+label {
+          background-color: #ADADAD;
         }
       }
 
       &.sb-radio--desc {
         &+label {
-          padding-left: 26px;
-          background-image: url(../images/icons/icon-descending.svg);
-          background-repeat: no-repeat;
-          background-position: 6px center;
+          background: #F5F5F5 url("../images/icons/icon-ascending.svg") no-repeat 6px center;
+
+          [dir="rtl"] & {
+            background-position: calc(100% - 6px) center;
+          }
+        }
+
+        &:hover+label {
+          background-color: #ADADAD;
         }
       }
     }
@@ -119,8 +233,15 @@
 
   .sorting-options {
     display: flex;
-    padding: 2px;
     background: white;
     border-radius: 4px;
+
+    .js-form-type-radio {
+      margin: 2px;
+    }
   }
+}
+
+.path-group-members [block="block-socialblue-titlewithsortsblock"] {
+  position: absolute;
 }

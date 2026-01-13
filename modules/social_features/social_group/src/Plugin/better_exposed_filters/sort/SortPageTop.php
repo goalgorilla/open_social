@@ -44,7 +44,15 @@ class SortPageTop extends DefaultWidget {
       ],
     ];
 
-    $field_group =& $form['sorting_group'];
+    // Add a parent wrapper inside sorting_group.
+    $form['sorting_group']['sorting_wrapper'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['sorting-group-wrapper'],
+      ],
+    ];
+
+    $field_group =& $form['sorting_group']['sorting_wrapper'];
 
     // Add the element to the container.
     $field_group['sort_by'] = $form['sort_by'];
