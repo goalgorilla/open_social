@@ -44,17 +44,15 @@ Feature: Mute/Unmute group notifications
     And I wait for AJAX to finish
     And I should see "Unmute group"
     And I am on "/my-groups"
+    And I should see "Ressinel's group 1st"
     And I should see "Ressinel's group 2nd"
     And I select "My muted groups" from "Muted groups"
-    And I press the "Filter" button
+    And I wait for AJAX to finish
     And I should not see "Ressinel's group 2nd"
     And I should see "Ressinel's group 1st"
     And I select "My unmuted groups" from "Muted groups"
-    And I press the "Filter" button
+    And I wait for AJAX to finish
     And I should not see "Ressinel's group 1st"
-    And I should see "Ressinel's group 2nd"
-    And I press the "Reset" button
-    And I should see "Ressinel's group 1st"
     And I should see "Ressinel's group 2nd"
 
   Scenario: LU able to receive notifications from the unmuted group

@@ -102,6 +102,12 @@ class CombineUserNameProfileName extends StringFilter {
       'left_table' => $this->usersTableAlias,
       'left_field' => 'uid',
       'type' => 'LEFT',
+      'extra' => [
+        [
+          'field' => 'type',
+          'value' => 'profile',
+        ],
+      ],
     ];
     /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')
@@ -181,7 +187,7 @@ class CombineUserNameProfileName extends StringFilter {
       return reset($fields);
     }
 
-    return "CONCAT_WS(' ', " . implode(', ', $fields) . ")";
+    return "CONCAT(" . implode(", ' ', ", $fields) . ")";
   }
 
   /**

@@ -132,8 +132,8 @@ class GroupRoles extends ManyToOne {
     foreach ($target_group_roles as $role_id => $role) {
       $role_id_string = (string) $role_id;
       // For member roles, always show just "Member" regardless of group type.
-      if (str_ends_with($role_id_string, '-member')) {
-        $options[$role_id] = 'Member';
+      if ($group_type_id && str_ends_with($role_id_string, '-member')) {
+        $options[$role_id] = $role->label();
       }
       else {
         // For manager roles, use the full_label or label.

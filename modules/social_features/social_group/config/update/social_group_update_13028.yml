@@ -48,7 +48,9 @@ views.view.groups:
             defaults:
               sorts: false
             exposed_form:
+
               options:
+                exposed_sorts_label: 'Sort by:'
                 bef:
                   sort:
                     plugin_id: bef_sort_page_top
@@ -92,7 +94,6 @@ views.view.groups:
                   label: Name
                   field_identifier: label
                 exposed: true
-
           cache_metadata:
             contexts:
               - 'url.query_args:sort_by'

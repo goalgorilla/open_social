@@ -63,7 +63,7 @@ class SocialCore {
    *   The key for the new element to insert.
    * @param mixed $new_value
    *   The value for the new element to insert. If not provided, uses the
-   *   existing value from $array[$new_key].
+   *   existing value from $array[$target_key].
    */
   public static function insertAfterKey(array &$array, string|int $after_key, string|int $target_key, mixed $new_value = NULL): void {
     // Determine the value to use for the new element.
@@ -84,6 +84,11 @@ class SocialCore {
     }
 
     $result = [];
+
+    if ($after_key === $target_key) {
+      $array[$target_key] = $new_value;
+      return;
+    }
 
     foreach ($array as $key => $value) {
       // Skip the new key if it already exists to avoid duplication.

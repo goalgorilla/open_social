@@ -3,7 +3,7 @@
  * Behavior to move exposed sort form elements to the view header.
  */
 
-(function (Drupal, once) {
+(function (Drupal, $, once) {
   'use strict';
 
   /**
@@ -58,8 +58,8 @@
       // Update the title with the member count after AJAX search.
       once('move-exposed-sort-ajax', 'body', context).forEach(function () {
         // Uses global jQuery from Drupal core.
-        if (typeof jQuery !== 'undefined') {
-          jQuery(document).ajaxComplete(function (event, xhr, settings) {
+        if (typeof $ !== 'undefined') {
+          $(document).ajaxComplete(function (event, xhr, settings) {
             // Only react to Views AJAX requests.
             if (settings && settings.extraData && settings.extraData.view_name) {
               const views = document.querySelectorAll('.view');
@@ -131,7 +131,7 @@
       const formElements = element.querySelectorAll('input, select');
 
       formElements.forEach(function (formElement) {
-        // For text inputs, add debounced input event for real-time search.
+        // For text inputs, add a debounced input event for real-time search.
         if (formElement.type === 'text' || formElement.type === 'search') {
           let debounceTimer;
           const delay = 100;
@@ -141,7 +141,8 @@
             clearTimeout(debounceTimer);
             const value = event.target.value;
 
-            // Only auto-submit if value is empty or meets minimum length.
+            // Only auto-submit if the value is empty or meets
+            // the minimum length.
             if (value.length > 0 && value.length < minLength) {
               return;
             }
@@ -207,9 +208,7 @@
       let count = 0;
 
       // Try to find an existing results-count element within this view.
-      let resultsCountElement =
-        viewElement.querySelector('.view-header .results-count') ||
-        document.querySelector('.view-header .results-count');
+      let resultsCountElement = viewElement.querySelector('.view-header .results-count');
 
       if (resultsCountElement) {
         // Get the count value from the result count element.
@@ -237,4 +236,4 @@
     },
   };
 
-})(Drupal, once);
+})(Drupal, jQuery, once);

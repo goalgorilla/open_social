@@ -78,17 +78,21 @@ class SortPageTop extends DefaultWidget {
     // Add the labels to the options.
     // It is used in JS to display the labels dynamically
     // for each sort order option.
-    foreach ($field_group['sort_by']['#options'] as $key => $value) {
+    foreach (array_keys($field_group['sort_by']['#options']) as $key) {
       $asc_label = $desc_label = '';
       $default_order = 'ASC';
 
       // Get the default order from the view's sort handler.
-      foreach ($this->view->sort as $sort_id => $sort_handler) {
-        if ($sort_handler->isExposed()
-            && !empty($sort_handler->options['expose']['field_identifier'])
-            && $sort_handler->options['expose']['field_identifier'] === $key) {
-          $default_order = $sort_handler->options['order'] ?? 'ASC';
-          break;
+      if (!empty($this->view->sort)) {
+        foreach ($this->view->sort as $sort_handler) {
+          if (
+            $sort_handler->isExposed() &&
+            !empty($sort_handler->options['expose']['field_identifier']) &&
+            $sort_handler->options['expose']['field_identifier'] === $key
+          ) {
+            $default_order = $sort_handler->options['order'] ?? 'ASC';
+            break;
+          }
         }
       }
 

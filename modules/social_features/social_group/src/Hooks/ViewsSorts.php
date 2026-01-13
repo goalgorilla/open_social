@@ -13,9 +13,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Alters forms for the Social Group module.
+ * Enhances the filters in the exposed form for group-related views.
  */
-final class FormAlter implements ContainerInjectionInterface {
+final class ViewsSorts implements ContainerInjectionInterface {
 
   use StringTranslationTrait;
 
@@ -50,35 +50,17 @@ final class FormAlter implements ContainerInjectionInterface {
    */
   #[Alter('form_views_exposed_form')]
   public function enhanceGroupMembersFilters(array &$form, FormStateInterface $form_state): void {
-    if ($form['#id'] !== 'views-exposed-form-group-members-page-group-members') {
+    if (($form['#id'] ?? NULL) !== 'views-exposed-form-group-members-page-group-members') {
       return;
     }
 
     // Move combine_user_name_profile_name filter to sorting_group container.
     // This makes it appear above the view alongside the sort controls.
     $this->moveSearchFilterToSortingGroup($form);
-
     // Enhance the "Joined" views exposed filter.
     if (isset($form['created_wrapper']['created_wrapper'])) {
-      $date_filter =& $form['created_wrapper']['created_wrapper'];
-
-      // Convert the wrapper from "fieldset" to "container".
-      $date_filter['#type'] = 'container';
-      $date_filter['created_op']['#title'] = $date_filter['#title'];
-      $date_filter['created_op']['#title_display'] = 'before';
-
-      // Replace "operator" options with new titles.
-      $date_filter['created_op']['#options'] = [
-        '<=' => $this->t('Before'),
-        '>=' => $this->t('After'),
-        'between' => $this->t('Between'),
-      ];
-
-      // Hide titles for date range filters.
-      $date_filter['created']['min']['#title_display'] =
-      $date_filter['created']['max']['#title_display'] = 'invisible';
+      $this->enhanceJoinedFilter($form['created_wrapper']['created_wrapper']);
     }
-
     // Add custom reset button.
     $this->addCustomResetButton($form, $form_state);
   }
@@ -175,6 +157,40 @@ final class FormAlter implements ContainerInjectionInterface {
         'data-drupal-selector' => 'edit-custom-reset',
       ],
     ];
+  }
+
+  /**
+   * Enhances the "Joined" filter form element for better presentation.
+   *
+   * @param array $element
+   *   The form element to be altered, passed by reference.
+   */
+  private function enhanceJoinedFilter(array &$element): void {
+    if (
+      !isset(
+        $element['#title'],
+        $element['created_op'],
+        $element['created']['min'],
+        $element['created']['max'])
+    ) {
+      return;
+    }
+
+    // Convert the wrapper from "fieldset" to "container".
+    $element['#type'] = 'container';
+    $element['created_op']['#title'] = $element['#title'];
+    $element['created_op']['#title_display'] = 'before';
+
+    // Replace "operator" options with new titles.
+    $element['created_op']['#options'] = [
+      '<=' => $this->t('Before'),
+      '>=' => $this->t('After'),
+      'between' => $this->t('Between'),
+    ];
+
+    // Hide titles for date range filters.
+    $element['created']['min']['#title_display'] =
+    $element['created']['max']['#title_display'] = 'invisible';
   }
 
 }

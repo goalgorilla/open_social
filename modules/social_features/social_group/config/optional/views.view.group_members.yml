@@ -410,7 +410,7 @@ display:
           entity_type: group_content
           entity_field: created
           plugin_id: date
-          order: ASC
+          order: DESC
           expose:
             label: Joined
             field_identifier: created
@@ -544,12 +544,7 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              contentmanager: '0'
-              verified: '0'
-              sitemanager: '0'
-            reduce: 0
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -562,7 +557,7 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          reduce_duplicates: 0
+          reduce_duplicates: false
         created:
           id: created
           table: group_relationship_field_data
