@@ -25,7 +25,7 @@ Feature: Validate access and visibility of topics for Verified User
     And I click "Manage members"
     And I click the group member dropdown
     And I click "Add directly"
-    And I fill in select2 input ".form-type-select" with "Group Member" and select "Group Member"
+    And I fill in input ".form-type-select" with "Group Member" and select "Group Member"
     And I wait for AJAX to finish
     And I press "Save"
     And I should see "1 new member joined."

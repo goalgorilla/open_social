@@ -174,14 +174,14 @@ Feature: Enroll for an event without an account
     And I click the xth "1" element with the css ".btn.dropdown-toggle"
     And I click "Add directly"
     And I should see "Find people by name or email address"
-    And I fill in select2 input ".form-type-select" with "event_user_1@example.com" and select "event_user_1@example.com"
+    And I fill in input ".form-type-select" with "event_user_1@example.com" and select "event_user_1@example.com"
     And I press "Save"
     # Add a second one.
     And I should see "Add enrollees"
     And I click the xth "1" element with the css ".btn.dropdown-toggle"
     And I click "Add directly"
     And I should see "Find people by name or email address"
-    And I fill in select2 input ".form-type-select" with "event_user_2@example.com" and select "event_user_2@example.com"
+    And I fill in input ".form-type-select" with "event_user_2@example.com" and select "event_user_2@example.com"
     And I press "Save"
 
     # Check a list of all event enrollments by the English user.

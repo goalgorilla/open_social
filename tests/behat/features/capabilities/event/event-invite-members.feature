@@ -32,7 +32,7 @@ Feature: Send invite event email notifications
     And I click the xth "1" element with the css ".btn.dropdown-toggle"
     And I click "Invite users"
     And I should see "Find people by name or email address"
-    And I fill in select2 input ".form-type-select" with "new_test_user@example.com" and select "new_test_user@example.com"
+    And I fill in input ".form-type-select" with "new_test_user@example.com" and select "new_test_user@example.com"
     And I press "Send your invite(s) by email"
     And I wait for the batch job to finish
     And I wait for the queue to be empty
@@ -64,7 +64,7 @@ Feature: Send invite event email notifications
     And I click the xth "1" element with the css ".btn.dropdown-toggle"
     And I click "Invite users"
     And I should see "Find people by name or email address"
-    And I fill in select2 input ".form-type-select" with "existing_user_1@example.com" and select "existing_user_1@example.com"
+    And I fill in input ".form-type-select" with "existing_user_1@example.com" and select "existing_user_1@example.com"
     And I press "Send your invite(s) by email"
     And I wait for the batch job to finish
     And I wait for the queue to be empty

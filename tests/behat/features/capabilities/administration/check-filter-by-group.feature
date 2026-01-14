@@ -29,7 +29,7 @@ Feature: View filtered users as site manager
     And I click "Manage members"
     And I click the group member dropdown
     And I click "Add directly"
-    And I fill in select2 input ".form-type-select" with "Behat Member 1" and select "Behat Member 1"
+    And I fill in input ".form-type-select" with "Behat Member 1" and select "Behat Member 1"
     And I wait for AJAX to finish
     And I press "Save"
     And I should see "1 new member joined."
@@ -40,7 +40,7 @@ Feature: View filtered users as site manager
     And I click "Manage members"
     And I click the group member dropdown
     And I click "Add directly"
-    And I fill in select2 input ".form-type-select" with "Behat Member 2" and select "Behat Member 2"
+    And I fill in input ".form-type-select" with "Behat Member 2" and select "Behat Member 2"
     And I wait for AJAX to finish
     And I press "Save"
     And I should see "1 new member joined."
@@ -51,7 +51,7 @@ Feature: View filtered users as site manager
     And I click "Manage members"
     And I click the group member dropdown
     And I click "Add directly"
-    And I fill in select2 input ".form-type-select" with "Behat Member 3" and select "Behat Member 3"
+    And I fill in input ".form-type-select" with "Behat Member 3" and select "Behat Member 3"
     And I wait for AJAX to finish
     And I press "Save"
     And I should see "1 new member joined."
@@ -62,7 +62,7 @@ Feature: View filtered users as site manager
     And I click "Manage members"
     And I click the group member dropdown
     And I click "Add directly"
-    And I fill in select2 input ".form-type-select" with "Behat Member 4" and select "Behat Member 4"
+    And I fill in input ".form-type-select" with "Behat Member 4" and select "Behat Member 4"
     And I wait for AJAX to finish
     And I press "Save"
     And I should see "1 new member joined."

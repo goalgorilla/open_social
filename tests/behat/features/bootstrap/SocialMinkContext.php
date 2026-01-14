@@ -65,51 +65,6 @@ class SocialMinkContext extends MinkContext {
   }
 
   /**
-   * @todo Replace this method with iFillInInputWithAndSelect
-   *
-   * @When /^(?:|I )fill in select2 input "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)" and select "(?P<entry>(?:[^"]|\\")*)"$/
-   */
-  public function iFillInSelectInputWithAndSelect($field, $value, $entry) {
-    $page = $this->getSession()->getPage();
-
-    $inputField = $page->find('css', $field);
-    if (!$inputField) {
-      throw new \RuntimeException('No field found');
-    }
-
-    $this->getSession()->wait(1000);
-
-    $choice = $inputField->getParent()->find('css', '.select2-selection');
-    if (!$choice) {
-      throw new \RuntimeException('No select2 choice found');
-    }
-    $choice->press();
-
-    $select2Input = $inputField->getParent()->find('css', '.select2-search__field');
-    if (!$select2Input) {
-      $select2Input = $page->find('css', '.select2-search__field');
-    }
-
-    if (!$select2Input) {
-      // Try to find an input globally on the page.
-      throw new \RuntimeException('No input found');
-    }
-
-    $select2Input->setValue($value);
-
-    $this->getSession()->wait(1000);
-
-    $chosenResults = $page->findAll('css', '.select2-results__options li');
-    foreach ($chosenResults as $result) {
-      if ($result->getText() === $entry) {
-        $result->click();
-        break;
-      }
-    }
-  }
-
-
-  /**
    * Fills in an autocomplete input and selects an option.
    *
    * This step works with both Select2 and Svelte autocomplete multiselect
@@ -282,7 +237,12 @@ class SocialMinkContext extends MinkContext {
   /**
    * Handles Select2 autocomplete selection.
    *
-   * This method mimics the exact behavior of the original iFillInSelectInputWithAndSelect method.
+   * @todo When there are multiple select2 fields on the page (single vs
+   *   multiple), this method should use '.select2-container--open
+   *   .select2-search__field' to find the correct input, similar to the removed
+   *   iFillInSelectInputWithAndSelect method in IataRegistryContext.php. This
+   *   ensures we find the correct open select2 dropdown when multiple select2
+   *   fields exist.
    *
    * @param NodeElement $inputField
    *   The input element.
@@ -295,7 +255,40 @@ class SocialMinkContext extends MinkContext {
    *   If the Select2 component cannot be interacted with or option not found.
    */
   private function handleSelect2Autocomplete(NodeElement $inputField, string $value, string $entry): void {
-    // @todo: Implement select 2 logic here.
+    $page = $this->getSession()->getPage();
+
+    $this->getSession()->wait(1000);
+
+    // Open the Select2 dropdown.
+    $select2Selection = $inputField->getParent()->find('css', '.select2-selection');
+    if (!$select2Selection) {
+      throw new \RuntimeException('No select2 choice found');
+    }
+    $select2Selection->press();
+
+    // Find the search input.
+    $select2Input = $inputField->getParent()->find('css', '.select2-search__field');
+    if (!$select2Input) {
+      $select2Input = $page->find('css', '.select2-search__field');
+    }
+
+    if (!$select2Input) {
+      // Try to find an input globally on the page.
+      throw new \RuntimeException('No input found');
+    }
+
+    // Type the search value.
+    $select2Input->setValue($value);
+    $this->getSession()->wait(1000);
+
+    $chosenResults = $page->findAll('css', '.select2-results__options li');
+
+    foreach ($chosenResults as $result) {
+      if ($result->getText() === $entry) {
+        $result->click();
+        break;
+      }
+    }
   }
 
   /**
