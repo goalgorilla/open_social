@@ -292,8 +292,9 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
    */
   public function getPrimaryAffiliation(): array {
     // Use a static cache to avoid re-calculating the affiliation.
-    // It's cached per object (translation) instance.
-    $affiliation = &drupal_static(sprintf('%s:%s:%s', __METHOD__, $this->uuid(), $this->language()->getId()));
+    // It's cached per object (translation) instance and current user.
+    $current_user = \Drupal::currentUser();
+    $affiliation = &drupal_static(sprintf('%s:%s:%s:%s', __METHOD__, $this->uuid(), $this->language()->getId(), $current_user->id()));
     if (isset($affiliation)) {
       return $affiliation;
     }
