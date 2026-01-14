@@ -23,6 +23,7 @@ use Drupal\meeting_api\MeetingEntityInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\Form\EventSettingsForm;
+use Drupal\social_event\PluginForm\BigBlueButtonMeetingConfigurationForm;
 use Drupal\social_event\PluginForm\ManualMeetingConfigurationForm;
 use Drupal\social_event\Service\EventOnline as EventOnlineService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -226,8 +227,10 @@ final class EventOnline implements ContainerInjectionInterface {
   #[Alter('meeting_api_backend_info')]
   public function meetingApiBackendInfoAlter(array &$definitions): void {
     if (isset($definitions['manual'])) {
-      // Replace the form class with our custom one.
       $definitions['manual']['forms']['meeting'] = ManualMeetingConfigurationForm::class;
+    }
+    if (isset($definitions['bigbluebutton'])) {
+      $definitions['bigbluebutton']['forms']['meeting'] = BigBlueButtonMeetingConfigurationForm::class;
     }
   }
 
