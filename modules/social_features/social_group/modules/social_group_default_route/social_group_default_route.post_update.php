@@ -33,6 +33,13 @@ use Drupal\social_group_default_route\GroupPathAliasFixService;
  *   database-related issues occur.
  */
 function social_group_default_route_post_update_001_fix_groups_path_aliases(array &$sandbox): MarkupInterface|string {
+  // By default, skip this update unless explicitly opted in.
+  if (!\Drupal::state()->get('social_group_default_route_fix_aliases_opt_in', FALSE)) {
+    $sandbox['#finished'] = 1;
+    \Drupal::logger('social_group_default_route')->info('Platform has opted out of alias fixes for the Group Default Route changes.');
+    return t('Platform has opted out of alias fixes for the Group Default Route changes.');
+  }
+
   /** @var \Drupal\social_group_default_route\GroupPathAliasFixService $service */
   $service = \Drupal::service(GroupPathAliasFixService::class);
 

@@ -52,14 +52,20 @@ class RedirectSubscriber implements EventSubscriberInterface {
    *   The event.
    */
   public function groupLandingPage(RequestEvent $event): void {
-    // First check if the current route is the group canonical.
+    // To make possible users to access a group stream page (which is
+    // a canonical route), we check if the request has a query parameter called
+    // "skipDefaultRoute". This parameter is set to the link on building the
+    // list of group menu local tasks to bypass the default route redirection.
+    $request = $event->getRequest();
+    if ($request->query->has('skipDefaultRoute')) {
+      return;
+    }
+
+    // First, check if the current route is the group canonical.
     $route_name = $this->currentRoute->getRouteName();
 
     // Not group canonical, then we leave.
-    if (
-      $route_name !== $this->redirectService::DEFAULT_GROUP_ROUTE &&
-      $route_name !== $this->redirectService::ALTERNATIVE_ROUTE
-    ) {
+    if ($route_name !== $this->redirectService::DEFAULT_GROUP_ROUTE) {
       return;
     }
 

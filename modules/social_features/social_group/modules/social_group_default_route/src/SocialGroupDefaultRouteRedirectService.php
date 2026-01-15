@@ -33,11 +33,6 @@ class SocialGroupDefaultRouteRedirectService {
   const GROUP_STREAM_ROUTE = 'social_group.stream';
 
   /**
-   * The route name of the group default page is provided by the current module.
-   */
-  const ALTERNATIVE_ROUTE = 'social_group_default.group_home';
-
-  /**
    * The route name of the default page of any group.
    */
   const DEFAULT_GROUP_ROUTE = 'entity.group.canonical';

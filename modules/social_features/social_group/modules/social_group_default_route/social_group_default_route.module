@@ -209,21 +209,3 @@ function _social_group_default_route_groups_get_options(array $routes): array {
 
   return $options;
 }
-
-/**
- * Implements hook_modules_installed().
- */
-function social_group_default_route_modules_installed(array $modules): void {
-  if (!in_array('social_group_default_route', $modules, TRUE)) {
-    return;
-  }
-
-  // First rebuild the container so our RouteSubscriber service is registered.
-  /** @var \Drupal\Core\DrupalKernelInterface $kernel */
-  $kernel = \Drupal::service('kernel');
-  $kernel->rebuildContainer();
-
-  // Now the new container knows about the route subscriber,
-  // so this rebuild will actually apply alterRoutes().
-  \Drupal::service('router.builder')->rebuild();
-}

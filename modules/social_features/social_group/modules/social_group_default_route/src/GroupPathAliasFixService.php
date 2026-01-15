@@ -4,7 +4,6 @@ namespace Drupal\social_group_default_route;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\path_alias\AliasManagerInterface;
 
@@ -13,7 +12,8 @@ use Drupal\path_alias\AliasManagerInterface;
  *
  * This service performs two operations:
  * 1. Cleans up duplicate/stale aliases for /group/{id} (canonical paths).
- * 2. Fixes aliases with unwanted suffixes (-0, -1, -2) for /group/{id}/home.
+ * 2. Cleans up redundant aliases for /group/{id}/home.
+ * 3. Fixes aliases with unwanted suffixes (-0, -1, -2) for /group/{id}/home.
  *
  * This fixes the issue where groups get -0, -1 suffixes in their URL aliases
  * after being updated. The issue is caused by stale aliases remaining in the
@@ -51,15 +51,12 @@ class GroupPathAliasFixService {
    *   The path alias manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
    *   The language manager.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
-   *   The module handler.
    */
   public function __construct(
     protected Connection $database,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected AliasManagerInterface $aliasManager,
     protected LanguageManagerInterface $languageManager,
-    protected ModuleHandlerInterface $moduleHandler,
   ) {}
 
   /**
@@ -93,50 +90,12 @@ class GroupPathAliasFixService {
   }
 
   /**
-   * Fixes path aliases for all groups.
-   *
-   * This method processes all groups in a single pass, performing both cleanup
-   * and suffix fixing operations.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @throws \Drupal\Core\Entity\EntityStorageException
-   */
-  public function fixAllGroups(): void {
-    $group_storage = $this->entityTypeManager->getStorage('group');
-
-    // Get all group IDs.
-    $query = $group_storage->getQuery();
-    // @phpstan-ignore-next-line
-    $group_ids = $query->accessCheck(FALSE)->execute();
-
-    if (empty($group_ids)) {
-      return;
-    }
-
-    $languages = $this->languageManager->getLanguages();
-
-    foreach (array_keys($languages) as $langcode) {
-      foreach ($group_ids as $gid) {
-        // Create a group home page alias.
-        $this->ensureGroupHomeAliasExists($gid, $langcode);
-        $this->registerReport('fixed_suffixes', $gid);
-      }
-    }
-
-    // Clear cache after processing.
-    if ($this->getReports('fixed_suffixes')) {
-      $this->aliasManager->cacheClear();
-    }
-  }
-
-  /**
    * Fixes path aliases for a single group.
    *
    * This method performs both operations:
    * 1. Cleans up duplicate aliases for /group/{id} (canonical path)
-   * 2. Migrates aliases from /group/{id}/stream to /group/{id}/home.
-   * 3. Fixes broken aliases with suffixes for /group/{id}/home.
+   * 2. Clean up redundant alias for the removed path /group/{id}/home.
+   * 3. Fixes broken aliases with suffixes for /group/{id}/stream.
    *
    * @param int|string $gid
    *   The group ID to process.
@@ -148,13 +107,10 @@ class GroupPathAliasFixService {
     $languages = $this->languageManager->getLanguages();
 
     foreach (array_keys($languages) as $langcode) {
-      // Ensure group home alias exists.
-      if (!$this->ensureGroupHomeAliasExists($gid, $langcode)) {
+      // We need to apply updates only in case if a group home alias exists.
+      if (!$this->groupHomeAliasExists($gid, $langcode)) {
         continue;
       }
-
-      // Clean up canonical aliases to avoid conflicts.
-      $this->cleanupCanonicalAliases($gid, $langcode);
 
       $affected_alias = $this->fixGroupCanonicalPathAliases($gid, $langcode);
       if (!isset($affected_alias['new_alias'])) {
@@ -172,13 +128,7 @@ class GroupPathAliasFixService {
   }
 
   /**
-   * Ensures the group home alias exists, creating it if necessary.
-   *
-   * In this method we create the alias for the group home page if it's missing.
-   * If alias is created in this method, we don't need to do the further fixes
-   * as there should not be any broken aliases.
-   * If group home path alias exists, we should proceed to remove unwanted
-   * suffixes.
+   * Ensures the group home alias exists.
    *
    * @param int|string $gid
    *   The group ID.
@@ -188,53 +138,15 @@ class GroupPathAliasFixService {
    * @return bool
    *   TRUE if the alias exists or was created, FALSE otherwise.
    *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Exception
    */
-  protected function ensureGroupHomeAliasExists(int|string $gid, string $langcode): bool {
-    $existing = $this->database->select('path_alias', 'pa')
+  protected function groupHomeAliasExists(int|string $gid, string $langcode): bool {
+    return (bool) $this->database->select('path_alias', 'pa')
       ->fields('pa', ['id'])
       ->condition('langcode', $langcode)
       ->condition('path', "/group/$gid/home")
       ->execute()
       ?->fetchField();
-
-    if ($existing) {
-      return TRUE;
-    }
-
-    // If not exists, create it. Use the stream alias as a base.
-    $stream_path_alias = $this->database->select('path_alias', 'pa')
-      ->fields('pa', ['alias'])
-      ->condition('langcode', $langcode)
-      ->condition('path', "/group/$gid/stream")
-      ->execute()
-      ?->fetchAssoc();
-
-    if (!isset($stream_path_alias['alias'])) {
-      return FALSE;
-    }
-
-    // Remove the '/stream' suffix if exists.
-    $group_home_alias = $this->strTrimEnd($stream_path_alias['alias'], '/stream');
-
-    $this->entityTypeManager->getStorage('path_alias')->create([
-      'path' => "/group/$gid/home",
-      'alias' => $group_home_alias,
-      'langcode' => $langcode,
-    ])->save();
-
-    // Update group stream path alias.
-    foreach (static::ALIAS_TABLES as $table) {
-      $this->database->update($table)
-        ->fields(['alias' => $this->strTrimEnd($stream_path_alias['alias'], '/stream') . '/stream'])
-        ->condition('langcode', $langcode)
-        ->condition('path', "/group/$gid/stream")
-        ->execute();
-    }
-
-    return TRUE;
   }
 
   /**
@@ -307,56 +219,34 @@ class GroupPathAliasFixService {
   }
 
   /**
-   * Cleans up canonical path aliases that should not exist.
+   * Checks if the unsuffixed alias exists as a canonical alias for this group.
    *
-   * Clean up conflicting paths according to the alter hook of
-   * social_group_default_route_group_types.
+   * This verifies that the suffix being stripped was actually a Pathauto
+   * deduplication artifact (the group has both /slug and /slug-N) rather
+   * than a legitimate part of the title-derived slug.
    *
+   * @param string $alias
+   *   The unsuffixed alias to check.
    * @param int|string $gid
    *   The group ID.
    * @param string $langcode
    *   The language code.
+   *
+   * @return bool
+   *   TRUE if the alias exists for this group's canonical paths.
    */
-  protected function cleanupCanonicalAliases(int|string $gid, string $langcode): void {
-    // Get the group bundle.
-    $bundle = $this->database->select('groups', 'g')
-      ->fields('g', ['type'])
-      ->condition('id', $gid)
+  protected function unsuffixedAliasExistsForGroup(string $alias, int|string $gid, string $langcode): bool {
+    $canonical_paths = ["/group/$gid", "/group/$gid/home", "/group/$gid/stream"];
+
+    $exists = $this->database->select('path_alias', 'pa')
+      ->fields('pa', ['id'])
+      ->condition('alias', $alias)
+      ->condition('langcode', $langcode)
+      ->condition('path', $canonical_paths, 'IN')
       ->execute()
       ?->fetchField();
 
-    // Get group types that use default routing (/group/{id}/home)
-    $supported_types = $this->moduleHandler
-      ->invokeAll('social_group_default_route_group_types');
-    $this->moduleHandler
-      ->alter('social_group_default_route_group_types', $supported_types);
-    $supported_bundles = array_keys($supported_types);
-
-    // If bundle is NOT in supported types, it uses alternate routing.
-    $uses_alternate_routing = !in_array($bundle, $supported_bundles);
-
-    foreach (static::ALIAS_TABLES as $table) {
-      // Delete canonical path alias as it creates conflicts with a home alias.
-      // Also, for the moment when creating a new group, the alias for a
-      // canonical path isn't generated anymore.
-      $this->database->delete($table)
-        ->condition('langcode', $langcode)
-        ->condition('path', "/group/$gid")
-        ->execute();
-
-      // Clean up routing aliases they shouldn't have.
-      if ($uses_alternate_routing) {
-        $this->database->delete($table)
-          ->condition('langcode', $langcode)
-          ->condition('path', "/group/$gid/home")
-          ->execute();
-
-        $this->database->delete($table)
-          ->condition('langcode', $langcode)
-          ->condition('path', "/group/$gid/stream")
-          ->execute();
-      }
-    }
+    return (bool) $exists;
   }
 
   /**
@@ -398,28 +288,51 @@ class GroupPathAliasFixService {
     foreach (self::UNWANTED_SUFFIXES as $suffix) {
       $new_alias = $this->strTrimEnd($new_alias, $suffix);
     }
-    // Remove '/stream' suffix if exists.
-    $new_alias = $this->strTrimEnd($new_alias, '/stream');
+
+    // Only proceed if the unsuffixed alias already exists for this group,
+    // which indicates a real Pathauto duplication (e.g. both /my-group and
+    // /my-group-2 exist). If only /my-group-2 exists, the -2 is part of
+    // the legitimate slug (e.g. group title "My Group 2") and should not
+    // be stripped.
+    if (!$this->unsuffixedAliasExistsForGroup($new_alias, $gid, $langcode)) {
+      return $target_aliases;
+    }
 
     // Make sure the new alias doesn't conflict with existing aliases.
     if ($this->hasGroupCanonicalAliasConflict($new_alias, $gid, $langcode)) {
       return $target_aliases;
     }
 
-    foreach (static::ALIAS_TABLES as $table) {
-      // Update group home path alias.
-      $this->database->update($table)
-        ->fields(['alias' => $new_alias])
-        ->condition('langcode', $langcode)
-        ->condition('path', "/group/$gid/home")
-        ->execute();
+    // Use transaction for data safety.
+    $transaction = $this->database->startTransaction();
+    try {
+      foreach (static::ALIAS_TABLES as $table) {
+        // Update group stream (canonical) path alias.
+        $this->database->update($table)
+          ->fields(['alias' => $new_alias])
+          ->condition('langcode', $langcode)
+          ->condition('path', "/group/$gid/stream")
+          ->execute();
 
-      // Update group stream path alias.
-      $this->database->update($table)
-        ->fields(['alias' => $new_alias . '/stream'])
-        ->condition('langcode', $langcode)
-        ->condition('path', "/group/$gid/stream")
-        ->execute();
+        // Delete redundant group home path alias.
+        $this->database->delete($table)
+          ->condition('langcode', $langcode)
+          ->condition('path', "/group/$gid/home")
+          ->execute();
+
+        // Delete canonical path alias as it creates conflicts
+        // with a stream alias.
+        // Also, for the moment when creating a new group, the alias for a
+        // canonical path isn't generated anymore.
+        $this->database->delete($table)
+          ->condition('langcode', $langcode)
+          ->condition('path', "/group/$gid")
+          ->execute();
+      }
+    }
+    catch (\Exception $e) {
+      $transaction->rollBack();
+      throw $e;
     }
 
     $target_aliases['broken_alias'] = $broken_alias;
@@ -446,9 +359,10 @@ class GroupPathAliasFixService {
    * @throws \Exception
    */
   protected function updateGroupPagesAliases(string $broken_alias, string $new_alias, int|string $gid, string $langcode): void {
+    $escaped_broken_alias = $this->database->escapeLike($broken_alias);
     $related_aliases = $this->database->select('path_alias', 'pa')
       ->fields('pa')
-      ->condition('alias', "$broken_alias/%", 'LIKE')
+      ->condition('alias', $escaped_broken_alias . '/%', 'LIKE')
       ->condition('path', "/group/$gid/%", 'LIKE')
       ->condition('langcode', $langcode)
       ->execute()
@@ -458,27 +372,35 @@ class GroupPathAliasFixService {
       return;
     }
 
-    foreach ($related_aliases as $related_alias) {
-      $fixed_alias = str_replace($broken_alias, $new_alias, $related_alias['alias']);
+    // Use transaction for data safety.
+    $transaction = $this->database->startTransaction();
+    try {
+      foreach ($related_aliases as $related_alias) {
+        $fixed_alias = str_replace($broken_alias, $new_alias, $related_alias['alias']);
 
-      if ($this->hasAliasConflict($fixed_alias, $langcode, alias_id: $related_alias['id'])) {
-        // Seems like we have another same alias. Skip it to avoid conflicts.
-        $this->registerReport('skipped', $related_alias['alias']);
-        continue;
+        if ($this->hasAliasConflict($fixed_alias, $langcode, alias_id: $related_alias['id'])) {
+          // Seems like we have another same alias. Skip it to avoid conflicts.
+          $this->registerReport('skipped', $related_alias['alias']);
+          continue;
+        }
+
+        foreach (static::ALIAS_TABLES as $table) {
+          $this->database->update($table)
+            ->fields([
+              'alias' => $fixed_alias,
+            ])
+            ->condition('id', $related_alias['id'])
+            ->condition('revision_id', $related_alias['revision_id'])
+            ->condition('langcode', $langcode)
+            ->execute();
+        }
+
+        $this->registerReport('fixed_suffixes', $related_alias['alias']);
       }
-
-      foreach (static::ALIAS_TABLES as $table) {
-        $this->database->update($table)
-          ->fields([
-            'alias' => $fixed_alias,
-          ])
-          ->condition('id', $related_alias['id'])
-          ->condition('revision_id', $related_alias['revision_id'])
-          ->condition('langcode', $langcode)
-          ->execute();
-      }
-
-      $this->registerReport('fixed_suffixes', $related_alias['alias']);
+    }
+    catch (\Exception $e) {
+      $transaction->rollBack();
+      throw $e;
     }
   }
 
@@ -516,10 +438,11 @@ class GroupPathAliasFixService {
 
     $node_ids = array_unique($node_ids);
 
+    $escaped_broken_alias = $this->database->escapeLike($broken_alias);
     foreach ($node_ids as $nid) {
       $affected_aliases = $this->database->select('path_alias', 'pa')
         ->fields('pa')
-        ->condition('alias', "$broken_alias/%", 'LIKE')
+        ->condition('alias', $escaped_broken_alias . '/%', 'LIKE')
         ->condition('path', "/node/$nid")
         ->condition('langcode', $langcode)
         ->execute()
@@ -529,27 +452,35 @@ class GroupPathAliasFixService {
         continue;
       }
 
-      foreach ($affected_aliases as $alias) {
-        $fixed_alias = str_replace($broken_alias, $new_alias, $alias['alias']);
+      // Use transaction for data safety.
+      $transaction = $this->database->startTransaction();
+      try {
+        foreach ($affected_aliases as $alias) {
+          $fixed_alias = str_replace($broken_alias, $new_alias, $alias['alias']);
 
-        if ($this->hasAliasConflict($fixed_alias, $langcode, path: $alias['path'])) {
-          // Seems like we have another same alias. Skip it to avoid conflicts.
-          $this->registerReport('skipped', $alias['path']);
-          continue;
+          if ($this->hasAliasConflict($fixed_alias, $langcode, path: $alias['path'])) {
+            // Seems like we have another same alias. Skip it to avoid conflict.
+            $this->registerReport('skipped', $alias['path']);
+            continue;
+          }
+
+          foreach (static::ALIAS_TABLES as $table) {
+            $this->database->update($table)
+              ->fields([
+                'alias' => $fixed_alias,
+              ])
+              ->condition('id', $alias['id'])
+              ->condition('revision_id', $alias['revision_id'])
+              ->condition('langcode', $langcode)
+              ->execute();
+          }
+
+          $this->registerReport('fixed_suffixes', $alias['path']);
         }
-
-        foreach (static::ALIAS_TABLES as $table) {
-          $this->database->update($table)
-            ->fields([
-              'alias' => $fixed_alias,
-            ])
-            ->condition('id', $alias['id'])
-            ->condition('revision_id', $alias['revision_id'])
-            ->condition('langcode', $langcode)
-            ->execute();
-        }
-
-        $this->registerReport('fixed_suffixes', $alias['path']);
+      }
+      catch (\Exception $e) {
+        $transaction->rollBack();
+        throw $e;
       }
     }
   }
@@ -598,8 +529,7 @@ class GroupPathAliasFixService {
     };
 
     foreach (['home', 'stream'] as $path_suffix) {
-      $broken_alias = $callback($gid, $path_suffix, $langcode);
-      if ($broken_alias) {
+      if ($broken_alias = $callback($gid, $path_suffix, $langcode)) {
         return $broken_alias;
       }
     }
