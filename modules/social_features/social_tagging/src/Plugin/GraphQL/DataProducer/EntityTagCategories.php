@@ -11,12 +11,12 @@ use Drupal\taxonomy\TermStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Loads selected tag categories for an entity.
+ * Returns tag categories that have tags assigned to an entity.
  *
  * @DataProducer(
- *   id = "content_taggable_selected_tag_categories",
- *   name = @Translation("Content Taggable Selected Tag Categories"),
- *   description = @Translation("Loads the tag categories that have selected tags for an entity."),
+ *   id = "entity_tag_categories",
+ *   name = @Translation("Entity Tag Categories"),
+ *   description = @Translation("Returns an array of wrapper objects, each containing a tag category and the entity. Groups the entity's assigned tags by their parent categories. Only includes categories that have at least one tag assigned to the entity. Each wrapper object contains both the category term and the entity for use in nested GraphQL queries."),
  *   produces = @ContextDefinition("any",
  *     label = @Translation("Selected tag categories")
  *   ),
@@ -28,7 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class ContentTaggableSelectedTagCategories extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class EntityTagCategories extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The taxonomy term storage.

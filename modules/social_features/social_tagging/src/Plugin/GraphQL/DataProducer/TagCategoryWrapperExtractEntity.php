@@ -8,12 +8,12 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 
 /**
- * Extracts the entity from a ContentTaggableSelectedTagCategories wrapper.
+ * Extracts the entity from a tag category wrapper object.
  *
  * @DataProducer(
- *   id = "content_taggable_selected_tag_entity",
- *   name = @Translation("Content Taggable Selected Tag Entity"),
- *   description = @Translation("Extracts the entity from a ContentTaggableSelectedTagCategories wrapper object."),
+ *   id = "tag_category_wrapper_extract_entity",
+ *   name = @Translation("Tag Category Wrapper Extract Entity"),
+ *   description = @Translation("Extracts the entity from a tag category wrapper object. The wrapper is created by entity_tag_categories and contains both a category and an entity. This producer returns only the entity portion, allowing GraphQL resolvers to access entity fields when resolving nested queries."),
  *   produces = @ContextDefinition("entity",
  *     label = @Translation("Entity")
  *   ),
@@ -25,7 +25,7 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
  *   }
  * )
  */
-class ContentTaggableSelectedTagEntity extends DataProducerPluginBase {
+class TagCategoryWrapperExtractEntity extends DataProducerPluginBase {
 
   /**
    * Resolves the entity from the wrapper object.

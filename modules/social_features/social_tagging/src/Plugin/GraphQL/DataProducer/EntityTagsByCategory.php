@@ -15,12 +15,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
 
 /**
- * Queries selected content tags for an entity filtered by category.
+ * Returns tags assigned to an entity within a specific category.
  *
  * @DataProducer(
- *   id = "content_taggable_selected_tags",
- *   name = @Translation("Content Taggable Selected Tags"),
- *   description = @Translation("Loads the selected content tags for an entity filtered by category."),
+ *   id = "entity_tags_by_category",
+ *   name = @Translation("Entity Tags By Category"),
+ *   description = @Translation("Returns a paginated connection of tags that are assigned to the given entity and belong to the specified category. Filters the entity's assigned tags to only include those whose parent category matches the provided category. Supports cursor-based pagination and sorting by weight. Only returns published tags."),
  *   produces = @ContextDefinition("any",
  *     label = @Translation("EntityConnection")
  *   ),
@@ -57,7 +57,7 @@ use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
  *   }
  * )
  */
-class ContentTaggableSelectedTags extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class EntityTagsByCategory extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The entity type manager.

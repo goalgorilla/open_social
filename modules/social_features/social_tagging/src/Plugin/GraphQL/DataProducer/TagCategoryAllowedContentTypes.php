@@ -8,12 +8,12 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\taxonomy\TermInterface;
 
 /**
- * Resolves the placement values from field_category_usage field.
+ * Returns the content types where a tag category can be used.
  *
  * @DataProducer(
- *   id = "content_tag_category_placement",
- *   name = @Translation("Content Tag Category Placement"),
- *   description = @Translation("Loads the placement values from field_category_usage field."),
+ *   id = "tag_category_allowed_content_types",
+ *   name = @Translation("Tag Category Allowed Content Types"),
+ *   description = @Translation("Returns an array of content type identifiers (as GraphQL ENUM values like TOPIC, EVENT) where the given tag category can be used. Reads the category's field_category_usage field and converts internal database values (e.g., 'node_topic') to GraphQL ENUM values (e.g., 'TOPIC')."),
  *   produces = @ContextDefinition("any",
  *     label = @Translation("Placement values")
  *   ),
@@ -25,7 +25,7 @@ use Drupal\taxonomy\TermInterface;
  *   }
  * )
  */
-class ContentTagCategoryPlacement extends DataProducerPluginBase {
+class TagCategoryAllowedContentTypes extends DataProducerPluginBase {
 
   /**
    * Resolves the placement values.

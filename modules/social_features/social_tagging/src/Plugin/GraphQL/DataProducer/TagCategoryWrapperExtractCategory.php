@@ -8,12 +8,12 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\taxonomy\TermInterface;
 
 /**
- * Extracts the category from a ContentTaggableSelectedTagCategories wrapper.
+ * Extracts the category from a tag category wrapper object.
  *
  * @DataProducer(
- *   id = "content_taggable_selected_tag_category",
- *   name = @Translation("Content Taggable Selected Tag Category"),
- *   description = @Translation("Extracts the category from a ContentTaggableSelectedTagCategories wrapper object."),
+ *   id = "tag_category_wrapper_extract_category",
+ *   name = @Translation("Tag Category Wrapper Extract Category"),
+ *   description = @Translation("Extracts the category taxonomy term from a tag category wrapper object. The wrapper is created by entity_tag_categories and contains both a category and an entity. This producer returns only the category portion, allowing GraphQL resolvers to access category fields."),
  *   produces = @ContextDefinition("entity:taxonomy_term",
  *     label = @Translation("Category")
  *   ),
@@ -25,7 +25,7 @@ use Drupal\taxonomy\TermInterface;
  *   }
  * )
  */
-class ContentTaggableSelectedTagCategory extends DataProducerPluginBase {
+class TagCategoryWrapperExtractCategory extends DataProducerPluginBase {
 
   /**
    * Resolves the category from the wrapper object.

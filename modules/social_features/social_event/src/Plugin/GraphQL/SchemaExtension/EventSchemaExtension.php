@@ -170,7 +170,7 @@ class EventSchemaExtension extends SdlSchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('Query', 'eventTagCategories',
-      $builder->produce('content_tag_categories_by_placement')
+      $builder->produce('tag_categories_by_content_type')
         ->map('placement', $builder->fromValue('EVENT'))
     );
 

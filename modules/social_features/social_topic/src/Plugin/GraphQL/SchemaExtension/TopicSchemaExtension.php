@@ -217,7 +217,7 @@ class TopicSchemaExtension extends SchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('Query', 'topicTagCategories',
-      $builder->produce('content_tag_categories_by_placement')
+      $builder->produce('tag_categories_by_content_type')
         ->map('placement', $builder->fromValue('TOPIC'))
     );
 

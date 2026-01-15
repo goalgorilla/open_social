@@ -10,12 +10,12 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Queries content tag categories filtered by placement.
+ * Returns tag categories that can be used for a specific content type.
  *
  * @DataProducer(
- *   id = "content_tag_categories_by_placement",
- *   name = @Translation("Content Tag Categories By Placement"),
- *   description = @Translation("Loads content tag categories (parent terms) filtered by placement."),
+ *   id = "tag_categories_by_content_type",
+ *   name = @Translation("Tag Categories By Content Type"),
+ *   description = @Translation("Returns all tag categories (parent taxonomy terms) that are configured to be used with a specific content type (e.g., TOPIC, EVENT). Filters categories based on their field_category_usage configuration, which determines which content types can use tags from that category."),
  *   produces = @ContextDefinition("any",
  *     label = @Translation("Categories")
  *   ),
@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class ContentTagCategoriesByPlacement extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class TagCategoriesByContentType extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The entity type manager.
@@ -88,7 +88,7 @@ class ContentTagCategoriesByPlacement extends DataProducerPluginBase implements 
       }
 
       // Check if term has the field_category_usage field.
-      // Following the same pattern as ContentTagCategoryPlacement::resolve().
+      // Following the same pattern as TagCategoryAllowedContentTypes::resolve().
       if (!$term->hasField('field_category_usage')) {
         continue;
       }

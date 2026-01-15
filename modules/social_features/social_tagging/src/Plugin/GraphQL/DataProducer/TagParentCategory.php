@@ -11,12 +11,12 @@ use Drupal\taxonomy\TermStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Loads the parent term of a content tag.
+ * Returns the parent category of a tag.
  *
  * @DataProducer(
- *   id = "content_tag_parent",
- *   name = @Translation("Content Tag Parent"),
- *   description = @Translation("Loads the parent category of a content tag."),
+ *   id = "tag_parent_category",
+ *   name = @Translation("Tag Parent Category"),
+ *   description = @Translation("Returns the parent category (taxonomy term) of a given tag. In the tagging hierarchy, categories are parent terms and tags are child terms. Returns NULL if the tag has no parent or if the parent is unpublished. Used to navigate from a tag to its category."),
  *   produces = @ContextDefinition("entity:taxonomy_term",
  *     label = @Translation("Parent category")
  *   ),
@@ -28,7 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class ContentTagParent extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class TagParentCategory extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The taxonomy term storage.

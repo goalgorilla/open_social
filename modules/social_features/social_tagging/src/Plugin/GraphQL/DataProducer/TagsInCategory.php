@@ -14,12 +14,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
 
 /**
- * Queries content tags for a category.
+ * Returns all tags in a category with pagination support.
  *
  * @DataProducer(
- *   id = "content_tag_category_tags",
- *   name = @Translation("Content Tag Category Tags"),
- *   description = @Translation("Loads the content tags for a category."),
+ *   id = "tags_in_category",
+ *   name = @Translation("Tags In Category"),
+ *   description = @Translation("Returns a paginated connection of all tags (child taxonomy terms) that belong to the specified tag category. Supports cursor-based pagination (first, last, after, before) and sorting by weight. Only returns published tags."),
  *   produces = @ContextDefinition("any",
  *     label = @Translation("EntityConnection")
  *   ),
@@ -52,7 +52,7 @@ use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
  *   }
  * )
  */
-class ContentTagCategoryTags extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class TagsInCategory extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The entity type manager.

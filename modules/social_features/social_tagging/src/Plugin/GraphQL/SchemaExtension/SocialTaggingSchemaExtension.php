@@ -56,13 +56,13 @@ class SocialTaggingSchemaExtension extends SchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('ContentTagCategory', 'placement',
-      $builder->produce('content_tag_category_placement')
+      $builder->produce('tag_category_allowed_content_types')
         ->map('term', $builder->fromParent())
     );
 
     // ContentTagCategory->contentTags.
     $registry->addFieldResolver('ContentTagCategory', 'contentTags',
-      $builder->produce('content_tag_category_tags')
+      $builder->produce('tags_in_category')
         ->map('category', $builder->fromParent())
         ->map('after', $builder->fromArgument('after'))
         ->map('before', $builder->fromArgument('before'))
@@ -84,30 +84,30 @@ class SocialTaggingSchemaExtension extends SchemaExtensionPluginBase {
 
     // ContentTag->parent.
     $registry->addFieldResolver('ContentTag', 'parent',
-      $builder->produce('content_tag_parent')
+      $builder->produce('tag_parent_category')
         ->map('tag', $builder->fromParent())
     );
 
     // ContentTaggable->contentTagCategories.
     $registry->addFieldResolver('ContentTaggable', 'contentTagCategories',
-      $builder->produce('content_taggable_selected_tag_categories')
+      $builder->produce('entity_tag_categories')
         ->map('entity', $builder->fromParent())
     );
 
     // ContentTaggableSelectedTagCategories->category.
     // Extract category from the wrapper object.
     $registry->addFieldResolver('ContentTaggableSelectedTagCategories', 'category',
-      $builder->produce('content_taggable_selected_tag_category')
+      $builder->produce('tag_category_wrapper_extract_category')
         ->map('wrapper', $builder->fromParent())
     );
 
     // ContentTaggableSelectedTagCategories->contentTags.
     // Extract both entity and category from the wrapper object.
     $registry->addFieldResolver('ContentTaggableSelectedTagCategories', 'contentTags',
-      $builder->produce('content_taggable_selected_tags')
-        ->map('entity', $builder->produce('content_taggable_selected_tag_entity')
+      $builder->produce('entity_tags_by_category')
+        ->map('entity', $builder->produce('tag_category_wrapper_extract_entity')
           ->map('wrapper', $builder->fromParent()))
-        ->map('category', $builder->produce('content_taggable_selected_tag_category')
+        ->map('category', $builder->produce('tag_category_wrapper_extract_category')
           ->map('wrapper', $builder->fromParent()))
         ->map('after', $builder->fromArgument('after'))
         ->map('before', $builder->fromArgument('before'))
