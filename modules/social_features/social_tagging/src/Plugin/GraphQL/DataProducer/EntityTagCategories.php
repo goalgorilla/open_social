@@ -70,36 +70,94 @@ class EntityTagCategories extends DataProducerPluginBase implements ContainerFac
       return [];
     }
 
-    // Load all selected tags.
-    $selected_tags = $this->termStorage->loadMultiple($selected_tag_ids);
+    // Process tags in batches to avoid memory issues.
+    $batch_size = 25;
+    $tag_id_chunks = array_chunk($selected_tag_ids, $batch_size);
     $categories = [];
+
+    foreach ($tag_id_chunks as $tag_id_chunk) {
+      // Load tags for this batch.
+      /** @var array<int, \Drupal\taxonomy\Entity\Term|null> $loaded_tags */
+      $loaded_tags = $this->termStorage->loadMultiple($tag_id_chunk);
+      // Filter out NULL values (tags that were deleted between query and load).
+      /** @var \Drupal\taxonomy\Entity\Term[] $selected_tags */
+      $selected_tags = array_values(array_filter($loaded_tags, function ($tag): bool {
+        return $tag !== NULL;
+      }));
+
+      if (empty($selected_tags)) {
+        continue;
+      }
+
+      $batch_categories = $this->processBatch($selected_tags, $entity);
+      $categories += $batch_categories;
+    }
+
+    return array_values($categories);
+  }
+
+  /**
+   * Processes a batch of tags and groups them by category.
+   *
+   * @param array $selected_tags
+   *   Array of loaded taxonomy term objects in this batch.
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity that has the tags.
+   *
+   * @return array
+   *   Array of category objects keyed by category ID.
+   */
+  private function processBatch(array $selected_tags, ContentEntityInterface $entity): array {
+    $categories = [];
+
+    // Pre-collect parent IDs and load them in bulk.
+    $parent_map = [];
+    foreach ($selected_tags as $tag) {
+      if (!$tag->isPublished()) {
+        continue;
+      }
+      $parent_target_id = $tag->get('parent')->target_id;
+      if (!empty($parent_target_id) && (int) $parent_target_id !== 0) {
+        $parent_map[$tag->id()] = (int) $parent_target_id;
+      }
+    }
+
+    $parent_ids = array_unique(array_values($parent_map));
+    /** @var array<int, \Drupal\taxonomy\Entity\Term> $parents */
+    $parents = [];
+    if (!empty($parent_ids)) {
+      /** @var array<int, \Drupal\taxonomy\Entity\Term|null> $loaded_parents */
+      $loaded_parents = $this->termStorage->loadMultiple($parent_ids);
+      $parents = array_filter($loaded_parents, function ($parent): bool {
+        return $parent !== NULL;
+      });
+    }
 
     foreach ($selected_tags as $tag) {
       if (!$tag->isPublished()) {
         continue;
       }
 
-      // Get the parent category of this tag.
-      $parents = $this->termStorage->loadParents((int) $tag->id());
-      if (!empty($parents)) {
-        $parent = reset($parents);
-        // Only include published categories.
-        if ($parent->isPublished()) {
-          $category_id = $parent->id();
-          // Group by category - only create one entry per category.
-          if (!isset($categories[$category_id])) {
-            $categories[$category_id] = (object) [
-              'category' => $parent,
-              'entity' => $entity,
-            ];
+      $tag_id = $tag->id();
+      if (isset($parent_map[$tag_id])) {
+        $parent_id = $parent_map[$tag_id];
+        if (isset($parents[$parent_id])) {
+          $parent = $parents[$parent_id];
+          if ($parent->isPublished()) {
+            $category_id = $parent->id();
+            if (!isset($categories[$category_id])) {
+              $categories[$category_id] = (object) [
+                'category' => $parent,
+                'entity' => $entity,
+              ];
+            }
           }
         }
       }
       // If tag has no parent, it might be a category itself.
       // Check if it's a top-level term (parent = 0).
-      elseif ($tag->get('parent')->isEmpty() || $tag->get('parent')->target_id == 0) {
-        $category_id = $tag->id();
-        // Group by category - only create one entry per category.
+      elseif ($tag->get('parent')->isEmpty() || (int) $tag->get('parent')->target_id === 0) {
+        $category_id = $tag_id;
         if (!isset($categories[$category_id])) {
           $categories[$category_id] = (object) [
             'category' => $tag,
@@ -109,7 +167,7 @@ class EntityTagCategories extends DataProducerPluginBase implements ContainerFac
       }
     }
 
-    return array_values($categories);
+    return $categories;
   }
 
 }

@@ -32,7 +32,6 @@ class SocialTaggingSchemaExtension extends SchemaExtensionPluginBase {
         ->map('type', $builder->fromValue('taxonomy_term'))
         ->map('bundles', $builder->fromValue(['social_tagging']))
         ->map('uuid', $builder->fromArgument('id'))
-        ->map('access', $builder->fromValue(FALSE))
     );
 
     // Query->contentTag.
@@ -41,7 +40,6 @@ class SocialTaggingSchemaExtension extends SchemaExtensionPluginBase {
         ->map('type', $builder->fromValue('taxonomy_term'))
         ->map('bundles', $builder->fromValue(['social_tagging']))
         ->map('uuid', $builder->fromArgument('id'))
-        ->map('access', $builder->fromValue(FALSE))
     );
 
     // ContentTagCategory fields.

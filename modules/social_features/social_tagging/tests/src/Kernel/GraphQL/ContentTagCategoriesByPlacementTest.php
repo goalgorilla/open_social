@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_tagging\Kernel\GraphQL;
 
-use Drupal\Core\Render\RenderContext;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Tests\iata_graphql_user\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\iata_graphql_user\Kernel\OAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
-use GraphQL\Server\OperationParams;
 
 /**
  * Test coverage for topicTagCategories and eventTagCategories GraphQL queries.
@@ -20,8 +18,8 @@ use GraphQL\Server\OperationParams;
 class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
 
   use OAuthTestTrait;
-  use UserCreationTrait;
   use GraphQLOAuthTestTrait;
+  use UserCreationTrait;
 
   /**
    * {@inheritdoc}
@@ -79,6 +77,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
     'group',
     'group_core_comments',
     'views',
+    'taxonomy_access_fix',
     // Modules required by social_core.
     'crop',
     'image_widget_crop',
@@ -94,13 +93,11 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
 
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('user');
+    $this->installEntitySchema('meeting_api_meeting');
+    $this->installEntitySchema('consumer');
     $this->installEntitySchema('oauth2_token');
     $this->installEntitySchema('oauth2_scope');
-    $this->installEntitySchema('consumer');
-    // Install meeting_api_meeting entity schema required by social_event.
-    $this->installEntitySchema('meeting_api_meeting');
 
-    // Install schemas required by social_event.
     $this->installSchema('comment', 'comment_entity_statistics');
     $this->installSchema('file', 'file_usage');
 
@@ -112,33 +109,30 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'social_node',
       'social_event',
       'social_topic',
-      'simple_oauth',
-      'simple_oauth_static_scope',
       'filter',
       'comment',
+      'simple_oauth',
+      'simple_oauth_static_scope',
+      'user',
+      'taxonomy_access_fix',
     ]);
 
-    // Configure OAuth to use static scope provider and set up keys.
-    $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
+    // Set up OAuth keys for testing.
     $this->setUpKeys();
 
-    $this->setUpCurrentUser(["uid" => 1], ['view terms in social_tagging'], TRUE);
+    // Configure simple_oauth to use static scope provider.
+    $this->config('simple_oauth.settings')
+      ->set('scope_provider', 'static')
+      ->save();
+
+    // Clear cache to ensure OAuth2 scopes from YAML files are loaded.
+    \Drupal::service('cache.discovery')->deleteAll();
   }
 
   /**
-   * Test topicTagCategories returns only categories with TOPIC placement.
+   * AN: Test topicTagCategories returns only categories with TOPIC placement.
    */
-  public function testQueryTopicTagCategories(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
-
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheMaxAge(0);
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
-    ]);
-
-    // Create a category for topics.
+  public function testQueryTopicTagCategoriesForAnonymous(): void {
     $topic_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Topic Category',
@@ -146,9 +140,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_topic']),
     ]);
     $topic_category->save();
-    $cache_metadata->addCacheableDependency($topic_category);
 
-    // Create a category for events.
     $event_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Event Category',
@@ -156,9 +148,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_event']),
     ]);
     $event_category->save();
-    $cache_metadata->addCacheableDependency($event_category);
 
-    // Create a category for both.
     $both_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Both Category',
@@ -166,71 +156,52 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_topic', 'node_event']),
     ]);
     $both_category->save();
-    $cache_metadata->addCacheableDependency($both_category);
 
-    // Create a category without placement (should not appear).
     $no_placement_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'No Placement Category',
       'parent' => 0,
     ]);
     $no_placement_category->save();
-    $cache_metadata->addCacheableDependency($no_placement_category);
 
-    // Execute query.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-                query TopicTagCategories {
-                    topicTagCategories {
-                        id
-                        label
-                        placement
-                    }
-                }
-                GQL,
-          ])
-        );
-      }
+    $this->assertResults(
+      <<<GQL
+        query TopicTagCategories {
+          topicTagCategories {
+            id
+            label
+            placement
+          }
+        }
+        GQL,
+      [],
+      [
+        'topicTagCategories' => [
+          [
+            'id' => $topic_category->uuid(),
+            'label' => 'Topic Category',
+            'placement' => ['TOPIC'],
+          ],
+          [
+            'id' => $both_category->uuid(),
+            'label' => 'Both Category',
+            'placement' => ['TOPIC', 'EVENT'],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($topic_category)
+        ->addCacheableDependency($both_category)
+        ->addCacheContexts(['languages:language_interface'])
     );
-
-    $this->assertEmpty($result->errors);
-    $this->assertIsArray($result->data['topicTagCategories']);
-
-    // Should return topic_category and both_category,
-    // but not event_category or no_placement_category.
-    $returned_ids = array_column($result->data['topicTagCategories'], 'id');
-    $this->assertContains($topic_category->uuid(), $returned_ids);
-    $this->assertContains($both_category->uuid(), $returned_ids);
-    $this->assertNotContains($event_category->uuid(), $returned_ids);
-    $this->assertNotContains($no_placement_category->uuid(), $returned_ids);
-
-    // Verify placement values.
-    foreach ($result->data['topicTagCategories'] as $category) {
-      $this->assertIsArray($category['placement']);
-      $this->assertContains('TOPIC', $category['placement']);
-    }
   }
 
   /**
-   * Test eventTagCategories returns only categories with EVENT placement.
+   * AN: Test topicTagCategories returns only categories with TOPIC placement.
    */
-  public function testQueryEventTagCategories(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
+  public function testQueryTopicTagCategoriesForAuthorized(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
 
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheMaxAge(0);
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
-    ]);
-
-    // Create a category for topics.
     $topic_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Topic Category',
@@ -238,9 +209,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_topic']),
     ]);
     $topic_category->save();
-    $cache_metadata->addCacheableDependency($topic_category);
 
-    // Create a category for events.
     $event_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Event Category',
@@ -248,9 +217,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_event']),
     ]);
     $event_category->save();
-    $cache_metadata->addCacheableDependency($event_category);
 
-    // Create a category for both.
     $both_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Both Category',
@@ -258,60 +225,172 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_topic', 'node_event']),
     ]);
     $both_category->save();
-    $cache_metadata->addCacheableDependency($both_category);
 
-    // Execute query.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-                query EventTagCategories {
-                    eventTagCategories {
-                        id
-                        label
-                        placement
-                    }
-                }
-                GQL,
-          ])
-        );
-      }
+    $no_placement_category = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'No Placement Category',
+      'parent' => 0,
+    ]);
+    $no_placement_category->save();
+
+    $this->assertResults(
+      <<<GQL
+        query TopicTagCategories {
+          topicTagCategories {
+            id
+            label
+            placement
+          }
+        }
+        GQL,
+      [],
+      [
+        'topicTagCategories' => [
+          [
+            'id' => $topic_category->uuid(),
+            'label' => 'Topic Category',
+            'placement' => ['TOPIC'],
+          ],
+          [
+            'id' => $both_category->uuid(),
+            'label' => 'Both Category',
+            'placement' => ['TOPIC', 'EVENT'],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($topic_category)
+        ->addCacheableDependency($both_category)
+        ->addCacheContexts(['languages:language_interface'])
     );
+  }
 
-    $this->assertEmpty($result->errors);
-    $this->assertIsArray($result->data['eventTagCategories']);
+  /**
+   * AN: Test eventTagCategories returns only categories with EVENT placement.
+   */
+  public function testQueryEventTagCategoriesForAnonymous(): void {
+    $topic_category = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Topic Category',
+      'parent' => 0,
+      'field_category_usage' => serialize(['node_topic']),
+    ]);
+    $topic_category->save();
 
-    // Should return event_category and both_category, but not topic_category.
-    $returned_ids = array_column($result->data['eventTagCategories'], 'id');
-    $this->assertContains($event_category->uuid(), $returned_ids);
-    $this->assertContains($both_category->uuid(), $returned_ids);
-    $this->assertNotContains($topic_category->uuid(), $returned_ids);
+    $event_category = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Category',
+      'parent' => 0,
+      'field_category_usage' => serialize(['node_event']),
+    ]);
+    $event_category->save();
 
-    // Verify placement values.
-    foreach ($result->data['eventTagCategories'] as $category) {
-      $this->assertIsArray($category['placement']);
-      $this->assertContains('EVENT', $category['placement']);
-    }
+    $both_category = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Both Category',
+      'parent' => 0,
+      'field_category_usage' => serialize(['node_topic', 'node_event']),
+    ]);
+    $both_category->save();
+
+    $this->assertResults(
+      <<<GQL
+        query EventTagCategories {
+          eventTagCategories {
+            id
+            label
+            placement
+          }
+        }
+        GQL,
+      [],
+      [
+        'eventTagCategories' => [
+          [
+            'id' => $event_category->uuid(),
+            'label' => 'Event Category',
+            'placement' => ['EVENT'],
+          ],
+          [
+            'id' => $both_category->uuid(),
+            'label' => 'Both Category',
+            'placement' => ['TOPIC', 'EVENT'],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($event_category)
+        ->addCacheableDependency($both_category)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * AN: Test eventTagCategories returns only categories with EVENT placement.
+   */
+  public function testQueryEventTagCategoriesForAuthorized(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $topic_category = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Topic Category',
+      'parent' => 0,
+      'field_category_usage' => serialize(['node_topic']),
+    ]);
+    $topic_category->save();
+
+    $event_category = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Category',
+      'parent' => 0,
+      'field_category_usage' => serialize(['node_event']),
+    ]);
+    $event_category->save();
+
+    $both_category = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Both Category',
+      'parent' => 0,
+      'field_category_usage' => serialize(['node_topic', 'node_event']),
+    ]);
+    $both_category->save();
+
+    $this->assertResults(
+      <<<GQL
+        query EventTagCategories {
+          eventTagCategories {
+            id
+            label
+            placement
+          }
+        }
+        GQL,
+      [],
+      [
+        'eventTagCategories' => [
+          [
+            'id' => $event_category->uuid(),
+            'label' => 'Event Category',
+            'placement' => ['EVENT'],
+          ],
+          [
+            'id' => $both_category->uuid(),
+            'label' => 'Both Category',
+            'placement' => ['TOPIC', 'EVENT'],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($event_category)
+        ->addCacheableDependency($both_category)
+        ->addCacheContexts(['languages:language_interface'])
+    );
   }
 
   /**
    * Test that unpublished categories are not returned.
    */
   public function testQueryTopicTagCategoriesExcludesUnpublished(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
-
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheMaxAge(0);
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
-    ]);
-
-    // Create a published category for topics.
     $published_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Published Topic Category',
@@ -320,9 +399,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_topic']),
     ]);
     $published_category->save();
-    $cache_metadata->addCacheableDependency($published_category);
 
-    // Create an unpublished category for topics.
     $unpublished_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Unpublished Topic Category',
@@ -331,52 +408,35 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_topic']),
     ]);
     $unpublished_category->save();
-    $cache_metadata->addCacheableDependency($unpublished_category);
 
-    // Execute query.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-                query TopicTagCategories {
-                    topicTagCategories {
-                        id
-                        label
-                    }
-                }
-                GQL,
-          ])
-        );
-      }
+    $this->assertResults(
+      <<<GQL
+        query TopicTagCategories {
+          topicTagCategories {
+            id
+            label
+          }
+        }
+        GQL,
+      [],
+      [
+        'topicTagCategories' => [
+          [
+            'id' => $published_category->uuid(),
+            'label' => 'Published Topic Category',
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($published_category)
+        ->addCacheContexts(['languages:language_interface'])
     );
-
-    $this->assertEmpty($result->errors);
-    $this->assertIsArray($result->data['topicTagCategories']);
-
-    // Should only return published category.
-    $returned_ids = array_column($result->data['topicTagCategories'], 'id');
-    $this->assertContains($published_category->uuid(), $returned_ids);
-    $this->assertNotContains($unpublished_category->uuid(), $returned_ids);
   }
 
   /**
-   * Test that only parent terms (parent = 0) are returned.
+   * Test that only parent terms (parent = 0) are returned (anonymous).
    */
-  public function testQueryTopicTagCategoriesOnlyParentTerms(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
-
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheMaxAge(0);
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
-    ]);
-
-    // Create a parent category for topics.
+  public function testQueryTopicTagCategoriesOnlyParentTermsForAnonymous(): void {
     $parent_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Parent Topic Category',
@@ -384,9 +444,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_topic']),
     ]);
     $parent_category->save();
-    $cache_metadata->addCacheableDependency($parent_category);
 
-    // Create a child term (should not appear in results).
     $child_term = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Child Term',
@@ -394,52 +452,81 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_topic']),
     ]);
     $child_term->save();
-    $cache_metadata->addCacheableDependency($child_term);
 
-    // Execute query.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-                query TopicTagCategories {
-                    topicTagCategories {
-                        id
-                        label
-                    }
-                }
-                GQL,
-          ])
-        );
-      }
+    $this->assertResults(
+      <<<GQL
+        query TopicTagCategories {
+          topicTagCategories {
+            id
+            label
+          }
+        }
+        GQL,
+      [],
+      [
+        'topicTagCategories' => [
+          [
+            'id' => $parent_category->uuid(),
+            'label' => 'Parent Topic Category',
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($parent_category)
+        ->addCacheContexts(['languages:language_interface'])
     );
-
-    $this->assertEmpty($result->errors);
-    $this->assertIsArray($result->data['topicTagCategories']);
-
-    // Should only return parent category, not child term.
-    $returned_ids = array_column($result->data['topicTagCategories'], 'id');
-    $this->assertContains($parent_category->uuid(), $returned_ids);
-    $this->assertNotContains($child_term->uuid(), $returned_ids);
   }
 
   /**
-   * Test empty result when no categories match the placement.
+   * Test that only parent terms (parent = 0) are returned (authorized).
    */
-  public function testQueryTopicTagCategoriesEmptyResult(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
+  public function testQueryTopicTagCategoriesOnlyParentTermsForAuthorized(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
 
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
+    $parent_category = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Parent Topic Category',
+      'parent' => 0,
+      'field_category_usage' => serialize(['node_topic']),
     ]);
-    $cache_metadata->addCacheTags(['taxonomy_term_list']);
+    $parent_category->save();
 
-    // Create a category for events only.
+    $child_term = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Child Term',
+      'parent' => $parent_category->id(),
+      'field_category_usage' => serialize(['node_topic']),
+    ]);
+    $child_term->save();
+
+    $this->assertResults(
+      <<<GQL
+        query TopicTagCategories {
+          topicTagCategories {
+            id
+            label
+          }
+        }
+        GQL,
+      [],
+      [
+        'topicTagCategories' => [
+          [
+            'id' => $parent_category->uuid(),
+            'label' => 'Parent Topic Category',
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($parent_category)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test empty result when no categories match the placement (anonymous).
+   */
+  public function testQueryTopicTagCategoriesEmptyResultForAnonymous(): void {
     $event_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Event Category',
@@ -447,32 +534,55 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'field_category_usage' => serialize(['node_event']),
     ]);
     $event_category->save();
-    $cache_metadata->addCacheableDependency($event_category);
 
-    // Execute query.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-                query TopicTagCategories {
-                    topicTagCategories {
-                        id
-                        label
-                    }
-                }
-                GQL,
-          ])
-        );
-      }
+    $this->assertResults(
+      <<<GQL
+        query TopicTagCategories {
+          topicTagCategories {
+            id
+            label
+          }
+        }
+        GQL,
+      [],
+      [
+        'topicTagCategories' => [],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
     );
+  }
 
-    $this->assertEmpty($result->errors);
-    $this->assertIsArray($result->data['topicTagCategories']);
-    $this->assertEmpty($result->data['topicTagCategories']);
+  /**
+   * Test empty result when no categories match the placement (authorized).
+   */
+  public function testQueryTopicTagCategoriesEmptyResultForAuthorized(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $event_category = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Category',
+      'parent' => 0,
+      'field_category_usage' => serialize(['node_event']),
+    ]);
+    $event_category->save();
+
+    $this->assertResults(
+      <<<GQL
+        query TopicTagCategories {
+          topicTagCategories {
+            id
+            label
+          }
+        }
+        GQL,
+      [],
+      [
+        'topicTagCategories' => [],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
   }
 
 }

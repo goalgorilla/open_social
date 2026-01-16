@@ -86,29 +86,8 @@ class ContentTaggableSelectedTagQueryHelper extends ConnectionQueryHelperBase {
         ->accessCheck();
     }
 
-    // Load all selected tags to check their parent category.
-    $selected_tags = $this->termStorage->loadMultiple($selected_tag_ids);
-    $filtered_tag_ids = [];
-
-    foreach ($selected_tags as $tag) {
-      if (!$tag->isPublished()) {
-        continue;
-      }
-
-      // Check if tag belongs to the specified category.
-      $parents = $this->termStorage->loadParents((int) $tag->id());
-      if (!empty($parents)) {
-        $parent = reset($parents);
-        // The parent->id() returns string but categoryId is int.
-        if ((int) $parent->id() === $this->categoryId) {
-          // Only include tags that are children of the category,
-          // not the category itself.
-          $filtered_tag_ids[] = $tag->id();
-        }
-      }
-      // Do not include the category itself when it's top-level.
-      // Top-level categories should have empty contentTags.
-    }
+    // Process tags in batches to avoid memory issues.
+    $filtered_tag_ids = $this->processTagsInBatches($selected_tag_ids);
 
     // If no tags match the category, return an empty query.
     if (empty($filtered_tag_ids)) {
@@ -175,6 +154,74 @@ class ContentTaggableSelectedTagQueryHelper extends ConnectionQueryHelperBase {
         $callback()
       )
     );
+  }
+
+  /**
+   * Processes tags in batches and filters by category.
+   *
+   * @param array $selected_tag_ids
+   *   Array of tag IDs to process.
+   *
+   * @return array
+   *   Array of filtered tag IDs that belong to the category.
+   */
+  private function processTagsInBatches(array $selected_tag_ids): array {
+    $batch_size = 25;
+    $tag_id_chunks = array_chunk($selected_tag_ids, $batch_size);
+    $filtered_tag_ids = [];
+
+    foreach ($tag_id_chunks as $tag_id_chunk) {
+      // Load tags for this batch.
+      /** @var array<int, \Drupal\taxonomy\Entity\Term|null> $loaded_tags */
+      $loaded_tags = $this->termStorage->loadMultiple($tag_id_chunk);
+      // Filter out NULL values (tags that were deleted between query and load).
+      /** @var \Drupal\taxonomy\Entity\Term[] $selected_tags */
+      $selected_tags = array_values(array_filter($loaded_tags, function ($tag): bool {
+        return $tag !== NULL && $tag->isPublished();
+      }));
+
+      if (empty($selected_tags)) {
+        continue;
+      }
+
+      // Pre-collect parent IDs and load them in bulk to avoid N+1 queries.
+      $parent_map = [];
+      foreach ($selected_tags as $tag) {
+        $parent_target_id = $tag->get('parent')->target_id;
+        if (!empty($parent_target_id) && (int) $parent_target_id !== 0) {
+          $parent_map[$tag->id()] = (int) $parent_target_id;
+        }
+      }
+
+      // Load all parents in a single query.
+      $parent_ids = array_unique(array_values($parent_map));
+      /** @var array<int, \Drupal\taxonomy\Entity\Term> $parents */
+      $parents = [];
+      if (!empty($parent_ids)) {
+        /** @var array<int, \Drupal\taxonomy\Entity\Term|null> $loaded_parents */
+        $loaded_parents = $this->termStorage->loadMultiple($parent_ids);
+        $parents = array_filter($loaded_parents, function ($parent): bool {
+          return $parent !== NULL;
+        });
+      }
+
+      // Filter tags by category using the pre-loaded parents.
+      foreach ($selected_tags as $tag) {
+        $tag_id = $tag->id();
+        if (isset($parent_map[$tag_id])) {
+          $parent_id = $parent_map[$tag_id];
+          if (isset($parents[$parent_id]) && (int) $parents[$parent_id]->id() === $this->categoryId) {
+            // Only include tags that are children of the category,
+            // not the category itself.
+            $filtered_tag_ids[] = $tag_id;
+          }
+        }
+        // Do not include the category itself when it's top-level.
+        // Top-level categories should have empty contentTags.
+      }
+    }
+
+    return $filtered_tag_ids;
   }
 
   /**

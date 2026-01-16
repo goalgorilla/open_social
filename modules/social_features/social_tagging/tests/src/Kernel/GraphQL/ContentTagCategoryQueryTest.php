@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\social_tagging\Kernel\GraphQL;
 
 use Drupal\Core\Render\RenderContext;
+use Drupal\node\Entity\NodeType;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Tests\iata_graphql_user\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\iata_graphql_user\Kernel\OAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
-use Drupal\Tests\user\Traits\UserCreationTrait;
 use GraphQL\Server\OperationParams;
 
 /**
@@ -20,7 +21,6 @@ use GraphQL\Server\OperationParams;
 class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
 
   use OAuthTestTrait;
-  use UserCreationTrait;
   use GraphQLOAuthTestTrait;
 
   /**
@@ -42,6 +42,8 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
     'system',
     'serialization',
     'social_core',
+    'entity_access_by_field',
+    'social_node',
     'social_tagging',
     'social_search',
     'select2',
@@ -54,7 +56,17 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
     'variationcache',
     'image',
     'file',
+    'file_mdm',
+    'image_effects',
+    'image_widget_crop',
+    'crop',
     'options',
+    'comment',
+    'menu_ui',
+    'taxonomy_access_fix',
+    'social_user',
+    'social_comment',
+    'social_topic',
   ];
 
   /**
@@ -65,105 +77,107 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
 
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('user');
+    $this->installEntitySchema('comment');
+    $this->installEntitySchema('file');
+    $this->installEntitySchema('crop');
     $this->installEntitySchema('oauth2_token');
     $this->installEntitySchema('oauth2_scope');
     $this->installEntitySchema('consumer');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installSchema('file', ['file_usage']);
 
     $this->installConfig([
+      'user',
+      'node',
       'taxonomy',
+      'social_node',
       'social_tagging',
       'simple_oauth',
       'simple_oauth_static_scope',
+      'comment',
+      'taxonomy_access_fix',
     ]);
 
-    // Configure OAuth to use static scope provider and set up keys.
+    if (!NodeType::load('topic')) {
+      $node_type = NodeType::create([
+        'type' => 'topic',
+        'name' => 'Topic',
+        'description' => 'Topic content type',
+      ]);
+      $node_type->save();
+    }
+
+    if (!Vocabulary::load('topic_types')) {
+      $vocabulary = Vocabulary::create([
+        'vid' => 'topic_types',
+        'name' => 'Topic Types',
+        'description' => 'Topic types vocabulary',
+      ]);
+      $vocabulary->save();
+    }
+
     $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
     $this->setUpKeys();
-
-    $this->setUpCurrentUser(["uid" => 1], ['view terms in social_tagging'], TRUE);
   }
 
   /**
    * Test querying a content tag category by ID.
    */
   public function testQueryContentTagCategoryById(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
-
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheMaxAge(0);
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
-    ]);
-
-    // Create a parent category term.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Technology',
       'parent' => 0,
+      'status' => 1,
     ]);
     $category->save();
-    $cache_metadata->addCacheableDependency($category);
 
-    // Execute query manually to validate result.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () use ($category) {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-                query ContentTagCategory(\$id: ID!) {
-                    contentTagCategory(id: \$id) {
-                        id
-                        label
-                    }
-                }
-                GQL,
-            'variables' => [
-              'id' => $category->uuid(),
-            ],
-          ])
-        );
-      }
+    $this->assertResults(
+      <<<GQL
+        query ContentTagCategory(\$id: ID!) {
+          contentTagCategory(id: \$id) {
+            id
+            label
+          }
+        }
+        GQL,
+      ['id' => $category->uuid()],
+      [
+        'contentTagCategory' => [
+          'id' => $category->uuid(),
+          'label' => 'Technology',
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($category)
+        ->addCacheContexts(['languages:language_interface'])
     );
-
-    $this->assertEmpty($result->errors);
-    $this->assertEquals($category->uuid(), $result->data['contentTagCategory']['id']);
-    $this->assertEquals('Technology', $result->data['contentTagCategory']['label']);
   }
 
   /**
    * Test querying a non-existent content tag category returns null.
    */
   public function testQueryContentTagCategoryNotFound(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
-
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
-    ]);
-    $cache_metadata->addCacheTags(['taxonomy_term_list']);
-
-    // Use a valid UUID format but non-existent category.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $fake_uuid = '12345678-1234-1234-1234-123456789012';
 
     $this->assertResults(
       <<<GQL
         query ContentTagCategory(\$id: ID!) {
-            contentTagCategory(id: \$id) {
-                id
-                label
-            }
+          contentTagCategory(id: \$id) {
+            id
+            label
+          }
         }
         GQL,
       ['id' => $fake_uuid],
       [
         'contentTagCategory' => NULL,
       ],
-      $cache_metadata
+      $this->defaultCacheMetaData()
+        ->addCacheTags(['taxonomy_term_list'])
+        ->addCacheContexts(['languages:language_interface'])
     );
   }
 
@@ -171,32 +185,25 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
    * Test querying content tag category with invalid UUID format.
    */
   public function testQueryContentTagCategoryInvalidUuid(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
-
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
-    ]);
-    $cache_metadata->addCacheTags(['taxonomy_term_list']);
-
-    // Use an invalid UUID format.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $invalid_uuid = 'not-a-valid-uuid';
 
     $this->assertResults(
       <<<GQL
         query ContentTagCategory(\$id: ID!) {
-            contentTagCategory(id: \$id) {
-                id
-                label
-            }
+          contentTagCategory(id: \$id) {
+            id
+            label
+          }
         }
         GQL,
       ['id' => $invalid_uuid],
       [
         'contentTagCategory' => NULL,
       ],
-      $cache_metadata
+      $this->defaultCacheMetaData()
+        ->addCacheTags(['taxonomy_term_list'])
+        ->addCacheContexts(['languages:language_interface'])
     );
   }
 
@@ -204,130 +211,124 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
    * Test querying category with children tags using pagination.
    */
   public function testQueryContentTagCategoryWithChildren(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
-
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheMaxAge(0);
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
-    ]);
-
-    // Create a parent category term.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Technology',
       'parent' => 0,
+      'status' => 1,
     ]);
     $category->save();
-    $cache_metadata->addCacheableDependency($category);
 
-    // Create child tags.
     $tag1 = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Web Development',
       'parent' => $category->id(),
       'weight' => 0,
+      'status' => 1,
     ]);
     $tag1->save();
-    $cache_metadata->addCacheableDependency($tag1);
 
     $tag2 = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Mobile Development',
       'parent' => $category->id(),
       'weight' => 1,
+      'status' => 1,
     ]);
     $tag2->save();
-    $cache_metadata->addCacheableDependency($tag2);
 
     $tag3 = Term::create([
       'vid' => 'social_tagging',
       'name' => 'DevOps',
       'parent' => $category->id(),
       'weight' => 2,
+      'status' => 1,
     ]);
     $tag3->save();
-    $cache_metadata->addCacheableDependency($tag3);
 
-    // Execute query manually to validate result.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () use ($category) {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-                query ContentTagCategory(\$id: ID!) {
-                    contentTagCategory(id: \$id) {
-                        id
-                        label
-                        contentTags(first: 2) {
-                            edges {
-                                cursor
-                                node {
-                                    id
-                                    label
-                                }
-                            }
-                            nodes {
-                                id
-                                label
-                            }
-                            pageInfo {
-                                hasNextPage
-                                hasPreviousPage
-                                startCursor
-                                endCursor
-                            }
-                        }
-                    }
+    $this->assertResults(
+      <<<GQL
+        query ContentTagCategory(\$id: ID!) {
+          contentTagCategory(id: \$id) {
+            id
+            label
+            contentTags(first: 2) {
+              edges {
+                node {
+                  id
+                  label
                 }
-                GQL,
-            'variables' => [
-              'id' => $category->uuid(),
+              }
+              nodes {
+                id
+                label
+              }
+              pageInfo {
+                hasNextPage
+                hasPreviousPage
+              }
+            }
+          }
+        }
+        GQL,
+      ['id' => $category->uuid()],
+      [
+        'contentTagCategory' => [
+          'id' => $category->uuid(),
+          'label' => 'Technology',
+          'contentTags' => [
+            'edges' => [
+              [
+                'node' => [
+                  'id' => $tag1->uuid(),
+                  'label' => 'Web Development',
+                ],
+              ],
+              [
+                'node' => [
+                  'id' => $tag2->uuid(),
+                  'label' => 'Mobile Development',
+                ],
+              ],
             ],
-          ])
-        );
-      }
+            'nodes' => [
+              [
+                'id' => $tag1->uuid(),
+                'label' => 'Web Development',
+              ],
+              [
+                'id' => $tag2->uuid(),
+                'label' => 'Mobile Development',
+              ],
+            ],
+            'pageInfo' => [
+              'hasNextPage' => TRUE,
+              'hasPreviousPage' => FALSE,
+            ],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($category)
+        ->addCacheableDependency($tag1)
+        ->addCacheableDependency($tag2)
+        ->addCacheContexts(['languages:language_interface'])
     );
-
-    $this->assertEmpty($result->errors);
-    $this->assertEquals($category->uuid(), $result->data['contentTagCategory']['id']);
-    $this->assertEquals('Technology', $result->data['contentTagCategory']['label']);
-    $this->assertCount(2, $result->data['contentTagCategory']['contentTags']['edges']);
-    $this->assertEquals($tag1->uuid(), $result->data['contentTagCategory']['contentTags']['edges'][0]['node']['id']);
-    $this->assertEquals('Web Development', $result->data['contentTagCategory']['contentTags']['edges'][0]['node']['label']);
-    $this->assertEquals($tag2->uuid(), $result->data['contentTagCategory']['contentTags']['edges'][1]['node']['id']);
-    $this->assertEquals('Mobile Development', $result->data['contentTagCategory']['contentTags']['edges'][1]['node']['label']);
-    $this->assertTrue($result->data['contentTagCategory']['contentTags']['pageInfo']['hasNextPage']);
-    $this->assertFalse($result->data['contentTagCategory']['contentTags']['pageInfo']['hasPreviousPage']);
   }
 
   /**
    * Test pagination with after cursor.
    */
   public function testQueryContentTagCategoryWithPagination(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
-
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheMaxAge(0);
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
-    ]);
-
-    // Create a parent category term.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Science',
       'parent' => 0,
     ]);
     $category->save();
-    $cache_metadata->addCacheableDependency($category);
 
-    // Create child tags.
     $tag1 = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Physics',
@@ -335,7 +336,6 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
       'weight' => 0,
     ]);
     $tag1->save();
-    $cache_metadata->addCacheableDependency($tag1);
 
     $tag2 = Term::create([
       'vid' => 'social_tagging',
@@ -344,9 +344,49 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
       'weight' => 1,
     ]);
     $tag2->save();
-    $cache_metadata->addCacheableDependency($tag2);
 
-    // Get first page.
+    $this->assertResults(
+      <<<GQL
+        query ContentTagCategory(\$id: ID!) {
+          contentTagCategory(id: \$id) {
+            contentTags(first: 1) {
+              edges {
+                node {
+                  id
+                  label
+                }
+              }
+              pageInfo {
+                hasNextPage
+              }
+            }
+          }
+        }
+        GQL,
+      ['id' => $category->uuid()],
+      [
+        'contentTagCategory' => [
+          'contentTags' => [
+            'edges' => [
+              [
+                'node' => [
+                  'id' => $tag1->uuid(),
+                  'label' => 'Physics',
+                ],
+              ],
+            ],
+            'pageInfo' => [
+              'hasNextPage' => TRUE,
+            ],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($category)
+        ->addCacheableDependency($tag1)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
     $context = new RenderContext();
     $renderer = \Drupal::service('renderer');
     $result = $renderer->executeInRenderContext(
@@ -355,24 +395,16 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
         return $this->server->executeOperation(
           OperationParams::create([
             'query' => <<<GQL
-                query ContentTagCategory(\$id: ID!) {
-                    contentTagCategory(id: \$id) {
-                        contentTags(first: 1) {
-                            edges {
-                                cursor
-                                node {
-                                    id
-                                    label
-                                }
-                            }
-                            pageInfo {
-                                hasNextPage
-                                endCursor
-                            }
-                        }
+              query ContentTagCategory(\$id: ID!) {
+                contentTagCategory(id: \$id) {
+                  contentTags(first: 1) {
+                    pageInfo {
+                      endCursor
                     }
+                  }
                 }
-                GQL,
+              }
+              GQL,
             'variables' => [
               'id' => $category->uuid(),
             ],
@@ -380,116 +412,107 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
         );
       }
     );
-
-    $this->assertEmpty($result->errors);
-    $this->assertNotEmpty($result->data['contentTagCategory']['contentTags']['edges']);
     $end_cursor = $result->data['contentTagCategory']['contentTags']['pageInfo']['endCursor'];
-    $this->assertTrue($result->data['contentTagCategory']['contentTags']['pageInfo']['hasNextPage']);
 
-    // Get second page using cursor.
-    $result2 = $renderer->executeInRenderContext(
-      $context,
-      function () use ($category, $end_cursor) {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-                query ContentTagCategory(\$id: ID!, \$after: Cursor!) {
-                    contentTagCategory(id: \$id) {
-                        contentTags(first: 1, after: \$after) {
-                            edges {
-                                cursor
-                                node {
-                                    id
-                                    label
-                                }
-                            }
-                            pageInfo {
-                                hasNextPage
-                                hasPreviousPage
-                            }
-                        }
-                    }
+    $this->assertResults(
+      <<<GQL
+        query ContentTagCategory(\$id: ID!, \$after: Cursor!) {
+          contentTagCategory(id: \$id) {
+            contentTags(first: 1, after: \$after) {
+              edges {
+                node {
+                  id
+                  label
                 }
-                GQL,
-            'variables' => [
-              'id' => $category->uuid(),
-              'after' => $end_cursor,
+              }
+              pageInfo {
+                hasNextPage
+                hasPreviousPage
+              }
+            }
+          }
+        }
+        GQL,
+      [
+        'id' => $category->uuid(),
+        'after' => $end_cursor,
+      ],
+      [
+        'contentTagCategory' => [
+          'contentTags' => [
+            'edges' => [
+              [
+                'node' => [
+                  'id' => $tag2->uuid(),
+                  'label' => 'Chemistry',
+                ],
+              ],
             ],
-          ])
-        );
-      }
+            'pageInfo' => [
+              'hasNextPage' => FALSE,
+              'hasPreviousPage' => TRUE,
+            ],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($category)
+        ->addCacheableDependency($tag2)
+        ->addCacheContexts(['languages:language_interface'])
     );
-
-    $this->assertEmpty($result2->errors);
-    $this->assertEquals($tag2->uuid(), $result2->data['contentTagCategory']['contentTags']['edges'][0]['node']['id']);
-    $this->assertEquals('Chemistry', $result2->data['contentTagCategory']['contentTags']['edges'][0]['node']['label']);
-    $this->assertFalse($result2->data['contentTagCategory']['contentTags']['pageInfo']['hasNextPage']);
-    $this->assertTrue($result2->data['contentTagCategory']['contentTags']['pageInfo']['hasPreviousPage']);
   }
 
   /**
    * Test empty child tags result.
    */
   public function testQueryContentTagCategoryWithNoChildren(): void {
-    $this->actAsClientCredentialsWithScopes(['content_tag:view']);
-
-    $cache_metadata = $this->defaultCacheMetaData();
-    $cache_metadata->setCacheMaxAge(0);
-    $cache_metadata->setCacheContexts([
-      'languages:language_interface',
-      'user.permissions',
-    ]);
-
-    // Create a parent category term with no children.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Empty Category',
       'parent' => 0,
     ]);
     $category->save();
-    $cache_metadata->addCacheableDependency($category);
 
-    // Execute query.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () use ($category) {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-                query ContentTagCategory(\$id: ID!) {
-                    contentTagCategory(id: \$id) {
-                        id
-                        label
-                        contentTags(first: 10) {
-                            edges {
-                                node {
-                                    id
-                                    label
-                                }
-                            }
-                            pageInfo {
-                                hasNextPage
-                                hasPreviousPage
-                            }
-                        }
-                    }
+    $this->assertResults(
+      <<<GQL
+        query ContentTagCategory(\$id: ID!) {
+          contentTagCategory(id: \$id) {
+            id
+            label
+            contentTags(first: 10) {
+              edges {
+                node {
+                  id
+                  label
                 }
-                GQL,
-            'variables' => [
-              'id' => $category->uuid(),
+              }
+              pageInfo {
+                hasNextPage
+                hasPreviousPage
+              }
+            }
+          }
+        }
+        GQL,
+      ['id' => $category->uuid()],
+      [
+        'contentTagCategory' => [
+          'id' => $category->uuid(),
+          'label' => 'Empty Category',
+          'contentTags' => [
+            'edges' => [],
+            'pageInfo' => [
+              'hasNextPage' => FALSE,
+              'hasPreviousPage' => FALSE,
             ],
-          ])
-        );
-      }
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($category)
+        ->addCacheContexts(['languages:language_interface'])
     );
-
-    $this->assertEmpty($result->errors);
-    $this->assertEquals($category->uuid(), $result->data['contentTagCategory']['id']);
-    $this->assertEmpty($result->data['contentTagCategory']['contentTags']['edges']);
-    $this->assertFalse($result->data['contentTagCategory']['contentTags']['pageInfo']['hasNextPage']);
-    $this->assertFalse($result->data['contentTagCategory']['contentTags']['pageInfo']['hasPreviousPage']);
   }
 
 }

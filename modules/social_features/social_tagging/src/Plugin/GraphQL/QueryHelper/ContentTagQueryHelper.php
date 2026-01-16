@@ -20,16 +20,9 @@ use GraphQL\Executor\Promise\Adapter\SyncPromise;
 class ContentTagQueryHelper extends ConnectionQueryHelperBase {
 
   /**
-   * The parent category term ID.
-   *
-   * @var int
-   */
-  protected int $parentId;
-
-  /**
    * Create a new connection query helper.
    *
-   * @param int $parent_id
+   * @param int $parentId
    *   The parent category term ID.
    * @param string $sort_key
    *   The key that is used for sorting.
@@ -38,13 +31,13 @@ class ContentTagQueryHelper extends ConnectionQueryHelperBase {
    * @param \Drupal\graphql\GraphQL\Buffers\EntityBuffer $graphql_entity_buffer
    *   The GraphQL entity buffer.
    */
-  public function __construct(int $parent_id, string $sort_key, EntityTypeManagerInterface $entity_type_manager, EntityBuffer $graphql_entity_buffer) {
+  public function __construct(
+    protected int $parentId,
+    string $sort_key,
+    EntityTypeManagerInterface $entity_type_manager,
+    EntityBuffer $graphql_entity_buffer,
+  ) {
     parent::__construct($sort_key, $entity_type_manager, $graphql_entity_buffer);
-
-    $this->parentId = $parent_id;
-    $this->entityTypeManager = $entity_type_manager;
-    $this->graphqlEntityBuffer = $graphql_entity_buffer;
-    $this->sortKey = $sort_key;
   }
 
   /**
@@ -100,13 +93,16 @@ class ContentTagQueryHelper extends ConnectionQueryHelperBase {
     }
 
     return new Deferred(
-      fn(): array => array_map(
-        fn (Term $term): Edge => new Edge(
-          $term,
-          (string) new Cursor('taxonomy_term', (int) $term->id(), $this->sortKey, $this->getSortValue($term))
-        ),
-        $callback()
-      )
+      function () use ($callback): array {
+        $entities = array_filter($callback());
+        return array_map(
+          function (Term $term): Edge {
+            $cursor = new Cursor('taxonomy_term', (int) $term->id(), $this->sortKey, $this->getSortValue($term));
+            return new Edge($term, $cursor->toCursorString());
+          },
+          $entities
+        );
+      }
     );
   }
 
