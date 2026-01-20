@@ -837,3 +837,12 @@ function social_course_update_13005(): void {
   $config->save();
 }
 
+/**
+ * Enable aggregation for course group display.
+ */
+function social_course_update_13006(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_course', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
