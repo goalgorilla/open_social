@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\social_group\Plugin\better_exposed_filters\sort;
+namespace Drupal\social_core\Plugin\better_exposed_filters\sort;
 
 use Drupal\better_exposed_filters\Plugin\better_exposed_filters\sort\DefaultWidget;
 use Drupal\Core\Form\FormStateInterface;
@@ -12,7 +12,7 @@ use Drupal\Component\Utility\Html;
 /**
  * Displays the sort widget on the page top.
  *
- * @see \Drupal\social_group\Plugin\Block\TitleWithSortsBlock
+ * @see \Drupal\social_core\Plugin\Block\TitleWithSortsBlock
  *
  * @BetterExposedFiltersSortWidget(
  *   id = "bef_sort_page_top",

@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Enhances the filters in the exposed form for group-related views.
  */
-final class ViewsSorts implements ContainerInjectionInterface {
+final class ViewsSort implements ContainerInjectionInterface {
 
   use StringTranslationTrait;
 

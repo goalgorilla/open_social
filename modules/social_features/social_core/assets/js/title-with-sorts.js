@@ -7,14 +7,14 @@
   'use strict';
 
   /**
-   * Moves elements with ".sorting-group" class to ".view-header".
+   * Moves elements with ".sorting-group" class to ".title-with-sorts".
    *
    * @type {Drupal~behavior}
    *
    * @prop {Drupal~behaviorAttach} attach
    *   Attaches the behavior to move exposed form elements.
    */
-  Drupal.behaviors.moveExposedSortToViewHeader = {
+  Drupal.behaviors.moveExposedSortToPageHeader = {
     attach: function (context, settings) {
       // Find all elements with the form="edit-views-exposed-form" attribute.
       const sortingGroup = once('move-exposed-form', '.sorting-group', context);
@@ -56,7 +56,7 @@
       });
 
       // Update the title with the member count after AJAX search.
-      once('move-exposed-sort-ajax', 'body', context).forEach(function () {
+      once('title-with-sorts-ajax', 'body', context).forEach(function () {
         // Uses global jQuery from Drupal core.
         if (typeof $ !== 'undefined') {
           $(document).ajaxComplete(function (event, xhr, settings) {
@@ -64,7 +64,7 @@
             if (settings && settings.extraData && settings.extraData.view_name) {
               const views = document.querySelectorAll('.view');
               views.forEach(function (viewElement) {
-                Drupal.behaviors.moveExposedSortToViewHeader.insertViewsResultCount(viewElement);
+                Drupal.behaviors.moveExposedSortToPageHeader.insertViewsResultCount(viewElement);
               });
             }
           });
@@ -105,11 +105,14 @@
           }
         }
 
-        if (isHidden) {
-          input.closest('.form-item').classList.add('hidden');
-        }
-        else {
-          input.closest('.form-item').classList.remove('hidden');
+        const formItem = input.closest('.form-item');
+        if (formItem) {
+          if (isHidden) {
+            formItem.classList.add('hidden');
+          }
+          else {
+            formItem.classList.remove('hidden');
+          }
         }
 
         if (input.getAttribute('value') === defaultSort) {
@@ -134,8 +137,8 @@
         // For text inputs, add a debounced input event for real-time search.
         if (formElement.type === 'text' || formElement.type === 'search') {
           let debounceTimer;
-          const delay = 100;
-          const minLength = 1;
+          const delay = 300;
+          const minLength = 2;
 
           formElement.addEventListener('input', function (event) {
             clearTimeout(debounceTimer);

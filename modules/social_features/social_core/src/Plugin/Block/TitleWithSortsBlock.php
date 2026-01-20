@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Drupal\social_group\Plugin\Block;
+namespace Drupal\social_core\Plugin\Block;
 
 use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
 use Drupal\Core\Block\Attribute\Block;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -67,7 +68,7 @@ class TitleWithSortsBlock extends PageTitleBlock implements ContainerFactoryPlug
       ],
       '#attached' => [
         'library' => [
-          'social_group/move-exposed-sort',
+          'social_core/title-with-sorts',
           'socialbase/sort-filter',
         ],
       ],
@@ -88,6 +89,13 @@ class TitleWithSortsBlock extends PageTitleBlock implements ContainerFactoryPlug
     ];
 
     return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts(): array {
+    return Cache::mergeContexts(parent::getCacheContexts(), ['route']);
   }
 
 }
