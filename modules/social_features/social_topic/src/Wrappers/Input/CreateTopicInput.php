@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_graphql\Wrappers\InputBase;
 use Drupal\taxonomy\TermInterface;
@@ -19,6 +20,7 @@ use Drupal\user\UserInterface;
  * Provides validation and easy access to the input to create a topic.
  */
 class CreateTopicInput extends InputBase {
+  use VisibilityTrait;
 
   /**
    * The entity type manager.
@@ -153,8 +155,7 @@ class CreateTopicInput extends InputBase {
       $this->violations[] = new Violation("VISIBILITY_REQUIRED");
     }
     else {
-      $allowed_visibilities = ['PUBLIC', 'COMMUNITY', 'GROUP_MEMBER'];
-      if (!in_array($input['visibility'], $allowed_visibilities, TRUE)) {
+      if (!$this->isValidVisibility($input['visibility'])) {
         $this->violations[] = new Violation("VISIBILITY_INVALID");
       }
       else {

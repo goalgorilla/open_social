@@ -76,7 +76,16 @@ extend type Mutation {
     Input data for creating the topic.
     """
     input: CreateTopicInput!
-  ): CreateTopicPayload @allowBot(requiredScopes: ["topic:write"])
+  ): CreateTopicPayload! @allowBot(requiredScopes: ["topic:write"])
+  """
+  Update an existing topic.
+  """
+  updateTopic(
+    """
+    Input data for updating an existing topic.
+    """
+    input: UpdateTopicInput!
+  ): UpdateTopicPayload! @allowBot(requiredScopes: ["topic:write"])
   """
   Delete an existing topic.
   """
@@ -85,5 +94,5 @@ extend type Mutation {
     Input data for deleting the topic.
     """
     input: DeleteTopicInput!
-  ): DeleteTopicPayload @allowBot(requiredScopes: ["topic:write"])
+  ): DeleteTopicPayload! @allowBot(requiredScopes: ["topic:write"])
 }

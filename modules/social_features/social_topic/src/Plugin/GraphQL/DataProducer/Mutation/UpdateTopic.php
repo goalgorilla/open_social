@@ -6,32 +6,32 @@ namespace Drupal\social_topic\Plugin\GraphQL\DataProducer\Mutation;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_graphql\GraphQL\Violation;
-use Drupal\social_topic\Wrappers\Input\CreateTopicInput;
-use Drupal\social_topic\Wrappers\Payload\CreateTopicPayload;
+use Drupal\social_topic\Wrappers\Input\UpdateTopicInput;
+use Drupal\social_topic\Wrappers\Payload\UpdateTopicPayload;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Creates a new topic.
+ * Updates an existing topic.
  *
  * @DataProducer(
- *   id = "create_topic",
- *   name = @Translation("Create Topic"),
- *   description = @Translation("Creates a new topic."),
+ *   id = "update_topic",
+ *   name = @Translation("Update Topic"),
+ *   description = @Translation("Updates an existing topic."),
  *   produces = @ContextDefinition("any",
- *     label = @Translation("CreateTopicPayload")
+ *     label = @Translation("UpdateTopicPayload")
  *   ),
  *   consumes = {
  *     "input" = @ContextDefinition("any",
- *       label = "CreateTopicInput",
+ *       label = "UpdateTopicInput",
  *     ),
  *   }
  * )
  */
-class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
   use VisibilityTrait;
 
   /**
@@ -42,10 +42,10 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
   /**
    * The current user.
    */
-  protected AccountInterface $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
-   * CreateTopic constructor.
+   * UpdateTopic constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -55,7 +55,7 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
    */
   public function __construct(
@@ -63,7 +63,7 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     string $plugin_id,
     array $plugin_definition,
     EntityTypeManagerInterface $entity_type_manager,
-    AccountInterface $current_user,
+    AccountProxyInterface $current_user,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -90,20 +90,21 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
   }
 
   /**
-   * Creates a new topic.
+   * Updates an existing topic.
    *
-   * @param \Drupal\social_topic\Wrappers\Input\CreateTopicInput $input
-   *   The information for the topic.
+   * @param \Drupal\social_topic\Wrappers\Input\UpdateTopicInput $input
+   *   The information for updating the topic.
    *
-   * @return \Drupal\social_topic\Wrappers\Payload\CreateTopicPayload
+   * @return \Drupal\social_topic\Wrappers\Payload\UpdateTopicPayload
    *   The GraphQL topic response.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function resolve(CreateTopicInput $input): CreateTopicPayload {
-    $payload = new CreateTopicPayload();
+  public function resolve(UpdateTopicInput $input): UpdateTopicPayload {
+    $payload = new UpdateTopicPayload();
     $payload->setClientMutationId($input->getClientMutationId());
 
     // Validate the input.
@@ -112,26 +113,30 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
       return $payload;
     }
 
-    // Map visibility from GraphQL to Drupal field values.
-    $visibility_value = $this->convertVisibilityUserInputToConstant($input->getVisibility());
+    // Load the topic node.
+    $node = $input->getTopic();
 
-    // Create the topic node.
-    $node_storage = $this->entityTypeManager->getStorage('node');
-    $node_values = [
-      'type' => 'topic',
-      'title' => $input->getTitle(),
-      'body' => [[
-        'value' => ' ',
-      ],
-      ],
-      'field_content_visibility' => $visibility_value,
-      'field_topic_type' => $input->getTopicType(),
-      'uid' => $input->getAuthor()->id(),
-      'status' => 1,
-    ];
+    // Update title if provided.
+    if ($input->hasTitle()) {
+      $node->setTitle($input->getTitle());
+    }
 
-    /** @var \Drupal\node\NodeInterface $node */
-    $node = $node_storage->create($node_values);
+    // Update topic type if provided.
+    if ($input->hasTopicType()) {
+      $node->set('field_topic_type', $input->getTopicType());
+    }
+
+    // Update visibility if provided.
+    if ($input->hasVisibility()) {
+      // Map visibility from GraphQL to Drupal field values.
+      $graphql_visibility = $input->getVisibility();
+      if (!$this->isValidVisibility($graphql_visibility)) {
+        $payload->addViolation(new Violation('INVALID_VISIBILITY'));
+        return $payload;
+      }
+      $visibility_value = $this->convertVisibilityUserInputToConstant($graphql_visibility);
+      $node->set('field_content_visibility', $visibility_value);
+    }
 
     // Validate the entity before saving.
     // This ensures that field-level constraints are checked
@@ -169,6 +174,7 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
       return $payload;
     }
 
+    // Save the node.
     $node->save();
     $payload->setTopic($node);
 

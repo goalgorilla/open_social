@@ -145,6 +145,51 @@ type CreateTopicPayload {
 }
 
 """
+Input for updating an existing topic.
+"""
+input UpdateTopicInput {
+  """
+  A unique identifier for the client performing the mutation.
+  Must be a valid UUIDv4 format.
+  """
+  clientMutationId: UUIDv4
+  """
+  The ID of the topic to update.
+  """
+  id: ID!
+  """
+  The type of the topic. Must be a valid topic type ID.
+  """
+  type: ID
+  """
+  The title of the topic (max 255 characters).
+  """
+  title: String
+  """
+  The visibility of the topic.
+  """
+  visibility: ContentVisibility
+}
+
+"""
+Payload returned after updating a topic.
+"""
+type UpdateTopicPayload {
+  """
+  The client mutation ID from the input.
+  """
+  clientMutationId: UUIDv4
+  """
+  List of validation errors, if any.
+  """
+  errors: [Violation!]
+  """
+  The updated topic, if successful.
+  """
+  topic: Topic
+}
+
+"""
 Input for deleting an existing topic.
 """
 input DeleteTopicInput {
