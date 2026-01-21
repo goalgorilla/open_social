@@ -28,6 +28,11 @@ extend type Query {
     """
     id: ID!
   ): Event
+
+  """
+  List of all event types on the platform.
+  """
+  eventTypes: [EventType!]!
 }
 
 extend type User {

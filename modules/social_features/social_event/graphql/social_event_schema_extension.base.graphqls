@@ -37,6 +37,10 @@ type Event implements Node & Commentable {
   """
   location: String
   """
+  The type of the event.
+  """
+  eventType: EventType
+  """
   List of event managers.
 
   Managers are people who have the rights to edit the event itself.
@@ -111,4 +115,20 @@ type EventManagerConnection implements Connection {
   edges: [EventManagerEdge!]!
   nodes: [User!]!
   pageInfo: PageInfo!
+}
+
+"""
+The type of an event.
+Each event is tagged with an event type to make it clear what this event is about.
+An event is assigned an event type defined by site managers.
+"""
+type EventType implements Node {
+  """
+  The unique identifier for the event type.
+  """
+  id: ID!
+  """
+  The human-readable name of the event type.
+  """
+  label: String
 }

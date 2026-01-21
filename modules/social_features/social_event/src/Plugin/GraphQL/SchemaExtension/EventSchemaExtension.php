@@ -105,6 +105,17 @@ class EventSchemaExtension extends SdlSchemaExtensionPluginBase {
       $builder->fromPath('entity:node', 'field_event_location.value')
     );
 
+    $registry->addFieldResolver('Event', 'eventType',
+      $builder->compose(
+        $builder->produce('entity_reference')
+          ->map('entity', $builder->fromParent())
+          ->map('field', $builder->fromValue('field_event_type')),
+        $builder->produce('seek')
+          ->map('input', $builder->fromParent())
+          ->map('position', $builder->fromValue(0))
+      )
+    );
+
     $registry->addFieldResolver('Event', 'url',
       $builder->compose(
         $builder->produce('social_entity_url')
@@ -158,9 +169,27 @@ class EventSchemaExtension extends SdlSchemaExtensionPluginBase {
         ->map('uuid', $builder->fromArgument('id'))
     );
 
+    $registry->addFieldResolver('Query', 'eventTypes',
+      $builder->produce('taxonomy_load_tree')
+        ->map('vid', $builder->fromValue('event_types'))
+        ->map('parent', $builder->fromValue(0))
+        ->map('max_depth', $builder->fromValue(1))
+    );
+
     // Add eventsCreated field to the user object.
     $registry->addFieldResolver('User', 'eventsCreated',
       $builder->produce('social_events_created')
+        ->map('entity', $builder->fromParent())
+    );
+
+    // Add EventType resolvers.
+    $registry->addFieldResolver('EventType', 'id',
+      $builder->produce('entity_uuid')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('EventType', 'label',
+      $builder->produce('entity_label')
         ->map('entity', $builder->fromParent())
     );
   }
