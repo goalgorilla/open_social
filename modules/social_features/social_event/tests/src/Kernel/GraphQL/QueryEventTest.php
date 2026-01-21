@@ -5,8 +5,10 @@ namespace Drupal\Tests\social_event\Kernel\GraphQL;
 use Drupal\comment\Entity\Comment;
 use Drupal\file\Entity\File;
 use Drupal\node\NodeInterface;
+use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
+use Drupal\Tests\taxonomy\Traits\TaxonomyTestTrait;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 
 /**
@@ -19,12 +21,14 @@ class QueryEventTest extends SocialGraphQLTestBase {
 
   use NodeCreationTrait;
   use UserCreationTrait;
+  use TaxonomyTestTrait;
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
     'social_event',
+    'social_event_type',
     'entity',
     // For the event author and viewer.
     'social_user',
@@ -99,6 +103,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('comment');
     $this->installEntitySchema('file');
     $this->installEntitySchema('profile');
+    $this->installEntitySchema('taxonomy_term');
 
     $this->installSchema('comment', 'comment_entity_statistics');
     $this->installSchema('file', 'file_usage');
@@ -109,6 +114,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
       'social_node',
       'social_event',
       'social_event_managers',
+      'social_event_type',
       'filter',
       'comment',
       'social_comment',
@@ -119,6 +125,10 @@ class QueryEventTest extends SocialGraphQLTestBase {
    * Test that the fields provided by the module can be queried.
    */
   public function testSupportsFieldsIncludedInModule() : void {
+    $event_types = Vocabulary::load('event_types');
+    $this->assertNotNull($event_types, 'The event_types vocabulary must exist.');
+    $event_type_term = $this->createTerm($event_types);
+
     $raw_event_body = "This is a link test: https://social.localhost";
     $html_event_body = "<div><p>This is a link test: <a href=\"https://social.localhost\">https://social.localhost</a></p>\n</div>";
 
@@ -134,6 +144,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
       'field_content_visibility' => 'public',
       'field_event_image' => $event_image->id(),
       'field_event_managers' => [$event_manager->id()],
+      'field_event_type' => $event_type_term->id(),
       'status' => NodeInterface::PUBLISHED,
       'body' => $raw_event_body,
     ]);
@@ -162,6 +173,10 @@ class QueryEventTest extends SocialGraphQLTestBase {
           author {
             id
             displayName
+          }
+          eventType {
+            id
+            label
           }
           bodyHtml
           comments(first: 1) {
@@ -196,6 +211,10 @@ class QueryEventTest extends SocialGraphQLTestBase {
             'id' => $event->getOwner()->uuid(),
             'displayName' => $event->getOwner()->getDisplayName(),
           ],
+          'eventType' => [
+            'id' => $event_type_term->uuid(),
+            'label' => $event_type_term->label(),
+          ],
           'bodyHtml' => $html_event_body,
           'comments' => [
             'nodes' => [
@@ -221,7 +240,8 @@ class QueryEventTest extends SocialGraphQLTestBase {
         ->addCacheableDependency($event)
         ->addCacheableDependency($event->getOwner())
         ->addCacheableDependency($event_manager)
-        ->addCacheTags(['config:filter.format.plain_text', 'config:filter.settings', 'comment:1'])
+        ->addCacheableDependency($event_type_term)
+        ->addCacheTags(['taxonomy_term:' . $event_type_term->id(), 'config:filter.format.plain_text', 'config:filter.settings', 'comment:1'])
         ->addCacheContexts(['languages:language_interface', 'url.site'])
     );
   }
@@ -251,6 +271,218 @@ class QueryEventTest extends SocialGraphQLTestBase {
       $this->defaultCacheMetaData()
         ->addCacheableDependency($topic)
         ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that event with event type returns correct eventType field via API.
+   *
+   * Tests that the eventType field on the Event type correctly resolves to
+   * the associated taxonomy term when an event has an event type assigned.
+   * This validates that the field resolver properly handles entity reference
+   * fields and returns the expected data structure.
+   */
+  public function testEventWithEventTypeReturnsCorrectType(): void {
+    $event_types = Vocabulary::load('event_types');
+    $this->assertNotNull($event_types, 'The event_types vocabulary must exist.');
+    $event_type_term = $this->createTerm($event_types);
+
+    $event = $this->createNode([
+      'type' => 'event',
+      'field_content_visibility' => 'public',
+      'field_event_type' => $event_type_term->id(),
+      'status' => NodeInterface::PUBLISHED,
+    ]);
+
+    $this->setUpCurrentUser([], array_merge([
+      'view node.event.field_content_visibility:public content',
+    ], $this->userPermissions()));
+
+    $this->assertResults('
+        query ($id: ID!) {
+          event(id: $id) {
+            id
+            eventType {
+              id
+              label
+            }
+          }
+        }
+      ',
+      ['id' => $event->uuid()],
+      [
+        'event' => [
+          'id' => $event->uuid(),
+          'eventType' => [
+            'id' => $event_type_term->uuid(),
+            'label' => $event_type_term->label(),
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheableDependency($event_type_term)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that event without event type returns null via GraphQL API.
+   *
+   * Tests that the eventType field correctly returns null when an event
+   * does not have an event type assigned. This validates that the field
+   * resolver handles the absence of an entity reference gracefully.
+   */
+  public function testEventWithoutEventTypeReturnsNull(): void {
+    $event = $this->createNode([
+      'type' => 'event',
+      'field_content_visibility' => 'public',
+      'status' => NodeInterface::PUBLISHED,
+    ]);
+
+    $this->setUpCurrentUser([], array_merge([
+      'view node.event.field_content_visibility:public content',
+    ], $this->userPermissions()));
+
+    $this->assertResults('
+        query ($id: ID!) {
+          event(id: $id) {
+            id
+            eventType {
+              id
+              label
+            }
+          }
+        }
+      ',
+      ['id' => $event->uuid()],
+      [
+        'event' => [
+          'id' => $event->uuid(),
+          'eventType' => NULL,
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheTags(['taxonomy_term_list'])
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that unpublished event type is filtered based on permissions.
+   *
+   * Tests that the eventType field correctly filters out unpublished
+   * taxonomy terms for API consumers without 'administer taxonomy' permission.
+   * This ensures that draft/unpublished event types are not exposed through
+   * the GraphQL API to regular consumers, protecting unpublished content.
+   */
+  public function testUnpublishedEventTypeNotVisibleWithoutPermissions(): void {
+    $unpublished_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->create([
+      'vid' => 'event_types',
+      'name' => 'Unpublished Type',
+      'status' => 0,
+    ]);
+    $unpublished_term->save();
+
+    $event = $this->createNode([
+      'type' => 'event',
+      'field_content_visibility' => 'public',
+      'field_event_type' => $unpublished_term->id(),
+      'status' => NodeInterface::PUBLISHED,
+    ]);
+
+    // Set up API consumer with standard content access permissions but without
+    // taxonomy administration scope.
+    $this->setUpCurrentUser([], array_merge([
+      'view node.event.field_content_visibility:public content',
+      'access content',
+    ], $this->userPermissions()));
+
+    $this->assertResults('
+        query ($id: ID!) {
+          event(id: $id) {
+            id
+            eventType {
+              id
+              label
+            }
+          }
+        }
+      ',
+      ['id' => $event->uuid()],
+      [
+        'event' => [
+          'id' => $event->uuid(),
+          'eventType' => NULL,
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheableDependency($unpublished_term)
+        ->addCacheTags(['taxonomy_term_list'])
+        ->addCacheContexts(['languages:language_interface', 'user.permissions'])
+    );
+  }
+
+  /**
+   * Test that unpublished event type is visible with correct permissions.
+   *
+   * Tests that the eventType field correctly includes unpublished taxonomy
+   * terms for API consumers with 'administer taxonomy' permission. This
+   * validates that the access control mechanism properly allows administrative
+   * access to draft/unpublished event types through the GraphQL API.
+   */
+  public function testUnpublishedEventTypeIsVisibleWithPermissions(): void {
+    $unpublished_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->create([
+      'vid' => 'event_types',
+      'name' => 'Unpublished Type',
+      'status' => 0,
+    ]);
+    $unpublished_term->save();
+
+    $event = $this->createNode([
+      'type' => 'event',
+      'field_content_visibility' => 'public',
+      'field_event_type' => $unpublished_term->id(),
+      'status' => NodeInterface::PUBLISHED,
+    ]);
+
+    // Set up context with 'administer taxonomy' permission to test access
+    // control logic. This validates that the API correctly handles
+    // administrative access to unpublished taxonomy terms.
+    $permissions = array_merge([
+      'view node.event.field_content_visibility:public content',
+      'administer taxonomy',
+      'access content',
+    ], $this->userPermissions());
+    $this->setUpCurrentUser([], $permissions);
+
+    $this->assertResults('
+        query ($id: ID!) {
+          event(id: $id) {
+            id
+            eventType {
+              id
+              label
+            }
+          }
+        }
+      ',
+      ['id' => $event->uuid()],
+      [
+        'event' => [
+          'id' => $event->uuid(),
+          'eventType' => [
+            'id' => $unpublished_term->uuid(),
+            'label' => $unpublished_term->label(),
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheableDependency($unpublished_term)
+        ->addCacheContexts(['languages:language_interface', 'user.permissions'])
     );
   }
 
