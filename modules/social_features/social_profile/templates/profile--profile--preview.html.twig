@@ -4,9 +4,12 @@
     {{ content.field_profile_image }}
 {% endblock %}
 
-{% block preview_popup_user_link %}{{ content.uid }}{% endblock %}
-
-{% block preview_popup_user_name %}{% endblock %}
+{% block preview_popup_user_link %}
+  <a href="{{ profile_home }}" rel="bookmark">
+    {{ profile_name }}
+    {{ profile_name_extra }}
+  </a>
+{% endblock %}
 
 {% block preview_popup_user_number %}{% endblock %}
 

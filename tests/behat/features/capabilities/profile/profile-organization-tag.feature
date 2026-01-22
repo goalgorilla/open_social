@@ -17,5 +17,5 @@ Feature: Check that profile organization tags are correctly displayed
       # This should automaticly redirect to \user\[id]\stream
     When I am on "\user"
 
-    Then I should see the text "Behat Sitemanager from A&B's commented on Behat Sitemanager's topic"
+    Then I should see the text "Behat Sitemanager at A&B's commented on Behat Sitemanager's topic"
     And the ".social-profile-tag" element should have the attribute "data-social-tooltip" with value "A&B's"

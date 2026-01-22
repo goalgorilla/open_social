@@ -2,11 +2,13 @@
 
 namespace Drupal\social_profile\Hooks;
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -17,6 +19,7 @@ use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_profile\Form\SocialProfileSettingsForm;
 use Drupal\social_profile\GroupAffiliation;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -311,6 +314,67 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
         '#title' => t('Enable affiliation for Groups'),
         '#default_value' => $default_value,
       ];
+    }
+  }
+
+  /**
+   * Adds an affiliation suffix to profile display names in token replacements.
+   *
+   * This method modifies specific token replacements for profile names
+   * to include the user's primary affiliation if it exists.
+   * It checks if the user has a profile with affiliation data and appends
+   * the affiliation name to relevant token values.
+   *
+   * @param array $replacements
+   *   An array of token replacements to modify.
+   * @param array $context
+   *   An associative array of contextual data for token processing.
+   *   This includes information about the user.
+   * @param \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata
+   *   An object containing metadata for bubbleable rendering.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *
+   * @see hook_tokens_alter()
+   */
+  #[Alter('tokens')]
+  public function affiliationSuffixInProfileName(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
+    if (!isset($replacements['[message:author:display-name]']) && !isset($replacements['[message:revision_author:display-name]'])) {
+      return;
+    }
+
+    // These tokens are used for profile name display in message tokens.
+    $tokens = [
+      '[message:author:display-name]',
+      '[message:revision_author:display-name]',
+    ];
+
+    $account = &$context['data']['user'];
+    if (!$account instanceof UserInterface) {
+      return;
+    }
+
+    $storage = $this->entityTypeManager->getStorage('profile');
+    $user_profile = $storage->loadByUser($account, 'profile');
+    if (!$user_profile instanceof ProfileAffiliationInterface) {
+      return;
+    }
+
+    $primary_affiliation_name = $user_profile->getPrimaryAffiliationName();
+    if (empty($primary_affiliation_name)) {
+      return;
+    }
+
+    foreach ($tokens as $name) {
+      if (!isset($replacements[$name])) {
+        continue;
+      }
+
+      $replacements[$name] = new FormattableMarkup('@displayName@affiliation', [
+        '@displayName' => $replacements[$name],
+        '@affiliation' => "@$primary_affiliation_name",
+      ]);
     }
   }
 

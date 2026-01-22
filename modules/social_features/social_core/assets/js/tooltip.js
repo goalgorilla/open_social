@@ -113,13 +113,15 @@
         const text = el.getAttribute("data-social-tooltip");
         const preferred = el.getAttribute("data-social-tooltip-position") || 'right';
 
-        el.addEventListener("mouseenter", () => {
+        el.addEventListener("mouseover", (event) => {
+          event.stopPropagation();
+
           currentTooltip = createTooltipElement(text);
           currentElement = el;
           positionTooltip(el, currentTooltip, preferred);
         });
 
-        el.addEventListener("mouseleave", () => {
+        el.addEventListener("mouseout", () => {
           if (currentTooltip) {
             currentTooltip.remove();
             currentTooltip = null;
