@@ -79,7 +79,6 @@ class SocialGroupInviteResendConfirmForm extends ConfirmFormBase implements Cont
 
     $form = parent::buildForm($form, $form_state);
     $form['#attributes']['class'][] = 'form--default';
-    $form['actions']['#prefix'] = '</div></div>';
     $form['actions']['cancel']['#attributes']['class'][] = 'btn btn-flat';
 
     return $form;

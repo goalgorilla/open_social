@@ -427,7 +427,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
 
   if (in_array($form_id, $confirm_forms)) {
     $form['description']['#prefix'] = '<div class="clearfix">';
-    $form['description']['#suffix'] = '</div></div></div>';
+    $form['description']['#suffix'] = '</div>';
   }
 
   // Add extra classes to.

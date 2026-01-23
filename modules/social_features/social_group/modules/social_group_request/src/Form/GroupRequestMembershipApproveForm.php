@@ -87,7 +87,7 @@ class GroupRequestMembershipApproveForm extends GroupMembershipApproveForm {
     $form['#attributes']['class'][] = 'form--default';
 
     $form['description']['#prefix'] = '<div class="clearfix">';
-    $form['description']['#suffix'] = '</div></div></div>';
+    $form['description']['#suffix'] = '</div>';
 
     $form['actions']['cancel']['#attributes']['class'] = [
       'button',

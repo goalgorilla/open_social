@@ -17,7 +17,8 @@
 {% else %}
   <div class="card">
     <div class="card__block">
-      {{ form }}
+      {{ form|without('actions') }}
     </div>
   </div>
+  {{ form.actions }}
 {% endif %}

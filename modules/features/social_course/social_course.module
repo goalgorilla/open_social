@@ -682,7 +682,7 @@ function social_course_form_alter(array &$form, FormStateInterface $form_state, 
       case 'group_content_course_advanced-group_membership_group-leave_form':
         // Extract the actions form the card.
         $form['description']['#prefix'] = '<div class="clearfix">';
-        $form['description']['#suffix'] = '</div></div></div>';
+        $form['description']['#suffix'] = '</div>';
         $form['actions']['submit']['#value'] = t('Cancel enrollment');
         break;
     }
