@@ -45,6 +45,20 @@ class TopicSchemaExtension extends SchemaExtensionPluginBase {
       $builder->produce('payload_topic')
         ->map('payload', $builder->fromParent())
     );
+
+    // Register deleteTopic mutation using the trait method.
+    $this->registerMutationResolver($registry, $builder, 'deleteTopic');
+
+    // Register DeleteTopicPayload resolvers.
+    $registry->addFieldResolver('DeleteTopicPayload', 'clientMutationId',
+      $builder->produce('payload_client_mutation_id')
+        ->map('payload', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('DeleteTopicPayload', 'errors',
+      $builder->produce('payload_violations')
+        ->map('payload', $builder->fromParent())
+    );
   }
 
   /**

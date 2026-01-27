@@ -77,4 +77,13 @@ extend type Mutation {
     """
     input: CreateTopicInput!
   ): CreateTopicPayload @allowBot(requiredScopes: ["topic:write"])
+  """
+  Delete an existing topic.
+  """
+  deleteTopic(
+    """
+    Input data for deleting the topic.
+    """
+    input: DeleteTopicInput!
+  ): DeleteTopicPayload @allowBot(requiredScopes: ["topic:write"])
 }

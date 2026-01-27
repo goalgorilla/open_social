@@ -143,3 +143,32 @@ type CreateTopicPayload {
   """
   topic: Topic
 }
+
+"""
+Input for deleting an existing topic.
+"""
+input DeleteTopicInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  The topic being deleted.
+  """
+  id: ID!
+}
+
+"""
+Payload returned after deleting a topic.
+"""
+type DeleteTopicPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  Errors that were encountered while performing the mutation.
+  NULL or an array of violations.
+  """
+  errors: [Violation!]
+}

@@ -12,7 +12,7 @@
 
 "topic:write":
   parent: topic
-  description: 'Provides the ability to create, update, and delete topics on the platform.'
+  description: 'Provides the ability to create and update topics on the platform.'
   umbrella: false
   granularity: permission
   permission: 'create topic content'
@@ -52,3 +52,17 @@
     client_credentials:
       status: true
       description: 'Allow the application to read terms from topic_types taxonomy on the platform.'
+
+"internal:topic:delete":
+  parent: topic:write
+  description: 'Temporary scope should be removed once multiple permissions are implemented.'
+  umbrella: false
+  granularity: permission
+  permission: 'delete any topic content'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to delete topics on the platform.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to delete topics on the platform.'
