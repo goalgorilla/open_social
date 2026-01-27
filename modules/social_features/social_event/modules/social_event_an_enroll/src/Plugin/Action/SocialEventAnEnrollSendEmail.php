@@ -4,6 +4,7 @@ namespace Drupal\social_event_an_enroll\Plugin\Action;
 
 use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Site\Settings;
@@ -53,6 +54,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
     LanguageManagerInterface $language_manager,
     EmailValidator $email_validator,
     QueueFactory $queue_factory,
+    KeyValueFactoryInterface $key_value_factory,
     $allow_text_format,
     SocialEmailBroadcast $email_broadcast_service,
     EventAnEnrollManager $event_an_enroll_manager,
@@ -67,6 +69,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
       $language_manager,
       $email_validator,
       $queue_factory,
+      $key_value_factory,
       $allow_text_format,
       $email_broadcast_service
     );
@@ -85,6 +88,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
       $container->get('language_manager'),
       $container->get('email.validator'),
       $container->get('queue'),
+      $container->get('keyvalue'),
       $container->get('current_user')->hasPermission('use text format mail_html'),
       $container->get(SocialEmailBroadcast::class),
       $container->get('social_event_an_enroll.manager'),

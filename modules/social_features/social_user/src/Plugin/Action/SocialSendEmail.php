@@ -6,6 +6,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
@@ -73,6 +74,13 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   protected $queue;
 
   /**
+   * The key-value factory.
+   *
+   * @var \Drupal\Core\KeyValueStore\KeyValueFactoryInterface
+   */
+  protected $keyValueFactory;
+
+  /**
    * TRUE if the current user can use the "Mail HTML" text format.
    *
    * @var bool
@@ -100,13 +108,15 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The email validator.
    * @param \Drupal\Core\Queue\QueueFactory $queue_factory
    *   The queue factory.
+   * @param \Drupal\Core\KeyValueStore\KeyValueFactoryInterface $key_value_factory
+   *   The key-value factory.
    * @param bool $allow_text_format
    *   TRUE if the current user can use the "Mail HTML" text format.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, LanguageManagerInterface $language_manager, EmailValidator $email_validator, QueueFactory $queue_factory, $allow_text_format) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, LanguageManagerInterface $language_manager, EmailValidator $email_validator, QueueFactory $queue_factory, KeyValueFactoryInterface $key_value_factory, $allow_text_format) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->token = $token;
@@ -115,6 +125,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
     $this->queue = $queue_factory;
+    $this->keyValueFactory = $key_value_factory;
     $this->allowTextFormat = $allow_text_format;
   }
 
@@ -129,6 +140,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $container->get('language_manager'),
       $container->get('email.validator'),
       $container->get('queue'),
+      $container->get('keyvalue'),
       $container->get('current_user')->hasPermission('use text format mail_html')
     );
   }
@@ -146,6 +158,36 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * {@inheritdoc}
    */
   public function executeMultiple(array $objects) {
+    $queue_storage_id = $this->configuration['queue_storage_id'];
+    $actual_count = count($objects);
+
+    // Verify recipient count against the expected count that was stored
+    // during form submission. This guards against race-conditions that could
+    // send email to all users. Only apply this check for the base
+    // social_user_send_email action, not subclasses which may filter the
+    // list.
+    $key_value = $this->keyValueFactory->get('social_email_expected_count');
+    $expected_count = $key_value->get((string) $queue_storage_id);
+
+    if ($this->getPluginId() === 'social_user_send_email' && $expected_count !== NULL && $expected_count > 0 && $actual_count !== $expected_count) {
+      $this->logger->critical('SocialSendEmail: Blocked email send. Expected @expected recipients but received @actual. This indicates the VBO selection list was corrupted. Mail queue storage ID: @mail_id.', [
+        '@expected' => $expected_count,
+        '@actual' => $actual_count,
+        '@mail_id' => $queue_storage_id,
+      ]);
+      $this->messenger()->addError($this->t('Email sending was blocked: the system detected @actual recipients instead of the expected @expected. No emails were sent. This is a safety measure to prevent mass emails. Please try again.', [
+        '@actual' => $actual_count,
+        '@expected' => $expected_count,
+      ]));
+      $key_value->delete((string) $queue_storage_id);
+      return [];
+    }
+
+    // Clean up the expected count entry.
+    if ($expected_count !== NULL) {
+      $key_value->delete((string) $queue_storage_id);
+    }
+
     // Array $objects contain all the entities of this bulk operation batch.
     // We want smaller queue items then this so we chunk these.
     // @todo make the chunk size configurable or dependable on the batch size.
@@ -161,7 +203,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       }
 
       // Get the entity ID of the email that is send.
-      $data['mail'] = $this->configuration['queue_storage_id'];
+      $data['mail'] = $queue_storage_id;
       // Add the list of user IDs.
       $data['users'] = $users;
       // Create the Queue Item.
@@ -268,6 +310,52 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       ':selected_count' => $this->context['selected_count'],
     ]);
 
+    // Warn when the email will be sent to all users on the platform.
+    $form_data = $form_state->get('views_bulk_operations');
+    $actual_list_count = count($form_data['list'] ?? []);
+    $exclude_mode = $form_data['exclude_mode'] ?? FALSE;
+    $total_results = $form_data['total_results'] ?? 0;
+
+    if ($actual_list_count === 0 && !$exclude_mode) {
+      // No recipients selected but VBO will process everyone.
+      $form['recipient_warning'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['messages', 'messages--error']],
+        '#weight' => -100,
+        'message' => [
+          '#markup' => $this->t('<strong>Warning:</strong> No specific recipients are selected. If you proceed, this email may be sent to all users on the platform. Please go back and select the intended recipients.'),
+        ],
+      ];
+    }
+    elseif ($exclude_mode && $actual_list_count === 0) {
+      // Select all with no exclusions.
+      $form['recipient_warning'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#weight' => -100,
+        'message' => [
+          '#markup' => $this->t('<strong>Warning:</strong> You are about to email all @count users on the platform.', [
+            '@count' => $total_results,
+          ]),
+        ],
+      ];
+    }
+    elseif ($exclude_mode) {
+      // Select all with some exclusions.
+      $recipient_count = $total_results - $actual_list_count;
+      $form['recipient_warning'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#weight' => -100,
+        'message' => [
+          '#markup' => $this->t('<strong>Warning:</strong> You are about to email @count users (all users except @excluded excluded).', [
+            '@count' => $recipient_count,
+            '@excluded' => $actual_list_count,
+          ]),
+        ],
+      ];
+    }
+
     if (isset($form['list'])) {
       unset($form['list']);
     }
@@ -297,6 +385,28 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
+    $form_data = $form_state->get('views_bulk_operations');
+    if (!$form_data) {
+      $form_state->setError($form, $this->t('Unable to verify selected items. Please go back and try again.'));
+      return;
+    }
+
+    $actual_list_count = count($form_data['list'] ?? []);
+    $exclude_mode = $form_data['exclude_mode'] ?? FALSE;
+
+    if ($actual_list_count === 0 && !$exclude_mode) {
+      $form_state->setError($form, $this->t('No items are selected. Please go back and select the recipients before sending an email.'));
+      $this->logger->critical('SocialSendEmail: Blocked submission with empty list. selected_count=@selected, total_results=@total.', [
+        '@selected' => $this->context['selected_count'] ?? 0,
+        '@total' => $form_data['total_results'] ?? 0,
+      ]);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     parent::submitConfigurationForm($form, $form_state);
     // Clean form values.
@@ -316,6 +426,15 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     // operation action configuration.
     if ($entity->save()) {
       $this->configuration['queue_storage_id'] = $entity->id();
+
+      // Store expected recipient count so executeMultiple() can verify it.
+      $form_data = $form_state->get('views_bulk_operations');
+      $expected_count = count($form_data['list'] ?? []);
+      if ($form_data['exclude_mode'] ?? FALSE) {
+        $expected_count = ($form_data['total_results'] ?? 0) - $expected_count;
+      }
+      $this->keyValueFactory->get('social_email_expected_count')
+        ->set((string) $entity->id(), $expected_count);
     }
   }
 
