@@ -430,6 +430,7 @@ function social_group_update_13000() : void {
   if (\Drupal::hasService('plugin.manager.group_content_enabler')) {
     // Following service will be removed in the group 2.x version but we still
     // need to make compatible for previous version.
+    /** @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $group_content_enabler_manager */
     $group_content_enabler_manager = \Drupal::service("plugin.manager.group_content_enabler");
     $group_type_content_plugins = $group_content_enabler_manager->getGroupTypePluginMap();
   }
