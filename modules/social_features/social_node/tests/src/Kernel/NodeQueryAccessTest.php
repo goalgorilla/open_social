@@ -11,6 +11,7 @@ namespace Drupal\Tests\social_node\Kernel;
  * It verifies node visibility and access for different user roles, ensuring
  * that users can only access content based on their assigned permissions.
  *
+ * @coversDefaultClass \Drupal\social_node\EventSubscriber\NodeQueryAccessAlterSubscriber
  * @group social_node
  * @group social_node_query_access
  */
@@ -23,7 +24,7 @@ class NodeQueryAccessTest extends NodeQueryAccessTestBase {
    *   have appropriate access to content nodes categorized
    *   by visibility settings such as "public", "community", or no visibility.
    *
-   * @covers \Drupal\social_node\EventSubscriber\NodeQueryAccessAlterSubscriber::alterQueryAccess()
+   * @covers ::alterQueryAccess
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException

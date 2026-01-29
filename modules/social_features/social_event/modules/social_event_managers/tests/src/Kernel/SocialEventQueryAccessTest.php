@@ -18,6 +18,7 @@ use Drupal\user\UserInterface;
  *   query access logic for nodes, specifically in the context of
  *   event managers.
  *
+ * @coversDefaultClass \Drupal\social_event_managers\EventSubscriber\NodeQueryAccessAlterSubscriber
  * @group social_event_managers
  * @group social_node_query_access
  */
@@ -87,7 +88,7 @@ class SocialEventQueryAccessTest extends NodeQueryAccessTestBase {
    *   visibility settings and defined access rules. It ensures no regressions
    *   are introduced in the query access logic for nodes.
    *
-   * @covers \Drupal\social_event_managers\EventSubscriber\NodeQueryAccessAlterSubscriber::alterQueryAccess()
+   * @covers ::alterQueryAccess
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
