@@ -53,6 +53,8 @@ use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\Plugin\views\row\EntityRow;
 use Drupal\views\ViewExecutable;
 use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
  * Implements hook_theme().
@@ -1614,6 +1616,27 @@ function _social_group_get_current_group($entity = NULL): ?SocialGroupInterface 
         $group = \Drupal::entityTypeManager()
           ->getStorage('group')
           ->load($gid_from_entity);
+      }
+    }
+  }
+
+  // Try to get a group from the path in the ajax request context.
+  if ($group === NULL && \Drupal::request()->isXmlHttpRequest()) {
+    // Make sure we are checking the views page.
+    if ($view_path = \Drupal::request()->get('view_path')) {
+      // Resolve the original page route to recover the group context in AJAX.
+      try {
+        $match = \Drupal::service('router.no_access_checks')->match($view_path);
+        $group = $match['group'] ?? NULL;
+
+        if (is_numeric($group)) {
+          $group = \Drupal::entityTypeManager()
+            ->getStorage('group')
+            ->load($match['group']);
+        }
+      }
+      catch (ResourceNotFoundException | MethodNotAllowedException $e) {
+        // Ignore unmatched view paths.
       }
     }
   }
