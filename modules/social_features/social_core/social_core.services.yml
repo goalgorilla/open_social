@@ -20,6 +20,10 @@ services:
     tags:
       - {name: event_subscriber}
 
+  Drupal\social_core\EventSubscriber\AjaxResponseSubscriber:
+    tags:
+      - { name: event_subscriber }
+
   social_core.translation_defaults:
     class: Drupal\social_core\ContentTranslationDefaultsConfigOverride
     arguments: ['@module_handler']

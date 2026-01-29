@@ -116,6 +116,8 @@
         }
 
         if (input.getAttribute('value') === defaultSort) {
+          // This click triggers the scrolling on the page which we are
+          // preventing in \Drupal\social_core\EventSubscriber\AjaxResponseSubscriber::disableScrollToTopAjaxCommand().
           input.click();
         }
       });
