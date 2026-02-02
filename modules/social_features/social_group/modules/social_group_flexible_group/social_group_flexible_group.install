@@ -477,3 +477,12 @@ function social_group_flexible_group_update_130018(): string {
   $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Filter by langcode in the flexible groups hub page.
+ */
+function social_group_flexible_group_update_130019(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group_flexible_group', __FUNCTION__);
+  return $updater->logger()->output();
+}

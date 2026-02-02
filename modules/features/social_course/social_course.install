@@ -856,3 +856,11 @@ function social_course_update_13007(): string {
   return $updater->logger()->output();
 }
 
+/**
+ * Filter by langcode in the courses hub page.
+ */
+function social_course_update_13008(): string {
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_course', __FUNCTION__);
+  return $updater->logger()->output();
+}

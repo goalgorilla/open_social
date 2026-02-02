@@ -38,7 +38,7 @@ final class SocialLanguageFormAlter {
     // For groups, we want to have the same approach as for nodes.
     /* @see \Drupal\node\NodeTranslationHandler::entityFormAlter() */
     if (isset($form['content_translation'])) {
-      // We do not need to show these values on node forms: they inherit the
+      // We do not need to show these values on group forms: they inherit the
       // basic group property values.
       /* @see static::groupFormEntityBuild() */
       $form['content_translation']['status']['#access'] = FALSE;
