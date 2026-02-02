@@ -846,3 +846,13 @@ function social_course_update_13006(): string {
   return $updater->logger()->output();
 }
 
+/**
+ * Exclude course group types from group views.
+ */
+function social_course_update_13007(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_course', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
