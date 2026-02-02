@@ -7,7 +7,7 @@ namespace Drupal\social_topic\Plugin\GraphQL\DataProducer\Mutation;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_topic\Wrappers\Input\CreateTopicInput as CreateTopicInputWrapper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -62,7 +62,7 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
   /**
    * The current user.
    */
-  protected AccountInterface $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The entity repository.
@@ -83,7 +83,7 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
    *   The Drupal entity repository.
@@ -94,7 +94,7 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
-    AccountInterface $current_user,
+    AccountProxyInterface $current_user,
     EntityRepositoryInterface $entity_repository,
     EntityTypeManagerInterface $entity_type_manager,
   ) {

@@ -129,6 +129,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     'layout_discovery',
     'flag_count',
     'hux',
+    'taxonomy_access_fix',
   ];
 
   /**
@@ -213,18 +214,6 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
    */
   public function testCreateTopicSuccess(): void {
     $this->actAsClientCredentialsWithScopes(['topic:write']);
-
-    // Grant permissions to the OAuth Machine user (UID 2)
-    $machine_user = \Drupal::entityTypeManager()->getStorage('user')->load(2);
-    if ($machine_user) {
-      $role = $this->createRole([
-        'create topic content',
-        'access content',
-        'bypass node access',
-      ]);
-      $machine_user->addRole($role);
-      $machine_user->save();
-    }
 
     // Create a topic type.
     $topicType = Term::create([
@@ -317,14 +306,6 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
   public function testCreateTopicMissingTitle(): void {
     $this->actAsClientCredentialsWithScopes(['topic:write']);
 
-    // Grant permissions to the OAuth Machine user.
-    $machine_user = \Drupal::entityTypeManager()->getStorage('user')->load(2);
-    if ($machine_user) {
-      $role = $this->createRole(['create topic content', 'access content', 'bypass node access']);
-      $machine_user->addRole($role);
-      $machine_user->save();
-    }
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -373,14 +354,6 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
    */
   public function testCreateTopicTitleTooLong(): void {
     $this->actAsClientCredentialsWithScopes(['topic:write']);
-
-    // Grant permissions to the OAuth Machine user.
-    $machine_user = \Drupal::entityTypeManager()->getStorage('user')->load(2);
-    if ($machine_user) {
-      $role = $this->createRole(['create topic content', 'access content', 'bypass node access']);
-      $machine_user->addRole($role);
-      $machine_user->save();
-    }
 
     // Create a topic type.
     $topicType = Term::create([
@@ -434,14 +407,6 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
   public function testCreateTopicInvalidTopicType(): void {
     $this->actAsClientCredentialsWithScopes(['topic:write']);
 
-    // Grant permissions to the OAuth Machine user.
-    $machine_user = \Drupal::entityTypeManager()->getStorage('user')->load(2);
-    if ($machine_user) {
-      $role = $this->createRole(['create topic content', 'access content', 'bypass node access']);
-      $machine_user->addRole($role);
-      $machine_user->save();
-    }
-
     // Use a non-existent UUID.
     $fakeUuid = '12345678-1234-1234-1234-123456789012';
 
@@ -486,14 +451,6 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
    */
   public function testCreateTopicDifferentVisibilities(): void {
     $this->actAsClientCredentialsWithScopes(['topic:write']);
-
-    // Grant permissions to the OAuth Machine user.
-    $machine_user = \Drupal::entityTypeManager()->getStorage('user')->load(2);
-    if ($machine_user) {
-      $role = $this->createRole(['create topic content', 'access content', 'bypass node access']);
-      $machine_user->addRole($role);
-      $machine_user->save();
-    }
 
     // Create a topic type.
     $topicType = Term::create([
@@ -548,19 +505,6 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
   public function testCreateTopicRequiresTopicWriteScope(): void {
     // Act as client credentials without the required scope.
     $this->actAsClientCredentialsWithScopes([]);
-
-    // Grant permissions to the OAuth Machine user to ensure the test is
-    // specifically checking scope, not permissions.
-    $machine_user = \Drupal::entityTypeManager()->getStorage('user')->load(2);
-    if ($machine_user) {
-      $role = $this->createRole([
-        'create topic content',
-        'access content',
-        'bypass node access',
-      ]);
-      $machine_user->addRole($role);
-      $machine_user->save();
-    }
 
     // Create a topic type.
     $topicType = Term::create([

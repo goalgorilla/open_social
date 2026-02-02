@@ -7,6 +7,7 @@ namespace Drupal\social_topic\Wrappers\Input;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_graphql\Wrappers\InputBase;
 use Drupal\taxonomy\TermInterface;
@@ -36,14 +37,14 @@ class CreateTopicInput extends InputBase {
    * author in future iterations where topics can be created on behalf of
    * another user.
    */
-  private AccountInterface $currentUser;
+  private AccountProxyInterface $currentUser;
 
   /**
    * The actor (current user performing the mutation).
    *
-   * @var \Drupal\user\UserInterface|null
+   * @var \Drupal\Core\Session\AccountInterface
    */
-  protected ?UserInterface $actor = NULL;
+  protected ?AccountInterface $actor;
 
   /**
    * The author of the topic.
@@ -53,9 +54,9 @@ class CreateTopicInput extends InputBase {
    * access checks should always be performed against the author to ensure
    * that only users with permission to create topics can be set as authors.
    *
-   * @var \Drupal\user\UserInterface|null
+   * @var \Drupal\user\UserInterface
    */
-  protected ?UserInterface $author = NULL;
+  protected UserInterface $author;
 
   /**
    * The title of the topic.
@@ -79,13 +80,13 @@ class CreateTopicInput extends InputBase {
    *   The entity type manager.
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
    *   The entity repository.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user for the request.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     EntityRepositoryInterface $entity_repository,
-    AccountInterface $current_user,
+    AccountProxyInterface $current_user,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->entityRepository = $entity_repository;
@@ -98,30 +99,24 @@ class CreateTopicInput extends InputBase {
   public function setValues(array $input): void {
     parent::setValues($input);
 
-    // Load the actor (current user performing the mutation).
-    /** @var \Drupal\user\UserInterface|null $actor */
-    $actor = $this->entityTypeManager->getStorage('user')->load($this->currentUser->id());
-    $this->actor = $actor;
-
-    // In case we don't have a valid actor then we stop processing other input
-    // as we don't want to expose data to an unknown user.
-    if ($this->actor === NULL) {
-      $this->violations[] = new Violation("ACCESS_DENIED");
-      return;
-    }
+    // Load actor from Account-Proxy.
+    $this->actor = $this->currentUser->getAccount();
 
     // In the initial iteration, the author is the same as the actor.
     // In future iterations, the author may be specified in the input.
-    $this->author = $this->actor;
+    // The author is loaded from user-data to ensure it exists.
+    $author = $this->entityTypeManager
+      ->getStorage('user')
+      ->load($this->actor->id());
+    if ($author === NULL) {
+      $this->violations[] = new Violation("ACCESS_DENIED");
+      return;
+    }
+    $this->author = $author;
 
-    // Check if the author has permission to create topics. We check access
-    // against the author (not the actor) to ensure that only users with
-    // permission to create topics can be set as authors. This prevents security
-    // issues when this endpoint is exposed to applications via @allowUser,
-    // where an application might try to create topics on behalf of users who
-    // don't have the necessary permissions.
+    // Check if the actor has permission to create topics.
     $node_access_handler = $this->entityTypeManager->getAccessControlHandler('node');
-    if (!$node_access_handler->createAccess('topic', $this->author)) {
+    if (!$node_access_handler->createAccess('topic', $this->actor)) {
       $this->violations[] = new Violation("ACCESS_DENIED");
       return;
     }
@@ -178,7 +173,7 @@ class CreateTopicInput extends InputBase {
     }
 
     // Validate author (should never be null at this point due to constructor).
-    if ($this->author === NULL || $this->author->isAnonymous()) {
+    if ($this->author->isAnonymous()) {
       $this->violations[] = new Violation("INVALID_USER");
       return FALSE;
     }
@@ -189,10 +184,10 @@ class CreateTopicInput extends InputBase {
   /**
    * Get the actor (current user performing the mutation).
    *
-   * @return \Drupal\user\UserInterface
+   * @return \Drupal\Core\Session\AccountInterface
    *   The actor.
    */
-  public function getActor(): UserInterface {
+  public function getActor(): AccountInterface {
     assert($this->actor !== NULL, __FUNCTION__ . " called but actor was not set.");
     return $this->actor;
   }
@@ -207,7 +202,6 @@ class CreateTopicInput extends InputBase {
    *   The author.
    */
   public function getAuthor(): UserInterface {
-    assert($this->author !== NULL, __FUNCTION__ . " called but author was not set.");
     return $this->author;
   }
 

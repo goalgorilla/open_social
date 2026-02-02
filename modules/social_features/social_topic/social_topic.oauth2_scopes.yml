@@ -23,3 +23,32 @@
     client_credentials:
       status: true
       description: 'Allow the application to create, update, and delete any topic on the platform.'
+
+"topic:read":
+  parent: topic:write
+  description: 'Provides the ability to read topics on the platform.'
+  umbrella: false
+  granularity: 'permission'
+  permission: 'access content'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read any topic information you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read any topic information on the platform.'
+
+# @todo Remove after https://getopensocial.atlassian.net/browse/PROD-34843
+"internal:topic:types":
+  parent: topic:read
+  description: 'Temporary scope should be removed once multiple permissions are implemented.'
+  umbrella: false
+  granularity: permission
+  permission: 'select terms in topic_types'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read terms from topic_types taxonomy you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read terms from topic_types taxonomy on the platform.'
