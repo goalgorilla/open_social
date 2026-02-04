@@ -371,7 +371,7 @@ class GroupAffiliationGroupTypeHooks implements ContainerInjectionInterface {
         continue;
       }
 
-      $replacements[$name] = new FormattableMarkup('@displayName@affiliation', [
+      $replacements[$name] = new FormattableMarkup('@displayName @affiliation', [
         '@displayName' => $replacements[$name],
         '@affiliation' => "@$primary_affiliation_name",
       ]);
