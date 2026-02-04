@@ -269,6 +269,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
       'user.permissions',
     ]);
     $cache_metadata->addCacheableDependency($user);
+    $cache_metadata->addCacheTags(['node_list:event']);
 
     return $cache_metadata;
   }

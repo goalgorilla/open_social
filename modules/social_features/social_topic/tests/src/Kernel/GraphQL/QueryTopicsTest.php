@@ -256,6 +256,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
       'user.permissions',
     ]);
     $cache_metadata->addCacheableDependency($user);
+    $cache_metadata->addCacheTags(['node_list:topic']);
 
     return $cache_metadata;
   }

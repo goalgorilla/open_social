@@ -50,6 +50,7 @@ class PostsCountTest extends SocialGraphQLTestBase {
       'user.permissions',
     ]);
     $cache_metadata->addCacheableDependency($user);
+    $cache_metadata->addCacheTags(['post_list']);
 
     return $cache_metadata;
   }

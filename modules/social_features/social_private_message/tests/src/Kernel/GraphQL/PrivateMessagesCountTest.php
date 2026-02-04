@@ -52,6 +52,7 @@ class PrivateMessagesCountTest extends SocialGraphQLTestBase {
       'user.permissions',
     ]);
     $cache_metadata->addCacheableDependency($user);
+    $cache_metadata->addCacheTags(['private_message_list']);
 
     return $cache_metadata;
   }

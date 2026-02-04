@@ -229,6 +229,7 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
       'user.permissions',
     ]);
     $cache_metadata->addCacheableDependency($user);
+    $cache_metadata->addCacheTags(['comment_list']);
 
     return $cache_metadata;
   }

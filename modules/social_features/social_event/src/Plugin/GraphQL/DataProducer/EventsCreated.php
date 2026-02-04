@@ -55,6 +55,8 @@ class EventsCreated extends DataProducerPluginBase implements ContainerFactoryPl
    * Resolves the request to the requested values.
    */
   public function resolve(EntityInterface $entity, RefinableCacheableDependencyInterface $metadata): int {
+    $metadata->addCacheTags(['node_list:event']);
+
     $user_id = $entity->id();
 
     // The query is copy/paste of 'user_events_created' user export plugin.

@@ -51,6 +51,7 @@ class LikesCountTest extends SocialGraphQLTestBase {
       'user.permissions',
     ]);
     $cache_metadata->addCacheableDependency($user);
+    $cache_metadata->addCacheTags(['vote_list']);
 
     return $cache_metadata;
   }
