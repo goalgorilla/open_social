@@ -57,6 +57,7 @@ class UserPostsCreated extends DataProducerPluginBase implements ContainerFactor
    */
   public function resolve(EntityInterface $entity, RefinableCacheableDependencyInterface $metadata): int {
     $metadata->addCacheTags(['post_list']);
+    $metadata->addCacheableDependency($entity);
 
     // The code is copy/paste of 'user_posts_created' user export plugin.
     // Get posts count for the user.

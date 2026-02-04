@@ -56,6 +56,7 @@ class TopicsCreated extends DataProducerPluginBase implements ContainerFactoryPl
    */
   public function resolve(EntityInterface $entity, RefinableCacheableDependencyInterface $metadata): int {
     $metadata->addCacheTags(['node_list:topic']);
+    $metadata->addCacheableDependency($entity);
 
     $user_id = $entity->id();
 

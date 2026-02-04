@@ -57,6 +57,7 @@ class CommentsCreated extends DataProducerPluginBase implements ContainerFactory
    */
   public function resolve(EntityInterface $entity, RefinableCacheableDependencyInterface $metadata): int {
     $metadata->addCacheTags(['comment_list']);
+    $metadata->addCacheableDependency($entity);
 
     $user_id = $entity->id();
 

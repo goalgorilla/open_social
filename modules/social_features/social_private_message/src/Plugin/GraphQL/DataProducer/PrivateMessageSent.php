@@ -58,6 +58,7 @@ class PrivateMessageSent extends DataProducerPluginBase implements ContainerFact
    */
   public function resolve(EntityInterface $entity, RefinableCacheableDependencyInterface $metadata): int {
     $metadata->addCacheTags(['private_message_list']);
+    $metadata->addCacheableDependency($entity);
 
     // The query is copy/paste of 'user_private_message' user export plugin.
     // Get messages count for the user.
