@@ -6,7 +6,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
@@ -39,9 +38,9 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   protected $token;
 
   /**
-   * The user storage.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $storage;
 
@@ -74,13 +73,6 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   protected $queue;
 
   /**
-   * The key-value factory.
-   *
-   * @var \Drupal\Core\KeyValueStore\KeyValueFactoryInterface
-   */
-  protected $keyValueFactory;
-
-  /**
    * TRUE if the current user can use the "Mail HTML" text format.
    *
    * @var bool
@@ -108,15 +100,13 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The email validator.
    * @param \Drupal\Core\Queue\QueueFactory $queue_factory
    *   The queue factory.
-   * @param \Drupal\Core\KeyValueStore\KeyValueFactoryInterface $key_value_factory
-   *   The key-value factory.
    * @param bool $allow_text_format
    *   TRUE if the current user can use the "Mail HTML" text format.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, LanguageManagerInterface $language_manager, EmailValidator $email_validator, QueueFactory $queue_factory, KeyValueFactoryInterface $key_value_factory, $allow_text_format) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, LanguageManagerInterface $language_manager, EmailValidator $email_validator, QueueFactory $queue_factory, $allow_text_format) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->token = $token;
@@ -125,7 +115,6 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
     $this->queue = $queue_factory;
-    $this->keyValueFactory = $key_value_factory;
     $this->allowTextFormat = $allow_text_format;
   }
 
@@ -140,7 +129,6 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $container->get('language_manager'),
       $container->get('email.validator'),
       $container->get('queue'),
-      $container->get('keyvalue'),
       $container->get('current_user')->hasPermission('use text format mail_html')
     );
   }
@@ -159,33 +147,65 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    */
   public function executeMultiple(array $objects) {
     $queue_storage_id = $this->configuration['queue_storage_id'];
-    $actual_count = count($objects);
 
-    // Verify recipient count against the expected count that was stored
-    // during form submission. This guards against race-conditions that could
-    // send email to all users. Only apply this check for the base
-    // social_user_send_email action, not subclasses which may filter the
-    // list.
-    $key_value = $this->keyValueFactory->get('social_email_expected_count');
-    $expected_count = $key_value->get((string) $queue_storage_id);
-
-    if ($this->getPluginId() === 'social_user_send_email' && $expected_count !== NULL && $expected_count > 0 && $actual_count !== $expected_count) {
-      $this->logger->critical('SocialSendEmail: Blocked email send. Expected @expected recipients but received @actual. This indicates the VBO selection list was corrupted. Mail queue storage ID: @mail_id.', [
-        '@expected' => $expected_count,
-        '@actual' => $actual_count,
-        '@mail_id' => $queue_storage_id,
-      ]);
-      $this->messenger()->addError($this->t('Email sending was blocked: the system detected @actual recipients instead of the expected @expected. No emails were sent. This is a safety measure to prevent mass emails. Please try again.', [
-        '@actual' => $actual_count,
-        '@expected' => $expected_count,
-      ]));
-      $key_value->delete((string) $queue_storage_id);
+    // If a previous batch detected a mismatch, block all batches.
+    if (!empty($this->context['sandbox']['social_email_blocked'])) {
       return [];
     }
 
-    // Clean up the expected count entry.
-    if ($expected_count !== NULL) {
-      $key_value->delete((string) $queue_storage_id);
+    // Guard rail: On first batch, verify the count VBO is processing
+    // matches what the user saw in the form title. This catches cases where
+    // the selection changed between form submission and batch execution.
+    // Only apply this check for the base social_user_send_email action.
+    if ($this->getPluginId() === 'social_user_send_email' && !isset($this->context['sandbox']['social_email_validated'])) {
+      $expected = $this->configuration['expected_recipient_count'] ?? NULL;
+      $actual = $this->context['sandbox']['total'] ?? NULL;
+
+      if ($expected === NULL || $actual === NULL) {
+        $this->context['sandbox']['social_email_blocked'] = TRUE;
+
+        $this->logger->critical('SocialSendEmail: Blocked - missing validation data. Expected: @expected, Actual: @actual, Queue ID: @id, Plugin: @plugin', [
+          '@expected' => $expected ?? 'NULL',
+          '@actual' => $actual ?? 'NULL',
+          '@id' => $queue_storage_id,
+          '@plugin' => $this->getPluginId(),
+        ]);
+
+        $this->messenger()->addError($this->t('Email sending blocked: unable to verify recipient count. Please try again.'));
+
+        $queue_storage = $this->storage->getStorage('queue_storage_entity');
+        if ($entity = $queue_storage->load($queue_storage_id)) {
+          $entity->delete();
+        }
+
+        return [];
+      }
+
+      // Block if counts don't match.
+      if ((int) $expected !== (int) $actual) {
+        $this->context['sandbox']['social_email_blocked'] = TRUE;
+
+        $this->logger->critical('SocialSendEmail: Blocked - user saw @expected recipients but VBO processing @actual. Queue ID: @id', [
+          '@expected' => $expected,
+          '@actual' => $actual,
+          '@id' => $queue_storage_id,
+        ]);
+
+        $this->messenger()->addError($this->t('Email sending blocked: expected @expected recipients but found @actual. Please try again.', [
+          '@expected' => $expected,
+          '@actual' => $actual,
+        ]));
+
+        $queue_storage = $this->storage->getStorage('queue_storage_entity');
+        if ($entity = $queue_storage->load($queue_storage_id)) {
+          $entity->delete();
+        }
+
+        return [];
+      }
+
+      // Validation passed.
+      $this->context['sandbox']['social_email_validated'] = TRUE;
     }
 
     // Array $objects contain all the entities of this bulk operation batch.
@@ -426,15 +446,19 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     // operation action configuration.
     if ($entity->save()) {
       $this->configuration['queue_storage_id'] = $entity->id();
+    }
 
-      // Store expected recipient count so executeMultiple() can verify it.
-      $form_data = $form_state->get('views_bulk_operations');
-      $expected_count = count($form_data['list'] ?? []);
-      if ($form_data['exclude_mode'] ?? FALSE) {
-        $expected_count = ($form_data['total_results'] ?? 0) - $expected_count;
-      }
-      $this->keyValueFactory->get('social_email_expected_count')
-        ->set((string) $entity->id(), $expected_count);
+    // Store expected recipient count for validation during batch execution.
+    $form_data = $form_state->get('views_bulk_operations');
+    $list_count = count($form_data['list'] ?? []);
+    $exclude_mode = $form_data['exclude_mode'] ?? FALSE;
+    $total_results = $form_data['total_results'] ?? 0;
+
+    if ($exclude_mode) {
+      $this->configuration['expected_recipient_count'] = $total_results - $list_count;
+    }
+    else {
+      $this->configuration['expected_recipient_count'] = $list_count;
     }
   }
 

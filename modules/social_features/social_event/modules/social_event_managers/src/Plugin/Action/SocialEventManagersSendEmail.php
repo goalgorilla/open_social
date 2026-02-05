@@ -7,7 +7,6 @@ use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
@@ -57,7 +56,6 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     LanguageManagerInterface $language_manager,
     EmailValidator $email_validator,
     QueueFactory $queue_factory,
-    KeyValueFactoryInterface $key_value_factory,
     $allow_text_format,
     SocialEmailBroadcast $email_broadcast_service,
   ) {
@@ -71,7 +69,6 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
       $language_manager,
       $email_validator,
       $queue_factory,
-      $key_value_factory,
       $allow_text_format
     );
 
@@ -90,7 +87,6 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
       $container->get('language_manager'),
       $container->get('email.validator'),
       $container->get('queue'),
-      $container->get('keyvalue'),
       $container->get('current_user')->hasPermission('use text format mail_html'),
       $container->get(SocialEmailBroadcast::class),
     );
