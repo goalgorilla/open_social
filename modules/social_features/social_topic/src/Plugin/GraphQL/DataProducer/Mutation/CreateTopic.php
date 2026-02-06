@@ -8,7 +8,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
-use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_topic\Wrappers\Input\CreateTopicInput;
 use Drupal\social_topic\Wrappers\Payload\CreateTopicPayload;
@@ -175,18 +174,6 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     }
 
     $node->save();
-
-    // Reset cache and reload the node to ensure all fields are available.
-    // This ensures that entity reference fields are properly loaded.
-    $node_id = $node->id();
-    if ($node_id !== NULL) {
-      $node_storage->resetCache([$node_id]);
-      $reloaded_node = $node_storage->load($node_id);
-      if ($reloaded_node instanceof NodeInterface) {
-        $node = $reloaded_node;
-      }
-    }
-
     $payload->setTopic($node);
 
     return $payload;
