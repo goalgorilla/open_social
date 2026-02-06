@@ -1,0 +1,39 @@
+# Event scopes for GraphQL API access
+"event":
+  description: 'Provides access to all Event data on the platform.'
+  umbrella: true
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read, write and delete any Event information you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read, write and delete any Event information on the platform.'
+
+"event:write":
+  parent: event
+  description: 'Provides the ability to create, update and delete events on the platform.'
+  umbrella: false
+  granularity: permission
+  permission: 'create event content'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read, write and delete any Event information you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read, write and delete any Event information on the platform.'
+
+"event:read":
+  parent: event:write
+  description: 'Provides the ability to read events on the platform.'
+  umbrella: false
+  granularity: 'permission'
+  permission: 'access content'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read any event information you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read any event information on the platform.'
