@@ -436,4 +436,13 @@ final class ProfileUserSegmentRule extends UserSegmentRulePluginBase {
     return $roles;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getEntityDependencies(): array {
+    return [
+      'user' => [],
+    ];
+  }
+
 }
