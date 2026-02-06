@@ -56,7 +56,7 @@ class UserLikesCreated extends DataProducerPluginBase implements ContainerFactor
    * Resolves the request to the requested values.
    */
   public function resolve(EntityInterface $entity, RefinableCacheableDependencyInterface $metadata): int {
-    $metadata->addCacheTags(['vote_list']);
+    $metadata->addCacheTags(['vote_list:like']);
     $metadata->addCacheableDependency($entity);
 
     // The query is copy/paste of 'user_likes' user export plugin.
