@@ -173,7 +173,7 @@ class SocialGroupMembershipsCount extends SocialGraphQLTestBase {
       'user.permissions',
     ]);
     $cache_metadata->addCacheableDependency($user);
-    $cache_metadata->addCacheTags(['group_content_list']);
+    $cache_metadata->addCacheTags(["group_content_list:plugin:group_membership:entity:{$user->id()}"]);
 
     return $cache_metadata;
   }

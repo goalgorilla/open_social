@@ -56,7 +56,7 @@ class UserFlexibleGroupMemberships extends DataProducerPluginBase implements Con
    * Resolves the request to the requested values.
    */
   public function resolve(EntityInterface $entity, RefinableCacheableDependencyInterface $metadata): int {
-    $metadata->addCacheTags(['group_content_list']);
+    $metadata->addCacheTags(["group_content_list:plugin:group_membership:entity:{$entity->id()}"]);
     $metadata->addCacheableDependency($entity);
 
     // Get all memberships for the given user but only for flexible groups.
