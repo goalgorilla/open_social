@@ -207,8 +207,14 @@ class BookContext extends RawMinkContext {
    *
    * @Then it should not show author information
    */
-  public function  itShouldNotShowAuthorInformation() : void {
-    $this->minkContext->assertNotRegionText("By", "Hero block");
+  public function itShouldNotShowAuthorInformation() : void {
+    // Check for "By " with trailing space to ensure it's a word boundary,
+    // not part of a username like "Byron" or "hSgByGqk" containing "By".
+    // The actual pattern that would indicate author information is "By Username"
+    // (from core Drupal templates: "Submitted by Username on Date").
+    $this->minkContext->assertNotRegionText("By ", "Hero block");
+    // " on " already has spaces, ensuring it matches the pattern "Username on Date"
+    // rather than finding "on" as a substring within words like "information".
     $this->minkContext->assertNotRegionText(" on ", "Hero block");
   }
 
