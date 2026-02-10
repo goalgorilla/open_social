@@ -2,8 +2,6 @@
 
 namespace Drupal\social_group_flexible_group\Plugin\GraphQL\DataProducer;
 
-use Drupal\Core\Cache\Cache;
-use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
@@ -30,8 +28,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class UserFlexibleGroupMemberships extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
-  const string CID_BASE = 'social_group_flexible_group:memberships_created:';
-
   /**
    * {@inheritdoc}
    */
@@ -40,7 +36,6 @@ class UserFlexibleGroupMemberships extends DataProducerPluginBase implements Con
     string $plugin_id,
     array $plugin_definition,
     protected Connection $database,
-    protected CacheBackendInterface $cacheBackend,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -53,8 +48,7 @@ class UserFlexibleGroupMemberships extends DataProducerPluginBase implements Con
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('database'),
-      $container->get('cache.default')
+      $container->get('database')
     );
   }
 
@@ -62,13 +56,8 @@ class UserFlexibleGroupMemberships extends DataProducerPluginBase implements Con
    * Resolves the request to the requested values.
    */
   public function resolve(EntityInterface $entity, RefinableCacheableDependencyInterface $metadata): int {
-    $user_id = $entity->id();
-    $cid = self::CID_BASE . $user_id;
-
-    // Check if the result is already cached.
-    if ($cache_data = $this->cacheBackend->get($cid)) {
-      return (int) $cache_data->data;
-    }
+    $metadata->addCacheTags(["group_content_list:plugin:group_membership:entity:{$entity->id()}"]);
+    $metadata->addCacheableDependency($entity);
 
     // Get all memberships for the given user but only for flexible groups.
     // Query is similar to SocialGroupHelperService::getAllGroupsForUser.
@@ -83,12 +72,7 @@ class UserFlexibleGroupMemberships extends DataProducerPluginBase implements Con
 
     // Calculate the result.
     // Cast to int to satisfy the user GraphQL interface.
-    $result = (int) $result?->fetchField();
-
-    // Cache the result.
-    $this->cacheBackend->set($cid, $result, Cache::PERMANENT, [$cid]);
-
-    return $result;
+    return (int) $result?->fetchField();
   }
 
 }

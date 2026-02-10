@@ -2,10 +2,8 @@
 
 namespace Drupal\Tests\social_post\Kernel\GraphQL;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\social_post\Entity\Post;
-use Drupal\social_post\Plugin\GraphQL\DataProducer\UserPostsCreated;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\user\UserInterface;
 
@@ -52,6 +50,7 @@ class PostsCountTest extends SocialGraphQLTestBase {
       'user.permissions',
     ]);
     $cache_metadata->addCacheableDependency($user);
+    $cache_metadata->addCacheTags(['post_list']);
 
     return $cache_metadata;
   }
@@ -149,37 +148,6 @@ class PostsCountTest extends SocialGraphQLTestBase {
 
     // Scenario: Deleting an event is reflected in the number of Posts created
     // by the user.
-    $this->assertResults(
-      $this->getQueryForpostsCreated(),
-      ['id' => $user->uuid()],
-      $expected_data,
-      $this->createMetadataForpostsCreated($user)
-    );
-
-  }
-
-  /**
-   * Test that the database not called if cache is set .
-   */
-  public function testUserCreatedPostsCached(): void {
-    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
-    // Set custom cache result.
-    $new_result = 35;
-    $cid = UserPostsCreated::CID_BASE . $user->id();
-    \Drupal::service('cache.default')
-      ->set($cid, $new_result, Cache::PERMANENT, [$cid]);
-
-    // Update expected counter.
-    // Set expected array.
-    $expected_data = [
-      'user' => [
-        'id' => $user->uuid(),
-        'postsCreated' => $new_result,
-      ],
-    ];
-
-    // Scenario: Requesting the same statistic twice should not trigger
-    // multiple database queries, the database not called if cache is set.
     $this->assertResults(
       $this->getQueryForpostsCreated(),
       ['id' => $user->uuid()],

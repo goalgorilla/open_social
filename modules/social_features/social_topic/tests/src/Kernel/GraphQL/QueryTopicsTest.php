@@ -2,10 +2,8 @@
 
 namespace Drupal\Tests\social_topic\Kernel\GraphQL;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\node\NodeInterface;
-use Drupal\social_topic\Plugin\GraphQL\DataProducer\TopicsCreated;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
@@ -258,6 +256,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
       'user.permissions',
     ]);
     $cache_metadata->addCacheableDependency($user);
+    $cache_metadata->addCacheTags(['node_list:topic']);
 
     return $cache_metadata;
   }
@@ -356,37 +355,6 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
 
     // Scenario: Deleting a topic is reflected in the number of topics created
     // by the user.
-    $this->assertResults(
-      $this->getQueryForTopicsCreated(),
-      ['id' => $user->uuid()],
-      $expected_data,
-      $this->createMetadataForTopicsCreated($user)
-    );
-
-  }
-
-  /**
-   * Test that the database not called if cache is set.
-   */
-  public function testUserCreatedTopicsCached(): void {
-    $user = $this->setUpCurrentUser([], array_merge(['administer users'], $this->userPermissions()));
-    // Set custom cache result.
-    $new_result = 35;
-    $cid = TopicsCreated::CID_BASE . $user->id();
-    \Drupal::service('cache.default')
-      ->set($cid, $new_result, Cache::PERMANENT, [$cid]);
-
-    // Update expected counter.
-    // Set expected array.
-    $expected_data = [
-      'user' => [
-        'id' => $user->uuid(),
-        'topicsCreated' => $new_result,
-      ],
-    ];
-
-    // Scenario: Requesting the same statistic twice should not trigger
-    // multiple database queries, the database not called if cache is set.
     $this->assertResults(
       $this->getQueryForTopicsCreated(),
       ['id' => $user->uuid()],
