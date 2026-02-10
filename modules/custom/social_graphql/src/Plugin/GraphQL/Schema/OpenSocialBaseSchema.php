@@ -4,7 +4,6 @@ namespace Drupal\social_graphql\Plugin\GraphQL\Schema;
 
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
-use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
 use Drupal\social_graphql\GraphQL\ResolverRegistry;
 
 /**
