@@ -138,6 +138,19 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
       $node->set('field_content_visibility', $visibility_value);
     }
 
+    // Update content tags if provided.
+    if ($input->hasContentTags()) {
+      $content_tags = $input->getContentTags();
+      if ($node->hasField('social_tagging')) {
+        // Convert TermInterface objects to target_id values.
+        $tag_ids = [];
+        foreach ($content_tags as $tag) {
+          $tag_ids[] = $tag->id();
+        }
+        $node->set('social_tagging', $tag_ids);
+      }
+    }
+
     // Validate the entity before saving.
     // This ensures that field-level constraints are checked
     // (e.g., title length, field types, required fields)

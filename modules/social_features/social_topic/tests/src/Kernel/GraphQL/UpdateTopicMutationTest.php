@@ -719,4 +719,686 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
     $this->assertEquals('Original Title', $updated_topic->getTitle(), 'Topic title should remain unchanged after scope failure');
   }
 
+  /**
+   * Test updating a topic with content tags.
+   */
+  public function testUpdateTopicWithContentTags(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $tag1 = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Technology',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tag1->save();
+
+    $tag2 = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Innovation',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tag2->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$id: ID!, \$contentTags: [ID!]) {
+          updateTopic(input: {
+            id: \$id
+            contentTags: \$contentTags
+          }) {
+            errors
+            topic {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'id' => $topic->uuid(),
+        'contentTags' => [$tag1->uuid(), $tag2->uuid()],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'title' => 'Original Title',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // Verify the content tags were actually updated.
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $topic_id = $topic->id();
+    assert($topic_id !== NULL);
+    /** @var \Drupal\node\NodeInterface $updated_topic */
+    $updated_topic = $node_storage->load($topic_id);
+    $tag_values = $updated_topic->get('social_tagging')->getValue();
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $tag_ids = [];
+    foreach ($tag_values as $value) {
+      if (!empty($value['target_id'])) {
+        $term = $term_storage->load($value['target_id']);
+        if ($term !== NULL) {
+          $tag_ids[] = $term->id();
+        }
+      }
+    }
+    $this->assertContains($tag1->id(), $tag_ids, 'Tag 1 should be assigned to topic');
+    $this->assertContains($tag2->id(), $tag_ids, 'Tag 2 should be assigned to topic');
+  }
+
+  /**
+   * Test validation error for invalid content tag UUID (empty or non-string).
+   */
+  public function testUpdateTopicWithEmptyContentTagUuid(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'News',
+    ]);
+    $topicType->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $emptyUuid = '';
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'contentTags' => [$emptyUuid],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['CONTENT_TAG_NOT_FOUND:'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error for invalid content tag UUID (not found).
+   */
+  public function testUpdateTopicWithInvalidContentTags(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'News',
+    ]);
+    $topicType->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $fakeUuid = '12345678-1234-1234-1234-123456789012';
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'contentTags' => [$fakeUuid],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ["CONTENT_TAG_NOT_FOUND:$fakeUuid"],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test updating topic with partial update including content tags.
+   */
+  public function testUpdateTopicPartialUpdateWithContentTags(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Blog',
+    ]);
+    $topicType->save();
+
+    $tag1 = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Science',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tag1->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+    $original_visibility = $topic->get('field_content_visibility')->value;
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$id: ID!, \$title: String, \$contentTags: [ID!]) {
+          updateTopic(input: {
+            id: \$id
+            title: \$title
+            contentTags: \$contentTags
+          }) {
+            errors
+            topic {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'id' => $topic->uuid(),
+        'title' => 'Updated Title with Tags',
+        'contentTags' => [$tag1->uuid()],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'title' => 'Updated Title with Tags',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // Verify both title and content tags were updated.
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $topic_id = $topic->id();
+    assert($topic_id !== NULL);
+    /** @var \Drupal\node\NodeInterface $updated_topic */
+    $updated_topic = $node_storage->load($topic_id);
+    $this->assertEquals('Updated Title with Tags', $updated_topic->getTitle());
+    $this->assertEquals($original_visibility, $updated_topic->get('field_content_visibility')->value, 'Visibility should remain unchanged');
+    $tag_values = $updated_topic->get('social_tagging')->getValue();
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $tag_ids = [];
+    foreach ($tag_values as $value) {
+      if (!empty($value['target_id'])) {
+        $term = $term_storage->load($value['target_id']);
+        if ($term !== NULL) {
+          $tag_ids[] = $term->id();
+        }
+      }
+    }
+    $this->assertContains($tag1->id(), $tag_ids, 'Tag should be assigned to topic');
+  }
+
+  /**
+   * Test removing content tags by passing empty array.
+   */
+  public function testUpdateTopicRemoveContentTags(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Discussion',
+    ]);
+    $topicType->save();
+
+    $tag1 = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Education',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tag1->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'social_tagging' => [$tag1->id()],
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$id: ID!, \$contentTags: [ID!]) {
+          updateTopic(input: {
+            id: \$id
+            contentTags: \$contentTags
+          }) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'id' => $topic->uuid(),
+        'contentTags' => [],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // Verify content tags were removed.
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $topic_id = $topic->id();
+    assert($topic_id !== NULL);
+    /** @var \Drupal\node\NodeInterface $updated_topic */
+    $updated_topic = $node_storage->load($topic_id);
+    $tag_values_after = $updated_topic->get('social_tagging')->getValue();
+    $this->assertEmpty($tag_values_after, 'Content tags should be removed');
+  }
+
+  /**
+   * Test validation error when providing too many content tags.
+   */
+  public function testUpdateTopicTooManyContentTags(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $fake_tag_uuids = [];
+    for ($i = 0; $i < 200; $i++) {
+      $fake_tag_uuids[] = sprintf('12345678-1234-1234-1234-%012d', $i);
+    }
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'contentTags' => $fake_tag_uuids,
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['CONTENT_TAGS_LIMIT_EXCEEDED'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error for content tag with invalid usage (not for topics).
+   */
+  public function testUpdateTopicWithInvalidContentTagUsage(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $tagA = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Tag',
+      'field_category_usage' => serialize(['node_event']),
+      'status' => 1,
+    ]);
+    $tagA->save();
+
+    $tagB = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Topic Tag',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tagB->save();
+
+    $tagC = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Shared Tag',
+      'field_category_usage' => serialize(['node_event', 'node_topic']),
+      'status' => 1,
+    ]);
+    $tagC->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'contentTags' => [$tagA->uuid(), $tagB->uuid(), $tagC->uuid()],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['CONTENT_TAG_INVALID_USAGE:' . $tagA->uuid()],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'contentTags' => [$tagB->uuid(), $tagC->uuid()],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'title' => 'Original Title',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test topic with child tag that inherits field_category_usage from parent.
+   */
+  public function testUpdateTopicWithChildTagInheritingFromParent(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $parentTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Parent Category',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $parentTag->save();
+
+    $childTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Child Tag',
+      'parent' => [$parentTag->id()],
+      'status' => 1,
+    ]);
+    $childTag->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->assertTrue(
+      $childTag->get('field_category_usage')->isEmpty(),
+      'Child tag should not have field_category_usage configured'
+    );
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'contentTags' => [$childTag->uuid()],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'title' => 'Original Title',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $topic_id = $topic->id();
+    assert($topic_id !== NULL);
+    /** @var \Drupal\node\NodeInterface $updated_topic */
+    $updated_topic = $node_storage->load($topic_id);
+    $tag_values = $updated_topic->get('social_tagging')->getValue();
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $tag_ids = [];
+    foreach ($tag_values as $value) {
+      if (!empty($value['target_id'])) {
+        $term = $term_storage->load($value['target_id']);
+        if ($term !== NULL) {
+          $tag_ids[] = $term->id();
+        }
+      }
+    }
+    $this->assertContains($childTag->id(), $tag_ids, 'Child tag should be assigned to topic');
+  }
+
+  /**
+   * Test tag without category_usage is rejected when parent don't allow topic.
+   */
+  public function testUpdateTopicWithChildTagRejectedWhenParentDoesNotAllowTopic(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $parentTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Parent Category',
+      'field_category_usage' => serialize(['node_event']),
+      'status' => 1,
+    ]);
+    $parentTag->save();
+
+    $childTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Child Tag',
+      'parent' => [$parentTag->id()],
+      'status' => 1,
+    ]);
+    $childTag->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->assertTrue(
+      $childTag->get('field_category_usage')->isEmpty(),
+      'Child tag should not have field_category_usage configured'
+    );
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'contentTags' => [$childTag->uuid()],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['CONTENT_TAG_INVALID_USAGE:' . $childTag->uuid()],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
 }

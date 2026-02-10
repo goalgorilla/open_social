@@ -179,6 +179,12 @@ input UpdateTopicInput {
   The visibility of the topic.
   """
   visibility: ContentVisibility
+  """
+  The tag(s) of the topic.
+  The ID of the topic tag(s) as provided by contentTagCategories.
+  If omitted, the content tag remains unchanged.
+  """
+  contentTags: [ID!]
 }
 
 """

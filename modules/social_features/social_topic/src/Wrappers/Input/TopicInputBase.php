@@ -156,6 +156,37 @@ abstract class TopicInputBase extends InputBase {
   }
 
   /**
+   * Process content tags from input.
+   *
+   * @param array $input
+   *   The input array that may contain 'contentTags'.
+   *
+   * @return array|null
+   *   An array with two keys: 'valid_tags' and 'violations'.
+   *   Returns NULL if 'contentTags' key is not present or if it is null.
+   */
+  protected function processContentTags(array $input): ?array {
+    // Process content tags if provided.
+    if (!array_key_exists('contentTags', $input)) {
+      return NULL;
+    }
+
+    // Treat null as "not provided".
+    if ($input['contentTags'] === NULL) {
+      return NULL;
+    }
+
+    $validation_result = $this->validateContentTags($input['contentTags']);
+
+    // Add all violations found during validation.
+    if (!empty($validation_result['violations'])) {
+      $this->violations = array_merge($this->violations, $validation_result['violations']);
+    }
+
+    return $validation_result;
+  }
+
+  /**
    * Load taxonomy terms by their UUIDs in a single query.
    *
    * @param array $uuids

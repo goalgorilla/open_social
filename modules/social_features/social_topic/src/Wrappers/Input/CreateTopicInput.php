@@ -170,18 +170,9 @@ class CreateTopicInput extends TopicInputBase {
     }
 
     // Process content tags if provided.
-    if (array_key_exists('contentTags', $input)) {
-      $validation_result = $this->validateContentTags($input['contentTags']);
-
-      // Add all violations found during validation.
-      if (!empty($validation_result['violations'])) {
-        $this->violations = array_merge($this->violations, $validation_result['violations']);
-      }
-
-      // Only set content tags if all validations passed.
-      if (empty($validation_result['violations'])) {
-        $this->contentTags = $validation_result['valid_tags'];
-      }
+    $content_tags_result = $this->processContentTags($input);
+    if ($content_tags_result !== NULL && empty($content_tags_result['violations'])) {
+      $this->contentTags = $content_tags_result['valid_tags'];
     }
   }
 

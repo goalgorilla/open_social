@@ -65,6 +65,13 @@ class UpdateTopicInput extends TopicInputBase {
   protected ?string $visibility = NULL;
 
   /**
+   * The content tags.
+   *
+   * @var \Drupal\taxonomy\TermInterface[]|null
+   */
+  protected ?array $contentTags = NULL;
+
+  /**
    * Create a new Update Topic Input instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
@@ -175,6 +182,12 @@ class UpdateTopicInput extends TopicInputBase {
       else {
         $this->visibility = $input['visibility'];
       }
+    }
+
+    // Process content tags if provided.
+    $content_tags_result = $this->processContentTags($input);
+    if ($content_tags_result !== NULL && empty($content_tags_result['violations'])) {
+      $this->contentTags = $content_tags_result['valid_tags'];
     }
   }
 
@@ -298,6 +311,27 @@ class UpdateTopicInput extends TopicInputBase {
   public function getVisibility(): string {
     assert($this->visibility !== NULL, __FUNCTION__ . " called but visibility was not set.");
     return $this->visibility;
+  }
+
+  /**
+   * Return if content tags has tags.
+   *
+   * @return bool
+   *   TRUE if content tags is not empty.
+   */
+  public function hasContentTags(): bool {
+    return $this->contentTags !== NULL;
+  }
+
+  /**
+   * Get the content tags.
+   *
+   * @return \Drupal\taxonomy\TermInterface[]
+   *   The content tags.
+   */
+  public function getContentTags(): array {
+    assert($this->contentTags !== NULL, __FUNCTION__ . " called but content tags were not set.");
+    return $this->contentTags;
   }
 
 }
