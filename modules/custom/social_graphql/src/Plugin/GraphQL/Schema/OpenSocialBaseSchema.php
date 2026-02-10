@@ -5,6 +5,14 @@ namespace Drupal\social_graphql\Plugin\GraphQL\Schema;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\social_graphql\GraphQL\ResolverRegistry;
+use GraphQL\Error\Error;
+use GraphQL\Language\AST\DocumentNode;
+use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
+use GraphQL\Language\AST\TypeDefinitionNode;
+use GraphQL\Language\AST\UnionTypeDefinitionNode;
+use GraphQL\Type\Schema;
+use GraphQL\Utils\AST;
+use GraphQL\Utils\BuildSchema;
 
 /**
  * The provider of the schema base for the Open Social GraphQL API.
@@ -44,8 +52,30 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
     // Add Open Social base types to the schema.
     $this->getBaseSchema($registry);
 
-    // Instantiate the schema and add all extensions.
     return parent::getSchema($registry);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function buildSchema(DocumentNode $astDocument, ResolverRegistryInterface $registry): Schema {
+    $resolver = [$registry, 'resolveType'];
+    // Performance: only validate the schema in development mode, skip it in
+    // production on every request.
+    $options = empty($this->inDevelopment) ? ['assumeValid' => TRUE] : [];
+    $schema = BuildSchema::build($astDocument, function ($config, TypeDefinitionNode $type) use ($resolver, $registry) {
+      if ($type instanceof InterfaceTypeDefinitionNode || $type instanceof UnionTypeDefinitionNode) {
+        $config['resolveType'] = $resolver;
+      }
+      if ($registry instanceof ResolverRegistry) {
+        $override = $registry->getTypeConfigOverride($type->name->value);
+        if ($override !== NULL) {
+          $config = array_merge($config, $override);
+        }
+      }
+      return $config;
+    }, $options);
+    return $schema;
   }
 
   /**
@@ -181,6 +211,31 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
         ->map('value', $builder->fromParent())
         ->map('path', $builder->fromValue('created.value'))
     );
+
+    // Register type config overrides (e.g. custom scalars) via the registry.
+    if ($registry instanceof ResolverRegistry) {
+      $registry->addTypeConfigOverride('RichTextJSON', [
+        'parseValue' => static function ($value) {
+          if (is_array($value)) {
+            return $value;
+          }
+          if (is_object($value) && $value instanceof \stdClass) {
+            return (array) $value;
+          }
+          throw new Error('RichTextJSON must be an object.');
+        },
+        'parseLiteral' => static function ($valueNode, ?array $variables = NULL) {
+          $value = AST::valueFromASTUntyped($valueNode, $variables);
+          if (!is_array($value)) {
+            throw new Error('RichTextJSON must be an object.');
+          }
+          return $value;
+        },
+        'serialize' => static function ($value) {
+          return $value;
+        },
+      ]);
+    }
   }
 
   /**

@@ -10,6 +10,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_topic\Service\RichTextToHtmlConverter;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 
@@ -75,11 +76,26 @@ class CreateTopicInput extends TopicInputBase {
   protected ?string $visibility = NULL;
 
   /**
+   * The body HTML (from Rich Text JSON conversion).
+   */
+  protected ?string $bodyHtml = NULL;
+
+  /**
+   * The text format ID for the body field.
+   */
+  protected ?string $bodyFormat = NULL;
+
+  /**
    * Content tags for the topic.
    *
    * @var \Drupal\taxonomy\TermInterface[]
    */
   protected array $contentTags = [];
+
+  /**
+   * The Rich Text JSON to HTML converter.
+   */
+  private RichTextToHtmlConverter $richTextConverter;
 
   /**
    * Create a new Create Topic Input instance.
@@ -90,15 +106,19 @@ class CreateTopicInput extends TopicInputBase {
    *   The entity repository.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user for the request.
+   * @param \Drupal\social_topic\Service\RichTextToHtmlConverter $rich_text_converter
+   *   The Rich Text JSON to HTML converter.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     EntityRepositoryInterface $entity_repository,
     AccountProxyInterface $current_user,
+    RichTextToHtmlConverter $rich_text_converter,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->entityRepository = $entity_repository;
     $this->currentUser = $current_user;
+    $this->richTextConverter = $rich_text_converter;
   }
 
   /**
@@ -168,6 +188,41 @@ class CreateTopicInput extends TopicInputBase {
         $this->visibility = $input['visibility'];
       }
     }
+
+    // Validate body (required Rich Text JSON).
+    if (!isset($input['body'])) {
+      $this->violations[] = new Violation("BODY_REQUIRED");
+      return;
+    }
+    if (!is_array($input['body'])) {
+      $this->violations[] = new Violation("BODY_INVALID_RICH_TEXT_JSON");
+      return;
+    }
+
+    // Until we decide that all topics are created with a specific text format
+    // and that this is not dependent on users' permission we must figure out
+    // what the default text format is that the user can use and use that.
+    // Get a list of formats for this user, ordered by weight. The first one
+    // available is the user's default format.
+    $allowed_formats = \filter_formats($this->actor);
+    if ($allowed_formats === []) {
+      throw new \RuntimeException("The application that is trying to create a topic does not have access to any usable text formats. It's expected that the scopes that allow access to content creation also provide access to at least one text format to be used.");
+    }
+    $format_id = reset($allowed_formats)->id();
+    assert(is_string($format_id) || is_null($format_id), "Expected TextFormats to be config with string IDs.");
+
+    $result = $this->richTextConverter->convert($input['body']);
+    if (!$result->isValid()) {
+      foreach ($result->getViolations() as $violation) {
+        $this->violations[] = $violation;
+      }
+      return;
+    }
+
+    $html = $result->getHtml();
+    assert($html !== NULL, 'Conversion result is valid so HTML must be set.');
+    $this->bodyHtml = $html;
+    $this->bodyFormat = $format_id;
 
     // Process content tags if provided.
     $content_tags_result = $this->processContentTags($input);
@@ -249,6 +304,28 @@ class CreateTopicInput extends TopicInputBase {
   public function getVisibility(): string {
     assert($this->visibility !== NULL, __FUNCTION__ . " called but visibility was not set.");
     return $this->visibility;
+  }
+
+  /**
+   * Get the body HTML (from Rich Text JSON conversion).
+   *
+   * @return string
+   *   The body HTML.
+   */
+  public function getBodyHtml(): string {
+    assert($this->bodyHtml !== NULL, __FUNCTION__ . " called but body HTML was not set.");
+    return $this->bodyHtml;
+  }
+
+  /**
+   * Get the text format ID for the body field.
+   *
+   * @return string
+   *   The format ID.
+   */
+  public function getBodyFormat(): string {
+    assert($this->bodyFormat !== NULL, __FUNCTION__ . " called but body format was not set.");
+    return $this->bodyFormat;
   }
 
   /**

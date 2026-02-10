@@ -92,6 +92,10 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     'group_core_comments',
     'menu_ui',
     'comment',
+    'editor',
+    'ckeditor5',
+    'responsive_table_filter',
+    'social_editor',
     'social_node',
     'social_core',
     'field_group',
@@ -171,6 +175,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
       'menu_link_content',
       'social_profile',
       'social_node',
+      'social_editor',
       'social_core',
       'social_event',
       'social_topic',
@@ -218,6 +223,27 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
   }
 
   /**
+   * Minimal valid Rich Text JSON body (paragraph with text).
+   */
+  private static function minimalRichTextBody(): array {
+    return [
+      'root' => [
+        'type' => 'root',
+        'version' => 1,
+        'children' => [
+          [
+            'type' => 'paragraph',
+            'version' => 1,
+            'children' => [
+              ['type' => 'text', 'version' => 1, 'text' => 'Hello'],
+            ],
+          ],
+        ],
+      ],
+    ];
+  }
+
+  /**
    * Test creating a topic with all required fields.
    */
   public function testCreateTopicSuccess(): void {
@@ -234,12 +260,13 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
 
     $this->assertResults(
       <<<GQL
-      mutation CreateTopic(\$type: ID!, \$title: String!, \$visibility: ContentVisibility!, \$clientMutationId: UUIDv4) {
+      mutation CreateTopic(\$type: ID!, \$title: String!, \$visibility: ContentVisibility!, \$body: RichTextJSON!, \$clientMutationId: UUIDv4) {
         createTopic(input: {
           clientMutationId: \$clientMutationId
           type: \$type
           title: \$title
           visibility: \$visibility
+          body: \$body
         }) {
           clientMutationId
           errors
@@ -247,6 +274,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
             title
             type { id }
             visibility
+            bodyHtml
           }
         }
       }
@@ -256,6 +284,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
         'type' => $topicType->uuid(),
         'title' => 'Test Topic',
         'visibility' => 'PUBLIC',
+        'body' => self::minimalRichTextBody(),
       ],
       [
         'createTopic' => [
@@ -267,7 +296,51 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
               'id' => $topicType->uuid(),
             ],
             'visibility' => 'PUBLIC',
+            'bodyHtml' => "<div><p>Hello</p>\n</div>",
           ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1', 'taxonomy_term:1', 'config:filter.format.basic_html'])
+        // @todo Remove max age once https://www.drupal.org/project/simple_oauth/issues/3573262 is fixed.
+        ->setCacheMaxAge(0)
+    );
+
+  }
+
+  /**
+   * Test validation error when Rich Text JSON is invalid (missing root).
+   */
+  public function testCreateTopicInvalidRichTextJson(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Blog',
+    ]);
+    $topicType->save();
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Invalid body',
+          'visibility' => 'PUBLIC',
+          'body' => ['notRoot' => []],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['BODY_INVALID_STRUCTURE'],
+          'topic' => NULL,
         ],
       ],
       $this->defaultMutationCacheMetaData()
@@ -304,6 +377,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => '',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
         ],
       ],
       [
@@ -350,6 +424,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => $longTitle,
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
         ],
       ],
       [
@@ -389,6 +464,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $fakeUuid,
           'title' => 'Test Topic',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
         ],
       ],
       [
@@ -434,6 +510,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => "Topic with $visibility visibility",
           'visibility' => $visibility,
+          'body' => self::minimalRichTextBody(),
         ],
       ],
       [
@@ -480,6 +557,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => "Topic with $visibility visibility",
           'visibility' => $visibility,
+          'body' => self::minimalRichTextBody(),
         ],
       ],
       [
@@ -525,6 +603,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => 'Test Topic',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
         ],
       ],
       [
@@ -582,6 +661,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => 'Tutorial: Getting Started',
           'visibility' => 'COMMUNITY',
+          'body' => self::minimalRichTextBody(),
           'contentTags' => [$tag1->uuid(), $tag2->uuid()],
         ],
       ],
@@ -642,6 +722,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => 'Test Topic',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'contentTags' => [$fakeTagUuid],
         ],
       ],
@@ -708,6 +789,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => 'Test Topic',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'contentTags' => [$tagA->uuid(), $tagB->uuid(), $tagC->uuid()],
         ],
       ],
@@ -738,6 +820,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
         'type' => $topicType->uuid(),
         'title' => 'Test Topic With Valid Tags',
         'visibility' => 'PUBLIC',
+        'body' => self::minimalRichTextBody(),
         'contentTags' => [$tagB->uuid(), $tagC->uuid()],
       ],
     ];
@@ -818,6 +901,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => 'Test Topic',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'contentTags' => $fake_tag_uuids,
         ],
       ],
@@ -881,6 +965,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => 'Topic with Child Tag',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'contentTags' => [$childTag->uuid()],
         ],
       ],
@@ -971,6 +1056,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'type' => $topicType->uuid(),
           'title' => 'Test Topic',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'contentTags' => [$childTag->uuid()],
         ],
       ],

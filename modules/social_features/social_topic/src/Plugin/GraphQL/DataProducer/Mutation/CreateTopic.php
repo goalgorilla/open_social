@@ -120,9 +120,11 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     $node_values = [
       'type' => 'topic',
       'title' => $input->getTitle(),
-      'body' => [[
-        'value' => ' ',
-      ],
+      'body' => [
+        [
+          'value' => $input->getBodyHtml(),
+          'format' => $input->getBodyFormat(),
+        ],
       ],
       'field_content_visibility' => $visibility_value,
       'field_topic_type' => $input->getTopicType(),

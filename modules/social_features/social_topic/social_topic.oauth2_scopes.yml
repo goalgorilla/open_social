@@ -109,6 +109,20 @@
       status: true
       description: 'Allow the application to select terms from social_tagging taxonomy on the platform.'
 
+"internal:topic:text_format":
+  parent: topic:write
+  description: 'Temporary scope should be removed once multiple permissions are implemented.'
+  umbrella: false
+  granularity: permission
+  permission: 'use text format basic_html'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Ensures that body fields can be filled with basic_html text.'
+    client_credentials:
+      status: true
+      description: 'Ensures that body fields can be filled with basic_html text.'
+
 "internal:topic:write_types":
   parent: topic:write
   description: 'Temporary scope should be removed once multiple permissions are implemented.'

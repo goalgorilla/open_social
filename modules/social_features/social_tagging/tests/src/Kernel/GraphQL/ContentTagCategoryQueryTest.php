@@ -67,6 +67,12 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
     'social_user',
     'social_comment',
     'social_topic',
+
+    // Required for our body field.
+    'editor',
+    'ckeditor5',
+    'responsive_table_filter',
+    'social_editor',
   ];
 
   /**
@@ -96,6 +102,7 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
       'simple_oauth_static_scope',
       'comment',
       'taxonomy_access_fix',
+      'social_editor',
     ]);
 
     if (!NodeType::load('topic')) {

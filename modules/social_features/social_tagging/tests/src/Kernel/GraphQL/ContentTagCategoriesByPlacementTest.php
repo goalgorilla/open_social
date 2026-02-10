@@ -83,6 +83,12 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
     'image_widget_crop',
     'image_effects',
     'file_mdm',
+
+    // Required for our body field.
+    'editor',
+    'ckeditor5',
+    'responsive_table_filter',
+    'social_editor',
   ];
 
   /**
@@ -115,6 +121,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'simple_oauth_static_scope',
       'user',
       'taxonomy_access_fix',
+      'social_editor',
     ]);
 
     // Set up OAuth keys for testing.

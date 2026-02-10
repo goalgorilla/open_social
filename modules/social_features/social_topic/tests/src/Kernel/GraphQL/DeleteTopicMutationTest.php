@@ -134,6 +134,12 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
     'flag_count',
     'hux',
     'taxonomy_access_fix',
+
+    // Required for our body field.
+    'editor',
+    'ckeditor5',
+    'responsive_table_filter',
+    'social_editor',
   ];
 
   /**
@@ -194,6 +200,7 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
       'flag',
       'simple_oauth',
       'simple_oauth_static_scope',
+      'social_editor',
     ]);
 
     // Configure OAuth to use static scope provider and set up keys.
