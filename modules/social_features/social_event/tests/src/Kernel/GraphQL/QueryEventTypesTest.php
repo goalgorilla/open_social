@@ -65,6 +65,7 @@ class QueryEventTypesTest extends SocialGraphQLTestBase {
     'profile',
     'social_profile',
     'variationcache',
+    'social_tagging',
   ];
 
   /**
@@ -81,6 +82,7 @@ class QueryEventTypesTest extends SocialGraphQLTestBase {
       'social_node',
       'social_event',
       'social_event_type',
+      'social_tagging',
     ]);
   }
 

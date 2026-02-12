@@ -63,6 +63,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
     'variationcache',
     'path_alias',
     'hux',
+    'social_tagging',
   ];
 
   /**
@@ -76,6 +77,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('comment');
     $this->installEntitySchema('path_alias');
 
+    $this->installEntitySchema('taxonomy_term');
     $this->installSchema('comment', 'comment_entity_statistics');
     $this->installConfig([
       'node',
@@ -83,6 +85,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
       'social_node',
       'social_topic',
       'filter',
+      'social_tagging',
     ]);
   }
 

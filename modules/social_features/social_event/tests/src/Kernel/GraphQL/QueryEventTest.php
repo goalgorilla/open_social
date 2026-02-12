@@ -80,6 +80,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
     'variationcache',
     'better_exposed_filters',
     'smart_trim',
+    'social_tagging',
   ];
 
   /**
@@ -118,6 +119,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
       'filter',
       'comment',
       'social_comment',
+      'social_tagging',
     ]);
   }
 

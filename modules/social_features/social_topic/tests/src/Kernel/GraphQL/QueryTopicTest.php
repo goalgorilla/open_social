@@ -65,6 +65,7 @@ class QueryTopicTest extends SocialGraphQLTestBase {
     'views_bulk_operations',
     'group',
     'variationcache',
+    'social_tagging',
   ];
 
   /**
@@ -89,6 +90,7 @@ class QueryTopicTest extends SocialGraphQLTestBase {
       'filter',
       'comment',
       'social_comment',
+      'social_tagging',
     ]);
   }
 

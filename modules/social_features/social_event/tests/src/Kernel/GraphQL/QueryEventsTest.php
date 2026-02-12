@@ -75,6 +75,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
     'path_alias',
     'hux',
     'smart_trim',
+    'social_tagging',
   ];
 
   /**
@@ -88,6 +89,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('path_alias');
 
+    $this->installEntitySchema('taxonomy_term');
     $this->installSchema('comment', 'comment_entity_statistics');
     $this->installConfig([
       'node',
@@ -96,6 +98,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
       'social_event',
       'filter',
       'comment',
+      'social_tagging',
     ]);
   }
 

@@ -53,6 +53,7 @@ class QueryTopicTypesTest extends SocialGraphQLTestBase {
     'views',
     'group',
     'variationcache',
+    'social_tagging',
   ];
 
   /**
@@ -68,6 +69,7 @@ class QueryTopicTypesTest extends SocialGraphQLTestBase {
       'social_core',
       'social_node',
       'social_topic',
+      'social_tagging',
     ]);
   }
 
