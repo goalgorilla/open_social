@@ -10,6 +10,7 @@ use Eluceo\iCal\Presentation\Factory\TimeZoneFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class AddToCalendarIcsController.
@@ -56,13 +57,23 @@ class AddToCalendarIcsController extends ControllerBase {
   /**
    * Download generated ICS file.
    *
-   * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
-   *   Empty array.
+   * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Symfony\Component\HttpFoundation\Response
+   *   The ICS file response or an error response.
    */
   public function downloadIcs() {
     // Event dates.
     $dates = $this->request->get('dates');
     $timezone = $this->request->get('timezone');
+
+    if (!is_array($dates) || empty($dates['start']) || empty($dates['end'])) {
+      throw new BadRequestHttpException('Start and end date are required for the calendar file.');
+    }
+
+    $start = $dates['start'];
+    $end = $dates['end'];
+    if (!is_string($start) || !is_string($end) || trim($start) === '' || trim($end) === '') {
+      throw new BadRequestHttpException('Start and end date are required for the calendar file.');
+    }
 
     // Generate timestamp, which needs to be the time the ICS object created.
     // https://icalendar.org/iCalendar-RFC-5545/3-6-1-event-component.html
@@ -88,8 +99,8 @@ class AddToCalendarIcsController extends ControllerBase {
 
       // Generate the VTIMEZONE.
       $timezone_components = [];
-      $timezone_components[$timezone] = $this->generateTimezoneComponent($dates['start'], $timezone);
-      $timezone_components[$timezone] = $this->generateTimezoneComponent($dates['end'], $timezone);
+      $timezone_components[$timezone] = $this->generateTimezoneComponent($start, $timezone);
+      $timezone_components[$timezone] = $this->generateTimezoneComponent($end, $timezone);
 
       $componentFactory = new TimeZoneFactory();
       $timezone_elements = $componentFactory->createComponents($timezone_components);
@@ -104,13 +115,13 @@ class AddToCalendarIcsController extends ControllerBase {
       $file_data[] = 'TRANSP:OPAQUE';
 
       // Set start and end datetime for event.
-      if ($dates['all_day']) {
-        $file_data[] = 'DTSTART:' . $dates['start'];
-        $file_data[] = 'DTEND:' . $dates['end'];
+      if (!empty($dates['all_day'])) {
+        $file_data[] = 'DTSTART:' . $start;
+        $file_data[] = 'DTEND:' . $end;
       }
       else {
-        $file_data[] = 'DTSTART;TZID=' . $dates['start'];
-        $file_data[] = 'DTEND;TZID=' . $dates['end'];
+        $file_data[] = 'DTSTART;TZID=' . $start;
+        $file_data[] = 'DTEND;TZID=' . $end;
       }
 
       // Add the DTSTAMP.
