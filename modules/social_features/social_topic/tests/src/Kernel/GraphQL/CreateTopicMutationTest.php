@@ -884,4 +884,157 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     );
   }
 
+  /**
+   * Test topic with child tag that inherits field_category_usage from parent.
+   */
+  public function testCreateTopicWithChildTagInheritingFromParent(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $parentTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Parent Category',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $parentTag->save();
+
+    $childTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Child Tag',
+      'parent' => [$parentTag->id()],
+      'status' => 1,
+    ]);
+    $childTag->save();
+
+    $this->assertTrue(
+      $childTag->get('field_category_usage')->isEmpty(),
+      'Child tag should not have field_category_usage configured'
+    );
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic with Child Tag',
+          'visibility' => 'PUBLIC',
+          'contentTags' => [$childTag->uuid()],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Topic with Child Tag',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->setCacheMaxAge(0)
+        ->addCacheTags(['node:1'])
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // Verify the child tag was actually saved to the topic.
+    $entity_repository = \Drupal::service('entity.repository');
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $nodes = $node_storage->loadByProperties([
+      'type' => 'topic',
+      'title' => 'Topic with Child Tag',
+    ]);
+    $this->assertNotEmpty($nodes, 'Topic should be created');
+    $created_topic = reset($nodes);
+    /** @var \Drupal\node\NodeInterface $created_topic */
+    $tag_values = $created_topic->get('social_tagging')->getValue();
+    $tag_ids = [];
+    foreach ($tag_values as $value) {
+      if (!empty($value['target_id'])) {
+        $term = $term_storage->load($value['target_id']);
+        if ($term !== NULL) {
+          $tag_ids[] = $term->id();
+        }
+      }
+    }
+    $this->assertContains($childTag->id(), $tag_ids, 'Child tag should be assigned to topic');
+  }
+
+  /**
+   * Test tag without category_usage is rejected when parent don't allow topic.
+   */
+  public function testCreateTopicWithChildTagRejectedWhenParentDoesNotAllowTopic(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $parentTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Parent Category',
+      'field_category_usage' => serialize(['node_event']),
+      'status' => 1,
+    ]);
+    $parentTag->save();
+
+    $childTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Child Tag',
+      'parent' => [$parentTag->id()],
+      'status' => 1,
+    ]);
+    $childTag->save();
+
+    $this->assertTrue(
+      $childTag->get('field_category_usage')->isEmpty(),
+      'Child tag should not have field_category_usage configured'
+    );
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'contentTags' => [$childTag->uuid()],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CONTENT_TAG_INVALID_USAGE:' . $childTag->uuid()],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
 }

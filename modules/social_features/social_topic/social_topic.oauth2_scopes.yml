@@ -81,7 +81,7 @@
       status: true
       description: 'Allow the application to delete topics on the platform.'
 
-"internal:topic:social_tagging":
+"internal:topic:read_social_tagging":
   parent: topic:read
   description: 'Temporary scope should be removed once multiple permissions are implemented.'
   umbrella: false
@@ -94,3 +94,17 @@
     client_credentials:
       status: true
       description: 'Allow the application to view terms from social_tagging taxonomy on the platform.'
+
+"internal:topic:select_social_tagging":
+  parent: topic:write
+  description: 'Temporary scope should be removed once multiple permissions are implemented.'
+  umbrella: false
+  granularity: permission
+  permission: 'select terms in social_tagging'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to select terms from social_tagging taxonomy you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to select terms from social_tagging taxonomy on the platform.'

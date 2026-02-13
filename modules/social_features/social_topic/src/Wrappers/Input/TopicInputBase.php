@@ -43,6 +43,9 @@ abstract class TopicInputBase extends InputBase {
    * - Checks if the tag exists and is of the correct vocabulary
    * - Checks if the tag is published
    * - Checks if the tag can be used for node_topic.
+   *   If the tag doesn't have field_category_usage configured, it inherits
+   *   the usage from its parent term (following the hierarchy pattern used
+   *   in the social_tagging module).
    *
    * @param mixed $content_tags_input
    *   The content tags input (should be an array of tag UUIDs).
@@ -95,10 +98,49 @@ abstract class TopicInputBase extends InputBase {
       $tag = $tags_by_uuid[$tag_uuid];
 
       // Check if tag can be used for node_topic.
+      // First, check if the tag itself has field_category_usage.
       $has_field = $tag->hasField('field_category_usage') && !$tag->get('field_category_usage')->isEmpty();
       $usage = $has_field ? unserialize($tag->get('field_category_usage')->value, ['allowed_classes' => FALSE]) : NULL;
 
-      if (!$has_field || !is_array($usage) || !in_array('node_topic', $usage, TRUE)) {
+      $is_valid = FALSE;
+
+      if ($has_field && is_array($usage)) {
+        // Tag has explicit configuration - check if it includes node_topic.
+        if (in_array('node_topic', $usage, TRUE)) {
+          $is_valid = TRUE;
+        }
+        // If tag has explicit configuration but doesn't include node_topic,
+        // don't check parent (explicit configuration takes precedence).
+      }
+      else {
+        // Tag doesn't have field_category_usage - check parent for inheritance.
+        $parent_ids = [];
+        foreach ($tag->get('parent') as $parent_item) {
+          $parent_value = $parent_item->getValue();
+          $parent_id = $parent_value['target_id'] ?? NULL;
+          if ($parent_id !== NULL && $parent_id > 0) {
+            $parent_ids[] = $parent_id;
+          }
+        }
+
+        if (!empty($parent_ids)) {
+          // Load the first parent (taxonomy terms typically have one parent).
+          $parent = $this->entityTypeManager
+            ->getStorage('taxonomy_term')
+            ->load(reset($parent_ids));
+
+          if ($parent && $parent->hasField('field_category_usage') && !$parent->get('field_category_usage')->isEmpty()) {
+            $parent_usage = unserialize($parent->get('field_category_usage')->value, ['allowed_classes' => FALSE]);
+            if (is_array($parent_usage) && in_array('node_topic', $parent_usage, TRUE)) {
+              $is_valid = TRUE;
+            }
+          }
+        }
+      }
+
+      // If tag is not valid (neither itself nor parent has valid usage),
+      // reject it.
+      if (!$is_valid) {
         $violations[] = new Violation("CONTENT_TAG_INVALID_USAGE:" . $tag_uuid);
         continue;
       }

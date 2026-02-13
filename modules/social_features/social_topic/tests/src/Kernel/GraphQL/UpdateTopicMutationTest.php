@@ -164,6 +164,7 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
       'social_core',
       'social_event',
       'social_topic',
+      'social_tagging',
       'social_group_invite',
       'ginvite',
       'pathauto',
