@@ -602,9 +602,9 @@ function social_follow_tag_activity_view(array &$build, ActivityInterface $activ
     return;
   }
 
-  /** @var \Drupal\message\MessageInterface $message */
+  /** @var \Drupal\message\MessageInterface|null $message */
   $message = $activity->get('field_activity_message')->entity;
-  if ($message->bundle() !== 'update_node_following_tag') {
+  if ($message === NULL || $message->bundle() !== 'update_node_following_tag') {
     return;
   }
 
