@@ -77,3 +77,8 @@ services:
       - '@plugin.manager.social_group.join'
     tags:
       - { name: access_check, applies_to: _social_group_access }
+
+  # Application group context: whether the application is "inside" a group (default: FALSE).
+  # Used by social_oauth's GroupPermissionCheckerDecorator for OAuth token group permission checks.
+  social_group.application_group_context:
+    class: Drupal\social_group\Service\DefaultApplicationGroupContext
