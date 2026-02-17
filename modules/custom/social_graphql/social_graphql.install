@@ -28,3 +28,15 @@ function social_graphql_update_last_removed() : int {
 function social_graphql_update_25001(): void {
   \Drupal::service('module_installer')->install(['graphql_oauth']);
 }
+
+/**
+ * Disable GraphQL introspection on the Open Social GraphQL server (PROD-34935).
+ */
+function social_graphql_update_25002(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  $updater->executeUpdate('social_graphql', __FUNCTION__);
+
+  return $updater->logger()->output();
+}
