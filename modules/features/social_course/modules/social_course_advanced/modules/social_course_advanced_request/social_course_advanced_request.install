@@ -6,6 +6,18 @@
  */
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_course_advanced_request_update_dependencies(): array {
+  // Field instances in 13002 depend on field storage from social_group_request.
+  $dependencies['social_course_advanced_request'][13002] = [
+    'social_group_request' => 13011,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Update membership request form display.
  */
 function social_course_advanced_request_update_13001(): string {
@@ -16,5 +28,15 @@ function social_course_advanced_request_update_13001(): string {
   $updater->executeUpdate('social_course_advanced_request', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
+
+/**
+ * Add request-to-join form customization fields to course_advanced group type.
+ */
+function social_course_advanced_request_update_13002(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_course_advanced_request', __FUNCTION__);
   return $updater->logger()->output();
 }
