@@ -99,8 +99,8 @@ class ProfileHeroBlock extends BlockBase implements ContainerFactoryPluginInterf
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
-    return Cache::mergeContexts(parent::getCacheContexts(), ['user.permissions']);
+  public function getCacheContexts(): array {
+    return array_values(Cache::mergeContexts(parent::getCacheContexts(), ['user.permissions']));
   }
 
 }

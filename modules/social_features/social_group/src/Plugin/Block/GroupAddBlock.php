@@ -150,9 +150,9 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     // Vary caching of this block per user.
-    return Cache::mergeContexts(parent::getCacheContexts(), ['user']);
+    return array_values(Cache::mergeContexts(parent::getCacheContexts(), ['user']));
   }
 
   /**

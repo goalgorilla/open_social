@@ -128,7 +128,7 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
     $group = $this->routeMatch->getParameter('group');
 
@@ -138,7 +138,7 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
 
     $cache_tags[] = 'taxonomy_term_list:social_tagging';
 
-    return $contexts;
+    return array_values($contexts);
   }
 
   /**

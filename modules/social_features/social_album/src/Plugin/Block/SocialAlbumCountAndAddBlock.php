@@ -137,14 +137,14 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
 
     if ($this->getProperties()) {
       $cache_contexts = Cache::mergeContexts($cache_contexts, ['url']);
     }
 
-    return $cache_contexts;
+    return array_values($cache_contexts);
   }
 
   /**

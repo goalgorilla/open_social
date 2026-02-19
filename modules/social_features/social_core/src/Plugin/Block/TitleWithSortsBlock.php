@@ -95,7 +95,7 @@ class TitleWithSortsBlock extends PageTitleBlock implements ContainerFactoryPlug
    * {@inheritdoc}
    */
   public function getCacheContexts(): array {
-    return Cache::mergeContexts(parent::getCacheContexts(), ['route']);
+    return array_values(Cache::mergeContexts(parent::getCacheContexts(), ['route']));
   }
 
 }

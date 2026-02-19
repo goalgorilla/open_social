@@ -99,8 +99,8 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
-    return Cache::mergeContexts(parent::getCacheContexts(), ['user.permissions']);
+  public function getCacheContexts(): array {
+    return array_values(Cache::mergeContexts(parent::getCacheContexts(), ['user.permissions']));
   }
 
   /**

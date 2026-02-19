@@ -202,7 +202,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
     // Ensure the context keeps track of the URL so we don't see the message on
     // every event.
@@ -210,7 +210,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
       'url',
       'user.permissions',
     ]);
-    return $contexts;
+    return array_values($contexts);
   }
 
   /**

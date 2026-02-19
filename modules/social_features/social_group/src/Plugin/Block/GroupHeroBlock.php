@@ -110,9 +110,9 @@ class GroupHeroBlock extends BlockBase implements ContainerFactoryPluginInterfac
    * {@inheritDoc}
    */
   public function getCacheContexts(): array {
-    return Cache::mergeContexts(parent::getCacheContexts(), [
+    return array_values(Cache::mergeContexts(parent::getCacheContexts(), [
       'user.group_permissions',
-    ]);
+    ]));
   }
 
 }

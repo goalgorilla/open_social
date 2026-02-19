@@ -144,7 +144,7 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
     // Ensure the context keeps track of the URL
     // so we don't see the message on every group.
@@ -152,7 +152,7 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
       'url',
       'route.group',
     ]);
-    return $contexts;
+    return array_values($contexts);
   }
 
   /**
