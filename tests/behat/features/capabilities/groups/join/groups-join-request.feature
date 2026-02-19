@@ -129,3 +129,29 @@ Feature: A group can be configured to require membership to be requested
     And I press "Send request" in the "Modal"
 
     Then I should see "Your request is waiting for approval"
+
+  Scenario: Request to join form customization is not shown when the setting is disabled
+    Given I am logged in as a user with the "sitemanager" role
+    And I am editing the group "Test group"
+
+    When I select the radio button "Request to join" with the id "edit-field-group-allowed-join-method-request"
+
+    Then I should not see "Make message required"
+
+  Scenario: Custom text is visible on the request form when the setting is enabled
+    Given I am logged in as a user with the "sitemanager" role
+    And I am on "admin/config/opensocial/social-group-request"
+    And I check "Allow Flexible group managers to customize the request to join form"
+    And I press "Save configuration"
+    And I am editing the group "Test group"
+
+    When I select the radio button "Request to join" with the id "group-join-method-request"
+    And I fill in "edit-field-grequest-form-description" with "Behat custom request description"
+    And I press "Save"
+    And I am logged in as a user with the "verified" role
+
+    And I am viewing the group "Test group"
+    And I click "Request to join"
+    And I wait for AJAX to finish
+
+    Then I should see "Behat custom request description"

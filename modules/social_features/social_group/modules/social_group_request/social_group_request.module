@@ -10,7 +10,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -178,65 +177,6 @@ function social_group_request_activity_send_email_notifications_alter(array &$it
 
   if (isset($email_message_templates['approve_request_join_group'])) {
     $items['message_to_me']['templates'][] = 'approve_request_join_group';
-  }
-}
-
-/**
- * Implements hook_form_alter().
- */
-function social_group_request_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
-  $social_group_types = [
-    'flexible_group',
-    'sc',
-    'cc',
-  ];
-  \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
-  if (preg_match(
-    '/^group_(' . implode('|', $social_group_types) . ')_(add|edit)_form$/',
-    $form_id,
-  )) {
-    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
-    $form_object = $form_state->getFormObject();
-
-    /** @var \Drupal\group\Entity\GroupInterface $group */
-    $group = $form_object->getEntity();
-
-    $group_type = $group->getGroupType();
-    $prohibit = FALSE;
-
-    if ($group_type->hasPlugin('group_membership_request')) {
-      /** @var \Drupal\social_group\JoinManagerInterface $manager */
-      $manager = \Drupal::service('plugin.manager.social_group.join');
-
-      /** @var string $bundle */
-      $bundle = $group_type->id();
-
-      $found = FALSE;
-
-      foreach ($manager->relations() as $relation) {
-        if (
-          $relation['entity_type'] === 'group' &&
-          isset($relation['bundle'], $relation['method']) &&
-          in_array($bundle, (array) $relation['bundle']) &&
-          in_array('request', (array) $relation['method'])
-        ) {
-          $found = TRUE;
-
-          break;
-        }
-      }
-
-      if (!$found) {
-        $prohibit = TRUE;
-      }
-    }
-    else {
-      $prohibit = TRUE;
-    }
-
-    if ($prohibit) {
-      unset($form['allow_request']);
-    }
   }
 }
 

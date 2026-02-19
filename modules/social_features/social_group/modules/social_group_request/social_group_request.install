@@ -295,3 +295,15 @@ function social_group_request_update_13010(): void {
     $view_config->save(TRUE);
   }
 }
+
+/**
+ * Add request to join form customization (settings and group fields).
+ */
+function social_group_request_update_13011(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  $updater->executeUpdate('social_group_request', __FUNCTION__);
+
+  return $updater->logger()->output();
+}

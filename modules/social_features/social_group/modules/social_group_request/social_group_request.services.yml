@@ -1,4 +1,13 @@
 services:
+  social_group_request.form_hooks:
+    class: Drupal\social_group_request\Hooks\SocialGroupRequestFormHooks
+    arguments:
+      - '@config.factory'
+      - '@entity_type.manager'
+      - '@module_handler'
+      - '@plugin.manager.social_group.join'
+    tags:
+      - { name: hooks }
 
   # Defines route subscriber service
   social_group_request.route_subscriber:

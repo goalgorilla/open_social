@@ -1,3 +1,11 @@
+social_group_request.settings:
+  path: '/admin/config/opensocial/social-group-request'
+  defaults:
+    _form: '\Drupal\social_group_request\Form\GroupRequestSettingsForm'
+    _title: 'Group request settings'
+  requirements:
+    _permission: 'set social group settings'
+
 social_group_request.anonymous_request_membership:
   path: '/group/{group}/anonymous-request-membership'
   defaults:
