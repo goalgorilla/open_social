@@ -344,7 +344,6 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
         ],
       ],
       $this->defaultMutationCacheMetaData()
-        ->addCacheTags(['node:1', 'taxonomy_term:1'])
     );
   }
 

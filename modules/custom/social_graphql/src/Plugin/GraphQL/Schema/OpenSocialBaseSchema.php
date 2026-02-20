@@ -5,9 +5,11 @@ namespace Drupal\social_graphql\Plugin\GraphQL\Schema;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\social_graphql\GraphQL\ResolverRegistry;
+use Drupal\social_graphql\Plugin\GraphQL\Types\RichTextJSON;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\DocumentNode;
 use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
+use GraphQL\Language\AST\ScalarTypeDefinitionNode;
 use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\UnionTypeDefinitionNode;
 use GraphQL\Type\Schema;
@@ -67,10 +69,14 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
       if ($type instanceof InterfaceTypeDefinitionNode || $type instanceof UnionTypeDefinitionNode) {
         $config['resolveType'] = $resolver;
       }
-      if ($registry instanceof ResolverRegistry) {
-        $override = $registry->getTypeConfigOverride($type->name->value);
-        if ($override !== NULL) {
-          $config = array_merge($config, $override);
+      if ($type instanceof ScalarTypeDefinitionNode && $registry instanceof ResolverRegistry) {
+        $definition = $registry->getCustomScalar($type->name->value);
+        if ($definition !== NULL) {
+          $config = array_merge($config, [
+            'serialize' => [$definition, 'serialize'],
+            'parseValue' => [$definition, 'parseValue'],
+            'parseLiteral' => [$definition, 'parseLiteral'],
+          ]);
         }
       }
       return $config;
@@ -212,30 +218,8 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
         ->map('path', $builder->fromValue('created.value'))
     );
 
-    // Register type config overrides (e.g. custom scalars) via the registry.
-    if ($registry instanceof ResolverRegistry) {
-      $registry->addTypeConfigOverride('RichTextJSON', [
-        'parseValue' => static function ($value) {
-          if (is_array($value)) {
-            return $value;
-          }
-          if (is_object($value) && $value instanceof \stdClass) {
-            return (array) $value;
-          }
-          throw new Error('RichTextJSON must be an object.');
-        },
-        'parseLiteral' => static function ($valueNode, ?array $variables = NULL) {
-          $value = AST::valueFromASTUntyped($valueNode, $variables);
-          if (!is_array($value)) {
-            throw new Error('RichTextJSON must be an object.');
-          }
-          return $value;
-        },
-        'serialize' => static function ($value) {
-          return $value;
-        },
-      ]);
-    }
+    assert($registry instanceof ResolverRegistry, "The resolver registry should be the Open Social variant that supports scalars.");
+    $registry->addCustomScalar('RichTextJSON', RichTextJSON::class);
   }
 
   /**
