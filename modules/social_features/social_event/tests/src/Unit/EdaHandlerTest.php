@@ -296,11 +296,102 @@ class EdaHandlerTest extends UnitTestCase {
     $this->node->method('getRevisionId')->willReturn(1);
     $this->node->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
     $this->node->method('get')->willReturnCallback(function ($field_name) {
-      if ($field_name === 'groups') {
-        return $this->fieldItemList;
+      return match ($field_name) {
+        'groups' => $this->fieldItemList,
+        'uuid' => (object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af'],
+        'status' => (object) ['value' => 1],
+        'field_content_visibility' => (object) ['value' => 'public'],
+        'field_event_all_day' => new class() {
+
+          /**
+           * Field value (1 = all day).
+           *
+           * @var int
+           */
+          public int $value = 1;
+
+          /**
+           * Whether the field is empty.
+           *
+           * @return bool
+           *   True if the field is empty, false otherwise.
+           */
+          public function isEmpty(): bool {
+            return FALSE;
+          }
+
+        },
+        'field_event_date' => (object) ['value' => '2024-08-21T10:00:00'],
+        'field_event_date_end' => (object) ['value' => '2024-08-21T10:00:00'],
+        'field_event_address' => $this->addressItemList,
+        'field_event_location' => (object) ['value' => 'Location Label'],
+        'field_event_enroll' => (object) ['value' => 1],
+        'field_enroll_method' => (object) ['value' => 0],
+        'field_event_type' => $this->eventTypeField,
+        'uid' => (object) ['entity' => $this->userInterface],
+        default => NULL,
+      };
+    });
+    $this->node->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
+
+    // Mock the CloudEvent class.
+    $this->cloudEvent = $this->createMock(CloudEventInterface::class);
+
+    // Initialize the time service.
+    $this->time = $this->createMock(TimeInterface::class);
+    $this->time->method('getRequestTime')->willReturn(1234567890);
+
+    // Initialize the logger.
+    $this->logger = $this->createMock(LoggerChannelInterface::class);
+    $this->loggerFactory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $this->loggerFactory->method('get')->with('social_event')->willReturn($this->logger);
+  }
+
+  /**
+   * Test fromEntity() with empty field_event_all_day and field_enroll_method.
+   *
+   * Legacy or backfilled events may have these fields empty. The handler must
+   * not throw and must emit boolean allDay and a valid enrollment method.
+   *
+   * @covers ::fromEntity
+   */
+  public function testFromEntityWithEmptyOptionalFields(): void {
+    $empty_all_day_field = new class() {
+
+      /**
+       * Field value (null when empty).
+       *
+       * @var int|null
+       */
+      public ?int $value = NULL;
+
+      /**
+       * Whether the field is empty.
+       *
+       * @return bool
+       *   True if the field is empty, false otherwise.
+       */
+      public function isEmpty(): bool {
+        return TRUE;
       }
-      if ($field_name === 'uuid') {
-        return (object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af'];
+
+    };
+    $empty_enroll_method_field = (object) ['value' => NULL];
+
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('label')->willReturn('Event Title');
+    $node->method('getCreatedTime')->willReturn(1692614400);
+    $node->method('getChangedTime')->willReturn(1692618000);
+    $node->method('getRevisionId')->willReturn(1);
+    $node->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $node->method('hasField')->willReturn(TRUE);
+    $node->method('get')->willReturnCallback(function ($field_name) use ($empty_all_day_field, $empty_enroll_method_field) {
+      if ($field_name === 'groups') {
+        $list = $this->createMock(EntityReferenceFieldItemListInterface::class);
+        $list->method('isEmpty')->willReturn(TRUE);
+        return $list;
       }
       if ($field_name === 'status') {
         return (object) ['value' => 1];
@@ -309,7 +400,7 @@ class EdaHandlerTest extends UnitTestCase {
         return (object) ['value' => 'public'];
       }
       if ($field_name === 'field_event_all_day') {
-        return (object) ['value' => 1];
+        return $empty_all_day_field;
       }
       if ($field_name === 'field_event_date') {
         return (object) ['value' => '2024-08-21T10:00:00'];
@@ -327,31 +418,34 @@ class EdaHandlerTest extends UnitTestCase {
         return (object) ['value' => 1];
       }
       if ($field_name === 'field_enroll_method') {
-        return (object) ['value' => 0];
+        return $empty_enroll_method_field;
       }
       if ($field_name === 'field_event_type') {
-        return $this->eventTypeField;
+        $list = $this->createMock(EntityReferenceFieldItemListInterface::class);
+        $list->method('isEmpty')->willReturn(TRUE);
+        return $list;
       }
       if ($field_name === 'uid') {
         return (object) ['entity' => $this->userInterface];
       }
       return NULL;
     });
-    $this->node->method('toUrl')
+    $node->method('toUrl')
       ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
       ->willReturn($this->url);
 
-    // Mock the CloudEvent class.
-    $this->cloudEvent = $this->createMock(CloudEventInterface::class);
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($node, 'com.getopensocial.cms.event.create');
 
-    // Initialize the time service.
-    $this->time = $this->createMock(TimeInterface::class);
-    $this->time->method('getRequestTime')->willReturn(1234567890);
-
-    // Initialize the logger.
-    $this->logger = $this->createMock(LoggerChannelInterface::class);
-    $this->loggerFactory = $this->createMock(LoggerChannelFactoryInterface::class);
-    $this->loggerFactory->method('get')->with('social_event')->willReturn($this->logger);
+    $this->assertEquals('com.getopensocial.cms.event.create', $event->getType());
+    $data = $event->getData();
+    $this->assertIsArray($data);
+    $this->assertArrayHasKey('event', $data);
+    $event_data = $data['event'];
+    $this->assertIsBool($event_data->allDay);
+    $this->assertFalse($event_data->allDay);
+    $this->assertArrayHasKey('enrollment', (array) $event_data);
+    $this->assertSame('open', $event_data->enrollment['method']);
   }
 
   /**

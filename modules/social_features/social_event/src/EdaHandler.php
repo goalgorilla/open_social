@@ -209,8 +209,13 @@ final class EdaHandler implements BackfillActorAwareInterface {
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function fromEntity(NodeInterface $node, string $event_type, string $op = ''): CloudEvent {
-    // List enrollment methods.
-    $enrollment_methods = ['open', 'request', 'invite'];
+    // Map enrollment method field values (1, 2, 3) to method strings.
+    // Default to 'open' for empty/legacy data.
+    $enrollment_method_map = [
+      EventEnrollmentInterface::ENROLL_METHOD_JOIN => 'open',
+      EventEnrollmentInterface::ENROLL_METHOD_REQUEST => 'request',
+      EventEnrollmentInterface::ENROLL_METHOD_INVITE => 'invite',
+    ];
 
     // Determine status.
     if ($op == 'delete') {
@@ -252,7 +257,9 @@ final class EdaHandler implements BackfillActorAwareInterface {
           visibility: ContentVisibility::fromEntity($node),
           group: $group_entity,
           author: User::fromEntity($node->get('uid')->entity),
-          allDay: $node->get('field_event_all_day')->value,
+          allDay: $node->get('field_event_all_day')->isEmpty()
+            ? FALSE
+            : (bool) $node->get('field_event_all_day')->value,
           start: $node->get('field_event_date')->value,
           end: $node->get('field_event_date_end')->value,
           timezone: date_default_timezone_get(),
@@ -262,7 +269,7 @@ final class EdaHandler implements BackfillActorAwareInterface {
           ),
           enrollment: [
             'enabled' => (bool) $node->get('field_event_enroll')->value,
-            'method' => $enrollment_methods[$node->get('field_enroll_method')->value],
+            'method' => $enrollment_method_map[(int) ($node->get('field_enroll_method')->value ?? EventEnrollmentInterface::ENROLL_METHOD_JOIN)] ?? $enrollment_method_map[EventEnrollmentInterface::ENROLL_METHOD_JOIN],
           ],
           href: Href::fromEntity($node),
           type: $type_label,

@@ -320,7 +320,26 @@ class EdaEventEnrollmentHandlerTest extends UnitTestCase {
         return (object) ['value' => 'public'];
       }
       if ($field_name === 'field_event_all_day') {
-        return (object) ['value' => 1];
+        return new class() {
+
+          /**
+           * Field value (1 = all day).
+           *
+           * @var int
+           */
+          public int $value = 1;
+
+          /**
+           * Whether the field is empty.
+           *
+           * @return bool
+           *   True if the field is empty, false otherwise.
+           */
+          public function isEmpty(): bool {
+            return FALSE;
+          }
+
+        };
       }
       if ($field_name === 'field_event_date') {
         return (object) ['value' => '2024-08-21T10:00:00'];

@@ -254,8 +254,13 @@ final class EdaEventEnrollmentHandler implements BackfillActorAwareInterface {
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function fromEntity(EventEnrollmentInterface $event_enrollment, string $event_type): CloudEvent {
-    // List enrollment methods.
-    $enrollment_methods = ['open', 'request', 'invite'];
+    // Map enrollment method field values (1, 2, 3) to method strings.
+    // Default to 'open' for empty/legacy data.
+    $enrollment_method_map = [
+      EventEnrollmentInterface::ENROLL_METHOD_JOIN => 'open',
+      EventEnrollmentInterface::ENROLL_METHOD_REQUEST => 'request',
+      EventEnrollmentInterface::ENROLL_METHOD_INVITE => 'invite',
+    ];
 
     // List enrollment statuses.
     $enrollment_status = [
@@ -358,7 +363,9 @@ final class EdaEventEnrollmentHandler implements BackfillActorAwareInterface {
             visibility: ContentVisibility::fromEntity($event),
             group: $group_entity,
             author: User::fromEntity($event->get('uid')->entity),
-            allDay: $event->get('field_event_all_day')->value,
+            allDay: $event->get('field_event_all_day')->isEmpty()
+              ? FALSE
+              : (bool) $event->get('field_event_all_day')->value,
             start: $event->get('field_event_date')->value,
             end: $event->get('field_event_date_end')->value,
             timezone: date_default_timezone_get(),
@@ -368,7 +375,7 @@ final class EdaEventEnrollmentHandler implements BackfillActorAwareInterface {
             ),
             enrollment: [
               'enabled' => (bool) $event->get('field_event_enroll')->value,
-              'method' => $enrollment_methods[$event->get('field_enroll_method')->value],
+              'method' => $enrollment_method_map[(int) ($event->get('field_enroll_method')->value ?? EventEnrollmentInterface::ENROLL_METHOD_JOIN)] ?? $enrollment_method_map[EventEnrollmentInterface::ENROLL_METHOD_JOIN],
             ],
             href: Href::fromEntity($event),
             type: $type_label,
