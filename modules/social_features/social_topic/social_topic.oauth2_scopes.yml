@@ -44,7 +44,7 @@
   description: 'Temporary scope should be removed once multiple permissions are implemented.'
   umbrella: false
   granularity: permission
-  permission: 'select terms in topic_types'
+  permission: 'view terms in topic_types'
   grant_types:
     authorization_code:
       status: true
@@ -108,3 +108,17 @@
     client_credentials:
       status: true
       description: 'Allow the application to select terms from social_tagging taxonomy on the platform.'
+
+"internal:topic:write_types":
+  parent: topic:write
+  description: 'Temporary scope should be removed once multiple permissions are implemented.'
+  umbrella: false
+  granularity: permission
+  permission: 'select terms in topic_types'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to select terms from topic_types taxonomy you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to select terms from topic_types taxonomy on the platform.'

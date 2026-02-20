@@ -211,6 +211,13 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function defaultCacheContexts(): array {
+    return [...parent::defaultCacheContexts(), 'languages:language_interface'];
+  }
+
+  /**
    * Test creating a topic with all required fields.
    */
   public function testCreateTopicSuccess(): void {
@@ -225,80 +232,47 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
 
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
 
-    // Execute mutation.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () use ($topicType, $clientMutationId) {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-              mutation CreateTopic(\$type: ID!, \$title: String!, \$visibility: ContentVisibility!, \$clientMutationId: UUIDv4) {
-                createTopic(input: {
-                  clientMutationId: \$clientMutationId
-                  type: \$type
-                  title: \$title
-                  visibility: \$visibility
-                }) {
-                  clientMutationId
-                  errors
-                  topic {
-                    id
-                    title
-                    visibility
-                  }
-                }
-              }
-              GQL,
-            'variables' => [
-              'clientMutationId' => $clientMutationId,
-              'type' => $topicType->uuid(),
-              'title' => 'Test Topic',
-              'visibility' => 'PUBLIC',
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$type: ID!, \$title: String!, \$visibility: ContentVisibility!, \$clientMutationId: UUIDv4) {
+        createTopic(input: {
+          clientMutationId: \$clientMutationId
+          type: \$type
+          title: \$title
+          visibility: \$visibility
+        }) {
+          clientMutationId
+          errors
+          topic {
+            title
+            type { id }
+            visibility
+          }
+        }
+      }
+      GQL,
+      [
+        'clientMutationId' => $clientMutationId,
+        'type' => $topicType->uuid(),
+        'title' => 'Test Topic',
+        'visibility' => 'PUBLIC',
+      ],
+      [
+        'createTopic' => [
+          'clientMutationId' => $clientMutationId,
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Test Topic',
+            'type' => [
+              'id' => $topicType->uuid(),
             ],
-          ])
-        );
-      }
+            'visibility' => 'PUBLIC',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1', 'taxonomy_term:1'])
     );
-
-    if (!empty($result->errors)) {
-      $errorMessages = [];
-      foreach ($result->errors as $error) {
-        if (is_object($error) && method_exists($error, 'getMessage')) {
-          $errorMessages[] = $error->getMessage();
-        }
-        elseif (is_array($error)) {
-          $errorMessages[] = json_encode($error);
-        }
-        else {
-          $errorMessages[] = (string) $error;
-        }
-      }
-      $this->fail('GraphQL errors found: ' . implode(' | ', $errorMessages));
-    }
-    $this->assertEmpty($result->errors);
-    $this->assertEmpty($result->data['createTopic']['errors']);
-    $this->assertEquals($clientMutationId, $result->data['createTopic']['clientMutationId']);
-    $this->assertNotNull($result->data['createTopic']['topic']);
-    $this->assertNotEmpty($result->data['createTopic']['topic']['id']);
-    $this->assertEquals('Test Topic', $result->data['createTopic']['topic']['title']);
-    $this->assertEquals('PUBLIC', $result->data['createTopic']['topic']['visibility']);
-
-    // Verify the node was actually created.
-    $topic_id = $result->data['createTopic']['topic']['id'];
-    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
-    $entity_repository = \Drupal::service('entity.repository');
-    $loaded_node = $entity_repository->loadEntityByUuid('node', $topic_id);
-    if (empty($loaded_node)) {
-      $this->fail('Is not possible to load the Topic created.');
-    }
-
-    $topic_type_entity = $loaded_node->get('field_topic_type')->entity;
-    // @phpstan-ignore-next-line
-    if ($topic_type_entity !== NULL) {
-      $this->assertEquals($topicType->id(), $topic_type_entity->id(), 'Topic type should match');
-    }
   }
 
   /**
@@ -314,40 +288,34 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     ]);
     $topicType->save();
 
-    // Execute mutation without title.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () use ($topicType) {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-              mutation CreateTopic(\$input: CreateTopicInput!) {
-                createTopic(input: \$input) {
-                  errors
-                  topic {
-                    id
-                  }
-                }
-              }
-              GQL,
-            'variables' => [
-              'input' => [
-                'type' => $topicType->uuid(),
-                'title' => '',
-                'visibility' => 'PUBLIC',
-              ],
-            ],
-          ])
-        );
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
       }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => '',
+          'visibility' => 'PUBLIC',
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => [
+            'TITLE_REQUIRED',
+          ],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData(),
     );
-
-    $this->assertEmpty($result->errors);
-    $this->assertNotEmpty($result->data['createTopic']['errors']);
-    $this->assertContains('TITLE_REQUIRED', $result->data['createTopic']['errors']);
-    $this->assertNull($result->data['createTopic']['topic']);
   }
 
   /**
@@ -366,40 +334,34 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     // Create a title longer than 255 characters.
     $longTitle = str_repeat('A', 256);
 
-    // Execute mutation with long title.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () use ($topicType, $longTitle) {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-              mutation CreateTopic(\$input: CreateTopicInput!) {
-                createTopic(input: \$input) {
-                  errors
-                  topic {
-                    id
-                  }
-                }
-              }
-              GQL,
-            'variables' => [
-              'input' => [
-                'type' => $topicType->uuid(),
-                'title' => $longTitle,
-                'visibility' => 'PUBLIC',
-              ],
-            ],
-          ])
-        );
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
       }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => $longTitle,
+          'visibility' => 'PUBLIC',
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => [
+            'TITLE_TOO_LONG',
+          ],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData(),
     );
-
-    $this->assertEmpty($result->errors);
-    $this->assertNotEmpty($result->data['createTopic']['errors']);
-    $this->assertContains('TITLE_TOO_LONG', $result->data['createTopic']['errors']);
-    $this->assertNull($result->data['createTopic']['topic']);
   }
 
   /**
@@ -411,46 +373,40 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     // Use a non-existent UUID.
     $fakeUuid = '12345678-1234-1234-1234-123456789012';
 
-    // Execute mutation with invalid topic type.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () use ($fakeUuid) {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-              mutation CreateTopic(\$input: CreateTopicInput!) {
-                createTopic(input: \$input) {
-                  errors
-                  topic {
-                    id
-                  }
-                }
-              }
-              GQL,
-            'variables' => [
-              'input' => [
-                'type' => $fakeUuid,
-                'title' => 'Test Topic',
-                'visibility' => 'PUBLIC',
-              ],
-            ],
-          ])
-        );
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
       }
+      GQL,
+      [
+        'input' => [
+          'type' => $fakeUuid,
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => [
+            'TOPIC_TYPE_NOT_FOUND',
+          ],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
     );
-
-    $this->assertEmpty($result->errors);
-    $this->assertNotEmpty($result->data['createTopic']['errors']);
-    $this->assertContains('TOPIC_TYPE_NOT_FOUND', $result->data['createTopic']['errors']);
-    $this->assertNull($result->data['createTopic']['topic']);
   }
 
   /**
-   * Test creating topic with different visibility levels.
+   * Test creating topic with public visibility.
    */
-  public function testCreateTopicDifferentVisibilities(): void {
+  public function testCreateTopicPublicVisibility(): void {
     $this->actAsClientCredentialsWithScopes(['topic:write']);
 
     // Create a topic type.
@@ -460,44 +416,83 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     ]);
     $topicType->save();
 
-    $visibilities = ['PUBLIC', 'COMMUNITY'];
+    $visibility = 'PUBLIC';
 
-    foreach ($visibilities as $visibility) {
-      $context = new RenderContext();
-      $renderer = \Drupal::service('renderer');
-      $result = $renderer->executeInRenderContext(
-        $context,
-        function () use ($topicType, $visibility) {
-          return $this->server->executeOperation(
-            OperationParams::create([
-              'query' => <<<GQL
-                mutation CreateTopic(\$input: CreateTopicInput!) {
-                  createTopic(input: \$input) {
-                    errors
-                    topic {
-                      id
-                      visibility
-                    }
-                  }
-                }
-                GQL,
-              'variables' => [
-                'input' => [
-                  'type' => $topicType->uuid(),
-                  'title' => "Topic with $visibility visibility",
-                  'visibility' => $visibility,
-                ],
-              ],
-            ])
-          );
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            visibility
+          }
         }
-      );
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => "Topic with $visibility visibility",
+          'visibility' => $visibility,
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'visibility' => $visibility,
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1'])
+    );
+  }
 
-      $this->assertEmpty($result->errors);
-      $this->assertEmpty($result->data['createTopic']['errors']);
-      $this->assertNotNull($result->data['createTopic']['topic']);
-      $this->assertEquals($visibility, $result->data['createTopic']['topic']['visibility']);
-    }
+  /**
+   * Test creating topic with community visibility.
+   */
+  public function testCreateTopicCommunityVisibility(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'General',
+    ]);
+    $topicType->save();
+
+    $visibility = 'COMMUNITY';
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            visibility
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => "Topic with $visibility visibility",
+          'visibility' => $visibility,
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'visibility' => $visibility,
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1'])
+    );
   }
 
   /**
@@ -514,52 +509,29 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     ]);
     $topicType->save();
 
-    // Execute mutation without the required scope.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () use ($topicType) {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => <<<GQL
-              mutation CreateTopic(\$input: CreateTopicInput!) {
-                createTopic(input: \$input) {
-                  errors
-                  topic {
-                    id
-                  }
-                }
-              }
-              GQL,
-            'variables' => [
-              'input' => [
-                'type' => $topicType->uuid(),
-                'title' => 'Test Topic',
-                'visibility' => 'PUBLIC',
-              ],
-            ],
-          ])
-        );
+    $this->assertErrors(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
       }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+        ],
+      ],
+      [
+        "Missing scope 'topic:write' on 'createTopic'.",
+      ],
+      $this->defaultMutationCacheMetaData(),
     );
-
-    // Should have GraphQL errors about missing scope.
-    $this->assertNotEmpty($result->errors);
-    $errorMessages = [];
-    foreach ($result->errors as $error) {
-      if (is_object($error) && method_exists($error, 'getMessage')) {
-        $errorMessages[] = $error->getMessage();
-      }
-      elseif (is_array($error)) {
-        $errorMessages[] = json_encode($error);
-      }
-      else {
-        $errorMessages[] = (string) $error;
-      }
-    }
-    $errorMessage = implode(' | ', $errorMessages);
-    $this->assertStringContainsString("Missing scope 'topic:write'", $errorMessage, 'Expected error about missing topic:write scope');
   }
 
   /**
@@ -592,76 +564,52 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
 
     $clientMutationId = '650e8400-e29b-41d4-a716-446655440001';
 
-    $query = <<<GQL
+    $this->assertResults(
+      <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {
         createTopic(input: \$input) {
           clientMutationId
           errors
           topic {
-            id
             title
           }
         }
       }
-      GQL;
-
-    $variables = [
-      'input' => [
-        'clientMutationId' => $clientMutationId,
-        'type' => $topicType->uuid(),
-        'title' => 'Tutorial: Getting Started',
-        'visibility' => 'COMMUNITY',
-        'contentTags' => [$tag1->uuid(), $tag2->uuid()],
+      GQL,
+      [
+        'input' => [
+          'clientMutationId' => $clientMutationId,
+          'type' => $topicType->uuid(),
+          'title' => 'Tutorial: Getting Started',
+          'visibility' => 'COMMUNITY',
+          'contentTags' => [$tag1->uuid(), $tag2->uuid()],
+        ],
       ],
-    ];
-
-    // Execute the mutation.
-    $context = new RenderContext();
-    $renderer = \Drupal::service('renderer');
-    $result = $renderer->executeInRenderContext(
-      $context,
-      function () use ($query, $variables) {
-        return $this->server->executeOperation(
-          OperationParams::create([
-            'query' => $query,
-            'variables' => $variables,
-          ])
-        );
-      }
+      [
+        'createTopic' => [
+          'clientMutationId' => $clientMutationId,
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Tutorial: Getting Started',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1'])
     );
 
-    // Verify the result structure following assertResults pattern.
-    // Check for GraphQL errors (should be empty).
-    $this->assertEmpty($result->errors, 'No GraphQL errors expected');
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $created_topic = $node_storage->load(1);
+    assert($created_topic !== NULL);
 
-    // Verify the data structure matches expected format.
-    $data = $result->toArray();
-    $this->assertArrayHasKey('data', $data, 'No result data.');
-    $this->assertEquals($clientMutationId, $data['data']['createTopic']['clientMutationId']);
-    $this->assertEmpty($data['data']['createTopic']['errors']);
-    $this->assertNotNull($data['data']['createTopic']['topic']);
-    $this->assertEquals('Tutorial: Getting Started', $data['data']['createTopic']['topic']['title']);
-    $topic_id = $data['data']['createTopic']['topic']['id'];
-    $this->assertNotEmpty($topic_id, 'Topic ID should be returned');
-
-    // Verify the content tags were actually saved.
-    $entity_repository = \Drupal::service('entity.repository');
-    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-    $created_topic = $entity_repository->loadEntityByUuid('node', $topic_id);
-    $this->assertNotNull($created_topic, 'Topic should be created');
-    /** @var \Drupal\node\NodeInterface $created_topic */
-    $tag_values = $created_topic->get('social_tagging')->getValue();
-    $tag_ids = [];
-    foreach ($tag_values as $value) {
-      if (!empty($value['target_id'])) {
-        $term = $term_storage->load($value['target_id']);
-        if ($term !== NULL) {
-          $tag_ids[] = $term->id();
-        }
-      }
-    }
-    $this->assertContains($tag1->id(), $tag_ids, 'Tag 1 should be assigned to topic');
-    $this->assertContains($tag2->id(), $tag_ids, 'Tag 2 should be assigned to topic');
+    $this->assertEquals(
+      [
+        ['target_id' => $tag1->id()],
+        ['target_id' => $tag2->id()],
+      ],
+      $created_topic->get('social_tagging')->getValue(),
+      "Expected the created topic to have the content tags associated in the correct order.",
+    );
   }
 
   /**
