@@ -151,6 +151,11 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
       }
     }
 
+    // Update body if provided.
+    if ($input->hasBody()) {
+      $node->set('body', $input->getBody());
+    }
+
     // Validate the entity before saving.
     // This ensures that field-level constraints are checked
     // (e.g., title length, field types, required fields)

@@ -13,6 +13,8 @@ use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
+use OpenSocial\RichTextJson\Document\ValidatedDocument;
+use OpenSocial\RichTextJson\Renderer\HtmlRenderer;
 
 /**
  * The update topic input wrapper.
@@ -63,6 +65,16 @@ class UpdateTopicInput extends TopicInputBase {
    * The visibility setting.
    */
   protected ?string $visibility = NULL;
+
+  /**
+   * The body field.
+   *
+   * Contains the HTML (from Rich Text JSON conversion) and text format.
+   * Only set when body was provided in the input.
+   *
+   * @var array{value: string, format: string}|null
+   */
+  protected ?array $body = NULL;
 
   /**
    * The content tags.
@@ -184,6 +196,22 @@ class UpdateTopicInput extends TopicInputBase {
       }
     }
 
+    // Process body if provided (optional for updates).
+    if (isset($input['body'])) {
+      assert($input['body'] instanceof ValidatedDocument, "GraphQL schema should ensure body is a ValidatedDocument when present.");
+      $allowed_formats = \filter_formats($this->actor);
+      if ($allowed_formats === []) {
+        throw new \RuntimeException("The application that is trying to update a topic does not have access to any usable text formats. It's expected that the scopes that allow access to content updates also provide access to at least one text format to be used.");
+      }
+      $format_id = reset($allowed_formats)->id();
+      assert(is_string($format_id), "Expected TextFormats to be saved config with string IDs.");
+      $renderer = new HtmlRenderer();
+      $this->body = [
+        'value' => $renderer->renderDocument($input['body']->getDocument()),
+        'format' => $format_id,
+      ];
+    }
+
     // Process content tags if provided.
     $content_tags_result = $this->processContentTags($input);
     if ($content_tags_result !== NULL && empty($content_tags_result['violations'])) {
@@ -300,6 +328,27 @@ class UpdateTopicInput extends TopicInputBase {
    */
   public function hasVisibility(): bool {
     return $this->visibility !== NULL;
+  }
+
+  /**
+   * Check if body should be updated.
+   *
+   * @return bool
+   *   TRUE if body should be updated.
+   */
+  public function hasBody(): bool {
+    return $this->body !== NULL;
+  }
+
+  /**
+   * Get the body field values.
+   *
+   * @return array{value: string, format: string}
+   *   The body.
+   */
+  public function getBody(): array {
+    assert($this->body !== NULL, __FUNCTION__ . " called but body was not set.");
+    return $this->body;
   }
 
   /**

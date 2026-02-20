@@ -83,6 +83,10 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
     'group_core_comments',
     'menu_ui',
     'comment',
+    'editor',
+    'ckeditor5',
+    'responsive_table_filter',
+    'social_editor',
     'social_node',
     'social_core',
     'field_group',
@@ -162,6 +166,7 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
       'social_profile',
       'social_node',
       'social_core',
+      'social_editor',
       'social_event',
       'social_topic',
       'social_tagging',
@@ -186,6 +191,27 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
     // Configure OAuth to use static scope provider and set up keys.
     $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
     $this->setUpKeys();
+  }
+
+  /**
+   * Minimal valid Rich Text JSON body (paragraph with text).
+   */
+  private static function minimalRichTextBody(): array {
+    return [
+      'root' => [
+        'type' => 'root',
+        'version' => 1,
+        'children' => [
+          [
+            'type' => 'paragraph',
+            'version' => 1,
+            'children' => [
+              ['type' => 'text', 'version' => 1, 'text' => 'Hello'],
+            ],
+          ],
+        ],
+      ],
+    ];
   }
 
   /**
@@ -332,6 +358,63 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
     $updated_topic = $node_storage->load($topic_id);
     $this->assertEquals($original_body, $updated_topic->get('body')->value);
     $this->assertEquals($original_visibility, $updated_topic->get('field_content_visibility')->value);
+  }
+
+  /**
+   * Test updating a topic's body with Rich Text JSON.
+   */
+  public function testUpdateTopicWithBody(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => 'Original body', 'format' => 'basic_html']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$id: ID!, \$body: RichTextJSON) {
+          updateTopic(input: {
+            id: \$id
+            body: \$body
+          }) {
+            errors
+            topic {
+              id
+              bodyHtml
+            }
+          }
+        }
+        GQL,
+      [
+        'id' => $topic->uuid(),
+        'body' => self::minimalRichTextBody(),
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'bodyHtml' => "<div><p>Hello</p>\n</div>",
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:' . $topic->id(), 'config:filter.format.basic_html'])
+        ->addCacheContexts(['languages:language_interface'])
+        ->setCacheMaxAge(0)
+    );
   }
 
   /**
