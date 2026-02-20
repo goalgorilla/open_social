@@ -6,14 +6,12 @@ use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\social_graphql\GraphQL\ResolverRegistry;
 use Drupal\social_graphql\Plugin\GraphQL\Types\RichTextJSON;
-use GraphQL\Error\Error;
 use GraphQL\Language\AST\DocumentNode;
 use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
 use GraphQL\Language\AST\ScalarTypeDefinitionNode;
 use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\UnionTypeDefinitionNode;
 use GraphQL\Type\Schema;
-use GraphQL\Utils\AST;
 use GraphQL\Utils\BuildSchema;
 
 /**

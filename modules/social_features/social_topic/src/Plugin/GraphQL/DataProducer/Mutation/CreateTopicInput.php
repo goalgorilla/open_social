@@ -9,7 +9,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
-use Drupal\social_topic\Service\RichTextToHtmlConverter;
 use Drupal\social_topic\Wrappers\Input\CreateTopicInput as CreateTopicInputWrapper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -76,11 +75,6 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
   protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
-   * The Rich Text JSON to HTML converter.
-   */
-  protected RichTextToHtmlConverter $richTextConverter;
-
-  /**
    * Constructs a CreateTopicInput.
    *
    * @param array $configuration
@@ -95,8 +89,6 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
    *   The Drupal entity repository.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The Drupal entity type manager.
-   * @param \Drupal\social_topic\Service\RichTextToHtmlConverter $rich_text_converter
-   *   The Rich Text JSON to HTML converter.
    */
   public function __construct(
     array $configuration,
@@ -105,14 +97,12 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
     AccountProxyInterface $current_user,
     EntityRepositoryInterface $entity_repository,
     EntityTypeManagerInterface $entity_type_manager,
-    RichTextToHtmlConverter $rich_text_converter,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->currentUser = $current_user;
     $this->entityRepository = $entity_repository;
     $this->entityTypeManager = $entity_type_manager;
-    $this->richTextConverter = $rich_text_converter;
   }
 
   /**
@@ -131,7 +121,6 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
       $container->get('current_user'),
       $container->get('entity.repository'),
       $container->get('entity_type.manager'),
-      $container->get('social_topic.rich_text_to_html_converter'),
     );
   }
 
@@ -158,7 +147,6 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
       $this->entityTypeManager,
       $this->entityRepository,
       $this->currentUser,
-      $this->richTextConverter,
     );
     $topic_input->setValues($input);
     return $topic_input;

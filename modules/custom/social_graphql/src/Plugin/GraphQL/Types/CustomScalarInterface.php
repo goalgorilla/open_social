@@ -6,7 +6,7 @@ use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\ValueNode;
 
 /**
- *
+ * Defines the resolver logic for a custom scalar.
  *
  * @template InternalT
  */

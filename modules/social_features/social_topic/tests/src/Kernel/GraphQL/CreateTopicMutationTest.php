@@ -320,14 +320,14 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     ]);
     $topicType->save();
 
-    $this->assertResults(
+    $this->assertErrors(
       <<<GQL
-      mutation CreateTopic(\$input: CreateTopicInput!) {
-        createTopic(input: \$input) {
-          errors
-          topic { id }
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic { id }
+          }
         }
-      }
       GQL,
       [
         'input' => [
@@ -338,10 +338,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
         ],
       ],
       [
-        'createTopic' => [
-          'errors' => ['BODY_INVALID_STRUCTURE'],
-          'topic' => NULL,
-        ],
+        'Variable "$input" got invalid value {"type":"' . $topicType->uuid() . '","title":"Invalid body","visibility":"PUBLIC","body":{"notRoot":[]}}; Expected type RichTextJSON at value.body; Invalid Rich Text JSON document: Missing required field "root"',
       ],
       $this->defaultMutationCacheMetaData()
     );
