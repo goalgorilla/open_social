@@ -27,7 +27,8 @@ use Drupal\user\Entity\User;
  *
  * App membership in the group is not covered (app is treated as non-member).
  * Insider/outsider refer to application context
- * (ApplicationGroupContextInterface), not app-as-group-member.
+ * (\Drupal\social_oauth\Service\ApplicationGroupContextInterface),
+ * not app-as-group-member.
  *
  * @group group
  */
