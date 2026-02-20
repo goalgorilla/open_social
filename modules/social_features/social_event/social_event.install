@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_event module.
  */
 
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Config\InstallStorage;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\RoleInterface;
@@ -386,4 +388,35 @@ function social_event_update_130011(): string {
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_event', __FUNCTION__);
   return $updater->logger()->output();
+}
+
+/**
+ * Install "Meeting API Scheduler" module.
+ */
+function social_event_update_130012(): void {
+  // Make sure the "Meeting API BBB" module is installed.
+  if (!\Drupal::moduleHandler()->moduleExists('meeting_api_bbb')) {
+    return;
+  }
+
+  // Enable meeting api scheduler module.
+  \Drupal::service('module_installer')->install(['meeting_api_scheduler']);
+
+  // Install (and update) related configuration.
+  /** @var \Drupal\Core\Config\StorageInterface $active_storage */
+  $active_storage = \Drupal::service('config.storage');
+
+  $path = \Drupal::service('extension.list.module')->getPath('social_event') . '/'
+    . InstallStorage::CONFIG_OPTIONAL_DIRECTORY;
+
+  $source = new FileStorage($path);
+
+  $configs = [
+    'core.entity_form_display.meeting_api_meeting.big_blue_button.event',
+    'meeting_api_scheduler.meeting_api_time_constraint.bigbluebutton',
+  ];
+
+  foreach ($configs as $name) {
+    $active_storage->write($name, (array) $source->read($name));
+  }
 }

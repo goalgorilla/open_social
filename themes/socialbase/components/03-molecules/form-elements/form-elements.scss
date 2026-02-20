@@ -284,6 +284,11 @@ span.form-required {
       display: inline-table;
       vertical-align: middle;
 
+      /* Exception for event date fields */
+      &:has([id*="field-event-date"]) {
+        display: flex;
+      }
+
       .input-group-addon,
       .input-group-btn,
       .form-control {

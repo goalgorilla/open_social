@@ -5,6 +5,7 @@ namespace Drupal\social_event\Form;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -46,6 +47,11 @@ class EventSettingsForm extends ConfigFormBase {
   protected EventOnline $eventOnline;
 
   /**
+   * The module handler.
+   */
+  protected ModuleHandlerInterface $moduleHandler;
+
+  /**
    * EventSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -56,13 +62,16 @@ class EventSettingsForm extends ConfigFormBase {
    *   The cache tags invalidator.
    * @param \Drupal\social_event\Service\EventOnline $event_online
    *   The event online service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The event online service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, CacheTagsInvalidatorInterface $cache_tags_invalidator, EventOnline $event_online) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, CacheTagsInvalidatorInterface $cache_tags_invalidator, EventOnline $event_online, ModuleHandlerInterface $module_handler) {
     parent::__construct($config_factory);
 
     $this->entityTypeManager = $entity_type_manager;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
     $this->eventOnline = $event_online;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -73,7 +82,8 @@ class EventSettingsForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('cache_tags.invalidator'),
-      $container->get(EventOnline::class)
+      $container->get(EventOnline::class),
+      $container->get('module_handler'),
     );
   }
 
@@ -184,8 +194,11 @@ class EventSettingsForm extends ConfigFormBase {
       ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
       ->set('show_user_timezone', $form_state->getValue('show_user_timezone'))
       ->set('disable_event_enroll', $form_state->getValue('disable_event_enroll'))
-      ->set('online_meeting', $form_state->getValue('online_meeting'))
+      ->set('online_meeting', $online_meeting = $form_state->getValue('online_meeting'))
       ->save();
+
+    // Update value in meeting API time constraint entity.
+    $this->syncMeetingApiTimeConstraint($online_meeting);
 
     // Invalidate cache tags to refresh blocks of list of events.
     $this->cacheTagsInvalidator->invalidateTags(['node_list']);
@@ -228,7 +241,7 @@ class EventSettingsForm extends ConfigFormBase {
     // Check if the BigBlueButton is properly configured.
     $bbb_configured = $this->eventOnline->isBigBlueButtonServerConfigured();
     // Display warning if BigBlueButton is not properly configured.
-    if (!$bbb_configured) {
+    if ($this->moduleHandler->moduleExists('meeting_api_bbb') && !$bbb_configured) {
       $online_meeting['bbb_warning'] = [
         '#type' => 'markup',
         '#markup' => '<div class="messages messages--warning">' . $this->t('BigBlueButton backend is not properly configured. Please ensure the URL and Key are set @url.', [
@@ -246,6 +259,25 @@ class EventSettingsForm extends ConfigFormBase {
       '#min' => 1,
       '#max' => EventOnline::MAX_CONCURRENT_BBB_ATTENDEES,
     ];
+  }
+
+  /**
+   * Updates the time constraint configuration for BBB meetings.
+   *
+   * @param array $online_meeting
+   *   An associative array containing details of the online meeting.
+   */
+  private function syncMeetingApiTimeConstraint(array $online_meeting): void {
+    $config = $this->configFactory->getEditable('meeting_api_scheduler.meeting_api_time_constraint.bigbluebutton');
+    if ($config->isNew()) {
+      // BigBlueButton is disabled.
+      return;
+    }
+
+    if ((int) $config->get('plugin_config.users_limit') !== (int) $online_meeting['max_attendees']) {
+      $config->set('plugin_config.users_limit', $online_meeting['max_attendees']);
+      $config->save();
+    }
   }
 
 }

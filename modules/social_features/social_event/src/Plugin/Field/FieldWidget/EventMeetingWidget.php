@@ -3,10 +3,13 @@
 namespace Drupal\social_event\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -14,9 +17,14 @@ use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\meeting_api\MeetingEntityInterface;
+use Drupal\meeting_api_scheduler\Enum\PeriodScheduleCalendarView;
+use Drupal\meeting_api_scheduler\Service\TimeConstraintManager;
+use Drupal\meeting_api_scheduler\ValueObject\MeetingRequest;
+use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\Form\EventSettingsForm;
 use Drupal\social_event\Service\EventOnline;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -47,6 +55,8 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
     protected EntityDisplayRepositoryInterface $entityDisplayRepository,
     protected ConfigFactoryInterface $configFactory,
     protected EventOnline $eventOnline,
+    protected ModuleHandlerInterface $moduleHandler,
+    protected AccountProxyInterface $currentUser,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
@@ -65,7 +75,169 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       $container->get('entity_display.repository'),
       $container->get('config.factory'),
       $container->get(EventOnline::class),
+      $container->get('module_handler'),
+      $container->get('current_user'),
     );
+  }
+
+  /**
+   * Get the meeting start and end dates from the parent event form.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $parent_form_state
+   *   The parent form state containing event date values.
+   *
+   * @return array
+   *   An array with 'start_date' and 'end_date' keys containing
+   *   DateTimeImmutable values, or NULL when unavailable.
+   */
+  protected function getMeetingDateTime(FormStateInterface $parent_form_state): array {
+    $empty_value = [
+      'start_date' => NULL,
+      'end_date' => NULL,
+    ];
+
+    // Get the dates from the event entity form.
+    $start_date = $parent_form_state->getValue(['field_event_date', 0, 'value']);
+    $end_date = $parent_form_state->getValue(['field_event_date_end', 0, 'value']);
+
+    if (!$start_date instanceof DrupalDateTime || !$end_date instanceof DrupalDateTime) {
+      $form_object = $parent_form_state->getFormObject();
+      if (!$form_object instanceof EntityFormInterface) {
+        return $empty_value;
+      }
+
+      $event = $form_object->getEntity();
+      // Try to get the dates from the event node.
+      if (!$event instanceof Event) {
+        return $empty_value;
+      }
+
+      // If the event is new, we just use "now" and "+ 12 hours".
+      if ($event->isNew()) {
+        $start_date = new DrupalDateTime('now');
+        $end_date = new DrupalDateTime('+12 hours');
+      }
+      else {
+        $start_date = $event->get('field_event_date')->date;
+        $end_date = $event->get('field_event_date_end')->date;
+      }
+    }
+
+    if (!$start_date instanceof DrupalDateTime || !$end_date instanceof DrupalDateTime) {
+      // Not possible to detect start and end dates.
+      return $empty_value;
+    }
+
+    // Compatibility with the "All day" event option. In event, "All day" means
+    // both start and end dates have the same time.
+    if ($start_date->getTimestamp() === $end_date->getTimestamp()) {
+      $end_date->modify('23 hours 59 minutes 59 seconds');
+    }
+
+    // We need to make sure the user can see the calendar in
+    // the preferred timezone.
+    $timezone = $this->currentUser->getTimeZone() ?: date_default_timezone_get();
+    try {
+      $start_date->setTimezone(new \DateTimeZone($timezone));
+      $end_date->setTimezone(new \DateTimeZone($timezone));
+    }
+    catch (\Exception $e) {
+      return $empty_value;
+    }
+
+    return [
+      'start_date' => \DateTimeImmutable::createFromFormat(
+        format: \DateTimeInterface::ATOM,
+        datetime: $start_date->format(\DateTimeInterface::ATOM)
+      ),
+      'end_date' => \DateTimeImmutable::createFromFormat(
+        format: \DateTimeInterface::ATOM,
+        datetime: $end_date->format(\DateTimeInterface::ATOM)
+      ),
+    ];
+  }
+
+  /**
+   * Determine whether the meeting scheduler should be displayed.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $parent_form_state
+   *   The parent form state containing event date values.
+   * @param \Drupal\meeting_api\MeetingEntityInterface $meeting_entity
+   *   The meeting entity used to derive scheduling constraints.
+   *
+   * @return bool
+   *   TRUE when a schedule needs to be shown; otherwise, FALSE.
+   */
+  protected function displayScheduler(FormStateInterface $parent_form_state, MeetingEntityInterface $meeting_entity): bool {
+    if (!$this->moduleHandler->moduleExists('meeting_api_scheduler')) {
+      return FALSE;
+    }
+
+    $dates = $this->getMeetingDateTime($parent_form_state);
+    $start_date = $dates['start_date'] ?? NULL;
+    $end_date = $dates['end_date'] ?? NULL;
+    // Both dates are required for the scheduler.
+    if (!$start_date || !$end_date) {
+      return FALSE;
+    }
+
+    $attendees = (int) $parent_form_state->getValue(['field_event_meeting', 'meeting_form', 'max_attendees', 0, 'value']);
+
+    $meeting_request = new MeetingRequest(
+      startTime: $start_date,
+      endTime: $end_date,
+      attendeesCount: $attendees ?: (int) $meeting_entity->get('max_attendees')->getString(),
+      serverId: $meeting_entity->getServerId(),
+      meetingId: !$meeting_entity->isNew() ? $meeting_entity->id() : NULL,
+    );
+
+    return !\Drupal::service(TimeConstraintManager::class)
+      ->collect($meeting_request)
+      ->isEmpty();
+  }
+
+  /**
+   * Build the scheduler form element for the meeting.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $parent_form_state
+   *   The parent form state containing event date values.
+   * @param \Drupal\meeting_api\MeetingEntityInterface $meeting_entity
+   *   The meeting entity used to build the schedule.
+   *
+   * @return array
+   *   The scheduler form element render array, or an empty array when
+   *   scheduling is not possible.
+   */
+  protected function buildScheduler(FormStateInterface $parent_form_state, MeetingEntityInterface $meeting_entity): array {
+    $dates = $this->getMeetingDateTime($parent_form_state);
+    $start_date = $dates['start_date'] ?? NULL;
+    $end_date = $dates['end_date'] ?? NULL;
+
+    // Both dates are required for the scheduler.
+    if (!$start_date || !$end_date) {
+      return [];
+    }
+
+    $attendees = (int) $parent_form_state->getValue(['field_event_meeting', 'meeting_form', 'max_attendees', 0, 'value']);
+
+    // Add the scheduler field to the entity form.
+    return [
+      '#type' => 'meeting_api_period_schedule',
+      '#meeting_request' => new MeetingRequest(
+        startTime: $start_date,
+        endTime: $end_date,
+        attendeesCount: $attendees ?: (int) $meeting_entity->get('max_attendees')->getString(),
+        serverId: $meeting_entity->getServerId(),
+        meetingId: !$meeting_entity->isNew() ? $meeting_entity->id() : NULL,
+      ),
+      '#calendar_view' => PeriodScheduleCalendarView::Week,
+      '#show_prev_next_controls' => FALSE,
+      '#prefix' => '<div id="meeting-scheduler-wrapper">',
+      '#suffix' => '</div>',
+      '#attached' => [
+        'library' => ['social_event/event_meeting_scheduler'],
+      ],
+    ];
   }
 
   /**
@@ -84,7 +256,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  private function buildMeetingForm(string $selected_bundle, array &$wrapper, FieldItemListInterface $items, FormStateInterface $form_state): void {
+  protected function buildMeetingForm(string $selected_bundle, array &$wrapper, FieldItemListInterface $items, FormStateInterface $form_state): void {
     $field_name = $items->getName();
 
     $meeting_entity = $this->getMeetingEntity($selected_bundle, $wrapper, $items);
@@ -121,6 +293,30 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       ]);
     }
 
+    // Add a scheduler if needed.
+    if ($component = $form_display->getComponent('scheduler')) {
+      if (
+        $this->displayScheduler($form_state, $meeting_entity) &&
+        ($scheduler_widget = $this->buildScheduler($form_state, $meeting_entity))
+      ) {
+        // Get the widget position from the form display configuration.
+        $entity_form['scheduler'] = $scheduler_widget + ['#weight' => $component['weight'] ?? 0];
+      }
+      else {
+        // We should return the wrapper without the scheduler, otherwise it
+        // will not be possible to display it when the selected timeslot
+        // will be unavailable.
+        $entity_form['scheduler'] = [
+          '#prefix' => '<div id="meeting-scheduler-wrapper">',
+          '#suffix' => '</div>',
+        ];
+
+        CacheableMetadata::createFromRenderArray($entity_form)
+          ->setCacheMaxAge(0)
+          ->applyTo($entity_form);
+      }
+    }
+
     // Add the meeting form to the wrapper.
     $wrapper[$selected_bundle]['entity_form'] = $entity_form;
   }
@@ -142,7 +338,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  private function getMeetingEntity(string $selected_bundle, array &$meeting_form, FieldItemListInterface $items): MeetingEntityInterface {
+  protected function getMeetingEntity(string $selected_bundle, array &$meeting_form, FieldItemListInterface $items): MeetingEntityInterface {
     // If no existing entity, check if we have a temporary entity stored
     // for this bundle.
     if (isset($meeting_form[$selected_bundle]['#meeting_entity'])) {
@@ -213,11 +409,17 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    *   TRUE if any field values in the meeting entity were changed;
    *   otherwise, FALSE.
    */
-  private function putFormValuesToMeeting(MeetingEntityInterface $meeting, array $values, FormStateInterface $form_state): bool {
+  protected function putFormValuesToMeeting(MeetingEntityInterface $meeting, array $values, FormStateInterface $form_state): bool {
     $event_start = $form_state->getValue(['field_event_date', 0, 'value']);
     $event_end = $form_state->getValue(['field_event_date_end', 0, 'value']);
     if (!$event_start instanceof DrupalDateTime || !$event_end instanceof DrupalDateTime) {
       return FALSE;
+    }
+
+    // Compatibility with the "All day" event option. In event, "All day" means
+    // both start and end dates have the same time.
+    if ($event_start->getTimestamp() === $event_end->getTimestamp()) {
+      $event_end->modify('23 hours 59 minutes 59 seconds');
     }
 
     $values_from_event = [
@@ -483,8 +685,8 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
           ->load($values['target_id']);
 
         if ($previous_meeting instanceof MeetingEntityInterface) {
-          $previous_meeting->set('status', FALSE);
-          $previous_meeting->save();
+          // Delete the previous meeting as we can't use it anywhere.
+          $previous_meeting->delete();
         }
       }
 
@@ -514,8 +716,8 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
               ->load($default_value);
 
             if ($previous_meeting instanceof MeetingEntityInterface) {
-              $previous_meeting->set('status', FALSE);
-              $previous_meeting->save();
+              // Delete the previous meeting as we can't use it anywhere.
+              $previous_meeting->delete();
             }
           }
         }

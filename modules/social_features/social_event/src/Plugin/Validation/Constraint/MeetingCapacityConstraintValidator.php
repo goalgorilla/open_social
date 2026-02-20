@@ -69,15 +69,20 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
           return;
         }
 
-        $event_start = $datetime_field->start_date ?? NULL;
-        $event_end = $datetime_field->end_date ?? NULL;
-
-        if (!$event_start || !$event_end) {
+        $time_start = $datetime_field->value ?? NULL;
+        $time_end = $datetime_field->end_value ?? NULL;
+        if (!$time_start || !$time_end) {
           return;
         }
 
+        // Set the timezone for the date and time fields. Then we need
+        // to convert them to UTC as database queries are done in UTC.
+        $timezone = $datetime_field->timezone ?? 'UTC';
+        $start_date = new DrupalDateTime($time_start, $timezone);
+        $end_date = new DrupalDateTime($time_end, $timezone);
+
         // Count the total capacity of overlapping BigBlueButton meetings.
-        $other_attendees = $this->countOverlappingMeetingsAttendees($event_start, $event_end);
+        $other_attendees = $this->countOverlappingMeetingsAttendees($start_date, $end_date);
 
         // Add the current meeting's capacity to the total.
         $current_capacity = (int) ($meeting->get('max_attendees')->value ?? 0);
@@ -119,8 +124,16 @@ class MeetingCapacityConstraintValidator extends ConstraintValidator implements 
    * @throws \Exception
    */
   protected function countOverlappingMeetingsAttendees(DrupalDateTime $event_start_date, DrupalDateTime $event_end_date, ?int $exclude_meeting_id = NULL): int {
-    $event_start = $event_start_date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
-    $event_end = $event_end_date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
+    // For database queries, convert the date and time to UTC.
+    $event_start = $event_start_date->format(
+      format: DateTimeItemInterface::DATETIME_STORAGE_FORMAT,
+      settings: ['timezone' => 'UTC']
+    );
+    $event_end = $event_end_date->format(
+      format: DateTimeItemInterface::DATETIME_STORAGE_FORMAT,
+      settings: ['timezone' => 'UTC']
+    );
+
     // Build the query to find overlapping BigBlueButton meetings.
     $query = $this->database->select('meeting_api_meeting', 'm')
       ->condition('bundle', 'big_blue_button')

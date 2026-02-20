@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Hooks;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Render\Element;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
 use Drupal\hux\Attribute\Hook;
@@ -27,6 +32,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class EventOnline implements ContainerInjectionInterface {
 
   use StringTranslationTrait;
+  use DependencySerializationTrait;
 
   /**
    * Construct the EventOnline object.
@@ -37,11 +43,14 @@ final class EventOnline implements ContainerInjectionInterface {
    *   The event online service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The module handler service.
+   * @param \Drupal\Core\Extension\ModuleInstallerInterface $moduleInstaller
+   *   The module installer service.
    */
   public function __construct(
-    protected ConfigFactoryInterface $configFactory,
+    private readonly ConfigFactoryInterface $configFactory,
     private readonly EventOnlineService $eventOnlineService,
     private readonly ModuleHandlerInterface $moduleHandler,
+    private readonly ModuleInstallerInterface $moduleInstaller,
   ) {}
 
   /**
@@ -52,7 +61,43 @@ final class EventOnline implements ContainerInjectionInterface {
       $container->get('config.factory'),
       $container->get(EventOnlineService::class),
       $container->get('module_handler'),
+      $container->get('module_installer'),
     );
+  }
+
+  /**
+   * Enables the Meeting API Scheduler module when BigBlueButton is installed.
+   *
+   * Implements hook_modules_installed() to automatically install the
+   * meeting_api_scheduler module when the meeting_api_bbb module is installed.
+   * This ensures that scheduling functionality is available for BigBlueButton
+   * meetings.
+   *
+   * @param array $modules
+   *   An array of the names of the modules being installed.
+   * @param bool $is_syncing
+   *   TRUE if the installation is part of a configuration synchronization,
+   *   FALSE otherwise.
+   *
+   * @throws \Drupal\Core\Extension\ExtensionNameLengthException
+   * @throws \Drupal\Core\Extension\ExtensionNameReservedException
+   * @throws \Drupal\Core\Extension\MissingDependencyException
+   *
+   * @see hook_modules_installed()
+   */
+  #[Hook('modules_installed')]
+  public function enableSchedulerForBigBlueButton(array $modules, bool $is_syncing): void {
+    if ($is_syncing) {
+      return;
+    }
+
+    if (in_array('meeting_api_bbb', $modules)) {
+      // Install "Meeting API Scheduler" module.
+      $this->moduleInstaller->install(['meeting_api_scheduler']);
+
+      // Grant a verified user role with a permission to see the scheduler.
+      user_role_grant_permissions('verified', ['view any meeting_api server schedule']);
+    }
   }
 
   /**
@@ -75,6 +120,27 @@ final class EventOnline implements ContainerInjectionInterface {
     return [
       $variables['theme_hook_original'] . '__' . $variables['view_mode'],
     ];
+  }
+
+  /**
+   * Exposes the scheduler extra field for meeting_api_meeting entity.
+   *
+   * @return array
+   *   An array of extra field definitions.
+   *
+   * @see hook_entity_extra_field_info()
+   */
+  #[Hook('entity_extra_field_info')]
+  public function entityExtraFieldInfo(): array {
+    // Add a scheduler extra field for meeting_api_meeting entity.
+    // @todo Add to all bundles.
+    $extra['meeting_api_meeting']['big_blue_button']['form']['scheduler'] = [
+      'label' => $this->t('Scheduler'),
+      'description' => $this->t('Scheduler field for meeting management'),
+      'weight' => 100,
+    ];
+
+    return $extra;
   }
 
   /**
@@ -262,6 +328,87 @@ final class EventOnline implements ContainerInjectionInterface {
     $element['#attached']['library'][] = 'social_event/event_meeting_widget';
 
     return $element;
+  }
+
+  /**
+   * Specific for online events form adjustments.
+   *
+   * Alters the event form to add AJAX callbacks for refreshing the scheduler
+   * upon changes in event dates or related meeting data.
+   *
+   * @param array $form
+   *   A structured array representing the form. It is modified in-place by
+   *   adding AJAX callbacks to specific form elements like event dates and
+   *   meeting-related fields.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   An object that contains the current state of the form. Used for managing
+   *   form processing and interactivity.
+   */
+  #[Alter('form_node_event_form')]
+  #[Alter('form_node_event_edit_form')]
+  public function meetingApiEntityScheduler(array &$form, FormStateInterface $form_state): void {
+    // Add AJAX callback to form elements to refresh the scheduler.
+    if (!isset($form['field_event_date'], $form['field_event_date_end'], $form['field_event_meeting'])) {
+      return;
+    }
+
+    $dates_ajax = [
+      'callback' => [static::class, 'refreshOnEventDatesChange'],
+      'event' => 'blur',
+      // Disable refocusing on blur to prevent form field value loss if
+      // a user submits the form immediately.
+      'disable-refocus' => TRUE,
+    ];
+
+    // Add ajax callback to update the scheduler on event dates changing.
+    $form['field_event_date']['widget'][0]['value']['#ajax'] = $dates_ajax;
+    $form['field_event_date_end']['widget'][0]['value']['#ajax'] = $dates_ajax;
+
+    $meeting_form =& $form['field_event_meeting']['widget']['meeting_form'];
+    foreach (Element::children($meeting_form) as $name) {
+      if (isset($meeting_form[$name]['entity_form']['max_attendees'])) {
+        // Add ajax callback to update the scheduler on attendees changing.
+        $meeting_form[$name]['entity_form']['max_attendees']['widget'][0]['value']['#ajax'] = $dates_ajax;
+      }
+    }
+  }
+
+  /**
+   * AJAX callback to refresh the scheduler when event dates change.
+   *
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   The AJAX response with commands to update the scheduler.
+   */
+  public static function refreshOnEventDatesChange(array &$form, FormStateInterface $form_state): AjaxResponse {
+    $response = new AjaxResponse();
+
+    // Check if the meeting form exists.
+    if (!isset($form['field_event_meeting']['widget']['meeting_form'])) {
+      return $response;
+    }
+
+    $meeting_form = &$form['field_event_meeting']['widget']['meeting_form'];
+
+    // Get the selected meeting type.
+    $selected_bundle = $form_state->getValue(['field_event_meeting', 'meeting_type']);
+
+    // Check if a scheduler exists for the selected bundle.
+    if ($selected_bundle && isset($meeting_form[$selected_bundle]['entity_form']['scheduler'])) {
+      $scheduler_element = $meeting_form[$selected_bundle]['entity_form']['scheduler'];
+
+      // Add a replace command to update the scheduler.
+      $response->addCommand(new ReplaceCommand(
+        '#meeting-scheduler-wrapper',
+        $scheduler_element
+      ));
+    }
+
+    return $response;
   }
 
   /**
