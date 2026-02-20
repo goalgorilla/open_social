@@ -1,0 +1,19 @@
+# Multiple permissions for a single scope (Drupal + Access Policy: outsider).
+"test:group:multi_outsider":
+  description: 'Test scope granting Drupal and multiple group permissions (access content, view group, edit group) in outsider context'
+  umbrella: false
+  granularity: permissions
+  grant_types:
+    client_credentials:
+      status: true
+    authorization_code:
+      status: true
+  permissions:
+    - scope: drupal
+      permission: 'access content'
+    - scope: outsider
+      identifier: 'example_group'
+      permission: 'view group'
+    - scope: outsider
+      identifier: 'example_group'
+      permission: 'edit group'

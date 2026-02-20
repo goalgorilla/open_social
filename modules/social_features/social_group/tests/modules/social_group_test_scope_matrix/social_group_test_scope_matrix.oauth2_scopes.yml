@@ -1,0 +1,42 @@
+# Matrix scopes: view group per Access Policy context. Test only asserts group permission.
+"test:group:outsider":
+  description: 'Test scope granting view group in outsider context'
+  umbrella: false
+  granularity: permissions
+  grant_types:
+    client_credentials:
+      status: true
+    authorization_code:
+      status: true
+  permissions:
+    - scope: outsider
+      identifier: 'example_group'
+      permission: 'view group'
+
+"test:group:insider":
+  description: 'Test scope granting view group in insider context'
+  umbrella: false
+  granularity: permissions
+  grant_types:
+    client_credentials:
+      status: true
+    authorization_code:
+      status: true
+  permissions:
+    - scope: insider
+      identifier: 'example_group'
+      permission: 'view group'
+
+"test:group:individual":
+  description: 'Test scope granting view group in individual context (group ID 1)'
+  umbrella: false
+  granularity: permissions
+  grant_types:
+    client_credentials:
+      status: true
+    authorization_code:
+      status: true
+  permissions:
+    - scope: individual
+      identifier: 1
+      permission: 'view group'

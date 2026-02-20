@@ -1,0 +1,14 @@
+"test:group:permission":
+  description: 'Test scope attempting to grant group permission'
+  umbrella: false
+  grant_types:
+    client_credentials:
+      status: true
+      description: 'Test scope client_credentials'
+  granularity: permissions
+  permissions:
+    - scope: drupal
+      permission: 'access content'
+    - scope: outsider
+      identifier: 'flexible_group'
+      permission: 'view group'
