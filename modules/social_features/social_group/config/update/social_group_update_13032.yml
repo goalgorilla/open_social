@@ -1,0 +1,131 @@
+views.view.group_manage_members:
+  expected_config: {  }
+  update_actions:
+    add:
+      display:
+        default:
+          display_options:
+            fields:
+              status:
+                id: status
+                table: users_field_data
+                field: status
+                relationship: gc__user
+                group_type: group
+                admin_label: ''
+                entity_type: user
+                entity_field: status
+                plugin_id: field
+                label: Status
+                exclude: false
+                alter:
+                  alter_text: false
+                  text: ''
+                  make_link: false
+                  path: ''
+                  absolute: false
+                  external: false
+                  replace_spaces: false
+                  path_case: none
+                  trim_whitespace: false
+                  alt: ''
+                  rel: ''
+                  link_class: ''
+                  prefix: ''
+                  suffix: ''
+                  target: ''
+                  nl2br: false
+                  max_length: 0
+                  word_boundary: true
+                  ellipsis: true
+                  more_link: false
+                  more_link_text: ''
+                  more_link_path: ''
+                  strip_tags: false
+                  trim: false
+                  preserve_tags: ''
+                  html: false
+                element_type: ''
+                element_class: ''
+                element_label_type: ''
+                element_label_class: ''
+                element_label_colon: true
+                element_wrapper_type: ''
+                element_wrapper_class: ''
+                element_default_classes: true
+                empty: ''
+                hide_empty: false
+                empty_zero: false
+                hide_alter_empty: true
+                click_sort_column: value
+                type: boolean
+                settings:
+                  format: custom
+                  format_custom_false: Blocked
+                  format_custom_true: Active
+            filters:
+              status:
+                id: status
+                table: users_field_data
+                field: status
+                relationship: gc__user
+                group_type: group
+                admin_label: ''
+                entity_type: user
+                entity_field: status
+                plugin_id: boolean
+                operator: '='
+                value: '1'
+                group: 1
+                exposed: true
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: status_op
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  identifier: status
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                    anonymous: '0'
+                    administrator: '0'
+                    contentmanager: '0'
+                    verified: '0'
+                    sitemanager: '0'
+                is_grouped: true
+                group_info:
+                  label: Status
+                  description: ''
+                  identifier: status
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: {  }
+                  group_items:
+                    1:
+                      title: Active
+                      operator: '='
+                      value: '1'
+                    2:
+                      title: Blocked
+                      operator: '='
+                      value: '0'
+            style:
+              options:
+                columns:
+                  status: status
+                info:
+                  status:
+                    sortable: true
+                    default_sort_order: asc
+                    align: ''
+                    separator: ''
+                    empty_column: false
+                    responsive: ''

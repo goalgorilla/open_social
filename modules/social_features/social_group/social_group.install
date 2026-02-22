@@ -1292,3 +1292,48 @@ function social_group_update_13031(): string {
   $updater->executeUpdate('social_group', __FUNCTION__);
   return $updater->logger()->output();
 }
+
+/**
+ * Add exposed Status filter and Status display field to group manage members.
+ */
+function social_group_update_13032(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+
+  // update_helper uses NestedArray::mergeDeep() which always appends new keys
+  // at the end — it cannot control insertion order. We therefore reorder the
+  // fields, columns, and info arrays so "status" sits before "operations".
+  $config = \Drupal::configFactory()->getEditable('views.view.group_manage_members');
+  $displays = $config->get('display');
+
+  foreach ($displays as &$display) {
+    foreach (['fields', 'style.options.columns', 'style.options.info'] as $path) {
+      $keys = explode('.', $path);
+      $items = &$display['display_options'];
+      foreach ($keys as $key) {
+        if (!isset($items[$key])) {
+          continue 2;
+        }
+        $items = &$items[$key];
+      }
+      if (!isset($items['status'], $items['operations'])) {
+        continue;
+      }
+      $reordered = [];
+      foreach ($items as $k => $v) {
+        if ($k === 'operations') {
+          $reordered['status'] = $items['status'];
+        }
+        if ($k !== 'status') {
+          $reordered[$k] = $v;
+        }
+      }
+      $items = $reordered;
+    }
+  }
+
+  $config->set('display', $displays)->save();
+
+  return $updater->logger()->output();
+}
