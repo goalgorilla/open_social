@@ -2164,6 +2164,79 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
 }
 
 /**
+ * Get the allowed content visibility options for multiple groups.
+ *
+ * When multiple groups are selected for a piece of content, the visibility of
+ * the content must be allowed in all groups. Thus the set of allowed
+ * visibilities are those that are allowed by all groups in the selection.
+ *
+ * If there are a few groups, a user should be able to add visibility options
+ * only if the groups have at least one shared option.
+ * F.e, if "Open Group" has only the "Public" option and "Secret Group" have
+ * "Only group members" option, then a user should not be able to save
+ * the entity (because of an error).
+ *
+ * @param \Drupal\group\Entity\GroupInterface[] $groups
+ *   The set of groups that visibility options need to be retrieved for.
+ * @param \Drupal\Core\Entity\EntityInterface|null $entity
+ *   The content entity for which to select a visibility or null if only the
+ *   visibilities of the groups are checked.
+ * @param \Drupal\Core\Session\AccountInterface|null $account
+ *   The account object that may have impact on the visibility options.
+ *   Defaults to the global current user if not provided.
+ *
+ * @return array<string, bool>
+ *   An associative array with visibility option name as key and whether the
+ *   visibility is allowed as value.
+ */
+function social_group_get_allowed_content_visibility_options_for_multiple_groups(array $groups, ?EntityInterface $entity = NULL, ?AccountInterface $account = NULL) : array {
+  $options = [];
+
+  foreach ($groups as $group) {
+    $items = social_group_get_allowed_visibility_options_per_group_type(
+      (string) $group->getGroupType()->id(),
+      $account,
+      $entity,
+      $group,
+    );
+
+    foreach ($items as $key => $value) {
+      // We always rewrite options if it is "FALSE".
+      if (!isset($options[$key]) || !$value) {
+        $options[$key] = $value;
+      }
+    }
+  }
+
+  return $options;
+}
+
+/**
+ * Check whether the configured content visibility is allowed in the groups.
+ *
+ * @param \Drupal\group\Entity\GroupInterface[] $groups
+ *   The set of groups that visibility options need to be checked for.
+ * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+ *   The entity with a `field_content_visibility` field to check the visibility
+ *   of.
+ * @param \Drupal\Core\Session\AccountInterface|null $account
+ *   The account object that may have impact on the visibility options.
+ *   Defaults to the global current user if not provided.
+ *
+ * @return bool
+ *   Whether the visibility set in `field_content_visibility` is allowed for the
+ *   provided set of groups.
+ */
+function social_group_is_content_visibility_allowed_for_groups(array $groups, FieldableEntityInterface $entity, ?AccountInterface $account = NULL) : bool {
+  assert($entity->hasField('field_content_visibility'), "The content entity must have a 'field_content_visibility' to work with the content visibility system.");
+
+  $visibility = $entity->get('field_content_visibility')->value;
+  $options = social_group_get_allowed_content_visibility_options_for_multiple_groups($groups, $entity, $account);
+
+  return $options[$visibility] ?? FALSE;
+}
+
+/**
  * Implements hook_views_query_alter().
  */
 function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {

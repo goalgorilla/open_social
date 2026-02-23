@@ -377,25 +377,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
     $groups = \Drupal::entityTypeManager()->getStorage('group')
       ->loadMultiple($groupIds);
 
-    $options = [];
-
-    foreach ($groups as $group) {
-      $items = social_group_get_allowed_visibility_options_per_group_type(
-        (string) $group->getGroupType()->id(),
-        NULL,
-        $entity,
-        $group,
-      );
-
-      foreach ($items as $key => $value) {
-        // We always rewrite options if it is "FALSE".
-        if (!isset($options[$key]) || !$value) {
-          $options[$key] = $value;
-        }
-      }
-    }
-
-    return $options;
+    return social_group_get_allowed_content_visibility_options_for_multiple_groups($groups, $entity);
   }
 
   /**
