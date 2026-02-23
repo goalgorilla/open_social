@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\social_group\Hooks;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -12,6 +13,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\hux\Attribute\Hook;
 use Drupal\social_group\CurrentGroupProviderInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -53,10 +55,12 @@ final class EntityFieldAccessHooks implements ContainerInjectionInterface {
    *   The field definition.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account to check access for.
-   * @param \Drupal\Core\Field\FieldItemListInterface|null $items
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>|null $items
    *   The field item list.
    *
-   * @phpstan-param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>|null $items
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result indicating whether the access is allowed,
+   *   denied, or neutral.
    */
   #[Hook('entity_field_access')]
   public function entityFieldAccess(
@@ -64,10 +68,17 @@ final class EntityFieldAccessHooks implements ContainerInjectionInterface {
     FieldDefinitionInterface $field_definition,
     AccountInterface $account,
     ?FieldItemListInterface $items = NULL,
-  ): AccessResult {
-    if ($operation !== 'view'
-      || $field_definition->getTargetEntityTypeId() !== 'user'
-      || $field_definition->getName() !== 'status') {
+  ): AccessResultInterface {
+    if ($items === NULL) {
+      return AccessResult::neutral();
+    }
+
+    $user = $items->getEntity();
+    if (!$user instanceof UserInterface) {
+      return AccessResult::neutral();
+    }
+
+    if ($operation !== 'view' || $field_definition->getName() !== 'status') {
       return AccessResult::neutral();
     }
 

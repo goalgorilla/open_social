@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_group\Unit;
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\Context\CacheContextsManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\CurrentGroupProviderInterface;
 use Drupal\social_group\Hooks\EntityFieldAccessHooks;
 use Drupal\Tests\UnitTestCase;
+use Drupal\user\UserInterface;
 
 /**
  * Unit test for EntityFieldAccessHooks (user status field access).
@@ -37,6 +41,30 @@ final class EntityFieldAccessHooksTest extends UnitTestCase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function tearDown(): void {
+    \Drupal::unsetContainer();
+    parent::tearDown();
+  }
+
+  /**
+   * Tests that NULL items returns neutral.
+   */
+  public function testNullItemsReturnsNeutral(): void {
+    $resolver = $this->createMock(CurrentGroupProviderInterface::class);
+    $resolver->expects($this->never())->method('getCurrentGroup');
+
+    $field_definition = $this->createMock(FieldDefinitionInterface::class);
+    $account = $this->createMock(AccountInterface::class);
+
+    $hooks = new EntityFieldAccessHooks($resolver);
+    $result = $hooks->entityFieldAccess('view', $field_definition, $account, NULL);
+
+    $this->assertTrue($result->isNeutral());
+  }
+
+  /**
    * Tests that non-view operation returns neutral.
    */
   public function testNonViewOperationReturnsNeutral(): void {
@@ -44,13 +72,13 @@ final class EntityFieldAccessHooksTest extends UnitTestCase {
     $resolver->expects($this->never())->method('getCurrentGroup');
 
     $field_definition = $this->createMock(FieldDefinitionInterface::class);
-    $field_definition->method('getTargetEntityTypeId')->willReturn('user');
     $field_definition->method('getName')->willReturn('status');
 
     $account = $this->createMock(AccountInterface::class);
+    $items = $this->createUserFieldItems();
 
     $hooks = new EntityFieldAccessHooks($resolver);
-    $result = $hooks->entityFieldAccess('edit', $field_definition, $account, NULL);
+    $result = $hooks->entityFieldAccess('edit', $field_definition, $account, $items);
 
     $this->assertTrue($result->isNeutral());
   }
@@ -63,13 +91,14 @@ final class EntityFieldAccessHooksTest extends UnitTestCase {
     $resolver->expects($this->never())->method('getCurrentGroup');
 
     $field_definition = $this->createMock(FieldDefinitionInterface::class);
-    $field_definition->method('getTargetEntityTypeId')->willReturn('node');
     $field_definition->method('getName')->willReturn('status');
 
     $account = $this->createMock(AccountInterface::class);
+    $items = $this->createMock(FieldItemListInterface::class);
+    $items->method('getEntity')->willReturn(new \stdClass());
 
     $hooks = new EntityFieldAccessHooks($resolver);
-    $result = $hooks->entityFieldAccess('view', $field_definition, $account, NULL);
+    $result = $hooks->entityFieldAccess('view', $field_definition, $account, $items);
 
     $this->assertTrue($result->isNeutral());
   }
@@ -82,13 +111,13 @@ final class EntityFieldAccessHooksTest extends UnitTestCase {
     $resolver->expects($this->never())->method('getCurrentGroup');
 
     $field_definition = $this->createMock(FieldDefinitionInterface::class);
-    $field_definition->method('getTargetEntityTypeId')->willReturn('user');
     $field_definition->method('getName')->willReturn('name');
 
     $account = $this->createMock(AccountInterface::class);
+    $items = $this->createUserFieldItems();
 
     $hooks = new EntityFieldAccessHooks($resolver);
-    $result = $hooks->entityFieldAccess('view', $field_definition, $account, NULL);
+    $result = $hooks->entityFieldAccess('view', $field_definition, $account, $items);
 
     $this->assertTrue($result->isNeutral());
   }
@@ -101,13 +130,13 @@ final class EntityFieldAccessHooksTest extends UnitTestCase {
     $resolver->method('getCurrentGroup')->willReturn(NULL);
 
     $field_definition = $this->createMock(FieldDefinitionInterface::class);
-    $field_definition->method('getTargetEntityTypeId')->willReturn('user');
     $field_definition->method('getName')->willReturn('status');
 
     $account = $this->createMock(AccountInterface::class);
+    $items = $this->createUserFieldItems();
 
     $hooks = new EntityFieldAccessHooks($resolver);
-    $result = $hooks->entityFieldAccess('view', $field_definition, $account, NULL);
+    $result = $hooks->entityFieldAccess('view', $field_definition, $account, $items);
 
     $this->assertTrue($result->isNeutral());
   }
@@ -126,11 +155,12 @@ final class EntityFieldAccessHooksTest extends UnitTestCase {
     $resolver->method('getCurrentGroup')->willReturn($group);
 
     $field_definition = $this->createMock(FieldDefinitionInterface::class);
-    $field_definition->method('getTargetEntityTypeId')->willReturn('user');
     $field_definition->method('getName')->willReturn('status');
 
+    $items = $this->createUserFieldItems();
+
     $hooks = new EntityFieldAccessHooks($resolver);
-    $result = $hooks->entityFieldAccess('view', $field_definition, $account, NULL);
+    $result = $hooks->entityFieldAccess('view', $field_definition, $account, $items);
 
     $this->assertTrue($result->isNeutral());
   }
@@ -144,20 +174,37 @@ final class EntityFieldAccessHooksTest extends UnitTestCase {
     $group->method('hasPermission')
       ->with('administer members', $account)
       ->willReturn(TRUE);
+    $group->method('getCacheContexts')->willReturn([]);
+    $group->method('getCacheTags')->willReturn([]);
+    $group->method('getCacheMaxAge')->willReturn(Cache::PERMANENT);
 
     $resolver = $this->createMock(CurrentGroupProviderInterface::class);
     $resolver->method('getCurrentGroup')->willReturn($group);
 
     $field_definition = $this->createMock(FieldDefinitionInterface::class);
-    $field_definition->method('getTargetEntityTypeId')->willReturn('user');
     $field_definition->method('getName')->willReturn('status');
 
+    $items = $this->createUserFieldItems();
+
     $hooks = new EntityFieldAccessHooks($resolver);
-    $result = $hooks->entityFieldAccess('view', $field_definition, $account, NULL);
+    $result = $hooks->entityFieldAccess('view', $field_definition, $account, $items);
 
     $this->assertTrue($result->isAllowed());
+    assert($result instanceof AccessResult);
     $this->assertContains('route.group', $result->getCacheContexts());
     $this->assertContains('user.group_permissions', $result->getCacheContexts());
+  }
+
+  /**
+   * Creates mock field items whose entity is a user.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   */
+  private function createUserFieldItems(): FieldItemListInterface {
+    $user = $this->createMock(UserInterface::class);
+    $items = $this->createMock(FieldItemListInterface::class);
+    $items->method('getEntity')->willReturn($user);
+    return $items;
   }
 
 }

@@ -23,9 +23,12 @@ use Symfony\Component\Routing\RouterInterface;
 final class CurrentGroupProvider implements CurrentGroupProviderInterface {
 
   /**
-   * Request-scoped cache keyed by entity id (or -1 for NULL).
+   * Request-scoped cache keyed by entity id, "new:{object_id}", or -1 for NULL.
    *
-   * @var array<int, \Drupal\group\Entity\GroupInterface|false>
+   * Unsaved entities use a unique key to avoid collisions between different
+   * entity instances.
+   *
+   * @var array<int|string, \Drupal\group\Entity\GroupInterface|false>
    */
   private array $cache = [];
 
@@ -55,10 +58,10 @@ final class CurrentGroupProvider implements CurrentGroupProviderInterface {
    * {@inheritdoc}
    */
   public function getCurrentGroup(?EntityInterface $entity = NULL): ?GroupInterface {
-    $entity_id = $entity === NULL ? -1 : (int) $entity->id();
+    $cache_key = $this->getCacheKey($entity);
 
-    if (isset($this->cache[$entity_id])) {
-      $cached = $this->cache[$entity_id];
+    if (isset($this->cache[$cache_key])) {
+      $cached = $this->cache[$cache_key];
       return $cached instanceof GroupInterface ? $cached : NULL;
     }
 
@@ -108,9 +111,33 @@ final class CurrentGroupProvider implements CurrentGroupProviderInterface {
     }
 
     $cache_value = $group instanceof GroupInterface ? $group : FALSE;
-    $this->cache[$entity_id] = $cache_value;
+    $this->cache[$cache_key] = $cache_value;
 
     return $group instanceof GroupInterface ? $group : NULL;
+  }
+
+  /**
+   * Returns the cache key for the given entity.
+   *
+   * Saved entities use their integer id. Unsaved entities use a unique key
+   * so different instances do not share the same cache slot.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface|null $entity
+   *   The entity, or NULL for route/context-based lookup.
+   *
+   * @return int|string
+   *   Cache key: -1 for NULL, integer id for saved entities, "new:{id}" for
+   *   unsaved entities.
+   */
+  private function getCacheKey(?EntityInterface $entity): int|string {
+    if ($entity === NULL) {
+      return -1;
+    }
+    $id = $entity->id();
+    if ($id !== NULL && $id !== '') {
+      return (int) $id;
+    }
+    return 'new:' . spl_object_id($entity);
   }
 
   /**
