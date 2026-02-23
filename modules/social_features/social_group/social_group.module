@@ -53,8 +53,6 @@ use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\Plugin\views\row\EntityRow;
 use Drupal\views\ViewExecutable;
 use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
-use Symfony\Component\Routing\Exception\MethodNotAllowedException;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
  * Implements hook_theme().
@@ -1567,88 +1565,18 @@ function _social_group_get_member_profile(GroupRelationship $group_content) {
 /**
  * Gets current Group entity from the route.
  *
+ * Delegates to the current group resolver service. Kept for backwards
+ * compatibility; new code may inject CurrentGroupProviderInterface instead.
+ *
  * @param mixed $entity
  *   (optional) The entity object. Defaults to NULL.
  */
 function _social_group_get_current_group($entity = NULL): ?SocialGroupInterface {
-  $cache = &drupal_static(__FUNCTION__, []);
-
-  // For the same $node input, within the same request the return is always
-  // the same.
-  $entity_id = NULL;
-  if (is_null($entity)) {
-    $entity_id = -1;
-  }
-  elseif ($entity instanceof EntityInterface) {
-    $entity_id = $entity->id();
-  }
-
-  // If we have a cache key and it has a value, we're done early.
-  if (!is_null($entity_id) && isset($cache[$entity_id])) {
-    // Translate FALSE (so isset works) back to NULL.
-    return $cache[$entity_id] ?: NULL;
-  }
-
-  $group = \Drupal::routeMatch()->getParameter('group');
-
-  if (is_numeric($group)) {
-    $group = \Drupal::entityTypeManager()->getStorage('group')->load($group);
-  }
-
-  if ($group === NULL) {
-    if (
-      !is_object($entity) &&
-      ($entity = \Drupal::routeMatch()->getParameter('node')) === NULL &&
-      ($route_name = \Drupal::routeMatch()->getRouteName()) !== NULL &&
-      preg_match('/^entity\.([^.]+)/', $route_name, $matches)
-    ) {
-      $entity = \Drupal::routeMatch()->getParameter($matches[1]);
-    }
-
-    if ($entity instanceof EntityInterface) {
-      $entity = [
-        'target_type' => $entity->getEntityTypeId(),
-        'target_id' => $entity->id(),
-      ];
-      $gid_from_entity = \Drupal::service('social_group.helper_service')
-        ->getGroupFromEntity($entity);
-      if ($gid_from_entity !== NULL) {
-        $group = \Drupal::entityTypeManager()
-          ->getStorage('group')
-          ->load($gid_from_entity);
-      }
-    }
-  }
-
-  // Try to get a group from the path in the ajax request context.
-  if ($group === NULL && \Drupal::request()->isXmlHttpRequest()) {
-    // Make sure we are checking the views page.
-    if ($view_path = \Drupal::request()->get('view_path')) {
-      // Resolve the original page route to recover the group context in AJAX.
-      try {
-        $match = \Drupal::service('router.no_access_checks')->match($view_path);
-        $group = $match['group'] ?? NULL;
-
-        if (is_numeric($group)) {
-          $group = \Drupal::entityTypeManager()
-            ->getStorage('group')
-            ->load($match['group']);
-        }
-      }
-      catch (ResourceNotFoundException | MethodNotAllowedException $e) {
-        // Ignore unmatched view paths.
-      }
-    }
-  }
-
-  // If we have a cache key we store the value.
-  if (!is_null($entity_id)) {
-    // Translate NULL to FALSE so that isset works.
-    $cache[$entity_id] = $group ?? FALSE;
-  }
-
-  /** @var \Drupal\social_group\SocialGroupInterface|null $group */
-  return $group;
+  $provider = \Drupal::service('social_group.current_group_provider');
+  $pass = $entity instanceof EntityInterface ? $entity : NULL;
+  /** @var \Drupal\social_group\SocialGroupInterface|null $result */
+  $result = $provider->getCurrentGroup($pass);
+  return $result;
 }
 
 /**

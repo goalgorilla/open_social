@@ -62,6 +62,21 @@ services:
     social_group.current_group_service: '@Drupal\social_group\CurrentGroupService'
     autowire: true
 
+  social_group.current_group_provider:
+    class: Drupal\social_group\CurrentGroupProvider
+    arguments:
+      - '@current_route_match'
+      - '@entity_type.manager'
+      - '@social_group.helper_service'
+      - '@request_stack'
+      - '@router.no_access_checks'
+
+  Drupal\social_group\Hooks\EntityFieldAccessHooks:
+    arguments:
+      - '@social_group.current_group_provider'
+    tags:
+      - { name: hux.hook_extension }
+
   Drupal\social_group\SocialGroupPermissions:
     autowire: true
 
