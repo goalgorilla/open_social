@@ -23,4 +23,13 @@ interface CurrentGroupProviderInterface {
    */
   public function getCurrentGroup(?EntityInterface $entity = NULL): ?GroupInterface;
 
+  /**
+   * Clears the request-scoped cache of resolved groups.
+   *
+   * Call this when the effective "current" group changes within the same
+   * request (e.g. after the user changes the group in a form widget) so that
+   * the next getCurrentGroup() call returns the updated group.
+   */
+  public function resetCache(): void;
+
 }

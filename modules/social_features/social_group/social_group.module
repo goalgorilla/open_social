@@ -1380,7 +1380,7 @@ function social_group_field_widget_single_element_form_alter(&$element, FormStat
     // getTriggeringElement (because that is null).
     $input = $form_state->getUserInput();
     if (!empty($form_state->getValue('groups')) || (isset($input['_triggering_element_name']) && $input['_triggering_element_name'] === 'groups')) {
-      drupal_static_reset('_social_group_get_current_group');
+      \Drupal::service('social_group.current_group_provider')->resetCache();
       $group_id = NULL;
       $group_value = $form_state->getValue('groups');
       if (is_array($group_value)) {

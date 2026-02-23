@@ -113,4 +113,11 @@ final class CurrentGroupProvider implements CurrentGroupProviderInterface {
     return $group instanceof GroupInterface ? $group : NULL;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function resetCache(): void {
+    $this->cache = [];
+  }
+
 }
