@@ -181,22 +181,10 @@ class CreateTopicInput extends TopicInputBase {
       }
     }
 
-    // Until we decide that all topics are created with a specific text format
-    // and that this is not dependent on users' permission we must figure out
-    // what the default text format is that the user can use and use that.
-    // Get a list of formats for this user, ordered by weight. The first one
-    // available is the user's default format.
-    $allowed_formats = \filter_formats($this->actor);
-    if ($allowed_formats === []) {
-      throw new \RuntimeException("The application that is trying to create a topic does not have access to any usable text formats. It's expected that the scopes that allow access to content creation also provide access to at least one text format to be used.");
-    }
-    $format_id = reset($allowed_formats)->id();
-    assert(is_string($format_id), "Expected TextFormats to be saved config with string IDs.");
-
     $renderer = new HtmlRenderer();
     $this->body = [
       'value' => $renderer->renderDocument($input['body']->getDocument()),
-      'format' => $format_id,
+      'format' => $this->getBodyFieldTextFormat($this->actor),
     ];
 
     // Process content tags if provided.

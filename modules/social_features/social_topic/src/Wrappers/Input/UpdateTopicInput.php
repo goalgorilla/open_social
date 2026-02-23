@@ -199,16 +199,11 @@ class UpdateTopicInput extends TopicInputBase {
     // Process body if provided (optional for updates).
     if (isset($input['body'])) {
       assert($input['body'] instanceof ValidatedDocument, "GraphQL schema should ensure body is a ValidatedDocument when present.");
-      $allowed_formats = \filter_formats($this->actor);
-      if ($allowed_formats === []) {
-        throw new \RuntimeException("The application that is trying to update a topic does not have access to any usable text formats. It's expected that the scopes that allow access to content updates also provide access to at least one text format to be used.");
-      }
-      $format_id = reset($allowed_formats)->id();
-      assert(is_string($format_id), "Expected TextFormats to be saved config with string IDs.");
+
       $renderer = new HtmlRenderer();
       $this->body = [
         'value' => $renderer->renderDocument($input['body']->getDocument()),
-        'format' => $format_id,
+        'format' => $this->getBodyFieldTextFormat($this->actor),
       ];
     }
 
