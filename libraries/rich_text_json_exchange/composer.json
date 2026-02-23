@@ -1,0 +1,33 @@
+{
+  "name": "goalgorilla/rich_text_json_exchange",
+  "description": "PHP implementation for the Rich Text JSON Exchange format.",
+  "license": "GPL-2.0-or-later",
+  "type": "library",
+  "require": {
+    "php": "^8.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "OpenSocial\\RichTextJson\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "OpenSocial\\RichTextJson\\Tests\\": "tests/src/"
+    }
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^2.1",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan-deprecation-rules": "^2.0",
+    "phpstan/phpstan-phpunit": "^2.0",
+    "drupal/coder": "^8.3",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
+}
