@@ -3,30 +3,23 @@
  * @file
  * Theme override for displaying a tablesort indicator.
  *
- * Available variables:
- * - style: Either 'asc' or 'desc', indicating the sorting direction.
+ * Outputs both up and down arrows; CSS shows the correct one based on the
+ * parent <th>’s aria-sort (set by Views). The visually-hidden label uses a generic string so it never depends on the "style" variable, which may not reach the template in some render paths and could otherwise disagree with
+ * aria-sort.
  */
 #}
 <span{{ attributes.addClass('tablesort') }}>
-
-  {% if style == 'asc' -%}
-    <svg class="icon-tablesort">
-      <title>{% trans %} Sort ascending {% endtrans %}</title>
-      <use xlink:href="#icon-arrow_drop_down"></use>
+  <span class="tablesort--asc" aria-hidden="true">
+    <svg class="icon-tablesort" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <title>{{ 'Sort ascending'|t }}</title>
+      <path d="M7 14l5-5 5 5z"/>
     </svg>
-    <span class="visually-hidden">
-      {{ 'Sort ascending'|t }}
-    </span>
-
-  {% else -%}
-
-    <svg class="icon-tablesort">
-      <title>{% trans %} Sort descending {% endtrans %}</title>
-      <use xlink:href="#icon-arrow_drop_up"></use>
+  </span>
+  <span class="tablesort--desc" aria-hidden="true">
+    <svg class="icon-tablesort" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <title>{{ 'Sort descending'|t }}</title>
+      <path d="M7 10l5 5 5-5z"/>
     </svg>
-    <span class="visually-hidden">
-      {{ 'Sort descending'|t }}
-    </span>
-  {% endif %}
-
+  </span>
+  <span class="visually-hidden">{{ 'Toggle sort order'|t }}</span>
 </span>

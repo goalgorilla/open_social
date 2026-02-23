@@ -99,7 +99,7 @@ th {
 
     thead {
       th {
-        padding: 0.5rem 0;
+        padding: 0.5rem $table-cell-padding-x;
         font-weight: bold;
         border: none;
       }
@@ -207,9 +207,56 @@ th {
   line-height: 1;
 }
 
+// Both arrows are output; show the one that matches the current sort (aria-sort on <th>).
+.tablesort--asc {
+  display: none;
+}
+.tablesort--desc {
+  display: inline-block;
+}
+.table th[aria-sort="ascending"] .tablesort .tablesort--asc {
+  display: inline-block;
+}
+.table th[aria-sort="ascending"] .tablesort .tablesort--desc {
+  display: none;
+}
+.table th[aria-sort="descending"] .tablesort .tablesort--asc {
+  display: none;
+}
+.table th[aria-sort="descending"] .tablesort .tablesort--desc {
+  display: inline-block;
+}
+
 .icon-tablesort {
   width: 20px;
   height: 20px;
+  vertical-align: middle;
+  fill: currentcolor;
+}
+
+// Show a neutral sort affordance icon only on sortable column headers.
+// The preprocess adds .sortable to <th> when the column has a sort link, so
+// non-sortable headers (e.g. plain links) do not get the icon. The active
+// column hides this ::after via the rule below and shows the real .tablesort SVG.
+.table th.sortable a::after {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  margin-inline-start: 4px;
+  opacity: 0.4;
+
+  // Neutral sort affordance icon — same icon as gin/admin theme uses.
+  // Three staggered horizontal lines (sort icon), stroke-based, no fill.
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12h14M3 6h18M3 18h10' fill='none' stroke='%23000' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 14px 14px;
+}
+
+// On the active sort column the real .tablesort SVG renders; hide this ::after.
+.table th.sortable[aria-sort] a::after {
+  display: none;
 }
 
 // Table drag
@@ -302,7 +349,7 @@ form:not(.layout-builder-configure-block) .select-all.checkbox {
 }
 
 .vbo-table.table td {
-  vertical-align: inherit;
+  vertical-align: middle;
 }
 
 .vbo-table .btn-group--operations {

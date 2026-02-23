@@ -29,4 +29,11 @@
     fill: $brand-primary;
   }
 
+  // Override the neutral sort icon colour to match the brand primary (#29abe2).
+  // SCSS variables cannot be interpolated inside data URIs so the hex is inline.
+  // Uses the same three-line sort icon as the gin admin theme.
+  th a::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12h14M3 6h18M3 18h10' fill='none' stroke='%2329abe2' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+
 }

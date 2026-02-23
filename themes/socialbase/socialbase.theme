@@ -148,6 +148,35 @@ function _socialbase_node_get_like_count($type, $id): int {
 }
 
 /**
+ * Implements hook_preprocess_views_view_table().
+ *
+ * Ensures the tablesort indicator receives the correct #style (next sort
+ * direction) so the arrow reflects the current sort: up = ASC, down = DESC.
+ * Theme preprocess runs after Views, so this fixes cases where #style was
+ * missing or wrong (e.g. due to order of execution or caching).
+ */
+function socialbase_preprocess_views_view_table(&$variables): void {
+  $view = $variables['view'];
+  if (!isset($view->style_plugin) || !$view->style_plugin->options) {
+    return;
+  }
+  $handler = $view->style_plugin;
+  $active = $handler->active ?? '';
+  $order = strtolower(!empty($handler->order) ? $handler->order : 'asc');
+  $next_style = ($order === 'asc') ? 'desc' : 'asc';
+  if ($active !== '' && !empty($variables['header'][$active]['sort_indicator'])) {
+    $variables['header'][$active]['sort_indicator']['#style'] = $next_style;
+  }
+
+  // Mark sortable headers so CSS can target the neutral sort icon only there.
+  foreach (array_keys($variables['header']) as $field) {
+    if (!empty($variables['header'][$field]['url']) && isset($variables['header'][$field]['attributes'])) {
+      $variables['header'][$field]['attributes']->addClass('sortable');
+    }
+  }
+}
+
+/**
  * Implements hook_theme().
  */
 function socialbase_theme($existing, $type, $theme, $path) {

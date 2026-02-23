@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * Theme override for a views field named "status".
+ *
+ * Renders user account status (Active/Blocked) as a styled badge pill.
+ *
+ * Available variables:
+ * - view: The view this field belongs to.
+ * - field: The field handler.
+ * - row: The raw result row.
+ * - output: The processed output (e.g. "Active" or "Blocked").
+ *
+ * @see template_preprocess_views_view_field()
+ */
+#}
+<span class="badge badge-default badge--pill">{{ output }}</span>
