@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_group\Unit;
 
+use Drupal\Core\Cache\Context\CacheContextsManager;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -17,6 +19,22 @@ use Drupal\Tests\UnitTestCase;
  * @group social_group
  */
 final class EntityFieldAccessHooksTest extends UnitTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+
+    // AccessResult::allowed() with cache contexts calls Cache::mergeContexts(),
+    // which requires the cache_contexts_manager service.
+    $cache_contexts_manager = $this->createMock(CacheContextsManager::class);
+    $cache_contexts_manager->method('assertValidTokens')->willReturn(TRUE);
+
+    $container = new ContainerBuilder();
+    $container->set('cache_contexts_manager', $cache_contexts_manager);
+    \Drupal::setContainer($container);
+  }
 
   /**
    * Tests that non-view operation returns neutral.
