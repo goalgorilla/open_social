@@ -137,3 +137,57 @@ type EventType implements Node {
   """
   label: String
 }
+
+"""
+Input for creating a new event.
+"""
+input CreateEventInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  The type of the event.
+  The ID of the event type as provided by Query.eventTypes.
+  """
+  type: ID!
+  """
+  The display title of the event.
+  """
+  title: String!
+  """
+  The visibility of the event determines what users can view this event.
+  """
+  visibility: ContentVisibility!
+  """
+  The unix timestamp start date of the event.
+  """
+  startDate: Timestamp!
+  """
+  The unix timestamp end date of the event.
+  """
+  endDate: Timestamp!
+  """
+  The location of the event as plain text.
+  """
+  location: String
+}
+
+"""
+Payload returned after creating an event.
+"""
+type CreateEventPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  Errors that were encountered while performing the mutation.
+  NULL or an array of violations.
+  """
+  errors: [Violation!]
+  """
+  The created event.
+  """
+  event: Event
+}

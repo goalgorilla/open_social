@@ -54,3 +54,15 @@ extend type User {
   """
   eventsCreated: Int!
 }
+
+extend type Mutation {
+  """
+  Create a new event.
+  """
+  createEvent(
+    """
+    Input data for creating the event.
+    """
+    input: CreateEventInput!
+  ): CreateEventPayload! @allowBot(requiredScopes: ["event:write"])
+}
