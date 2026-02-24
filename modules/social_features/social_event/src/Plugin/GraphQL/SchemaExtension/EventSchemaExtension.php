@@ -4,7 +4,7 @@ namespace Drupal\social_event\Plugin\GraphQL\SchemaExtension;
 
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
-use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
+use Drupal\social_graphql\Plugin\GraphQL\SchemaExtension\SchemaExtensionPluginBase;
 
 /**
  * Adds event data to the Open Social GraphQL API.
@@ -16,7 +16,7 @@ use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
  *   schema = "open_social"
  * )
  */
-class EventSchemaExtension extends SdlSchemaExtensionPluginBase {
+class EventSchemaExtension extends SchemaExtensionPluginBase {
 
   /**
    * {@inheritdoc}
@@ -26,6 +26,23 @@ class EventSchemaExtension extends SdlSchemaExtensionPluginBase {
 
     $this->addQueryFields($registry, $builder);
     $this->addEventFields($registry, $builder);
+
+    $this->registerMutationResolver($registry, $builder, 'createEvent');
+
+    $registry->addFieldResolver('CreateEventPayload', 'clientMutationId',
+      $builder->produce('payload_client_mutation_id')
+        ->map('payload', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('CreateEventPayload', 'errors',
+      $builder->produce('payload_violations')
+        ->map('payload', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('CreateEventPayload', 'event',
+      $builder->produce('payload_event')
+        ->map('payload', $builder->fromParent())
+    );
   }
 
   /**
