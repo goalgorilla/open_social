@@ -31,13 +31,4 @@ class FlexibleGroupSchemaExtension extends SchemaExtensionPluginBase {
     );
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getBaseDefinition() {
-    // Skipping social_posts_schema_extension.base.graphqls, as we have nothing
-    // to write there.
-    return NULL;
-  }
-
 }

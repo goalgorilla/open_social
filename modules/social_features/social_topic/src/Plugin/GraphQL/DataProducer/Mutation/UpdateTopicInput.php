@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
+use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\social_topic\Wrappers\Input\UpdateTopicInput as UpdateTopicInputWrapper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -74,6 +75,8 @@ class UpdateTopicInput extends DataProducerPluginBase implements ContainerFactor
    *   The Drupal entity repository.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The Drupal entity type manager.
+   * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $groupInputValidationService
+   *   The group input validation service.
    */
   public function __construct(
     array $configuration,
@@ -82,6 +85,7 @@ class UpdateTopicInput extends DataProducerPluginBase implements ContainerFactor
     protected AccountProxyInterface $currentUser,
     protected EntityRepositoryInterface $entityRepository,
     protected EntityTypeManagerInterface $entityTypeManager,
+    protected ?GroupInputValidationService $groupInputValidationService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -95,6 +99,10 @@ class UpdateTopicInput extends DataProducerPluginBase implements ContainerFactor
     $plugin_id,
     $plugin_definition,
   ): self {
+    $group_validation_service = NULL;
+    if ($container->get('module_handler')->moduleExists('social_group_flexible_group')) {
+      $group_validation_service = $container->get('social_group_flexible_group.group_input_validation');
+    }
     return new static(
       $configuration,
       $plugin_id,
@@ -102,6 +110,7 @@ class UpdateTopicInput extends DataProducerPluginBase implements ContainerFactor
       $container->get('current_user'),
       $container->get('entity.repository'),
       $container->get('entity_type.manager'),
+      $group_validation_service,
     );
   }
 

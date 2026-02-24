@@ -83,6 +83,33 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
     'image_widget_crop',
     'image_effects',
     'file_mdm',
+    // Required for flexible_group permissions in oauth2_scopes.yml.
+    'social_group',
+    'social_group_flexible_group',
+    'social_organization',
+    'social_group_request',
+    'grequest',
+    'activity_logger',
+    'activity_creator',
+    'message',
+    'flag',
+    'flag_count',
+    'better_exposed_filters',
+    'field_group',
+    'gnode',
+    'dynamic_entity_reference',
+    'state_machine',
+    'paragraphs',
+    'entity_reference_revisions',
+    'telephone',
+    'smart_trim',
+    'views_bulk_operations',
+    'layout_builder',
+    'layout_discovery',
+    'social_group_invite',
+    'ginvite',
+    'profile',
+    'social_profile',
 
     // Required for our body field.
     'editor',
@@ -103,9 +130,20 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('consumer');
     $this->installEntitySchema('oauth2_token');
     $this->installEntitySchema('oauth2_scope');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_content');
+    $this->installEntitySchema('activity');
+    $this->installEntitySchema('message');
+    $this->installEntitySchema('flagging');
+    $this->installEntitySchema('flag');
+    $this->installEntitySchema('profile');
+    $this->installEntitySchema('paragraph');
+    $this->installEntitySchema('block_content');
 
     $this->installSchema('comment', 'comment_entity_statistics');
+    $this->installSchema('layout_builder', ['inline_block_usage']);
     $this->installSchema('file', 'file_usage');
+    $this->installSchema('flag', ['flag_counts']);
 
     $this->installConfig([
       'taxonomy',
@@ -122,6 +160,22 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
       'user',
       'taxonomy_access_fix',
       'social_editor',
+      'group',
+      'gnode',
+      'grequest',
+      'activity_creator',
+      'activity_logger',
+      'social_group',
+      'profile',
+      'social_profile',
+      'layout_builder',
+      'layout_discovery',
+      'social_group_invite',
+      'ginvite',
+      'social_group_flexible_group',
+      'social_group_request',
+      'social_organization',
+      'flag',
     ]);
 
     // Set up OAuth keys for testing.
@@ -131,9 +185,6 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
     $this->config('simple_oauth.settings')
       ->set('scope_provider', 'static')
       ->save();
-
-    // Clear cache to ensure OAuth2 scopes from YAML files are loaded.
-    \Drupal::service('cache.discovery')->deleteAll();
   }
 
   /**

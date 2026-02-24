@@ -162,33 +162,8 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     // before the entity is persisted.
     $violations = $node->validate();
     if ($violations->count() > 0) {
-      // Convert Drupal constraint violations to GraphQL violations.
-      foreach ($violations as $violation) {
-        // Create a violation ID based on the constraint type and field.
-        $property_path = $violation->getPropertyPath();
-        $constraint = $violation->getConstraint();
-
-        // Skip if constraint is null (should not happen but type-safe).
-        if ($constraint === NULL) {
-          continue;
-        }
-
-        $constraint_class = get_class($constraint);
-        $last_separator_pos = strrpos($constraint_class, '\\');
-        $constraint_type = $last_separator_pos !== FALSE
-          ? substr($constraint_class, $last_separator_pos + 1)
-          : $constraint_class;
-
-        // Create a machine-readable violation ID.
-        // Example: "title" + "LengthConstraint" => "TITLE_LENGTH_CONSTRAINT".
-        $violation_id = strtoupper($property_path . '_' . $constraint_type);
-        $violation_id = preg_replace('/[^A-Z0-9_]/', '_', $violation_id);
-
-        // Add violation if ID is valid.
-        if (is_string($violation_id)) {
-          $payload->addViolation(new Violation($violation_id));
-        }
-      }
+      $graphql_violations = $input->convertConstraintViolations($violations);
+      $payload->addViolations($graphql_violations);
       return $payload;
     }
 

@@ -9,7 +9,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
@@ -22,25 +24,6 @@ use OpenSocial\RichTextJson\Renderer\HtmlRenderer;
  */
 class CreateTopicInput extends TopicInputBase {
   use VisibilityTrait;
-
-  /**
-   * The entity type manager.
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
-   * The entity repository.
-   */
-  protected EntityRepositoryInterface $entityRepository;
-
-  /**
-   * The current user (actor).
-   *
-   * The actor is the user performing the mutation. This may differ from the
-   * author in future iterations where topics can be created on behalf of
-   * another user.
-   */
-  private AccountProxyInterface $currentUser;
 
   /**
    * The actor (current user performing the mutation).
@@ -93,23 +76,38 @@ class CreateTopicInput extends TopicInputBase {
   protected array $contentTags = [];
 
   /**
+   * Validated primary group data.
+   *
+   * @var ?GroupInterface
+   */
+  protected ?GroupInterface $primaryGroup = NULL;
+
+  /**
+   * Validated crossposted group data.
+   *
+   * @var ?GroupInterface[]
+   */
+  protected ?array $crosspostedGroups = NULL;
+
+  /**
    * Create a new Create Topic Input instance.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entityRepository
    *   The entity repository.
-   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user for the request.
+   * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $groupInputValidationService
+   *   The group input validation service.
    */
   public function __construct(
-    EntityTypeManagerInterface $entity_type_manager,
-    EntityRepositoryInterface $entity_repository,
-    AccountProxyInterface $current_user,
+    EntityTypeManagerInterface $entityTypeManager,
+    EntityRepositoryInterface $entityRepository,
+    private readonly AccountProxyInterface $currentUser,
+    ?GroupInputValidationService $groupInputValidationService = NULL,
   ) {
-    $this->entityTypeManager = $entity_type_manager;
-    $this->entityRepository = $entity_repository;
-    $this->currentUser = $current_user;
+    parent::__construct($entityTypeManager, $entityRepository, $groupInputValidationService);
   }
 
   /**
@@ -186,6 +184,15 @@ class CreateTopicInput extends TopicInputBase {
       'value' => $renderer->renderDocument($input['body']->getDocument()),
       'format' => $this->getBodyFieldTextFormat($this->actor),
     ];
+
+    // Process groups if provided.
+    assert(is_string($this->visibility));
+    $drupal_visibility = $this->convertVisibilityUserInputToConstant($this->visibility);
+    $groups_result = $this->processGroups($input, $this->actor, $drupal_visibility);
+    if ($groups_result !== NULL && $groups_result->isValid()) {
+      $this->primaryGroup = $groups_result->getPrimaryGroup();
+      $this->crosspostedGroups = $groups_result->getCrosspostedGroups();
+    }
 
     // Process content tags if provided.
     $content_tags_result = $this->processContentTags($input);
@@ -288,6 +295,26 @@ class CreateTopicInput extends TopicInputBase {
    */
   public function getContentTags(): array {
     return $this->contentTags;
+  }
+
+  /**
+   * Get primary group.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The primary group or NULL.
+   */
+  public function getPrimaryGroup(): ?GroupInterface {
+    return $this->primaryGroup ?? NULL;
+  }
+
+  /**
+   * Get cross-posted groups.
+   *
+   * @return \Drupal\group\Entity\GroupInterface[]
+   *   Array of cross-posted groups.
+   */
+  public function getCrosspostedGroups(): array {
+    return $this->crosspostedGroups ?? [];
   }
 
 }

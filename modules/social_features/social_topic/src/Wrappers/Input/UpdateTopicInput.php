@@ -94,10 +94,12 @@ class UpdateTopicInput extends TopicInputBase {
    *   The current user for the request.
    */
   public function __construct(
-    protected EntityTypeManagerInterface $entityTypeManager,
-    protected EntityRepositoryInterface $entityRepository,
+    EntityTypeManagerInterface $entityTypeManager,
+    EntityRepositoryInterface $entityRepository,
     protected AccountProxyInterface $currentUser,
-  ) {}
+  ) {
+    parent::__construct($entityTypeManager, $entityRepository);
+  }
 
   /**
    * {@inheritdoc}

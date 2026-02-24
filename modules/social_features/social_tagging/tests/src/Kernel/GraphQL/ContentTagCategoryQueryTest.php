@@ -63,10 +63,60 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
     'options',
     'comment',
     'menu_ui',
+    'menu_link_content',
+    'path',
+    'path_alias',
+    'token',
+    'pathauto',
     'taxonomy_access_fix',
     'social_user',
+    'role_delegation',
+    // Modules required by social_event configurations.
+    'address',
+    'comment',
+    'datetime',
+    'datetime_range_timezone',
+    'key',
+    'meeting_api',
+    'meeting_api_bbb',
+    'meeting_api_manual',
+    'entity_access_by_field',
+    'social_node',
     'social_comment',
     'social_topic',
+    'social_event',
+    'group',
+    'group_core_comments',
+    'views',
+    'block',
+    'block_content',
+    // Required for flexible_group permissions in oauth2_scopes.yml.
+    'social_group',
+    'social_group_flexible_group',
+    'social_organization',
+    'social_group_request',
+    'grequest',
+    'activity_logger',
+    'activity_creator',
+    'message',
+    'flag',
+    'flag_count',
+    'better_exposed_filters',
+    'field_group',
+    'gnode',
+    'dynamic_entity_reference',
+    'state_machine',
+    'paragraphs',
+    'entity_reference_revisions',
+    'telephone',
+    'smart_trim',
+    'views_bulk_operations',
+    'layout_builder',
+    'layout_discovery',
+    'social_group_invite',
+    'ginvite',
+    'profile',
+    'social_profile',
 
     // Required for our body field.
     'editor',
@@ -83,27 +133,65 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
 
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('user');
-    $this->installEntitySchema('comment');
-    $this->installEntitySchema('file');
-    $this->installEntitySchema('crop');
+    $this->installEntitySchema('meeting_api_meeting');
+    $this->installEntitySchema('consumer');
     $this->installEntitySchema('oauth2_token');
     $this->installEntitySchema('oauth2_scope');
-    $this->installEntitySchema('consumer');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_content');
+    $this->installEntitySchema('activity');
+    $this->installEntitySchema('message');
+    $this->installEntitySchema('flagging');
+    $this->installEntitySchema('flag');
+    $this->installEntitySchema('profile');
+    $this->installEntitySchema('paragraph');
+    $this->installEntitySchema('block_content');
+    $this->installEntitySchema('path_alias');
     $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installSchema('layout_builder', ['inline_block_usage']);
     $this->installSchema('file', ['file_usage']);
+    $this->installSchema('flag', ['flag_counts']);
 
     $this->installConfig([
-      'user',
-      'node',
       'taxonomy',
-      'social_node',
       'social_tagging',
+      'node',
+      'social_core',
+      'social_node',
+      'social_event',
+      'social_topic',
+      'filter',
+      'comment',
       'simple_oauth',
       'simple_oauth_static_scope',
-      'comment',
+      'user',
       'taxonomy_access_fix',
       'social_editor',
+      'group',
+      'gnode',
+      'grequest',
+      'activity_creator',
+      'activity_logger',
+      'social_group',
+      'profile',
+      'social_profile',
+      'layout_builder',
+      'layout_discovery',
+      'social_group_invite',
+      'ginvite',
+      'social_group_flexible_group',
+      'social_group_request',
+      'social_organization',
+      'flag',
     ]);
+
+    // Set up OAuth keys for testing.
+    $this->setUpKeys();
+
+    // Configure simple_oauth to use static scope provider.
+    $this->config('simple_oauth.settings')
+      ->set('scope_provider', 'static')
+      ->save();
 
     if (!NodeType::load('topic')) {
       $node_type = NodeType::create([

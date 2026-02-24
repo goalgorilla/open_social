@@ -6,10 +6,9 @@ namespace Drupal\social_topic\Plugin\GraphQL\DataProducer\Mutation;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
-use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_group\SetGroupsForNodeService;
 use Drupal\social_topic\Wrappers\Input\CreateTopicInput;
 use Drupal\social_topic\Wrappers\Payload\CreateTopicPayload;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -35,16 +34,6 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
   use VisibilityTrait;
 
   /**
-   * The entity type manager.
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
-   * The current user.
-   */
-  protected AccountInterface $currentUser;
-
-  /**
    * CreateTopic constructor.
    *
    * @param array $configuration
@@ -53,22 +42,19 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user.
+   * @param \Drupal\social_group\SetGroupsForNodeService|null $setGroupsForNodeService
+   *   The set groups for node service.
    */
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
-    EntityTypeManagerInterface $entity_type_manager,
-    AccountInterface $current_user,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected ?SetGroupsForNodeService $setGroupsForNodeService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->entityTypeManager = $entity_type_manager;
-    $this->currentUser = $current_user;
   }
 
   /**
@@ -80,12 +66,17 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     $plugin_id,
     $plugin_definition,
   ): self {
+    $set_groups_for_node_service = NULL;
+    if ($container->get('module_handler')->moduleExists('social_group')) {
+      $set_groups_for_node_service = $container->get('social_group.set_groups_for_node_service');
+    }
+
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('current_user'),
+      $set_groups_for_node_service,
     );
   }
 
@@ -146,37 +137,58 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     // before the entity is persisted.
     $violations = $node->validate();
     if ($violations->count() > 0) {
-      // Convert Drupal constraint violations to GraphQL violations.
-      foreach ($violations as $violation) {
-        // Create a violation ID based on the constraint type and field.
-        $property_path = $violation->getPropertyPath();
-        $constraint = $violation->getConstraint();
-
-        // Skip if constraint is null (should not happen but type-safe).
-        if ($constraint === NULL) {
-          continue;
-        }
-
-        $constraint_class = get_class($constraint);
-        $last_separator_pos = strrpos($constraint_class, '\\');
-        $constraint_type = $last_separator_pos !== FALSE
-          ? substr($constraint_class, $last_separator_pos + 1)
-          : $constraint_class;
-
-        // Create a machine-readable violation ID.
-        // Example: "title" + "LengthConstraint" => "TITLE_LENGTH_CONSTRAINT".
-        $violation_id = strtoupper($property_path . '_' . $constraint_type);
-        $violation_id = preg_replace('/[^A-Z0-9_]/', '_', $violation_id);
-
-        // Add violation if ID is valid.
-        if (is_string($violation_id)) {
-          $payload->addViolation(new Violation($violation_id));
-        }
-      }
+      $graphql_violations = $input->convertConstraintViolations($violations);
+      $payload->addViolations($graphql_violations);
       return $payload;
     }
 
     $node->save();
+
+    // Set groups after saving the node, as groups require a saved entity.
+    // The crossposted only can be sent when exist primary-group,
+    // because of that I checked only primary-group.
+    if ($input->getPrimaryGroup() !== NULL) {
+      $primary_group = $input->getPrimaryGroup();
+      $crossposted_groups = $input->getCrosspostedGroups();
+
+      // The SetGroupsForNodeService::setGroupsForNode is expecting group-id;.
+      $groups_to_add = [];
+      $groups_to_add[$primary_group->id()] = $primary_group->id();
+      foreach ($crossposted_groups as $group) {
+        $groups_to_add[$group->id()] = $group->id();
+      }
+
+      // If the social_group module is disabled and a group was provided,
+      // the input validation already be added a violation,
+      // so that is to make PHPStan happy.
+      assert($this->setGroupsForNodeService instanceof SetGroupsForNodeService);
+      $this->setGroupsForNodeService->setGroupsForNode(
+        $node,
+        [],
+        $groups_to_add,
+        [],
+        TRUE
+      );
+
+      // Add group IDs to the groups field before validation.
+      $groups_field_values = [];
+      $groups_field_values[] = ['target_id' => $primary_group->id()];
+      foreach ($crossposted_groups as $group) {
+        $groups_field_values[] = ['target_id' => $group->id()];
+      }
+      $node->set('groups', $groups_field_values);
+
+      // Validate after adding groups to ensure group-related constraints
+      // are properly validated.
+      $violations = $node->validate();
+      if ($violations->count() > 0) {
+        $graphql_violations = $input->convertConstraintViolations($violations);
+        $payload->addViolations($graphql_violations);
+        return $payload;
+      }
+      $node->save();
+
+    }
     $payload->setTopic($node);
 
     return $payload;

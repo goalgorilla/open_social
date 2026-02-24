@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\social_topic\Kernel\GraphQL;
 
 use Drupal\Core\Render\RenderContext;
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Tests\iata_graphql_user\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\iata_graphql_user\Kernel\OAuthTestTrait;
@@ -147,6 +150,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('activity');
+    $this->installEntitySchema('message');
     $this->installEntitySchema('menu_link_content');
     $this->installEntitySchema('paragraph');
     $this->installEntitySchema('block_content');
@@ -209,10 +213,18 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
         'access content',
         'bypass node access',
         'administer nodes',
+        'access cross-group posting',
       ],
       // Don't check permissions.
       FALSE
     );
+
+    // Enable cross-posting for tests.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', TRUE)
+      ->set('cross_posting.content_types', ['topic'])
+      ->set('cross_posting.group_types', ['flexible_group'])
+      ->save();
   }
 
   /**
@@ -1065,6 +1077,611 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
       $this->defaultMutationCacheMetaData()
         ->addCacheContexts(['languages:language_interface'])
     );
+  }
+
+  /**
+   * Test creating a topic with a single group successfully.
+   */
+  public function testCreateTopicWithSingleGroupSuccess(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Create a group with allowed visibility options.
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'community'],
+    ]);
+    $group->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic in Group',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Topic in Group',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:1'])
+    );
+
+    // Verify group relationship was created.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $topic = $node_storage->load(1);
+    assert($topic instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($topic);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group->id(), $group_ids, 'Topic should be linked to the group.');
+  }
+
+  /**
+   * Test creating a topic with cross-posting successfully.
+   */
+  public function testCreateTopicWithCrossPostingSuccess(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Create groups with shared visibility options.
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public', 'community'],
+    ]);
+    $group1->save();
+
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group2->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Cross-posted Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Cross-posted Topic',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:1'])
+    );
+
+    // Verify group relationships were created.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $topic = $node_storage->load(1);
+    assert($topic instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($topic);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group1->id(), $group_ids, 'Topic should be linked to group 1.');
+    $this->assertContains($group2->id(), $group_ids, 'Topic should be linked to group 2.');
+  }
+
+  /**
+   * Test validation error when primary group doesn't exist.
+   */
+  public function testCreateTopicWithInvalidPrimaryGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $fakeGroupUuid,
+            'crosspostedGroups' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['GROUP_NOT_FOUND'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when cross-posted group doesn't exist.
+   */
+  public function testCreateTopicWithInvalidCrossPostedGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group->save();
+
+    $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [$fakeGroupUuid],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CROSSPOSTED_GROUP_NOT_FOUND:' . $fakeGroupUuid],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when same group is in primary and cross-posted.
+   */
+  public function testCreateTopicWithDuplicateGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [$group->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['GROUP_DUPLICATE'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when too many cross-posted groups.
+   */
+  public function testCreateTopicTooManyCrossPostedGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $primaryGroup = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Primary Group',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $primaryGroup->save();
+
+    // Create 51 groups (exceeds MAX_CROSSPOSTED_GROUPS = 50).
+    $crosspostedGroups = [];
+    for ($i = 0; $i < 51; $i++) {
+      $group = Group::create([
+        'type' => 'flexible_group',
+        'label' => 'Cross-posted Group ' . $i,
+        'field_group_allowed_visibility' => ['public'],
+      ]);
+      $group->save();
+      $crosspostedGroups[] = $group->uuid();
+    }
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $primaryGroup->uuid(),
+            'crosspostedGroups' => $crosspostedGroups,
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['LIMIT_EXCEEDED_FOR_CROSSPOSTED_GROUPS'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when visibility is not allowed in single group.
+   */
+  public function testCreateTopicVisibilityNotAllowedInSingleGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Group allows only PUBLIC and GROUP_MEMBERS, not COMMUNITY.
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'COMMUNITY',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['VISIBILITY_NOT_ALLOWED_IN_GROUP'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when visibility is not in intersection.
+   */
+  public function testCreateTopicVisibilityNotAllowedInCrossPosting(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Group 1 allows PUBLIC and COMMUNITY.
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public', 'community'],
+    ]);
+    $group1->save();
+
+    // Group 2 allows PUBLIC and GROUP_MEMBERS.
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group2->save();
+
+    // Intersection: only PUBLIC is allowed. COMMUNITY should fail.
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'COMMUNITY',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['VISIBILITY_NOT_ALLOWED_IN_GROUP'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when cross-posting is disabled.
+   */
+  public function testCreateTopicCrossPostingDisabled(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    // Disable cross-posting for this test.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', FALSE)
+      ->save();
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group1->save();
+
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group2->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CROSS_POSTING_IS_DISABLED'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // Re-enable cross-posting for other tests.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', TRUE)
+      ->save();
+  }
+
+  /**
+   * Test that topic created without groups has no group relationships.
+   */
+  public function testCreateTopicWithoutGroupsHasNoRelationships(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $query = <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            title
+          }
+        }
+      }
+      GQL;
+
+    $variables = [
+      'input' => [
+        'type' => $topicType->uuid(),
+        'title' => 'Topic Without Groups',
+        'visibility' => 'PUBLIC',
+        'body' => self::minimalRichTextBody(),
+      ],
+    ];
+
+    $context = new RenderContext();
+    $renderer = \Drupal::service('renderer');
+    $result = $renderer->executeInRenderContext(
+      $context,
+      function () use ($query, $variables) {
+        return $this->server->executeOperation(
+          OperationParams::create([
+            'query' => $query,
+            'variables' => $variables,
+          ])
+        );
+      }
+    );
+
+    $this->assertEmpty($result->errors, 'No GraphQL errors expected');
+    $data = $result->toArray();
+    $this->assertArrayHasKey('data', $data, 'No result data.');
+    $this->assertEmpty($data['data']['createTopic']['errors']);
+    $this->assertNotNull($data['data']['createTopic']['topic']);
   }
 
 }

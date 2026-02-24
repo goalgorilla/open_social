@@ -9,6 +9,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_graphql\Wrappers\InputBase;
+use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
+use Drupal\social_group_flexible_group\ValueObject\GroupInputValidationResult;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Drupal\social_graphql\Exception\ShouldNotHappenException;
 
 /**
@@ -27,14 +30,21 @@ abstract class TopicInputBase extends InputBase {
   const MAX_CONTENT_TAGS = 50;
 
   /**
-   * The entity type manager.
+   * Constructs a TopicInputBase.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entityRepository
+   *   The entity repository.
+   * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $groupInputValidationService
+   *   The group input validation service.
    */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
-   * The entity repository.
-   */
-  protected EntityRepositoryInterface $entityRepository;
+  public function __construct(
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected EntityRepositoryInterface $entityRepository,
+    protected ?GroupInputValidationService $groupInputValidationService = NULL,
+  ) {
+  }
 
   /**
    * Get the text format that should be used in the body field.
@@ -245,6 +255,92 @@ abstract class TopicInputBase extends InputBase {
     }
 
     return $terms;
+  }
+
+  /**
+   * Process groups input and validate all group-related rules.
+   *
+   * @param array $input
+   *   The input array.
+   * @param \Drupal\Core\Session\AccountInterface $actor
+   *   The actor account.
+   * @param string|null $visibility
+   *   The visibility value.
+   *
+   * @return \Drupal\social_group_flexible_group\ValueObject\GroupInputValidationResult|null
+   *   The validation result, or NULL if groups were not provided.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function processGroups(array $input, AccountInterface $actor, ?string $visibility = NULL): ?GroupInputValidationResult {
+    if (!array_key_exists('groups', $input) || $input['groups'] === NULL) {
+      return NULL;
+    }
+
+    if ($this->groupInputValidationService === NULL) {
+      $this->violations[] = new Violation('GROUPS_NOT_SUPPORTED');
+      return NULL;
+    }
+
+    $validation_result = $this->groupInputValidationService->validateGroupsForContent(
+      $input['groups'],
+      'topic',
+      $visibility,
+      $actor,
+      'group_node:topic'
+    );
+
+    // Convert error strings to Violation objects.
+    if (!$validation_result->isValid()) {
+      $this->violations = array_merge(
+        $this->violations,
+        array_map(fn($error_code) => new Violation((string) $error_code), $validation_result->getErrors())
+      );
+    }
+
+    return $validation_result;
+  }
+
+  /**
+   * Converts constraint violations to GraphQL violations.
+   *
+   * @param \Symfony\Component\Validator\ConstraintViolationListInterface $violations
+   *   The constraint violations.
+   *
+   * @return \Drupal\social_graphql\GraphQL\Violation[]
+   *   Array of GraphQL violation objects.
+   */
+  public function convertConstraintViolations(ConstraintViolationListInterface $violations): array {
+    $graphql_violations = [];
+
+    foreach ($violations as $violation) {
+      // Create a violation ID based on the constraint type and field.
+      $property_path = $violation->getPropertyPath();
+      $constraint = $violation->getConstraint();
+
+      // Skip if constraint is null (Make PHPStan happy).
+      if ($constraint === NULL) {
+        continue;
+      }
+
+      $constraint_class = get_class($constraint);
+      $last_separator_pos = strrpos($constraint_class, '\\');
+      $constraint_type = $last_separator_pos !== FALSE
+        ? substr($constraint_class, $last_separator_pos + 1)
+        : $constraint_class;
+
+      // Create a machine-readable violation ID.
+      $violation_id = strtoupper($property_path . '_' . $constraint_type);
+      $violation_id = preg_replace('/[^A-Z0-9_]/', '_', $violation_id);
+
+      // Add violation if ID is valid.
+      if (is_string($violation_id)) {
+        $graphql_violations[] = new Violation($violation_id);
+      }
+    }
+
+    return $graphql_violations;
   }
 
 }

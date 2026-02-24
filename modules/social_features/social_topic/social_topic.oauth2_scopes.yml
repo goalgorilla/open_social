@@ -14,8 +14,16 @@
   parent: topic
   description: 'Provides the ability to create and update topics on the platform.'
   umbrella: false
-  granularity: permission
-  permission: 'create topic content'
+  granularity: permissions
+  permissions:
+    - scope: drupal
+      permission: 'create topic content'
+    - scope: outsider
+      identifier: flexible_group
+      permission: 'create group_node:topic entity'
+    - scope: outsider
+      identifier: flexible_group
+      permission: 'create group_node:topic relationship'
   grant_types:
     authorization_code:
       status: true

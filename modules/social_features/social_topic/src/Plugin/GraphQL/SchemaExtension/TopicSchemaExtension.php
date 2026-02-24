@@ -2,6 +2,7 @@
 
 namespace Drupal\social_topic\Plugin\GraphQL\SchemaExtension;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\social_graphql\Plugin\GraphQL\SchemaExtension\SchemaExtensionPluginBase;
@@ -226,6 +227,46 @@ class TopicSchemaExtension extends SchemaExtensionPluginBase {
       $builder->produce('social_topics_created')
         ->map('entity', $builder->fromParent())
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExtensionDefinition(): ?string {
+    // First, try to load the default extension
+    // definition using parent method.
+    try {
+      $definition = parent::getExtensionDefinition() ?? "";
+    }
+    catch (InvalidPluginDefinitionException $e) {
+      // Expected fallback when base extension definition is absent.
+      $definition = "";
+    }
+
+    // Then, load additional extension schemas.
+    // These files extend the base Topic type with groups field.
+    // Only load extensions if their corresponding modules are enabled.
+    $extension_modules = [
+      'social_group_flexible_group' => 'social_topic_flexible_group_schema_extension.extension.graphqls',
+    ];
+
+    $topic_module = $this->moduleHandler->getModule('social_topic');
+    foreach ($extension_modules as $module_name => $filename) {
+      // Check if the module is enabled before loading its extension.
+      if (!$this->moduleHandler->moduleExists($module_name)) {
+        continue;
+      }
+
+      $file = $topic_module->getPath() . '/graphql/' . $filename;
+      if (file_exists($file)) {
+        $contents = file_get_contents($file);
+        if ($contents) {
+          $definition .= "\n" . $contents;
+        }
+      }
+    }
+
+    return !empty(trim($definition)) ? $definition : NULL;
   }
 
 }

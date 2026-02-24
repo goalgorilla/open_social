@@ -1,0 +1,15 @@
+"""
+Input to set the groups of a piece of content.
+"""
+input ContentInGroupInput {
+  """
+  The group that owns the content.
+  """
+  group: ID!
+  """
+  That field only be used if the crossposted feature is enable at flexible_group configuration.
+  The other groups that may view the content. Must not include the group that owns the content. Only applicable when the crossposted feature is enabled for HUBs.
+  Should not list the group that owns the content.
+  """
+  crosspostedGroups: [ID!]!
+}

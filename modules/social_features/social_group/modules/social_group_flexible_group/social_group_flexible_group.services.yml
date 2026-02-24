@@ -57,3 +57,9 @@ services:
     arguments:
       - '@keyvalue.expirable'
       - '@datetime.time'
+
+  social_group_flexible_group.group_input_validation:
+    class: Drupal\social_group_flexible_group\Service\GroupInputValidationService
+    arguments:
+      - '@entity_type.manager'
+      - '@config.factory'
