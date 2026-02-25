@@ -38,6 +38,21 @@
       status: true
       description: 'Allow the application to read any event information on the platform.'
 
+# @todo Remove after multiple permissions are implemented.
+"internal:event:update":
+  parent: event:write
+  description: 'Temporary scope should be removed once multiple permissions are implemented.'
+  umbrella: false
+  granularity: permission
+  permission: 'edit any event content'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to update events on the platform.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to update events on the platform.'
+
 "internal:event:social_tagging":
   parent: event:read
   description: 'Temporary scope should be removed once multiple permissions are implemented.'
