@@ -65,4 +65,13 @@ extend type Mutation {
     """
     input: CreateEventInput!
   ): CreateEventPayload! @allowBot(requiredScopes: ["event:write"])
+  """
+  Update an existing event.
+  """
+  updateEvent(
+    """
+    Input data for updating the event.
+    """
+    input: UpdateEventInput!
+  ): UpdateEventPayload! @allowBot(requiredScopes: ["event:write"])
 }

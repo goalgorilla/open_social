@@ -191,3 +191,62 @@ type CreateEventPayload {
   """
   event: Event
 }
+
+input UpdateEventInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  The event being edited.
+  """
+  id: ID!
+  """
+  The type of the event.
+  The ID of the event type as provided by Query.eventTypes.
+  If omitted, the type remains unchanged.
+  """
+  type: ID
+  """
+  The display title of the event.
+  If omitted, the title remains unchanged.
+  """
+  title: String
+  """
+  The visibility of the event determines what users can view this event.
+  If omitted, visibility remains unchanged.
+  """
+  visibility: ContentVisibility
+  """
+  The unix timestamp start date of the event.
+  If omitted, start date remains unchanged.
+  """
+  startDate: Timestamp
+  """
+  The unix timestamp end date of the event.
+  If omitted, end date remains unchanged.
+  """
+  endDate: Timestamp
+  """
+  The location of the event as plain text, this is not the address field, see "address".
+  If omitted, event location remains unchanged. If null, the location is cleared.
+  """
+  location: String
+}
+
+type UpdateEventPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  Errors that were encountered while performing the mutation.
+  NULL or an array of violations.
+  """
+  errors: [Violation!]
+
+  """
+  The updated event.
+  """
+  event: Event
+}
