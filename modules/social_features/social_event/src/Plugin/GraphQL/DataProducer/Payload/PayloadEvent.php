@@ -8,6 +8,7 @@ use Drupal\graphql\Plugin\DataProducerPluginCachingInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Wrappers\Payload\CreateEventPayload;
+use Drupal\social_event\Wrappers\Payload\UpdateEventPayload;
 
 /**
  * Returns the event in a payload.
@@ -31,13 +32,13 @@ class PayloadEvent extends DataProducerPluginBase implements DataProducerPluginC
   /**
    * Resolves the value for this data producer.
    *
-   * @param \Drupal\social_event\Wrappers\Payload\CreateEventPayload $payload
+   * @param \Drupal\social_event\Wrappers\Payload\CreateEventPayload|\Drupal\social_event\Wrappers\Payload\UpdateEventPayload $payload
    *   The payload to return the event for.
    *
    * @return \Drupal\node\NodeInterface|null
    *   The event for this payload or null if there is none.
    */
-  public function resolve(CreateEventPayload $payload): ?NodeInterface {
+  public function resolve(CreateEventPayload|UpdateEventPayload $payload): ?NodeInterface {
     return $payload->getEvent();
   }
 

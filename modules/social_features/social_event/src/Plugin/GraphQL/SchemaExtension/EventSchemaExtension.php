@@ -43,6 +43,23 @@ class EventSchemaExtension extends SchemaExtensionPluginBase {
       $builder->produce('payload_event')
         ->map('payload', $builder->fromParent())
     );
+
+    $this->registerMutationResolver($registry, $builder, 'updateEvent');
+
+    $registry->addFieldResolver('UpdateEventPayload', 'clientMutationId',
+      $builder->produce('payload_client_mutation_id')
+        ->map('payload', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('UpdateEventPayload', 'errors',
+      $builder->produce('payload_violations')
+        ->map('payload', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('UpdateEventPayload', 'event',
+      $builder->produce('payload_event')
+        ->map('payload', $builder->fromParent())
+    );
   }
 
   /**
