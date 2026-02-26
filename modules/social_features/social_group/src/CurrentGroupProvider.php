@@ -23,7 +23,7 @@ use Symfony\Component\Routing\RouterInterface;
 final class CurrentGroupProvider implements CurrentGroupProviderInterface {
 
   /**
-   * Request-scoped cache keyed by entity id, "new:{object_id}", or -1 for NULL.
+   * Request-scoped cache keyed by entity type and id, or -1 for NULL.
    *
    * Unsaved entities use a unique key to avoid collisions between different
    * entity instances.
@@ -65,79 +65,175 @@ final class CurrentGroupProvider implements CurrentGroupProviderInterface {
       return $cached instanceof GroupInterface ? $cached : NULL;
     }
 
+    $group = $this->resolveGroupFromRoute();
+    if ($group !== NULL) {
+      return $this->storeAndReturn($cache_key, $group);
+    }
+
+    $group = $this->resolveGroupFromEntity($entity);
+    if ($group !== NULL) {
+      return $this->storeAndReturn($cache_key, $group);
+    }
+
+    $group = $this->resolveGroupFromAjaxViewPath();
+    return $this->storeAndReturn($cache_key, $group);
+  }
+
+  /**
+   * Resolves the group from the current route parameter.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The group if present on the route, NULL otherwise.
+   */
+  private function resolveGroupFromRoute(): ?GroupInterface {
     $group = $this->routeMatch->getParameter('group');
-
-    if (is_numeric($group)) {
-      $storage = $this->entityTypeManager->getStorage('group');
-      $group = $storage->load((int) $group);
-    }
-
     if ($group === NULL) {
-      $resolved_entity = $entity;
-      if ($resolved_entity === NULL
-        && $this->routeMatch->getParameter('node') === NULL
-        && $this->routeMatch->getRouteName() !== NULL
-        && preg_match('/^entity\.([^.]+)/', $this->routeMatch->getRouteName(), $matches)
-      ) {
-        $resolved_entity = $this->routeMatch->getParameter($matches[1]);
-      }
+      return NULL;
+    }
+    return $this->ensureGroupEntity($group);
+  }
 
-      if ($resolved_entity instanceof EntityInterface) {
-        $ref = [
-          'target_type' => $resolved_entity->getEntityTypeId(),
-          'target_id' => $resolved_entity->id(),
-        ];
-        $gid = $this->helperService->getGroupFromEntity($ref);
-        if ($gid !== NULL) {
-          $group = $this->entityTypeManager->getStorage('group')->load($gid);
-        }
-      }
+  /**
+   * Resolves the group from the given entity or from route entity parameters.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface|null $entity
+   *   Optional entity to derive the group from.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The group if derivable from entity/route, NULL otherwise.
+   */
+  private function resolveGroupFromEntity(?EntityInterface $entity): ?GroupInterface {
+    $resolved_entity = $this->resolveEntityForGroupLookup($entity);
+    if ($resolved_entity === NULL) {
+      return NULL;
     }
 
-    if ($group === NULL && $this->requestStack->getCurrentRequest()?->isXmlHttpRequest()) {
-      $view_path = $this->requestStack->getCurrentRequest()->get('view_path');
-      if ($view_path !== NULL && $view_path !== '') {
-        try {
-          $match = $this->router->match($view_path);
-          $group = $match['group'] ?? NULL;
-          if (is_numeric($group)) {
-            $group = $this->entityTypeManager->getStorage('group')->load((int) $group);
-          }
-        }
-        catch (ResourceNotFoundException | MethodNotAllowedException) {
-          // Ignore unmatched view paths.
-        }
-      }
+    $ref = [
+      'target_type' => $resolved_entity->getEntityTypeId(),
+      'target_id' => $resolved_entity->id(),
+    ];
+    $gid = $this->helperService->getGroupFromEntity($ref);
+    if ($gid === NULL) {
+      return NULL;
     }
 
-    $cache_value = $group instanceof GroupInterface ? $group : FALSE;
-    $this->cache[$cache_key] = $cache_value;
+    $group = $this->entityTypeManager->getStorage('group')->load($gid);
+    return $group instanceof GroupInterface ? $group : NULL;
+  }
 
+  /**
+   * Resolves the entity to use for group lookup (given entity or route param).
+   *
+   * @param \Drupal\Core\Entity\EntityInterface|null $entity
+   *   Optional entity passed to getCurrentGroup().
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|null
+   *   The entity to use for group lookup, or NULL.
+   */
+  private function resolveEntityForGroupLookup(?EntityInterface $entity): ?EntityInterface {
+    if ($entity !== NULL) {
+      return $entity;
+    }
+    if ($this->routeMatch->getParameter('node') !== NULL) {
+      return NULL;
+    }
+    $route_name = $this->routeMatch->getRouteName();
+    if ($route_name === NULL) {
+      return NULL;
+    }
+    if (!preg_match('/^entity\.([^.]+)/', $route_name, $matches)) {
+      return NULL;
+    }
+    $param = $this->routeMatch->getParameter($matches[1]);
+    return $param instanceof EntityInterface ? $param : NULL;
+  }
+
+  /**
+   * Resolves the group from AJAX request view_path when applicable.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The group from the matched view_path route, or NULL.
+   */
+  private function resolveGroupFromAjaxViewPath(): ?GroupInterface {
+    $request = $this->requestStack->getCurrentRequest();
+    if ($request === NULL || !$request->isXmlHttpRequest()) {
+      return NULL;
+    }
+
+    $view_path = $request->get('view_path');
+    if ($view_path === NULL || $view_path === '') {
+      return NULL;
+    }
+
+    try {
+      $match = $this->router->match($view_path);
+      $group = $match['group'] ?? NULL;
+      return $group !== NULL ? $this->ensureGroupEntity($group) : NULL;
+    }
+    catch (ResourceNotFoundException | MethodNotAllowedException) {
+      return NULL;
+    }
+  }
+
+  /**
+   * Ensures the value is a Group entity (loads by id if numeric).
+   *
+   * @param mixed $group
+   *   Route parameter value (group entity or numeric id).
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The group entity, or NULL.
+   */
+  private function ensureGroupEntity(mixed $group): ?GroupInterface {
+    if ($group instanceof GroupInterface) {
+      return $group;
+    }
+    if (!is_numeric($group)) {
+      return NULL;
+    }
+    $loaded = $this->entityTypeManager->getStorage('group')->load((int) $group);
+    return $loaded instanceof GroupInterface ? $loaded : NULL;
+  }
+
+  /**
+   * Stores the result in cache and returns the group or NULL.
+   *
+   * @param int|string $cache_key
+   *   Cache key.
+   * @param \Drupal\group\Entity\GroupInterface|null $group
+   *   Resolved group or NULL.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The group or NULL.
+   */
+  private function storeAndReturn(int|string $cache_key, ?GroupInterface $group): ?GroupInterface {
+    $this->cache[$cache_key] = $group instanceof GroupInterface ? $group : FALSE;
     return $group instanceof GroupInterface ? $group : NULL;
   }
 
   /**
    * Returns the cache key for the given entity.
    *
-   * Saved entities use their integer id. Unsaved entities use a unique key
-   * so different instances do not share the same cache slot.
+   * Saved entities use "{entity_type}:{id}" so different entity types do not
+   * collide. Unsaved entities use "new:{entity_type}:{object_id}".
    *
    * @param \Drupal\Core\Entity\EntityInterface|null $entity
    *   The entity, or NULL for route/context-based lookup.
    *
    * @return int|string
-   *   Cache key: -1 for NULL, integer id for saved entities, "new:{id}" for
-   *   unsaved entities.
+   *   Cache key: -1 for NULL, "{entity_type}:{id}" for saved entities,
+   *   "new:{entity_type}:{object_id}" for unsaved entities.
    */
   private function getCacheKey(?EntityInterface $entity): int|string {
     if ($entity === NULL) {
       return -1;
     }
+    $entity_type = $entity->getEntityTypeId();
     $id = $entity->id();
     if ($id !== NULL && $id !== '') {
-      return (int) $id;
+      return $entity_type . ':' . $id;
     }
-    return 'new:' . spl_object_id($entity);
+    return 'new:' . $entity_type . ':' . spl_object_id($entity);
   }
 
   /**

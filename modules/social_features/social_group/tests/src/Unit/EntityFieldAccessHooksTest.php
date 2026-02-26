@@ -199,6 +199,7 @@ final class EntityFieldAccessHooksTest extends UnitTestCase {
    * Creates mock field items whose entity is a user.
    *
    * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   Mock field items whose getEntity() returns a user.
    */
   private function createUserFieldItems(): FieldItemListInterface {
     $user = $this->createMock(UserInterface::class);
