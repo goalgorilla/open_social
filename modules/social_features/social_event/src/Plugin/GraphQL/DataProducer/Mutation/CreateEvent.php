@@ -7,6 +7,8 @@ namespace Drupal\social_event\Plugin\GraphQL\DataProducer\Mutation;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
@@ -35,6 +37,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
+  use LoggerChannelTrait;
   use VisibilityTrait;
 
   /**
@@ -53,16 +56,20 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger channel factory.
    */
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
     EntityTypeManagerInterface $entity_type_manager,
+    LoggerChannelFactoryInterface $logger_factory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityTypeManager = $entity_type_manager;
+    $this->setLoggerFactory($logger_factory);
   }
 
   /**
@@ -79,6 +86,7 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
+      $container->get('logger.factory'),
     );
   }
 
@@ -176,6 +184,10 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $node->save();
     }
     catch (EntityStorageException $e) {
+      $this->getLogger('social_event')->error('Event save failed in GraphQL Create Event Mutation: @message', [
+        '@message' => $e->getMessage(),
+        'exception' => $e,
+      ]);
       $payload->addViolation(new Violation('EVENT_SAVE_FAILED'));
       return $payload;
     }
