@@ -127,6 +127,16 @@ function social_event_update_dependencies(): array {
 }
 
 /**
+ * Implements hook_requirements_alter().
+ */
+function social_event_requirements_alter(array &$requirements): void {
+  // Unset the requirement to install the "fullcalendar.io" library because we
+  // have it installed as a npm package, not with a repository as suggested
+  // in a module.
+  unset($requirements['meeting_api_scheduler_libraries']);
+}
+
+/**
  * Implements hook_update_last_removed().
  */
 function social_event_update_last_removed() : int {
