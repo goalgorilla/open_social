@@ -160,6 +160,10 @@ input CreateEventInput {
   """
   visibility: ContentVisibility!
   """
+  The body of the event in Open Social Rich Text JSON Exchange format.
+  """
+  body: RichTextJSON!
+  """
   The unix timestamp start date of the event.
   """
   startDate: Timestamp!
@@ -217,6 +221,11 @@ input UpdateEventInput {
   If omitted, visibility remains unchanged.
   """
   visibility: ContentVisibility
+  """
+  The body of the event in Open Social Rich Text JSON Exchange format.
+  If omitted, the body remains unchanged.
+  """
+  body: RichTextJSON
   """
   The unix timestamp start date of the event.
   If omitted, start date remains unchanged.
