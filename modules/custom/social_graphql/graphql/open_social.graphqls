@@ -369,6 +369,57 @@ input OptionalPhoneNumber {
 }
 
 """
+Provides the input structure for addresses within the Open Social Community Management System.
+The required format of the address depends on the country the address is in.
+"""
+# @todo use commerceguys/addressing AddressFormatRepository to generate documentation about the supported country codes
+# and the required addresses in those countries.
+input AddressInput {
+  """
+  The two-letter code identifying the country of the address.
+  Represents the country (or dependent territory) using the standard ISO 3166-1 alpha-2 code (for example "NL" for the
+  Netherlands, "US" for the United States, "JP" for Japan).
+  """
+  countryCode: String!
+  """
+  The main sub-division of a country (e.g. a state, province, region, etc.).
+  Used to specify the top-level region within a country that helps to identify the address (for example "CA" for
+  California in the US, "ON" for Ontario in Canada).
+  """
+  administrativeArea: String
+  """
+  The city, town or post-town of the address.
+  Used to capture the primary populated place (city/district) within the administrative area where the address is
+  located.
+  """
+  locality: String
+  """
+  A smaller division within the locality — e.g. suburb, neighbourhood, district or other sub-area.
+  Used when finer-grained locality information is needed (for instance a neighborhood, borough or suburb within a city),
+  where supported by the country's address format.
+  """
+  dependentLocality: String
+  """
+  The postal (ZIP / postcode) code of the address.
+  Used to specify the code assigned by the national postal system for the delivery area — helps ensure mail and packages
+  are routed correctly.
+  """
+  postalCode: String
+  """
+  The primary street address line — e.g. street name, house number.
+  Used to capture the main part of the street-level address (street name, number, building name or other primary
+  delivery location descriptor).
+  """
+  addressLine1: String
+  """
+  A secondary address line for additional street-level details.
+  Used for optional extra information that complements addressLine1 (e.g. apartment, unit, floor, suite, building name,
+  care-of, or other delivery instructions), where needed.
+  """
+  addressLine2: String
+}
+
+"""
 The visibility level of content on the platform.
 """
 enum ContentVisibility {
