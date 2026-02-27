@@ -144,6 +144,12 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $node_values['field_event_location'] = $location;
     }
 
+    // Add address if provided (field uses default langcode when omitted).
+    $address = $input->getAddress();
+    if ($address !== NULL) {
+      $node_values['field_event_address'] = [0 => $address];
+    }
+
     /** @var \Drupal\node\NodeInterface $node */
     $node = $node_storage->create($node_values);
 

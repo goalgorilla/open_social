@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Plugin\GraphQL\DataProducer\Mutation;
 
+use CommerceGuys\Addressing\Country\CountryRepositoryInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -37,21 +38,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class CreateEventInput extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The current user.
-   */
-  protected AccountProxyInterface $currentUser;
-
-  /**
-   * The entity repository.
-   */
-  protected EntityRepositoryInterface $entityRepository;
-
-  /**
-   * The entity type manager.
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
    * Constructs a CreateEventInput.
    *
    * @param array $configuration
@@ -60,26 +46,25 @@ class CreateEventInput extends DataProducerPluginBase implements ContainerFactor
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entityRepository
    *   The Drupal entity repository.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The Drupal entity type manager.
+   * @param \CommerceGuys\Addressing\Country\CountryRepositoryInterface $countryRepository
+   *   The country repository for validating address country codes.
    */
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
-    AccountProxyInterface $current_user,
-    EntityRepositoryInterface $entity_repository,
-    EntityTypeManagerInterface $entity_type_manager,
+    protected AccountProxyInterface $currentUser,
+    protected EntityRepositoryInterface $entityRepository,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected CountryRepositoryInterface $countryRepository,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->currentUser = $current_user;
-    $this->entityRepository = $entity_repository;
-    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -98,6 +83,7 @@ class CreateEventInput extends DataProducerPluginBase implements ContainerFactor
       $container->get('current_user'),
       $container->get('entity.repository'),
       $container->get('entity_type.manager'),
+      $container->get('address.country_repository'),
     );
   }
 
@@ -116,6 +102,7 @@ class CreateEventInput extends DataProducerPluginBase implements ContainerFactor
       $this->entityTypeManager,
       $this->entityRepository,
       $this->currentUser,
+      $this->countryRepository,
     );
     $event_input->setValues($input);
     return $event_input;

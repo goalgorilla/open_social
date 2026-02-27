@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Plugin\GraphQL\DataProducer\Mutation;
 
+use CommerceGuys\Addressing\Country\CountryRepositoryInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -47,6 +48,8 @@ class UpdateEventInput extends DataProducerPluginBase implements ContainerFactor
    *   The Drupal entity repository.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The Drupal entity type manager.
+   * @param \CommerceGuys\Addressing\Country\CountryRepositoryInterface $countryRepository
+   *   The country repository for validating address country codes.
    */
   public function __construct(
     array $configuration,
@@ -55,6 +58,7 @@ class UpdateEventInput extends DataProducerPluginBase implements ContainerFactor
     protected AccountProxyInterface $currentUser,
     protected EntityRepositoryInterface $entityRepository,
     protected EntityTypeManagerInterface $entityTypeManager,
+    protected CountryRepositoryInterface $countryRepository,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -75,6 +79,7 @@ class UpdateEventInput extends DataProducerPluginBase implements ContainerFactor
       $container->get('current_user'),
       $container->get('entity.repository'),
       $container->get('entity_type.manager'),
+      $container->get('address.country_repository'),
     );
   }
 
@@ -93,6 +98,7 @@ class UpdateEventInput extends DataProducerPluginBase implements ContainerFactor
       $this->entityTypeManager,
       $this->entityRepository,
       $this->currentUser,
+      $this->countryRepository,
     );
     $event_input->setValues($input);
     return $event_input;

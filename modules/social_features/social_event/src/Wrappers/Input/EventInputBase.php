@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Wrappers\Input;
 
+use CommerceGuys\Addressing\Country\CountryRepositoryInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -35,6 +36,11 @@ abstract class EventInputBase extends InputBase {
    * The current user for the request.
    */
   protected AccountProxyInterface $currentUser;
+
+  /**
+   * The country repository for address validation.
+   */
+  protected CountryRepositoryInterface $countryRepository;
 
   /**
    * The actor (current user performing the mutation).
@@ -95,6 +101,13 @@ abstract class EventInputBase extends InputBase {
   protected ?string $location = NULL;
 
   /**
+   * The address of the event in Drupal storage shape (snake_case keys).
+   *
+   * @var array<string, string>|null
+   */
+  protected ?array $address = NULL;
+
+  /**
    * Constructs an EventInputBase instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -103,15 +116,19 @@ abstract class EventInputBase extends InputBase {
    *   The entity repository.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user for the request.
+   * @param \CommerceGuys\Addressing\Country\CountryRepositoryInterface $country_repository
+   *   The country repository for validating address country codes.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     EntityRepositoryInterface $entity_repository,
     AccountProxyInterface $current_user,
+    CountryRepositoryInterface $country_repository,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->entityRepository = $entity_repository;
     $this->currentUser = $current_user;
+    $this->countryRepository = $country_repository;
   }
 
   /**
@@ -287,6 +304,39 @@ abstract class EventInputBase extends InputBase {
    */
   public function getLocation(): ?string {
     return $this->location;
+  }
+
+  /**
+   * Get the address in Drupal storage shape (snake_case keys).
+   *
+   * @return array<string, string>|null
+   *   The address or NULL if not provided.
+   */
+  public function getAddress(): ?array {
+    return $this->address;
+  }
+
+  /**
+   * Normalizes GraphQL address input to Drupal address field value shape.
+   *
+   * @param array $input
+   *   The raw address input (camelCase keys from GraphQL).
+   *
+   * @return array{country_code: string, administrative_area: string, locality: string, dependent_locality: string, postal_code: string, address_line1: string, address_line2: string}
+   *   Address value with Drupal keys (snake_case). Langcode is left empty;
+   *   the mutation adds it when building the node value.
+   */
+  protected function normalizeAddressInputToDrupal(array $input): array {
+    $value = [
+      'country_code' => trim($input['countryCode'] ?? ''),
+      'administrative_area' => trim($input['administrativeArea'] ?? ''),
+      'locality' => trim($input['locality'] ?? ''),
+      'dependent_locality' => trim($input['dependentLocality'] ?? ''),
+      'postal_code' => trim($input['postalCode'] ?? ''),
+      'address_line1' => trim($input['addressLine1'] ?? ''),
+      'address_line2' => trim($input['addressLine2'] ?? ''),
+    ];
+    return $value;
   }
 
 }
