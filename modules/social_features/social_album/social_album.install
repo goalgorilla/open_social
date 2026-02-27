@@ -89,6 +89,7 @@ function _social_album_set_group_permissions() {
     ],
     'group_manager' => [
       'delete any group_node:album entity',
+      'view unpublished group_node:album entity',
     ],
     'group_admin' => [
       'update any group_node:album entity',
@@ -238,4 +239,26 @@ function social_album_update_13002() : string {
 
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
+}
+
+/**
+ * Grant "view unpublished group_node:album entity" to group manager.
+ */
+function social_album_update_13003(): void {
+  $group_permissions = [
+    'flexible_group-group_manager' => ['view unpublished group_node:album entity'],
+  ];
+
+  $group_type = \Drupal::entityTypeManager()
+    ->getStorage('group_type')
+    ->load('flexible_group');
+
+  if ($group_type) {
+    foreach ($group_type->getRoles() as $role) {
+      if (!empty($group_permissions[$role->id()])) {
+        $role->grantPermissions($group_permissions[$role->id()])
+          ->save();
+      }
+    }
+  }
 }
