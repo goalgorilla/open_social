@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_event\Kernel\GraphQL;
 
+use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
@@ -930,6 +931,166 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
       $this->defaultMutationCacheMetaData()
     );
     $this->assertSame(0, $this->getEventCountByTitle('Test Event'), 'No event node should have been created when event type is invalid.');
+  }
+
+  /**
+   * Test creating an event with a valid address.
+   */
+  public function testCreateEventWithValidAddress(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
+    $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
+
+    // @todo add address in the assertResults once it lands in the read schema.
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $eventType->uuid(),
+          'title' => 'Event With Address 2026',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $startTimestamp,
+          'endDate' => $endTimestamp,
+          'address' => [
+            'countryCode' => 'NL',
+            'locality' => 'Amsterdam',
+            'postalCode' => '1012 AB',
+            'addressLine1' => 'Dam Square 1',
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => TRUE,
+            'title' => 'Event With Address 2026',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1'])
+        ->setCacheMaxAge(0)
+    );
+
+    $node = $this->getEventByTitle('Event With Address 2026');
+    $this->assertInstanceOf(NodeInterface::class, $node);
+    $this->assertFalse($node->get('field_event_address')->isEmpty());
+    $address_item = $node->get('field_event_address')->first();
+    $this->assertInstanceOf(AddressItem::class, $address_item);
+    /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem $address_item */
+    $this->assertSame('NL', $address_item->getCountryCode());
+    $this->assertSame('Amsterdam', $address_item->getLocality());
+    $this->assertSame('1012 AB', $address_item->getPostalCode());
+    $this->assertSame('Dam Square 1', $address_item->getAddressLine1());
+  }
+
+  /**
+   * Test validation error when address is provided but countryCode is empty.
+   *
+   * GraphQL schema requires countryCode: String! so it cannot be omitted; we
+   * send an empty string to trigger input-level validation.
+   */
+  public function testCreateEventAddressMissingCountryCode(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
+    $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $eventType->uuid(),
+          'title' => 'Event Address No Country',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $startTimestamp,
+          'endDate' => $endTimestamp,
+          'address' => [
+            'countryCode' => '',
+            'locality' => 'Amsterdam',
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => [
+            'ADDRESS_COUNTRY_CODE_REQUIRED',
+          ],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+    $this->assertSame(0, $this->getEventCountByTitle('Event Address No Country'), 'No event when address has no countryCode.');
+  }
+
+  /**
+   * Test validation error when address countryCode is not in the list.
+   */
+  public function testCreateEventAddressInvalidCountryCode(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
+    $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $eventType->uuid(),
+          'title' => 'Event Invalid Country Code',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $startTimestamp,
+          'endDate' => $endTimestamp,
+          'address' => [
+            'countryCode' => 'XX',
+            'locality' => 'Somewhere',
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => [
+            'ADDRESS_COUNTRY_CODE_INVALID',
+          ],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+    $this->assertSame(0, $this->getEventCountByTitle('Event Invalid Country Code'), 'No event when address countryCode is invalid.');
   }
 
   /**
