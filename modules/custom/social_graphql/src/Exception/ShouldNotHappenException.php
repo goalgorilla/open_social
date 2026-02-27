@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_topic\Exception;
+namespace Drupal\social_graphql\Exception;
 
 /**
  * This exception indicates that there is a bug in the application.

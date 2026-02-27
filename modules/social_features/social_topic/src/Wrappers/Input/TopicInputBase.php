@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_graphql\Wrappers\InputBase;
-use Drupal\social_topic\Exception\ShouldNotHappenException;
+use Drupal\social_graphql\Exception\ShouldNotHappenException;
 
 /**
  * Base class for topic input wrappers.
