@@ -260,3 +260,32 @@ type UpdateEventPayload {
   """
   event: Event
 }
+
+"""
+Input for deleting an existing event.
+"""
+input DeleteEventInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  The event being deleted.
+  """
+  id: ID!
+}
+
+"""
+Payload returned after deleting an event.
+"""
+type DeleteEventPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  Errors that were encountered while performing the mutation.
+  NULL or an array of violations.
+  """
+  errors: [Violation!]
+}

@@ -74,4 +74,13 @@ extend type Mutation {
     """
     input: UpdateEventInput!
   ): UpdateEventPayload! @allowBot(requiredScopes: ["event:write"])
+  """
+  Delete an existing event.
+  """
+  deleteEvent(
+    """
+    Input data for deleting the event.
+    """
+    input: DeleteEventInput!
+  ): DeleteEventPayload! @allowBot(requiredScopes: ["event:write"])
 }
