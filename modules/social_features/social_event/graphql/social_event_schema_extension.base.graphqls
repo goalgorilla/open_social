@@ -149,8 +149,9 @@ input CreateEventInput {
   """
   The type of the event.
   The ID of the event type as provided by Query.eventTypes.
+  If omitted, the event has no event type.
   """
-  type: ID!
+  type: ID
   """
   The display title of the event.
   """
@@ -208,7 +209,7 @@ input UpdateEventInput {
   """
   The type of the event.
   The ID of the event type as provided by Query.eventTypes.
-  If omitted, the type remains unchanged.
+  If omitted, the type remains unchanged. If null, the event type is cleared.
   """
   type: ID
   """

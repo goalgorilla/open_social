@@ -7,9 +7,11 @@ namespace Drupal\social_event\Wrappers\Input;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_graphql\Exception\ShouldNotHappenException;
 use Drupal\social_graphql\Wrappers\InputBase;
 use Drupal\taxonomy\TermInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Base class for event input wrappers.
@@ -28,6 +30,39 @@ abstract class EventInputBase extends InputBase {
    * The entity repository.
    */
   protected EntityRepositoryInterface $entityRepository;
+
+  /**
+   * The current user for the request.
+   */
+  protected AccountProxyInterface $currentUser;
+
+  /**
+   * The actor (current user performing the mutation).
+   *
+   * @var \Drupal\Core\Session\AccountInterface|null
+   */
+  protected ?AccountInterface $actor = NULL;
+
+  /**
+   * The author of the event.
+   *
+   * The author is the user who will be credited as the creator of the event.
+   * In the initial iteration, the author is the same as the actor. However,
+   * access checks should always be performed against the author to ensure
+   * that only users with permission to create events can be set as authors.
+   *
+   * @var \Drupal\user\UserInterface|null
+   */
+  protected ?UserInterface $author = NULL;
+
+  /**
+   * The body field.
+   *
+   * Contains the HTML (from Rich Text JSON conversion) and text format.
+   *
+   * @var array{value: string, format: string}|null
+   */
+  protected ?array $body = NULL;
 
   /**
    * The title of the event.
@@ -58,6 +93,59 @@ abstract class EventInputBase extends InputBase {
    * The location of the event.
    */
   protected ?string $location = NULL;
+
+  /**
+   * Constructs an EventInputBase instance.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user for the request.
+   */
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    EntityRepositoryInterface $entity_repository,
+    AccountProxyInterface $current_user,
+  ) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->entityRepository = $entity_repository;
+    $this->currentUser = $current_user;
+  }
+
+  /**
+   * Get the actor (current user performing the mutation).
+   *
+   * @return \Drupal\Core\Session\AccountInterface
+   *   The actor.
+   */
+  public function getActor(): AccountInterface {
+    assert($this->actor !== NULL, __FUNCTION__ . " called but actor was not set.");
+    return $this->actor;
+  }
+
+  /**
+   * Get the author.
+   *
+   * @return \Drupal\user\UserInterface
+   *   The author.
+   */
+  public function getAuthor(): UserInterface {
+    assert($this->author !== NULL, __FUNCTION__ . " called but author was not set.");
+    return $this->author;
+  }
+
+  /**
+   * Get the body field values.
+   *
+   * @return array{value: string, format: string}
+   *   The body.
+   */
+  public function getBody(): array {
+    assert($this->body !== NULL, __FUNCTION__ . " called but body was not set.");
+    return $this->body;
+  }
 
   /**
    * Get the text format that should be used in the body field.
@@ -134,12 +222,26 @@ abstract class EventInputBase extends InputBase {
   }
 
   /**
+   * Check if event type is set.
+   *
+   * @return bool
+   *   TRUE if event type was provided and is valid.
+   */
+  public function hasEventType(): bool {
+    return $this->eventType !== NULL;
+  }
+
+  /**
    * Get the event type.
    *
-   * @return \Drupal\taxonomy\TermInterface
-   *   The event type.
+   * Returns the event type term. In the base implementation, an assert ensures
+   * callers have verified hasEventType() before calling. Subclasses may
+   * override to return NULL (e.g. UpdateEventInput for clearing).
+   *
+   * @return \Drupal\taxonomy\TermInterface|null
+   *   The event type, or NULL.
    */
-  public function getEventType(): TermInterface {
+  public function getEventType(): ?TermInterface {
     assert($this->eventType !== NULL, __FUNCTION__ . " called but event type was not set.");
     return $this->eventType;
   }

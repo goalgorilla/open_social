@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Wrappers\Input;
 
-use Drupal\Core\Entity\EntityRepositoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
-use Drupal\user\UserInterface;
+use Drupal\taxonomy\TermInterface;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
 use OpenSocial\RichTextJson\Renderer\HtmlRenderer;
 
@@ -23,20 +19,6 @@ use OpenSocial\RichTextJson\Renderer\HtmlRenderer;
 class UpdateEventInput extends EventInputBase {
 
   use VisibilityTrait;
-
-  /**
-   * The actor (current user performing the mutation).
-   *
-   * @var \Drupal\Core\Session\AccountInterface|null
-   */
-  protected ?AccountInterface $actor = NULL;
-
-  /**
-   * The author of the event.
-   *
-   * @var \Drupal\user\UserInterface|null
-   */
-  protected ?UserInterface $author = NULL;
 
   /**
    * The event node being updated.
@@ -54,41 +36,12 @@ class UpdateEventInput extends EventInputBase {
   protected bool $locationProvided = FALSE;
 
   /**
-   * The body field.
+   * Whether the type (event type) field was explicitly provided in the input.
    *
-   * Contains the HTML (from Rich Text JSON conversion) and text format.
-   * Only set when body was provided in the input.
-   *
-   * @var array{value: string, format: string}|null
+   * When true, event type should be updated (set to the term or cleared if
+   * null).
    */
-  protected ?array $body = NULL;
-
-  /**
-   * The current user for the request.
-   *
-   * @var \Drupal\Core\Session\AccountProxyInterface
-   */
-  protected AccountProxyInterface $currentUser;
-
-  /**
-   * Create a new Update Event Input instance.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-   *   The entity repository.
-   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
-   *   The current user for the request.
-   */
-  public function __construct(
-    EntityTypeManagerInterface $entity_type_manager,
-    EntityRepositoryInterface $entity_repository,
-    AccountProxyInterface $current_user,
-  ) {
-    $this->entityTypeManager = $entity_type_manager;
-    $this->entityRepository = $entity_repository;
-    $this->currentUser = $current_user;
-  }
+  protected bool $eventTypeProvided = FALSE;
 
   /**
    * {@inheritdoc}
@@ -151,10 +104,11 @@ class UpdateEventInput extends EventInputBase {
       }
     }
 
-    // Validate event type if provided (optional for updates).
-    if (isset($input['type'])) {
-      if (empty($input['type'])) {
-        $this->violations[] = new Violation("EVENT_TYPE_INVALID");
+    // Handle event type: omit = unchanged; null = clear; value = set.
+    if (array_key_exists('type', $input)) {
+      $this->eventTypeProvided = TRUE;
+      if ($input['type'] === NULL) {
+        $this->eventType = NULL;
       }
       else {
         $event_types = $this->loadEventTypesByUuids([$input['type']]);
@@ -284,28 +238,6 @@ class UpdateEventInput extends EventInputBase {
   }
 
   /**
-   * Get the actor (current user performing the mutation).
-   *
-   * @return \Drupal\Core\Session\AccountInterface
-   *   The actor.
-   */
-  public function getActor(): AccountInterface {
-    assert($this->actor !== NULL, __FUNCTION__ . " called but actor was not set.");
-    return $this->actor;
-  }
-
-  /**
-   * Get the author.
-   *
-   * @return \Drupal\user\UserInterface
-   *   The author.
-   */
-  public function getAuthor(): UserInterface {
-    assert($this->author !== NULL, __FUNCTION__ . " called but author was not set.");
-    return $this->author;
-  }
-
-  /**
    * Get the event node being updated.
    *
    * @return \Drupal\node\NodeInterface
@@ -317,6 +249,28 @@ class UpdateEventInput extends EventInputBase {
   }
 
   /**
+   * Check whether the event type field was explicitly provided in the input.
+   *
+   * When true, the resolver should update the field (set to term or clear).
+   *
+   * @return bool
+   *   TRUE if type was in the input (set or null to clear).
+   */
+  public function eventTypeProvided(): bool {
+    return $this->eventTypeProvided;
+  }
+
+  /**
+   * Get the event type, or NULL if type was provided as null (clear).
+   *
+   * @return \Drupal\taxonomy\TermInterface|null
+   *   The event type term, or NULL to clear the field.
+   */
+  public function getEventType(): ?TermInterface {
+    return $this->eventType;
+  }
+
+  /**
    * Check if title should be updated.
    *
    * @return bool
@@ -324,16 +278,6 @@ class UpdateEventInput extends EventInputBase {
    */
   public function hasTitle(): bool {
     return $this->title !== NULL;
-  }
-
-  /**
-   * Check if event type should be updated.
-   *
-   * @return bool
-   *   TRUE if event type was provided.
-   */
-  public function hasEventType(): bool {
-    return $this->eventType !== NULL;
   }
 
   /**
@@ -354,17 +298,6 @@ class UpdateEventInput extends EventInputBase {
    */
   public function hasBody(): bool {
     return $this->body !== NULL;
-  }
-
-  /**
-   * Get the body field values.
-   *
-   * @return array{value: string, format: string}
-   *   The body.
-   */
-  public function getBody(): array {
-    assert($this->body !== NULL, __FUNCTION__ . " called but body was not set.");
-    return $this->body;
   }
 
   /**

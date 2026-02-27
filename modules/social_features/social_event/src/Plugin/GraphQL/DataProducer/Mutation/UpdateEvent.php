@@ -109,8 +109,8 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $modified = TRUE;
     }
 
-    // Update event type if provided.
-    if ($input->hasEventType()) {
+    // Update event type if provided (set to term or clear if null).
+    if ($input->eventTypeProvided()) {
       $node->set('field_event_type', $input->getEventType());
       $modified = TRUE;
     }

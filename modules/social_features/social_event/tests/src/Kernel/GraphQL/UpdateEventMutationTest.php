@@ -361,6 +361,53 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
   }
 
   /**
+   * Test clearing the event type by sending type: null.
+   */
+  public function testUpdateEventClearEventType(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType('Conference');
+    $event = $this->createEvent($eventType);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event {
+              id
+              title
+              eventType {
+                id
+              }
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'type' => NULL,
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+            'title' => 'Original Event Title',
+            'eventType' => NULL,
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['taxonomy_term_list'])
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
    * Test partial update -- only title.
    */
   public function testUpdateEventTitle(): void {
@@ -415,11 +462,8 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
 
     $this->assertResults(
       <<<GQL
-        mutation UpdateEvent(\$id: ID!, \$body: RichTextJSON) {
-          updateEvent(input: {
-            id: \$id
-            body: \$body
-          }) {
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
             errors
             event {
               id
@@ -429,8 +473,10 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
         }
         GQL,
       [
-        'id' => $event->uuid(),
-        'body' => self::minimalRichTextBody(),
+        'input' => [
+          'id' => $event->uuid(),
+          'body' => self::minimalRichTextBody(),
+        ],
       ],
       [
         'updateEvent' => [

@@ -324,17 +324,8 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
     // schema.
     $this->assertResults(
       <<<GQL
-        mutation CreateEvent(\$type: ID!, \$title: String!, \$visibility: ContentVisibility!, \$body: RichTextJSON!, \$startDate: Timestamp!, \$endDate: Timestamp!, \$location: String, \$clientMutationId: UUIDv4) {
-          createEvent(input: {
-            clientMutationId: \$clientMutationId
-            type: \$type
-            title: \$title
-            visibility: \$visibility
-            body: \$body
-            startDate: \$startDate
-            endDate: \$endDate
-            location: \$location
-          }) {
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
             clientMutationId
             errors
             event {
@@ -355,14 +346,16 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
         }
         GQL,
       [
-        'clientMutationId' => $clientMutationId,
-        'type' => $eventType->uuid(),
-        'title' => 'Annual Conference 2026',
-        'visibility' => 'PUBLIC',
-        'body' => self::minimalRichTextBody(),
-        'startDate' => $startTimestamp,
-        'endDate' => $endTimestamp,
-        'location' => 'Amsterdam Convention Centre',
+        'input' => [
+          'clientMutationId' => $clientMutationId,
+          'type' => $eventType->uuid(),
+          'title' => 'Annual Conference 2026',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $startTimestamp,
+          'endDate' => $endTimestamp,
+          'location' => 'Amsterdam Convention Centre',
+        ],
       ],
       [
         'createEvent' => [
@@ -387,6 +380,74 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
       $this->defaultMutationCacheMetaData()
         ->addCacheTags(['node:1', 'taxonomy_term:1', 'config:filter.format.basic_html'])
         // @todo Remove max age once https://www.drupal.org/project/simple_oauth/issues/3573262 is fixed.
+        ->setCacheMaxAge(0)
+    );
+  }
+
+  /**
+   * Test creating an event without an event type (type is optional).
+   */
+  public function testCreateEventSuccessWithoutEventType(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $clientMutationId = '550e8400-e29b-41d4-a716-446655440001';
+    $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
+    $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            clientMutationId
+            errors
+            event {
+              title
+              location
+              bodyHtml
+              startDate {
+                timestamp
+              }
+              endDate {
+                timestamp
+              }
+              eventType {
+                id
+              }
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'clientMutationId' => $clientMutationId,
+          'title' => 'Event Without Type 2026',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $startTimestamp,
+          'endDate' => $endTimestamp,
+          'location' => 'Somewhere',
+        ],
+      ],
+      [
+        'createEvent' => [
+          'clientMutationId' => $clientMutationId,
+          'errors' => NULL,
+          'event' => [
+            'title' => 'Event Without Type 2026',
+            'location' => 'Somewhere',
+            'bodyHtml' => "<div><p>Hello</p>\n</div>",
+            'startDate' => [
+              'timestamp' => $startTimestamp,
+            ],
+            'endDate' => [
+              'timestamp' => $endTimestamp,
+            ],
+            'eventType' => NULL,
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1', 'taxonomy_term_list', 'config:filter.format.basic_html'])
         ->setCacheMaxAge(0)
     );
   }
