@@ -177,7 +177,6 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
       'menu_link_content',
       'social_profile',
       'social_node',
-      'social_editor',
       'social_core',
       'social_event',
       'social_event_type',
@@ -198,6 +197,7 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
       'flag',
       'simple_oauth',
       'simple_oauth_static_scope',
+      'social_editor',
     ]);
 
     // Configure OAuth to use static scope provider and set up keys.
@@ -212,6 +212,27 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
    */
   protected function defaultCacheContexts(): array {
     return [...parent::defaultCacheContexts(), 'languages:language_interface'];
+  }
+
+  /**
+   * Minimal valid Rich Text JSON body (paragraph with text).
+   */
+  private static function minimalRichTextBody(): array {
+    return [
+      'root' => [
+        'type' => 'root',
+        'version' => 1,
+        'children' => [
+          [
+            'type' => 'paragraph',
+            'version' => 1,
+            'children' => [
+              ['type' => 'text', 'version' => 1, 'text' => 'Hello'],
+            ],
+          ],
+        ],
+      ],
+    ];
   }
 
   /**
@@ -378,6 +399,52 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
       $this->defaultMutationCacheMetaData()
         ->addCacheableDependency($event)
         ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test updating an event's body with Rich Text JSON.
+   */
+  public function testUpdateEventWithBody(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType('Article');
+    $event = $this->createEvent($eventType, [
+      'body' => [['value' => 'Original body', 'format' => 'basic_html']],
+    ]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$id: ID!, \$body: RichTextJSON) {
+          updateEvent(input: {
+            id: \$id
+            body: \$body
+          }) {
+            errors
+            event {
+              id
+              bodyHtml
+            }
+          }
+        }
+        GQL,
+      [
+        'id' => $event->uuid(),
+        'body' => self::minimalRichTextBody(),
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+            'bodyHtml' => "<div><p>Hello</p>\n</div>",
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:' . $event->id(), 'config:filter.format.basic_html'])
+        ->addCacheContexts(['languages:language_interface'])
+        ->setCacheMaxAge(0)
     );
   }
 

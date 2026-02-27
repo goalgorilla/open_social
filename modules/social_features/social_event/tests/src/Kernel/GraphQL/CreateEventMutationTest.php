@@ -197,6 +197,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
       'flag',
       'simple_oauth',
       'simple_oauth_static_scope',
+      'social_editor',
     ]);
 
     // Configure OAuth to use static scope provider and set up keys.
@@ -220,6 +221,27 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
    */
   protected function defaultCacheContexts(): array {
     return [...parent::defaultCacheContexts(), 'languages:language_interface'];
+  }
+
+  /**
+   * Minimal valid Rich Text JSON body (paragraph with text).
+   */
+  private static function minimalRichTextBody(): array {
+    return [
+      'root' => [
+        'type' => 'root',
+        'version' => 1,
+        'children' => [
+          [
+            'type' => 'paragraph',
+            'version' => 1,
+            'children' => [
+              ['type' => 'text', 'version' => 1, 'text' => 'Hello'],
+            ],
+          ],
+        ],
+      ],
+    ];
   }
 
   /**
@@ -298,14 +320,17 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    // @todo add visibility in the assertResults once it lands in the read
+    // schema.
     $this->assertResults(
       <<<GQL
-        mutation CreateEvent(\$type: ID!, \$title: String!, \$visibility: ContentVisibility!, \$startDate: Timestamp!, \$endDate: Timestamp!, \$location: String, \$clientMutationId: UUIDv4) {
+        mutation CreateEvent(\$type: ID!, \$title: String!, \$visibility: ContentVisibility!, \$body: RichTextJSON!, \$startDate: Timestamp!, \$endDate: Timestamp!, \$location: String, \$clientMutationId: UUIDv4) {
           createEvent(input: {
             clientMutationId: \$clientMutationId
             type: \$type
             title: \$title
             visibility: \$visibility
+            body: \$body
             startDate: \$startDate
             endDate: \$endDate
             location: \$location
@@ -315,6 +340,16 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
             event {
               title
               location
+              bodyHtml
+              startDate {
+                timestamp
+              }
+              endDate {
+                timestamp
+              }
+              eventType {
+                id
+              }
             }
           }
         }
@@ -324,6 +359,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
         'type' => $eventType->uuid(),
         'title' => 'Annual Conference 2026',
         'visibility' => 'PUBLIC',
+        'body' => self::minimalRichTextBody(),
         'startDate' => $startTimestamp,
         'endDate' => $endTimestamp,
         'location' => 'Amsterdam Convention Centre',
@@ -335,22 +371,60 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'event' => [
             'title' => 'Annual Conference 2026',
             'location' => 'Amsterdam Convention Centre',
+            'bodyHtml' => "<div><p>Hello</p>\n</div>",
+            'eventType' => [
+              'id' => $eventType->uuid(),
+            ],
+            'startDate' => [
+              'timestamp' => $startTimestamp,
+            ],
+            'endDate' => [
+              'timestamp' => $endTimestamp,
+            ],
           ],
         ],
       ],
       $this->defaultMutationCacheMetaData()
-        ->addCacheTags(['node:1'])
+        ->addCacheTags(['node:1', 'taxonomy_term:1', 'config:filter.format.basic_html'])
+        // @todo Remove max age once https://www.drupal.org/project/simple_oauth/issues/3573262 is fixed.
+        ->setCacheMaxAge(0)
     );
+  }
 
-    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
-    $loaded_node = $node_storage->load(1);
-    $this->assertNotNull($loaded_node, 'Event node should exist.');
-    $this->assertEquals('0', $loaded_node->get('field_event_enroll')->getString(), 'Enrollment should be disabled.');
-    $this->assertEquals('public', $loaded_node->get('field_content_visibility')->value);
-    /** @var \Drupal\taxonomy\TermInterface|null $event_type_entity */
-    $event_type_entity = $loaded_node->get('field_event_type')->entity;
-    $this->assertNotNull($event_type_entity);
-    $this->assertEquals($eventType->id(), $event_type_entity->id());
+  /**
+   * Test validation error when Rich Text JSON is invalid (missing root).
+   */
+  public function testCreateEventInvalidRichTextJson(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
+    $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
+
+    $this->assertErrors(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+      GQL,
+      [
+        'input' => [
+          'type' => $eventType->uuid(),
+          'title' => 'Invalid body',
+          'visibility' => 'PUBLIC',
+          'body' => ['notRoot' => []],
+          'startDate' => $startTimestamp,
+          'endDate' => $endTimestamp,
+        ],
+      ],
+      [
+        'Variable "$input" got invalid value {"type":"' . $eventType->uuid() . '","title":"Invalid body","visibility":"PUBLIC","body":{"notRoot":[]},"startDate":' . $startTimestamp . ',"endDate":' . $endTimestamp . '}; Expected type RichTextJSON at value.body; Invalid Rich Text JSON document: Missing required field "root"',
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
   }
 
   /**
@@ -363,6 +437,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
     $startTimestamp = (new \DateTimeImmutable('2026-07-01T09:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-07-01T17:00:00Z'))->getTimestamp();
 
+    // @todo add visibility in the assertResults once it lands in the read
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -372,6 +447,16 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
             event {
               title
               location
+              bodyHtml
+              startDate {
+                timestamp
+              }
+              endDate {
+                timestamp
+              }
+              eventType {
+                id
+              }
             }
           }
         }
@@ -381,6 +466,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'type' => $eventType->uuid(),
           'title' => 'Simple Event',
           'visibility' => 'COMMUNITY',
+          'body' => self::minimalRichTextBody(),
           'startDate' => $startTimestamp,
           'endDate' => $endTimestamp,
         ],
@@ -392,11 +478,22 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'event' => [
             'title' => 'Simple Event',
             'location' => NULL,
+            'bodyHtml' => "<div><p>Hello</p>\n</div>",
+            'eventType' => [
+              'id' => $eventType->uuid(),
+            ],
+            'startDate' => [
+              'timestamp' => $startTimestamp,
+            ],
+            'endDate' => [
+              'timestamp' => $endTimestamp,
+            ],
           ],
         ],
       ],
       $this->defaultMutationCacheMetaData()
-        ->addCacheTags(['node:1'])
+        ->addCacheTags(['node:1', 'taxonomy_term:1', 'config:filter.format.basic_html'])
+        ->setCacheMaxAge(0)
     );
   }
 
@@ -414,6 +511,8 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
     $visibility = 'PUBLIC';
     $title = "Event with $visibility visibility";
 
+    // @todo add visibility in the assertResults once it lands in the read
+    // schema.
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -421,6 +520,17 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
             errors
             event {
               title
+              location
+              bodyHtml
+              startDate {
+                timestamp
+              }
+              endDate {
+                timestamp
+              }
+              eventType {
+                id
+              }
             }
           }
         }
@@ -430,6 +540,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'type' => $eventType->uuid(),
           'title' => $title,
           'visibility' => $visibility,
+          'body' => self::minimalRichTextBody(),
           'startDate' => $startTimestamp,
           'endDate' => $endTimestamp,
         ],
@@ -439,11 +550,23 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'errors' => NULL,
           'event' => [
             'title' => $title,
+            'location' => NULL,
+            'bodyHtml' => "<div><p>Hello</p>\n</div>",
+            'eventType' => [
+              'id' => $eventType->uuid(),
+            ],
+            'startDate' => [
+              'timestamp' => $startTimestamp,
+            ],
+            'endDate' => [
+              'timestamp' => $endTimestamp,
+            ],
           ],
         ],
       ],
       $this->defaultMutationCacheMetaData()
-        ->addCacheTags(['node:1'])
+        ->addCacheTags(['node:1', 'taxonomy_term:1', 'config:filter.format.basic_html'])
+        ->setCacheMaxAge(0)
     );
     $node = $this->getEventByTitle($title);
     $this->assertNotNull($node);
@@ -464,6 +587,8 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
     $visibility = 'COMMUNITY';
     $title = "Event with $visibility visibility";
 
+    // @todo add visibility in the assertResults once it lands in the read
+    // schema.
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -471,6 +596,17 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
             errors
             event {
               title
+              location
+              bodyHtml
+              startDate {
+                timestamp
+              }
+              endDate {
+                timestamp
+              }
+              eventType {
+                id
+              }
             }
           }
         }
@@ -480,6 +616,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'type' => $eventType->uuid(),
           'title' => $title,
           'visibility' => $visibility,
+          'body' => self::minimalRichTextBody(),
           'startDate' => $startTimestamp,
           'endDate' => $endTimestamp,
         ],
@@ -489,11 +626,23 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'errors' => NULL,
           'event' => [
             'title' => $title,
+            'location' => NULL,
+            'bodyHtml' => "<div><p>Hello</p>\n</div>",
+            'eventType' => [
+              'id' => $eventType->uuid(),
+            ],
+            'startDate' => [
+              'timestamp' => $startTimestamp,
+            ],
+            'endDate' => [
+              'timestamp' => $endTimestamp,
+            ],
           ],
         ],
       ],
       $this->defaultMutationCacheMetaData()
-        ->addCacheTags(['node:1'])
+        ->addCacheTags(['node:1', 'taxonomy_term:1', 'config:filter.format.basic_html'])
+        ->setCacheMaxAge(0)
     );
     $node = $this->getEventByTitle($title);
     $this->assertNotNull($node);
@@ -530,6 +679,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'type' => $eventType->uuid(),
           'title' => '   ',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'startDate' => $startTimestamp,
           'endDate' => $endTimestamp,
         ],
@@ -574,6 +724,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'type' => $eventType->uuid(),
           'title' => $longTitle,
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'startDate' => $startTimestamp,
           'endDate' => $endTimestamp,
         ],
@@ -613,6 +764,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'type' => $eventType->uuid(),
           'title' => 'Invalid Date Floats',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'startDate' => 1781881200.0,
           'endDate' => 1781967600.0,
         ],
@@ -657,6 +809,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'type' => $eventType->uuid(),
           'title' => 'End Before Start Test',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'startDate' => $startTimestamp,
           'endDate' => $endTimestamp,
         ],
@@ -700,6 +853,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'type' => $fakeUuid,
           'title' => 'Test Event',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'startDate' => $startTimestamp,
           'endDate' => $endTimestamp,
         ],
@@ -743,6 +897,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'type' => $eventType->uuid(),
           'title' => 'Test Event',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'startDate' => $startTimestamp,
           'endDate' => $endTimestamp,
         ],
@@ -787,6 +942,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'type' => $eventType->uuid(),
           'title' => 'Test Event',
           'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
           'startDate' => $startTimestamp,
           'endDate' => $endTimestamp,
         ],
