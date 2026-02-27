@@ -12,6 +12,8 @@ use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\user\UserInterface;
+use OpenSocial\RichTextJson\Document\ValidatedDocument;
+use OpenSocial\RichTextJson\Renderer\HtmlRenderer;
 
 /**
  * The update event input wrapper.
@@ -50,6 +52,16 @@ class UpdateEventInput extends EventInputBase {
    * null).
    */
   protected bool $locationProvided = FALSE;
+
+  /**
+   * The body field.
+   *
+   * Contains the HTML (from Rich Text JSON conversion) and text format.
+   * Only set when body was provided in the input.
+   *
+   * @var array{value: string, format: string}|null
+   */
+  protected ?array $body = NULL;
 
   /**
    * The current user for the request.
@@ -200,6 +212,18 @@ class UpdateEventInput extends EventInputBase {
         $this->location = $trimmed !== '' ? $trimmed : NULL;
       }
     }
+
+    // Process body if provided (optional for updates).
+    if (isset($input['body'])) {
+      assert($input['body'] instanceof ValidatedDocument, "GraphQL schema should ensure body is a ValidatedDocument when present.");
+      assert($this->actor !== NULL, "Actor must be set before processing body.");
+
+      $renderer = new HtmlRenderer();
+      $this->body = [
+        'value' => $renderer->renderDocument($input['body']->getDocument()),
+        'format' => $this->getBodyFieldTextFormat($this->actor),
+      ];
+    }
   }
 
   /**
@@ -320,6 +344,27 @@ class UpdateEventInput extends EventInputBase {
    */
   public function hasVisibility(): bool {
     return $this->visibility !== NULL;
+  }
+
+  /**
+   * Check if body should be updated.
+   *
+   * @return bool
+   *   TRUE if body should be updated.
+   */
+  public function hasBody(): bool {
+    return $this->body !== NULL;
+  }
+
+  /**
+   * Get the body field values.
+   *
+   * @return array{value: string, format: string}
+   *   The body.
+   */
+  public function getBody(): array {
+    assert($this->body !== NULL, __FUNCTION__ . " called but body was not set.");
+    return $this->body;
   }
 
   /**

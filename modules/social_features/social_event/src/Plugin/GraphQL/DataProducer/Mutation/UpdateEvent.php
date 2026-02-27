@@ -142,6 +142,12 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $modified = TRUE;
     }
 
+    // Update body if provided.
+    if ($input->hasBody()) {
+      $node->set('body', $input->getBody());
+      $modified = TRUE;
+    }
+
     // Validate the entity before saving.
     // This ensures that field-level constraints are checked
     // (e.g., title length, field types, required fields)

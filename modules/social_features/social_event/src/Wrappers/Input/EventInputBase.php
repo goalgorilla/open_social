@@ -6,6 +6,8 @@ namespace Drupal\social_event\Wrappers\Input;
 
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\social_graphql\Exception\ShouldNotHappenException;
 use Drupal\social_graphql\Wrappers\InputBase;
 use Drupal\taxonomy\TermInterface;
 
@@ -56,6 +58,33 @@ abstract class EventInputBase extends InputBase {
    * The location of the event.
    */
   protected ?string $location = NULL;
+
+  /**
+   * Get the text format that should be used in the body field.
+   *
+   * Until we decide that all content is created with a specific text format
+   * and that this is not dependent on users' permission we must figure out
+   * what the default text format is that the user can use and use that.
+   * Get a list of formats for this user, ordered by weight. The first one
+   * available is the user's default format.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $actor
+   *   The actor that's updating the content. The format depends on what they
+   *   have access to.
+   *
+   * @return string
+   *   The format ID.
+   */
+  protected function getBodyFieldTextFormat(AccountInterface $actor) : string {
+    $allowed_formats = \filter_formats($actor);
+    if ($allowed_formats === []) {
+      throw new ShouldNotHappenException("The application that is trying to create an event does not have access to any usable text formats. It's expected that the scopes that allow access to content creation also provide access to at least one text format to be used.");
+    }
+    $format_id = reset($allowed_formats)->id();
+    assert(is_string($format_id), "Expected TextFormats to be saved config with string IDs.");
+
+    return $format_id;
+  }
 
   /**
    * Load event type taxonomy terms by their UUIDs.

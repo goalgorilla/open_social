@@ -124,7 +124,7 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     $node_values = [
       'type' => 'event',
       'title' => $input->getTitle(),
-      'body' => [['value' => ' ']],
+      'body' => $input->getBody(),
       'field_content_visibility' => $visibility_value,
       'field_event_type' => $input->getEventType(),
       'field_event_date' => $start_date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),

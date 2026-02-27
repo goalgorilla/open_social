@@ -11,6 +11,8 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\user\UserInterface;
+use OpenSocial\RichTextJson\Document\ValidatedDocument;
+use OpenSocial\RichTextJson\Renderer\HtmlRenderer;
 
 /**
  * The creation event input wrapper.
@@ -50,6 +52,15 @@ class CreateEventInput extends EventInputBase {
   protected ?UserInterface $author = NULL;
 
   /**
+   * The body field.
+   *
+   * Contains the HTML (from Rich Text JSON conversion) and text format.
+   *
+   * @var array{value: string, format: string}|null
+   */
+  protected ?array $body = NULL;
+
+  /**
    * Create a new Create Event Input instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -74,6 +85,7 @@ class CreateEventInput extends EventInputBase {
    */
   public function setValues(array $input): void {
     parent::setValues($input);
+    assert(isset($input['body']) && $input['body'] instanceof ValidatedDocument, "GraphQL schema should ensure the body is a required rich text document.");
 
     $this->actor = $this->currentUser->getAccount();
 
@@ -118,6 +130,12 @@ class CreateEventInput extends EventInputBase {
     else {
       $this->violations[] = new Violation("VISIBILITY_INVALID");
     }
+
+    $renderer = new HtmlRenderer();
+    $this->body = [
+      'value' => $renderer->renderDocument($input['body']->getDocument()),
+      'format' => $this->getBodyFieldTextFormat($this->actor),
+    ];
 
     // Validate start date and end date as integer timestamps.
     // @todo Validate Timestamp (integer) in the GraphQL schema (e.g. Timestamp
@@ -186,6 +204,17 @@ class CreateEventInput extends EventInputBase {
   public function getAuthor(): UserInterface {
     assert($this->author !== NULL, __FUNCTION__ . " called but author was not set.");
     return $this->author;
+  }
+
+  /**
+   * Get the body field values.
+   *
+   * @return array{value: string, format: string}
+   *   The body.
+   */
+  public function getBody(): array {
+    assert($this->body !== NULL, __FUNCTION__ . " called but body was not set.");
+    return $this->body;
   }
 
 }
