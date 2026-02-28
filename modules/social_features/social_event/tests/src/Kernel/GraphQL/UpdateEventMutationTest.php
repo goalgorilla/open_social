@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_event\Kernel\GraphQL;
 
+use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
@@ -283,6 +284,25 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
   }
 
   /**
+   * Reloads an event node from storage to assert on fresh entity data.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The event node to reload.
+   *
+   * @return \Drupal\node\NodeInterface
+   *   The reloaded node (never null; asserts on failure).
+   */
+  protected function reloadEvent(NodeInterface $node): NodeInterface {
+    $id = $node->id();
+    assert($id !== NULL);
+    $storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $storage->resetCache([$id]);
+    $reloaded = $storage->load($id);
+    assert($reloaded !== NULL);
+    return $reloaded;
+  }
+
+  /**
    * Test updating an event with all fields.
    */
   public function testUpdateEventSuccess(): void {
@@ -296,8 +316,8 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     $newStartTimestamp = (new \DateTimeImmutable('2026-07-01T09:00:00Z'))->getTimestamp();
     $newEndTimestamp = (new \DateTimeImmutable('2026-07-01T17:00:00Z'))->getTimestamp();
 
-    // @todo add visibility in the assertResults once it lands in the read
-    // schema.
+    // @todo add visibility and address in the assertResults once it lands in
+    // the read schema.
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -331,6 +351,12 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
           'startDate' => $newStartTimestamp,
           'endDate' => $newEndTimestamp,
           'location' => 'Amsterdam Convention Centre',
+          'address' => [
+            'countryCode' => 'NL',
+            'locality' => 'Amsterdam',
+            'postalCode' => '1012 AB',
+            'addressLine1' => 'Dam Square 1',
+          ],
         ],
       ],
       [
@@ -353,6 +379,9 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
           ],
         ],
       ],
+
+      // @todo use assertResults once we have address as part of the read
+      // schema.
       $this->defaultMutationCacheMetaData()
         ->addCacheableDependency($event)
         ->addCacheableDependency($newEventType)
@@ -540,12 +569,9 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
         ->addCacheContexts(['languages:language_interface'])
     );
 
-    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
-    $event_id = $event->id();
-    assert($event_id !== NULL);
-    $node_storage->resetCache([$event_id]);
-    $reloaded = $node_storage->load($event_id);
-    assert($reloaded !== NULL);
+    // We verify with a reload that no new revision was created and the changed
+    // time is unchanged.
+    $reloaded = $this->reloadEvent($event);
     $this->assertSame($revision_id_before, $reloaded->getRevisionId(), 'No new revision should be created when no fields are updated.');
     $this->assertSame($changed_before, $reloaded->getChangedTime(), 'Node changed time should be unchanged when no fields are updated.');
   }
@@ -948,6 +974,294 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
   }
 
   /**
+   * Test that when address is omitted, the event address remains unchanged.
+   */
+  public function testUpdateEventAddressOmittedUnchanged(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType, [
+      'title' => 'Event With Address To Keep',
+      'field_event_address' => [
+        [
+          'country_code' => 'NL',
+          'administrative_area' => '',
+          'locality' => 'Amsterdam',
+          'dependent_locality' => '',
+          'postal_code' => '1012 AB',
+          'address_line1' => 'Dam Square 1',
+          'address_line2' => '',
+        ],
+      ],
+    ]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'title' => 'Updated Title Only',
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+            'title' => 'Updated Title Only',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have address as part of the read schema.
+    $updated = $this->reloadEvent($event);
+    $this->assertFalse($updated->get('field_event_address')->isEmpty());
+    $address_item = $updated->get('field_event_address')->first();
+    $this->assertInstanceOf(AddressItem::class, $address_item);
+
+    /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem $address_item */
+    $this->assertSame('NL', $address_item->getCountryCode());
+    $this->assertSame('Amsterdam', $address_item->getLocality());
+    $this->assertSame('Dam Square 1', $address_item->getAddressLine1());
+  }
+
+  /**
+   * Test that when address is null, the address field is cleared.
+   */
+  public function testUpdateEventClearAddress(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType, [
+      'field_event_address' => [
+        [
+          'country_code' => 'NL',
+          'administrative_area' => '',
+          'locality' => 'Amsterdam',
+          'dependent_locality' => '',
+          'postal_code' => '1012 AB',
+          'address_line1' => 'Dam Square 1',
+          'address_line2' => '',
+        ],
+      ],
+    ]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'address' => NULL,
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have address as part of the read schema.
+    $updated = $this->reloadEvent($event);
+    $this->assertTrue($updated->get('field_event_address')->isEmpty());
+  }
+
+  /**
+   * Test that when address is provided with valid AddressInput, it is updated.
+   */
+  public function testUpdateEventAddressUpdated(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType, [
+      'field_event_address' => [
+        [
+          'country_code' => 'NL',
+          'administrative_area' => '',
+          'locality' => 'Amsterdam',
+          'dependent_locality' => '',
+          'postal_code' => '1012 AB',
+          'address_line1' => 'Original',
+          'address_line2' => '',
+        ],
+      ],
+    ]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'address' => [
+            'countryCode' => 'BE',
+            'locality' => 'Brussels',
+            'postalCode' => '1000',
+            'addressLine1' => 'Grand Place 1',
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have address as part of the read schema.
+    $updated = $this->reloadEvent($event);
+    $this->assertFalse($updated->get('field_event_address')->isEmpty());
+    $address_item = $updated->get('field_event_address')->first();
+    $this->assertInstanceOf(AddressItem::class, $address_item);
+    /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem $address_item */
+    $this->assertSame('BE', $address_item->getCountryCode());
+    $this->assertSame('Brussels', $address_item->getLocality());
+    $this->assertSame('Grand Place 1', $address_item->getAddressLine1());
+  }
+
+  /**
+   * Test that an invalid address country code is rejected.
+   */
+  public function testUpdateEventAddressInvalidEmptyCountryCode(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType, [
+      'field_event_address' => [
+        [
+          'country_code' => 'NL',
+          'administrative_area' => '',
+          'locality' => 'Amsterdam',
+          'dependent_locality' => '',
+          'postal_code' => '1012 AB',
+          'address_line1' => 'Original',
+          'address_line2' => '',
+        ],
+      ],
+    ]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'address' => [
+            'countryCode' => '',
+            'locality' => 'Amsterdam',
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => [
+            'ADDRESS_COUNTRY_CODE_REQUIRED',
+          ],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+
+    // @todo use assertResults once we have address as part of the read schema.
+    // Address should remain unchanged (event not returned on validation error).
+    $reloaded = $this->reloadEvent($event);
+    $address_item = $reloaded->get('field_event_address')->first();
+    $this->assertInstanceOf(AddressItem::class, $address_item);
+
+    /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem $address_item */
+    $this->assertSame('NL', $address_item->getCountryCode());
+  }
+
+  /**
+   * Test that invalid country code is rejected with validation errors.
+   */
+  public function testUpdateEventAddressInvalidCountryCode(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'address' => [
+            'countryCode' => 'XX',
+            'locality' => 'Somewhere',
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => [
+            'ADDRESS_COUNTRY_CODE_INVALID',
+          ],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
    * Test that field_event_enroll is not changed during update.
    */
   public function testUpdateEventEnrollmentUnchanged(): void {
@@ -992,12 +1306,7 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
 
     // The enrollment value is not part of the GraphQL schema, so we need to
     // reload the event to check if it changed.
-    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
-    $event_id = $event->id();
-    assert($event_id !== NULL);
-    $node_storage->resetCache([$event_id]);
-    $updated_event = $node_storage->load($event_id);
-    assert($updated_event !== NULL);
+    $updated_event = $this->reloadEvent($event);
     $this->assertEquals($original_enroll, $updated_event->get('field_event_enroll')->getString(), 'Enrollment value should not change during update.');
   }
 
@@ -1043,12 +1352,7 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     );
 
     // @todo remove this once we have visibility as part of the read schema.
-    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
-    $event_id = $event->id();
-    assert($event_id !== NULL);
-    $node_storage->resetCache([$event_id]);
-    $reloaded_event = $node_storage->load($event_id);
-    assert($reloaded_event !== NULL);
+    $reloaded_event = $this->reloadEvent($event);
     $this->assertEquals('public', $reloaded_event->get('field_content_visibility')->value);
   }
 
@@ -1098,12 +1402,7 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     );
 
     // @todo remove this once we have visibility as part of the read schema.
-    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
-    $event_id = $event->id();
-    assert($event_id !== NULL);
-    $node_storage->resetCache([$event_id]);
-    $reloaded_event = $node_storage->load($event_id);
-    assert($reloaded_event !== NULL);
+    $reloaded_event = $this->reloadEvent($event);
     $this->assertEquals('community', $reloaded_event->get('field_content_visibility')->value);
   }
 
