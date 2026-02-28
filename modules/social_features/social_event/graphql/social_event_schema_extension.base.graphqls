@@ -246,6 +246,11 @@ input UpdateEventInput {
   If omitted, event location remains unchanged. If null, the location is cleared.
   """
   location: String
+  """
+  The address of the event.
+  If omitted, event address remains unchanged. If null, the address is cleared.
+  """
+  address: AddressInput
 }
 
 type UpdateEventPayload {
