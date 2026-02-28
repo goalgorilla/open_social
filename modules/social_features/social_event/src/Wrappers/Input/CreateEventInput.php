@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Wrappers\Input;
 
-use CommerceGuys\Addressing\Exception\UnknownCountryException;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\social_graphql\GraphQL\Violation;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
@@ -115,22 +114,7 @@ class CreateEventInput extends EventInputBase {
 
     // Address is optional; validate and normalize when provided.
     if (isset($input['address']) && is_array($input['address'])) {
-      $address_input = $input['address'];
-      $country_code = isset($address_input['countryCode']) && is_string($address_input['countryCode'])
-        ? trim($address_input['countryCode'])
-        : '';
-      if ($country_code === '') {
-        $this->violations[] = new Violation("ADDRESS_COUNTRY_CODE_REQUIRED");
-      }
-      else {
-        try {
-          $this->countryRepository->get($country_code);
-          $this->address = $this->normalizeAddressInputToDrupal($address_input);
-        }
-        catch (UnknownCountryException $e) {
-          $this->violations[] = new Violation("ADDRESS_COUNTRY_CODE_INVALID");
-        }
-      }
+      $this->validateAndSetAddressFromInput($input['address']);
     }
   }
 

@@ -44,6 +44,13 @@ class UpdateEventInput extends EventInputBase {
   protected bool $eventTypeProvided = FALSE;
 
   /**
+   * Whether the address field was explicitly provided in the input.
+   *
+   * When true, address should be updated (to the value or cleared if null).
+   */
+  protected bool $addressProvided = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function setValues(array $input): void {
@@ -164,6 +171,20 @@ class UpdateEventInput extends EventInputBase {
       else {
         $trimmed = trim($input['location']);
         $this->location = $trimmed !== '' ? $trimmed : NULL;
+      }
+    }
+
+    // Handle address: omit = unchanged; null = clear; value = set.
+    if (array_key_exists('address', $input)) {
+      $this->addressProvided = TRUE;
+      if ($input['address'] === NULL) {
+        $this->address = NULL;
+      }
+      elseif (!is_array($input['address'])) {
+        $this->violations[] = new Violation("ADDRESS_INVALID");
+      }
+      else {
+        $this->validateAndSetAddressFromInput($input['address']);
       }
     }
 
@@ -328,6 +349,16 @@ class UpdateEventInput extends EventInputBase {
    */
   public function hasLocation(): bool {
     return $this->locationProvided;
+  }
+
+  /**
+   * Check if address should be updated.
+   *
+   * @return bool
+   *   TRUE if the address field was explicitly provided in the input.
+   */
+  public function hasAddress(): bool {
+    return $this->addressProvided;
   }
 
 }

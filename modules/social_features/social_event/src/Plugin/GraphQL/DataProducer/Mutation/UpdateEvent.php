@@ -142,6 +142,13 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $modified = TRUE;
     }
 
+    // Update address if provided (set to value or clear if null).
+    if ($input->hasAddress()) {
+      $address = $input->getAddress();
+      $node->set('field_event_address', $address !== NULL ? [0 => $address] : []);
+      $modified = TRUE;
+    }
+
     // Update body if provided.
     if ($input->hasBody()) {
       $node->set('body', $input->getBody());

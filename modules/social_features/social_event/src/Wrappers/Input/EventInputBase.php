@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Drupal\social_event\Wrappers\Input;
 
 use CommerceGuys\Addressing\Country\CountryRepositoryInterface;
+use CommerceGuys\Addressing\Exception\UnknownCountryException;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_graphql\Exception\ShouldNotHappenException;
+use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_graphql\Wrappers\InputBase;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
@@ -314,6 +316,32 @@ abstract class EventInputBase extends InputBase {
    */
   public function getAddress(): ?array {
     return $this->address;
+  }
+
+  /**
+   * Validates address input and sets $this->address when valid.
+   *
+   * Adds ADDRESS_COUNTRY_CODE_REQUIRED or ADDRESS_COUNTRY_CODE_INVALID to
+   * violations when invalid. Does not set $this->address when validation fails.
+   *
+   * @param array $address_input
+   *   Raw address input.
+   */
+  protected function validateAndSetAddressFromInput(array $address_input): void {
+    $country_code = isset($address_input['countryCode']) && is_string($address_input['countryCode'])
+      ? trim($address_input['countryCode'])
+      : '';
+    if ($country_code === '') {
+      $this->violations[] = new Violation("ADDRESS_COUNTRY_CODE_REQUIRED");
+      return;
+    }
+    try {
+      $this->countryRepository->get($country_code);
+      $this->address = $this->normalizeAddressInputToDrupal($address_input);
+    }
+    catch (UnknownCountryException $e) {
+      $this->violations[] = new Violation("ADDRESS_COUNTRY_CODE_INVALID");
+    }
   }
 
   /**
