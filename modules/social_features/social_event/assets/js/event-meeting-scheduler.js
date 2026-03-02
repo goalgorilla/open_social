@@ -16,8 +16,10 @@
    *   Formatted date string.
    */
   function formatDayHeader(date) {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const dayName = days[date.getDay()];
+    const dayName = new Intl.DateTimeFormat(
+      drupalSettings.path?.currentLanguage || 'en',
+      { weekday: 'short' }
+    ).format(date);
     const month = date.getMonth() + 1; // getMonth() returns 0-11
     const day = date.getDate();
     return `${dayName} ${month}/${day}`;

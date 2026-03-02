@@ -427,6 +427,15 @@ function social_event_update_130012(): void {
   ];
 
   foreach ($configs as $name) {
-    $active_storage->write($name, (array) $source->read($name));
+    if ($active_storage->exists($name)) {
+      continue;
+    }
+
+    $data = $source->read($name);
+    if ($data === FALSE) {
+      continue;
+    }
+
+    $active_storage->write($name, $data);
   }
 }

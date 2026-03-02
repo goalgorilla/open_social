@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\social_event\Plugin\Validation\Constraint;
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -24,6 +26,6 @@ class MeetingCapacityConstraint extends SymfonyConstraint {
    *
    * @var string
    */
-  public string $bbbCapacityLimitExceeded = 'BigBlueButton capacity limit reached. At the selected time, only @capacity attendees are allowed. Change the meeting time or decrease the number of attendees.';
+  public string $bbbCapacityLimitExceeded = 'BigBlueButton capacity limit reached. Change the meeting time or decrease the number of attendees.';
 
 }

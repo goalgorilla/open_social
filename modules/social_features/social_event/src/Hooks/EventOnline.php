@@ -66,6 +66,30 @@ final class EventOnline implements ContainerInjectionInterface {
   }
 
   /**
+   * Fix the path to the fullcalendar library for meeting_api_scheduler.
+   *
+   * @param array $libraries
+   *   An array of libraries.
+   * @param string $extension
+   *   The extension name.
+   *
+   * @see hook_library_info_alter()
+   */
+  #[Alter('library_info')]
+  public function fixFullCalendarJsPath(array &$libraries, string $extension): void {
+    if ($extension === 'meeting_api_scheduler' && isset($libraries['fullcalendar']['js'])) {
+      foreach ($libraries['fullcalendar']['js'] as $path => $options) {
+        // Because the "meeting_api_scheduler" module expects the "fullcalendar"
+        // library load by a specific repository rather than npm library,
+        // the path to the main source file is broken.
+        // Fix it by removing the "dist/" part of the path.
+        unset($libraries['fullcalendar']['js'][$path]);
+        $libraries['fullcalendar']['js'][str_replace('/dist/', '/', $path)] = $options;
+      }
+    }
+  }
+
+  /**
    * Enables the Meeting API Scheduler module when BigBlueButton is installed.
    *
    * Implements hook_modules_installed() to automatically install the
@@ -133,7 +157,6 @@ final class EventOnline implements ContainerInjectionInterface {
   #[Hook('entity_extra_field_info')]
   public function entityExtraFieldInfo(): array {
     // Add a scheduler extra field for meeting_api_meeting entity.
-    // @todo Add to all bundles.
     $extra['meeting_api_meeting']['big_blue_button']['form']['scheduler'] = [
       'label' => $this->t('Scheduler'),
       'description' => $this->t('Scheduler field for meeting management'),

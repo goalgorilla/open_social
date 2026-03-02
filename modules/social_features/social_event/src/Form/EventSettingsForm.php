@@ -63,7 +63,7 @@ class EventSettingsForm extends ConfigFormBase {
    * @param \Drupal\social_event\Service\EventOnline $event_online
    *   The event online service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The event online service.
+   *   The module handler service.
    */
   public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, CacheTagsInvalidatorInterface $cache_tags_invalidator, EventOnline $event_online, ModuleHandlerInterface $module_handler) {
     parent::__construct($config_factory);
