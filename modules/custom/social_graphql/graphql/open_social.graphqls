@@ -420,6 +420,27 @@ input AddressInput {
 }
 
 """
+Output type for address data returned from the API.
+Matches the structure of AddressInput for consistency.
+"""
+type Address {
+  """The two-letter ISO 3166-1 alpha-2 country code."""
+  countryCode: String!
+  """The main sub-division of a country (e.g. state, province, region)."""
+  administrativeArea: String
+  """The city, town or post-town of the address."""
+  locality: String
+  """A smaller division within the locality (e.g. suburb, neighbourhood)."""
+  dependentLocality: String
+  """The postal (ZIP / postcode) code of the address."""
+  postalCode: String
+  """The primary street address line."""
+  addressLine1: String
+  """A secondary address line for additional street-level details."""
+  addressLine2: String
+}
+
+"""
 The visibility level of content on the platform.
 """
 enum ContentVisibility {
