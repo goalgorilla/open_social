@@ -121,6 +121,24 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
       $builder->fromParent()
     );
 
+    // Address fields.
+    $address_fields = [
+      'countryCode',
+      'administrativeArea',
+      'locality',
+      'dependentLocality',
+      'postalCode',
+      'addressLine1',
+      'addressLine2',
+    ];
+    foreach ($address_fields as $field) {
+      $registry->addFieldResolver('Address', $field,
+        $builder->produce('map_key')
+          ->map('value', $builder->fromParent())
+          ->map('key', $builder->fromValue($field))
+      );
+    }
+
     // Media fields.
     // @todo https://www.drupal.org/project/social/issues/3191617
     $registry->addFieldResolver('Media', 'id',
