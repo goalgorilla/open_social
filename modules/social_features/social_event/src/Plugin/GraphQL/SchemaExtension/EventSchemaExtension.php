@@ -151,6 +151,12 @@ class EventSchemaExtension extends SchemaExtensionPluginBase {
       $builder->fromPath('entity:node', 'field_event_location.value')
     );
 
+    $registry->addFieldResolver('Event', 'address',
+      $builder->produce('entity_address')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_event_address'))
+    );
+
     $registry->addFieldResolver('Event', 'eventType',
       $builder->compose(
         $builder->produce('entity_reference')

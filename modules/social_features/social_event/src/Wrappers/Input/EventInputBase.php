@@ -328,43 +328,26 @@ abstract class EventInputBase extends InputBase {
    *   Raw address input.
    */
   protected function validateAndSetAddressFromInput(array $address_input): void {
-    $country_code = isset($address_input['countryCode']) && is_string($address_input['countryCode'])
-      ? trim($address_input['countryCode'])
-      : '';
+    $country_code = strtoupper(trim($address_input['countryCode'] ?? ''));
     if ($country_code === '') {
       $this->violations[] = new Violation("ADDRESS_COUNTRY_CODE_REQUIRED");
       return;
     }
     try {
       $this->countryRepository->get($country_code);
-      $this->address = $this->normalizeAddressInputToDrupal($address_input);
+      $this->address = [
+        'country_code' => $country_code,
+        'administrative_area' => trim($address_input['administrativeArea'] ?? ''),
+        'locality' => trim($address_input['locality'] ?? ''),
+        'dependent_locality' => trim($address_input['dependentLocality'] ?? ''),
+        'postal_code' => trim($address_input['postalCode'] ?? ''),
+        'address_line1' => trim($address_input['addressLine1'] ?? ''),
+        'address_line2' => trim($address_input['addressLine2'] ?? ''),
+      ];
     }
     catch (UnknownCountryException $e) {
       $this->violations[] = new Violation("ADDRESS_COUNTRY_CODE_INVALID");
     }
-  }
-
-  /**
-   * Normalizes GraphQL address input to Drupal address field value shape.
-   *
-   * @param array $input
-   *   The raw address input (camelCase keys from GraphQL).
-   *
-   * @return array{country_code: string, administrative_area: string, locality: string, dependent_locality: string, postal_code: string, address_line1: string, address_line2: string}
-   *   Address value with Drupal keys (snake_case). Langcode is left empty;
-   *   the mutation adds it when building the node value.
-   */
-  protected function normalizeAddressInputToDrupal(array $input): array {
-    $value = [
-      'country_code' => trim($input['countryCode'] ?? ''),
-      'administrative_area' => trim($input['administrativeArea'] ?? ''),
-      'locality' => trim($input['locality'] ?? ''),
-      'dependent_locality' => trim($input['dependentLocality'] ?? ''),
-      'postal_code' => trim($input['postalCode'] ?? ''),
-      'address_line1' => trim($input['addressLine1'] ?? ''),
-      'address_line2' => trim($input['addressLine2'] ?? ''),
-    ];
-    return $value;
   }
 
 }
