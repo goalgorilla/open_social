@@ -78,7 +78,7 @@ function social_group_default_route_post_update_001_fix_groups_path_aliases(arra
     Cache::invalidateTags(['route_match']);
 
     return Markup::create(sprintf(
-       'Fixed group path aliases: fixed %s aliases with unwanted suffixes from %s groups.' . PHP_EOL . 'A list of skipped:' . PHP_EOL . '%s',
+        'Fixed group path aliases: fixed %s aliases with unwanted suffixes from %s groups.' . PHP_EOL . 'A list of skipped:' . PHP_EOL . '%s',
         count($service->getReports('fixed_suffixes')),
         $sandbox['total'],
         implode(PHP_EOL, $service->getReports('skipped')),
@@ -93,6 +93,101 @@ function social_group_default_route_post_update_001_fix_groups_path_aliases(arra
       '@total' => $sandbox['total'],
     ]);
   }
+}
+
+/**
+ * Deletes /group/{id}/home aliases and shortens /group/{id}/stream aliases.
+ *
+ * This update performs two operations in a single pass per group:
+ * 1. Deletes path aliases for /group/{id}/home.
+ * 2. For /group/{id}/stream, shortens the alias by removing a trailing /stream
+ *    when present.
+ *
+ * @param array $sandbox
+ *   A reference to the sandbox array used to manage the operation's state:
+ *   - groups: Array of group IDs to process.
+ *   - total: Total number of groups to process.
+ *   - progress: Number of groups processed so far.
+ *   - #finished: Completion ratio (0 to 1).
+ *
+ * @return \Drupal\Component\Render\MarkupInterface
+ *   A message describing the outcome.
+ */
+function social_group_default_route_post_update_002_remove_home_and_stream_aliases(array &$sandbox): MarkupInterface {
+  if (!\Drupal::state()->get('social_group_default_route_fix_aliases_opt_in', FALSE)) {
+    $sandbox['#finished'] = 1;
+    \Drupal::logger('social_group_default_route')->info('Platform has opted out of alias fixes for the Group Default Route changes.');
+    return t('Platform has opted out of alias fixes for the Group Default Route changes.');
+  }
+
+  $database = \Drupal::database();
+
+  if (!isset($sandbox['groups'])) {
+    $sandbox['groups'] = \Drupal::entityQuery('group')
+      ->accessCheck(FALSE)
+      ->sort('id')
+      ->execute();
+
+    $sandbox['total'] = count($sandbox['groups']);
+    $sandbox['progress'] = 0;
+
+    if ($sandbox['total'] === 0) {
+      $sandbox['#finished'] = 1;
+      return t('No groups found to process.');
+    }
+  }
+
+  $batch_size = Settings::get('entity_update_batch_size', 25);
+  $groups_to_process = array_splice($sandbox['groups'], 0, $batch_size);
+
+  foreach ($groups_to_process as $gid) {
+    foreach (GroupPathAliasFixService::ALIAS_TABLES as $table) {
+      $has_home_alias = (bool) $database->select($table, 'pa')
+        ->fields('pa', ['id'])
+        ->condition('path', "/group/$gid/home")
+        ->execute()
+        ?->fetchField();
+
+      if (!$has_home_alias) {
+        continue;
+      }
+
+      $database->delete($table)
+        ->condition('path', "/group/$gid/home")
+        ->execute();
+
+      $stream_alias = $database->select($table, 'pa')
+        ->fields('pa', ['id', 'alias'])
+        ->condition('path', "/group/$gid/stream")
+        ->execute()
+        ?->fetchAssoc();
+
+      if (!isset($stream_alias['id'], $stream_alias['alias'])) {
+        continue;
+      }
+
+      $alias = $stream_alias['alias'];
+      if (!str_ends_with($alias, '/stream')) {
+        continue;
+      }
+
+      $database->update($table)
+        ->fields(['alias' => substr($alias, 0, -strlen('/stream'))])
+        ->condition('id', $stream_alias['id'])
+        ->execute();
+    }
+    $sandbox['progress']++;
+  }
+
+  if (empty($sandbox['groups'])) {
+    $sandbox['#finished'] = 1;
+    \Drupal::service('path_alias.manager')->cacheClear();
+    Cache::invalidateTags(['route_match']);
+    return t('Removed /group/{id}/home aliases and shortened /group/{id}/stream aliases for @total groups.', ['@total' => $sandbox['total']]);
+  }
+
+  $sandbox['#finished'] = $sandbox['progress'] / $sandbox['total'];
+  return t('Processed @progress of @total groups...', ['@progress' => $sandbox['progress'], '@total' => $sandbox['total']]);
 }
 
 /**
