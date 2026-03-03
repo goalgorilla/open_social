@@ -488,4 +488,98 @@ class QueryEventTest extends SocialGraphQLTestBase {
     );
   }
 
+  /**
+   * Test that event with address returns the address via GraphQL API.
+   */
+  public function testEventWithAddressReturnsAddress(): void {
+    $address_value = [
+      'country_code' => 'NL',
+      'administrative_area' => 'NH',
+      'locality' => 'Amsterdam',
+      'dependent_locality' => '',
+      'postal_code' => '1012 AB',
+      'address_line1' => 'Dam Square 1',
+      'address_line2' => '',
+    ];
+    $event = $this->createNode([
+      'type' => 'event',
+      'field_content_visibility' => 'public',
+      'field_event_address' => [$address_value],
+      'status' => NodeInterface::PUBLISHED,
+    ]);
+
+    $this->setUpCurrentUser([], array_merge([
+      'view node.event.field_content_visibility:public content',
+    ], $this->userPermissions()));
+
+    $this->assertResults('
+        query ($id: ID!) {
+          event(id: $id) {
+            id
+            address {
+              countryCode
+              administrativeArea
+              locality
+              postalCode
+              addressLine1
+            }
+          }
+        }
+      ',
+      ['id' => $event->uuid()],
+      [
+        'event' => [
+          'id' => $event->uuid(),
+          'address' => [
+            'countryCode' => 'NL',
+            'administrativeArea' => 'NH',
+            'locality' => 'Amsterdam',
+            'postalCode' => '1012 AB',
+            'addressLine1' => 'Dam Square 1',
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that event without address returns null for address via GraphQL API.
+   */
+  public function testEventWithoutAddressReturnsNull(): void {
+    $event = $this->createNode([
+      'type' => 'event',
+      'field_content_visibility' => 'public',
+      'status' => NodeInterface::PUBLISHED,
+    ]);
+
+    $this->setUpCurrentUser([], array_merge([
+      'view node.event.field_content_visibility:public content',
+    ], $this->userPermissions()));
+
+    $this->assertResults('
+        query ($id: ID!) {
+          event(id: $id) {
+            id
+            address {
+              countryCode
+            }
+          }
+        }
+      ',
+      ['id' => $event->uuid()],
+      [
+        'event' => [
+          'id' => $event->uuid(),
+          'address' => NULL,
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
 }

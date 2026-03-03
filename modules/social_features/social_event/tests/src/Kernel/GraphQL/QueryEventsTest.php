@@ -263,6 +263,76 @@ class QueryEventsTest extends SocialGraphQLTestBase {
   }
 
   /**
+   * Test that events query returns address when present and null when absent.
+   */
+  public function testEventsQueryReturnsAddressWhenPresent(): void {
+    $address_value = [
+      'country_code' => 'NL',
+      'administrative_area' => '',
+      'locality' => 'Amsterdam',
+      'dependent_locality' => '',
+      'postal_code' => '1012 AB',
+      'address_line1' => 'Dam Square 1',
+      'address_line2' => '',
+    ];
+    $event_with_address = $this->createNode([
+      'type' => 'event',
+      'field_content_visibility' => 'public',
+      'field_event_address' => [$address_value],
+      'status' => NodeInterface::PUBLISHED,
+    ]);
+    $event_without_address = $this->createNode([
+      'type' => 'event',
+      'field_content_visibility' => 'public',
+      'status' => NodeInterface::PUBLISHED,
+    ]);
+
+    $this->setUpCurrentUser([], ['view node.event.field_content_visibility:public content']);
+
+    $this->assertResults('
+        query {
+          events(last: 2, sortKey: CREATED_AT) {
+            nodes {
+              id
+              address {
+                countryCode
+                locality
+                postalCode
+                addressLine1
+              }
+            }
+          }
+        }
+      ',
+      [],
+      [
+        'events' => [
+          'nodes' => [
+            [
+              'id' => $event_with_address->uuid(),
+              'address' => [
+                'countryCode' => 'NL',
+                'locality' => 'Amsterdam',
+                'postalCode' => '1012 AB',
+                'addressLine1' => 'Dam Square 1',
+              ],
+            ],
+            [
+              'id' => $event_without_address->uuid(),
+              'address' => NULL,
+            ],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->setCacheMaxAge(0)
+        ->addCacheableDependency($event_with_address)
+        ->addCacheableDependency($event_without_address)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
    * Helper method to get cache for eventsCreated tets.
    */
   private function createMetadataForEventsCreated(UserInterface $user): CacheableMetadata {
