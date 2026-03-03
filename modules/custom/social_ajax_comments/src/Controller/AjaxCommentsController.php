@@ -14,6 +14,10 @@ use Drupal\ajax_comments\Controller\AjaxCommentsController as ContribController;
 
 /**
  * Controller routines for AJAX comments routes.
+ *
+ * We do not override renderCommentField(): the contrib controller removes
+ * entity_type, entity, field_name, and pid from the pager's route and uses the
+ * entity canonical route. Re-adding those params produced invalid pager URLs.
  */
 class AjaxCommentsController extends ContribController {
 
@@ -30,13 +34,6 @@ class AjaxCommentsController extends ContribController {
    * @var bool
    */
   protected $clearTempStore = TRUE;
-
-  /**
-   * The parent comment's comment ID.
-   *
-   * @var int|null
-   */
-  protected $pid;
 
   /**
    * Cancel handler for the cancel form.
@@ -92,6 +89,17 @@ class AjaxCommentsController extends ContribController {
   }
 
   /**
+   * {@inheritdoc}
+   *
+   * Preserves the comment pager page so that after editing a comment the list
+   * stays on the same page instead of resetting to page 1.
+   */
+  public function save(Request $request, CommentInterface $comment) {
+    $this->preservePagerPageFromReferer($request);
+    return parent::save($request, $comment);
+  }
+
+  /**
    * Builds ajax response for adding a new comment without a parent comment.
    *
    * This is copied from AjaxCommentsController::add because a reply on
@@ -117,6 +125,10 @@ class AjaxCommentsController extends ContribController {
    */
   public function socialAdd(Request $request, EntityInterface $entity, $field_name, $pid = NULL) {
     $response = new AjaxResponse();
+
+    // Preserve pager page first so the current request has it before any
+    // rendering (formatter reads it via PagerParameters from the request).
+    $this->preservePagerPageFromReferer($request);
 
     // Store the selectors from the incoming request, if applicable.
     // If the selectors are not in the request, the stored ones will
@@ -157,8 +169,6 @@ class AjaxCommentsController extends ContribController {
       // If there are no errors, set the ajax-updated
       // selector value for the form.
       $this->tempStore->setSelector('form_html_id', $form['#attributes']['id']);
-
-      $this->pid = $pid;
 
       // Build the updated comment field and insert into a replaceWith
       // response.
@@ -243,18 +253,87 @@ class AjaxCommentsController extends ContribController {
   }
 
   /**
-   * {@inheritdoc}
+   * Preserves the pager page on the request query.
+   *
+   * When adding a comment via AJAX, the response rebuilds the comment list. The
+   * request URL is the AJAX endpoint, so it has no ?page= and the pager would
+   * show page 1. We copy the page from the form POST (hidden field) or Referer.
+   *
+   * Note: If the user deletes the last comment on a page, the preserved page
+   * may point beyond the new last page; the pager will then show an empty list.
+   * Clamping would require knowing the new total page count
+   * after the operation.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request (controller request; pager reads from this).
    */
-  protected function renderCommentField(EntityInterface $entity, $field_name) {
-    $comment_display = parent::renderCommentField($entity, $field_name);
+  protected function preservePagerPageFromReferer(Request $request): void {
+    $rawPage = $this->getPagerPageFromRequest($request);
+    if ($rawPage === '') {
+      return;
+    }
+    $page = $this->normalizePagerPage($rawPage);
+    $request->query->set('page', $page);
+  }
 
-    $parameters = &$comment_display[0]['comments']['pager']['#route_parameters'];
-    $parameters['entity_type'] = $entity->getEntityTypeId();
-    $parameters['entity'] = $entity->id();
-    $parameters['field_name'] = $field_name;
-    $parameters['pid'] = $this->pid;
+  /**
+   * Gets the pager page value from request (query, POST, or Referer).
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
+   *
+   * @return string
+   *   Raw page value, or empty string if not found.
+   */
+  private function getPagerPageFromRequest(Request $request): string {
+    if ($request->query->has('page') && $request->query->get('page') !== '') {
+      return (string) $request->query->get('page');
+    }
+    if ($request->request->has('comment_pager_page')) {
+      return (string) $request->request->get('comment_pager_page');
+    }
+    // Check nested form data for the pager page value. ParameterBag::get()
+    // returns scalar types, so use all() to access array form values.
+    $all_post = $request->request->all();
+    foreach (['comment_comment_form', 'comment_post_comment_form'] as $form_key) {
+      $form_data = $all_post[$form_key] ?? NULL;
+      if (is_array($form_data) && isset($form_data['comment_pager_page']) && (string) $form_data['comment_pager_page'] !== '') {
+        return (string) $form_data['comment_pager_page'];
+      }
+    }
+    foreach ($all_post as $value) {
+      if (is_array($value) && isset($value['comment_pager_page']) && (string) $value['comment_pager_page'] !== '') {
+        return (string) $value['comment_pager_page'];
+      }
+    }
+    // Best-effort fallback: Referer is user-controlled and may be spoofed.
+    $referer = $request->headers->get('Referer');
+    if ($referer !== NULL && $referer !== '') {
+      $parts = parse_url($referer);
+      if (isset($parts['query'])) {
+        parse_str($parts['query'], $query);
+        if (isset($query['page']) && is_string($query['page']) && $query['page'] !== '') {
+          return $query['page'];
+        }
+      }
+    }
+    return '';
+  }
 
-    return $comment_display;
+  /**
+   * Normalizes a pager page string to non-negative integers.
+   *
+   * @param string $raw
+   *   Raw value from request (e.g. "1" or "0,1" for multiple pagers).
+   *
+   * @return string
+   *   Sanitized value safe for the page query (e.g. "1" or "0,1").
+   */
+  private function normalizePagerPage(string $raw): string {
+    $parts = array_map(static function ($p) {
+      return (string) max(0, (int) $p);
+    }, explode(',', $raw));
+    return implode(',', $parts);
   }
 
   /**
@@ -291,6 +370,8 @@ class AjaxCommentsController extends ContribController {
 
     /** @var \Drupal\Core\Entity\EntityInterface $commented_entity */
     $commented_entity = $comment->getCommentedEntity();
+
+    $this->preservePagerPageFromReferer($request);
 
     // Build the updated comment field and insert into a replaceWith response.
     // Also prepend any status messages in the response.

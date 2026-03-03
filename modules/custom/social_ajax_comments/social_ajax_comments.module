@@ -162,7 +162,18 @@ function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, 
  * Implements hook_ajax_render_alter().
  */
 function social_ajax_comments_ajax_render_alter(array &$data) {
+  // Only apply pager response shaping for pager navigation, not when adding or
+  // deleting a comment (those use replaceWith and would conflict).
+  $route = \Drupal::routeMatch()->getRouteName();
+  $is_comment_add_or_delete = in_array($route, [
+    'social_ajax_comments.add',
+    'social_ajax_comments.delete',
+    'ajax_comments.add',
+    'ajax_comments.delete',
+  ], TRUE);
+
   if (
+    !$is_comment_add_or_delete &&
     (
       // In case when the current page is (re)loaded and the response contains a
       // command with settings and a command with new content.
@@ -270,6 +281,26 @@ function social_ajax_comments_form_comment_form_alter(array &$form, FormStateInt
   // Do not proceed with the form alter.
   if (in_array(\Drupal::routeMatch()->getRouteName(), ['comment.reply', 'entity.comment.edit_form'])) {
     unset($form['actions']['submit']['#ajax']);
+    return;
+  }
+
+  // Pass current pager page so the AJAX response can rebuild the same page.
+  $request = \Drupal::request();
+  $page = $request->query->get('page', '');
+  $form['comment_pager_page'] = [
+    '#type' => 'hidden',
+    '#default_value' => $page,
+  ];
+  $form['#attached']['library'][] = 'social_ajax_comments/comment_pager';
+  // Add page to the AJAX submit URL so the request has it
+  // (Drupal AJAX uses #ajax url).
+  if ($page !== '' && isset($form['actions']['submit']['#ajax']['url'])) {
+    $url = $form['actions']['submit']['#ajax']['url'];
+    if ($url instanceof Url) {
+      $query = $url->getOption('query') ?? [];
+      $query['page'] = $page;
+      $url->setOption('query', $query);
+    }
   }
 }
 
