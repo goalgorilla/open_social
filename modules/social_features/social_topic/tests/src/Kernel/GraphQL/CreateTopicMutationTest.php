@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_topic\Kernel\GraphQL;
 
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Render\RenderContext;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\NodeInterface;
+use Drupal\social_organization\Entity\group\Organization;
+use Drupal\social_organization\Service\OrganizationInputValidationService;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
+use Drupal\user\Entity\User;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use GraphQL\Server\OperationParams;
@@ -225,6 +231,87 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
       ->set('cross_posting.content_types', ['topic'])
       ->set('cross_posting.group_types', ['flexible_group'])
       ->save();
+
+    // Organization save requires view routes (group_members, upcoming_events,
+    // newest_groups, latest_topics). Install optional config.
+    $this->installOrganizationRequiredViews();
+  }
+
+  /**
+   * Installs view config required for Organization entity save.
+   *
+   * Organization::save() and social_organization_group_insert need views
+   * (group_members, upcoming_events, newest_groups, latest_topics).
+   */
+  private function installOrganizationRequiredViews(): void {
+    $config_installer = $this->container->get('config.installer');
+    $path_resolver = $this->container->get('extension.path.resolver');
+
+    $config_dirs = [
+      $path_resolver->getPath('module', 'social_group') . '/config/optional',
+      $path_resolver->getPath('module', 'social_event') . '/config/install',
+    ];
+
+    foreach ($config_dirs as $dir) {
+      if (is_dir($dir)) {
+        $storage = new FileStorage($dir, StorageInterface::DEFAULT_COLLECTION);
+        $config_installer->installOptionalConfig($storage);
+      }
+    }
+
+    $this->container->get('router.builder')->rebuild();
+  }
+
+  /**
+   * Creates an organization (group of type organization).
+   *
+   * For "members" visibility, the current user (OAuth actor) must be a member
+   * to view the organization; otherwise OrganizationInputValidationService
+   * returns ORGANIZATION_NOT_FOUND. So we add the current user as a member.
+   */
+  private function createOrganization(string $label, string $visibility, int $uid = 1): Organization {
+    $group = Group::create([
+      'type' => 'organization',
+      'label' => $label,
+      'uid' => $uid,
+      'field_flexible_group_visibility' => $visibility,
+      'status' => 1,
+    ]);
+    assert($group instanceof Organization);
+    $group->save();
+
+    if ($visibility === 'members') {
+      $actor = $this->container->get('current_user')->getAccount();
+      if (!$group->hasMember($actor)) {
+        $user_storage = $this->container->get('entity_type.manager')->getStorage('user');
+        $user = $user_storage->load($actor->id());
+        if ($user !== NULL) {
+          $group->addMember($user);
+        }
+      }
+    }
+
+    return $group;
+  }
+
+  /**
+   * Returns the maximum node ID in storage (0 if no nodes exist).
+   */
+  private function getMaxNodeId(EntityStorageInterface $nodeStorage): int {
+    /** @phpstan-ignore method.alreadyNarrowedType */
+    $ids = $nodeStorage->getQuery()->accessCheck(FALSE)->execute();
+    return empty($ids) ? 0 : (int) max($ids);
+  }
+
+  /**
+   * Asserts that the topic node is assigned to the given organization.
+   */
+  private function assertTopicInOrganization(int $nodeId, int|string $orgId): void {
+    $node = $this->container->get('entity_type.manager')->getStorage('node')->load($nodeId);
+    assert($node instanceof NodeInterface);
+    $refs = $node->get(Organization::REFERENCE_FIELD)->getValue();
+    $gids = array_column($refs, 'target_id');
+    $this->assertContains((string) $orgId, $gids, "Topic {$nodeId} should be in organization {$orgId}.");
   }
 
   /**
@@ -1682,6 +1769,661 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
     $this->assertArrayHasKey('data', $data, 'No result data.');
     $this->assertEmpty($data['data']['createTopic']['errors']);
     $this->assertNotNull($data['data']['createTopic']['topic']);
+  }
+
+  /**
+   * Test: Unauthenticated request with organizations fails.
+   *
+   * Returns error and creates no topic.
+   */
+  public function testCreateTopicInOrganizationFailsWhenNotAuthenticated(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $publicOrganization = $this->createOrganization('Public Organization', 'public');
+
+    $this->setCurrentUser(User::getAnonymousUser());
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $countBefore = (int) $nodeStorage->getQuery()->count()->accessCheck(FALSE)->execute();
+
+    $this->assertErrors(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic in Organization',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $publicOrganization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      ['/scope|authorization|authenticated/i'],
+      $this->defaultMutationCacheMetaData()
+    );
+
+    $countAfter = (int) $nodeStorage->getQuery()->count()->accessCheck(FALSE)->execute();
+    $this->assertSame($countBefore, $countAfter, 'No new topic should be created when unauthenticated.');
+  }
+
+  /**
+   * Data provider for topic visibility × organization visibility combinations.
+   */
+  public static function topicVisibilityInOrganizationProvider(): array {
+    $topicVisibilities = ['PUBLIC', 'COMMUNITY', 'GROUP_MEMBER'];
+    $organizationVisibilities = ['public', 'community', 'members'];
+    $topicLabels = ['PUBLIC' => 'Public', 'COMMUNITY' => 'Community', 'GROUP_MEMBER' => 'Members'];
+    $organizationLabels = ['public' => 'Public', 'community' => 'Community', 'members' => 'Members'];
+
+    $datasets = [];
+    foreach ($organizationVisibilities as $organizationVisibility) {
+      foreach ($topicVisibilities as $topicVisibility) {
+        $title = "{$topicLabels[$topicVisibility]} Topic in {$organizationLabels[$organizationVisibility]} Organization";
+        $name = "{$topicLabels[$topicVisibility]} topic in {$organizationLabels[$organizationVisibility]} organization";
+        $datasets[$name] = [$topicVisibility, $organizationVisibility, $title];
+      }
+    }
+    return $datasets;
+  }
+
+  /**
+   * Test: Successfully create a topic with given visibility in organization.
+   *
+   * @dataProvider topicVisibilityInOrganizationProvider
+   */
+  public function testCreateTopicInOrganization(string $topicVisibility, string $organizationVisibility, string $title): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $organization = $this->createOrganization("{$organizationVisibility} Organization", $organizationVisibility);
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $maxNidBefore = $this->getMaxNodeId($nodeStorage);
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { title visibility }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => $title,
+          'visibility' => $topicVisibility,
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'title' => $title,
+            'visibility' => $topicVisibility,
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()->addCacheTags(['node:' . ($maxNidBefore + 1)])
+    );
+
+    $organizationId = $organization->id();
+    assert($organizationId !== NULL);
+    $this->assertTopicInOrganization($maxNidBefore + 1, $organizationId);
+  }
+
+  /**
+   * Test: Create topic with cross-posting to multiple organizations.
+   */
+  public function testCreateTopicWithCrosspostedOrganizations(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Cross-posted']);
+    $topicType->save();
+
+    $primaryOrganization = $this->createOrganization('Primary Organization', 'public');
+    $crossOrganization1 = $this->createOrganization('Cross Organization 1', 'public');
+    $crossOrganization2 = $this->createOrganization('Cross Organization 2', 'public');
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $maxNidBefore = $this->getMaxNodeId($nodeStorage);
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { title }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Cross-posted Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $primaryOrganization->uuid(),
+            'crosspostedOrganizations' => [$crossOrganization1->uuid(), $crossOrganization2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => ['title' => 'Cross-posted Topic'],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()->addCacheTags(['node:' . ($maxNidBefore + 1)])
+    );
+
+    $topic = $nodeStorage->load($maxNidBefore + 1);
+    assert($topic instanceof NodeInterface);
+
+    $organizationRefs = $topic->get(Organization::REFERENCE_FIELD)->getValue();
+    $gids = array_map('strval', array_column($organizationRefs, 'target_id'));
+    $expected = [
+      (string) $primaryOrganization->id(),
+      (string) $crossOrganization1->id(),
+      (string) $crossOrganization2->id(),
+    ];
+    $this->assertEquals($expected, $gids, 'Organizations should be stored with primary first, then cross-posted.');
+  }
+
+  /**
+   * Test: Members-only organization when user is not a member returns error.
+   *
+   * User without "manage all groups" cannot create topic in a members-only
+   * organization they are not a member of. OrganizationInputValidationService
+   * uses access('view') which fails for non-members.
+   */
+  public function testCreateTopicWithMembersOrganizationWhenNotMemberReturnsError(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $membersOrg = Group::create([
+      'type' => 'organization',
+      'label' => 'Members Only Organization',
+      'uid' => 1,
+      'field_flexible_group_visibility' => 'members',
+      'status' => 1,
+    ]);
+    assert($membersOrg instanceof Organization);
+    // Do NOT add the current user as a member.
+    $membersOrg->save();
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $membersOrg->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['ORGANIZATION_NOT_FOUND'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test: Invalid organization UUID returns validation error.
+   */
+  public function testCreateTopicWithInvalidOrganizationReturnsError(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $fakeUuid = '00000000-0000-0000-0000-000000000000';
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $fakeUuid,
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['ORGANIZATION_NOT_FOUND'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test: Topic not in allowed content types returns error.
+   *
+   * Topic not in allowed content types returns
+   * CONTENT_TYPE_NOT_ALLOWED_FOR_ORGANIZATIONS.
+   */
+  public function testCreateTopicWithTopicNotInAllowedContentTypesReturnsError(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+
+    // Remove node:topic from allowed types (default has it).
+    $this->config('social_organization.settings')
+      ->set('types', ['node:event' => 'node:event'])
+      ->save();
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $organization = $this->createOrganization('Test Organization', 'public');
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CONTENT_TYPE_NOT_ALLOWED_FOR_ORGANIZATIONS:topic'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test: Unpublished organization returns ORGANIZATION_NOT_FOUND.
+   *
+   * Scope organization:read grants access to published organizations only;
+   * unpublished organizations fail access('view') and thus loadOrganization
+   * returns NULL.
+   */
+  public function testCreateTopicWithUnpublishedOrganizationReturnsError(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $unpublishedOrg = Group::create([
+      'type' => 'organization',
+      'label' => 'Unpublished Organization',
+      'uid' => 1,
+      'field_flexible_group_visibility' => 'public',
+      'status' => 0,
+    ]);
+    $unpublishedOrg->save();
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $unpublishedOrg->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['ORGANIZATION_NOT_FOUND'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test: User without organization:read gets error when using organizations.
+   *
+   * Without organization:read, the token lacks view organization permissions;
+   * loadOrganization fails access and returns NULL, with error returning
+   * ORGANIZATION_NOT_FOUND.
+   */
+  public function testCreateTopicWithOrganizationsWithoutOrganizationReadScopeReturnsError(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $organization = $this->createOrganization('Test Organization', 'public');
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['ORGANIZATION_NOT_FOUND'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test: Empty primary organization returns PRIMARY_ORGANIZATION_REQUIRED.
+   */
+  public function testCreateTopicWithEmptyPrimaryOrganizationReturnsError(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => '',
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['PRIMARY_ORGANIZATION_REQUIRED'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test: Duplicate organization returns error.
+   *
+   * Duplicate between primary and crossposted, or duplicate within
+   * crossposted list only, returns ORGANIZATION_DUPLICATE.
+   */
+  public function testCreateTopicWithDuplicateOrganizationReturnsError(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $organization = $this->createOrganization('Test Organization', 'public');
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [$organization->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['ORGANIZATION_DUPLICATE'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test: Too many crossposted organizations returns error.
+   *
+   * Too many crossposted organizations returns
+   * LIMIT_EXCEEDED_FOR_CROSSPOSTED_ORGANIZATIONS.
+   */
+  public function testCreateTopicWithTooManyCrosspostedOrganizationsReturnsError(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $primaryOrganization = $this->createOrganization('Primary Organization', 'public');
+    $crosspostedUuids = [];
+    // Exceed OrganizationInputValidationService::MAX_CROSSPOSTED_ORGANIZATIONS.
+    for ($i = 0; $i < OrganizationInputValidationService::MAX_CROSSPOSTED_ORGANIZATIONS + 1; $i++) {
+      $organization = $this->createOrganization("Cross Organization {$i}", 'public');
+      $crosspostedUuids[] = $organization->uuid();
+    }
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $primaryOrganization->uuid(),
+            'crosspostedOrganizations' => $crosspostedUuids,
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['LIMIT_EXCEEDED_FOR_CROSSPOSTED_ORGANIZATIONS'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test: Invalid UUID in crossposted organizations returns error.
+   *
+   * Invalid UUID in crossposted organizations returns
+   * CROSSPOSTED_ORGANIZATION_NOT_FOUND.
+   */
+  public function testCreateTopicWithInvalidCrosspostedOrganizationReturnsError(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $primaryOrganization = $this->createOrganization('Primary Organization', 'public');
+    $fakeUuid = '00000000-0000-0000-0000-000000000001';
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $primaryOrganization->uuid(),
+            'crosspostedOrganizations' => [$fakeUuid],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CROSSPOSTED_ORGANIZATION_NOT_FOUND:' . $fakeUuid],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test: Topic without organizations input works (backward compatible).
+   */
+  public function testCreateTopicWithoutOrganizationsStillWorks(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Standalone']);
+    $topicType->save();
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $maxNidBefore = $this->getMaxNodeId($nodeStorage);
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { title }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic Without Organization',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => ['title' => 'Topic Without Organization'],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()->addCacheTags(['node:' . ($maxNidBefore + 1)])
+    );
+
+    $topic = $nodeStorage->load($maxNidBefore + 1);
+    assert($topic instanceof NodeInterface);
+    $this->assertTrue(
+      $topic->get(Organization::REFERENCE_FIELD)->isEmpty(),
+      'Topic without organizations input should have no organization reference.'
+    );
   }
 
 }
