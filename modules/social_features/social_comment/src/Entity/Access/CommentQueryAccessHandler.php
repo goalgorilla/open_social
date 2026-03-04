@@ -3,17 +3,78 @@
 namespace Drupal\social_comment\Entity\Access;
 
 use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\entity\QueryAccess\ConditionGroup;
 use Drupal\entity\QueryAccess\QueryAccessHandlerBase;
 use Drupal\user\EntityOwnerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Controls query access for comment entities.
  *
+ * For 'view' with "access comments", comment list access is restricted as
+ * follows:
+ *
+ * - Comments on nodes: restricted to nodes the account can view. A node
+ *   query with accessCheck(TRUE) runs NodeEntityQueryAlter (social_node) and
+ *   NODE_QUERY_ACCESS_ALTER subscribers (entity access by field, e.g.
+ *   field_content_visibility; group content visibility; unpublished handling).
+ *   So comments on group-only or visibility-restricted content appear only
+ *   when the user has access to the commented node.
+ *
+ * - Comments on other entity types (e.g. post): currently not restricted by
+ *   parent-entity access. Per-entity access (e.g. post query access) can be
+ *   added later in the same way as for nodes.
+ *
  * @see \Drupal\entity\QueryAccess\QueryAccessHandler
+ * @see \Drupal\social_node\QueryAccess\NodeEntityQueryAlter
+ * @see \Drupal\social_node\EventSubscriber\NodeQueryAccessAlterSubscriber
+ * @see \Drupal\social_group\EventSubscriber\NodeQueryAccessAlterSubscriber
  */
 class CommentQueryAccessHandler extends QueryAccessHandlerBase {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * Constructs a CommentQueryAccessHandler.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundle_info
+   *   The entity type bundle info.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(EntityTypeInterface $entity_type, EntityTypeBundleInfoInterface $bundle_info, EventDispatcherInterface $event_dispatcher, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($entity_type, $bundle_info, $event_dispatcher, $current_user);
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static(
+      $entity_type,
+      $container->get('entity_type.bundle.info'),
+      $container->get('event_dispatcher'),
+      $container->get('current_user'),
+      $container->get('entity_type.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -85,11 +146,59 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
     $conditions = new ConditionGroup('OR');
     $conditions->addCacheContexts(['user.permissions']);
     if ($account->hasPermission("access comments")) {
-      // The user has full access, no conditions needed.
-      return $conditions;
+      if ($operation === 'view') {
+        // Comments on nodes: restrict to nodes the account can view (node query
+        // with accessCheck(TRUE) runs the full node access stack).
+        $accessible_nids = $this->getAccessibleNodeIds($account);
+        if ($accessible_nids !== []) {
+          $node_conditions = new ConditionGroup('AND');
+          $node_conditions->addCacheContexts(['user.permissions']);
+          $node_conditions->addCacheTags(['node_list']);
+          $node_conditions->addCondition('entity_type', 'node');
+          $node_conditions->addCondition('entity_id', $accessible_nids);
+          $conditions->addCondition($node_conditions);
+        }
+        // Comments on other entity types (e.g. post): allow for now; per-entity
+        // access (e.g. post query access) can be added later.
+        $conditions->addCondition('entity_type', 'node', '<>');
+      }
+      return $conditions->count() ? $conditions : NULL;
     }
 
     return $conditions->count() ? $conditions : NULL;
+  }
+
+  /**
+   * Static cache of accessible node IDs per account (per request).
+   *
+   * @var array<int, int[]>
+   */
+  protected static array $accessibleNodeIdsCache = [];
+
+  /**
+   * Returns node IDs the account can view (query access).
+   *
+   * Runs a node entity query with accessCheck(TRUE) so NodeEntityQueryAlter
+   * and NODE_QUERY_ACCESS_ALTER subscribers apply (entity access by field,
+   * group membership for group visibility, etc.).
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account.
+   *
+   * @return int[]
+   *   Accessible node IDs.
+   */
+  protected function getAccessibleNodeIds(AccountInterface $account): array {
+    $uid = $account->id();
+    if (isset(static::$accessibleNodeIdsCache[$uid])) {
+      return static::$accessibleNodeIdsCache[$uid];
+    }
+    $storage = $this->entityTypeManager->getStorage('node');
+    $nids = $storage->getQuery()
+      ->accessCheck(TRUE)
+      ->execute();
+    static::$accessibleNodeIdsCache[$uid] = array_values(array_map('intval', $nids));
+    return static::$accessibleNodeIdsCache[$uid];
   }
 
 }
