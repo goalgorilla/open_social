@@ -231,23 +231,28 @@ class TopicSchemaExtension extends SchemaExtensionPluginBase {
 
   /**
    * {@inheritdoc}
+   *
+   * Loads the base extension schema, then appends additional schemas from
+   * enabled modules (e.g. social_group_flexible_group, social_organization)
+   * that extend Topic and CreateTopicInput.
    */
   public function getExtensionDefinition(): ?string {
-    // First, try to load the default extension
-    // definition using parent method.
+    // First, try to load the default extension definition using parent method.
     try {
-      $definition = parent::getExtensionDefinition() ?? "";
+      $extension_definition = parent::getExtensionDefinition() ?? '';
     }
     catch (InvalidPluginDefinitionException $e) {
       // Expected fallback when base extension definition is absent.
-      $definition = "";
+      $extension_definition = '';
     }
 
-    // Then, load additional extension schemas.
-    // These files extend the base Topic type with groups field.
-    // Only load extensions if their corresponding modules are enabled.
+    // Then, load additional extension schemas. These files extend the base
+    // Topic type with groups field (flexible_group) and organizations field
+    // (organization). Only load extensions if their corresponding modules are
+    // enabled.
     $extension_modules = [
       'social_group_flexible_group' => 'social_topic_flexible_group_schema_extension.extension.graphqls',
+      'social_organization' => 'social_topic_organization_schema_extension.extension.graphqls',
     ];
 
     $topic_module = $this->moduleHandler->getModule('social_topic');
@@ -261,12 +266,12 @@ class TopicSchemaExtension extends SchemaExtensionPluginBase {
       if (file_exists($file)) {
         $contents = file_get_contents($file);
         if ($contents) {
-          $definition .= "\n" . $contents;
+          $extension_definition .= "\n" . $contents;
         }
       }
     }
 
-    return !empty(trim($definition)) ? $definition : NULL;
+    return !empty(trim($extension_definition)) ? $extension_definition : NULL;
   }
 
 }

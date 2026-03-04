@@ -10,6 +10,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
+use Drupal\social_organization\Service\OrganizationInputValidationService;
 use Drupal\social_topic\Wrappers\Input\CreateTopicInput as CreateTopicInputWrapper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -77,6 +78,8 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
    *   The Drupal entity type manager.
    * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $groupInputValidationService
    *   The group input validation service.
+   * @param \Drupal\social_organization\Service\OrganizationInputValidationService|null $organizationInputValidationService
+   *   The organization input validation service.
    */
   public function __construct(
     array $configuration,
@@ -86,6 +89,7 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
     protected EntityRepositoryInterface $entityRepository,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected ?GroupInputValidationService $groupInputValidationService = NULL,
+    protected ?OrganizationInputValidationService $organizationInputValidationService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -111,6 +115,10 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
       $container->get('entity.repository'),
       $container->get('entity_type.manager'),
       $group_validation_service,
+
+      $container->get('module_handler')->moduleExists('social_organization')
+        ? $container->get('social_organization.organization_input_validation')
+        : NULL,
     );
   }
 
@@ -138,6 +146,7 @@ class CreateTopicInput extends DataProducerPluginBase implements ContainerFactor
       $this->entityRepository,
       $this->currentUser,
       $this->groupInputValidationService,
+      $this->organizationInputValidationService,
     );
     $topic_input->setValues($input);
     return $topic_input;

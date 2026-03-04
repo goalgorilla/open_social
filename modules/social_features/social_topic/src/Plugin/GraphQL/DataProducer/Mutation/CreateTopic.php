@@ -9,6 +9,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_group\SetGroupsForNodeService;
+use Drupal\social_organization\Entity\group\Organization;
 use Drupal\social_topic\Wrappers\Input\CreateTopicInput;
 use Drupal\social_topic\Wrappers\Payload\CreateTopicPayload;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -126,6 +127,15 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
         $tag_ids[] = $tag->id();
       }
       $node_values['social_tagging'] = $tag_ids;
+    }
+
+    // Organization reference: primary first, then cross-posted (IDs only).
+    $primary_organization = $input->getPrimaryOrganization();
+    if ($primary_organization !== NULL) {
+      $node_values[Organization::REFERENCE_FIELD] = array_map(
+        fn($organization_entity): array => ['target_id' => $organization_entity->id()],
+        array_merge([$primary_organization], $input->getCrosspostedOrganizations())
+      );
     }
 
     /** @var \Drupal\node\NodeInterface $node */

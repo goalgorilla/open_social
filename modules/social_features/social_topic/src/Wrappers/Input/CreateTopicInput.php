@@ -11,8 +11,10 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
+use Drupal\social_organization\Service\OrganizationInputValidationService;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
+use Drupal\group\Entity\GroupInterface;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
 use OpenSocial\RichTextJson\Renderer\HtmlRenderer;
 
@@ -75,6 +77,20 @@ class CreateTopicInput extends TopicInputBase {
   protected array $contentTags = [];
 
   /**
+   * Validated primary organization data.
+   *
+   * @var ?GroupInterface
+   */
+  protected ?GroupInterface $primaryOrganization = NULL;
+
+  /**
+   * Validated crossposted organization data.
+   *
+   * @var ?GroupInterface[]
+   */
+  protected ?array $crosspostedOrganizations = NULL;
+
+  /**
    * Create a new Create Topic Input instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
@@ -85,14 +101,22 @@ class CreateTopicInput extends TopicInputBase {
    *   The current user for the request.
    * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $groupInputValidationService
    *   The group input validation service.
+   * @param \Drupal\social_organization\Service\OrganizationInputValidationService|null $organizationInputValidationService
+   *   The organization input validation service.
    */
   public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
     EntityRepositoryInterface $entityRepository,
     private readonly AccountProxyInterface $currentUser,
     ?GroupInputValidationService $groupInputValidationService = NULL,
+    ?OrganizationInputValidationService $organizationInputValidationService = NULL,
   ) {
-    parent::__construct($entityTypeManager, $entityRepository, $groupInputValidationService);
+    parent::__construct(
+      $entityTypeManager,
+      $entityRepository,
+      $groupInputValidationService,
+      $organizationInputValidationService,
+    );
   }
 
   /**
@@ -183,6 +207,13 @@ class CreateTopicInput extends TopicInputBase {
     $content_tags_result = $this->processContentTags($input);
     if ($content_tags_result !== NULL && empty($content_tags_result['violations'])) {
       $this->contentTags = $content_tags_result['valid_tags'];
+    }
+
+    // Process organization if provided.
+    $organizations_result = $this->processOrganizations($input, $this->actor);
+    if ($organizations_result !== NULL && $organizations_result->isValid()) {
+      $this->primaryOrganization = $organizations_result->getPrimaryOrganization();
+      $this->crosspostedOrganizations = $organizations_result->getCrosspostedOrganizations();
     }
   }
 
@@ -280,6 +311,26 @@ class CreateTopicInput extends TopicInputBase {
    */
   public function getContentTags(): array {
     return $this->contentTags;
+  }
+
+  /**
+   * Get primary organization.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The primary organization or NULL.
+   */
+  public function getPrimaryOrganization(): ?GroupInterface {
+    return $this->primaryOrganization ?? NULL;
+  }
+
+  /**
+   * Get cross-posted organizations.
+   *
+   * @return \Drupal\group\Entity\GroupInterface[]
+   *   Array of cross-posted organizations.
+   */
+  public function getCrosspostedOrganizations(): array {
+    return $this->crosspostedOrganizations ?? [];
   }
 
 }

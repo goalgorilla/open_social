@@ -14,6 +14,8 @@ use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\social_group_flexible_group\ValueObject\GroupInputValidationResult;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Drupal\social_graphql\Exception\ShouldNotHappenException;
+use Drupal\social_organization\Service\OrganizationInputValidationService;
+use Drupal\social_organization\ValueObject\OrganizationInputValidationResult;
 
 /**
  * Base class for topic input wrappers.
@@ -29,6 +31,13 @@ abstract class TopicInputBase extends InputBase {
    * send a large number of tag UUIDs to overload the database.
    */
   const MAX_CONTENT_TAGS = 50;
+
+  /**
+   * The node bundle for topic content.
+   *
+   * Used when validating organization input for topic-in-group relationships.
+   */
+  const CONTENT_BUNDLE = 'topic';
 
   /**
    * Validated primary group data.
@@ -53,11 +62,14 @@ abstract class TopicInputBase extends InputBase {
    *   The entity repository.
    * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $groupInputValidationService
    *   The group input validation service.
+   * @param \Drupal\social_organization\Service\OrganizationInputValidationService|null $organizationInputValidationService
+   *   The organization input validation service.
    */
   public function __construct(
     protected EntityTypeManagerInterface $entityTypeManager,
     protected EntityRepositoryInterface $entityRepository,
     protected ?GroupInputValidationService $groupInputValidationService = NULL,
+    protected ?OrganizationInputValidationService $organizationInputValidationService = NULL,
   ) {
   }
 
@@ -376,6 +388,48 @@ abstract class TopicInputBase extends InputBase {
    */
   public function getCrosspostedGroups(): array {
     return $this->crosspostedGroups ?? [];
+  }
+
+  /**
+   * Process organizations input and validate all organization-related rules.
+   *
+   * @param array $input
+   *   The input array.
+   * @param \Drupal\Core\Session\AccountInterface $actor
+   *   The actor account.
+   *
+   * @return \Drupal\social_organization\ValueObject\OrganizationInputValidationResult|null
+   *   The validation result, or NULL if organizations were not provided.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function processOrganizations(array $input, AccountInterface $actor): ?OrganizationInputValidationResult {
+    if (!array_key_exists('organizations', $input) || $input['organizations'] === NULL) {
+      return NULL;
+    }
+
+    if ($this->organizationInputValidationService === NULL) {
+      $this->violations[] = new Violation('ORGANIZATIONS_NOT_SUPPORTED');
+      return NULL;
+    }
+
+    // Validate organizations for topic.
+    $validation_result = $this->organizationInputValidationService->validateOrganizationsForContent(
+      $input['organizations'],
+      self::CONTENT_BUNDLE,
+      $actor,
+    );
+
+    // Convert error strings to Violation objects.
+    if (!$validation_result->isValid()) {
+      $this->violations = array_merge(
+        $this->violations,
+        array_map(fn($error_code) => new Violation((string) $error_code), $validation_result->getErrors())
+      );
+    }
+
+    return $validation_result;
   }
 
 }
