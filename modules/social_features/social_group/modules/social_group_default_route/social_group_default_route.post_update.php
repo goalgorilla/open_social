@@ -88,6 +88,217 @@ function social_group_default_route_post_update_001_fix_groups_path_aliases(arra
   else {
     // More groups to process.
     $sandbox['#finished'] = $sandbox['progress'] / $sandbox['total'];
-    return t('Processed @progress aliases of @total groups...', ['@progress' => $sandbox['progress'], '@total' => $sandbox['total']]);
+    return t('Processed @progress aliases of @total groups...', [
+      '@progress' => $sandbox['progress'],
+      '@total' => $sandbox['total'],
+    ]);
   }
+}
+
+/**
+ * Moves path aliases from /group/{id} to /group/{id}/stream.
+ *
+ * Also shortens aliases by removing trailing /stream.
+ *
+ * 1. Path: alias rows with path /group/{id} are updated to
+ *    path /group/{id}/stream so that /group/{id} no longer
+ *    exists. Where /group/{id}/stream already has an alias
+ *    for the same langcode, the /group/{id} row is removed.
+ * 2. Alias: rows with path /group/{id}/stream whose alias
+ *    ends with /stream (e.g. /group/slug/stream) are updated
+ *    to the shorter alias (e.g. /group/slug).
+ *
+ * @param array $sandbox
+ *   Batch sandbox: path_rows, alias_rows, total, progress, counters.
+ *
+ * @throws \Exception
+ *   Throws an exception if there is a problem updating the database.
+ */
+function social_group_default_route_post_update_003_canonical_path_to_stream(array &$sandbox): MarkupInterface {
+  if (!\Drupal::state()->get('social_group_default_route_fix_aliases_opt_in', FALSE)) {
+    $sandbox['#finished'] = 1;
+    \Drupal::logger('social_group_default_route')->info('Platform has opted out of alias fixes for the Group Default Route changes.');
+    return t('Platform has opted out of alias fixes for the Group Default Route changes.');
+  }
+
+  $database = \Drupal::database();
+  $tables = ['path_alias', 'path_alias_revision'];
+  $batch_size = Settings::get('entity_update_batch_size', 25);
+
+  // Initialize sandbox on first run: load both Part 1 and
+  // Part 2 rows so total is fixed from the start and
+  // progress percentage never jumps backward.
+  if (!isset($sandbox['path_rows'])) {
+    $canonical_rows = $database->select('path_alias', 'pa')
+      ->fields('pa', ['id', 'path', 'alias', 'langcode'])
+      ->condition('path', '/group/%', 'LIKE')
+      ->condition('path', '/group/%/%', 'NOT LIKE')
+      ->execute()?->fetchAll() ?? [];
+    $canonical_rows = array_filter($canonical_rows, function ($row): bool {
+      return (bool) preg_match('#^/group/(\d+)$#', $row->path);
+    });
+
+    // Part 1: distinct (path, langcode) for path updates.
+    $seen = [];
+    $sandbox['path_rows'] = [];
+    foreach ($canonical_rows as $row) {
+      $key = $row->path . ':' . $row->langcode;
+      if (!isset($seen[$key])) {
+        $seen[$key] = TRUE;
+        $sandbox['path_rows'][] = (object) ['path' => $row->path, 'langcode' => $row->langcode];
+      }
+    }
+
+    // Part 2: rows with path /group/{id}/stream and alias ending in /stream.
+    $alias_rows = $database->select('path_alias', 'pa')
+      ->fields('pa', ['id', 'path', 'alias', 'langcode'])
+      ->condition('path', '/group/%/stream', 'LIKE')
+      ->execute()?->fetchAll() ?? [];
+    $sandbox['alias_rows'] = array_values(array_filter($alias_rows, function ($row) {
+      if (!preg_match('#^/group/\d+/stream$#', $row->path) || !str_ends_with($row->alias, '/stream')) {
+        return FALSE;
+      }
+      $new_alias = substr($row->alias, 0, -strlen('/stream'));
+      return $new_alias !== '' && $new_alias !== '/';
+    }));
+
+    // Also include canonical rows whose alias ends with
+    // /stream; Part 1 will move their path to
+    // /group/{id}/stream, and Part 2 should shorten them.
+    $extra = array_values(array_filter($canonical_rows, function ($row) {
+      if (!str_ends_with($row->alias, '/stream')) {
+        return FALSE;
+      }
+      $new_alias = substr($row->alias, 0, -strlen('/stream'));
+      return $new_alias !== '' && $new_alias !== '/';
+    }));
+    $sandbox['alias_rows'] = array_merge($sandbox['alias_rows'], $extra);
+
+    $sandbox['total'] = count($sandbox['path_rows']) + count($sandbox['alias_rows']);
+    $sandbox['progress'] = 0;
+    $sandbox['path_updated'] = 0;
+    $sandbox['path_deleted'] = 0;
+    $sandbox['alias_shortened'] = 0;
+    $sandbox['alias_conflict_deleted'] = 0;
+    $sandbox['deleted_ids'] = [];
+  }
+
+  // Part 1: Process a batch of path rows.
+  if (!empty($sandbox['path_rows'])) {
+    $batch = array_splice($sandbox['path_rows'], 0, $batch_size);
+    foreach ($batch as $row) {
+      $path = $row->path;
+      preg_match('#^/group/(\d+)$#', $path, $m);
+      $gid = $m[1];
+      $stream_path = "/group/$gid/stream";
+      $langcode = $row->langcode;
+
+      $stream_exists = (bool) $database->select('path_alias', 'pa')
+        ->fields('pa', ['id'])
+        ->condition('path', $stream_path)
+        ->condition('langcode', $langcode)
+        ->execute()?->fetchField();
+
+      $transaction = $database->startTransaction();
+      try {
+        if ($stream_exists) {
+          $ids_deleted = $database->select('path_alias', 'pa')
+            ->fields('pa', ['id'])
+            ->condition('path', $path)
+            ->condition('langcode', $langcode)
+            ->execute()?->fetchCol() ?? [];
+          foreach ($tables as $table) {
+            $database->delete($table)
+              ->condition('path', $path)
+              ->condition('langcode', $langcode)
+              ->execute();
+          }
+          $sandbox['path_deleted']++;
+          foreach ($ids_deleted as $id) {
+            $sandbox['deleted_ids'][$id] = TRUE;
+          }
+        }
+        else {
+          foreach ($tables as $table) {
+            $database->update($table)
+              ->fields(['path' => $stream_path])
+              ->condition('path', $path)
+              ->condition('langcode', $langcode)
+              ->execute();
+          }
+          $sandbox['path_updated']++;
+        }
+        unset($transaction);
+      }
+      catch (\Exception $e) {
+        $transaction->rollBack();
+        throw $e;
+      }
+    }
+    $sandbox['progress'] += count($batch);
+  }
+
+  // Part 2: Process a batch of alias rows (skip ids already deleted by Part 1).
+  if (!empty($sandbox['alias_rows'])) {
+    $batch = array_splice($sandbox['alias_rows'], 0, $batch_size);
+    $batch_count = count($batch);
+    $batch = array_values(array_filter($batch, function ($row) use ($sandbox) {
+      return !isset($sandbox['deleted_ids'][$row->id]);
+    }));
+    foreach ($batch as $row) {
+      $new_alias = substr($row->alias, 0, -strlen('/stream'));
+
+      $alias_taken = (bool) $database->select('path_alias', 'pa')
+        ->fields('pa', ['id'])
+        ->condition('alias', $new_alias)
+        ->condition('langcode', $row->langcode)
+        ->condition('id', $row->id, '<>')
+        ->execute()?->fetchField();
+
+      $transaction = $database->startTransaction();
+      try {
+        if ($alias_taken) {
+          foreach ($tables as $table) {
+            $database->delete($table)
+              ->condition('id', $row->id)
+              ->execute();
+          }
+          $sandbox['alias_conflict_deleted']++;
+        }
+        else {
+          foreach ($tables as $table) {
+            $database->update($table)
+              ->fields(['alias' => $new_alias])
+              ->condition('id', $row->id)
+              ->execute();
+          }
+          $sandbox['alias_shortened']++;
+        }
+        unset($transaction);
+      }
+      catch (\Exception $e) {
+        $transaction->rollBack();
+        throw $e;
+      }
+    }
+    $sandbox['progress'] += $batch_count;
+  }
+
+  if (empty($sandbox['path_rows']) && empty($sandbox['alias_rows'])) {
+    $sandbox['#finished'] = 1;
+    \Drupal::service('path_alias.manager')->cacheClear();
+    Cache::invalidateTags(['route_match']);
+    return t('Group path aliases: updated @path_updated path(s) to /group/{id}/stream, removed @path_deleted duplicate(s), shortened @alias_shortened alias(es) by removing trailing /stream, removed @alias_conflict_deleted alias(es) due to conflict.', [
+      '@path_updated' => $sandbox['path_updated'],
+      '@path_deleted' => $sandbox['path_deleted'],
+      '@alias_shortened' => $sandbox['alias_shortened'],
+      '@alias_conflict_deleted' => $sandbox['alias_conflict_deleted'],
+    ]);
+  }
+
+  $sandbox['#finished'] = $sandbox['progress'] / $sandbox['total'];
+  return t('Processed @progress of @total group path alias updates...', [
+    '@progress' => $sandbox['progress'],
+    '@total' => $sandbox['total'],
+  ]);
 }
