@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_event\Kernel\GraphQL;
 
-use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
@@ -1003,6 +1002,11 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
             event {
               id
               title
+              address {
+                countryCode
+                locality
+                addressLine1
+              }
             }
           }
         }
@@ -1019,6 +1023,11 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
           'event' => [
             'id' => $event->uuid(),
             'title' => 'Updated Title Only',
+            'address' => [
+              'countryCode' => 'NL',
+              'locality' => 'Amsterdam',
+              'addressLine1' => 'Dam Square 1',
+            ],
           ],
         ],
       ],
@@ -1026,17 +1035,6 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
         ->addCacheableDependency($event)
         ->addCacheContexts(['languages:language_interface'])
     );
-
-    // @todo use assertResults once we have address as part of the read schema.
-    $updated = $this->reloadEvent($event);
-    $this->assertFalse($updated->get('field_event_address')->isEmpty());
-    $address_item = $updated->get('field_event_address')->first();
-    $this->assertInstanceOf(AddressItem::class, $address_item);
-
-    /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem $address_item */
-    $this->assertSame('NL', $address_item->getCountryCode());
-    $this->assertSame('Amsterdam', $address_item->getLocality());
-    $this->assertSame('Dam Square 1', $address_item->getAddressLine1());
   }
 
   /**
@@ -1090,7 +1088,6 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
         ->addCacheContexts(['languages:language_interface'])
     );
 
-    // @todo use assertResults once we have address as part of the read schema.
     $updated = $this->reloadEvent($event);
     $this->assertTrue($updated->get('field_event_address')->isEmpty());
   }
@@ -1123,6 +1120,11 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
             errors
             event {
               id
+              address {
+                countryCode
+                locality
+                addressLine1
+              }
             }
           }
         }
@@ -1143,6 +1145,11 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
           'errors' => NULL,
           'event' => [
             'id' => $event->uuid(),
+            'address' => [
+              'countryCode' => 'BE',
+              'locality' => 'Brussels',
+              'addressLine1' => 'Grand Place 1',
+            ],
           ],
         ],
       ],
@@ -1150,16 +1157,6 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
         ->addCacheableDependency($event)
         ->addCacheContexts(['languages:language_interface'])
     );
-
-    // @todo use assertResults once we have address as part of the read schema.
-    $updated = $this->reloadEvent($event);
-    $this->assertFalse($updated->get('field_event_address')->isEmpty());
-    $address_item = $updated->get('field_event_address')->first();
-    $this->assertInstanceOf(AddressItem::class, $address_item);
-    /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem $address_item */
-    $this->assertSame('BE', $address_item->getCountryCode());
-    $this->assertSame('Brussels', $address_item->getLocality());
-    $this->assertSame('Grand Place 1', $address_item->getAddressLine1());
   }
 
   /**
@@ -1211,15 +1208,6 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
       ],
       $this->defaultMutationCacheMetaData()
     );
-
-    // @todo use assertResults once we have address as part of the read schema.
-    // Address should remain unchanged (event not returned on validation error).
-    $reloaded = $this->reloadEvent($event);
-    $address_item = $reloaded->get('field_event_address')->first();
-    $this->assertInstanceOf(AddressItem::class, $address_item);
-
-    /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem $address_item */
-    $this->assertSame('NL', $address_item->getCountryCode());
   }
 
   /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_event\Kernel\GraphQL;
 
-use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
@@ -943,7 +942,6 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
-    // @todo add address in the assertResults once it lands in the read schema.
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -952,6 +950,12 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
             event {
               id
               title
+              address {
+                countryCode
+                locality
+                postalCode
+                addressLine1
+              }
             }
           }
         }
@@ -978,6 +982,12 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
           'event' => [
             'id' => TRUE,
             'title' => 'Event With Address 2026',
+            'address' => [
+              'countryCode' => 'NL',
+              'locality' => 'Amsterdam',
+              'postalCode' => '1012 AB',
+              'addressLine1' => 'Dam Square 1',
+            ],
           ],
         ],
       ],
@@ -985,17 +995,6 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
         ->addCacheTags(['node:1'])
         ->setCacheMaxAge(0)
     );
-
-    $node = $this->getEventByTitle('Event With Address 2026');
-    $this->assertInstanceOf(NodeInterface::class, $node);
-    $this->assertFalse($node->get('field_event_address')->isEmpty());
-    $address_item = $node->get('field_event_address')->first();
-    $this->assertInstanceOf(AddressItem::class, $address_item);
-    /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem $address_item */
-    $this->assertSame('NL', $address_item->getCountryCode());
-    $this->assertSame('Amsterdam', $address_item->getLocality());
-    $this->assertSame('1012 AB', $address_item->getPostalCode());
-    $this->assertSame('Dam Square 1', $address_item->getAddressLine1());
   }
 
   /**
