@@ -24,7 +24,7 @@ final class SocialGroupDefaultRouteHooks {
    * group stream page. When the user clicks on the stream tab, the current
    * module is redirecting the user to the group landing page and makes the
    * group stream page inaccessible for users.
-   * This method fixes the issue by adding a "skipDefaultRoute"
+   * This method fixes the issue by adding a "stream"
    * query parameter to the stream tab URL to bypass the default route
    * redirection.
    *
@@ -48,7 +48,7 @@ final class SocialGroupDefaultRouteHooks {
     $query = (array) $url->getOption('query');
     // To not overload the path, we need just to put this parameter and check if
     // it exists.
-    $query['skipDefaultRoute'] = NULL;
+    $query['stream'] = NULL;
     $url->setOption('query', $query);
   }
 

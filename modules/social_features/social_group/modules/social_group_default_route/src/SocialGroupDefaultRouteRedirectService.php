@@ -3,6 +3,7 @@
 namespace Drupal\social_group_default_route;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\path_alias\AliasManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -14,6 +15,7 @@ use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class SocialGroupDefaultRouteRedirectService.
@@ -50,6 +52,8 @@ class SocialGroupDefaultRouteRedirectService {
    *   The landing tab manager.
    * @param \Drupal\Core\Routing\RouteProviderInterface $routeProvider
    *   The route provider to load routes by name.
+   * @param \Drupal\path_alias\AliasManagerInterface $pathAliasManager
+   *   The path alias manager.
    */
   public function __construct(
     protected RouteMatchInterface $routeMatch,
@@ -57,6 +61,7 @@ class SocialGroupDefaultRouteRedirectService {
     protected ModuleHandlerInterface $moduleHandler,
     protected GroupLandingTabManager $landingTabManager,
     protected RouteProviderInterface $routeProvider,
+    protected AliasManagerInterface $pathAliasManager,
   ) {}
 
   /**
@@ -93,6 +98,68 @@ class SocialGroupDefaultRouteRedirectService {
 
     // Redirect.
     $event->setResponse(new RedirectResponse($url->toString()));
+  }
+
+  /**
+   * Redirects to group canonical with ?stream when path ends with /stream.
+   *
+   * When path aliases shorten group canonical from /alias/stream to /alias,
+   * visiting /alias/stream results in 404. This method resolves the path
+   * (e.g. /alias or /group/123) to a group and returns a redirect to the
+   * group canonical URL with the "stream" query parameter so the user lands
+   * on the stream tab.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request that produced the 404.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse|null
+   *   A redirect response, or NULL if the path does not indicate a group
+   *   stream.
+   */
+  public function getRedirectResponseForStreamNotFound(Request $request): ?RedirectResponse {
+    $path = trim($request->getPathInfo(), '/');
+    $path = '/' . $path;
+
+    if (!str_ends_with($path, '/stream')) {
+      return NULL;
+    }
+
+    $path_without_stream = rtrim(substr($path, 0, -strlen('/stream')), '/') ?: '/';
+
+    $group_id = NULL;
+    if (preg_match('#^/group/(\d+)$#', $path_without_stream, $m)) {
+      $group_id = (int) $m[1];
+    }
+    else {
+      $system_path = $this->pathAliasManager->getPathByAlias($path_without_stream);
+      if ($system_path && preg_match('#^/group/(\d+)(?:/stream)?$#', $system_path, $m)) {
+        $group_id = (int) $m[1];
+      }
+    }
+
+    if ($group_id === NULL) {
+      return NULL;
+    }
+
+    $group = Group::load($group_id);
+    if (!$group instanceof SocialGroupInterface) {
+      return NULL;
+    }
+
+    $group_routes = $this->getGroupDefaultRoutes($group);
+    if (empty($group_routes)) {
+      return NULL;
+    }
+
+    $url = Url::fromRoute(self::DEFAULT_GROUP_ROUTE, ['group' => $group->id()], [
+      'query' => ['stream' => NULL],
+    ]);
+
+    if ($url->access($this->currentUser) === FALSE) {
+      return NULL;
+    }
+
+    return new RedirectResponse($url->setAbsolute(TRUE)->toString());
   }
 
   /**

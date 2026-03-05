@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_default_route\EventSubscriber;
 
+use Drupal\Core\ParamConverter\ParamNotConvertedException;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_group\SocialGroupInterface;
@@ -54,10 +55,10 @@ class RedirectSubscriber implements EventSubscriberInterface {
   public function groupLandingPage(RequestEvent $event): void {
     // To make possible users to access a group stream page (which is
     // a canonical route), we check if the request has a query parameter called
-    // "skipDefaultRoute". This parameter is set to the link on building the
+    // "stream". This parameter is set to the link on building the
     // list of group menu local tasks to bypass the default route redirection.
     $request = $event->getRequest();
-    if ($request->query->has('skipDefaultRoute')) {
+    if ($request->query->has('stream')) {
       return;
     }
 
@@ -92,6 +93,14 @@ class RedirectSubscriber implements EventSubscriberInterface {
    */
   public function onKernelException(ExceptionEvent $event): void {
     $exception = $event->getThrowable();
+
+    if ($exception instanceof ParamNotConvertedException) {
+      $response = $this->redirectService->getRedirectResponseForStreamNotFound($event->getRequest());
+      if ($response !== NULL) {
+        $event->setResponse($response);
+      }
+      return;
+    }
 
     $group = $this->redirectService->getGroup();
     // Not group, then we leave.
