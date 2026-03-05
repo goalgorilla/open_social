@@ -137,6 +137,7 @@ class UpdateTopicInput extends DataProducerPluginBase implements ContainerFactor
       $this->entityTypeManager,
       $this->entityRepository,
       $this->currentUser,
+      $this->groupInputValidationService,
     );
     $topic_input->setValues($input);
     return $topic_input;

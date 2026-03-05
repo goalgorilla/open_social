@@ -7,6 +7,7 @@ namespace Drupal\social_topic\Wrappers\Input;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_graphql\Wrappers\InputBase;
 use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
@@ -28,6 +29,20 @@ abstract class TopicInputBase extends InputBase {
    * send a large number of tag UUIDs to overload the database.
    */
   const MAX_CONTENT_TAGS = 50;
+
+  /**
+   * Validated primary group data.
+   *
+   * @var \Drupal\group\Entity\GroupInterface|null
+   */
+  protected ?GroupInterface $primaryGroup = NULL;
+
+  /**
+   * Validated crossposted group data.
+   *
+   * @var \Drupal\group\Entity\GroupInterface[]|null
+   */
+  protected ?array $crosspostedGroups = NULL;
 
   /**
    * Constructs a TopicInputBase.
@@ -341,6 +356,26 @@ abstract class TopicInputBase extends InputBase {
     }
 
     return $graphql_violations;
+  }
+
+  /**
+   * Get primary group.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The primary group or NULL.
+   */
+  public function getPrimaryGroup(): ?GroupInterface {
+    return $this->primaryGroup ?? NULL;
+  }
+
+  /**
+   * Get cross-posted groups.
+   *
+   * @return \Drupal\group\Entity\GroupInterface[]
+   *   Array of cross-posted groups.
+   */
+  public function getCrosspostedGroups(): array {
+    return $this->crosspostedGroups ?? [];
   }
 
 }

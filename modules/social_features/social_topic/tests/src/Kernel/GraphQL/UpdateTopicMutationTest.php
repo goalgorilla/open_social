@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\social_topic\Kernel\GraphQL;
 
 use Drupal\Core\Render\RenderContext;
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
@@ -138,6 +140,7 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('activity');
+    $this->installEntitySchema('message');
     $this->installEntitySchema('menu_link_content');
     $this->installEntitySchema('paragraph');
     $this->installEntitySchema('block_content');
@@ -191,6 +194,13 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
     // Configure OAuth to use static scope provider and set up keys.
     $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
     $this->setUpKeys();
+
+    // Enable cross-posting for tests.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', TRUE)
+      ->set('cross_posting.content_types', ['topic'])
+      ->set('cross_posting.group_types', ['flexible_group'])
+      ->save();
   }
 
   /**
@@ -1482,6 +1492,800 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
       $this->defaultMutationCacheMetaData()
         ->addCacheContexts(['languages:language_interface'])
     );
+  }
+
+  /**
+   * Test adding a topic to a group when editing.
+   */
+  public function testUpdateTopicAddToGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Create a topic without groups.
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Topic Without Group',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    // Create a group with allowed visibility options.
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'community'],
+    ]);
+    $group->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => [
+            'value' => [
+              'group' => $group->uuid(),
+              'crosspostedGroups' => [],
+            ],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'title' => 'Topic Without Group',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:' . $topic->id()])
+    );
+
+    // Verify group relationship was created.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $updated_topic = $node_storage->load($topic->id());
+    assert($updated_topic instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($updated_topic);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group->id(), $group_ids, 'Topic should be linked to the group.');
+  }
+
+  /**
+   * Test removing a topic from all groups when editing.
+   */
+  public function testUpdateTopicRemoveFromAllGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Create groups.
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group1->save();
+
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group2->save();
+
+    // Create a topic in groups.
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Topic in Groups',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'groups' => [
+        ['target_id' => $group1->id()],
+        ['target_id' => $group2->id()],
+      ],
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    // Add group relationships manually using Group::addRelationship.
+    $group1->addRelationship($topic, 'group_node:topic', ['uid' => $topic->getOwnerId()]);
+    $group2->addRelationship($topic, 'group_node:topic', ['uid' => $topic->getOwnerId()]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => [
+            'value' => NULL,
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'title' => 'Topic in Groups',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:' . $topic->id()])
+    );
+
+    // Verify group relationships were removed.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $updated_topic = $node_storage->load($topic->id());
+    assert($updated_topic instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($updated_topic);
+    $this->assertEmpty($relationships, 'Topic should not be linked to any groups.');
+  }
+
+  /**
+   * Test changing which groups a topic is in when editing.
+   */
+  public function testUpdateTopicChangeGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Create groups.
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group1->save();
+
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group2->save();
+
+    // Create a topic in group1.
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Topic in Group 1',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'groups' => [['target_id' => $group1->id()]],
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    // Add group relationship manually using Group::addRelationship.
+    $group1->addRelationship($topic, 'group_node:topic', ['uid' => $topic->getOwnerId()]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => [
+            'value' => [
+              'group' => $group2->uuid(),
+              'crosspostedGroups' => [],
+            ],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'title' => 'Topic in Group 1',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:' . $topic->id()])
+    );
+
+    // Verify group relationships were updated.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $updated_topic = $node_storage->load($topic->id());
+    assert($updated_topic instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($updated_topic);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group2->id(), $group_ids, 'Topic should be linked to group 2.');
+    $this->assertNotContains($group1->id(), $group_ids, 'Topic should not be linked to group 1.');
+  }
+
+  /**
+   * Test leaving group membership unchanged when editing other fields.
+   */
+  public function testUpdateTopicLeaveGroupsUnchanged(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Create a group.
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group->save();
+
+    // Create a topic in a group.
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'groups' => [['target_id' => $group->id()]],
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    // Add group relationship manually using Group::addRelationship.
+    $group->addRelationship($topic, 'group_node:topic', ['uid' => $topic->getOwnerId()]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'title' => 'Updated Title',
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'title' => 'Updated Title',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:' . $topic->id()])
+    );
+
+    // Verify group relationship remains unchanged.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $updated_topic = $node_storage->load($topic->id());
+    assert($updated_topic instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($updated_topic);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group->id(), $group_ids, 'Topic should still be linked to the group.');
+  }
+
+  /**
+   * Test validation error when trying to assign topic to invalid group.
+   */
+  public function testUpdateTopicWithInvalidGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => [
+            'value' => [
+              'group' => $fakeGroupUuid,
+              'crosspostedGroups' => [],
+            ],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['GROUP_NOT_FOUND'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when trying to assign topic to duplicate groups.
+   */
+  public function testUpdateTopicWithDuplicateGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => [
+            'value' => [
+              'group' => $group->uuid(),
+              'crosspostedGroups' => [$group->uuid()],
+            ],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['GROUP_DUPLICATE'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test updating topic with cross-posting successfully.
+   */
+  public function testUpdateTopicWithCrossPostingSuccess(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Create groups with shared visibility options.
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public', 'community'],
+    ]);
+    $group1->save();
+
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group2->save();
+
+    // Create a topic in group1.
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Topic in Group 1',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'groups' => [['target_id' => $group1->id()]],
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    // Add group relationship manually using Group::addRelationship.
+    $group1->addRelationship($topic, 'group_node:topic', ['uid' => $topic->getOwnerId()]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => [
+            'value' => [
+              'group' => $group1->uuid(),
+              'crosspostedGroups' => [$group2->uuid()],
+            ],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'title' => 'Topic in Group 1',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:' . $topic->id()])
+    );
+
+    // Verify group relationships were created.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $updated_topic = $node_storage->load($topic->id());
+    assert($updated_topic instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($updated_topic);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group1->id(), $group_ids, 'Topic should be linked to group 1.');
+    $this->assertContains($group2->id(), $group_ids, 'Topic should be linked to group 2.');
+  }
+
+  /**
+   * Test validation error when visibility is not allowed in groups.
+   */
+  public function testUpdateTopicVisibilityNotAllowedInGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Group allows only PUBLIC and GROUP_MEMBERS, not COMMUNITY.
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'visibility' => 'COMMUNITY',
+          'groups' => [
+            'value' => [
+              'group' => $group->uuid(),
+              'crosspostedGroups' => [],
+            ],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['VISIBILITY_NOT_ALLOWED_IN_GROUP'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when cross-posting is disabled.
+   */
+  public function testUpdateTopicCrossPostingDisabled(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    // Disable cross-posting for this test.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', FALSE)
+      ->save();
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group1->save();
+
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group2->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => [
+            'value' => [
+              'group' => $group1->uuid(),
+              'crosspostedGroups' => [$group2->uuid()],
+            ],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['CROSS_POSTING_IS_DISABLED'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // Re-enable cross-posting for other tests.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', TRUE)
+      ->save();
+  }
+
+  /**
+   * Test updating topic from one group to multiple groups with cross-posting.
+   */
+  public function testUpdateTopicFromSingleToMultipleGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Create groups.
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group1->save();
+
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group2->save();
+
+    $group3 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 3',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group3->save();
+
+    // Create a topic in group1.
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Topic in Group 1',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'groups' => [['target_id' => $group1->id()]],
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    // Add group relationship manually using Group::addRelationship.
+    $group1->addRelationship($topic, 'group_node:topic', ['uid' => $topic->getOwnerId()]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => [
+            'value' => [
+              'group' => $group2->uuid(),
+              'crosspostedGroups' => [$group3->uuid()],
+            ],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'title' => 'Topic in Group 1',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:' . $topic->id()])
+    );
+
+    // Verify group relationships were updated.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $updated_topic = $node_storage->load($topic->id());
+    assert($updated_topic instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($updated_topic);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group2->id(), $group_ids, 'Topic should be linked to group 2.');
+    $this->assertContains($group3->id(), $group_ids, 'Topic should be linked to group 3.');
+    $this->assertNotContains($group1->id(), $group_ids, 'Topic should not be linked to group 1.');
   }
 
 }

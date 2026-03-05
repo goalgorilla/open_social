@@ -9,7 +9,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
-use Drupal\group\Entity\GroupInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\taxonomy\TermInterface;
@@ -74,20 +73,6 @@ class CreateTopicInput extends TopicInputBase {
    * @var \Drupal\taxonomy\TermInterface[]
    */
   protected array $contentTags = [];
-
-  /**
-   * Validated primary group data.
-   *
-   * @var ?GroupInterface
-   */
-  protected ?GroupInterface $primaryGroup = NULL;
-
-  /**
-   * Validated crossposted group data.
-   *
-   * @var ?GroupInterface[]
-   */
-  protected ?array $crosspostedGroups = NULL;
 
   /**
    * Create a new Create Topic Input instance.
@@ -295,26 +280,6 @@ class CreateTopicInput extends TopicInputBase {
    */
   public function getContentTags(): array {
     return $this->contentTags;
-  }
-
-  /**
-   * Get primary group.
-   *
-   * @return \Drupal\group\Entity\GroupInterface|null
-   *   The primary group or NULL.
-   */
-  public function getPrimaryGroup(): ?GroupInterface {
-    return $this->primaryGroup ?? NULL;
-  }
-
-  /**
-   * Get cross-posted groups.
-   *
-   * @return \Drupal\group\Entity\GroupInterface[]
-   *   Array of cross-posted groups.
-   */
-  public function getCrosspostedGroups(): array {
-    return $this->crosspostedGroups ?? [];
   }
 
 }

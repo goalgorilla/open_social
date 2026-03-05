@@ -11,6 +11,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
@@ -84,6 +85,13 @@ class UpdateTopicInput extends TopicInputBase {
   protected ?array $contentTags = NULL;
 
   /**
+   * Flag to track if groups field was provided in input.
+   *
+   * @var bool
+   */
+  protected bool $groupsProvided = FALSE;
+
+  /**
    * Create a new Update Topic Input instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
@@ -92,13 +100,16 @@ class UpdateTopicInput extends TopicInputBase {
    *   The entity repository.
    * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user for the request.
+   * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $groupInputValidationService
+   *   The group input validation service.
    */
   public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
     EntityRepositoryInterface $entityRepository,
     protected AccountProxyInterface $currentUser,
+    ?GroupInputValidationService $groupInputValidationService = NULL,
   ) {
-    parent::__construct($entityTypeManager, $entityRepository);
+    parent::__construct($entityTypeManager, $entityRepository, $groupInputValidationService);
   }
 
   /**
@@ -213,6 +224,36 @@ class UpdateTopicInput extends TopicInputBase {
     $content_tags_result = $this->processContentTags($input);
     if ($content_tags_result !== NULL && empty($content_tags_result['violations'])) {
       $this->contentTags = $content_tags_result['valid_tags'];
+    }
+
+    // Process groups if provided.
+    if (array_key_exists('groups', $input)) {
+      $this->groupsProvided = TRUE;
+
+      if ($input['groups'] === NULL) {
+        // groups: NULL means don't change groups.
+        $this->groupsProvided = FALSE;
+      }
+      elseif (!is_array($input['groups']) || !array_key_exists('value', $input['groups'])) {
+        $this->groupsProvided = FALSE;
+        $this->violations[] = new Violation("GROUPS_INVALID");
+      }
+      elseif ($input['groups']['value'] === NULL) {
+        // groups: { value: NULL } means remove from all groups.
+        $this->primaryGroup = NULL;
+        $this->crosspostedGroups = [];
+      }
+      else {
+        // groups: { value: ContentInGroupInput } means update groups.
+        $groups_input = $input;
+        $groups_input['groups'] = $input['groups']['value'];
+        $topic_visibility = $this->getTopicVisibilityForGroups();
+        $groups_result = $this->processGroups($groups_input, $this->actor, $topic_visibility);
+        if ($groups_result !== NULL && $groups_result->isValid()) {
+          $this->primaryGroup = $groups_result->getPrimaryGroup();
+          $this->crosspostedGroups = $groups_result->getCrosspostedGroups();
+        }
+      }
     }
   }
 
@@ -378,6 +419,37 @@ class UpdateTopicInput extends TopicInputBase {
   public function getContentTags(): array {
     assert($this->contentTags !== NULL, __FUNCTION__ . " called but content tags were not set.");
     return $this->contentTags;
+  }
+
+  /**
+   * Check if groups should be updated.
+   *
+   * @return bool
+   *   TRUE if groups should be updated or removed.
+   */
+  public function hasGroups(): bool {
+    return $this->groupsProvided;
+  }
+
+  /**
+   * Gets the topic visibility value for group processing.
+   *
+   * Uses the visibility from input if provided, otherwise falls back to
+   * the existing topic's visibility field value.
+   *
+   * @return string|null
+   *   The visibility constant value or NULL if not available.
+   */
+  private function getTopicVisibilityForGroups(): ?string {
+    if ($this->visibility !== NULL) {
+      return $this->convertVisibilityUserInputToConstant($this->visibility);
+    }
+
+    if ($this->topic !== NULL && $this->topic->hasField('field_content_visibility') && !$this->topic->get('field_content_visibility')->isEmpty()) {
+      return $this->topic->get('field_content_visibility')->value;
+    }
+
+    return NULL;
   }
 
 }

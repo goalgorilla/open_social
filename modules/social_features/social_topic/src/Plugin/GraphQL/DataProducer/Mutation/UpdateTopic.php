@@ -6,10 +6,13 @@ namespace Drupal\social_topic\Plugin\GraphQL\DataProducer\Mutation;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_group\SetGroupsForNodeService;
 use Drupal\social_topic\Wrappers\Input\UpdateTopicInput;
 use Drupal\social_topic\Wrappers\Payload\UpdateTopicPayload;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -35,16 +38,6 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
   use VisibilityTrait;
 
   /**
-   * The entity type manager.
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
-   * The current user.
-   */
-  protected AccountProxyInterface $currentUser;
-
-  /**
    * UpdateTopic constructor.
    *
    * @param array $configuration
@@ -53,22 +46,19 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
-   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
-   *   The current user.
+   * @param \Drupal\social_group\SetGroupsForNodeService|null $setGroupsForNodeService
+   *   The service to set groups for a node.
    */
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
-    EntityTypeManagerInterface $entity_type_manager,
-    AccountProxyInterface $current_user,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected ?SetGroupsForNodeService $setGroupsForNodeService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->entityTypeManager = $entity_type_manager;
-    $this->currentUser = $current_user;
   }
 
   /**
@@ -80,12 +70,17 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     $plugin_id,
     $plugin_definition,
   ): self {
+    $set_groups_service = NULL;
+    if ($container->get('module_handler')->moduleExists('social_group')) {
+      $set_groups_service = $container->get('social_group.set_groups_for_node_service');
+    }
+
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('current_user'),
+      $set_groups_service,
     );
   }
 
@@ -156,6 +151,44 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
       $node->set('body', $input->getBody());
     }
 
+    // Process groups if provided.
+    if ($input->hasGroups()) {
+      $primary_group = $input->getPrimaryGroup();
+      $crossposted_groups = $input->getCrosspostedGroups();
+
+      // Get current groups from relationships.
+      $current_groups = $this->getCurrentGroupsFromRelationships($node);
+
+      // Remove from all groups.
+      if ($primary_group === NULL) {
+        if ($this->setGroupsForNodeService !== NULL && !empty($current_groups)) {
+          $this->setGroupsForNodeService->setGroupsForNode(
+            $node,
+            $current_groups,
+            [],
+            $current_groups,
+            FALSE
+          );
+          $node->set('groups', []);
+        }
+      }
+      // Update groups.
+      else {
+        $groups_to_add = $this->prepareGroupsToAdd($primary_group, $crossposted_groups);
+        $this->setGroupsForNodeService?->setGroupsForNode(
+          $node,
+          $current_groups,
+          $groups_to_add,
+          $current_groups,
+          FALSE
+        );
+
+        // Update groups field.
+        $groups_field_values = $this->prepareGroupsFieldValues($primary_group, $crossposted_groups);
+        $node->set('groups', $groups_field_values);
+      }
+    }
+
     // Validate the entity before saving.
     // This ensures that field-level constraints are checked
     // (e.g., title length, field types, required fields)
@@ -172,6 +205,65 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     $payload->setTopic($node);
 
     return $payload;
+  }
+
+  /**
+   * Gets current group IDs from relationships for a node.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node entity.
+   *
+   * @return array<int, int>
+   *   Array of group IDs keyed by group ID.
+   */
+  protected function getCurrentGroupsFromRelationships(NodeInterface $node): array {
+    $current_groups = [];
+    $relationships = GroupRelationship::loadByEntity($node);
+    foreach ($relationships as $relationship) {
+      $group_id = $relationship->getGroupId();
+      $current_groups[$group_id] = $group_id;
+    }
+    return $current_groups;
+  }
+
+  /**
+   * Prepares groups to add array for SetGroupsForNodeService.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $primary_group
+   *   The primary group.
+   * @param \Drupal\group\Entity\GroupInterface[] $crossposted_groups
+   *   Array of cross-posted groups.
+   *
+   * @return array
+   *   Array of group IDs keyed by group ID.
+   */
+  private function prepareGroupsToAdd(GroupInterface $primary_group, array $crossposted_groups): array {
+    $groups_to_add = [];
+    $groups_to_add[$primary_group->id()] = $primary_group->id();
+    foreach ($crossposted_groups as $group) {
+      $groups_to_add[$group->id()] = $group->id();
+    }
+    return $groups_to_add;
+  }
+
+  /**
+   * Prepares groups field values for setting on the node.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $primary_group
+   *   The primary group.
+   * @param \Drupal\group\Entity\GroupInterface[] $crossposted_groups
+   *   Array of cross-posted groups.
+   *
+   * @return array
+   *   Array of field values with target_id keys.
+   */
+  private function prepareGroupsFieldValues(GroupInterface $primary_group, array $crossposted_groups): array {
+    $groups_field_values = [];
+    $groups_field_values[] = ['target_id' => $primary_group->id()];
+    foreach ($crossposted_groups as $group) {
+      $groups_field_values[] = ['target_id' => $group->id()];
+    }
+    return $groups_field_values;
   }
 
 }

@@ -5,3 +5,14 @@ extend input CreateTopicInput {
   """
   groups: ContentInGroupInput
 }
+
+extend input UpdateTopicInput {
+  """
+  The groups this topic should belong to if any.
+  May optionally be posted to additional groups.
+  If omitted, groups remain unchanged.
+  To remove the topic from all groups, set: groups: { value: null }.
+  If groups is null, groups remain unchanged.
+  """
+  groups: UpdateContentInGroupInput
+}

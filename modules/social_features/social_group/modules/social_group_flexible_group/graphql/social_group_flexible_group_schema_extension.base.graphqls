@@ -13,3 +13,15 @@ input ContentInGroupInput {
   """
   crosspostedGroups: [ID!]!
 }
+
+"""
+Provides a way to differentiate between "field should not be changed" and "field should be empty".
+In objects where a group is optional this value can be provided with a NULL value to empty the group selection, or with
+a new set of groups to update the value.
+"""
+input UpdateContentInGroupInput {
+  """
+  If set to NULL, will remove the content from any group.
+  """
+  value: ContentInGroupInput
+}
