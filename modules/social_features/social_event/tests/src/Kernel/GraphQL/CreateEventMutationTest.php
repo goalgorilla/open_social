@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_event\Kernel\GraphQL;
 
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
@@ -148,6 +150,7 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('activity');
+    $this->installEntitySchema('message');
     $this->installEntitySchema('menu_link_content');
     $this->installEntitySchema('paragraph');
     $this->installEntitySchema('block_content');
@@ -211,9 +214,17 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
         'access content',
         'bypass node access',
         'administer nodes',
+        'access cross-group posting',
       ],
       FALSE
     );
+
+    // Enable cross-posting for tests.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', TRUE)
+      ->set('cross_posting.content_types', ['event'])
+      ->set('cross_posting.group_types', ['flexible_group'])
+      ->save();
   }
 
   /**
@@ -245,6 +256,18 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
   }
 
   /**
+   * Returns minimal event timestamps for group tests.
+   *
+   * @return array{0: int, 1: int}
+   *   [startTimestamp, endTimestamp].
+   */
+  private static function eventTimestamps(): array {
+    $start = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
+    $end = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
+    return [$start, $end];
+  }
+
+  /**
    * Helper to create a valid event type taxonomy term.
    *
    * @param string $name
@@ -260,6 +283,27 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
     ]);
     $term->save();
     return $term;
+  }
+
+  /**
+   * Creates a test flexible group and saves it.
+   *
+   * @param string $label
+   *   The group label.
+   * @param array $field_group_allowed_visibility
+   *   Allowed visibility values (e.g. ['public', 'community']).
+   *
+   * @return \Drupal\group\Entity\Group
+   *   The created group.
+   */
+  protected function createTestGroup(string $label = 'Test Group', array $field_group_allowed_visibility = ['public', 'community']): Group {
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => $label,
+      'field_group_allowed_visibility' => $field_group_allowed_visibility,
+    ]);
+    $group->save();
+    return $group;
   }
 
   /**
@@ -1090,6 +1134,559 @@ class CreateEventMutationTest extends SocialGraphQLTestBase {
       $this->defaultMutationCacheMetaData()
     );
     $this->assertSame(0, $this->getEventCountByTitle('Event Invalid Country Code'), 'No event when address countryCode is invalid.');
+  }
+
+  /**
+   * Test creating an event with a single group successfully.
+   */
+  public function testCreateEventWithSingleGroupSuccess(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    [$start, $end] = self::eventTimestamps();
+
+    $group = $this->createTestGroup();
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'title' => 'Event in Group',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $group->uuid(),
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'title' => 'Event in Group',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:1'])
+    );
+
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $event = $node_storage->load(1);
+    assert($event instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($event);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group->id(), $group_ids, 'Event should be linked to the group.');
+  }
+
+  /**
+   * Test creating an event with cross-posting successfully.
+   */
+  public function testCreateEventWithCrossPostingSuccess(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    [$start, $end] = self::eventTimestamps();
+
+    $group1 = $this->createTestGroup('Group 1');
+    $group2 = $this->createTestGroup('Group 2', ['public', 'group']);
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'title' => 'Cross-posted Event',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'title' => 'Cross-posted Event',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:1'])
+    );
+
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $event = $node_storage->load(1);
+    assert($event instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($event);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group1->id(), $group_ids, 'Event should be linked to group 1.');
+    $this->assertContains($group2->id(), $group_ids, 'Event should be linked to group 2.');
+  }
+
+  /**
+   * Test validation error when primary group doesn't exist.
+   */
+  public function testCreateEventWithInvalidPrimaryGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    [$start, $end] = self::eventTimestamps();
+    $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'title' => 'Test Event',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $fakeGroupUuid,
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => ['GROUP_NOT_FOUND'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when cross-posted group doesn't exist.
+   */
+  public function testCreateEventWithInvalidCrossPostedGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    [$start, $end] = self::eventTimestamps();
+
+    $group = $this->createTestGroup('Test Group', ['public']);
+
+    $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'title' => 'Test Event',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [$fakeGroupUuid],
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => ['CROSSPOSTED_GROUP_NOT_FOUND:' . $fakeGroupUuid],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when same group is in primary and cross-posted.
+   */
+  public function testCreateEventWithDuplicateGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    [$start, $end] = self::eventTimestamps();
+
+    $group = $this->createTestGroup('Test Group', ['public']);
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'title' => 'Test Event',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [$group->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => ['GROUP_DUPLICATE'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when too many cross-posted groups.
+   */
+  public function testCreateEventTooManyCrossPostedGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    [$start, $end] = self::eventTimestamps();
+
+    $primaryGroup = $this->createTestGroup('Primary Group', ['public']);
+
+    $crosspostedGroups = [];
+    for ($i = 0; $i < 51; $i++) {
+      $group = $this->createTestGroup('Cross-posted Group ' . $i, ['public']);
+      $crosspostedGroups[] = $group->uuid();
+    }
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'title' => 'Test Event',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $primaryGroup->uuid(),
+            'crosspostedGroups' => $crosspostedGroups,
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => ['LIMIT_EXCEEDED_FOR_CROSSPOSTED_GROUPS'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when visibility is not allowed in single group.
+   */
+  public function testCreateEventVisibilityNotAllowedInSingleGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    [$start, $end] = self::eventTimestamps();
+
+    $group = $this->createTestGroup('Test Group', ['public', 'group']);
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'title' => 'Test Event',
+          'visibility' => 'COMMUNITY',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $group->uuid(),
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => ['VISIBILITY_NOT_ALLOWED_IN_GROUP'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation when visibility is not in intersection for cross-posting.
+   */
+  public function testCreateEventVisibilityNotAllowedInCrossPosting(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    [$start, $end] = self::eventTimestamps();
+
+    $group1 = $this->createTestGroup('Group 1');
+    $group2 = $this->createTestGroup('Group 2', ['public', 'group']);
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'title' => 'Test Event',
+          'visibility' => 'COMMUNITY',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => ['VISIBILITY_NOT_ALLOWED_IN_GROUP'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when creating a PUBLIC event in a secret group.
+   *
+   * PROD-34790: Public events are not allowed in groups that do not allow
+   * public content visibility. Uses a group with only group visibility allowed
+   * (no 'public' or 'community').
+   */
+  public function testCreateEventPublicNotAllowedInSecretGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    [$start, $end] = self::eventTimestamps();
+
+    $group = $this->createTestGroup('Secret Group', ['group']);
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'title' => 'Test Event',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $group->uuid(),
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => ['VISIBILITY_NOT_ALLOWED_IN_GROUP'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when cross-posting PUBLIC event with a secret group.
+   *
+   * PROD-34790: If any group (primary or cross-posted) does not allow public
+   * visibility, creating a PUBLIC event fails with
+   * VISIBILITY_NOT_ALLOWED_IN_GROUP.
+   */
+  public function testCreateEventPublicNotAllowedInSecretGroupCrossPosting(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    [$start, $end] = self::eventTimestamps();
+
+    $secretGroup = $this->createTestGroup('Secret Group', ['community', 'group']);
+    $publicGroup = $this->createTestGroup('Public Group', ['public', 'group']);
+
+    $this->assertResults(
+      <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'title' => 'Test Event',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $secretGroup->uuid(),
+            'crosspostedGroups' => [$publicGroup->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => ['VISIBILITY_NOT_ALLOWED_IN_GROUP'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when cross-posting is disabled.
+   */
+  public function testCreateEventCrossPostingDisabled(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $group_settings = $this->config('social_group.settings');
+    $previous_status = $group_settings->get('cross_posting.status');
+    $previous_content_types = $group_settings->get('cross_posting.content_types');
+    $previous_group_types = $group_settings->get('cross_posting.group_types');
+
+    try {
+      $this->config('social_group.settings')
+        ->set('cross_posting.status', FALSE)
+        ->save();
+
+      [$start, $end] = self::eventTimestamps();
+
+      $group1 = $this->createTestGroup('Group 1', ['public']);
+      $group2 = $this->createTestGroup('Group 2', ['public']);
+
+      $this->assertResults(
+        <<<GQL
+        mutation CreateEvent(\$input: CreateEventInput!) {
+          createEvent(input: \$input) {
+            errors
+            event {
+              id
+            }
+          }
+        }
+        GQL,
+        [
+          'input' => [
+            'title' => 'Test Event',
+            'visibility' => 'PUBLIC',
+            'body' => self::minimalRichTextBody(),
+            'startDate' => $start,
+            'endDate' => $end,
+            'groups' => [
+              'group' => $group1->uuid(),
+              'crosspostedGroups' => [$group2->uuid()],
+            ],
+          ],
+        ],
+        [
+          'createEvent' => [
+            'errors' => ['CROSS_POSTING_IS_DISABLED'],
+            'event' => NULL,
+          ],
+        ],
+        $this->defaultMutationCacheMetaData()
+          ->addCacheContexts(['languages:language_interface'])
+      );
+    }
+    finally {
+      $this->config('social_group.settings')
+        ->set('cross_posting.status', $previous_status)
+        ->set('cross_posting.content_types', $previous_content_types)
+        ->set('cross_posting.group_types', $previous_group_types)
+        ->save();
+    }
   }
 
   /**
