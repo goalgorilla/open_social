@@ -17,9 +17,13 @@
   granularity: permissions
   permissions:
     - scope: drupal
+      permission: 'access content'
+    - scope: drupal
       permission: 'create topic content'
     - scope: drupal
       permission: 'edit any topic content'
+    - scope: drupal
+      permission: 'delete any topic content'
     - scope: outsider
       identifier: flexible_group
       permission: 'create group_node:topic entity'
@@ -38,6 +42,16 @@
     - scope: outsider
       identifier: flexible_group
       permission: 'delete any group_node:topic relationship'
+    - scope: drupal
+      permission: 'use text format basic_html'
+    - scope: drupal
+      permission: 'select terms in topic_types'
+    - scope: drupal
+      permission: 'view terms in topic_types'
+    - scope: drupal
+      permission: 'view terms in social_tagging'
+    - scope: drupal
+      permission: 'select terms in social_tagging'
   grant_types:
     authorization_code:
       status: true
@@ -50,8 +64,14 @@
   parent: topic:write
   description: 'Provides the ability to read topics on the platform.'
   umbrella: false
-  granularity: 'permission'
-  permission: 'access content'
+  granularity: permissions
+  permissions:
+    - scope: drupal
+      permission: 'access content'
+    - scope: drupal
+      permission: 'view terms in topic_types'
+    - scope: drupal
+      permission: 'view terms in social_tagging'
   grant_types:
     authorization_code:
       status: true
@@ -59,102 +79,3 @@
     client_credentials:
       status: true
       description: 'Allow the application to read any topic information on the platform.'
-
-# @todo Remove after https://getopensocial.atlassian.net/browse/PROD-34843
-"internal:topic:types":
-  parent: topic:read
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'view terms in topic_types'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Allow the application to read terms from topic_types taxonomy you have access to.'
-    client_credentials:
-      status: true
-      description: 'Allow the application to read terms from topic_types taxonomy on the platform.'
-
-"internal:topic:update":
-  parent: topic:write
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'edit any topic content'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Allow the application to update topics on the platform.'
-    client_credentials:
-      status: true
-      description: 'Allow the application to update topics on the platform.'
-
-"internal:topic:delete":
-  parent: topic:write
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'delete any topic content'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Allow the application to delete topics on the platform.'
-    client_credentials:
-      status: true
-      description: 'Allow the application to delete topics on the platform.'
-
-"internal:topic:read_social_tagging":
-  parent: topic:read
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'view terms in social_tagging'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Allow the application to view terms from social_tagging taxonomy you have access to.'
-    client_credentials:
-      status: true
-      description: 'Allow the application to view terms from social_tagging taxonomy on the platform.'
-
-"internal:topic:select_social_tagging":
-  parent: topic:write
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'select terms in social_tagging'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Allow the application to select terms from social_tagging taxonomy you have access to.'
-    client_credentials:
-      status: true
-      description: 'Allow the application to select terms from social_tagging taxonomy on the platform.'
-
-"internal:topic:text_format":
-  parent: topic:write
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'use text format basic_html'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Ensures that body fields can be filled with basic_html text.'
-    client_credentials:
-      status: true
-      description: 'Ensures that body fields can be filled with basic_html text.'
-
-"internal:topic:write_types":
-  parent: topic:write
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'select terms in topic_types'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Allow the application to select terms from topic_types taxonomy you have access to.'
-    client_credentials:
-      status: true
-      description: 'Allow the application to select terms from topic_types taxonomy on the platform.'

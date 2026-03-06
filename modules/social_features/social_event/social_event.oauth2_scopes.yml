@@ -17,13 +17,29 @@
   granularity: permissions
   permissions:
     - scope: drupal
+      permission: 'access content'
+    - scope: drupal
       permission: 'create event content'
+    - scope: drupal
+      permission: 'edit any event content'
+    - scope: drupal
+      permission: 'delete any event content'
     - scope: outsider
       identifier: flexible_group
       permission: 'create group_node:event entity'
     - scope: outsider
       identifier: flexible_group
       permission: 'create group_node:event relationship'
+    - scope: drupal
+      permission: 'use text format basic_html'
+    - scope: drupal
+      permission: 'view terms in event_types'
+    - scope: drupal
+      permission: 'select terms in event_types'
+    - scope: drupal
+      permission: 'view terms in social_tagging'
+    - scope: drupal
+      permission: 'select terms in social_tagging'
   grant_types:
     authorization_code:
       status: true
@@ -36,8 +52,14 @@
   parent: event:write
   description: 'Provides the ability to read events on the platform.'
   umbrella: false
-  granularity: 'permission'
-  permission: 'access content'
+  granularity: permissions
+  permissions:
+    - scope: drupal
+      permission: 'access content'
+    - scope: drupal
+      permission: 'view terms in social_tagging'
+    - scope: drupal
+      permission: 'view terms in event_types'
   grant_types:
     authorization_code:
       status: true
@@ -45,60 +67,3 @@
     client_credentials:
       status: true
       description: 'Allow the application to read any event information on the platform.'
-
-# @todo Remove after multiple permissions are implemented.
-"internal:event:update":
-  parent: event:write
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'edit any event content'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Allow the application to update events on the platform.'
-    client_credentials:
-      status: true
-      description: 'Allow the application to update events on the platform.'
-
-"internal:event:delete":
-  parent: event:write
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'delete any event content'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Allow the application to delete events on the platform.'
-    client_credentials:
-      status: true
-      description: 'Allow the application to delete events on the platform.'
-
-"internal:event:text_format":
-  parent: event:write
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'use text format basic_html'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Ensures that body fields can be filled with basic_html text.'
-    client_credentials:
-      status: true
-      description: 'Ensures that body fields can be filled with basic_html text.'
-
-"internal:event:social_tagging":
-  parent: event:read
-  description: 'Temporary scope should be removed once multiple permissions are implemented.'
-  umbrella: false
-  granularity: permission
-  permission: 'view terms in social_tagging'
-  grant_types:
-    authorization_code:
-      status: true
-      description: 'Allow the application to view terms from social_tagging taxonomy you have access to.'
-    client_credentials:
-      status: true
-      description: 'Allow the application to view terms from social_tagging taxonomy on the platform.'
