@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Plugin\GraphQL\SchemaExtension;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\social_graphql\Plugin\GraphQL\SchemaExtension\SchemaExtensionPluginBase;
@@ -249,6 +250,45 @@ class EventSchemaExtension extends SchemaExtensionPluginBase {
       $builder->produce('entity_label')
         ->map('entity', $builder->fromParent())
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExtensionDefinition(): ?string {
+    // First, try to load the default extension definition using parent method.
+    try {
+      $definition = parent::getExtensionDefinition() ?? "";
+    }
+    catch (InvalidPluginDefinitionException $e) {
+      // Expected fallback when base extension definition is absent.
+      $definition = "";
+    }
+
+    // Then, load additional extension schemas.
+    // These files extend the base Event type with groups field.
+    // Only load extensions if their corresponding modules are enabled.
+    $extension_modules = [
+      'social_group_flexible_group' => 'social_event_flexible_group_schema_extension.extension.graphqls',
+    ];
+
+    $event_module = $this->moduleHandler->getModule('social_event');
+    foreach ($extension_modules as $module_name => $filename) {
+      // Check if the module is enabled before loading its extension.
+      if (!$this->moduleHandler->moduleExists($module_name)) {
+        continue;
+      }
+
+      $file = $event_module->getPath() . '/graphql/' . $filename;
+      if (file_exists($file)) {
+        $contents = file_get_contents($file);
+        if ($contents) {
+          $definition .= "\n" . $contents;
+        }
+      }
+    }
+
+    return !empty(trim($definition)) ? $definition : NULL;
   }
 
 }
