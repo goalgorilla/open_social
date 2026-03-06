@@ -222,11 +222,6 @@ class EventSchemaExtension extends SchemaExtensionPluginBase {
         ->map('uuid', $builder->fromArgument('id'))
     );
 
-    $registry->addFieldResolver('Query', 'eventTagCategories',
-      $builder->produce('tag_categories_by_content_type')
-        ->map('placement', $builder->fromValue('EVENT'))
-    );
-
     $registry->addFieldResolver('Query', 'eventTypes',
       $builder->produce('taxonomy_load_tree')
         ->map('vid', $builder->fromValue('event_types'))

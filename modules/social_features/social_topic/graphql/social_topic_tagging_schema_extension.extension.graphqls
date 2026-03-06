@@ -1,0 +1,38 @@
+extend type Query {
+  """
+  List of all content tag categories that are applicable to topics.
+  """
+  topicTagCategories: [ContentTagCategory!]!
+}
+
+extend type Topic implements ContentTaggable {
+  """
+  The content tags this topic is tagged with grouped by the categories they belong in.
+  Each topic is classified with content tags to make it clear what this topic is about.
+  """
+  contentTagCategories: [ContentTaggableSelectedTagCategories!]!
+}
+
+extend enum ContentTagPlacement {
+  """
+  This content type can be placed on a Topic object.
+  """
+  TOPIC
+}
+
+extend input CreateTopicInput {
+  """
+  Content tags associated with the topic (optional).
+  If provided, each tag ID must be valid.
+  """
+  contentTags: [ID!]
+}
+
+extend input UpdateTopicInput {
+  """
+  The tag(s) of the topic.
+  The ID of the topic tag(s) as provided by contentTagCategories.
+  If omitted, the content tag remains unchanged.
+  """
+  contentTags: [ID!]
+}

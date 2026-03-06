@@ -1,0 +1,21 @@
+extend type Query {
+  """
+  List of all content tag categories that are applicable to events.
+  """
+  eventTagCategories: [ContentTagCategory!]!
+}
+
+extend type Event implements ContentTaggable {
+  """
+  The content tags this event is tagged with grouped by the categories they belong in.
+  Each event is classified with content tags to make it clear what this event is about.
+  """
+  contentTagCategories: [ContentTaggableSelectedTagCategories!]!
+}
+
+extend enum ContentTagPlacement {
+  """
+  This content type can be placed on an Event object.
+  """
+  EVENT
+}

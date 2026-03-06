@@ -49,9 +49,10 @@
     - scope: drupal
       permission: 'select terms in event_types'
     - scope: drupal
-      permission: 'view terms in social_tagging'
-    - scope: drupal
       permission: 'select terms in social_tagging'
+      dependencies:
+        module:
+          - social_tagging
   grant_types:
     authorization_code:
       status: true
@@ -70,6 +71,9 @@
       permission: 'access content'
     - scope: drupal
       permission: 'view terms in social_tagging'
+      dependencies:
+        module:
+          - social_tagging
     - scope: drupal
       permission: 'view terms in event_types'
   grant_types:
