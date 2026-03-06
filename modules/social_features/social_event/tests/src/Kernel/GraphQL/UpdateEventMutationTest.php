@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_event\Kernel\GraphQL;
 
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
@@ -149,6 +151,7 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('activity');
+    $this->installEntitySchema('message');
     $this->installEntitySchema('menu_link_content');
     $this->installEntitySchema('paragraph');
     $this->installEntitySchema('block_content');
@@ -205,6 +208,13 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     $this->setUpKeys();
 
     $this->setUpCurrentUser(["uid" => 1], [], FALSE);
+
+    // Enable cross-posting for event tests.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', TRUE)
+      ->set('cross_posting.content_types', ['event'])
+      ->set('cross_posting.group_types', ['flexible_group'])
+      ->save();
   }
 
   /**
@@ -299,6 +309,27 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     $reloaded = $storage->load($id);
     assert($reloaded !== NULL);
     return $reloaded;
+  }
+
+  /**
+   * Creates a test flexible group and saves it.
+   *
+   * @param string $label
+   *   The group label.
+   * @param array $field_group_allowed_visibility
+   *   Allowed visibility values (e.g. ['public', 'community']).
+   *
+   * @return \Drupal\group\Entity\Group
+   *   The created group.
+   */
+  protected function createTestGroup(string $label = 'Test Group', array $field_group_allowed_visibility = ['public', 'community']): Group {
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => $label,
+      'field_group_allowed_visibility' => $field_group_allowed_visibility,
+    ]);
+    $group->save();
+    return $group;
   }
 
   /**
@@ -1392,6 +1423,473 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     // @todo remove this once we have visibility as part of the read schema.
     $reloaded_event = $this->reloadEvent($event);
     $this->assertEquals('community', $reloaded_event->get('field_content_visibility')->value);
+  }
+
+  /**
+   * Test adding an event to a group via update.
+   */
+  public function testUpdateEventAddToGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType);
+    $group = $this->createTestGroup();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id title }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'groups' => [
+            'group' => $group->uuid(),
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+            'title' => 'Original Event Title',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have groups as part of the read schema.
+    $relationships = GroupRelationship::loadByEntity($this->reloadEvent($event));
+    $group_ids = array_map(fn ($r) => (string) $r->getGroup()->id(), $relationships);
+    $this->assertContains((string) $group->id(), $group_ids, 'Event should be linked to the group.');
+  }
+
+  /**
+   * Test removing an event from all groups via update.
+   */
+  public function testUpdateEventRemoveFromAllGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $group = $this->createTestGroup();
+
+    $event = $this->createEvent($eventType);
+    $this->container->get('social_group.set_groups_for_node_service')
+      ->setGroupsForNode($event, [], [$group->id() => $group->id()], [], FALSE);
+    $event->set('groups', [['target_id' => $group->id()]]);
+    $event->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'groups' => NULL,
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => ['id' => $event->uuid()],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have groups as part of the read schema.
+    $relationships = GroupRelationship::loadByEntity($this->reloadEvent($event));
+    $this->assertEmpty($relationships, 'Event should not be in any group.');
+  }
+
+  /**
+   * Test changing an event's groups via update.
+   */
+  public function testUpdateEventChangeGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $group1 = $this->createTestGroup('Group 1');
+    $group2 = $this->createTestGroup('Group 2');
+
+    $event = $this->createEvent($eventType);
+    $this->container->get('social_group.set_groups_for_node_service')
+      ->setGroupsForNode($event, [], [$group1->id() => $group1->id()], [], FALSE);
+    $event->set('groups', [['target_id' => $group1->id()]]);
+    $event->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'groups' => [
+            'group' => $group2->uuid(),
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => ['id' => $event->uuid()],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have groups as part of the read schema.
+    $relationships = GroupRelationship::loadByEntity($this->reloadEvent($event));
+    $group_ids = array_map(fn ($r) => (string) $r->getGroup()->id(), $relationships);
+    $this->assertContains((string) $group2->id(), $group_ids);
+    $this->assertNotContains((string) $group1->id(), $group_ids);
+  }
+
+  /**
+   * Test that omitting groups leaves group membership unchanged.
+   */
+  public function testUpdateEventLeaveGroupsUnchanged(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $group = $this->createTestGroup();
+
+    $event = $this->createEvent($eventType);
+    $this->container->get('social_group.set_groups_for_node_service')
+      ->setGroupsForNode($event, [], [$group->id() => $group->id()], [], FALSE);
+    $event->set('groups', [['target_id' => $group->id()]]);
+    $event->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id title }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'title' => 'Updated Title Only',
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+            'title' => 'Updated Title Only',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have groups as part of the read schema.
+    $relationships = GroupRelationship::loadByEntity($this->reloadEvent($event));
+    $group_ids = array_map(fn ($r) => (string) $r->getGroup()->id(), $relationships);
+    $this->assertContains((string) $group->id(), $group_ids, 'Event should still be in the group.');
+  }
+
+  /**
+   * Test validation error when group does not exist.
+   */
+  public function testUpdateEventInvalidGroup(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType);
+    $fake_group_uuid = '12345678-1234-1234-1234-123456789012';
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'groups' => [
+            'group' => $fake_group_uuid,
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => ['GROUP_NOT_FOUND'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when primary and crossposted list duplicate group.
+   */
+  public function testUpdateEventDuplicateGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType);
+    $group = $this->createTestGroup();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [$group->uuid()],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => ['GROUP_DUPLICATE'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test updating an event with cross-posting (primary + crossposted groups).
+   */
+  public function testUpdateEventCrossPostingSuccess(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType);
+    $group1 = $this->createTestGroup('Group 1');
+    $group2 = $this->createTestGroup('Group 2');
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'groups' => [
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => ['id' => $event->uuid()],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have groups as part of the read schema.
+    $relationships = GroupRelationship::loadByEntity($this->reloadEvent($event));
+    $group_ids = array_map(fn ($r) => (string) $r->getGroup()->id(), $relationships);
+    $this->assertContains((string) $group1->id(), $group_ids);
+    $this->assertContains((string) $group2->id(), $group_ids);
+  }
+
+  /**
+   * Test validation error when visibility is not allowed in target groups.
+   */
+  public function testUpdateEventVisibilityNotAllowedInGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType);
+    $group = $this->createTestGroup('Group public only', ['public']);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'visibility' => 'COMMUNITY',
+          'groups' => [
+            'group' => $group->uuid(),
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => ['VISIBILITY_NOT_ALLOWED_IN_GROUP'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that cross-posting is rejected when cross-posting is disabled.
+   */
+  public function testUpdateEventCrossPostingDisabled(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $group_settings = $this->config('social_group.settings');
+    $previous_status = $group_settings->get('cross_posting.status');
+    $previous_content_types = $group_settings->get('cross_posting.content_types');
+    $previous_group_types = $group_settings->get('cross_posting.group_types');
+
+    try {
+      $group_settings
+        ->set('cross_posting.status', FALSE)
+        ->save();
+
+      $eventType = $this->createEventType();
+      $event = $this->createEvent($eventType);
+      $group1 = $this->createTestGroup('Group 1');
+      $group2 = $this->createTestGroup('Group 2');
+
+      $this->assertResults(
+        <<<GQL
+          mutation UpdateEvent(\$input: UpdateEventInput!) {
+            updateEvent(input: \$input) {
+              errors
+              event { id }
+            }
+          }
+          GQL,
+        [
+          'input' => [
+            'id' => $event->uuid(),
+            'groups' => [
+              'group' => $group1->uuid(),
+              'crosspostedGroups' => [$group2->uuid()],
+            ],
+          ],
+        ],
+        [
+          'updateEvent' => [
+            'errors' => ['CROSS_POSTING_IS_DISABLED'],
+            'event' => NULL,
+          ],
+        ],
+        $this->defaultMutationCacheMetaData()
+          ->addCacheContexts(['languages:language_interface'])
+      );
+    }
+    finally {
+      $group_settings
+        ->set('cross_posting.status', $previous_status)
+        ->set('cross_posting.content_types', $previous_content_types)
+        ->set('cross_posting.group_types', $previous_group_types)
+        ->save();
+    }
+  }
+
+  /**
+   * Test updating event from single group to primary + crossposted.
+   */
+  public function testUpdateEventSingleToMultipleGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $group1 = $this->createTestGroup('Group 1');
+    $group2 = $this->createTestGroup('Group 2');
+
+    $event = $this->createEvent($eventType);
+    $this->container->get('social_group.set_groups_for_node_service')
+      ->setGroupsForNode($event, [], [$group1->id() => $group1->id()], [], FALSE);
+    $event->set('groups', [['target_id' => $group1->id()]]);
+    $event->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'groups' => [
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => ['id' => $event->uuid()],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have groups as part of the read schema.
+    $relationships = GroupRelationship::loadByEntity($this->reloadEvent($event));
+    $group_ids = array_map(fn ($r) => (string) $r->getGroup()->id(), $relationships);
+    $this->assertContains((string) $group1->id(), $group_ids);
+    $this->assertContains((string) $group2->id(), $group_ids);
   }
 
   /**
