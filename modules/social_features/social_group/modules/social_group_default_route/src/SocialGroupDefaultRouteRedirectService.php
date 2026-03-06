@@ -141,17 +141,7 @@ class SocialGroupDefaultRouteRedirectService {
       return NULL;
     }
 
-    $group = Group::load($group_id);
-    if (!$group instanceof SocialGroupInterface) {
-      return NULL;
-    }
-
-    $group_routes = $this->getGroupDefaultRoutes($group);
-    if (empty($group_routes)) {
-      return NULL;
-    }
-
-    $url = Url::fromRoute(self::DEFAULT_GROUP_ROUTE, ['group' => $group->id()], [
+    $url = Url::fromRoute(self::DEFAULT_GROUP_ROUTE, ['group' => $group_id], [
       'query' => ['stream' => NULL],
     ]);
 

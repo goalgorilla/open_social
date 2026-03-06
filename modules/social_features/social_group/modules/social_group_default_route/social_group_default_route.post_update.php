@@ -302,3 +302,57 @@ function social_group_default_route_post_update_003_canonical_path_to_stream(arr
     '@total' => $sandbox['total'],
   ]);
 }
+
+/**
+ * Generates URL aliases for groups that have no existing alias.
+ *
+ * @param array $sandbox
+ *   Batch sandbox; passed through to Pathauto (current, count, total, results).
+ *
+ * @throws \Exception
+ *   Re-throws any exception from Pathauto.
+ */
+function social_group_default_route_post_update_004_generate_group_aliases(array &$sandbox): MarkupInterface|string {
+  if (!\Drupal::state()->get('social_group_default_route_fix_aliases_opt_in', FALSE)) {
+    $sandbox['#finished'] = 1;
+    \Drupal::logger('social_group_default_route')->info('Platform has opted out of alias fixes for the Group Default Route changes.');
+    return t('Platform has opted out of alias fixes for the Group Default Route changes.');
+  }
+
+  $alias_type_manager = \Drupal::service('plugin.manager.alias_type');
+  if (!$alias_type_manager->hasDefinition('canonical_entities:group')) {
+    $sandbox['#finished'] = 1;
+    return t('Pathauto group alias type is not available; nothing to generate.');
+  }
+
+  if (!isset($sandbox['results'])) {
+    $sandbox['results'] = ['updates' => 0];
+  }
+
+  $context = [
+    'sandbox' => &$sandbox,
+    'results' => &$sandbox['results'],
+    'finished' => 0,
+    'message' => '',
+  ];
+
+  /** @var \Drupal\pathauto\AliasTypeBatchUpdateInterface $alias_type */
+  $alias_type = $alias_type_manager->createInstance('canonical_entities:group');
+  $alias_type->batchUpdate('create', $context);
+
+  if (isset($context['sandbox']['total']) && $context['sandbox']['count'] == $context['sandbox']['total']) {
+    $context['finished'] = 1;
+  }
+  $sandbox['#finished'] = $context['finished'];
+
+  if ($sandbox['#finished'] == 1) {
+    \Drupal::service('path_alias.manager')->cacheClear();
+    Cache::invalidateTags(['route_match']);
+    $count = $sandbox['results']['updates'];
+    return $count
+      ? t('Generated @count URL alias(es) for groups (un-aliased paths only).', ['@count' => $count])
+      : t('No new URL aliases to generate for groups.');
+  }
+
+  return '';
+}
