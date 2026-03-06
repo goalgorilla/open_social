@@ -11,6 +11,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_event\Wrappers\Input\UpdateEventInput as UpdateEventInputWrapper;
+use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -50,6 +51,8 @@ class UpdateEventInput extends DataProducerPluginBase implements ContainerFactor
    *   The Drupal entity type manager.
    * @param \CommerceGuys\Addressing\Country\CountryRepositoryInterface $countryRepository
    *   The country repository for validating address country codes.
+   * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $groupInputValidationService
+   *   The group input validation service.
    */
   public function __construct(
     array $configuration,
@@ -59,6 +62,7 @@ class UpdateEventInput extends DataProducerPluginBase implements ContainerFactor
     protected EntityRepositoryInterface $entityRepository,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected CountryRepositoryInterface $countryRepository,
+    protected ?GroupInputValidationService $groupInputValidationService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -72,6 +76,11 @@ class UpdateEventInput extends DataProducerPluginBase implements ContainerFactor
     $plugin_id,
     $plugin_definition,
   ): self {
+    $group_validation_service = NULL;
+    if ($container->get('module_handler')->moduleExists('social_group_flexible_group')) {
+      $group_validation_service = $container->get('social_group_flexible_group.group_input_validation');
+    }
+
     return new static(
       $configuration,
       $plugin_id,
@@ -80,6 +89,7 @@ class UpdateEventInput extends DataProducerPluginBase implements ContainerFactor
       $container->get('entity.repository'),
       $container->get('entity_type.manager'),
       $container->get('address.country_repository'),
+      $group_validation_service,
     );
   }
 
@@ -99,6 +109,7 @@ class UpdateEventInput extends DataProducerPluginBase implements ContainerFactor
       $this->entityRepository,
       $this->currentUser,
       $this->countryRepository,
+      $this->groupInputValidationService,
     );
     $event_input->setValues($input);
     return $event_input;

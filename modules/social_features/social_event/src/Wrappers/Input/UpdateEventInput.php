@@ -51,6 +51,13 @@ class UpdateEventInput extends EventInputBase {
   protected bool $addressProvided = FALSE;
 
   /**
+   * Whether the groups field was explicitly provided in the input.
+   *
+   * When true, groups should be updated (set, or remove if value null).
+   */
+  protected bool $groupsProvided = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function setValues(array $input): void {
@@ -198,6 +205,32 @@ class UpdateEventInput extends EventInputBase {
         'value' => $renderer->renderDocument($input['body']->getDocument()),
         'format' => $this->getBodyFieldTextFormat($this->actor),
       ];
+    }
+
+    // Process groups if provided (optional for updates).
+    // Omit = key not present (unchanged); null = remove from all;
+    // object = set groups.
+    if (!array_key_exists('groups', $input)) {
+      return;
+    }
+    $this->groupsProvided = TRUE;
+    if ($input['groups'] === NULL) {
+      $this->primaryGroup = NULL;
+      $this->crosspostedGroups = [];
+      return;
+    }
+    if (!is_array($input['groups']) || !array_key_exists('group', $input['groups'])) {
+      $this->violations[] = new Violation("GROUPS_INVALID");
+      return;
+    }
+    $groups_input = ['groups' => $input['groups']];
+    $event_visibility = $this->getEventVisibilityForGroups();
+    if ($this->actor !== NULL) {
+      $groups_result = $this->processGroups($groups_input, $this->actor, $event_visibility, 'event', 'group_node:event');
+      if ($groups_result !== NULL && $groups_result->isValid()) {
+        $this->primaryGroup = $groups_result->getPrimaryGroup();
+        $this->crosspostedGroups = $groups_result->getCrosspostedGroups();
+      }
     }
   }
 
@@ -359,6 +392,35 @@ class UpdateEventInput extends EventInputBase {
    */
   public function hasAddress(): bool {
     return $this->addressProvided;
+  }
+
+  /**
+   * Check if groups should be updated.
+   *
+   * @return bool
+   *   TRUE if the groups field was explicitly provided in the input.
+   */
+  public function hasGroups(): bool {
+    return $this->groupsProvided;
+  }
+
+  /**
+   * Gets the visibility value to use when processing groups.
+   *
+   * Uses input visibility if provided, otherwise the event's current
+   * visibility.
+   *
+   * @return string|null
+   *   The Drupal visibility constant, or NULL if none available.
+   */
+  private function getEventVisibilityForGroups(): ?string {
+    if ($this->visibility !== NULL) {
+      return $this->convertVisibilityUserInputToConstant($this->visibility);
+    }
+    if ($this->event !== NULL && $this->event->hasField('field_content_visibility') && !$this->event->get('field_content_visibility')->isEmpty()) {
+      return $this->event->get('field_content_visibility')->value;
+    }
+    return NULL;
   }
 
 }

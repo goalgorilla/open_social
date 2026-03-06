@@ -436,6 +436,9 @@ abstract class EventInputBase extends InputBase {
    *
    * @return \Drupal\social_graphql\GraphQL\Violation[]
    *   Array of GraphQL violation objects.
+   *
+   * @todo This duplicates code from SocialTopicInputBase::convertConstraintViolations().
+   *       We should refactor to share code between the two wrappers.
    */
   public function convertConstraintViolations(ConstraintViolationListInterface $violations): array {
     $graphql_violations = [];

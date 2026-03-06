@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Plugin\GraphQL\DataProducer\Mutation;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\node\NodeInterface;
 use Drupal\social_event\Wrappers\Input\UpdateEventInput;
 use Drupal\social_event\Wrappers\Payload\UpdateEventPayload;
 use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_group\SetGroupsForNodeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -50,12 +53,18 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The plugin implementation definition.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger channel factory.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
+   * @param \Drupal\social_group\SetGroupsForNodeService|null $setGroupsForNodeService
+   *   The set groups for node service.
    */
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
     LoggerChannelFactoryInterface $logger_factory,
+    protected Connection $database,
+    protected ?SetGroupsForNodeService $setGroupsForNodeService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->setLoggerFactory($logger_factory);
@@ -70,11 +79,18 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     $plugin_id,
     $plugin_definition,
   ): self {
+    $set_groups_for_node_service = NULL;
+    if ($container->get('module_handler')->moduleExists('social_group')) {
+      $set_groups_for_node_service = $container->get('social_group.set_groups_for_node_service');
+    }
+
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->get('logger.factory'),
+      $container->get('database'),
+      $set_groups_for_node_service,
     );
   }
 
@@ -155,39 +171,55 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $modified = TRUE;
     }
 
+    // Update groups if provided: set field value now; sync relationships after
+    // successful save.
+    $groups_sync_pending = FALSE;
+    // Group IDs to pass as "current" to setGroupsForNode.
+    $groups_sync_current = [];
+    // Group IDs to add (used when transaction runs).
+    $groups_sync_to_add = [];
+    if ($input->hasGroups()) {
+      $primary_group = $input->getPrimaryGroup();
+      $crossposted_groups = $input->getCrosspostedGroups();
+      $current_groups = $this->getCurrentGroupsFromRelationships($node);
+
+      if ($primary_group === NULL) {
+        // Clearing groups: remove all group memberships.
+        $node->set('groups', []);
+        $groups_sync_pending = TRUE;
+        $groups_sync_current = $current_groups;
+        $groups_sync_to_add = [];
+      }
+      else {
+        // Build the list of group IDs to add (primary + crossposted).
+        $groups_to_add = [];
+        $groups_to_add[$primary_group->id()] = $primary_group->id();
+        foreach ($crossposted_groups as $group) {
+          $groups_to_add[$group->id()] = $group->id();
+        }
+
+        // Prepare the field values for the groups field on the node.
+        $groups_field_values = [];
+        $groups_field_values[] = ['target_id' => $primary_group->id()];
+        foreach ($crossposted_groups as $group) {
+          $groups_field_values[] = ['target_id' => $group->id()];
+        }
+        $node->set('groups', $groups_field_values);
+
+        $groups_sync_pending = TRUE;
+        $groups_sync_current = $current_groups;
+        $groups_sync_to_add = $groups_to_add;
+      }
+      $modified = TRUE;
+    }
+
     // Validate the entity before saving.
     // This ensures that field-level constraints are checked
     // (e.g., title length, field types, required fields)
     // before the entity is persisted.
     $violations = $node->validate();
     if ($violations->count() > 0) {
-      // Convert Drupal constraint violations to GraphQL violations.
-      foreach ($violations as $violation) {
-        // Create a violation ID based on the constraint type and field.
-        $property_path = $violation->getPropertyPath();
-        $constraint = $violation->getConstraint();
-
-        // Skip if constraint is null (should not happen but type-safe).
-        if ($constraint === NULL) {
-          continue;
-        }
-
-        $constraint_class = $constraint::class;
-        $last_separator_pos = strrpos($constraint_class, '\\');
-        $constraint_type = $last_separator_pos !== FALSE
-          ? substr($constraint_class, $last_separator_pos + 1)
-          : $constraint_class;
-
-        // Create a machine-readable violation ID.
-        // Example: "title" + "LengthConstraint" => "TITLE_LENGTH_CONSTRAINT".
-        $violation_id = strtoupper($property_path . '_' . $constraint_type);
-        $violation_id = preg_replace('/[^A-Z0-9_]/', '_', $violation_id);
-
-        // Add violation if ID is valid.
-        if (is_string($violation_id)) {
-          $payload->addViolation(new Violation($violation_id));
-        }
-      }
+      $payload->addViolations($input->convertConstraintViolations($violations));
       return $payload;
     }
 
@@ -197,22 +229,56 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       return $payload;
     }
 
-    // Save the node.
+    // Wrap save and group sync in a single transaction so that a failed
+    // setGroupsForNode rolls back the node save (no partial state).
+    $transaction = $this->database->startTransaction();
     try {
+      // Persist the updated event node.
       $node->save();
+
+      // Sync group relationships only after successful save.
+      if ($groups_sync_pending && $this->setGroupsForNodeService !== NULL) {
+        // Apply group membership changes via the service.
+        $this->setGroupsForNodeService->setGroupsForNode(
+          $node,
+          $groups_sync_current,
+          $groups_sync_to_add,
+          $groups_sync_current,
+          FALSE
+        );
+      }
+
+      $payload->setEvent($node);
+      return $payload;
     }
-    catch (EntityStorageException $e) {
-      $this->getLogger('social_event')->error('Event save failed in GraphQL Update Event Mutation: @message', [
+    catch (\Throwable $e) {
+      $transaction->rollBack();
+      $this->getLogger('social_event')->error('Event update failed in GraphQL Update Event Mutation: @message', [
         '@message' => $e->getMessage(),
         'exception' => $e,
       ]);
       $payload->addViolation(new Violation('EVENT_SAVE_FAILED'));
       return $payload;
     }
+  }
 
-    $payload->setEvent($node);
-
-    return $payload;
+  /**
+   * Gets the current group IDs for a node from its group relationships.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node.
+   *
+   * @return array
+   *   Array of group IDs keyed by group ID (gid => gid).
+   */
+  protected function getCurrentGroupsFromRelationships(NodeInterface $node): array {
+    $relationships = GroupRelationship::loadByEntity($node);
+    $current = [];
+    foreach ($relationships as $relationship) {
+      $gid = $relationship->getGroup()->id();
+      $current[$gid] = $gid;
+    }
+    return $current;
   }
 
 }
