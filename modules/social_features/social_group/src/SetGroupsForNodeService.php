@@ -151,20 +151,45 @@ class SetGroupsForNodeService {
   }
 
   /**
-   * Creates a group relationship.
+   * Adds the node to a group by creating a group_content (relationship) entity.
+   *
+   * Adds only if the node is not already in this group. That way the node can
+   * be added to multiple groups in one pass regardless of iteration order.
    *
    * @param \Drupal\node\NodeInterface $node
-   *   Object of a node.
+   *   The node to add to the group.
    * @param \Drupal\group\Entity\Group $group
-   *   Object of a group.
+   *   The group to add the node to.
    */
   public static function addGroupRelationship(NodeInterface $node, Group $group): void {
+    if (self::isNodeInGroup($node, $group)) {
+      return;
+    }
     // @todo Check if group plugin id exists.
     $plugin_id = 'group_node:' . $node->bundle();
-    $group_contents = GroupRelationship::loadByEntity($node);
-    if (empty($group_contents)) {
-      $group->addRelationship($node, $plugin_id, ['uid' => $node->getOwnerId()]);
+    $group->addRelationship($node, $plugin_id, ['uid' => $node->getOwnerId()]);
+  }
+
+  /**
+   * Checks whether the node has a group_content relationship to the group.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node.
+   * @param \Drupal\group\Entity\Group $group
+   *   The group.
+   *
+   * @return bool
+   *   TRUE if the node is in the group, FALSE otherwise.
+   */
+  private static function isNodeInGroup(NodeInterface $node, Group $group): bool {
+    $group_id = $group->id();
+    $relationships = GroupRelationship::loadByEntity($node);
+    foreach ($relationships as $relationship) {
+      if ($relationship->getGroup()->id() === $group_id) {
+        return TRUE;
+      }
     }
+    return FALSE;
   }
 
   /**
