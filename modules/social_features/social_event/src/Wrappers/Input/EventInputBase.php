@@ -10,11 +10,15 @@ use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\social_graphql\Exception\ShouldNotHappenException;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_graphql\Wrappers\InputBase;
+use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
+use Drupal\social_group_flexible_group\ValueObject\GroupInputValidationResult;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * Base class for event input wrappers.
@@ -110,6 +114,27 @@ abstract class EventInputBase extends InputBase {
   protected ?array $address = NULL;
 
   /**
+   * The group input validation service.
+   *
+   * @var \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null
+   */
+  protected ?GroupInputValidationService $groupInputValidationService = NULL;
+
+  /**
+   * Validated primary group data.
+   *
+   * @var \Drupal\group\Entity\GroupInterface|null
+   */
+  protected ?GroupInterface $primaryGroup = NULL;
+
+  /**
+   * Validated crossposted group data.
+   *
+   * @var \Drupal\group\Entity\GroupInterface[]|null
+   */
+  protected ?array $crosspostedGroups = NULL;
+
+  /**
    * Constructs an EventInputBase instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -120,17 +145,21 @@ abstract class EventInputBase extends InputBase {
    *   The current user for the request.
    * @param \CommerceGuys\Addressing\Country\CountryRepositoryInterface $country_repository
    *   The country repository for validating address country codes.
+   * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $group_input_validation_service
+   *   The group input validation service.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     EntityRepositoryInterface $entity_repository,
     AccountProxyInterface $current_user,
     CountryRepositoryInterface $country_repository,
+    ?GroupInputValidationService $group_input_validation_service = NULL,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->entityRepository = $entity_repository;
     $this->currentUser = $current_user;
     $this->countryRepository = $country_repository;
+    $this->groupInputValidationService = $group_input_validation_service;
   }
 
   /**
@@ -348,6 +377,116 @@ abstract class EventInputBase extends InputBase {
     catch (UnknownCountryException $e) {
       $this->violations[] = new Violation("ADDRESS_COUNTRY_CODE_INVALID");
     }
+  }
+
+  /**
+   * Process groups input and validate all group-related rules.
+   *
+   * @param array $input
+   *   The input array.
+   * @param \Drupal\Core\Session\AccountInterface $actor
+   *   The actor account.
+   * @param string|null $visibility
+   *   The visibility value.
+   * @param string $bundle
+   *   The entity bundle (e.g. 'event').
+   * @param string $plugin_id
+   *   The group content plugin ID (e.g. 'group_node:event').
+   *
+   * @return \Drupal\social_group_flexible_group\ValueObject\GroupInputValidationResult|null
+   *   The validation result, or NULL if groups were not provided.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function processGroups(array $input, AccountInterface $actor, ?string $visibility, string $bundle = 'event', string $plugin_id = 'group_node:event'): ?GroupInputValidationResult {
+    if (!array_key_exists('groups', $input) || $input['groups'] === NULL) {
+      return NULL;
+    }
+
+    if ($this->groupInputValidationService === NULL) {
+      $this->violations[] = new Violation('GROUPS_NOT_SUPPORTED');
+      return NULL;
+    }
+
+    $validation_result = $this->groupInputValidationService->validateGroupsForContent(
+      $input['groups'],
+      $bundle,
+      $visibility,
+      $actor,
+      $plugin_id
+    );
+
+    // Convert error strings to Violation objects.
+    if (!$validation_result->isValid()) {
+      $this->violations = array_merge(
+        $this->violations,
+        array_map(fn($error_code) => new Violation((string) $error_code), $validation_result->getErrors())
+      );
+    }
+
+    return $validation_result;
+  }
+
+  /**
+   * Converts constraint violations to GraphQL violations.
+   *
+   * @param \Symfony\Component\Validator\ConstraintViolationListInterface $violations
+   *   The constraint violations.
+   *
+   * @return \Drupal\social_graphql\GraphQL\Violation[]
+   *   Array of GraphQL violation objects.
+   */
+  public function convertConstraintViolations(ConstraintViolationListInterface $violations): array {
+    $graphql_violations = [];
+
+    foreach ($violations as $violation) {
+      // Create a violation ID based on the constraint type and field.
+      $property_path = $violation->getPropertyPath();
+      $constraint = $violation->getConstraint();
+
+      // Skip if constraint is null (Make PHPStan happy).
+      if ($constraint === NULL) {
+        continue;
+      }
+
+      $constraint_class = get_class($constraint);
+      $last_separator_pos = strrpos($constraint_class, '\\');
+      $constraint_type = $last_separator_pos !== FALSE
+        ? substr($constraint_class, $last_separator_pos + 1)
+        : $constraint_class;
+
+      // Create a machine-readable violation ID.
+      $violation_id = strtoupper($property_path . '_' . $constraint_type);
+      $violation_id = preg_replace('/[^A-Z0-9_]/', '_', $violation_id);
+
+      // Add violation if ID is valid.
+      if (is_string($violation_id)) {
+        $graphql_violations[] = new Violation($violation_id);
+      }
+    }
+
+    return $graphql_violations;
+  }
+
+  /**
+   * Get primary group.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The primary group or NULL.
+   */
+  public function getPrimaryGroup(): ?GroupInterface {
+    return $this->primaryGroup;
+  }
+
+  /**
+   * Get cross-posted groups.
+   *
+   * @return \Drupal\group\Entity\GroupInterface[]
+   *   Array of cross-posted groups.
+   */
+  public function getCrosspostedGroups(): array {
+    return $this->crosspostedGroups ?? [];
   }
 
 }

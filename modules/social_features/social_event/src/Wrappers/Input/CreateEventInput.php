@@ -116,6 +116,17 @@ class CreateEventInput extends EventInputBase {
     if (isset($input['address']) && is_array($input['address'])) {
       $this->validateAndSetAddressFromInput($input['address']);
     }
+
+    // Process groups if provided.
+    if (array_key_exists('groups', $input) && $input['groups'] !== NULL && $this->actor !== NULL) {
+      assert(is_string($this->visibility));
+      $drupal_visibility = $this->convertVisibilityUserInputToConstant($this->visibility);
+      $groups_result = $this->processGroups($input, $this->actor, $drupal_visibility, 'event', 'group_node:event');
+      if ($groups_result !== NULL && $groups_result->isValid()) {
+        $this->primaryGroup = $groups_result->getPrimaryGroup();
+        $this->crosspostedGroups = $groups_result->getCrosspostedGroups();
+      }
+    }
   }
 
   /**

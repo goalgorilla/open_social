@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Plugin\GraphQL\DataProducer\Mutation;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelTrait;
@@ -16,6 +16,7 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_event\Wrappers\Input\CreateEventInput;
 use Drupal\social_event\Wrappers\Payload\CreateEventPayload;
 use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_group\SetGroupsForNodeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -41,11 +42,6 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
   use VisibilityTrait;
 
   /**
-   * The entity type manager.
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
    * CreateEvent constructor.
    *
    * @param array $configuration
@@ -54,21 +50,25 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger channel factory.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
+   * @param \Drupal\social_group\SetGroupsForNodeService|null $setGroupsForNodeService
+   *   The set groups for node service.
    */
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
-    EntityTypeManagerInterface $entity_type_manager,
+    protected EntityTypeManagerInterface $entityTypeManager,
     LoggerChannelFactoryInterface $logger_factory,
+    protected Connection $database,
+    protected ?SetGroupsForNodeService $setGroupsForNodeService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->entityTypeManager = $entity_type_manager;
     $this->setLoggerFactory($logger_factory);
   }
 
@@ -81,12 +81,19 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     $plugin_id,
     $plugin_definition,
   ): self {
+    $set_groups_for_node_service = NULL;
+    if ($container->get('module_handler')->moduleExists('social_group')) {
+      $set_groups_for_node_service = $container->get('social_group.set_groups_for_node_service');
+    }
+
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('logger.factory'),
+      $container->get('database'),
+      $set_groups_for_node_service,
     );
   }
 
@@ -159,52 +166,69 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     // before the entity is persisted.
     $violations = $node->validate();
     if ($violations->count() > 0) {
-      // Convert Drupal constraint violations to GraphQL violations.
-      foreach ($violations as $violation) {
-        // Create a violation ID based on the constraint type and field.
-        $property_path = $violation->getPropertyPath();
-        $constraint = $violation->getConstraint();
-
-        // Skip if constraint is null (should not happen but type-safe).
-        if ($constraint === NULL) {
-          continue;
-        }
-
-        $constraint_class = $constraint::class;
-        $last_separator_pos = strrpos($constraint_class, '\\');
-        $constraint_type = $last_separator_pos !== FALSE
-          ? substr($constraint_class, $last_separator_pos + 1)
-          : $constraint_class;
-
-        // Create a machine-readable violation ID.
-        // Example: "title" + "LengthConstraint" => "TITLE_LENGTH_CONSTRAINT".
-        $violation_id = strtoupper($property_path . '_' . $constraint_type);
-        $violation_id = preg_replace('/[^A-Z0-9_]/', '_', $violation_id);
-
-        // Add violation if ID is valid.
-        if (is_string($violation_id)) {
-          $payload->addViolation(new Violation($violation_id));
-        }
-      }
+      $payload->addViolations($input->convertConstraintViolations($violations));
       return $payload;
     }
 
-    // Save the event node, and throw an exception if it fails.
+    // Wrap both saves in a single transaction so that a failed group
+    // validation rolls back the first save (no orphan event).
+    $transaction = $this->database->startTransaction();
     try {
+      // Persist the event node so it has an ID for group membership.
       $node->save();
+
+      // Set groups after saving the node, as groups require a saved entity.
+      if ($input->getPrimaryGroup() !== NULL) {
+        $primary_group = $input->getPrimaryGroup();
+        $crossposted_groups = $input->getCrosspostedGroups();
+
+        // Build the list of group IDs to add (primary + crossposted).
+        $groups_to_add = [];
+        $groups_to_add[$primary_group->id()] = $primary_group->id();
+        foreach ($crossposted_groups as $group) {
+          $groups_to_add[$group->id()] = $group->id();
+        }
+
+        // Apply group membership via the service (validates access etc.).
+        assert($this->setGroupsForNodeService instanceof SetGroupsForNodeService);
+        $this->setGroupsForNodeService->setGroupsForNode(
+          $node,
+          [],
+          $groups_to_add,
+          [],
+          TRUE
+        );
+
+        // Sync the groups field on the node for the second save.
+        $groups_field_values = [];
+        $groups_field_values[] = ['target_id' => $primary_group->id()];
+        foreach ($crossposted_groups as $group) {
+          $groups_field_values[] = ['target_id' => $group->id()];
+        }
+        $node->set('groups', $groups_field_values);
+
+        // Re-validate after group changes; roll back and report if invalid.
+        $violations = $node->validate();
+        if ($violations->count() > 0) {
+          $transaction->rollBack();
+          $payload->addViolations($input->convertConstraintViolations($violations));
+          return $payload;
+        }
+        $node->save();
+      }
+
+      $payload->setEvent($node);
+      return $payload;
     }
-    catch (EntityStorageException $e) {
-      $this->getLogger('social_event')->error('Event save failed in GraphQL Create Event Mutation: @message', [
+    catch (\Throwable $e) {
+      $transaction->rollBack();
+      $this->getLogger('social_event')->error('Event creation failed in GraphQL Create Event Mutation: @message', [
         '@message' => $e->getMessage(),
         'exception' => $e,
       ]);
       $payload->addViolation(new Violation('EVENT_SAVE_FAILED'));
       return $payload;
     }
-
-    $payload->setEvent($node);
-
-    return $payload;
   }
 
 }
