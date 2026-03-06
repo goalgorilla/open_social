@@ -1,4 +1,12 @@
 services:
+  Drupal\social_graphql\SchemaExtensionDependencyFilter:
+    class: Drupal\social_graphql\SchemaExtensionDependencyFilter
+    arguments:
+      - '@module_handler'
+      - '@theme_handler'
+      - '@config.factory'
+  social_graphql.schema_extension_dependency_filter: '@Drupal\social_graphql\SchemaExtensionDependencyFilter'
+
   logger.channel.social_graphql:
     parent: logger.channel_base
     arguments: ['social_graphql']
