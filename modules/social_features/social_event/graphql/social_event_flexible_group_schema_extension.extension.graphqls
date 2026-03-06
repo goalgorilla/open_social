@@ -4,3 +4,10 @@ extend input CreateEventInput {
   """
   groups: ContentInGroupInput
 }
+
+extend input UpdateEventInput {
+  """
+  The groups this event should belong to. Omit = unchanged; null = remove from all; ContentInGroupInput = set groups.
+  """
+  groups: ContentInGroupInput
+}
