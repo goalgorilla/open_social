@@ -12,6 +12,7 @@ use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
+use Drupal\social_organization\Service\OrganizationInputValidationService;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
@@ -92,6 +93,13 @@ class UpdateTopicInput extends TopicInputBase {
   protected bool $groupsProvided = FALSE;
 
   /**
+   * Flag to track if organizations field was provided in input.
+   *
+   * @var bool
+   */
+  protected bool $organizationsProvided = FALSE;
+
+  /**
    * Create a new Update Topic Input instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
@@ -102,14 +110,22 @@ class UpdateTopicInput extends TopicInputBase {
    *   The current user for the request.
    * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $groupInputValidationService
    *   The group input validation service.
+   * @param \Drupal\social_organization\Service\OrganizationInputValidationService|null $organizationInputValidationService
+   *   The organization input validation service.
    */
   public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
     EntityRepositoryInterface $entityRepository,
     protected AccountProxyInterface $currentUser,
     ?GroupInputValidationService $groupInputValidationService = NULL,
+    ?OrganizationInputValidationService $organizationInputValidationService = NULL,
   ) {
-    parent::__construct($entityTypeManager, $entityRepository, $groupInputValidationService);
+    parent::__construct(
+      $entityTypeManager,
+      $entityRepository,
+      $groupInputValidationService,
+      $organizationInputValidationService,
+    );
   }
 
   /**
@@ -246,6 +262,40 @@ class UpdateTopicInput extends TopicInputBase {
         if ($groups_result !== NULL && $groups_result->isValid()) {
           $this->primaryGroup = $groups_result->getPrimaryGroup();
           $this->crosspostedGroups = $groups_result->getCrosspostedGroups();
+        }
+      }
+    }
+
+    // Process organizations if provided (UpdateContentInOrganizationInput).
+    if (array_key_exists('organizations', $input)) {
+      $this->organizationsProvided = TRUE;
+
+      if ($input['organizations'] === NULL) {
+        // organizations: NULL means don't change organizations.
+        $this->organizationsProvided = FALSE;
+      }
+      elseif (!is_array($input['organizations']) || !array_key_exists('value', $input['organizations'])) {
+        $this->organizationsProvided = FALSE;
+        $this->violations[] = new Violation("ORGANIZATIONS_INVALID");
+      }
+      elseif ($input['organizations']['value'] === NULL) {
+        // organizations: { value: null } means remove from all.
+        $this->primaryOrganization = NULL;
+        $this->crosspostedOrganizations = [];
+      }
+      else {
+        // organizations: { value: ContentInOrganizationInput } means update.
+        $organizations_result = $this->processOrganizations(
+          ['organizations' => $input['organizations']['value']],
+          $this->actor
+        );
+
+        if ($organizations_result !== NULL && $organizations_result->isValid()) {
+          $this->primaryOrganization = $organizations_result->getPrimaryOrganization();
+          $this->crosspostedOrganizations = $organizations_result->getCrosspostedOrganizations();
+        }
+        else {
+          $this->organizationsProvided = FALSE;
         }
       }
     }
@@ -444,6 +494,28 @@ class UpdateTopicInput extends TopicInputBase {
     }
 
     return NULL;
+  }
+
+  /**
+   * Check if organizations should be updated.
+   *
+   * @return bool
+   *   TRUE if organizations input was provided (clear or set).
+   */
+  public function hasOrganizationsUpdate(): bool {
+    return $this->organizationsProvided;
+  }
+
+  /**
+   * Check if organizations should be cleared (removed from all).
+   *
+   * When value was null we never set primaryOrganization, so it stays NULL.
+   *
+   * @return bool
+   *   TRUE if organizations value was explicitly null.
+   */
+  public function shouldClearOrganizations(): bool {
+    return $this->organizationsProvided && $this->primaryOrganization === NULL;
   }
 
 }

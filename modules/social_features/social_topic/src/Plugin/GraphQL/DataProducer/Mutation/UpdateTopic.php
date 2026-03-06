@@ -13,6 +13,7 @@ use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_group\SetGroupsForNodeService;
+use Drupal\social_organization\Entity\group\Organization;
 use Drupal\social_topic\Wrappers\Input\UpdateTopicInput;
 use Drupal\social_topic\Wrappers\Payload\UpdateTopicPayload;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -186,6 +187,27 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
         // Update groups field.
         $groups_field_values = $this->prepareGroupsFieldValues($primary_group, $crossposted_groups);
         $node->set('groups', $groups_field_values);
+      }
+    }
+
+    // Process organizations if provided.
+    if ($input->hasOrganizationsUpdate()) {
+      if (!$node->hasField(Organization::REFERENCE_FIELD)) {
+        $payload->addViolation(new Violation('ORGANIZATIONS_NOT_SUPPORTED'));
+        return $payload;
+      }
+      if ($input->shouldClearOrganizations()) {
+        $node->set(Organization::REFERENCE_FIELD, []);
+      }
+      else {
+        $primary = $input->getPrimaryOrganization();
+        if ($primary !== NULL) {
+          $organization_ids = array_map(
+            fn($entity): array => ['target_id' => $entity->id()],
+            array_merge([$primary], $input->getCrosspostedOrganizations())
+          );
+          $node->set(Organization::REFERENCE_FIELD, $organization_ids);
+        }
       }
     }
 

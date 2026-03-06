@@ -5,3 +5,12 @@ extend input CreateTopicInput {
   """
   organizations: ContentInOrganizationInput
 }
+
+extend input UpdateTopicInput {
+  """
+  The organization this topic should belong to if any.
+  May optionally be posted to additional organizations.
+  If omitted, organizations remain unchanged.
+  """
+  organizations: UpdateContentInOrganizationInput
+}

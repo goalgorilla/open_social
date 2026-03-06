@@ -14,7 +14,6 @@ use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\social_organization\Service\OrganizationInputValidationService;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
-use Drupal\group\Entity\GroupInterface;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
 use OpenSocial\RichTextJson\Renderer\HtmlRenderer;
 
@@ -75,20 +74,6 @@ class CreateTopicInput extends TopicInputBase {
    * @var \Drupal\taxonomy\TermInterface[]
    */
   protected array $contentTags = [];
-
-  /**
-   * Validated primary organization data.
-   *
-   * @var ?GroupInterface
-   */
-  protected ?GroupInterface $primaryOrganization = NULL;
-
-  /**
-   * Validated crossposted organization data.
-   *
-   * @var ?GroupInterface[]
-   */
-  protected ?array $crosspostedOrganizations = NULL;
 
   /**
    * Create a new Create Topic Input instance.
@@ -311,26 +296,6 @@ class CreateTopicInput extends TopicInputBase {
    */
   public function getContentTags(): array {
     return $this->contentTags;
-  }
-
-  /**
-   * Get primary organization.
-   *
-   * @return \Drupal\group\Entity\GroupInterface|null
-   *   The primary organization or NULL.
-   */
-  public function getPrimaryOrganization(): ?GroupInterface {
-    return $this->primaryOrganization ?? NULL;
-  }
-
-  /**
-   * Get cross-posted organizations.
-   *
-   * @return \Drupal\group\Entity\GroupInterface[]
-   *   Array of cross-posted organizations.
-   */
-  public function getCrosspostedOrganizations(): array {
-    return $this->crosspostedOrganizations ?? [];
   }
 
 }

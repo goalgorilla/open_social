@@ -54,6 +54,20 @@ abstract class TopicInputBase extends InputBase {
   protected ?array $crosspostedGroups = NULL;
 
   /**
+   * Validated primary organization data.
+   *
+   * @var \Drupal\group\Entity\GroupInterface|null
+   */
+  protected ?GroupInterface $primaryOrganization = NULL;
+
+  /**
+   * Validated crossposted organization data.
+   *
+   * @var \Drupal\group\Entity\GroupInterface[]
+   */
+  protected array $crosspostedOrganizations = [];
+
+  /**
    * Constructs a TopicInputBase.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
@@ -430,6 +444,26 @@ abstract class TopicInputBase extends InputBase {
     }
 
     return $validation_result;
+  }
+
+  /**
+   * Get primary organization.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The primary organization or NULL.
+   */
+  public function getPrimaryOrganization(): ?GroupInterface {
+    return $this->primaryOrganization;
+  }
+
+  /**
+   * Get cross-posted organizations.
+   *
+   * @return \Drupal\group\Entity\GroupInterface[]
+   *   Array of cross-posted organizations.
+   */
+  public function getCrosspostedOrganizations(): array {
+    return $this->crosspostedOrganizations;
   }
 
 }
