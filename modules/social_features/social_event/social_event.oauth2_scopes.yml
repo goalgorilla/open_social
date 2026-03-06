@@ -14,8 +14,16 @@
   parent: event
   description: 'Provides the ability to create, update and delete events on the platform.'
   umbrella: false
-  granularity: permission
-  permission: 'create event content'
+  granularity: permissions
+  permissions:
+    - scope: drupal
+      permission: 'create event content'
+    - scope: outsider
+      identifier: flexible_group
+      permission: 'create group_node:event entity'
+    - scope: outsider
+      identifier: flexible_group
+      permission: 'create group_node:event relationship'
   grant_types:
     authorization_code:
       status: true
