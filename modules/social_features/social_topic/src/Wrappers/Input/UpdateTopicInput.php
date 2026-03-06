@@ -266,27 +266,23 @@ class UpdateTopicInput extends TopicInputBase {
       }
     }
 
-    // Process organizations if provided (UpdateContentInOrganizationInput).
+    // Process organizations if provided.
     if (array_key_exists('organizations', $input)) {
       $this->organizationsProvided = TRUE;
 
       if ($input['organizations'] === NULL) {
-        // organizations: NULL means don't change organizations.
-        $this->organizationsProvided = FALSE;
-      }
-      elseif (!is_array($input['organizations']) || !array_key_exists('value', $input['organizations'])) {
-        $this->organizationsProvided = FALSE;
-        $this->violations[] = new Violation("ORGANIZATIONS_INVALID");
-      }
-      elseif ($input['organizations']['value'] === NULL) {
-        // organizations: { value: null } means remove from all.
+        // organizations: NULL means remove from all.
         $this->primaryOrganization = NULL;
         $this->crosspostedOrganizations = [];
       }
+      elseif (!is_array($input['organizations'])) {
+        $this->organizationsProvided = FALSE;
+        $this->violations[] = new Violation("ORGANIZATIONS_INVALID");
+      }
       else {
-        // organizations: { value: ContentInOrganizationInput } means update.
+        // organizations: ContentInOrganizationInput means update.
         $organizations_result = $this->processOrganizations(
-          ['organizations' => $input['organizations']['value']],
+          ['organizations' => $input['organizations']],
           $this->actor
         );
 
