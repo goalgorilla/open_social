@@ -101,6 +101,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $pids = \Drupal::entityQuery('profile')
       ->condition('type', 'profile')
+      ->accessCheck(TRUE)
       ->execute();
 
     $fields = $this->getUnselectedFields();

@@ -12,7 +12,6 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\Core\Link;
-use Drupal\profile\ProfileStorage;
 use Drupal\user\UserInterface;
 
 /**
@@ -86,7 +85,7 @@ function template_preprocess_activity(array &$variables) {
   // 'compact_notification' view mode might not be configured, so remember to
   // always check the theme setting first.
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
-  if ($storage instanceof ProfileStorage && $account instanceof UserInterface) {
+  if ($account instanceof UserInterface) {
     $user_profile = $storage->loadByUser($account, 'profile');
     if ($user_profile) {
       $content = \Drupal::entityTypeManager()

@@ -733,7 +733,7 @@ function _social_profile_get_profile_from_route() {
   $entity_type_manager = \Drupal::entityTypeManager();
 
   $account = \Drupal::routeMatch()->getParameter('user');
-  if (!is_object($account) && !is_null($account)) {
+  if (!$account instanceof AccountInterface && !is_null($account)) {
     $account = $entity_type_manager
       ->getStorage('user')
       ->load($account);

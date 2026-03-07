@@ -338,7 +338,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
         if ($recipient instanceof User) {
           $storage = \Drupal::entityTypeManager()->getStorage('profile');
           $user_profile = $storage->loadByUser($recipient, 'profile');
-          if ($user_profile !== FALSE) {
+          if ($user_profile !== NULL) {
             $content = \Drupal::entityTypeManager()
               ->getViewBuilder('profile')
               ->view($user_profile, 'compact_notification');

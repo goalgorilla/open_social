@@ -71,9 +71,7 @@ class SocialProfilePrivacyBatchHelper {
       $profiles = $profile_storage->loadMultiple($current_pids);
 
       foreach ($profiles as $profile) {
-        if ($profile instanceof ProfileInterface) {
-          SocialProfilePrivacyBatchHelper::updateProfileName($profile);
-        }
+        SocialProfilePrivacyBatchHelper::updateProfileName($profile);
 
         $context['sandbox']['progress']++;
 
