@@ -127,6 +127,15 @@ class CreateEventInput extends EventInputBase {
         $this->crosspostedGroups = $groups_result->getCrosspostedGroups();
       }
     }
+
+    // Process organization if provided.
+    if ($this->actor !== NULL && array_key_exists('organizations', $input) && $input['organizations'] !== NULL) {
+      $organizations_result = $this->processOrganizations($input, $this->actor);
+      if ($organizations_result !== NULL && $organizations_result->isValid()) {
+        $this->primaryOrganization = $organizations_result->getPrimaryOrganization();
+        $this->crosspostedOrganizations = $organizations_result->getCrosspostedOrganizations();
+      }
+    }
   }
 
   /**

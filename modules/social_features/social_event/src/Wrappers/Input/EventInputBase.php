@@ -16,6 +16,8 @@ use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_graphql\Wrappers\InputBase;
 use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\social_group_flexible_group\ValueObject\GroupInputValidationResult;
+use Drupal\social_organization\Service\OrganizationInputValidationService;
+use Drupal\social_organization\ValueObject\OrganizationInputValidationResult;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -130,9 +132,30 @@ abstract class EventInputBase extends InputBase {
   /**
    * Validated crossposted group data.
    *
-   * @var \Drupal\group\Entity\GroupInterface[]|null
+   * @var \Drupal\group\Entity\GroupInterface[]
    */
-  protected ?array $crosspostedGroups = NULL;
+  protected array $crosspostedGroups = [];
+
+  /**
+   * The organization input validation service.
+   *
+   * @var \Drupal\social_organization\Service\OrganizationInputValidationService|null
+   */
+  protected ?OrganizationInputValidationService $organizationInputValidationService = NULL;
+
+  /**
+   * Validated primary organization data.
+   *
+   * @var \Drupal\group\Entity\GroupInterface|null
+   */
+  protected ?GroupInterface $primaryOrganization = NULL;
+
+  /**
+   * Validated crossposted organization data.
+   *
+   * @var \Drupal\group\Entity\GroupInterface[]
+   */
+  protected array $crosspostedOrganizations = [];
 
   /**
    * Constructs an EventInputBase instance.
@@ -147,6 +170,8 @@ abstract class EventInputBase extends InputBase {
    *   The country repository for validating address country codes.
    * @param \Drupal\social_group_flexible_group\Service\GroupInputValidationService|null $group_input_validation_service
    *   The group input validation service.
+   * @param \Drupal\social_organization\Service\OrganizationInputValidationService|null $organization_input_validation_service
+   *   The organization input validation service.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
@@ -154,12 +179,14 @@ abstract class EventInputBase extends InputBase {
     AccountProxyInterface $current_user,
     CountryRepositoryInterface $country_repository,
     ?GroupInputValidationService $group_input_validation_service = NULL,
+    ?OrganizationInputValidationService $organization_input_validation_service = NULL,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->entityRepository = $entity_repository;
     $this->currentUser = $current_user;
     $this->countryRepository = $country_repository;
     $this->groupInputValidationService = $group_input_validation_service;
+    $this->organizationInputValidationService = $organization_input_validation_service;
   }
 
   /**
@@ -429,6 +456,48 @@ abstract class EventInputBase extends InputBase {
   }
 
   /**
+   * Process organizations input and validate all organization-related rules.
+   *
+   * @param array $input
+   *   The input array.
+   * @param \Drupal\Core\Session\AccountInterface $actor
+   *   The actor account.
+   *
+   * @return \Drupal\social_organization\ValueObject\OrganizationInputValidationResult|null
+   *   The validation result, or NULL if organizations were not provided.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function processOrganizations(array $input, AccountInterface $actor): ?OrganizationInputValidationResult {
+    if (!array_key_exists('organizations', $input) || $input['organizations'] === NULL) {
+      return NULL;
+    }
+
+    if ($this->organizationInputValidationService === NULL) {
+      $this->violations[] = new Violation('ORGANIZATIONS_NOT_SUPPORTED');
+      return NULL;
+    }
+
+    // Validate organizations for event.
+    $validation_result = $this->organizationInputValidationService->validateOrganizationsForContent(
+      $input['organizations'],
+      'event',
+      $actor,
+    );
+
+    // Convert error strings to Violation objects.
+    if (!$validation_result->isValid()) {
+      $this->violations = array_merge(
+        $this->violations,
+        array_map(fn($error_code) => new Violation((string) $error_code), $validation_result->getErrors())
+      );
+    }
+
+    return $validation_result;
+  }
+
+  /**
    * Converts constraint violations to GraphQL violations.
    *
    * @param \Symfony\Component\Validator\ConstraintViolationListInterface $violations
@@ -489,7 +558,27 @@ abstract class EventInputBase extends InputBase {
    *   Array of cross-posted groups.
    */
   public function getCrosspostedGroups(): array {
-    return $this->crosspostedGroups ?? [];
+    return $this->crosspostedGroups;
+  }
+
+  /**
+   * Get primary organization.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   The primary organization or NULL.
+   */
+  public function getPrimaryOrganization(): ?GroupInterface {
+    return $this->primaryOrganization;
+  }
+
+  /**
+   * Get cross-posted organizations.
+   *
+   * @return \Drupal\group\Entity\GroupInterface[]
+   *   Array of cross-posted organizations.
+   */
+  public function getCrosspostedOrganizations(): array {
+    return $this->crosspostedOrganizations;
   }
 
 }

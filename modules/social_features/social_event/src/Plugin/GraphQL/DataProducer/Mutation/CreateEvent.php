@@ -17,6 +17,7 @@ use Drupal\social_event\Wrappers\Input\CreateEventInput;
 use Drupal\social_event\Wrappers\Payload\CreateEventPayload;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_group\SetGroupsForNodeService;
+use Drupal\social_organization\Entity\group\Organization;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -155,6 +156,15 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     $address = $input->getAddress();
     if ($address !== NULL) {
       $node_values['field_event_address'] = [0 => $address];
+    }
+
+    // Organization reference: primary first, then cross-posted (IDs only).
+    $primary_organization = $input->getPrimaryOrganization();
+    if ($primary_organization !== NULL) {
+      $node_values[Organization::REFERENCE_FIELD] = array_map(
+        fn($organization_entity): array => ['target_id' => $organization_entity->id()],
+        array_merge([$primary_organization], $input->getCrosspostedOrganizations())
+      );
     }
 
     /** @var \Drupal\node\NodeInterface $node */
