@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_event\Kernel\GraphQL;
 
-use Drupal\group\Entity\Group;
+use Drupal\social_group\Entity\Group;
 use Drupal\group\Entity\GroupRelationship;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\taxonomy\Entity\Term;
+use Drupal\Tests\social_event\Kernel\SocialEventGraphQLKernelTestBase;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
-use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 
 /**
  * Test coverage for the updateEvent GraphQL mutation.
  *
+ * Organization-related tests are skipped when social_organization is not
+ * available (e.g. open source distribution).
+ *
  * @group social_event
  */
-class UpdateEventMutationTest extends SocialGraphQLTestBase {
+class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
 
   use OAuthTestTrait;
   use UserCreationTrait;
@@ -27,11 +28,10 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
 
   /**
    * {@inheritdoc}
-   */
-  protected $strictConfigSchema = FALSE;
-
-  /**
-   * {@inheritdoc}
+   *
+   * Include social_organization so the kernel can boot with it when present
+   * (avoids ConfigSchemaAlterException). Removed in setUpBeforeClass() when
+   * the module is not in the codebase.
    */
   protected static $modules = [
     'address',
@@ -47,27 +47,19 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     'node',
     'grequest',
     'state_machine',
-    // For field_group_allowed_join_method.
     'social_group',
-    // Required for social_group_request.
     'activity_logger',
     'activity_creator',
     'message',
     'dynamic_entity_reference',
-    // Required for requests.
     'social_group_flexible_group',
     'social_organization',
     'social_group_request',
-    // Needed for field_media_file as field storage is defined by
-    // "social_media_system".
     'social_media_system',
-    // Required for select2 form display widget.
     'select2',
-    // Needed for taxonomy as it uses "text_long" field type.
     'text',
     'pathauto',
     'smart_trim',
-    // Required by pathauto.
     'path',
     'path_alias',
     'token',
@@ -81,8 +73,6 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     'social_event',
     'social_event_type',
     'social_topic',
-
-    // Meeting API modules required by social_event configurations.
     'datetime_range_timezone',
     'key',
     'meeting_api',
@@ -135,10 +125,39 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     'layout_discovery',
     'flag_count',
     'hux',
-    // Required for taxonomy access permissions (view terms in event_types,
-    // select terms in event_types).
     'taxonomy_access_fix',
   ];
+
+  /**
+   * Whether social_organization is available and was enabled for this test.
+   *
+   * @var bool
+   */
+  protected bool $organizationAvailable = FALSE;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function setUpBeforeClass(): void {
+    parent::setUpBeforeClass();
+    if (!static::socialOrganizationExists()) {
+      static::$modules = array_values(array_filter(
+        static::$modules,
+        static fn(string $m): bool => $m !== 'social_organization'
+      ));
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getConfigToInstall(): array {
+    $config = parent::getConfigToInstall();
+    if ($this->container->get('module_handler')->moduleExists('social_organization')) {
+      $config[] = 'social_organization';
+    }
+    return $config;
+  }
 
   /**
    * {@inheritdoc}
@@ -146,75 +165,10 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->installEntitySchema('group');
-    $this->installEntitySchema('group_content');
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('taxonomy_term');
-    $this->installEntitySchema('activity');
-    $this->installEntitySchema('message');
-    $this->installEntitySchema('menu_link_content');
-    $this->installEntitySchema('paragraph');
-    $this->installEntitySchema('block_content');
-    $this->installEntitySchema('path_alias');
-    $this->installEntitySchema('pathauto_pattern');
-    $this->installEntitySchema('profile');
-    $this->installEntitySchema('oauth2_token');
-    $this->installEntitySchema('oauth2_scope');
-    $this->installEntitySchema('consumer');
-    $this->installEntitySchema('comment');
-    $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installEntitySchema('user');
-    $this->installEntitySchema('flagging');
-    $this->installEntitySchema('flag');
-    $this->installSchema('flag', ['flag_counts']);
-    $this->installEntitySchema('file');
-    $this->installEntitySchema('crop');
-    $this->installSchema('file', ['file_usage']);
-    $this->installSchema('layout_builder', ['inline_block_usage']);
-
-    $this->installConfig([
-      'social_tagging',
-      'node',
-      'user',
-      'profile',
-      'menu_link_content',
-      'social_profile',
-      'social_node',
-      'social_core',
-      'social_event',
-      'social_event_type',
-      'social_topic',
-      'social_group_invite',
-      'ginvite',
-      'pathauto',
-      'social_group',
-      'grequest',
-      'group',
-      'activity_creator',
-      'activity_logger',
-      'layout_builder',
-      'layout_discovery',
-      'social_group_flexible_group',
-      'social_group_request',
-      'social_organization',
-      'flag',
-      'simple_oauth',
-      'simple_oauth_static_scope',
-      'social_editor',
-    ]);
-
-    // Configure OAuth to use static scope provider and set up keys.
-    $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
-    $this->setUpKeys();
-
-    $this->setUpCurrentUser(["uid" => 1], [], FALSE);
-
-    // Enable cross-posting for event tests.
-    $this->config('social_group.settings')
-      ->set('cross_posting.status', TRUE)
-      ->set('cross_posting.content_types', ['event'])
-      ->set('cross_posting.group_types', ['flexible_group'])
-      ->save();
+    $this->organizationAvailable = $this->container->get('module_handler')->moduleExists('social_organization');
+    if ($this->organizationAvailable) {
+      $this->installOrganizationRequiredViews();
+    }
   }
 
   /**
@@ -222,114 +176,6 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
    */
   protected function defaultCacheContexts(): array {
     return [...parent::defaultCacheContexts(), 'languages:language_interface'];
-  }
-
-  /**
-   * Minimal valid Rich Text JSON body (paragraph with text).
-   */
-  private static function minimalRichTextBody(): array {
-    return [
-      'root' => [
-        'type' => 'root',
-        'version' => 1,
-        'children' => [
-          [
-            'type' => 'paragraph',
-            'version' => 1,
-            'children' => [
-              ['type' => 'text', 'version' => 1, 'text' => 'Hello'],
-            ],
-          ],
-        ],
-      ],
-    ];
-  }
-
-  /**
-   * Helper to create a valid event type taxonomy term.
-   *
-   * @param string $name
-   *   The name of the event type.
-   *
-   * @return \Drupal\taxonomy\Entity\Term
-   *   The created term.
-   */
-  protected function createEventType(string $name = 'Conference'): Term {
-    $term = Term::create([
-      'vid' => 'event_types',
-      'name' => $name,
-    ]);
-    $term->save();
-    return $term;
-  }
-
-  /**
-   * Helper to create a test event node for use in update tests.
-   *
-   * @param \Drupal\taxonomy\Entity\Term $event_type
-   *   The event type term.
-   * @param array $overrides
-   *   Optional field overrides.
-   *
-   * @return \Drupal\node\NodeInterface
-   *   The created event node.
-   */
-  protected function createEvent(Term $event_type, array $overrides = []): NodeInterface {
-    $values = array_merge([
-      'type' => 'event',
-      'title' => 'Original Event Title',
-      'body' => [['value' => ' ']],
-      'field_content_visibility' => 'community',
-      'field_event_type' => $event_type->id(),
-      'field_event_date' => '2026-06-15T10:00:00',
-      'field_event_date_end' => '2026-06-15T18:00:00',
-      'field_event_enroll' => 0,
-      'status' => 1,
-    ], $overrides);
-
-    $node = Node::create($values);
-    $node->save();
-    return $node;
-  }
-
-  /**
-   * Reloads an event node from storage to assert on fresh entity data.
-   *
-   * @param \Drupal\node\NodeInterface $node
-   *   The event node to reload.
-   *
-   * @return \Drupal\node\NodeInterface
-   *   The reloaded node (never null; asserts on failure).
-   */
-  protected function reloadEvent(NodeInterface $node): NodeInterface {
-    $id = $node->id();
-    assert($id !== NULL);
-    $storage = $this->container->get('entity_type.manager')->getStorage('node');
-    $storage->resetCache([$id]);
-    $reloaded = $storage->load($id);
-    assert($reloaded !== NULL);
-    return $reloaded;
-  }
-
-  /**
-   * Creates a test flexible group and saves it.
-   *
-   * @param string $label
-   *   The group label.
-   * @param array $field_group_allowed_visibility
-   *   Allowed visibility values (e.g. ['public', 'community']).
-   *
-   * @return \Drupal\group\Entity\Group
-   *   The created group.
-   */
-  protected function createTestGroup(string $label = 'Test Group', array $field_group_allowed_visibility = ['public', 'community']): Group {
-    $group = Group::create([
-      'type' => 'flexible_group',
-      'label' => $label,
-      'field_group_allowed_visibility' => $field_group_allowed_visibility,
-    ]);
-    $group->save();
-    return $group;
   }
 
   /**
@@ -534,7 +380,7 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
       [
         'input' => [
           'id' => $event->uuid(),
-          'body' => self::minimalRichTextBody(),
+          'body' => $this->minimalRichTextBody(),
         ],
       ],
       [
@@ -1890,6 +1736,449 @@ class UpdateEventMutationTest extends SocialGraphQLTestBase {
     $group_ids = array_map(fn ($r) => (string) $r->getGroup()->id(), $relationships);
     $this->assertContains((string) $group1->id(), $group_ids);
     $this->assertContains((string) $group2->id(), $group_ids);
+  }
+
+  /**
+   * Organizations omitted from input leaves event's organizations unchanged.
+   */
+  public function testUpdateEventOrganizationsOmittedUnchanged(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!$this->organizationAvailable) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $organization = $this->createOrganization('Public Organization', 'public');
+    $orgId = $organization->id();
+    assert($orgId !== NULL);
+
+    $event = $this->createEvent($eventType, [
+      'organizations_group' => [['target_id' => $orgId]],
+    ]);
+
+    // Update title only; do not pass organizations.
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id title }
+          }
+        }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'title' => 'Updated Title Only',
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+            'title' => 'Updated Title Only',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have organizations as part of the read
+    // schema.
+    $eventId = $event->id();
+    assert($eventId !== NULL);
+    $this->assertEventInOrganization($eventId, $orgId);
+  }
+
+  /**
+   * Organizations null clears organization associations.
+   */
+  public function testUpdateEventOrganizationsNullCleared(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!$this->organizationAvailable) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $organization = $this->createOrganization('Public Organization', 'public');
+    $orgId = $organization->id();
+    assert($orgId !== NULL);
+
+    $event = $this->createEvent($eventType, [
+      'organizations_group' => [['target_id' => $orgId]],
+    ]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'organizations' => NULL,
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => ['id' => $event->uuid()],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have organizations as part of the read
+    // schema.
+    $eventId = $event->id();
+    assert($eventId !== NULL);
+    $this->assertEventNotInAnyOrganization($eventId);
+  }
+
+  /**
+   * Organizations with valid value sets event to that organization.
+   */
+  public function testUpdateEventOrganizationsSet(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!$this->organizationAvailable) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
+
+    $eventType = $this->createEventType();
+    $organization = $this->createOrganization('Public Organization', 'public');
+    $event = $this->createEvent($eventType);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id title }
+          }
+        }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+            'title' => 'Original Event Title',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have organizations as part of the read
+    // schema.
+    $eventId = $event->id();
+    $orgId = $organization->id();
+    assert($eventId !== NULL && $orgId !== NULL);
+    $this->assertEventInOrganization($eventId, $orgId);
+  }
+
+  /**
+   * Change event from one organization to another.
+   */
+  public function testUpdateEventOrganizationsChange(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!$this->organizationAvailable) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
+
+    $eventType = $this->createEventType();
+    $org1 = $this->createOrganization('Organization 1', 'public');
+    $org2 = $this->createOrganization('Organization 2', 'public');
+
+    $event = $this->createEvent($eventType, [
+      'organizations_group' => [['target_id' => $org1->id()]],
+    ]);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'organizations' => [
+            'organization' => $org2->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => ['id' => $event->uuid()],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have organizations as part of the read
+    // schema.
+    $eventId = $event->id();
+    $org2Id = $org2->id();
+    assert($eventId !== NULL && $org2Id !== NULL);
+    $this->assertEventInOrganization($eventId, $org2Id);
+    $node = $this->container->get('entity_type.manager')->getStorage('node')->load($eventId);
+    assert($node instanceof NodeInterface);
+    $gids = array_map('strval', array_column($node->get('organizations_group')->getValue(), 'target_id'));
+    $this->assertNotContains((string) $org1->id(), $gids, 'Event should no longer be in org1.');
+  }
+
+  /**
+   * Update with primary and crossposted organizations.
+   */
+  public function testUpdateEventOrganizationsCrossposted(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!$this->organizationAvailable) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
+
+    $eventType = $this->createEventType();
+    $primaryOrg = $this->createOrganization('Primary Organization', 'public');
+    $crossOrg1 = $this->createOrganization('Cross Organization 1', 'public');
+    $crossOrg2 = $this->createOrganization('Cross Organization 2', 'public');
+
+    $event = $this->createEvent($eventType);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id title }
+          }
+        }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'organizations' => [
+            'organization' => $primaryOrg->uuid(),
+            'crosspostedOrganizations' => [
+              $crossOrg1->uuid(),
+              $crossOrg2->uuid(),
+            ],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+            'title' => 'Original Event Title',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have organizations as part of the read
+    // schema.
+    $eventId = $event->id();
+    assert($eventId !== NULL);
+    $primaryOrgId = $primaryOrg->id();
+    $crossOrg1Id = $crossOrg1->id();
+    $crossOrg2Id = $crossOrg2->id();
+    assert($primaryOrgId !== NULL && $crossOrg1Id !== NULL && $crossOrg2Id !== NULL);
+    $this->assertEventInOrganization($eventId, $primaryOrgId);
+    $this->assertEventInOrganization($eventId, $crossOrg1Id);
+    $this->assertEventInOrganization($eventId, $crossOrg2Id);
+  }
+
+  /**
+   * Invalid organization UUID returns appropriate violation.
+   */
+  public function testUpdateEventOrganizationsInvalidOrganizationId(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!$this->organizationAvailable) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType);
+    $fake_uuid = '00000000-0000-0000-0000-000000000000';
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'organizations' => [
+            'organization' => $fake_uuid,
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => ['ORGANIZATION_NOT_FOUND'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test: organizations update combined with another field (e.g. title).
+   */
+  public function testUpdateEventOrganizationsCombinedWithOtherFields(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!$this->organizationAvailable) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
+
+    $eventType = $this->createEventType();
+    $organization = $this->createOrganization('Public Organization', 'public');
+    $event = $this->createEvent($eventType);
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id title }
+          }
+        }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'title' => 'New Title With Orgs',
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'id' => $event->uuid(),
+            'title' => 'New Title With Orgs',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have organizations as part of the read
+    // schema.
+    $eventId = $event->id();
+    $orgId = $organization->id();
+    assert($eventId !== NULL && $orgId !== NULL);
+    $this->assertEventInOrganization($eventId, $orgId);
+  }
+
+  /**
+   * Updating to a members-only organization without access is rejected.
+   */
+  public function testUpdateEventOrganizationsAccessRespected(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!$this->organizationAvailable) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType);
+
+    // Members-only org; do not add the OAuth actor as member.
+    $membersOnlyOrg = Group::create([
+      'type' => 'organization',
+      'label' => 'Members Only Organization',
+      'uid' => 1,
+      'field_flexible_group_visibility' => 'members',
+      'status' => 1,
+    ]);
+    assert($membersOnlyOrg->bundle() === 'organization');
+    $membersOnlyOrg->save();
+
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'organizations' => [
+            'organization' => $membersOnlyOrg->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => ['ORGANIZATION_NOT_FOUND'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // @todo use assertResults once we have organizations as part of the read
+    // schema.
+    $eventId = $event->id();
+    assert($eventId !== NULL);
+    $this->assertEventNotInAnyOrganization($eventId);
   }
 
   /**

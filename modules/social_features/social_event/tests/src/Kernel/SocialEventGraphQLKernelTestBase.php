@@ -12,6 +12,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\Entity\Group;
 
@@ -373,6 +374,21 @@ abstract class SocialEventGraphQLKernelTestBase extends SocialGraphQLTestBase {
   }
 
   /**
+   * Asserts that the event node has no organization assignments.
+   *
+   * @param int|string $nodeId
+   *   The event node ID.
+   */
+  protected function assertEventNotInAnyOrganization(int|string $nodeId): void {
+    $node = $this->container->get('entity_type.manager')->getStorage('node')->load($nodeId);
+    assert($node instanceof NodeInterface);
+    $this->assertTrue(
+      $node->get('organizations_group')->isEmpty(),
+      "Event {$nodeId} should not be in any organization."
+    );
+  }
+
+  /**
    * Returns minimal event timestamps for group tests.
    *
    * @return array{0: int, 1: int}
@@ -400,6 +416,54 @@ abstract class SocialEventGraphQLKernelTestBase extends SocialGraphQLTestBase {
     ]);
     $term->save();
     return $term;
+  }
+
+  /**
+   * Creates a test event node (e.g. for update or delete mutation tests).
+   *
+   * @param \Drupal\taxonomy\Entity\Term $event_type
+   *   The event type term.
+   * @param array $overrides
+   *   Optional field overrides (e.g. 'organizations_group' for organization).
+   *
+   * @return \Drupal\node\NodeInterface
+   *   The created event node.
+   */
+  protected function createEvent(Term $event_type, array $overrides = []): NodeInterface {
+    $values = array_merge([
+      'type' => 'event',
+      'title' => 'Original Event Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_event_type' => $event_type->id(),
+      'field_event_date' => '2026-06-15T10:00:00',
+      'field_event_date_end' => '2026-06-15T18:00:00',
+      'field_event_enroll' => 0,
+      'status' => 1,
+    ], $overrides);
+
+    $node = Node::create($values);
+    $node->save();
+    return $node;
+  }
+
+  /**
+   * Reloads an event node from storage to assert on fresh entity data.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The event node to reload.
+   *
+   * @return \Drupal\node\NodeInterface
+   *   The reloaded node (never null; asserts on failure).
+   */
+  protected function reloadEvent(NodeInterface $node): NodeInterface {
+    $id = $node->id();
+    assert($id !== NULL);
+    $storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $storage->resetCache([$id]);
+    $reloaded = $storage->load($id);
+    assert($reloaded !== NULL);
+    return $reloaded;
   }
 
   /**
