@@ -265,11 +265,13 @@ class EventSchemaExtension extends SchemaExtensionPluginBase {
       $definition = "";
     }
 
-    // Then, load additional extension schemas.
-    // These files extend the base Event type with groups field.
-    // Only load extensions if their corresponding modules are enabled.
+    // Then, load additional extension schemas. These files extend the base
+    // Event type with groups field (flexible_group) and organizations field
+    // (organization). Only load extensions if their corresponding modules are
+    // enabled.
     $extension_modules = [
       'social_group_flexible_group' => 'social_event_flexible_group_schema_extension.extension.graphqls',
+      'social_organization' => 'social_event_organization_schema_extension.extension.graphqls',
     ];
 
     $event_module = $this->moduleHandler->getModule('social_event');
