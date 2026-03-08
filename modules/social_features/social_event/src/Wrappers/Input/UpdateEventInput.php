@@ -58,6 +58,13 @@ class UpdateEventInput extends EventInputBase {
   protected bool $groupsProvided = FALSE;
 
   /**
+   * Whether the organizations field was explicitly provided in the input.
+   *
+   * When true, organizations should be updated (set, or remove if null).
+   */
+  protected bool $organizationsProvided = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function setValues(array $input): void {
@@ -207,29 +214,67 @@ class UpdateEventInput extends EventInputBase {
       ];
     }
 
-    // Process groups if provided (optional for updates).
-    // Omit = key not present (unchanged); null = remove from all;
-    // object = set groups.
-    if (!array_key_exists('groups', $input)) {
-      return;
+    // --- Groups (optional on update) ---
+    // Semantics: omit = leave groups unchanged; null = remove from all groups;
+    // object with "group" key = set primary/crossposted groups.
+    if (array_key_exists('groups', $input)) {
+      $this->groupsProvided = TRUE;
+      if ($input['groups'] === NULL) {
+        // Explicit null: remove event from all groups.
+        $this->primaryGroup = NULL;
+        $this->crosspostedGroups = [];
+      }
+      elseif (!is_array($input['groups']) || !array_key_exists('group', $input['groups'])) {
+        // Wrong shape (missing or invalid "group" key): record violation, do
+        // not apply.
+        $this->violations[] = new Violation("GROUPS_INVALID");
+        $this->groupsProvided = FALSE;
+      }
+      else {
+        // Valid shape: resolve groups and apply if actor is set and result is
+        // valid.
+        $groups_input = ['groups' => $input['groups']];
+        $event_visibility = $this->getEventVisibilityForGroups();
+        if ($this->actor !== NULL) {
+          $groups_result = $this->processGroups($groups_input, $this->actor, $event_visibility, 'event', 'group_node:event');
+          if ($groups_result !== NULL && $groups_result->isValid()) {
+            $this->primaryGroup = $groups_result->getPrimaryGroup();
+            $this->crosspostedGroups = $groups_result->getCrosspostedGroups();
+          }
+        }
+      }
     }
-    $this->groupsProvided = TRUE;
-    if ($input['groups'] === NULL) {
-      $this->primaryGroup = NULL;
-      $this->crosspostedGroups = [];
-      return;
-    }
-    if (!is_array($input['groups']) || !array_key_exists('group', $input['groups'])) {
-      $this->violations[] = new Violation("GROUPS_INVALID");
-      return;
-    }
-    $groups_input = ['groups' => $input['groups']];
-    $event_visibility = $this->getEventVisibilityForGroups();
-    if ($this->actor !== NULL) {
-      $groups_result = $this->processGroups($groups_input, $this->actor, $event_visibility, 'event', 'group_node:event');
-      if ($groups_result !== NULL && $groups_result->isValid()) {
-        $this->primaryGroup = $groups_result->getPrimaryGroup();
-        $this->crosspostedGroups = $groups_result->getCrosspostedGroups();
+
+    // --- Organizations (optional on update) ---
+    // Semantics: omit = leave organizations unchanged; null = clear all;
+    // object with "organization" key = set primary/crossposted organizations.
+    if (array_key_exists('organizations', $input)) {
+      $this->organizationsProvided = TRUE;
+      if ($input['organizations'] === NULL) {
+        // Explicit null: clear all organizations.
+        $this->primaryOrganization = NULL;
+        $this->crosspostedOrganizations = [];
+      }
+      elseif (!is_array($input['organizations']) || !array_key_exists('organization', $input['organizations'])) {
+        // Wrong shape (missing or invalid "organization" key): record
+        // violation, do not apply.
+        $this->violations[] = new Violation("ORGANIZATIONS_INVALID");
+        $this->organizationsProvided = FALSE;
+      }
+      elseif ($this->actor !== NULL) {
+        // Valid shape: resolve organizations and apply if result is valid.
+        $organizations_result = $this->processOrganizations(
+          ['organizations' => $input['organizations']],
+          $this->actor
+        );
+        if ($organizations_result !== NULL && $organizations_result->isValid()) {
+          $this->primaryOrganization = $organizations_result->getPrimaryOrganization();
+          $this->crosspostedOrganizations = $organizations_result->getCrosspostedOrganizations();
+        }
+        else {
+          // Validation or resolution failed: do not treat as provided.
+          $this->organizationsProvided = FALSE;
+        }
       }
     }
   }
@@ -402,6 +447,29 @@ class UpdateEventInput extends EventInputBase {
    */
   public function hasGroups(): bool {
     return $this->groupsProvided;
+  }
+
+  /**
+   * Check if organizations should be updated.
+   *
+   * @return bool
+   *   TRUE if the organizations field was explicitly provided in the input.
+   */
+  public function hasOrganizationsUpdate(): bool {
+    return $this->organizationsProvided;
+  }
+
+  /**
+   * Check if organizations should be cleared (removed from all).
+   *
+   * When value was null we never set primaryOrganization from input, so it
+   * stays NULL while organizationsProvided is TRUE.
+   *
+   * @return bool
+   *   TRUE if organizations value was explicitly null.
+   */
+  public function shouldClearOrganizations(): bool {
+    return $this->organizationsProvided && $this->primaryOrganization === NULL;
   }
 
   /**

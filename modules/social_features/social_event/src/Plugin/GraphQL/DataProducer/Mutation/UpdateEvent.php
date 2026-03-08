@@ -18,6 +18,7 @@ use Drupal\social_event\Wrappers\Input\UpdateEventInput;
 use Drupal\social_event\Wrappers\Payload\UpdateEventPayload;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_group\SetGroupsForNodeService;
+use Drupal\social_organization\Entity\group\Organization;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -209,6 +210,28 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
         $groups_sync_pending = TRUE;
         $groups_sync_current = $current_groups;
         $groups_sync_to_add = $groups_to_add;
+      }
+      $modified = TRUE;
+    }
+
+    // Process organizations if provided.
+    if ($input->hasOrganizationsUpdate()) {
+      if (!$node->hasField(Organization::REFERENCE_FIELD)) {
+        $payload->addViolation(new Violation('ORGANIZATIONS_NOT_SUPPORTED'));
+        return $payload;
+      }
+      if ($input->shouldClearOrganizations()) {
+        $node->set(Organization::REFERENCE_FIELD, []);
+      }
+      else {
+        $primary = $input->getPrimaryOrganization();
+        if ($primary !== NULL) {
+          $organization_ids = array_map(
+            fn($entity): array => ['target_id' => $entity->id()],
+            array_merge([$primary], $input->getCrosspostedOrganizations())
+          );
+          $node->set(Organization::REFERENCE_FIELD, $organization_ids);
+        }
       }
       $modified = TRUE;
     }
