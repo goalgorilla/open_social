@@ -5,3 +5,11 @@ extend input CreateEventInput {
   """
   organizations: ContentInOrganizationInput
 }
+
+extend input UpdateEventInput {
+  """
+  The organizations this event should belong to.
+  Omit = unchanged; null = remove from all; ContentInOrganizationInput = set organizations.
+  """
+  organizations: ContentInOrganizationInput
+}
