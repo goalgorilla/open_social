@@ -1807,6 +1807,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'body' => self::minimalRichTextBody(),
           'organizations' => [
             'organization' => $publicOrganization->uuid(),
+            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -1871,6 +1872,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'body' => self::minimalRichTextBody(),
           'organizations' => [
             'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -1991,6 +1993,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'body' => self::minimalRichTextBody(),
           'organizations' => [
             'organization' => $membersOrg->uuid(),
+            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -2032,6 +2035,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'body' => self::minimalRichTextBody(),
           'organizations' => [
             'organization' => $fakeUuid,
+            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -2081,6 +2085,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'body' => self::minimalRichTextBody(),
           'organizations' => [
             'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -2133,6 +2138,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'body' => self::minimalRichTextBody(),
           'organizations' => [
             'organization' => $unpublishedOrg->uuid(),
+            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -2178,6 +2184,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'body' => self::minimalRichTextBody(),
           'organizations' => [
             'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -2217,6 +2224,7 @@ class CreateTopicMutationTest extends SocialGraphQLTestBase {
           'body' => self::minimalRichTextBody(),
           'organizations' => [
             'organization' => '',
+            'crosspostedOrganizations' => [],
           ],
         ],
       ],
