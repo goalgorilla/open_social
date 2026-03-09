@@ -231,24 +231,18 @@ class UpdateTopicInput extends TopicInputBase {
       $this->groupsProvided = TRUE;
 
       if ($input['groups'] === NULL) {
-        // groups: NULL means don't change groups.
-        $this->groupsProvided = FALSE;
-      }
-      elseif (!is_array($input['groups']) || !array_key_exists('value', $input['groups'])) {
-        $this->groupsProvided = FALSE;
-        $this->violations[] = new Violation("GROUPS_INVALID");
-      }
-      elseif ($input['groups']['value'] === NULL) {
-        // groups: { value: NULL } means remove from all groups.
+        // groups: NULL means remove from all groups.
         $this->primaryGroup = NULL;
         $this->crosspostedGroups = [];
       }
+      elseif (!is_array($input['groups'])) {
+        $this->groupsProvided = FALSE;
+        $this->violations[] = new Violation("GROUPS_INVALID");
+      }
       else {
-        // groups: { value: ContentInGroupInput } means update groups.
-        $groups_input = $input;
-        $groups_input['groups'] = $input['groups']['value'];
+        // groups: ContentInGroupInput means update groups.
         $topic_visibility = $this->getTopicVisibilityForGroups();
-        $groups_result = $this->processGroups($groups_input, $this->actor, $topic_visibility);
+        $groups_result = $this->processGroups($input, $this->actor, $topic_visibility);
         if ($groups_result !== NULL && $groups_result->isValid()) {
           $this->primaryGroup = $groups_result->getPrimaryGroup();
           $this->crosspostedGroups = $groups_result->getCrosspostedGroups();

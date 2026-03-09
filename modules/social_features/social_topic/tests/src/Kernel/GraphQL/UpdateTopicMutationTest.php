@@ -1541,10 +1541,8 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
         'input' => [
           'id' => $topic->uuid(),
           'groups' => [
-            'value' => [
-              'group' => $group->uuid(),
-              'crosspostedGroups' => [],
-            ],
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
           ],
         ],
       ],
@@ -1635,9 +1633,7 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
       [
         'input' => [
           'id' => $topic->uuid(),
-          'groups' => [
-            'value' => NULL,
-          ],
+          'groups' => NULL,
         ],
       ],
       [
@@ -1721,10 +1717,8 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
         'input' => [
           'id' => $topic->uuid(),
           'groups' => [
-            'value' => [
-              'group' => $group2->uuid(),
-              'crosspostedGroups' => [],
-            ],
+            'group' => $group2->uuid(),
+            'crosspostedGroups' => [],
           ],
         ],
       ],
@@ -1873,10 +1867,8 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
         'input' => [
           'id' => $topic->uuid(),
           'groups' => [
-            'value' => [
-              'group' => $fakeGroupUuid,
-              'crosspostedGroups' => [],
-            ],
+            'group' => $fakeGroupUuid,
+            'crosspostedGroups' => [],
           ],
         ],
       ],
@@ -1935,10 +1927,8 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
         'input' => [
           'id' => $topic->uuid(),
           'groups' => [
-            'value' => [
-              'group' => $group->uuid(),
-              'crosspostedGroups' => [$group->uuid()],
-            ],
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [$group->uuid()],
           ],
         ],
       ],
@@ -2011,10 +2001,8 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
         'input' => [
           'id' => $topic->uuid(),
           'groups' => [
-            'value' => [
-              'group' => $group1->uuid(),
-              'crosspostedGroups' => [$group2->uuid()],
-            ],
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
           ],
         ],
       ],
@@ -2091,10 +2079,8 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
           'id' => $topic->uuid(),
           'visibility' => 'COMMUNITY',
           'groups' => [
-            'value' => [
-              'group' => $group->uuid(),
-              'crosspostedGroups' => [],
-            ],
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
           ],
         ],
       ],
@@ -2165,10 +2151,8 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
         'input' => [
           'id' => $topic->uuid(),
           'groups' => [
-            'value' => [
-              'group' => $group1->uuid(),
-              'crosspostedGroups' => [$group2->uuid()],
-            ],
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
           ],
         ],
       ],
@@ -2253,10 +2237,8 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
         'input' => [
           'id' => $topic->uuid(),
           'groups' => [
-            'value' => [
-              'group' => $group2->uuid(),
-              'crosspostedGroups' => [$group3->uuid()],
-            ],
+            'group' => $group2->uuid(),
+            'crosspostedGroups' => [$group3->uuid()],
           ],
         ],
       ],
