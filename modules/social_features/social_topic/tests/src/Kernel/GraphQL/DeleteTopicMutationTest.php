@@ -81,6 +81,7 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
     'views_bulk_operations',
     'gnode',
     'social_event',
+    'social_event_type',
     'social_topic',
 
     // Meeting API modules required by social_event configurations.
@@ -183,6 +184,7 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
       'social_node',
       'social_core',
       'social_event',
+      'social_event_type',
       'social_topic',
       'social_group_invite',
       'ginvite',

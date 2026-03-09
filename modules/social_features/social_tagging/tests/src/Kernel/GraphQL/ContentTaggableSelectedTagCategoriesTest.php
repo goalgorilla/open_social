@@ -60,6 +60,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
     'file',
     'options',
     'social_event',
+    'social_event_type',
     'social_topic',
     // Modules required for GraphQL User type.
     'social_user',
@@ -161,6 +162,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
       'social_core',
       'social_node',
       'social_event',
+      'social_event_type',
       'social_topic',
       'filter',
       'comment',
