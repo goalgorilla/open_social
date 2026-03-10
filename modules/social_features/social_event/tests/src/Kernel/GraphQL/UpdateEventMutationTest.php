@@ -1617,4 +1617,220 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     );
   }
 
+  /**
+   * Test error when updating visibility to GROUP_MEMBER without groups.
+   */
+  public function testUpdateEventToGroupMemberVisibilityWithoutGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $event = $this->createEvent($eventType);
+
+    $this->assertResults(
+      <<<GQL
+      mutation UpdateEvent(\$input: UpdateEventInput!) {
+        updateEvent(input: \$input) {
+          errors
+          event { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'visibility' => 'GROUP_MEMBER',
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $reloaded_event = $this->reloadEvent($event);
+    $this->assertSame('community', $reloaded_event->get('field_content_visibility')->value);
+  }
+
+  /**
+   * Test error when removing groups from event with GROUP_MEMBER visibility.
+   */
+  public function testUpdateEventRemoveGroupsFromGroupMemberVisibility(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $group = $this->createTestGroup('Test Group', ['public', 'group']);
+
+    $event = $this->createEvent($eventType, [
+      'field_content_visibility' => 'group',
+    ]);
+    $this->container->get('social_group.set_groups_for_node_service')
+      ->setGroupsForNode($event, [], [$group->id() => $group->id()], [], FALSE);
+    $event->set('groups', [['target_id' => $group->id()]]);
+    $event->save();
+
+    $this->assertResults(
+      <<<GQL
+      mutation UpdateEvent(\$input: UpdateEventInput!) {
+        updateEvent(input: \$input) {
+          errors
+          event { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'groups' => NULL,
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $reloaded_event = $this->reloadEvent($event);
+    $this->assertSame('group', $reloaded_event->get('field_content_visibility')->value);
+    $relationships = GroupRelationship::loadByEntity($reloaded_event);
+    $group_ids = array_map(fn ($rel) => $rel->getGroupId(), $relationships);
+    $this->assertContains($group->id(), $group_ids, 'Event should still be linked to the group after failed mutation.');
+  }
+
+  /**
+   * Test error when updating visibility to GROUP_MEMBER and removing groups.
+   */
+  public function testUpdateEventToGroupMemberVisibilityAndRemoveGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $group = $this->createTestGroup('Test Group', ['public', 'group']);
+
+    $event = $this->createEvent($eventType);
+    $this->container->get('social_group.set_groups_for_node_service')
+      ->setGroupsForNode($event, [], [$group->id() => $group->id()], [], FALSE);
+    $event->set('groups', [['target_id' => $group->id()]]);
+    $event->save();
+
+    $this->assertResults(
+      <<<GQL
+      mutation UpdateEvent(\$input: UpdateEventInput!) {
+        updateEvent(input: \$input) {
+          errors
+          event { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'visibility' => 'GROUP_MEMBER',
+          'groups' => NULL,
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $reloaded_event = $this->reloadEvent($event);
+    $this->assertSame('community', $reloaded_event->get('field_content_visibility')->value);
+    $relationships = GroupRelationship::loadByEntity($reloaded_event);
+    $group_ids = array_map(fn ($rel) => $rel->getGroupId(), $relationships);
+    $this->assertContains($group->id(), $group_ids, 'Event should still be linked to the group after failed mutation.');
+  }
+
+  /**
+   * Test updating to GROUP_MEMBER visibility works when groups are provided.
+   */
+  public function testUpdateEventToGroupMemberVisibilityWithGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $group = $this->createTestGroup('Test Group', ['public', 'group']);
+    $event = $this->createEvent($eventType);
+
+    $this->assertResults(
+      <<<GQL
+      mutation UpdateEvent(\$input: UpdateEventInput!) {
+        updateEvent(input: \$input) {
+          errors
+          event { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'visibility' => 'GROUP_MEMBER',
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => NULL,
+          'event' => ['id' => $event->uuid()],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($event)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $reloadedEvent = $this->reloadEvent($event);
+    $this->assertEquals('group', $reloadedEvent->get('field_content_visibility')->value);
+  }
+
+  /**
+   * Test error when groups input has crosspostedGroups but no primary group.
+   *
+   * CrosspostedGroups can only be used when a primary group is also provided.
+   */
+  public function testUpdateEventGroupsWithCrosspostedGroupsOnlyRejected(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    $group = $this->createTestGroup('Test Group', ['public', 'group']);
+    $event = $this->createEvent($eventType);
+
+    $this->assertErrors(
+      <<<GQL
+      mutation UpdateEvent(\$input: UpdateEventInput!) {
+        updateEvent(input: \$input) {
+          errors
+          event { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'groups' => [
+            'crosspostedGroups' => [$group->uuid()],
+          ],
+        ],
+      ],
+      [
+        '/groups\.group.*required|was not provided/i',
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
 }

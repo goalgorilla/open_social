@@ -588,4 +588,58 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     $this->assertSame(0, $this->getEventCountByTitle('Event in Members Org'), 'No event when actor cannot view members-only organization.');
   }
 
+  /**
+   * Test that GROUP_MEMBER works when organizations are provided (no groups).
+   */
+  public function testCreateEventGroupMemberVisibilityWithOrganizations(): void {
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
+
+    $eventType = $this->createEventType();
+    [$start, $end] = $this->eventTimestamps();
+    $organization = $this->createOrganization('Test Organization', 'public');
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateEvent(\$input: CreateEventInput!) {
+        createEvent(input: \$input) {
+          errors
+          event { title }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $eventType->uuid(),
+          'title' => 'Event GROUP_MEMBER with organizations',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => $this->minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'title' => 'Event GROUP_MEMBER with organizations',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:1'])
+    );
+
+    $node = $this->getEventByTitle('Event GROUP_MEMBER with organizations');
+    $this->assertNotNull($node);
+    $this->assertEquals('group', $node->get('field_content_visibility')->value);
+  }
+
 }

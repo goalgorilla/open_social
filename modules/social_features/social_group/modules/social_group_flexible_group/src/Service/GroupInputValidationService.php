@@ -38,6 +38,9 @@ class GroupInputValidationService {
   /**
    * Validates that primary group is provided in input.
    *
+   * Cross-posted groups require a primary group; the API does not allow
+   * crosspostedGroups-only.
+   *
    * @param array $groups_input
    *   The groups input array.
    *

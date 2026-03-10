@@ -1452,4 +1452,93 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     $this->assertSame(0, $this->getEventCountByTitle('Test Event'), 'No event node should have been created when authorization_code grant is used with @allowBot.');
   }
 
+  /**
+   * Test error when GROUP_MEMBER is set without groups or organizations.
+   */
+  public function testCreateEventGroupMemberVisibilityWithoutGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    [$start, $end] = $this->eventTimestamps();
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateEvent(\$input: CreateEventInput!) {
+        createEvent(input: \$input) {
+          errors
+          event { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $eventType->uuid(),
+          'title' => 'Event GROUP_MEMBER without groups',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => $this->minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test that GROUP_MEMBER visibility works when groups are provided.
+   */
+  public function testCreateEventGroupMemberVisibilityWithGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+
+    $eventType = $this->createEventType();
+    [$start, $end] = $this->eventTimestamps();
+    $group = $this->createTestGroup('Test Group', ['public', 'group']);
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateEvent(\$input: CreateEventInput!) {
+        createEvent(input: \$input) {
+          errors
+          event { title }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $eventType->uuid(),
+          'title' => 'Event GROUP_MEMBER with groups',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => $this->minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
+          'errors' => NULL,
+          'event' => [
+            'title' => 'Event GROUP_MEMBER with groups',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:1'])
+    );
+
+    $node = $this->getEventByTitle('Event GROUP_MEMBER with groups');
+    $this->assertNotNull($node);
+    $this->assertEquals('group', $node->get('field_content_visibility')->value);
+  }
+
 }

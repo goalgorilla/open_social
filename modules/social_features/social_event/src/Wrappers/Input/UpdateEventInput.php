@@ -353,7 +353,50 @@ class UpdateEventInput extends EventInputBase {
       return FALSE;
     }
 
+    if (
+      $this->getEventVisibilityForGroups() === 'group'
+      && !$this->hasEffectiveGroups()
+      && !$this->hasEffectiveOrganizations()
+    ) {
+      $this->violations[] = new Violation("GROUP_REQUIRED_FOR_GROUP_VISIBILITY");
+      return FALSE;
+    }
+
     return TRUE;
+  }
+
+  /**
+   * Whether the event will have groups after this mutation.
+   *
+   * Uses the input groups if provided, otherwise the existing entity state.
+   */
+  private function hasEffectiveGroups(): bool {
+    assert($this->event !== NULL);
+
+    if ($this->groupsProvided) {
+      return $this->primaryGroup !== NULL || !empty($this->crosspostedGroups);
+    }
+
+    return $this->event->hasField('groups')
+      && !$this->event->get('groups')->isEmpty();
+  }
+
+  /**
+   * Whether the event will have organizations after this mutation.
+   *
+   * Uses the input organizations if provided, otherwise the existing entity
+   * state.
+   */
+  private function hasEffectiveOrganizations(): bool {
+    assert($this->event !== NULL);
+
+    if ($this->organizationsProvided) {
+      return $this->primaryOrganization !== NULL
+        || !empty($this->crosspostedOrganizations);
+    }
+
+    return $this->event->hasField(self::ORGANIZATIONS_GROUP_FIELD)
+      && !$this->event->get(self::ORGANIZATIONS_GROUP_FIELD)->isEmpty();
   }
 
   /**

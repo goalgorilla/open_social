@@ -33,6 +33,11 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 abstract class EventInputBase extends InputBase {
 
   /**
+   * The field name on the node that stores organization.
+   */
+  protected const string ORGANIZATIONS_GROUP_FIELD = 'organizations_group';
+
+  /**
    * The entity type manager.
    */
   protected EntityTypeManagerInterface $entityTypeManager;

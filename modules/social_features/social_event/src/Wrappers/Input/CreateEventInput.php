@@ -164,6 +164,12 @@ class CreateEventInput extends EventInputBase {
       return FALSE;
     }
 
+    // Validate that GROUP_MEMBER visibility requires one group or organization.
+    if ($this->visibility === 'GROUP_MEMBER' && $this->primaryGroup === NULL && $this->primaryOrganization === NULL) {
+      $this->violations[] = new Violation("GROUP_REQUIRED_FOR_GROUP_VISIBILITY");
+      return FALSE;
+    }
+
     return TRUE;
   }
 

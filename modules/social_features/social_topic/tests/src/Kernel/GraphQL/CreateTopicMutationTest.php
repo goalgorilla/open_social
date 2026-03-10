@@ -1500,4 +1500,122 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     $this->assertNotNull($data['data']['createTopic']['topic']);
   }
 
+  /**
+   * Test validation error when GROUP_MEMBER visibility is set without groups.
+   */
+  public function testCreateTopicGroupMemberVisibilityWithoutGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $countBefore = (int) $nodeStorage->getQuery()
+      ->count()
+      ->accessCheck(FALSE)
+      ->execute();
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => self::minimalRichTextBody(),
+          // No groups provided.
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+
+    $countAfter = (int) $nodeStorage->getQuery()
+      ->count()
+      ->accessCheck(FALSE)
+      ->execute();
+    $this->assertSame($countBefore, $countAfter, 'No topic should be created on validation failure.');
+  }
+
+  /**
+   * Test that GROUP_MEMBER visibility works when groups are provided.
+   */
+  public function testCreateTopicGroupMemberVisibilityWithGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group->save();
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $maxNidBefore = $this->getMaxNodeId($nodeStorage);
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            title
+            visibility
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Test Topic',
+            'visibility' => 'GROUP_MEMBER',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:' . ($maxNidBefore + 1)])
+    );
+
+    $topic = $nodeStorage->load($maxNidBefore + 1);
+    assert($topic instanceof NodeInterface);
+    $this->assertEquals('group', $topic->get('field_content_visibility')->value);
+  }
+
 }
