@@ -9,10 +9,18 @@ use Drupal\Core\Config\FileStorage;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\GroupMembership;
+use Drupal\social_course\SocialCourseUninstallHelper;
 use Drupal\social_group\Entity\Group;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_course_basic_uninstall(): void {
+  SocialCourseUninstallHelper::deleteGroupRelationships('social_course_basic');
+}
 
 /**
  * Implements hook_install().
@@ -477,4 +485,11 @@ function social_course_basic_update_13014(): string {
   $update_helper = \Drupal::service('update_helper.updater');
   $update_helper->executeUpdate('social_course_basic', __FUNCTION__);
   return $update_helper->logger()->output();
+}
+
+/**
+ * Add enforced dependency on social_course_basic to all module config.
+ */
+function social_course_basic_update_13015(): void {
+  SocialCourseUninstallHelper::addEnforcedDependency('social_course_basic');
 }

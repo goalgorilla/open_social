@@ -7,6 +7,14 @@
 
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\GroupTypeInterface;
+use Drupal\social_course\SocialCourseUninstallHelper;
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_course_advanced_invite_uninstall(): void {
+  SocialCourseUninstallHelper::deleteGroupRelationships('social_course_advanced_invite');
+}
 
 /**
  * Implements hook_install().
@@ -50,4 +58,11 @@ function social_course_advanced_invite_update_10001(): void {
       $configuration->save();
     }
   }
+}
+
+/**
+ * Add enforced dependency to all module config.
+ */
+function social_course_advanced_invite_update_10002(): void {
+  SocialCourseUninstallHelper::addEnforcedDependency('social_course_advanced_invite');
 }

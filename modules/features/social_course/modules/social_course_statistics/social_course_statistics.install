@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_course_statistics module.
  */
 
+use Drupal\social_course\SocialCourseUninstallHelper;
+
 /**
  * Implements hook_install().
  *
@@ -24,6 +26,13 @@ function social_course_statistics_update_13001(): string {
   $updateHelper = \Drupal::service('update_helper.updater');
   $updateHelper->executeUpdate('social_course_statistics', __FUNCTION__);
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Add enforced dependency on social_course_statistics to all module config.
+ */
+function social_course_statistics_update_13002(): void {
+  SocialCourseUninstallHelper::addEnforcedDependency('social_course_statistics');
 }
 
 /**

@@ -30,6 +30,14 @@ field_settings:
     dependencies:
       config:
         - field.storage.group.field_group_description
+  group_status:
+    label: Status
+    datasource_id: 'entity:group'
+    property_path: status
+    type: boolean
+    dependencies:
+      module:
+        - group
   label:
     label: Title
     datasource_id: 'entity:group'

@@ -185,3 +185,13 @@ function social_search_update_13004(): string {
   $updateHelper->executeUpdate('social_search', __FUNCTION__);
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Add the "group_status" field to social_all and social_groups search indexes.
+ */
+function social_search_update_13005(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_search', __FUNCTION__);
+  return $updateHelper->logger()->output();
+}

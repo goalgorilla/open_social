@@ -1,12 +1,13 @@
+dependencies:
+  config:
+    - views.view.group_per_type
+  module:
+    - social_group
 items:
   views.view.group_per_type:
     expected_config: { }
     update_actions:
       add:
-        dependencies:
-          config:
-            - group.type.course_advanced
-            - group.type.course_basic
         display:
           course_group:
             id: course_group

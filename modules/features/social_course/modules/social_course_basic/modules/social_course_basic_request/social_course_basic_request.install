@@ -5,6 +5,15 @@
  * Update and install hooks for Social Course Basic Request.
  */
 
+use Drupal\social_course\SocialCourseUninstallHelper;
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_course_basic_request_uninstall(): void {
+  SocialCourseUninstallHelper::deleteGroupRelationships('social_course_basic_request');
+}
+
 /**
  * Implements hook_update_dependencies().
  */
@@ -39,4 +48,11 @@ function social_course_basic_request_update_13002(): string {
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_course_basic_request', __FUNCTION__);
   return $updater->logger()->output();
+}
+
+/**
+ * Add enforced dependency to all module config.
+ */
+function social_course_basic_request_update_13003(): void {
+  SocialCourseUninstallHelper::addEnforcedDependency('social_course_basic_request');
 }

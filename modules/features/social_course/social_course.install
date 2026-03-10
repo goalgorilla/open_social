@@ -7,6 +7,7 @@
 
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\social_course\SocialCourseUninstallHelper;
 use Drupal\user\Entity\Role;
 use Symfony\Component\Yaml\Yaml;
 
@@ -45,6 +46,16 @@ function social_course_install(): void {
       $block->save();
     }
   }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_course_uninstall(): void {
+  // Rebuild the router to remove route alterations added by
+  // \Drupal\social_course\Routing\RouteSubscriber (e.g. _custom_access on
+  // /group/{group}/stream and related paths).
+  \Drupal::service('router.builder')->rebuild();
 }
 
 /**
@@ -863,4 +874,61 @@ function social_course_update_13008(): string {
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_course', __FUNCTION__);
   return $updater->logger()->output();
+}
+
+/**
+ * Clear field definition cache after removing the entity base field info hook.
+ */
+function social_course_update_13009(): void {
+  // Clear field definition cache after removing
+  // social_course_entity_base_field_info().
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Remove course-related dependencies from shared config entities.
+ */
+function social_course_update_13010(): void {
+  $configs = [
+    'views.view.latest_topics',
+    'views.view.upcoming_events',
+    'views.view.group_per_type',
+    'views.view.groups',
+    'views.view.newest_groups',
+    'field.storage.activity.field_activity_entity',
+  ];
+
+  $config_factory = \Drupal::configFactory();
+
+  foreach ($configs as $config_name) {
+    $config = $config_factory->getEditable($config_name);
+    if ($config->isNew()) {
+      continue;
+    }
+
+    $config_dependencies = $config->get('dependencies.config');
+    if (is_array($config_dependencies)) {
+      $without_course_dependency = array_values(array_filter($config_dependencies, fn (string $item) => !str_contains(strtolower($item), 'course')));
+      if (count($without_course_dependency) !== count($config_dependencies)) {
+        $config->set('dependencies.config', $without_course_dependency);
+      }
+    }
+
+    $module_dependencies = $config->get('dependencies.module');
+    if (is_array($module_dependencies)) {
+      $without_course_dependency = array_values(array_filter($module_dependencies, fn (string $item) => !str_contains(strtolower($item), 'social_course')));
+      if (count($without_course_dependency) !== count($module_dependencies)) {
+        $config->set('dependencies.module', $without_course_dependency);
+      }
+    }
+
+    $config->save(TRUE);
+  }
+}
+
+/**
+ * Add enforced dependency on social_course to all module config.
+ */
+function social_course_update_13011(): void {
+  SocialCourseUninstallHelper::addEnforcedDependency('social_course');
 }

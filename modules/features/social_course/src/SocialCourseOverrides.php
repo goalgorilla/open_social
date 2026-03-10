@@ -300,15 +300,6 @@ class SocialCourseOverrides implements ConfigFactoryOverrideInterface {
             ],
           ],
         ];
-
-        if ($config_name === 'search_api.index.social_all') {
-          $overrides[$config_name]['field_settings']['group_status'] = [
-            'label' => 'Published',
-            'datasource_id' => 'entity:group',
-            'property_path' => 'status',
-            'type' => 'boolean',
-          ];
-        }
       }
     }
 

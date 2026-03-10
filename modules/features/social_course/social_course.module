@@ -13,9 +13,7 @@ use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -1879,29 +1877,6 @@ function social_course_entity_view(array &$build, EntityInterface $entity, Entit
   elseif ($view_mode == 'teaser' && $entity->bundle() == 'course_section') {
     $build['#cache']['contexts'][] = 'user';
   }
-}
-
-/**
- * Implements hook_entity_base_field_info().
- */
-function social_course_entity_base_field_info(EntityTypeInterface $entity_type): array {
-  $fields = [];
-  if ($entity_type->id() === 'group') {
-    $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Published'))
-      ->setRevisionable(TRUE)
-      ->setTranslatable(TRUE)
-      ->setDefaultValue(TRUE)
-      ->setDisplayOptions('view', [
-        'region' => 'hidden',
-      ])
-      ->setDisplayOptions('form', [
-        'weight' => -5,
-      ])
-      ->setDisplayConfigurable('form', TRUE);
-
-  }
-  return $fields;
 }
 
 /**

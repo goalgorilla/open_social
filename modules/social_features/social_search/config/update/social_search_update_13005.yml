@@ -1,0 +1,26 @@
+search_api.index.social_all:
+  expected_config: {  }
+  update_actions:
+    add:
+      field_settings:
+        group_status:
+          label: Status
+          datasource_id: 'entity:group'
+          property_path: status
+          type: boolean
+          dependencies:
+            module:
+              - group
+search_api.index.social_groups:
+  expected_config: {  }
+  update_actions:
+    add:
+      field_settings:
+        group_status:
+          label: Status
+          datasource_id: 'entity:group'
+          property_path: status
+          type: boolean
+          dependencies:
+            module:
+              - group
