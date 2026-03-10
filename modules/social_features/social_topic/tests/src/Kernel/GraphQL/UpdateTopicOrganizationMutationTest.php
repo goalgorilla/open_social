@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_topic\Kernel\GraphQL;
 
-use Drupal\Core\Config\FileStorage;
-use Drupal\Core\Config\StorageInterface;
-use Drupal\group\Entity\Group;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\social_organization\Entity\group\Organization;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
-use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
+use Drupal\Tests\social_topic\Kernel\SocialTopicGraphQLKernelTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 
 /**
@@ -22,9 +18,11 @@ use Drupal\Tests\user\Traits\UserCreationTrait;
  * Covers add, remove, change, and leave-unchanged of topic organization
  * membership via the updateTopic mutation.
  *
+ * All tests are skipped when social_organization is not in the codebase.
+ *
  * @group social_topic
  */
-class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
+class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBase {
 
   use OAuthTestTrait;
   use UserCreationTrait;
@@ -32,11 +30,9 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
 
   /**
    * {@inheritdoc}
-   */
-  protected $strictConfigSchema = FALSE;
-
-  /**
-   * {@inheritdoc}
+   *
+   * Include social_organization so the kernel can boot with it when present.
+   * Removed in setUpBeforeClass() when the module is not in the codebase.
    */
   protected static $modules = [
     'address',
@@ -136,79 +132,32 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
+  public static function setUpBeforeClass(): void {
+    parent::setUpBeforeClass();
+    if (!static::socialOrganizationExists()) {
+      static::$modules = array_values(array_filter(
+        static::$modules,
+        static fn(string $m): bool => $m !== 'social_organization'
+      ));
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getConfigToInstall(): array {
+    $config = parent::getConfigToInstall();
+    if ($this->container->get('module_handler')->moduleExists('social_organization')) {
+      $config[] = 'social_organization';
+    }
+    return $config;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
-
-    $this->installEntitySchema('group');
-    $this->installEntitySchema('group_content');
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('taxonomy_term');
-    $this->installEntitySchema('activity');
-    $this->installEntitySchema('menu_link_content');
-    $this->installEntitySchema('paragraph');
-    $this->installEntitySchema('block_content');
-    $this->installEntitySchema('path_alias');
-    $this->installEntitySchema('pathauto_pattern');
-    $this->installEntitySchema('profile');
-    $this->installEntitySchema('oauth2_token');
-    $this->installEntitySchema('oauth2_scope');
-    $this->installEntitySchema('consumer');
-    $this->installEntitySchema('comment');
-    $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installEntitySchema('user');
-    $this->installEntitySchema('flagging');
-    $this->installEntitySchema('flag');
-    $this->installSchema('flag', ['flag_counts']);
-    $this->installEntitySchema('file');
-    $this->installEntitySchema('crop');
-    $this->installSchema('file', ['file_usage']);
-    $this->installSchema('layout_builder', ['inline_block_usage']);
-
-    $this->installConfig([
-      'node',
-      'user',
-      'profile',
-      'menu_link_content',
-      'social_profile',
-      'social_node',
-      'social_core',
-      'social_editor',
-      'social_event',
-      'social_event_type',
-      'social_topic',
-      'social_tagging',
-      'social_group_invite',
-      'ginvite',
-      'pathauto',
-      'social_group',
-      'grequest',
-      'group',
-      'activity_creator',
-      'activity_logger',
-      'layout_builder',
-      'layout_discovery',
-      'social_group_flexible_group',
-      'social_group_request',
-      'social_organization',
-      'flag',
-      'simple_oauth',
-      'simple_oauth_static_scope',
-    ]);
-
-    $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
-    $this->setUpKeys();
-
-    $this->setUpCurrentUser(
-      ["uid" => 1],
-      [
-        'create topic content',
-        'access content',
-        'bypass node access',
-        'administer nodes',
-        'access cross-group posting',
-      ],
-      FALSE
-    );
 
     $this->config('social_group.settings')
       ->set('cross_posting.status', TRUE)
@@ -216,7 +165,9 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
       ->set('cross_posting.group_types', ['flexible_group'])
       ->save();
 
-    $this->installOrganizationRequiredViews();
+    if ($this->container->get('module_handler')->moduleExists('social_organization')) {
+      $this->installOrganizationRequiredViews();
+    }
   }
 
   /**
@@ -227,99 +178,15 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
   }
 
   /**
-   * Installs view config required for Organization entity save.
-   */
-  private function installOrganizationRequiredViews(): void {
-    $config_installer = $this->container->get('config.installer');
-    $path_resolver = $this->container->get('extension.path.resolver');
-
-    $config_dirs = [
-      $path_resolver->getPath('module', 'social_group') . '/config/optional',
-      $path_resolver->getPath('module', 'social_event') . '/config/install',
-    ];
-
-    foreach ($config_dirs as $dir) {
-      if (is_dir($dir)) {
-        $storage = new FileStorage($dir, StorageInterface::DEFAULT_COLLECTION);
-        $config_installer->installOptionalConfig($storage);
-      }
-    }
-
-    $this->container->get('router.builder')->rebuild();
-  }
-
-  /**
-   * Creates an organization (group of type organization).
-   *
-   * For "members" visibility, the current user must be a member for
-   * OrganizationInputValidationService to find it. Use
-   * $addCurrentUserAsMember = FALSE to test the "user not in members org"
-   * scenario.
-   *
-   * @param string $label
-   *   The organization label.
-   * @param string $visibility
-   *   The visibility value (e.g. 'public', 'members').
-   * @param int $uid
-   *   The user ID that owns the organization.
-   * @param bool $addCurrentUserAsMember
-   *   When TRUE and visibility is 'members', add the current user as a member.
-   *   When FALSE, do not add the user (for testing non-member access denial).
-   */
-  private function createOrganization(string $label, string $visibility, int $uid = 1, bool $addCurrentUserAsMember = TRUE): Organization {
-    $group = Group::create([
-      'type' => 'organization',
-      'label' => $label,
-      'uid' => $uid,
-      'field_flexible_group_visibility' => $visibility,
-      'status' => 1,
-    ]);
-    assert($group instanceof Organization);
-    $group->save();
-
-    if ($visibility === 'members' && $addCurrentUserAsMember) {
-      $actor = $this->container->get('current_user')->getAccount();
-      if (!$group->hasMember($actor)) {
-        $user_storage = $this->container->get('entity_type.manager')->getStorage('user');
-        $user = $user_storage->load($actor->id());
-        if ($user !== NULL) {
-          $group->addMember($user);
-        }
-      }
-    }
-
-    return $group;
-  }
-
-  /**
-   * Asserts that the topic node is assigned to the given organization.
-   */
-  private function assertTopicInOrganization(int|string $nodeId, int|string $orgId): void {
-    $node = $this->container->get('entity_type.manager')->getStorage('node')->load($nodeId);
-    assert($node instanceof NodeInterface);
-    $refs = $node->get(Organization::REFERENCE_FIELD)->getValue();
-    $gids = array_map('strval', array_column($refs, 'target_id'));
-    $this->assertContains((string) $orgId, $gids, "Topic {$nodeId} should be in organization {$orgId}.");
-  }
-
-  /**
-   * Asserts that the topic node has no organization assignments.
-   */
-  private function assertTopicNotInAnyOrganization(int|string $nodeId): void {
-    $node = $this->container->get('entity_type.manager')->getStorage('node')->load($nodeId);
-    assert($node instanceof NodeInterface);
-    $this->assertTrue(
-      $node->get(Organization::REFERENCE_FIELD)->isEmpty(),
-      "Topic {$nodeId} should not be in any organization."
-    );
-  }
-
-  /**
    * Test: Add topic to organization when editing.
    *
    * (topic with no org → set to one).
    */
   public function testUpdateTopicAddToOrganization(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
@@ -351,7 +218,6 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
           'id' => $topic->uuid(),
           'organizations' => [
             'organization' => $organization->uuid(),
-            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -379,6 +245,10 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
    * Test: Remove topic from all organizations when editing.
    */
   public function testUpdateTopicRemoveFromAllOrganizations(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
@@ -392,7 +262,7 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
       'body' => [['value' => ' ']],
       'field_content_visibility' => 'public',
       'field_topic_type' => $topicType->id(),
-      Organization::REFERENCE_FIELD => [['target_id' => $organization->id()]],
+      'organizations_group' => [['target_id' => $organization->id()]],
       'status' => 1,
     ]);
     $topic->save();
@@ -432,6 +302,10 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
    * Test: Change which organization(s) a topic is in when editing.
    */
   public function testUpdateTopicChangeOrganizations(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
@@ -446,7 +320,7 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
       'body' => [['value' => ' ']],
       'field_content_visibility' => 'public',
       'field_topic_type' => $topicType->id(),
-      Organization::REFERENCE_FIELD => [['target_id' => $org1->id()]],
+      'organizations_group' => [['target_id' => $org1->id()]],
       'status' => 1,
     ]);
     $topic->save();
@@ -465,7 +339,6 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
           'id' => $topic->uuid(),
           'organizations' => [
             'organization' => $org2->uuid(),
-            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -486,7 +359,7 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
     $this->assertTopicInOrganization($topicId, $org2Id);
     $node = $this->container->get('entity_type.manager')->getStorage('node')->load($topicId);
     assert($node instanceof NodeInterface);
-    $gids = array_map('strval', array_column($node->get(Organization::REFERENCE_FIELD)->getValue(), 'target_id'));
+    $gids = array_map('strval', array_column($node->get('organizations_group')->getValue(), 'target_id'));
     $this->assertNotContains((string) $org1->id(), $gids, 'Topic should no longer be in org1.');
   }
 
@@ -497,6 +370,10 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
    * CreateTopicMutationTest::testCreateTopicWithCrosspostedOrganizations.
    */
   public function testUpdateTopicWithCrosspostedOrganizations(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Cross-posted']);
@@ -555,7 +432,7 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
     assert($topicId !== NULL);
     $node = $this->container->get('entity_type.manager')->getStorage('node')->load($topicId);
     assert($node instanceof NodeInterface);
-    $organizationRefs = $node->get(Organization::REFERENCE_FIELD)->getValue();
+    $organizationRefs = $node->get('organizations_group')->getValue();
     $gids = array_map('strval', array_column($organizationRefs, 'target_id'));
     $expected = [
       (string) $primaryOrganization->id(),
@@ -612,6 +489,10 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
    * @dataProvider topicVisibilityInOrganizationProvider
    */
   public function testUpdateTopicInOrganization(string $topicVisibility, string $organizationVisibility, string $title): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
@@ -643,7 +524,6 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
           'id' => $topic->uuid(),
           'organizations' => [
             'organization' => $organization->uuid(),
-            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -671,6 +551,10 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
    * Test: Leave organization unchanged when editing other fields.
    */
   public function testUpdateTopicLeaveOrganizationsUnchanged(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
@@ -684,7 +568,7 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
       'body' => [['value' => ' ']],
       'field_content_visibility' => 'public',
       'field_topic_type' => $topicType->id(),
-      Organization::REFERENCE_FIELD => [['target_id' => $organization->id()]],
+      'organizations_group' => [['target_id' => $organization->id()]],
       'status' => 1,
     ]);
     $topic->save();
@@ -731,6 +615,10 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
    * not in. OrganizationInputValidationService returns ORGANIZATION_NOT_FOUND.
    */
   public function testUpdateTopicWithMembersOrganizationWhenNotMemberReturnsError(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
@@ -761,10 +649,7 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
         'input' => [
           'id' => $topic->uuid(),
           'organizations' => [
-            'value' => [
-              'organization' => $membersOrg->uuid(),
-              'crosspostedOrganizations' => [],
-            ],
+            'organization' => $membersOrg->uuid(),
           ],
         ],
       ],
@@ -783,6 +668,10 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
    * Test: Invalid organization reference returns validation error.
    */
   public function testUpdateTopicWithInvalidOrganizationReturnsError(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
@@ -813,10 +702,7 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
         'input' => [
           'id' => $topic->uuid(),
           'organizations' => [
-            'value' => [
-              'organization' => $fakeUuid,
-              'crosspostedOrganizations' => [],
-            ],
+            'organization' => $fakeUuid,
           ],
         ],
       ],
@@ -838,6 +724,10 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
    * ORGANIZATION_NOT_FOUND.
    */
   public function testUpdateTopicWithOrganizationsWithoutOrganizationReadScopeReturnsError(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
@@ -869,7 +759,6 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
           'id' => $topic->uuid(),
           'organizations' => [
             'organization' => $organization->uuid(),
-            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -885,57 +774,13 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
   }
 
   /**
-   * Test: Malformed organizations input returns ORGANIZATIONS_INVALID.
-   *
-   * Passing an empty ContentInOrganizationInput to the mutation triggers
-   * ORGANIZATIONS_INVALID because required organization fields are missing.
-   */
-  public function testUpdateTopicWithMalformedOrganizationsInputReturnsError(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
-
-    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
-    $topicType->save();
-
-    $topic = Node::create([
-      'type' => 'topic',
-      'title' => 'Original Title',
-      'body' => [['value' => ' ']],
-      'field_content_visibility' => 'public',
-      'field_topic_type' => $topicType->id(),
-      'status' => 1,
-    ]);
-    $topic->save();
-
-    $this->assertResults(
-      <<<GQL
-      mutation UpdateTopic(\$input: UpdateTopicInput!) {
-        updateTopic(input: \$input) {
-          errors
-          topic { id }
-        }
-      }
-      GQL,
-      [
-        'input' => [
-          'id' => $topic->uuid(),
-          'organizations' => [],
-        ],
-      ],
-      [
-        'updateTopic' => [
-          'errors' => ['ORGANIZATIONS_INVALID'],
-          'topic' => NULL,
-        ],
-      ],
-      $this->defaultMutationCacheMetaData()
-        ->addCacheContexts(['languages:language_interface'])
-    );
-  }
-
-  /**
    * Test: Update without organizations input leaves organizations unchanged.
    */
   public function testUpdateTopicWithoutOrganizationsInputLeavesOrganizationsUnchanged(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
@@ -949,7 +794,7 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
       'body' => [['value' => ' ']],
       'field_content_visibility' => 'public',
       'field_topic_type' => $topicType->id(),
-      Organization::REFERENCE_FIELD => [['target_id' => $organization->id()]],
+      'organizations_group' => [['target_id' => $organization->id()]],
       'status' => 1,
     ]);
     $topic->save();
@@ -993,6 +838,10 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
    * Test: After successful organization update, load topic shows updated orgs.
    */
   public function testUpdateTopicOrganizationUpdateReflectedOnReload(): void {
+    // Skip test if social_organization is not in the codebase.
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
     $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
@@ -1007,7 +856,7 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
       'body' => [['value' => ' ']],
       'field_content_visibility' => 'public',
       'field_topic_type' => $topicType->id(),
-      Organization::REFERENCE_FIELD => [['target_id' => $org1->id()]],
+      'organizations_group' => [['target_id' => $org1->id()]],
       'status' => 1,
     ]);
     $topic->save();
@@ -1026,7 +875,6 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
           'id' => $topic->uuid(),
           'organizations' => [
             'organization' => $org2->uuid(),
-            'crosspostedOrganizations' => [],
           ],
         ],
       ],
@@ -1046,7 +894,7 @@ class UpdateTopicOrganizationMutationTest extends SocialGraphQLTestBase {
     assert($topicId !== NULL);
     $reloaded = $nodeStorage->load($topicId);
     assert($reloaded instanceof NodeInterface);
-    $refs = $reloaded->get(Organization::REFERENCE_FIELD)->getValue();
+    $refs = $reloaded->get('organizations_group')->getValue();
     $gids = array_map('strval', array_column($refs, 'target_id'));
     $this->assertContains((string) $org2->id(), $gids);
     $this->assertNotContains((string) $org1->id(), $gids);

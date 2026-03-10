@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_topic\Kernel;
 
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\social_group\Entity\Group;
+use Drupal\node\NodeInterface;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
@@ -136,7 +141,7 @@ abstract class SocialTopicGraphQLKernelTestBase extends SocialGraphQLTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->setUpTopicGraphQLCommon();
+    $this->setUpTopicGraphQlCommon();
   }
 
   /**
@@ -173,7 +178,29 @@ abstract class SocialTopicGraphQLKernelTestBase extends SocialGraphQLTestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('layout_builder', ['inline_block_usage']);
 
-    $this->installConfig([
+    $this->installConfig($this->getConfigToInstall());
+
+    $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
+    $this->setUpKeys();
+
+    $this->setUpCurrentUser(
+      ['uid' => 1],
+      [],
+      FALSE
+    );
+  }
+
+  /**
+   * Returns the list of config modules to install in setUpTopicGraphQlCommon().
+   *
+   * Subclasses may override to add modules (e.g. social_organization) when
+   * they are present in $modules.
+   *
+   * @return string[]
+   *   Config module names to install.
+   */
+  protected function getConfigToInstall(): array {
+    return [
       'social_tagging',
       'node',
       'user',
@@ -201,34 +228,148 @@ abstract class SocialTopicGraphQLKernelTestBase extends SocialGraphQLTestBase {
       'flag',
       'simple_oauth',
       'simple_oauth_static_scope',
-    ]);
-
-    $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
-    $this->setUpKeys();
-
-    $this->setUpCurrentUser(
-      ['uid' => 1],
-      $this->getTopicGraphQLUserPermissions(),
-      FALSE
-    );
+    ];
   }
 
   /**
-   * Returns permissions for the current user in topic GraphQL tests.
+   * Checks if the social_organization module exists in the codebase.
    *
-   * Subclasses may override to grant different permissions (e.g. add
-   * 'access cross-group posting' or 'organization:read').
-   *
-   * @return string[]
-   *   Permission machine names.
+   * @return bool
+   *   TRUE if the module info file exists.
    */
-  protected function getTopicGraphQlUserPermissions(): array {
-    return [
-      'create topic content',
-      'access content',
-      'bypass node access',
-      'administer nodes',
+  protected static function socialOrganizationExists(): bool {
+    if (!defined('DRUPAL_ROOT')) {
+      return FALSE;
+    }
+    $paths = [
+      DRUPAL_ROOT . '/modules/extensions/social_organization/social_organization.info.yml',
+      DRUPAL_ROOT . '/modules/contrib/social_organization/social_organization.info.yml',
     ];
+    foreach ($paths as $path) {
+      if (file_exists($path)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * Installs view config required for Organization entity save.
+   *
+   * Organization::save() and social_organization_group_insert need views
+   * (group_members, upcoming_events, newest_groups, latest_topics).
+   */
+  protected function installOrganizationRequiredViews(): void {
+    $config_installer = $this->container->get('config.installer');
+    $path_resolver = $this->container->get('extension.path.resolver');
+
+    $config_dirs = [
+      $path_resolver->getPath('module', 'social_group') . '/config/optional',
+      $path_resolver->getPath('module', 'social_event') . '/config/install',
+    ];
+
+    foreach ($config_dirs as $dir) {
+      if (is_dir($dir)) {
+        $storage = new FileStorage($dir, StorageInterface::DEFAULT_COLLECTION);
+        $config_installer->installOptionalConfig($storage);
+      }
+    }
+
+    $this->container->get('router.builder')->rebuild();
+  }
+
+  /**
+   * Creates an organization (group of type organization).
+   *
+   * For "members" visibility, the current user (OAuth actor) must be a member
+   * to view the organization; otherwise OrganizationInputValidationService
+   * returns ORGANIZATION_NOT_FOUND. So we add the current user as a member.
+   *
+   * @param string $label
+   *   The organization label.
+   * @param string $visibility
+   *   The visibility (e.g. 'public', 'members').
+   * @param int $uid
+   *   The owner user ID.
+   * @param bool $addCurrentUserAsMember
+   *   When TRUE and visibility is 'members', add the current user as a member.
+   *   When FALSE, do not add (for testing non-member access denial).
+   *
+   * @return \Drupal\social_group\Entity\Group
+   *   The created organization (group of type organization).
+   */
+  protected function createOrganization(string $label, string $visibility, int $uid = 1, bool $addCurrentUserAsMember = TRUE): Group {
+    $group = Group::create([
+      'type' => 'organization',
+      'label' => $label,
+      'uid' => $uid,
+      'field_flexible_group_visibility' => $visibility,
+      'status' => 1,
+    ]);
+    $group->save();
+
+    if ($visibility === 'members' && $addCurrentUserAsMember) {
+      $actor = $this->container->get('current_user')->getAccount();
+      /** @var \Drupal\social_group\Entity\Group $group */
+      if (!$group->hasMember($actor)) {
+        $user_storage = $this->container->get('entity_type.manager')->getStorage('user');
+        $user = $user_storage->load($actor->id());
+        if ($user !== NULL) {
+          $group->addMember($user);
+        }
+      }
+    }
+
+    return $group;
+  }
+
+  /**
+   * Returns the maximum node ID in storage (0 if no nodes exist).
+   *
+   * @param \Drupal\Core\Entity\EntityStorageInterface $nodeStorage
+   *   The node storage.
+   *
+   * @return int
+   *   The maximum node ID.
+   */
+  protected function getMaxNodeId(EntityStorageInterface $nodeStorage): int {
+    /** @phpstan-ignore method.alreadyNarrowedType */
+    $ids = $nodeStorage->getQuery()->accessCheck(FALSE)->execute();
+    return empty($ids) ? 0 : (int) max($ids);
+  }
+
+  /**
+   * Asserts that the topic node is assigned to the given organization.
+   *
+   * Uses the organization reference field name so the base does not depend
+   * on the Organization class.
+   *
+   * @param int|string $nodeId
+   *   The topic node ID.
+   * @param int|string $orgId
+   *   The organization (group) ID.
+   */
+  protected function assertTopicInOrganization(int|string $nodeId, int|string $orgId): void {
+    $node = $this->container->get('entity_type.manager')->getStorage('node')->load((int) $nodeId);
+    assert($node instanceof NodeInterface);
+    $refs = $node->get('organizations_group')->getValue();
+    $gids = array_map('strval', array_column($refs, 'target_id'));
+    $this->assertContains((string) $orgId, $gids, "Topic {$nodeId} should be in organization {$orgId}.");
+  }
+
+  /**
+   * Asserts that the topic node has no organization assignments.
+   *
+   * @param int|string $nodeId
+   *   The topic node ID.
+   */
+  protected function assertTopicNotInAnyOrganization(int|string $nodeId): void {
+    $node = $this->container->get('entity_type.manager')->getStorage('node')->load((int) $nodeId);
+    assert($node instanceof NodeInterface);
+    $this->assertTrue(
+      $node->get('organizations_group')->isEmpty(),
+      "Topic {$nodeId} should not be in any organization."
+    );
   }
 
 }

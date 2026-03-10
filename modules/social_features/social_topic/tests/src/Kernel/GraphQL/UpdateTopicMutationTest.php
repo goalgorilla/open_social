@@ -5,23 +5,26 @@ declare(strict_types=1);
 namespace Drupal\Tests\social_topic\Kernel\GraphQL;
 
 use Drupal\Core\Render\RenderContext;
-use Drupal\group\Entity\Group;
+use Drupal\social_group\Entity\Group;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
-use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
+use Drupal\Tests\social_topic\Kernel\SocialTopicGraphQLKernelTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use GraphQL\Server\OperationParams;
 
 /**
  * Test coverage for the updateTopic GraphQL mutation.
  *
+ * Organization-related behavior is covered in
+ * UpdateTopicOrganizationMutationTest.
+ *
  * @group social_topic
  */
-class UpdateTopicMutationTest extends SocialGraphQLTestBase {
+class UpdateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
 
   use OAuthTestTrait;
   use UserCreationTrait;
@@ -30,174 +33,9 @@ class UpdateTopicMutationTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $strictConfigSchema = FALSE;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'address',
-    'datetime',
-    'subgroup',
-    'paragraphs',
-    'image',
-    'options',
-    'file',
-    'link',
-    'entity_reference_revisions',
-    'media',
-    'node',
-    'grequest',
-    'state_machine',
-    'social_group',
-    'activity_logger',
-    'activity_creator',
-    'message',
-    'dynamic_entity_reference',
-    'social_group_flexible_group',
-    'social_organization',
-    'social_group_request',
-    'social_media_system',
-    'select2',
-    'text',
-    'pathauto',
-    'smart_trim',
-    'path',
-    'path_alias',
-    'token',
-    'inline_entity_form',
-    'workflows',
-    'content_moderation',
-    'better_exposed_filters',
-    'filter',
-    'views_bulk_operations',
-    'gnode',
-    'social_event',
-    'social_event_type',
-    'social_topic',
-    'datetime_range_timezone',
-    'key',
-    'meeting_api',
-    'meeting_api_bbb',
-    'meeting_api_manual',
-    'profile',
-    'social_profile',
-    'views',
-    'group_core_comments',
-    'menu_ui',
-    'comment',
-    'editor',
-    'ckeditor5',
-    'responsive_table_filter',
-    'social_editor',
-    'social_node',
-    'social_core',
-    'field_group',
-    'file_mdm',
-    'image_effects',
-    'image_widget_crop',
-    'crop',
-    'block',
-    'block_content',
-    'entity_access_by_field',
-    'entity',
-    'entity_test',
-    'telephone',
-    'lazy',
-    'serialization',
-    'group',
-    'social_user',
-    'consumers',
-    'simple_oauth',
-    'simple_oauth_static_scope',
-    'social_oauth',
-    'social_graphql',
-    'graphql_oauth',
-    'social_comment',
-    'taxonomy',
-    'role_delegation',
-    'variationcache',
-    'menu_link_content',
-    'flag',
-    'field',
-    'social_group_invite',
-    'ginvite',
-    'layout_builder',
-    'social_tagging',
-    'layout_discovery',
-    'flag_count',
-    'hux',
-    'taxonomy_access_fix',
-  ];
-
-  /**
-   * {@inheritdoc}
-   */
   protected function setUp(): void {
     parent::setUp();
 
-    $this->installEntitySchema('group');
-    $this->installEntitySchema('group_content');
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('taxonomy_term');
-    $this->installEntitySchema('activity');
-    $this->installEntitySchema('message');
-    $this->installEntitySchema('menu_link_content');
-    $this->installEntitySchema('paragraph');
-    $this->installEntitySchema('block_content');
-    $this->installEntitySchema('path_alias');
-    $this->installEntitySchema('pathauto_pattern');
-    $this->installEntitySchema('profile');
-    $this->installEntitySchema('oauth2_token');
-    $this->installEntitySchema('oauth2_scope');
-    $this->installEntitySchema('consumer');
-    $this->installEntitySchema('comment');
-    $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installEntitySchema('user');
-    $this->installEntitySchema('flagging');
-    $this->installEntitySchema('flag');
-    $this->installSchema('flag', ['flag_counts']);
-    $this->installEntitySchema('file');
-    $this->installEntitySchema('crop');
-    $this->installSchema('file', ['file_usage']);
-    $this->installSchema('layout_builder', ['inline_block_usage']);
-
-    $this->installConfig([
-      'node',
-      'user',
-      'profile',
-      'menu_link_content',
-      'social_profile',
-      'social_node',
-      'social_core',
-      'social_editor',
-      'social_event',
-      'social_event_type',
-      'social_topic',
-      'social_tagging',
-      'social_group_invite',
-      'ginvite',
-      'pathauto',
-      'social_group',
-      'grequest',
-      'group',
-      'activity_creator',
-      'activity_logger',
-      'layout_builder',
-      'layout_discovery',
-      'social_group_flexible_group',
-      'social_group_request',
-      'social_organization',
-      'flag',
-      'simple_oauth',
-      'simple_oauth_static_scope',
-    ]);
-
-    // Configure OAuth to use static scope provider and set up keys.
-    $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
-    $this->setUpKeys();
-
-    // Enable cross-posting for tests.
     $this->config('social_group.settings')
       ->set('cross_posting.status', TRUE)
       ->set('cross_posting.content_types', ['topic'])
