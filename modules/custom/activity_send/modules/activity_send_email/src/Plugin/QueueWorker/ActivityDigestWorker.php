@@ -163,13 +163,13 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
             $instance = $this->emailFrequencyManager->createInstance($data['frequency']);
 
             // Translating frequency instance in the language of the user.
-            // @codingStandardsIgnoreStart
+            // phpcs:disable Drupal.Semantics.FunctionT.NotLiteralString
             $frequency_translated = $this->t(
               $instance->getName()->getUntranslatedString(),
               [],
               ['langcode' => $langcode]
             );
-            // @codingStandardsIgnoreEnd
+            // phpcs:enable Drupal.Semantics.FunctionT.NotLiteralString
             // Get the notification settings for the email template.
             $digest_notifications['#notification_settings'] = $this->formatPlural(
               $notification_count,

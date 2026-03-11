@@ -706,14 +706,14 @@ function social_group_allowed_join_method_description(
     return $description;
   }
 
-  // @codingStandardsIgnoreStart
+  // phpcs:disable Drupal.Semantics.FunctionT.NotLiteralString
   $text = t(
     $text->getUntranslatedString(),
     $text->getArguments() + [
       '@entity_type_id' => $definition->getSingularLabel(),
     ],
   );
-  // @codingStandardsIgnoreEnd
+  // phpcs:enable Drupal.Semantics.FunctionT.NotLiteralString
   // Add explanatory descriptive text after the icon.
   $description = '<p>';
   $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-' . $item['icon'] . '"></use></svg></strong>';

@@ -12,8 +12,6 @@ use OpenSocial\RichTextJson\Node\LinebreakNode;
 use OpenSocial\RichTextJson\Node\LinkNode;
 use OpenSocial\RichTextJson\Node\ListItemNode;
 use OpenSocial\RichTextJson\Node\ListNode;
-// phpcs:ignore Drupal.Classes.UnusedUseStatement.UnusedUse
-use OpenSocial\RichTextJson\Node\NodeInterface;
 use OpenSocial\RichTextJson\Node\ParagraphNode;
 use OpenSocial\RichTextJson\Node\QuoteNode;
 use OpenSocial\RichTextJson\Node\RootNode;
@@ -70,7 +68,7 @@ final class HtmlImporter {
    * @param \DOMNode $parent
    *   The parent DOM node.
    *
-   * @return array<int, NodeInterface>
+   * @return array<int, \OpenSocial\RichTextJson\Node\NodeInterface>
    *   The converted block nodes.
    */
   private function convertBlockElements(\DOMNode $parent): array {
@@ -173,7 +171,7 @@ final class HtmlImporter {
    * @param \DOMElement $list
    *   The list element (ul or ol).
    *
-   * @return array<int, NodeInterface>
+   * @return array<int, \OpenSocial\RichTextJson\Node\NodeInterface>
    *   The list item nodes.
    */
   private function convertListItems(\DOMElement $list): array {
@@ -247,7 +245,7 @@ final class HtmlImporter {
    * @param int $detail
    *   The current detail bitmask.
    *
-   * @return array<int, NodeInterface>
+   * @return array<int, \OpenSocial\RichTextJson\Node\NodeInterface>
    *   The converted inline nodes.
    */
   private function convertInlineElements(
@@ -368,10 +366,10 @@ final class HtmlImporter {
   /**
    * Merges adjacent text nodes with same formatting.
    *
-   * @param array<int, NodeInterface> $nodes
+   * @param array<int, \OpenSocial\RichTextJson\Node\NodeInterface> $nodes
    *   The nodes to merge.
    *
-   * @return array<int, NodeInterface>
+   * @return array<int, \OpenSocial\RichTextJson\Node\NodeInterface>
    *   The merged nodes.
    */
   private function mergeAdjacentTextNodes(array $nodes): array {

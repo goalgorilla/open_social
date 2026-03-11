@@ -306,7 +306,7 @@ final class HtmlImporterTest extends TestCase {
                 'type' => 'list-item',
                 'version' => 1,
                 'children' => [
-                    ['type' => 'text', 'version' => 1, 'text' => "Item 1"],
+                  ['type' => 'text', 'version' => 1, 'text' => "Item 1"],
                 ],
               ],
             ],
