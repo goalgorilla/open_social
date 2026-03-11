@@ -170,7 +170,6 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
               ['langcode' => $langcode]
             );
             // @codingStandardsIgnoreEnd
-
             // Get the notification settings for the email template.
             $digest_notifications['#notification_settings'] = $this->formatPlural(
               $notification_count,

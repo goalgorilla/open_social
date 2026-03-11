@@ -64,7 +64,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
           switch ($visibility) {
             // Recipient.
             case "0":
-
+              // Intentional fall-through - all cases return explicitly.
               if (AccessResult::allowedIfHasPermission($account, 'view community posts')->isAllowed()) {
                 // Check if the post has been posted in a group.
                 $group_id = $entity->field_recipient_group->target_id;

@@ -20,6 +20,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
    * @return array
    *   An array keyed by configuration name of override data. Override data
    *   contains a nested array structure of overrides.
+   *
    * @codingStandardsIgnoreStart
    */
   public function loadOverrides($names) {
