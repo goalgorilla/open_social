@@ -338,9 +338,9 @@ class UserSegmentContext extends RawMinkContext {
    * Update an existing user segment.
    *
    * Updates user segments provided in the form:
-   * | label            | outcome                    |
-   * | Airline Partners | request_access_to_iata_iar |
-   * | Airline Partners |                            | (empty outcome clears it)
+   * | label     | outcome    |
+   * | User role | outcome_id |
+   * | User role |            | (empty outcome clears it)
    *
    * @Given I update user segments:
    */

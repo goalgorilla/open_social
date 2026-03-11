@@ -240,7 +240,7 @@ class SocialMinkContext extends MinkContext {
    * @todo When there are multiple select2 fields on the page (single vs
    *   multiple), this method should use '.select2-container--open
    *   .select2-search__field' to find the correct input, similar to the removed
-   *   iFillInSelectInputWithAndSelect method in IataRegistryContext.php. This
+   *   iFillInSelectInputWithAndSelect method. This
    *   ensures we find the correct open select2 dropdown when multiple select2
    *   fields exist.
    *
@@ -786,7 +786,7 @@ class SocialMinkContext extends MinkContext {
 
   /**
    * Override iWaitForAjaxToFinish to handle redirects and VBO operations.
-   * 
+   *
    * This override is more lenient than the parent implementation:
    * 1. Returns immediately if page content indicates navigation occurred.
    * 2. Handles VBO operations with button state checks.
@@ -795,7 +795,7 @@ class SocialMinkContext extends MinkContext {
   public function iWaitForAjaxToFinish($event = null) {
     $session = $this->getSession();
     $page = $session->getPage();
-    
+
     // For clicks/submits that might redirect, check if navigation occurred.
     // Some redirects are so fast that by the time this hook runs,
     // we're already on the new page.
@@ -805,7 +805,7 @@ class SocialMinkContext extends MinkContext {
       if (preg_match('/\b(click|follow)\b/i', $stepText)) {
         // Give page a moment to stabilize after navigation.
         usleep(100000); // 100ms
-        
+
         // Check if document indicates it just loaded.
         try {
           $justLoaded = $session->evaluateScript(<<<JS
@@ -821,7 +821,7 @@ class SocialMinkContext extends MinkContext {
             })();
 JS
           );
-          
+
           if ($justLoaded) {
             // Page recently loaded - this was likely a redirect.
             // Wait for full readiness and return.
@@ -835,7 +835,7 @@ JS
         }
       }
     }
-    
+
     // Check if we're dealing with VBO by looking for VBO forms.
     $hasVboForm = FALSE;
     try {
@@ -848,7 +848,7 @@ JS
     } catch (\Exception $e) {
       // If we can't evaluate, assume no VBO form.
     }
-    
+
     $condition = <<<JS
     (function() {
       try {
@@ -860,7 +860,7 @@ JS
           for(var i in Drupal.ajax) { if (isAjaxing(Drupal.ajax[i])) { d7_not_ajaxing = false; } }
         }
         var d8_not_ajaxing = (typeof Drupal === 'undefined' || typeof Drupal.ajax === 'undefined' || typeof Drupal.ajax.instances === 'undefined' || !Drupal.ajax.instances.some(isAjaxing));
-        
+
         // For VBO operations, check if the Actions button is enabled.
         // This indicates VBO AJAX completed.
         var vbo_complete = true;
@@ -871,7 +871,7 @@ JS
             vbo_complete = false;
           }
         }
-        
+
         return (
           // Assert no AJAX request is running and no animation is running.
           (typeof jQuery === 'undefined' || jQuery.hasOwnProperty('active') === false || (jQuery.active === 0 && jQuery(':animated').length === 0)) &&
@@ -885,16 +885,16 @@ JS
     }());
 JS;
     $ajax_timeout = $this->getMinkParameter('ajax_timeout');
-    
+
     // For VBO operations, use a shorter timeout with fallback check.
     $timeout = $hasVboForm ? min($ajax_timeout, 15) : $ajax_timeout;
-    
+
     // Use standard wait with the condition.
     $result = $session->wait(1000 * $timeout, $condition);
-    
+
     if (!$result) {
       // Wait timed out. Perform final checks before throwing exception.
-      
+
       // Check if Actions button is enabled for VBO forms.
       if ($hasVboForm) {
         usleep(500000);
@@ -904,7 +904,7 @@ JS;
           return;
         }
       }
-      
+
       if ($ajax_timeout === null) {
         throw new \Exception('No AJAX timeout has been defined. Please verify that "Drupal\MinkExtension" is configured in behat.yml (and not "Behat\MinkExtension").');
       }
