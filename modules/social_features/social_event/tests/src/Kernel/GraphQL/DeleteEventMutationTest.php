@@ -49,13 +49,12 @@ class DeleteEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test deleting an event successfully.
    */
   public function testDeleteEventSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $event = $this->createEventNode();
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
     $event_uuid = $event->uuid();
     assert(is_string($event_uuid));
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation DeleteEvent(\$input: DeleteEventInput!) {
@@ -120,10 +119,9 @@ class DeleteEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error for non-existent event.
    */
   public function testDeleteEventNotFound(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $fakeUuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation DeleteEvent(\$input: DeleteEventInput!) {
@@ -153,8 +151,6 @@ class DeleteEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Passing a topic UUID returns EVENT_NOT_FOUND and the topic is unchanged.
    */
   public function testDeleteNonEventNode(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -173,6 +169,7 @@ class DeleteEventMutationTest extends SocialEventGraphQLKernelTestBase {
 
     $topic_uuid = $topic->uuid();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation DeleteEvent(\$input: DeleteEventInput!) {
@@ -211,8 +208,6 @@ class DeleteEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * are automatically deleted by Drupal's entity implementation.
    */
   public function testDeleteEventWithComments(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $event = $this->createEventNode(['title' => 'Test Event with Comments']);
 
     $comment = Comment::create([
@@ -234,6 +229,7 @@ class DeleteEventMutationTest extends SocialEventGraphQLKernelTestBase {
     assert(is_string($event_uuid));
     $comment_id = $comment->id();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation DeleteEvent(\$input: DeleteEventInput!) {
@@ -274,11 +270,10 @@ class DeleteEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that deleting an event requires the event:write scope.
    */
   public function testDeleteEventRequiresEventWriteScope(): void {
-    $this->actAsClientCredentialsWithScopes([]);
-
     $event = $this->createEventNode(['title' => 'Test Event']);
     $event_uuid = $event->uuid();
 
+    $this->actAsClientCredentialsWithScopes([]);
     $this->assertErrors(
       <<<GQL
         mutation DeleteEvent(\$input: DeleteEventInput!) {

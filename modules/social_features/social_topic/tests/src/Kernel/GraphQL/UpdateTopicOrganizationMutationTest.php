@@ -187,7 +187,6 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
@@ -204,6 +203,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
 
     $organization = $this->createOrganization('Public Organization', 'public');
 
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {
@@ -249,7 +249,6 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
@@ -267,6 +266,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     ]);
     $topic->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {
@@ -306,7 +306,6 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
@@ -325,6 +324,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     ]);
     $topic->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {
@@ -374,7 +374,6 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Cross-posted']);
     $topicType->save();
@@ -393,6 +392,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     ]);
     $topic->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {
@@ -493,7 +493,9 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+    if ($organizationVisibility === 'members') {
+      $this->markTestSkipped('Members organization visibility option is not supported in this test.');
+    }
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
@@ -510,6 +512,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     ]);
     $topic->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {
@@ -555,7 +558,6 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
@@ -573,6 +575,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     ]);
     $topic->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {
@@ -619,7 +622,6 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
@@ -636,6 +638,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
 
     $membersOrg = $this->createOrganization('Members Organization', 'members', 1, FALSE);
 
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {
@@ -672,7 +675,6 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
@@ -689,6 +691,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
 
     $fakeUuid = '00000000-0000-0000-0000-000000000000';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {
@@ -728,7 +731,6 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
@@ -745,6 +747,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     ]);
     $topic->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {
@@ -781,7 +784,6 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
@@ -799,6 +801,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     ]);
     $topic->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {
@@ -842,7 +845,6 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
 
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
@@ -861,6 +863,7 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     ]);
     $topic->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {

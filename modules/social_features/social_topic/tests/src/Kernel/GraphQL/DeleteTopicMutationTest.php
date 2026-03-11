@@ -214,8 +214,6 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
    * Test deleting a topic successfully.
    */
   public function testDeleteTopicSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -239,6 +237,7 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
     assert(is_string($topic_uuid));
 
     // Execute mutation.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $context = new RenderContext();
     $renderer = \Drupal::service('renderer');
     $result = $renderer->executeInRenderContext(
@@ -298,9 +297,8 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
    * Test validation error for missing topic ID.
    */
   public function testDeleteTopicMissingId(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Execute mutation without ID.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $context = new RenderContext();
     $renderer = \Drupal::service('renderer');
     $result = $renderer->executeInRenderContext(
@@ -334,12 +332,11 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
    * Test validation error for non-existent topic.
    */
   public function testDeleteTopicNotFound(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Use a non-existent UUID.
     $fakeUuid = '12345678-1234-1234-1234-123456789012';
 
     // Execute mutation with invalid topic ID.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $context = new RenderContext();
     $renderer = \Drupal::service('renderer');
     $result = $renderer->executeInRenderContext(
@@ -374,8 +371,6 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
    */
   public function testDeleteTopicRequiresTopicWriteScope(): void {
     // Act as client credentials without the required scope.
-    $this->actAsClientCredentialsWithScopes([]);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -397,6 +392,7 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
     $topic_uuid = $topic->uuid();
 
     // Execute mutation without the required scope.
+    $this->actAsClientCredentialsWithScopes([]);
     $context = new RenderContext();
     $renderer = \Drupal::service('renderer');
     $result = $renderer->executeInRenderContext(
@@ -443,8 +439,6 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
    * Test attempting to delete a non-topic node.
    */
   public function testDeleteNonTopicNode(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a non-topic node (event).
     $event = Node::create([
       'type' => 'event',
@@ -457,6 +451,7 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
     $event_uuid = $event->uuid();
 
     // Execute mutation - should fail with TOPIC_NOT_FOUND.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $context = new RenderContext();
     $renderer = \Drupal::service('renderer');
     $result = $renderer->executeInRenderContext(
@@ -503,8 +498,6 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
    * - Files should be marked as temporary for cleanup via cron.
    */
   public function testDeleteTopicWithCommentsAndFiles(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -591,6 +584,7 @@ class DeleteTopicMutationTest extends SocialGraphQLTestBase {
     $this->assertNotNull(\Drupal::entityTypeManager()->getStorage('file')->load($file_id));
 
     // Execute mutation to delete the topic.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $context = new RenderContext();
     $renderer = \Drupal::service('renderer');
     $result = $renderer->executeInRenderContext(

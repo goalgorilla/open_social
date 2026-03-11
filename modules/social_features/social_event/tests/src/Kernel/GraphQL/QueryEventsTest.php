@@ -75,7 +75,6 @@ class QueryEventsTest extends SocialGraphQLTestBase {
     'path_alias',
     'hux',
     'smart_trim',
-    'social_tagging',
   ];
 
   /**
@@ -98,7 +97,6 @@ class QueryEventsTest extends SocialGraphQLTestBase {
       'social_event',
       'filter',
       'comment',
-      'social_tagging',
     ]);
   }
 

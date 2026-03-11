@@ -75,8 +75,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test creating a topic with all required fields.
    */
   public function testCreateTopicSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -86,6 +84,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
 
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
       mutation CreateTopic(\$type: ID!, \$title: String!, \$visibility: ContentVisibility!, \$body: RichTextJSON!, \$clientMutationId: UUIDv4) {
@@ -140,14 +139,13 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error when Rich Text JSON is invalid (missing root).
    */
   public function testCreateTopicInvalidRichTextJson(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Blog',
     ]);
     $topicType->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertErrors(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -176,8 +174,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error for missing required field (title).
    */
   public function testCreateTopicMissingTitle(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -185,6 +181,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $topicType->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -220,8 +217,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error for title too long (> 255 characters).
    */
   public function testCreateTopicTitleTooLong(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -232,6 +227,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     // Create a title longer than 255 characters.
     $longTitle = str_repeat('A', 256);
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -267,11 +263,10 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error for invalid topic type UUID.
    */
   public function testCreateTopicInvalidTopicType(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Use a non-existent UUID.
     $fakeUuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -307,8 +302,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test creating topic with public visibility.
    */
   public function testCreateTopicPublicVisibility(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -318,6 +311,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
 
     $visibility = 'PUBLIC';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -354,8 +348,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test creating topic with community visibility.
    */
   public function testCreateTopicCommunityVisibility(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -365,6 +357,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
 
     $visibility = 'COMMUNITY';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -402,8 +395,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    */
   public function testCreateTopicRequiresTopicWriteScope(): void {
     // Act as client credentials without the required scope.
-    $this->actAsClientCredentialsWithScopes([]);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -411,6 +402,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $topicType->save();
 
+    $this->actAsClientCredentialsWithScopes([]);
     $this->assertErrors(
       <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -441,8 +433,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test creating a topic with content tags.
    */
   public function testCreateTopicWithTags(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Tutorial',
@@ -467,6 +457,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
 
     $clientMutationId = '650e8400-e29b-41d4-a716-446655440001';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -520,8 +511,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error for invalid content tag UUID.
    */
   public function testCreateTopicInvalidContentTag(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -530,6 +519,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
 
     $fakeTagUuid = '12345678-1234-1234-1234-123456789999';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -565,8 +555,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error for content tag with invalid usage (not for topics).
    */
   public function testCreateTopicWithInvalidContentTagUsage(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -597,6 +585,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $tagC->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -696,8 +685,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error when providing too many content tags.
    */
   public function testCreateTopicTooManyContentTags(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -709,6 +696,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
       $fake_tag_uuids[] = sprintf('12345678-1234-1234-1234-%012d', $i);
     }
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -744,8 +732,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test topic with child tag that inherits field_category_usage from parent.
    */
   public function testCreateTopicWithChildTagInheritingFromParent(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -773,6 +759,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
       'Child tag should not have field_category_usage configured'
     );
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -835,8 +822,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test tag without category_usage is rejected when parent don't allow topic.
    */
   public function testCreateTopicWithChildTagRejectedWhenParentDoesNotAllowTopic(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -864,6 +849,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
       'Child tag should not have field_category_usage configured'
     );
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -899,8 +885,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test creating a topic with a single group successfully.
    */
   public function testCreateTopicWithSingleGroupSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -916,6 +900,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $group->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -967,8 +952,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test creating a topic with cross-posting successfully.
    */
   public function testCreateTopicWithCrossPostingSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -991,6 +974,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $group2->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -1043,8 +1027,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error when primary group doesn't exist.
    */
   public function testCreateTopicWithInvalidPrimaryGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -1053,6 +1035,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
 
     $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -1091,8 +1074,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error when cross-posted group doesn't exist.
    */
   public function testCreateTopicWithInvalidCrossPostedGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -1108,6 +1089,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
 
     $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -1146,8 +1128,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error when same group is in primary and cross-posted.
    */
   public function testCreateTopicWithDuplicateGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -1161,6 +1141,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $group->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -1199,8 +1180,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error when too many cross-posted groups.
    */
   public function testCreateTopicTooManyCrossPostedGroups(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -1226,6 +1205,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
       $crosspostedGroups[] = $group->uuid();
     }
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -1264,8 +1244,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error when visibility is not allowed in single group.
    */
   public function testCreateTopicVisibilityNotAllowedInSingleGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -1280,6 +1258,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $group->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -1318,8 +1297,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error when visibility is not in intersection.
    */
   public function testCreateTopicVisibilityNotAllowedInCrossPosting(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -1343,6 +1320,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     $group2->save();
 
     // Intersection: only PUBLIC is allowed. COMMUNITY should fail.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -1381,8 +1359,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test validation error when cross-posting is disabled.
    */
   public function testCreateTopicCrossPostingDisabled(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Disable cross-posting for this test.
     $this->config('social_group.settings')
       ->set('cross_posting.status', FALSE)
@@ -1408,6 +1384,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $group2->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -1451,8 +1428,6 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
    * Test that topic created without groups has no group relationships.
    */
   public function testCreateTopicWithoutGroupsHasNoRelationships(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -1479,6 +1454,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
       ],
     ];
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $context = new RenderContext();
     $renderer = \Drupal::service('renderer');
     $result = $renderer->executeInRenderContext(

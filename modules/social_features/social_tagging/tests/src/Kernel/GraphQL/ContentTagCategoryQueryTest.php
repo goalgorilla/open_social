@@ -221,7 +221,6 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
    * Test querying a content tag category by ID.
    */
   public function testQueryContentTagCategoryById(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Technology',
@@ -230,6 +229,7 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
     ]);
     $category->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTagCategory(\$id: ID!) {
@@ -256,9 +256,9 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
    * Test querying a non-existent content tag category returns null.
    */
   public function testQueryContentTagCategoryNotFound(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $fake_uuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTagCategory(\$id: ID!) {
@@ -282,9 +282,9 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
    * Test querying content tag category with invalid UUID format.
    */
   public function testQueryContentTagCategoryInvalidUuid(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $invalid_uuid = 'not-a-valid-uuid';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTagCategory(\$id: ID!) {
@@ -308,7 +308,6 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
    * Test querying category with children tags using pagination.
    */
   public function testQueryContentTagCategoryWithChildren(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Technology',
@@ -344,6 +343,7 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
     ]);
     $tag3->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTagCategory(\$id: ID!) {
@@ -418,7 +418,6 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
    * Test pagination with after cursor.
    */
   public function testQueryContentTagCategoryWithPagination(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Science',
@@ -442,6 +441,7 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
     ]);
     $tag2->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTagCategory(\$id: ID!) {
@@ -563,7 +563,6 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
    * Test empty child tags result.
    */
   public function testQueryContentTagCategoryWithNoChildren(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Empty Category',
@@ -571,6 +570,7 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
     ]);
     $category->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTagCategory(\$id: ID!) {

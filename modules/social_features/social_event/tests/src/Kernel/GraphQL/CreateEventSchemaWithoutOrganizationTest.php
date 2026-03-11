@@ -34,11 +34,10 @@ class CreateEventSchemaWithoutOrganizationTest extends SocialEventGraphQLKernelT
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not in the codebase.');
     }
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $start = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $end = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertErrors(
       <<<GQL
       mutation CreateEvent(\$input: CreateEventInput!) {

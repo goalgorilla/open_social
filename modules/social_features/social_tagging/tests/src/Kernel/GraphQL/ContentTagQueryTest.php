@@ -220,7 +220,6 @@ class ContentTagQueryTest extends SocialGraphQLTestBase {
    * Test querying a content tag by ID.
    */
   public function testQueryContentTagById(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Technology',
@@ -235,6 +234,7 @@ class ContentTagQueryTest extends SocialGraphQLTestBase {
     ]);
     $tag->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTag(\$id: ID!) {
@@ -261,7 +261,6 @@ class ContentTagQueryTest extends SocialGraphQLTestBase {
    * Test querying a content tag with parent relationship.
    */
   public function testQueryContentTagWithParent(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Technology',
@@ -277,6 +276,7 @@ class ContentTagQueryTest extends SocialGraphQLTestBase {
     ]);
     $tag->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTag(\$id: ID!) {
@@ -312,9 +312,9 @@ class ContentTagQueryTest extends SocialGraphQLTestBase {
    * Test querying a non-existent content tag returns null.
    */
   public function testQueryContentTagNotFound(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $fake_uuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTag(\$id: ID!) {
@@ -338,9 +338,9 @@ class ContentTagQueryTest extends SocialGraphQLTestBase {
    * Test querying content tag with invalid UUID format.
    */
   public function testQueryContentTagInvalidUuid(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $invalid_uuid = 'not-a-valid-uuid';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTag(\$id: ID!) {
@@ -387,7 +387,6 @@ class ContentTagQueryTest extends SocialGraphQLTestBase {
    * Test querying multiple content tags.
    */
   public function testQueryMultipleContentTags(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Science',
@@ -409,6 +408,7 @@ class ContentTagQueryTest extends SocialGraphQLTestBase {
     ]);
     $tag2->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTags(\$id1: ID!, \$id2: ID!) {
@@ -460,7 +460,6 @@ class ContentTagQueryTest extends SocialGraphQLTestBase {
    * Test content tag without parent (should handle gracefully).
    */
   public function testQueryContentTagWithoutParent(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $tag = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Orphan Tag',
@@ -468,6 +467,7 @@ class ContentTagQueryTest extends SocialGraphQLTestBase {
     ]);
     $tag->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query ContentTag(\$id: ID!) {

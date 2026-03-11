@@ -260,8 +260,6 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
    * AN: Test topicTagCategories returns only categories with TOPIC placement.
    */
   public function testQueryTopicTagCategoriesForAuthorized(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topic_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Topic Category',
@@ -293,6 +291,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
     ]);
     $no_placement_category->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query TopicTagCategories {
@@ -389,8 +388,6 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
    * AN: Test eventTagCategories returns only categories with EVENT placement.
    */
   public function testQueryEventTagCategoriesForAuthorized(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $topic_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Topic Category',
@@ -415,6 +412,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
     ]);
     $both_category->save();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         query EventTagCategories {
@@ -541,8 +539,6 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
    * Test that only parent terms (parent = 0) are returned (authorized).
    */
   public function testQueryTopicTagCategoriesOnlyParentTermsForAuthorized(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $parent_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Parent Topic Category',
@@ -559,6 +555,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
     ]);
     $child_term->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query TopicTagCategories {
@@ -617,8 +614,6 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
    * Test empty result when no categories match the placement (authorized).
    */
   public function testQueryTopicTagCategoriesEmptyResultForAuthorized(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $event_category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Event Category',
@@ -627,6 +622,7 @@ class ContentTagCategoriesByPlacementTest extends SocialGraphQLTestBase {
     ]);
     $event_category->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query TopicTagCategories {

@@ -231,8 +231,6 @@ class TopicWithoutTaggingMutationTest extends SocialGraphQLTestBase {
    * Test creating a topic with all required fields.
    */
   public function testCreateTopicSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -242,6 +240,7 @@ class TopicWithoutTaggingMutationTest extends SocialGraphQLTestBase {
 
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
       mutation CreateTopic(\$type: ID!, \$title: String!, \$visibility: ContentVisibility!, \$body: RichTextJSON!, \$clientMutationId: UUIDv4) {
@@ -296,8 +295,6 @@ class TopicWithoutTaggingMutationTest extends SocialGraphQLTestBase {
    * Test that the content tagging field is not secretly present.
    */
   public function testCreateTopicWithTaggingErrors(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     // Create a topic type.
     $topicType = Term::create([
       'vid' => 'topic_types',
@@ -307,6 +304,7 @@ class TopicWithoutTaggingMutationTest extends SocialGraphQLTestBase {
 
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertErrors(
       <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {
@@ -345,8 +343,6 @@ class TopicWithoutTaggingMutationTest extends SocialGraphQLTestBase {
    * Test updating a topic with all fields (without tagging).
    */
   public function testUpdateTopicSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -365,6 +361,7 @@ class TopicWithoutTaggingMutationTest extends SocialGraphQLTestBase {
 
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateTopic(\$id: ID!, \$type: ID, \$title: String, \$visibility: ContentVisibility, \$clientMutationId: UUIDv4) {
@@ -420,8 +417,6 @@ class TopicWithoutTaggingMutationTest extends SocialGraphQLTestBase {
    * Test that updateTopic rejects contentTags when tagging is not enabled.
    */
   public function testUpdateTopicWithTaggingErrors(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create([
       'vid' => 'topic_types',
       'name' => 'Article',
@@ -440,6 +435,7 @@ class TopicWithoutTaggingMutationTest extends SocialGraphQLTestBase {
 
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertErrors(
       <<<GQL
       mutation UpdateTopic(\$input: UpdateTopicInput!) {

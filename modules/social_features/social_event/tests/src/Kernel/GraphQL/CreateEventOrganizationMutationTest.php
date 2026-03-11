@@ -180,10 +180,10 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
 
     [$start, $end] = $this->eventTimestamps();
 
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -225,10 +225,10 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
 
     [$start, $end] = $this->eventTimestamps();
 
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -270,7 +270,6 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
 
     $organization = $this->createOrganization('Public Organization', 'public');
     $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
@@ -279,6 +278,7 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     [$start, $end] = $this->eventTimestamps();
     $title = 'Event in Organization';
 
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -326,7 +326,6 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
 
     $primary_org = $this->createOrganization('Primary Organization', 'public');
     $cross_org_1 = $this->createOrganization('Cross Organization 1', 'public');
@@ -338,6 +337,7 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     [$start, $end] = $this->eventTimestamps();
     $title = 'Event Cross-posted to Organizations';
 
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -391,12 +391,12 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
 
     [$start, $end] = $this->eventTimestamps();
 
     $organization = $this->createOrganization('Test Organization', 'public');
 
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -438,7 +438,6 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
 
     [$start, $end] = $this->eventTimestamps();
 
@@ -450,6 +449,7 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
       $crossposted_organizations[] = $org->uuid();
     }
 
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -491,13 +491,13 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
 
     [$start, $end] = $this->eventTimestamps();
 
     $organization = $this->createOrganization('Test Organization', 'public');
     $fake_org_uuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -539,7 +539,6 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     if (!static::socialOrganizationExists()) {
       $this->markTestSkipped('social_organization is not available.');
     }
-    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
 
     // Create members-only org but do NOT add the current user as member.
     $group = Group::create([
@@ -554,6 +553,7 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
 
     [$start, $end] = $this->eventTimestamps();
 
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {

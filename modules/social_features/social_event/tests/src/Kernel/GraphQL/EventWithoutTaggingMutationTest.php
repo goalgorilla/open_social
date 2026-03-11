@@ -31,13 +31,12 @@ class EventWithoutTaggingMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that createEvent rejects contentTags when tagging is not enabled.
    */
   public function testCreateEventWithTaggingErrors(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertErrors(
       <<<GQL
       mutation CreateEvent(\$input: CreateEventInput!) {
@@ -77,13 +76,12 @@ class EventWithoutTaggingMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that updateEvent rejects contentTags when tagging is not enabled.
    */
   public function testUpdateEventWithTaggingErrors(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertErrors(
       <<<GQL
       mutation UpdateEvent(\$input: UpdateEventInput!) {

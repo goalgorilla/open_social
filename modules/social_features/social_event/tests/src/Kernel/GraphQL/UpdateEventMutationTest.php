@@ -25,8 +25,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test updating an event with all fields.
    */
   public function testUpdateEventSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType('Conference');
     $newEventType = $this->createEventType('Workshop');
     $event = $this->createEvent($eventType);
@@ -37,6 +35,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
 
     // @todo add visibility and address in the assertResults once it lands in
     // the read schema.
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -112,11 +111,10 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test clearing the event type by sending type: null.
    */
   public function testUpdateEventClearEventType(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType('Conference');
     $event = $this->createEvent($eventType);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -159,11 +157,10 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test partial update -- only title.
    */
   public function testUpdateEventTitle(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -201,13 +198,12 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test updating an event's body with Rich Text JSON.
    */
   public function testUpdateEventWithBody(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType('Article');
     $event = $this->createEvent($eventType, [
       'body' => [['value' => 'Original body', 'format' => 'basic_html']],
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -249,14 +245,13 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * new revision is created.
    */
   public function testUpdateEventNoOp(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
     $revision_id_before = $event->getRevisionId();
     $changed_before = $event->getChangedTime();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -299,10 +294,9 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error for non-existent event ID.
    */
   public function testUpdateEventNotFound(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $fakeUuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -335,11 +329,10 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error for empty title.
    */
   public function testUpdateEventEmptyTitle(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -372,11 +365,10 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error for whitespace-only title.
    */
   public function testUpdateEventWhitespaceTitle(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -409,12 +401,11 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error for title too long (> 255 characters).
    */
   public function testUpdateEventTitleTooLong(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
     $longTitle = str_repeat('A', 256);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -447,12 +438,11 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error for invalid event type UUID.
    */
   public function testUpdateEventInvalidEventType(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
     $fakeUuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -485,11 +475,10 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error for invalid date types (non-integer).
    */
   public function testUpdateEventInvalidDateType(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -526,14 +515,13 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when end date is before start date (both provided).
    */
   public function testUpdateEventEndDateBeforeStartDate(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -567,8 +555,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test cross-field date validation: new startDate after existing endDate.
    */
   public function testUpdateEventStartDateAfterExistingEndDate(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     // Event ends at 2026-06-15T18:00:00.
     $event = $this->createEvent($eventType);
@@ -576,6 +562,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     // Set start date to after the existing end date.
     $newStartTimestamp = (new \DateTimeImmutable('2026-06-16T10:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -608,13 +595,12 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test updating location to a new value.
    */
   public function testUpdateEventLocation(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType, [
       'field_event_location' => 'Original Location',
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -652,13 +638,12 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test clearing location by providing NULL.
    */
   public function testUpdateEventClearLocation(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType, [
       'field_event_location' => 'Original Location',
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -696,8 +681,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that when address is omitted, the event address remains unchanged.
    */
   public function testUpdateEventAddressOmittedUnchanged(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType, [
       'title' => 'Event With Address To Keep',
@@ -714,6 +697,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
       ],
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -761,8 +745,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that when address is null, the address field is cleared.
    */
   public function testUpdateEventClearAddress(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType, [
       'field_event_address' => [
@@ -778,6 +760,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
       ],
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -816,8 +799,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that when address is provided with valid AddressInput, it is updated.
    */
   public function testUpdateEventAddressUpdated(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType, [
       'field_event_address' => [
@@ -833,6 +814,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
       ],
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -883,8 +865,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that an invalid address country code is rejected.
    */
   public function testUpdateEventAddressInvalidEmptyCountryCode(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType, [
       'field_event_address' => [
@@ -900,6 +880,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
       ],
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -935,11 +916,10 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that invalid country code is rejected with validation errors.
    */
   public function testUpdateEventAddressInvalidCountryCode(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -975,13 +955,12 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that field_event_enroll is not changed during update.
    */
   public function testUpdateEventEnrollmentUnchanged(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
     $original_enroll = $event->get('field_event_enroll')->getString();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1026,11 +1005,10 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Event type does not expose visibility in GraphQL; we assert via the node.
    */
   public function testUpdateEventPublicVisibility(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1072,8 +1050,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Event type does not expose visibility in GraphQL; we assert via the node.
    */
   public function testUpdateEventCommunityVisibility(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     // Create the event with public visibility so the mutation actually changes
     // it.
@@ -1081,6 +1057,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
       'field_content_visibility' => 'public',
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1120,12 +1097,11 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test adding an event to a group via update.
    */
   public function testUpdateEventAddToGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
     $group = $this->createTestGroup();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1167,8 +1143,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test removing an event from all groups via update.
    */
   public function testUpdateEventRemoveFromAllGroups(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $group = $this->createTestGroup();
 
@@ -1178,6 +1152,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     $event->set('groups', [['target_id' => $group->id()]]);
     $event->save();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1213,8 +1188,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test changing an event's groups via update.
    */
   public function testUpdateEventChangeGroups(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $group1 = $this->createTestGroup('Group 1');
     $group2 = $this->createTestGroup('Group 2');
@@ -1225,6 +1198,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     $event->set('groups', [['target_id' => $group1->id()]]);
     $event->save();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1264,8 +1238,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that omitting groups leaves group membership unchanged.
    */
   public function testUpdateEventLeaveGroupsUnchanged(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $group = $this->createTestGroup();
 
@@ -1275,6 +1247,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     $event->set('groups', [['target_id' => $group->id()]]);
     $event->save();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1314,12 +1287,11 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when group does not exist.
    */
   public function testUpdateEventInvalidGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
     $fake_group_uuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1352,12 +1324,11 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when primary and crossposted list duplicate group.
    */
   public function testUpdateEventDuplicateGroups(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
     $group = $this->createTestGroup();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1391,13 +1362,12 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test updating an event with cross-posting (primary + crossposted groups).
    */
   public function testUpdateEventCrossPostingSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
     $group1 = $this->createTestGroup('Group 1');
     $group2 = $this->createTestGroup('Group 2');
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1438,12 +1408,11 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when visibility is not allowed in target groups.
    */
   public function testUpdateEventVisibilityNotAllowedInGroups(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
     $group = $this->createTestGroup('Group public only', ['public']);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1477,8 +1446,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that cross-posting is rejected when cross-posting is disabled.
    */
   public function testUpdateEventCrossPostingDisabled(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $group_settings = $this->config('social_group.settings');
     $previous_status = $group_settings->get('cross_posting.status');
     $previous_content_types = $group_settings->get('cross_posting.content_types');
@@ -1494,6 +1461,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
       $group1 = $this->createTestGroup('Group 1');
       $group2 = $this->createTestGroup('Group 2');
 
+      $this->actAsClientCredentialsWithScopes(['event:write']);
       $this->assertResults(
         <<<GQL
           mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1535,8 +1503,6 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test updating event from single group to primary + crossposted.
    */
   public function testUpdateEventSingleToMultipleGroups(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $group1 = $this->createTestGroup('Group 1');
     $group2 = $this->createTestGroup('Group 2');
@@ -1547,6 +1513,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     $event->set('groups', [['target_id' => $group1->id()]]);
     $event->save();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {
@@ -1587,11 +1554,10 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that updating an event requires the event:write scope.
    */
   public function testUpdateEventRequiresEventWriteScope(): void {
-    $this->actAsClientCredentialsWithScopes([]);
-
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
+    $this->actAsClientCredentialsWithScopes([]);
     $this->assertErrors(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {

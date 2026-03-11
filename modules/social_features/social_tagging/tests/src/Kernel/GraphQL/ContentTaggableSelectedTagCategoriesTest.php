@@ -201,8 +201,6 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
    * Test querying contentTagCategories for an Event with tags.
    */
   public function testQueryContentTagCategoriesForEvent(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $category1 = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Technology',
@@ -253,6 +251,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
       ],
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         query Event(\$id: ID!) {
@@ -360,8 +359,6 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
    * Test querying contentTagCategories for an Event with no tags.
    */
   public function testQueryContentTagCategoriesForEventWithNoTags(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $event = $this->createNode([
       'type' => 'event',
       'title' => 'Test Event Without Tags',
@@ -369,6 +366,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
       'field_content_visibility' => 'public',
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         query Event(\$id: ID!) {
@@ -412,8 +410,6 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
    * Test pagination for contentTags in ContentTaggableSelectedTagCategories.
    */
   public function testContentTagCategoriesPagination(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Technology',
@@ -442,6 +438,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
       'social_tagging' => $tag_ids,
     ]);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         query Event(\$id: ID!) {
@@ -609,8 +606,6 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
    * Test querying contentTagCategories for a Topic with tags.
    */
   public function testQueryContentTagCategoriesForTopic(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $category = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Technology',
@@ -636,6 +631,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
     ]);
     $topic->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query Topic(\$id: ID!) {
@@ -694,8 +690,6 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
    * Test querying with both parent and child tags selected.
    */
   public function testQueryContentTagCategoriesWithParentAndChildTags(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $parent_tag = Term::create([
       'vid' => 'social_tagging',
       'name' => 'Tag 1',
@@ -723,6 +717,7 @@ class ContentTaggableSelectedTagCategoriesTest extends SocialGraphQLTestBase {
     ]);
     $topic->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertResults(
       <<<GQL
         query Topic(\$id: ID!) {

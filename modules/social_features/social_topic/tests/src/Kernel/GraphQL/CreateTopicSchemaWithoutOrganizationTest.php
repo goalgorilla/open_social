@@ -52,11 +52,10 @@ class CreateTopicSchemaWithoutOrganizationTest extends SocialTopicGraphQLKernelT
    * When organizations is sent, GraphQL rejects it as unknown field.
    */
   public function testCreateTopicInputHasNoOrganizationsFieldWhenModuleDisabled(): void {
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
-
     $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
     $topicType->save();
 
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertErrors(
       <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {

@@ -36,8 +36,6 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test creating an event with all required fields.
    */
   public function testCreateEventSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
@@ -45,6 +43,7 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
 
     // @todo add visibility in the assertResults once it lands in the read
     // schema.
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -111,12 +110,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test creating an event without an event type (type is optional).
    */
   public function testCreateEventSuccessWithoutEventType(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $clientMutationId = '550e8400-e29b-41d4-a716-446655440001';
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -179,12 +177,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when Rich Text JSON is invalid (missing root).
    */
   public function testCreateEventInvalidRichTextJson(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertErrors(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -215,13 +212,12 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test creating an event without optional fields.
    */
   public function testCreateEventWithoutOptionalFields(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-07-01T09:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-07-01T17:00:00Z'))->getTimestamp();
 
     // @todo add visibility in the assertResults once it lands in the read
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -287,8 +283,6 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Event type does not expose visibility in GraphQL; we assert via the node.
    */
   public function testCreateEventPublicVisibility(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-08-01T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-08-01T18:00:00Z'))->getTimestamp();
@@ -297,6 +291,7 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
 
     // @todo add visibility in the assertResults once it lands in the read
     // schema.
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -363,8 +358,6 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Event type does not expose visibility in GraphQL; we assert via the node.
    */
   public function testCreateEventCommunityVisibility(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-08-01T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-08-01T18:00:00Z'))->getTimestamp();
@@ -373,6 +366,7 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
 
     // @todo add visibility in the assertResults once it lands in the read
     // schema.
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -441,12 +435,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * becomes empty after trim yields TITLE_REQUIRED.
    */
   public function testCreateEventEmptyOrWhitespaceOnlyTitleFails(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -485,13 +478,12 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error for title too long (> 255 characters).
    */
   public function testCreateEventTitleTooLong(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
     $longTitle = str_repeat('A', 256);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -530,10 +522,9 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when start and end date are floats (is_int() guard).
    */
   public function testCreateEventInvalidDateType(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -571,12 +562,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when end date is before start date.
    */
   public function testCreateEventEndDateBeforeStartDate(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -615,12 +605,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error for invalid event type UUID.
    */
   public function testCreateEventInvalidEventType(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $fakeUuid = '12345678-1234-1234-1234-123456789012';
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -659,12 +648,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test creating an event with a valid address.
    */
   public function testCreateEventWithValidAddress(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -727,12 +715,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * send an empty string to trigger input-level validation.
    */
   public function testCreateEventAddressMissingCountryCode(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -773,12 +760,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when address countryCode is not in the list.
    */
   public function testCreateEventAddressInvalidCountryCode(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -819,12 +805,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test creating an event with a single group successfully.
    */
   public function testCreateEventWithSingleGroupSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     [$start, $end] = $this->eventTimestamps();
 
     $group = $this->createTestGroup();
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -875,13 +860,12 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test creating an event with cross-posting successfully.
    */
   public function testCreateEventWithCrossPostingSuccess(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     [$start, $end] = $this->eventTimestamps();
 
     $group1 = $this->createTestGroup('Group 1');
     $group2 = $this->createTestGroup('Group 2', ['public', 'group']);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -934,11 +918,10 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when primary group doesn't exist.
    */
   public function testCreateEventWithInvalidPrimaryGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     [$start, $end] = $this->eventTimestamps();
     $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -977,14 +960,13 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when cross-posted group doesn't exist.
    */
   public function testCreateEventWithInvalidCrossPostedGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     [$start, $end] = $this->eventTimestamps();
 
     $group = $this->createTestGroup('Test Group', ['public']);
 
     $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1024,12 +1006,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when same group is in primary and cross-posted.
    */
   public function testCreateEventWithDuplicateGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     [$start, $end] = $this->eventTimestamps();
 
     $group = $this->createTestGroup('Test Group', ['public']);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1069,8 +1050,6 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when too many cross-posted groups.
    */
   public function testCreateEventTooManyCrossPostedGroups(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     [$start, $end] = $this->eventTimestamps();
 
     $primaryGroup = $this->createTestGroup('Primary Group', ['public']);
@@ -1081,6 +1060,7 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
       $crosspostedGroups[] = $group->uuid();
     }
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1120,12 +1100,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when visibility is not allowed in single group.
    */
   public function testCreateEventVisibilityNotAllowedInSingleGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     [$start, $end] = $this->eventTimestamps();
 
     $group = $this->createTestGroup('Test Group', ['public', 'group']);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1164,13 +1143,12 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation when visibility is not in intersection for cross-posting.
    */
   public function testCreateEventVisibilityNotAllowedInCrossPosting(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     [$start, $end] = $this->eventTimestamps();
 
     $group1 = $this->createTestGroup('Group 1');
     $group2 = $this->createTestGroup('Group 2', ['public', 'group']);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1214,12 +1192,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * (no 'public' or 'community').
    */
   public function testCreateEventPublicNotAllowedInSecretGroup(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     [$start, $end] = $this->eventTimestamps();
 
     $group = $this->createTestGroup('Secret Group', ['group']);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1262,13 +1239,12 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * VISIBILITY_NOT_ALLOWED_IN_GROUP.
    */
   public function testCreateEventPublicNotAllowedInSecretGroupCrossPosting(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     [$start, $end] = $this->eventTimestamps();
 
     $secretGroup = $this->createTestGroup('Secret Group', ['community', 'group']);
     $publicGroup = $this->createTestGroup('Public Group', ['public', 'group']);
 
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertResults(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1308,8 +1284,6 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test validation error when cross-posting is disabled.
    */
   public function testCreateEventCrossPostingDisabled(): void {
-    $this->actAsClientCredentialsWithScopes(['event:write']);
-
     $group_settings = $this->config('social_group.settings');
     $previous_status = $group_settings->get('cross_posting.status');
     $previous_content_types = $group_settings->get('cross_posting.content_types');
@@ -1325,6 +1299,7 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
       $group1 = $this->createTestGroup('Group 1', ['public']);
       $group2 = $this->createTestGroup('Group 2', ['public']);
 
+      $this->actAsClientCredentialsWithScopes(['event:write']);
       $this->assertResults(
         <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1372,12 +1347,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
    * Test that creating an event requires the event:write scope.
    */
   public function testCreateEventRequiresEventWriteScope(): void {
-    $this->actAsClientCredentialsWithScopes([]);
-
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes([]);
     $this->assertErrors(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1408,21 +1382,14 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
   }
 
   /**
-   * Test that authorization_code grant is rejected by @allowBot.
+   * Test that creating an event without required scopes is rejected.
    */
-  public function testCreateEventRejectsAuthorizationCodeGrant(): void {
-    $user = $this->createUser([
-      'create event content',
-      'access content',
-      'grant simple_oauth codes',
-    ]);
-    $this->assertNotFalse($user, 'User should be created');
-    $this->actAsAuthorizationCodeWithScopes(['event:write'], $user);
-
+  public function testCreateEventWithoutRequiredScopesIsRejected(): void {
     $eventType = $this->createEventType();
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
+    $this->actAsClientCredentialsWithScopes([]);
     $this->assertErrors(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1445,11 +1412,11 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
         ],
       ],
       [
-        "Application type 'User' does not have access on 'createEvent'.",
+        "Missing scope 'event:write' on 'createEvent'.",
       ],
       $this->defaultMutationCacheMetaData()
     );
-    $this->assertSame(0, $this->getEventCountByTitle('Test Event'), 'No event node should have been created when authorization_code grant is used with @allowBot.');
+    $this->assertSame(0, $this->getEventCountByTitle('Test Event'), 'No event node should have been created without required scopes.');
   }
 
   /**
