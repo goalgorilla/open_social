@@ -787,7 +787,7 @@ class UpdateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
       ],
       [
         'updateTopic' => [
-          'errors' => ['CONTENT_TAG_NOT_FOUND:'],
+          'errors' => ['CONTENT_TAG_INVALID_INPUT'],
           'topic' => NULL,
         ],
       ],
@@ -1006,6 +1006,77 @@ class UpdateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     $updated_topic = $node_storage->load($topic_id);
     $tag_values_after = $updated_topic->get('social_tagging')->getValue();
     $this->assertEmpty($tag_values_after, 'Content tags should be removed');
+  }
+
+  /**
+   * Test removing content tags by passing explicit null (clear request).
+   */
+  public function testUpdateTopicClearContentTagsWithNull(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Discussion',
+    ]);
+    $topicType->save();
+
+    $tag1 = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Education',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tag1->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Original Title',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'social_tagging' => [$tag1->id()],
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$id: ID!, \$contentTags: [ID!]) {
+          updateTopic(input: {
+            id: \$id
+            contentTags: \$contentTags
+          }) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'id' => $topic->uuid(),
+        'contentTags' => NULL,
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // Verify content tags were cleared (explicit null = clear, not omit).
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $topic_id = $topic->id();
+    assert($topic_id !== NULL);
+    /** @var \Drupal\node\NodeInterface $updated_topic */
+    $updated_topic = $node_storage->load($topic_id);
+    $tag_values_after = $updated_topic->get('social_tagging')->getValue();
+    $this->assertEmpty($tag_values_after, 'Content tags should be cleared when contentTags: null');
   }
 
   /**

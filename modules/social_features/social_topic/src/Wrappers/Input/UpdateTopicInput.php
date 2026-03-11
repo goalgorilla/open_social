@@ -13,6 +13,7 @@ use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\social_organization\Service\OrganizationInputValidationService;
+use Drupal\social_tagging\Service\ContentTagInputValidationServiceInterface;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
@@ -112,6 +113,8 @@ class UpdateTopicInput extends TopicInputBase {
    *   The group input validation service.
    * @param \Drupal\social_organization\Service\OrganizationInputValidationService|null $organizationInputValidationService
    *   The organization input validation service.
+   * @param \Drupal\social_tagging\Service\ContentTagInputValidationServiceInterface|null $contentTagInputValidationService
+   *   The content tag input validation service.
    */
   public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
@@ -119,12 +122,14 @@ class UpdateTopicInput extends TopicInputBase {
     protected AccountProxyInterface $currentUser,
     ?GroupInputValidationService $groupInputValidationService = NULL,
     ?OrganizationInputValidationService $organizationInputValidationService = NULL,
+    ?ContentTagInputValidationServiceInterface $contentTagInputValidationService = NULL,
   ) {
     parent::__construct(
       $entityTypeManager,
       $entityRepository,
       $groupInputValidationService,
       $organizationInputValidationService,
+      $contentTagInputValidationService,
     );
   }
 
@@ -238,8 +243,8 @@ class UpdateTopicInput extends TopicInputBase {
 
     // Process content tags if provided.
     $content_tags_result = $this->processContentTags($input);
-    if ($content_tags_result !== NULL && empty($content_tags_result['violations'])) {
-      $this->contentTags = $content_tags_result['valid_tags'];
+    if ($content_tags_result !== NULL && $content_tags_result->isValid()) {
+      $this->contentTags = $content_tags_result->getTags();
     }
 
     // Process groups if provided.
