@@ -1,4 +1,11 @@
 services:
+  _defaults:
+    autowire: true
+
+  social_tagging.content_tag_input_validation:
+    class: Drupal\social_tagging\Service\ContentTagInputValidationService
+  Drupal\social_tagging\Service\ContentTagInputValidationServiceInterface: '@social_tagging.content_tag_input_validation'
+
   social_tagging.tag_service:
     class: Drupal\social_tagging\SocialTaggingService
     arguments:
