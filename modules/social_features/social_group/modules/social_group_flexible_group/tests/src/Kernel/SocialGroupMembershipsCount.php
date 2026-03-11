@@ -3,9 +3,9 @@
 namespace Drupal\social_group_flexible_group\tests\Kernel;
 
 use Drupal\group\Entity\Group;
-use Drupal\Tests\iata_graphql_user\Kernel\GraphQLOAuthTestTrait;
-use Drupal\Tests\iata_graphql_user\Kernel\OAuthTestTrait;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
+use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\user\UserInterface;

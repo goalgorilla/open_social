@@ -8,8 +8,8 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\node\Entity\NodeType;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
-use Drupal\Tests\iata_graphql_user\Kernel\GraphQLOAuthTestTrait;
-use Drupal\Tests\iata_graphql_user\Kernel\OAuthTestTrait;
+use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
+use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 
 /**

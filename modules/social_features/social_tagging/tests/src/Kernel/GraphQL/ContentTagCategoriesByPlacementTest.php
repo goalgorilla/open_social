@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\social_tagging\Kernel\GraphQL;
 
 use Drupal\taxonomy\Entity\Term;
-use Drupal\Tests\iata_graphql_user\Kernel\GraphQLOAuthTestTrait;
-use Drupal\Tests\iata_graphql_user\Kernel\OAuthTestTrait;
+use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
+use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 
