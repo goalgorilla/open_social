@@ -390,3 +390,32 @@ fieldset {
     }
   }
 }
+
+.form-item-field-grequest-form-description,
+.form-item-field-grequest-form-default {
+  label {
+    font-weight: 700;
+  }
+
+  textarea {
+    @include for-tablet-portrait-up {
+      min-width: 26rem;
+    }
+  }
+}
+
+.form-item-field-grequest-form-description {
+  textarea {
+    min-height: 150px;
+
+    @include for-tablet-portrait-up {
+      min-height: 100px;
+    }
+  }
+}
+
+.form-item-field-grequest-form-default {
+  textarea {
+    min-height: 200px;
+  }
+}
