@@ -180,6 +180,7 @@ class LogContext implements Context {
       return NULL;
     }
 
+    // allowed_classes TRUE: dblog variables can contain serialized objects (e.g. exceptions); we allow classes so Behat can format log messages correctly.
     $variables = @unserialize($row->variables, ['allowed_classes' => TRUE]);
 
     // Messages without variables or user specified text.
