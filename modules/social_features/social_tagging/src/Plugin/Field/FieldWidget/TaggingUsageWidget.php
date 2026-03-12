@@ -48,7 +48,9 @@ class TaggingUsageWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
-    $value = unserialize($items[$delta]->value ?? '', ['allowed_classes' => FALSE]);
+    $serialized_value = $items[$delta]->value ?? '';
+    $value = $serialized_value !== '' ? unserialize($serialized_value, ['allowed_classes' => FALSE]) : [];
+    $value = is_array($value) ? $value : [];
     $options = $this->taggingService->getKeyValueOptions();
     $element['#type'] = 'checkboxes';
     $element['#options'] = $options;
