@@ -211,7 +211,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     // Array $objects contain all the entities of this bulk operation batch.
     // We want smaller queue items then this so we chunk these.
     // @todo make the chunk size configurable or dependable on the batch size.
-    $chunk_size = Settings::get('social_mail_chunk_size', 10);
+    $chunk_size = $this->getChunkSize();
     $chunks = array_chunk($objects, $chunk_size);
     $data = [];
     foreach ($chunks as $chunk) {
@@ -460,6 +460,18 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     else {
       $this->configuration['expected_recipient_count'] = $list_count;
     }
+  }
+
+  /**
+   * Returns the chunk size for splitting users into queue items.
+   *
+   * Subclasses can override this to change the default for their mail backend.
+   *
+   * @return positive-int
+   *   The chunk size.
+   */
+  protected function getChunkSize(): int {
+    return Settings::get('social_mail_chunk_size', 10);
   }
 
   /**
