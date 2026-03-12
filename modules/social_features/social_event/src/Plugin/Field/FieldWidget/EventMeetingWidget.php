@@ -181,6 +181,13 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       return FALSE;
     }
 
+    // Prevent displaying the scheduler if the end date is greater than
+    // the start date. Otherwise, we get a fatal error in TimeConstraintManager.
+    $interval = $start_date->diff($end_date);
+    if ($interval->invert === 1) {
+      return FALSE;
+    }
+
     $attendees = (int) $parent_form_state->getValue(['field_event_meeting', 'meeting_form', 'max_attendees', 0, 'value']);
 
     $meeting_request = new MeetingRequest(

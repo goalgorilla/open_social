@@ -20,6 +20,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
 use Drupal\hux\Attribute\Hook;
 use Drupal\meeting_api\MeetingEntityInterface;
+use Drupal\node\NodeInterface;
 use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\Form\EventSettingsForm;
 use Drupal\social_event\PluginForm\ManualMeetingConfigurationForm;
@@ -204,6 +205,10 @@ final class EventOnline implements ContainerInjectionInterface {
     if (isset($fields['max_attendees'])) {
       $fields['max_attendees']->addConstraint('MeetingCapacity');
     }
+
+    if (isset($fields['datetime'])) {
+      $fields['datetime']->addConstraint('MeetingDateRange');
+    }
   }
 
   /**
@@ -375,6 +380,14 @@ final class EventOnline implements ContainerInjectionInterface {
       return;
     }
 
+    // Mark the form for the AJAX guard behavior that defers form submission
+    // while a blur-triggered AJAX request is in flight. This prevents the
+    // race condition where Drupal's AJAX system disables the triggering
+    // element and the field value is lost on submit.
+    // @see https://www.drupal.org/project/drupal/issues/1736308
+    $form['#attributes']['data-ajax-guard'] = TRUE;
+    $form['#attached']['library'][] = 'social_core/ajax-submit-guard';
+
     $dates_ajax = [
       'callback' => [static::class, 'refreshOnEventDatesChange'],
       'event' => 'blur',
@@ -491,6 +504,28 @@ final class EventOnline implements ContainerInjectionInterface {
     $country_code = $form_state->getValue(['field_event_address', 0, 'address', 'country_code']);
     if (!$is_online && !$country_code) {
       $form_state->setErrorByName('field_event_address', t('The country is required.'));
+    }
+  }
+
+  /**
+   * Deletes the related meeting entity when an online event is deleted.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node being deleted.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   *
+   * @see hook_ENTITY_TYPE_delete()
+   */
+  #[Hook('node_delete')]
+  public function cleanUpMeeting(NodeInterface $node): void {
+    if (!$node instanceof Event) {
+      return;
+    }
+
+    $meeting = $node->getMeeting();
+    if ($meeting instanceof MeetingEntityInterface) {
+      $meeting->delete();
     }
   }
 
