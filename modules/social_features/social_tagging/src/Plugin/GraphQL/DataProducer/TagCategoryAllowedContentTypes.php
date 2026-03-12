@@ -43,7 +43,7 @@ class TagCategoryAllowedContentTypes extends DataProducerPluginBase {
     if ($term->hasField('field_category_usage') && !$term->get('field_category_usage')->isEmpty()) {
       $serialized_value = $term->get('field_category_usage')->value;
       if (!empty($serialized_value)) {
-        $usage_values = unserialize($serialized_value);
+        $usage_values = unserialize($serialized_value, ['allowed_classes' => FALSE]);
         if (is_array($usage_values)) {
           // Map database values to GraphQL ENUM values.
           // Database stores 'node_topic', 'node_event', etc.

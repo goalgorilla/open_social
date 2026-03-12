@@ -57,7 +57,10 @@ class TaggingUsageFormatter extends FormatterBase {
     $elements = [];
     foreach ($items as $delta => $item) {
       $keys = $this->taggingService->getKeyValueOptions();
-      $values = unserialize($items[$delta]->value ?? '');
+      $values = unserialize($items[$delta]->value ?? '', ['allowed_classes' => FALSE]);
+      if (!is_array($values)) {
+        $values = [];
+      }
       foreach ($values as $value) {
         // Skip not selected items.
         if (empty($value) || empty($keys[$value])) {

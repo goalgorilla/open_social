@@ -324,7 +324,8 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
       return $usage[$tid] = [];
     }
 
-    $usage[$tid] = unserialize($term->get('field_category_usage')->value);
+    $unserialized = unserialize($term->get('field_category_usage')->value, ['allowed_classes' => FALSE]);
+    $usage[$tid] = is_array($unserialized) ? $unserialized : [];
 
     return $usage[$tid];
   }

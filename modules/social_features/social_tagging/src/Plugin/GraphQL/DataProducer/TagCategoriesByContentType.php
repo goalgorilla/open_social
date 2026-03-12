@@ -156,7 +156,7 @@ class TagCategoriesByContentType extends DataProducerPluginBase implements Conta
     }
 
     // Unserialize the value.
-    $usage_values = unserialize($serialized_value);
+    $usage_values = unserialize($serialized_value, ['allowed_classes' => FALSE]);
     if (!is_array($usage_values) || empty($usage_values)) {
       return FALSE;
     }
