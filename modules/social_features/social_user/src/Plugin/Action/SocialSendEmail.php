@@ -147,65 +147,65 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    */
   public function executeMultiple(array $objects) {
     $queue_storage_id = $this->configuration['queue_storage_id'];
+    $skip_guard_rail = !empty($this->configuration['skip_guard_rail']);
 
-    // If a previous batch detected a mismatch, block all batches.
-    if (!empty($this->context['sandbox']['social_email_blocked'])) {
-      return [];
+    // Guard rail: block when VBO is processing many more recipients than the
+    // user saw at submit (e.g. VBO lost the selection and fell back to full
+    // view results). Can be skipped via the "Skip recipient validation" option.
+    if ($this->getPluginId() === 'social_user_send_email' && !$skip_guard_rail) {
+      if (!empty($this->context['sandbox']['social_email_blocked'])) {
+        return [];
+      }
+
+      if (!isset($this->context['sandbox']['social_email_validated'])) {
+        $expected = $this->configuration['expected_recipient_count'] ?? NULL;
+        $actual = $this->context['sandbox']['total'] ?? NULL;
+
+        if ($expected === NULL || $actual === NULL) {
+          $this->context['sandbox']['social_email_blocked'] = TRUE;
+          $this->logger->critical('SocialSendEmail: Blocked - missing count data. Expected: @expected, Actual: @actual, Queue ID: @id', [
+            '@expected' => $expected ?? 'NULL',
+            '@actual' => $actual ?? 'NULL',
+            '@id' => $queue_storage_id,
+          ]);
+          $this->messenger()->addError($this->t('Email sending blocked: unable to validate recipient count. Please try again.'));
+          $queue_storage = $this->storage->getStorage('queue_storage_entity');
+          if ($entity = $queue_storage->load($queue_storage_id)) {
+            $entity->delete();
+          }
+          return [];
+        }
+
+        // Block if VBO is processing a different number of recipients than
+        // the user saw at submit. The failure mode is binary: either VBO has
+        // the correct selection or it lost it and fell back to all users.
+        if ((int) $actual !== (int) $expected) {
+          $this->context['sandbox']['social_email_blocked'] = TRUE;
+          $this->logger->critical('SocialSendEmail: Blocked - user saw @expected recipients but VBO processing @actual. Queue ID: @id', [
+            '@expected' => $expected,
+            '@actual' => $actual,
+            '@id' => $queue_storage_id,
+          ]);
+          $this->messenger()->addError($this->t('Email sending blocked: expected @expected recipients but found @actual. Please try again.', [
+            '@expected' => $expected,
+            '@actual' => $actual,
+          ]));
+          $queue_storage = $this->storage->getStorage('queue_storage_entity');
+          if ($entity = $queue_storage->load($queue_storage_id)) {
+            $entity->delete();
+          }
+          return [];
+        }
+
+        $this->context['sandbox']['social_email_validated'] = TRUE;
+      }
     }
 
-    // Guard rail: On first batch, verify the count VBO is processing
-    // matches what the user saw in the form title. This catches cases where
-    // the selection changed between form submission and batch execution.
-    // Only apply this check for the base social_user_send_email action.
-    if ($this->getPluginId() === 'social_user_send_email' && !isset($this->context['sandbox']['social_email_validated'])) {
-      $expected = $this->configuration['expected_recipient_count'] ?? NULL;
-      $actual = $this->context['sandbox']['total'] ?? NULL;
-
-      if ($expected === NULL || $actual === NULL) {
-        $this->context['sandbox']['social_email_blocked'] = TRUE;
-
-        $this->logger->critical('SocialSendEmail: Blocked - missing validation data. Expected: @expected, Actual: @actual, Queue ID: @id, Plugin: @plugin', [
-          '@expected' => $expected ?? 'NULL',
-          '@actual' => $actual ?? 'NULL',
-          '@id' => $queue_storage_id,
-          '@plugin' => $this->getPluginId(),
-        ]);
-
-        $this->messenger()->addError($this->t('Email sending blocked: unable to verify recipient count. Please try again.'));
-
-        $queue_storage = $this->storage->getStorage('queue_storage_entity');
-        if ($entity = $queue_storage->load($queue_storage_id)) {
-          $entity->delete();
-        }
-
-        return [];
-      }
-
-      // Block if counts don't match.
-      if ((int) $expected !== (int) $actual) {
-        $this->context['sandbox']['social_email_blocked'] = TRUE;
-
-        $this->logger->critical('SocialSendEmail: Blocked - user saw @expected recipients but VBO processing @actual. Queue ID: @id', [
-          '@expected' => $expected,
-          '@actual' => $actual,
-          '@id' => $queue_storage_id,
-        ]);
-
-        $this->messenger()->addError($this->t('Email sending blocked: expected @expected recipients but found @actual. Please try again.', [
-          '@expected' => $expected,
-          '@actual' => $actual,
-        ]));
-
-        $queue_storage = $this->storage->getStorage('queue_storage_entity');
-        if ($entity = $queue_storage->load($queue_storage_id)) {
-          $entity->delete();
-        }
-
-        return [];
-      }
-
-      // Validation passed.
-      $this->context['sandbox']['social_email_validated'] = TRUE;
+    if ($skip_guard_rail && empty($this->context['sandbox']['skip_guard_rail_logged'])) {
+      $this->context['sandbox']['skip_guard_rail_logged'] = TRUE;
+      $this->logger->notice('SocialSendEmail: Sending without recipient validation (skip_guard_rail). Queue ID: @id', [
+        '@id' => $queue_storage_id,
+      ]);
     }
 
     // Array $objects contain all the entities of this bulk operation batch.
@@ -376,10 +376,19 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       ];
     }
 
+    $form['skip_guard_rail'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Skip recipient validation'),
+      '#description' => $this->t('If you keep encountering issues where emails are blocked from being sent, you can skip the validation step.'),
+      '#default_value' => $form_state->getValue('skip_guard_rail', FALSE),
+      '#weight' => 50,
+    ];
+
     if (isset($form['list'])) {
       unset($form['list']);
     }
 
+    $form['actions']['#weight'] = 100;
     $form['actions']['submit']['#value'] = $this->t('Send email');
 
     $classes = ['button', 'btn', 'waves-effect', 'waves-btn'];
@@ -408,7 +417,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
     $form_data = $form_state->get('views_bulk_operations');
     if (!$form_data) {
-      $form_state->setError($form, $this->t('Unable to verify selected items. Please go back and try again.'));
+      $form_state->setError($form, $this->t('Unable to validate selected items. Please go back and try again.'));
       return;
     }
 
@@ -448,18 +457,18 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $this->configuration['queue_storage_id'] = $entity->id();
     }
 
-    // Store expected recipient count for validation during batch execution.
+    // Store expected recipient count for the guard rail in executeMultiple():
+    // block if VBO processes any count other than this (exact mismatch).
     $form_data = $form_state->get('views_bulk_operations');
     $list_count = count($form_data['list'] ?? []);
-    $exclude_mode = $form_data['exclude_mode'] ?? FALSE;
     $total_results = $form_data['total_results'] ?? 0;
+    $exclude_mode = $form_data['exclude_mode'] ?? FALSE;
 
-    if ($exclude_mode) {
-      $this->configuration['expected_recipient_count'] = $total_results - $list_count;
-    }
-    else {
-      $this->configuration['expected_recipient_count'] = $list_count;
-    }
+    $this->configuration['expected_recipient_count'] = $exclude_mode
+      ? $total_results - $list_count
+      : $list_count;
+
+    $this->configuration['skip_guard_rail'] = (bool) $form_state->getValue('skip_guard_rail');
   }
 
   /**
