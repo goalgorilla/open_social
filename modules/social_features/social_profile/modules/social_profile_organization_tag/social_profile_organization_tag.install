@@ -237,3 +237,50 @@ function social_profile_organization_tag_update_130004(): void {
     ->set('settings.token options.clear', TRUE)
     ->save();
 }
+
+/**
+ * Grant view/select permissions to SM and CM, revoke select from verified.
+ *
+ * Ensures sitemanager and contentmanager can view and select organisation tag
+ * terms on profiles when taxonomy_access_fix is enabled. Revokes select
+ * permission from verified so only staff can set the organisation tag.
+ */
+function social_profile_organization_tag_update_130005(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('taxonomy_access_fix')) {
+    return;
+  }
+
+  $taxonomy_permissions = [
+    'view terms in profile_organization_tag',
+    'view term names in profile_organization_tag',
+    'select terms in profile_organization_tag',
+  ];
+
+  $roles = ['sitemanager', 'contentmanager'];
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  foreach ($roles as $role_id) {
+    $role = $entity_type_manager->getStorage('user_role')->load($role_id);
+    if ($role === NULL) {
+      continue;
+    }
+
+    $needs_save = FALSE;
+    foreach ($taxonomy_permissions as $permission) {
+      if (!$role->hasPermission($permission)) {
+        $role->grantPermission($permission);
+        $needs_save = TRUE;
+      }
+    }
+    if ($needs_save) {
+      $role->save();
+    }
+  }
+
+  // Revoke select permission from verified role so only CM+ can select terms.
+  $verified = $entity_type_manager->getStorage('user_role')->load('verified');
+  if ($verified !== NULL && $verified->hasPermission('select terms in profile_organization_tag')) {
+    $verified->revokePermission('select terms in profile_organization_tag');
+    $verified->save();
+  }
+}
