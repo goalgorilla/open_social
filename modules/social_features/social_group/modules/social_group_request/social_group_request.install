@@ -307,3 +307,35 @@ function social_group_request_update_13011(): string {
 
   return $updater->logger()->output();
 }
+
+/**
+ * Exclude membership-requests from local tasks block visibility.
+ *
+ * Ensure the tabs block is not hidden on /group/ID/membership-requests pages.
+ */
+function social_group_request_update_13012(): void {
+  $config = \Drupal::configFactory()->getEditable('block.block.socialblue_local_tasks');
+  $pages = $config->get('visibility.request_path.pages');
+
+  if ($pages === NULL || $pages === '') {
+    return;
+  }
+
+  $path_to_remove = '/group/*/membership-requests';
+  $lines = preg_split('/\r\n|\n/', $pages, -1, PREG_SPLIT_NO_EMPTY);
+  if ($lines === FALSE) {
+    return;
+  }
+  $normalized_path = rtrim(trim($path_to_remove), '/');
+  $filtered = array_values(array_filter($lines, function (string $line) use ($normalized_path): bool {
+    $normalized_line = rtrim(trim($line), '/');
+    return $normalized_line !== $normalized_path;
+  }));
+
+  if (count($filtered) === count($lines)) {
+    return;
+  }
+
+  $config->set('visibility.request_path.pages', implode("\r\n", $filtered));
+  $config->save();
+}
