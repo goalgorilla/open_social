@@ -132,7 +132,6 @@ abstract class SocialEventGraphQLKernelTestBase extends SocialGraphQLTestBase {
     'social_group_invite',
     'ginvite',
     'layout_builder',
-    'social_tagging',
     'layout_discovery',
     'flag_count',
     'hux',
@@ -163,7 +162,6 @@ abstract class SocialEventGraphQLKernelTestBase extends SocialGraphQLTestBase {
    */
   protected function getConfigToInstall(): array {
     return [
-      'social_tagging',
       'node',
       'user',
       'profile',

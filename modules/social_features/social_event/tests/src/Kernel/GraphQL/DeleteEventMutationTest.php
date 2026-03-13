@@ -8,9 +8,9 @@ use Drupal\comment\Entity\Comment;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\Tests\social_event\Kernel\SocialEventGraphQLKernelTestBase;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
-use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 
 /**
@@ -18,195 +18,11 @@ use Drupal\Tests\user\Traits\UserCreationTrait;
  *
  * @group social_event
  */
-class DeleteEventMutationTest extends SocialGraphQLTestBase {
+class DeleteEventMutationTest extends SocialEventGraphQLKernelTestBase {
 
   use OAuthTestTrait;
   use UserCreationTrait;
   use GraphQLOAuthTestTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $strictConfigSchema = FALSE;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'address',
-    'datetime',
-    'subgroup',
-    'paragraphs',
-    'image',
-    'options',
-    'file',
-    'link',
-    'entity_reference_revisions',
-    'media',
-    'node',
-    'grequest',
-    'state_machine',
-    // For field_group_allowed_join_method.
-    'social_group',
-    // Required for social_group_request.
-    'activity_logger',
-    'activity_creator',
-    'message',
-    'dynamic_entity_reference',
-    // Required for requests.
-    'social_group_flexible_group',
-    'social_organization',
-    'social_group_request',
-    // Needed for field_media_file as field storage is defined by
-    // "social_media_system".
-    'social_media_system',
-    // Required for select2 form display widget.
-    'select2',
-    // Needed for taxonomy as it uses "text_long" field type.
-    'text',
-    'pathauto',
-    'smart_trim',
-    // Required by pathauto.
-    'path',
-    'path_alias',
-    'token',
-    'inline_entity_form',
-    'workflows',
-    'content_moderation',
-    'better_exposed_filters',
-    'filter',
-    'views_bulk_operations',
-    'gnode',
-    'social_event',
-    'social_event_type',
-    'social_topic',
-
-    // Meeting API modules required by social_event configurations.
-    'datetime_range_timezone',
-    'key',
-    'meeting_api',
-    'meeting_api_bbb',
-    'meeting_api_manual',
-    'profile',
-    'social_profile',
-    'views',
-    'group_core_comments',
-    'menu_ui',
-    'comment',
-    'editor',
-    'ckeditor5',
-    'responsive_table_filter',
-    'social_editor',
-    'social_node',
-    'social_core',
-    'field_group',
-    'file_mdm',
-    'image_effects',
-    'image_widget_crop',
-    'crop',
-    'block',
-    'block_content',
-    'entity_access_by_field',
-    'entity',
-    'entity_test',
-    'telephone',
-    'lazy',
-    'serialization',
-    'group',
-    'social_user',
-    'consumers',
-    'simple_oauth',
-    'simple_oauth_static_scope',
-    'social_oauth',
-    'social_graphql',
-    'graphql_oauth',
-    'social_comment',
-    'taxonomy',
-    'role_delegation',
-    'variationcache',
-    'menu_link_content',
-    'flag',
-    'field',
-    'social_group_invite',
-    'ginvite',
-    'layout_builder',
-    'social_tagging',
-    'layout_discovery',
-    'flag_count',
-    'hux',
-    // Required for taxonomy access permissions (view terms in event_types,
-    // select terms in event_types).
-    'taxonomy_access_fix',
-  ];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp(): void {
-    parent::setUp();
-
-    $this->installEntitySchema('group');
-    $this->installEntitySchema('group_content');
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('taxonomy_term');
-    $this->installEntitySchema('activity');
-    $this->installEntitySchema('menu_link_content');
-    $this->installEntitySchema('paragraph');
-    $this->installEntitySchema('block_content');
-    $this->installEntitySchema('path_alias');
-    $this->installEntitySchema('pathauto_pattern');
-    $this->installEntitySchema('profile');
-    $this->installEntitySchema('oauth2_token');
-    $this->installEntitySchema('oauth2_scope');
-    $this->installEntitySchema('consumer');
-    $this->installEntitySchema('comment');
-    $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installEntitySchema('user');
-    $this->installEntitySchema('flagging');
-    $this->installEntitySchema('flag');
-    $this->installSchema('flag', ['flag_counts']);
-    $this->installEntitySchema('file');
-    $this->installEntitySchema('crop');
-    $this->installSchema('file', ['file_usage']);
-    $this->installSchema('layout_builder', ['inline_block_usage']);
-
-    $this->installConfig([
-      'social_tagging',
-      'node',
-      'user',
-      'profile',
-      'menu_link_content',
-      'social_profile',
-      'social_node',
-      'social_core',
-      'social_event',
-      'social_event_type',
-      'social_topic',
-      'social_group_invite',
-      'ginvite',
-      'pathauto',
-      'social_group',
-      'grequest',
-      'group',
-      'activity_creator',
-      'activity_logger',
-      'layout_builder',
-      'layout_discovery',
-      'social_group_flexible_group',
-      'social_group_request',
-      'social_organization',
-      'flag',
-      'simple_oauth',
-      'simple_oauth_static_scope',
-      'social_editor',
-    ]);
-
-    // Configure OAuth to use static scope provider and set up keys.
-    $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
-    $this->setUpKeys();
-
-    $this->setUpCurrentUser(["uid" => 1], [], FALSE);
-  }
 
   /**
    * {@inheritdoc}
@@ -225,19 +41,8 @@ class DeleteEventMutationTest extends SocialGraphQLTestBase {
    *   The created event node.
    */
   protected function createEventNode(array $overrides = []): NodeInterface {
-    $values = array_merge([
-      'type' => 'event',
-      'title' => 'Test Event to Delete',
-      'field_content_visibility' => 'public',
-      'field_event_date' => date('Y-m-d\TH:i:s', strtotime('+1 day')),
-      'field_event_date_end' => date('Y-m-d\TH:i:s', strtotime('+2 days')),
-      'uid' => 2,
-      'status' => 1,
-    ], $overrides);
-
-    $node = Node::create($values);
-    $node->save();
-    return $node;
+    $eventType = $this->createEventType();
+    return $this->createEvent($eventType, array_merge(['title' => 'Test Event to Delete'], $overrides));
   }
 
   /**
