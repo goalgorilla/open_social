@@ -18,6 +18,8 @@ use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\social_group_flexible_group\ValueObject\GroupInputValidationResult;
 use Drupal\social_organization\Service\OrganizationInputValidationService;
 use Drupal\social_organization\ValueObject\OrganizationInputValidationResult;
+use Drupal\social_tagging\Service\ContentTagInputValidationServiceInterface;
+use Drupal\social_tagging\ValueObject\ContentTagInputValidationResult;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -158,6 +160,13 @@ abstract class EventInputBase extends InputBase {
   protected array $crosspostedOrganizations = [];
 
   /**
+   * The content tag input validation service.
+   *
+   * @var \Drupal\social_tagging\Service\ContentTagInputValidationServiceInterface|null
+   */
+  protected ?ContentTagInputValidationServiceInterface $contentTagInputValidationService = NULL;
+
+  /**
    * Constructs an EventInputBase instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -172,6 +181,8 @@ abstract class EventInputBase extends InputBase {
    *   The group input validation service.
    * @param \Drupal\social_organization\Service\OrganizationInputValidationService|null $organization_input_validation_service
    *   The organization input validation service.
+   * @param \Drupal\social_tagging\Service\ContentTagInputValidationServiceInterface|null $content_tag_input_validation_service
+   *   The content tag input validation service.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
@@ -180,6 +191,7 @@ abstract class EventInputBase extends InputBase {
     CountryRepositoryInterface $country_repository,
     ?GroupInputValidationService $group_input_validation_service = NULL,
     ?OrganizationInputValidationService $organization_input_validation_service = NULL,
+    ?ContentTagInputValidationServiceInterface $content_tag_input_validation_service = NULL,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->entityRepository = $entity_repository;
@@ -187,6 +199,7 @@ abstract class EventInputBase extends InputBase {
     $this->countryRepository = $country_repository;
     $this->groupInputValidationService = $group_input_validation_service;
     $this->organizationInputValidationService = $organization_input_validation_service;
+    $this->contentTagInputValidationService = $content_tag_input_validation_service;
   }
 
   /**
@@ -449,6 +462,56 @@ abstract class EventInputBase extends InputBase {
       $this->violations = array_merge(
         $this->violations,
         array_map(fn($error_code) => new Violation((string) $error_code), $validation_result->getErrors())
+      );
+    }
+
+    return $validation_result;
+  }
+
+  /**
+   * Process content tags from input.
+   *
+   * @param array $input
+   *   The input array that may contain 'contentTags'.
+   *
+   * @return \Drupal\social_tagging\ValueObject\ContentTagInputValidationResult|null
+   *   The validation result, or NULL when the 'contentTags' key is absent
+   *   (omitted) or when the validation service is not available and tags
+   *   were provided. When the key is present and value is null, returns a
+   *   valid result with empty tags (explicit "clear tags" intent).
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function processContentTags(array $input): ?ContentTagInputValidationResult {
+    if (!array_key_exists('contentTags', $input)) {
+      return NULL;
+    }
+
+    // Explicit null: caller intends to clear tags. Return valid empty result
+    // only when the validation service is available.
+    if ($input['contentTags'] === NULL) {
+      if ($this->contentTagInputValidationService === NULL) {
+        $this->violations[] = new Violation('CONTENT_TAGS_NOT_SUPPORTED');
+        return NULL;
+      }
+      return new ContentTagInputValidationResult([], []);
+    }
+
+    if ($this->contentTagInputValidationService === NULL) {
+      $this->violations[] = new Violation('CONTENT_TAGS_NOT_SUPPORTED');
+      return NULL;
+    }
+
+    $validation_result = $this->contentTagInputValidationService->validateContentTagsForContent(
+      $input['contentTags'],
+      'node_event',
+    );
+
+    if (!$validation_result->isValid()) {
+      $this->violations = array_merge(
+        $this->violations,
+        array_map(fn(string $error_code) => new Violation($error_code), $validation_result->getErrors())
       );
     }
 

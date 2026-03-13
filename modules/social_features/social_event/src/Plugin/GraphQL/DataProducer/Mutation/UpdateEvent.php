@@ -172,6 +172,21 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $modified = TRUE;
     }
 
+    // Update content tags if provided.
+    if ($input->hasContentTags()) {
+      if (!$node->hasField('social_tagging')) {
+        $payload->addViolation(new Violation('CONTENT_TAGS_NOT_SUPPORTED'));
+        return $payload;
+      }
+      $content_tags = $input->getContentTags();
+      $tag_ids = [];
+      foreach ($content_tags as $tag) {
+        $tag_ids[] = $tag->id();
+      }
+      $node->set('social_tagging', $tag_ids);
+      $modified = TRUE;
+    }
+
     // Update groups if provided: set field value now; sync relationships after
     // successful save.
     $groups_sync_pending = FALSE;

@@ -65,6 +65,16 @@ class UpdateEventInput extends EventInputBase {
   protected bool $organizationsProvided = FALSE;
 
   /**
+   * The content tags.
+   *
+   * NULL when contentTags was not provided in input (unchanged).
+   * Set to term array when contentTags was provided and valid (including []).
+   *
+   * @var \Drupal\taxonomy\TermInterface[]|null
+   */
+  protected ?array $contentTags = NULL;
+
+  /**
    * {@inheritdoc}
    */
   public function setValues(array $input): void {
@@ -212,6 +222,16 @@ class UpdateEventInput extends EventInputBase {
         'value' => $renderer->renderDocument($input['body']->getDocument()),
         'format' => $this->getBodyFieldTextFormat($this->actor),
       ];
+    }
+
+    // Process content tags if provided (optional for updates).
+    // Omit = unchanged; null = clear tags (processContentTags returns valid
+    // empty result); [] or [uuid, ...] = validate and set (or clear when []).
+    if (array_key_exists('contentTags', $input)) {
+      $content_tags_result = $this->processContentTags($input);
+      if ($content_tags_result !== NULL && $content_tags_result->isValid()) {
+        $this->contentTags = $content_tags_result->getTags();
+      }
     }
 
     // --- Groups (optional on update) ---
@@ -447,6 +467,27 @@ class UpdateEventInput extends EventInputBase {
    */
   public function hasGroups(): bool {
     return $this->groupsProvided;
+  }
+
+  /**
+   * Check if content tags should be updated.
+   *
+   * @return bool
+   *   TRUE if the contentTags field was provided in the input and validated.
+   */
+  public function hasContentTags(): bool {
+    return $this->contentTags !== NULL;
+  }
+
+  /**
+   * Get the content tags.
+   *
+   * @return \Drupal\taxonomy\TermInterface[]
+   *   The content tags (empty array when cleared).
+   */
+  public function getContentTags(): array {
+    assert($this->contentTags !== NULL, __FUNCTION__ . " called but content tags were not set.");
+    return $this->contentTags;
   }
 
   /**

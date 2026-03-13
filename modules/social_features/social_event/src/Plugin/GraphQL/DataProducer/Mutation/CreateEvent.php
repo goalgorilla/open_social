@@ -6,6 +6,7 @@ namespace Drupal\social_event\Plugin\GraphQL\DataProducer\Mutation;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelTrait;
@@ -53,6 +54,8 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager
+   *   The entity field manager.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger channel factory.
    * @param \Drupal\Core\Database\Connection $database
@@ -65,6 +68,7 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     string $plugin_id,
     array $plugin_definition,
     protected EntityTypeManagerInterface $entityTypeManager,
+    protected EntityFieldManagerInterface $entityFieldManager,
     LoggerChannelFactoryInterface $logger_factory,
     protected Connection $database,
     protected ?SetGroupsForNodeService $setGroupsForNodeService = NULL,
@@ -92,6 +96,7 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
+      $container->get('entity_field.manager'),
       $container->get('logger.factory'),
       $container->get('database'),
       $set_groups_for_node_service,
@@ -156,6 +161,21 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     $address = $input->getAddress();
     if ($address !== NULL) {
       $node_values['field_event_address'] = [0 => $address];
+    }
+
+    // Add content tags if provided. Only set when the event bundle supports
+    // the field.
+    if (!empty($input->getContentTags())) {
+      $event_field_definitions = $this->entityFieldManager->getFieldDefinitions('node', 'event');
+      if (!isset($event_field_definitions['social_tagging'])) {
+        $payload->addViolation(new Violation('CONTENT_TAGS_NOT_SUPPORTED'));
+        return $payload;
+      }
+      $tag_ids = [];
+      foreach ($input->getContentTags() as $tag) {
+        $tag_ids[] = $tag->id();
+      }
+      $node_values['social_tagging'] = $tag_ids;
     }
 
     // Organization reference: primary first, then cross-posted (IDs only).

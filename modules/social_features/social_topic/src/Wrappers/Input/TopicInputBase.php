@@ -118,9 +118,13 @@ abstract class TopicInputBase extends InputBase {
    *   The input array that may contain 'contentTags'.
    *
    * @return \Drupal\social_tagging\ValueObject\ContentTagInputValidationResult|null
-   *   The validation result; NULL only if 'contentTags' was omitted or the
-   *   content tag validation service is not available. An explicit
-   *   contentTags: null yields an empty valid result (clear tags).
+   *   The validation result, or NULL when the 'contentTags' key is absent
+   *   (omitted). When the key is present, behavior depends on validation
+   *   service availability: if the service is available, a null value yields
+   *   a valid result with empty tags (explicit "clear tags" intent) and
+   *   non-null values are validated and their result returned; if the
+   *   service is unavailable, CONTENT_TAGS_NOT_SUPPORTED is added and NULL
+   *   is returned for either a null or non-null value.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -129,7 +133,14 @@ abstract class TopicInputBase extends InputBase {
     if (!array_key_exists('contentTags', $input)) {
       return NULL;
     }
+
+    // Explicit null: caller intends to clear tags. Return valid empty result
+    // only when the validation service is available.
     if ($input['contentTags'] === NULL) {
+      if ($this->contentTagInputValidationService === NULL) {
+        $this->violations[] = new Violation('CONTENT_TAGS_NOT_SUPPORTED');
+        return NULL;
+      }
       return new ContentTagInputValidationResult([], []);
     }
 

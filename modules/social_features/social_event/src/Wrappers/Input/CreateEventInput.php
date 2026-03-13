@@ -19,6 +19,13 @@ class CreateEventInput extends EventInputBase {
   use VisibilityTrait;
 
   /**
+   * Content tags for the event.
+   *
+   * @var \Drupal\taxonomy\TermInterface[]
+   */
+  protected array $contentTags = [];
+
+  /**
    * {@inheritdoc}
    */
   public function setValues(array $input): void {
@@ -128,6 +135,12 @@ class CreateEventInput extends EventInputBase {
       }
     }
 
+    // Process content tags if provided.
+    $content_tags_result = $this->processContentTags($input);
+    if ($content_tags_result !== NULL && $content_tags_result->isValid()) {
+      $this->contentTags = $content_tags_result->getTags();
+    }
+
     // Process organization if provided.
     if ($this->actor !== NULL && array_key_exists('organizations', $input) && $input['organizations'] !== NULL) {
       $organizations_result = $this->processOrganizations($input, $this->actor);
@@ -152,6 +165,16 @@ class CreateEventInput extends EventInputBase {
     }
 
     return TRUE;
+  }
+
+  /**
+   * Get content tags.
+   *
+   * @return \Drupal\taxonomy\TermInterface[]
+   *   Array of content tags.
+   */
+  public function getContentTags(): array {
+    return $this->contentTags;
   }
 
 }

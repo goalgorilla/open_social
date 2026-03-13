@@ -13,6 +13,7 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_event\Wrappers\Input\CreateEventInput as CreateEventInputWrapper;
 use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\social_organization\Service\OrganizationInputValidationService;
+use Drupal\social_tagging\Service\ContentTagInputValidationServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -60,6 +61,8 @@ class CreateEventInput extends DataProducerPluginBase implements ContainerFactor
    *   The group input validation service.
    * @param \Drupal\social_organization\Service\OrganizationInputValidationService|null $organizationInputValidationService
    *   The organization input validation service.
+   * @param \Drupal\social_tagging\Service\ContentTagInputValidationServiceInterface|null $contentTagInputValidationService
+   *   The content tag input validation service.
    */
   public function __construct(
     array $configuration,
@@ -71,6 +74,7 @@ class CreateEventInput extends DataProducerPluginBase implements ContainerFactor
     protected CountryRepositoryInterface $countryRepository,
     protected ?GroupInputValidationService $groupInputValidationService = NULL,
     protected ?OrganizationInputValidationService $organizationInputValidationService = NULL,
+    protected ?ContentTagInputValidationServiceInterface $contentTagInputValidationService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -84,12 +88,15 @@ class CreateEventInput extends DataProducerPluginBase implements ContainerFactor
     $plugin_id,
     $plugin_definition,
   ): self {
-    $group_validation_service = NULL;
-    if ($container->get('module_handler')->moduleExists('social_group_flexible_group')) {
-      $group_validation_service = $container->get('social_group_flexible_group.group_input_validation');
-    }
-    $organization_validation_service = $container->get('module_handler')->moduleExists('social_organization')
+    $module_handler = $container->get('module_handler');
+    $group_validation_service = $module_handler->moduleExists('social_group_flexible_group')
+      ? $container->get('social_group_flexible_group.group_input_validation')
+      : NULL;
+    $organization_validation_service = $module_handler->moduleExists('social_organization')
       ? $container->get('social_organization.organization_input_validation')
+      : NULL;
+    $content_tag_validation_service = $module_handler->moduleExists('social_tagging')
+      ? $container->get('social_tagging.content_tag_input_validation')
       : NULL;
 
     return new static(
@@ -102,6 +109,7 @@ class CreateEventInput extends DataProducerPluginBase implements ContainerFactor
       $container->get('address.country_repository'),
       $group_validation_service,
       $organization_validation_service,
+      $content_tag_validation_service,
     );
   }
 
@@ -123,6 +131,7 @@ class CreateEventInput extends DataProducerPluginBase implements ContainerFactor
       $this->countryRepository,
       $this->groupInputValidationService,
       $this->organizationInputValidationService,
+      $this->contentTagInputValidationService,
     );
     $event_input->setValues($input);
     return $event_input;

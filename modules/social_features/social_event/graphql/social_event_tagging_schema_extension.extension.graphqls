@@ -19,3 +19,20 @@ extend enum ContentTagPlacement {
   """
   EVENT
 }
+
+extend input CreateEventInput {
+  """
+  Content tags associated with the event (optional).
+  If provided, each tag ID must be valid.
+  """
+  contentTags: [ID!]
+}
+
+extend input UpdateEventInput {
+  """
+  The tag(s) of the event.
+  The ID of the event tag(s) as provided by contentTagCategories.
+  If omitted, the content tag remains unchanged.
+  """
+  contentTags: [ID!]
+}
