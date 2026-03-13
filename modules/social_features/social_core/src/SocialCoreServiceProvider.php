@@ -4,6 +4,7 @@ namespace Drupal\social_core;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
+use Drupal\social_core\Service\FieldUninstallValidatorOverride;
 use Drupal\social_eda_dispatcher\Dispatcher;
 
 /**
@@ -29,6 +30,15 @@ class SocialCoreServiceProvider extends ServiceProviderBase {
         $definition = $container->getDefinition('select2.autocomplete_matcher');
         $definition->setClass('Drupal\social_core\Entity\Select2EntityAutocompleteMatcher');
       }
+    }
+
+    // Override the field uninstall validator to allow uninstalling modules
+    // whose field storages all have enforced dependencies on the module.
+    // We swap the class (not decorates) to preserve the service_collector tag.
+    if ($container->hasDefinition('field.uninstall_validator')) {
+      $definition = $container->getDefinition('field.uninstall_validator');
+      $definition->setClass(FieldUninstallValidatorOverride::class);
+      $definition->setLazy(FALSE);
     }
 
     // Replaces all EDA Handlers with dummies if there is no Publisher.

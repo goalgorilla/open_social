@@ -64,6 +64,73 @@ class SocialCourseUninstallHelper {
   }
 
   /**
+   * Removes course-related dependencies from configs listed in config/modify.
+   *
+   * Reads the module's config/modify YAML files, collects all config names
+   * from the 'items' keys, and strips any dependency entries containing
+   * "course" so they don't become orphan references after uninstall.
+   *
+   * @param string $module
+   *   The module machine name whose config/modify files to scan.
+   */
+  public static function cleanModifyConfigDependencies(string $module): void {
+    $module_path = \Drupal::service('extension.list.module')->getPath($module);
+    $modify_dir = $module_path . '/config/modify';
+
+    if (!is_dir($modify_dir)) {
+      return;
+    }
+
+    $modify_storage = new FileStorage($modify_dir);
+    $config_names = [];
+
+    foreach ($modify_storage->listAll() as $modify_name) {
+      $data = $modify_storage->read($modify_name);
+      if (!empty($data['items']) && is_array($data['items'])) {
+        $config_names = [...$config_names, ...array_keys($data['items'])];
+      }
+    }
+
+    $config_factory = \Drupal::configFactory();
+
+    foreach ($config_names as $config_name) {
+      $config = $config_factory->getEditable($config_name);
+
+      if ($config->isNew()) {
+        continue;
+      }
+
+      $dependencies = $config->get('dependencies');
+      if (empty($dependencies)) {
+        continue;
+      }
+
+      $changed = FALSE;
+
+      foreach (['module', 'config', 'theme'] as $type) {
+        if (empty($dependencies[$type])) {
+          continue;
+        }
+
+        $filtered = array_values(array_filter(
+          $dependencies[$type],
+          fn (string $dependency): bool => !str_contains($dependency, 'course'),
+        ));
+
+        if (count($filtered) !== count($dependencies[$type])) {
+          $dependencies[$type] = $filtered;
+          $changed = TRUE;
+        }
+      }
+
+      if ($changed) {
+        $config->set('dependencies', $dependencies);
+        $config->save();
+      }
+    }
+  }
+
+  /**
    * Adds enforced dependency on a module to all its config.
    *
    * Scans the module's config/install and config/optional directories and

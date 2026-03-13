@@ -27,6 +27,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\social_course\Entity\CourseEnrollmentInterface;
+use Drupal\social_course\SocialCourseUninstallHelper;
 use Drupal\social_course\Plugin\Group\RelationHandler\SocialCourseNodePermissionProvider;
 use Drupal\social_course\Plugin\Join\SocialCourseDirectJoin;
 use Drupal\social_course\Plugin\Join\SocialCourseInviteJoin;
@@ -2255,4 +2256,16 @@ function social_course_social_core_add_form_title_override(): array {
       'label' => 'Course',
     ],
   ];
+}
+
+/**
+ * Implements hook_module_preuninstall().
+ */
+function social_course_module_preuninstall($module, bool $is_syncing): void {
+  // This helps to make configuration cleanup before uninstalling the module.
+  if ($is_syncing || !in_array($module, ['social_course', 'social_course_advanced', 'social_course_basic'])) {
+    return;
+  }
+
+  SocialCourseUninstallHelper::cleanModifyConfigDependencies('social_course');
 }
