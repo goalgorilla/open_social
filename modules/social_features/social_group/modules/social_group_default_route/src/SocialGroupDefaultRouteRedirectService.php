@@ -120,22 +120,33 @@ class SocialGroupDefaultRouteRedirectService {
     $path = trim($request->getPathInfo(), '/');
     $path = '/' . $path;
 
-    if (!str_ends_with($path, '/stream')) {
-      return NULL;
+    // Handle paths ending with /stream (e.g., /group/slug/stream).
+    if (str_ends_with($path, '/stream')) {
+      return $this->resolveStreamRedirect($path);
     }
 
+    // Handle paths with /stream/ in the middle
+    // (e.g., /group/slug/stream/about).
+    if (str_contains($path, '/stream/')) {
+      return $this->resolveStreamSubpageRedirect($path);
+    }
+
+    return NULL;
+  }
+
+  /**
+   * Resolves a redirect for paths ending with /stream.
+   *
+   * @param string $path
+   *   The request path (e.g., /group/slug/stream).
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse|null
+   *   A redirect response, or NULL if not applicable.
+   */
+  protected function resolveStreamRedirect(string $path): ?RedirectResponse {
     $path_without_stream = rtrim(substr($path, 0, -strlen('/stream')), '/') ?: '/';
 
-    $group_id = NULL;
-    if (preg_match('#^/group/(\d+)$#', $path_without_stream, $m)) {
-      $group_id = (int) $m[1];
-    }
-    else {
-      $system_path = $this->pathAliasManager->getPathByAlias($path_without_stream);
-      if ($system_path && preg_match('#^/group/(\d+)(?:/stream)?$#', $system_path, $m)) {
-        $group_id = (int) $m[1];
-      }
-    }
+    $group_id = $this->resolveGroupIdFromAlias($path_without_stream);
 
     if ($group_id === NULL) {
       return NULL;
@@ -149,7 +160,69 @@ class SocialGroupDefaultRouteRedirectService {
       return NULL;
     }
 
-    return new RedirectResponse($url->setAbsolute(TRUE)->toString());
+    return new RedirectResponse($url->setAbsolute(TRUE)->toString(), 301);
+  }
+
+  /**
+   * Resolves a redirect for paths with /stream/ in the middle.
+   *
+   * E.g., /group/slug/stream/about → /group/slug/about.
+   *
+   * @param string $path
+   *   The request path containing /stream/ (e.g., /group/slug/stream/about).
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse|null
+   *   A redirect response, or NULL if not applicable.
+   */
+  protected function resolveStreamSubpageRedirect(string $path): ?RedirectResponse {
+    // Split at the first occurrence of /stream/.
+    $stream_pos = strpos($path, '/stream/');
+    if ($stream_pos === FALSE) {
+      return NULL;
+    }
+
+    $prefix = substr($path, 0, $stream_pos);
+    $suffix = substr($path, $stream_pos + strlen('/stream'));
+
+    $group_id = $this->resolveGroupIdFromAlias($prefix);
+
+    if ($group_id === NULL) {
+      return NULL;
+    }
+
+    // Build the corrected URL without /stream.
+    $corrected_alias = $this->pathAliasManager->getAliasByPath("/group/$group_id/stream");
+    $redirect_path = $corrected_alias . $suffix;
+
+    $url = Url::fromUserInput($redirect_path);
+
+    if ($url->access($this->currentUser) === FALSE) {
+      return NULL;
+    }
+
+    return new RedirectResponse($url->setAbsolute(TRUE)->toString(), 301);
+  }
+
+  /**
+   * Resolves a group ID from an alias or system path.
+   *
+   * @param string $path
+   *   The path to resolve (e.g., /group/slug or /group/123).
+   *
+   * @return int|null
+   *   The group ID, or NULL if the path does not resolve to a group.
+   */
+  protected function resolveGroupIdFromAlias(string $path): ?int {
+    if (preg_match('#^/group/(\d+)$#', $path, $m)) {
+      return (int) $m[1];
+    }
+
+    $system_path = $this->pathAliasManager->getPathByAlias($path);
+    if ($system_path && preg_match('#^/group/(\d+)(?:/stream)?$#', $system_path, $m)) {
+      return (int) $m[1];
+    }
+
+    return NULL;
   }
 
   /**

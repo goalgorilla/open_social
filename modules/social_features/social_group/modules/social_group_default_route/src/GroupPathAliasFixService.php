@@ -486,6 +486,120 @@ class GroupPathAliasFixService {
   }
 
   /**
+   * Fixes group tab aliases that don't match the current canonical alias.
+   *
+   * This handles two scenarios:
+   * 1. Aliases with /stream/ embedded (e.g., /group/slug/stream/about should
+   *    be /group/slug/about).
+   * 2. Aliases with stale prefixes (e.g., /group/slug-1/about when the
+   *    canonical alias is /group/slug).
+   *
+   * For each group tab alias, the correct alias is computed from the current
+   * canonical alias (the alias for /group/{id}/stream) plus the tab suffix
+   * from the system path.
+   *
+   * @param int|string $gid
+   *   The group ID to process.
+   *
+   * @throws \Exception
+   *   Throws an exception if there is a problem updating the database.
+   */
+  public function fixGroupTabAliases(int|string $gid): void {
+    $languages = $this->languageManager->getLanguages();
+
+    foreach (array_keys($languages) as $langcode) {
+      $this->fixGroupTabAliasesForLanguage($gid, $langcode);
+    }
+  }
+
+  /**
+   * Fixes group tab aliases for a specific group and language.
+   *
+   * @param int|string $gid
+   *   The group ID.
+   * @param string $langcode
+   *   The language code.
+   *
+   * @throws \Exception
+   */
+  protected function fixGroupTabAliasesForLanguage(int|string $gid, string $langcode): void {
+    // Get the current canonical alias for this group. Order by ID descending
+    // to get the latest alias when multiple exist for the same path (e.g. after
+    // a group title change that created a new alias).
+    $canonical_query = $this->database->select('path_alias', 'pa')
+      ->fields('pa', ['alias'])
+      ->condition('path', "/group/$gid/stream")
+      ->condition('langcode', $langcode)
+      ->orderBy('id', 'DESC')
+      ->range(0, 1);
+    $canonical_alias = $canonical_query->execute()
+      ?->fetchField();
+
+    if (!$canonical_alias) {
+      return;
+    }
+
+    // Find group tab aliases for this group. Only match paths with exactly
+    // one segment after /group/{id}/ (e.g. /group/123/about) to avoid
+    // touching admin or nested paths. Also exclude the stream path itself
+    // since that's the canonical alias.
+    $tab_aliases = $this->database->select('path_alias', 'pa')
+      ->fields('pa')
+      ->condition('path', "/group/$gid/%", 'LIKE')
+      ->condition('path', "/group/$gid/%/%", 'NOT LIKE')
+      ->condition('path', "/group/$gid/stream", '<>')
+      ->condition('langcode', $langcode)
+      ->execute()
+      ?->fetchAll(\PDO::FETCH_ASSOC);
+
+    if (!$tab_aliases) {
+      return;
+    }
+
+    $transaction = $this->database->startTransaction();
+    try {
+      foreach ($tab_aliases as $alias_record) {
+        // Extract the tab suffix from the system path.
+        // E.g., /group/123/about → about.
+        $system_path = $alias_record['path'];
+        if (!preg_match("#^/group/$gid/(.+)$#", $system_path, $m)) {
+          continue;
+        }
+        $tab_suffix = $m[1];
+
+        // Compute the expected alias.
+        $expected_alias = $canonical_alias . '/' . $tab_suffix;
+
+        // Skip if the alias already matches.
+        if ($alias_record['alias'] === $expected_alias) {
+          continue;
+        }
+
+        // Check for conflicts.
+        if ($this->hasAliasConflict($expected_alias, $langcode, alias_id: $alias_record['id'])) {
+          $this->registerReport('skipped', $alias_record['alias']);
+          continue;
+        }
+
+        foreach (static::ALIAS_TABLES as $table) {
+          $this->database->update($table)
+            ->fields(['alias' => $expected_alias])
+            ->condition('id', $alias_record['id'])
+            ->condition('revision_id', $alias_record['revision_id'])
+            ->condition('langcode', $langcode)
+            ->execute();
+        }
+
+        $this->registerReport('fixed_tab', $alias_record['alias'] . ' → ' . $expected_alias);
+      }
+    }
+    catch (\Exception $e) {
+      $transaction->rollBack();
+      throw $e;
+    }
+  }
+
+  /**
    * Retrieves a broken canonical alias for a group.
    *
    * This method checks both the group home and stream paths to find any

@@ -11,6 +11,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -94,12 +95,17 @@ class RedirectSubscriber implements EventSubscriberInterface {
   public function onKernelException(ExceptionEvent $event): void {
     $exception = $event->getThrowable();
 
-    if ($exception instanceof ParamNotConvertedException) {
-      $response = $this->redirectService->getRedirectResponseForStreamNotFound($event->getRequest());
+    if ($exception instanceof ParamNotConvertedException || $exception instanceof NotFoundHttpException) {
+      $request = $event->getRequest();
+      $response = $this->redirectService->getRedirectResponseForStreamNotFound($request);
       if ($response !== NULL) {
         $event->setResponse($response);
+        return;
       }
-      return;
+
+      if ($exception instanceof NotFoundHttpException) {
+        return;
+      }
     }
 
     $group = $this->redirectService->getGroup();

@@ -451,3 +451,81 @@ function social_group_default_route_post_update_004_generate_group_aliases(array
 
   return '';
 }
+
+/**
+ * Fixes group tab aliases that don't match the group's canonical alias.
+ *
+ * This handles two scenarios:
+ * 1. Aliases with /stream/ embedded (e.g., /group/slug/stream/about should
+ *    be /group/slug/about) left over from when stream aliases were shortened.
+ * 2. Aliases with stale prefixes (e.g., /group/slug-1/about when the
+ *    canonical alias is /group/slug) for groups whose suffix was fixed.
+ *
+ * @param array $sandbox
+ *   A reference to the sandbox array used to manage the operation's state.
+ *
+ * @throws \Exception
+ *   Throws an exception if there is a problem updating the database.
+ */
+function social_group_default_route_post_update_005_fix_group_tab_aliases(array &$sandbox): MarkupInterface {
+  if (!\Drupal::state()->get('social_group_default_route_fix_aliases_opt_in', FALSE)) {
+    $sandbox['#finished'] = 1;
+    \Drupal::logger('social_group_default_route')->info('Platform has opted out of alias fixes for the Group Default Route changes.');
+    return t('Platform has opted out of alias fixes for the Group Default Route changes.');
+  }
+
+  /** @var \Drupal\social_group_default_route\GroupPathAliasFixService $service */
+  $service = \Drupal::service(GroupPathAliasFixService::class);
+
+  if (!isset($sandbox['groups'])) {
+    $sandbox['groups'] = \Drupal::entityQuery('group')
+      ->accessCheck(FALSE)
+      ->sort('id')
+      ->execute();
+
+    $sandbox['total'] = count($sandbox['groups']);
+    $sandbox['progress'] = 0;
+    // Accumulate reports in $sandbox because the service instance (and its
+    // in-memory $reports array) is recreated on each batch iteration.
+    $sandbox['reports'] = [
+      'fixed_tab' => [],
+    ];
+
+    if ($sandbox['total'] === 0) {
+      $sandbox['#finished'] = 1;
+      return t('No groups found to process.');
+    }
+  }
+
+  $batch_size = Settings::get('entity_update_batch_size', 25);
+  $groups_to_process = array_splice($sandbox['groups'], 0, $batch_size);
+
+  foreach ($groups_to_process as $gid) {
+    $service->fixGroupTabAliases($gid);
+    $sandbox['progress']++;
+  }
+
+  // Merge this batch's reports into the sandbox-persisted totals.
+  $sandbox['reports']['fixed_tab'] = array_merge(
+    $sandbox['reports']['fixed_tab'],
+    $service->getReports('fixed_tab'),
+  );
+
+  if (empty($sandbox['groups'])) {
+    $sandbox['#finished'] = 1;
+
+    \Drupal::service('path_alias.manager')->cacheClear();
+    Cache::invalidateTags(['route_match']);
+
+    return t('Fixed group tab aliases for @total groups: @count tab aliases fixed.', [
+      '@total' => $sandbox['total'],
+      '@count' => count($sandbox['reports']['fixed_tab']),
+    ]);
+  }
+
+  $sandbox['#finished'] = $sandbox['progress'] / $sandbox['total'];
+  return t('Processed @progress of @total groups...', [
+    '@progress' => $sandbox['progress'],
+    '@total' => $sandbox['total'],
+  ]);
+}
