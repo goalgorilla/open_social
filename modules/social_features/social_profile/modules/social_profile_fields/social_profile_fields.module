@@ -99,6 +99,8 @@ function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterf
   }
 
   if ($context['entity_type'] === 'profile') {
+    $display->addCacheTags(['config:social_profile_fields.settings']);
+
     // Hide groups affiliation list.
     if (!_social_profile_fields_get_setting('profile_profile_field_group_affiliation')) {
       $display->removeComponent('groups_affiliation_list');

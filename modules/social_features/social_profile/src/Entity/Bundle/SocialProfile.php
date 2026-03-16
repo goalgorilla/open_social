@@ -103,10 +103,7 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
     $names = [];
 
     // Make sure the "Other affiliations" field is enabled.
-    if (
-      !$this->hasField('field_enable_other_affiliations') ||
-      !$this->get('field_enable_other_affiliations')->getString()
-    ) {
+    if (!$this->isOtherAffiliationsEnabled()) {
       return $names;
     }
 
@@ -308,10 +305,7 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
 
     // 1. Read the affiliation function from group membership
     // selected in the "field_group_affiliation" profile field.
-    if (
-      $this->hasField('field_group_affiliation') &&
-      !$this->get('field_group_affiliation')->isEmpty()
-    ) {
+    if ($this->isGroupAffiliationAccessed()) {
       $group = $this->get('field_group_affiliation')->entity;
       // @todo PROD-34701: Calling access here ensures that the current user is
       // only shown group information if they're allowed to see it.
@@ -342,9 +336,7 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
     // 2. Get an affiliation function from the "field_other_affiliations" field.
     if (empty($value)) {
       if (
-        // Make sure the "Other affiliations" field is enabled.
-        $this->hasField('field_enable_other_affiliations') &&
-        $this->get('field_enable_other_affiliations')->getString() &&
+        $this->isOtherAffiliationsEnabled() &&
         // Make sure the "Other affiliations" field has a value.
         $this->hasField('field_other_affiliations') &&
         !$this->get('field_other_affiliations')->isEmpty()
@@ -437,6 +429,48 @@ final class SocialProfile extends Profile implements ProfileAffiliationInterface
     ]);
 
     return $this;
+  }
+
+  /**
+   * Checks if the group affiliation field exists and has a value.
+   *
+   * @return bool
+   *   TRUE if the field exists and is not empty. FALSE otherwise.
+   */
+  protected function isGroupAffiliationAccessed(): bool {
+    // If the field is empty, it means that the user has not
+    // yet added any affiliation.
+    if (
+      !$this->hasField('field_group_affiliation') ||
+      $this->get('field_group_affiliation')->isEmpty()
+    ) {
+      return FALSE;
+    }
+
+    // For CLI requests, we should always allow access.
+    return PHP_SAPI === 'cli' ||
+      // Check access for current user.
+      $this->get('field_group_affiliation')->access('view');
+  }
+
+  /**
+   * Checks if the other affiliations field is enabled.
+   *
+   * @return bool
+   *   TRUE if the field exists, is accessible, and its value is truthy.
+   *   FALSE otherwise.
+   */
+  protected function isOtherAffiliationsEnabled(): bool {
+    if (!$this->hasField('field_enable_other_affiliations')) {
+      return FALSE;
+    }
+
+    // For CLI requests, we should always allow access.
+    if (PHP_SAPI !== 'cli' && !$this->get('field_enable_other_affiliations')->access('view')) {
+      return FALSE;
+    }
+
+    return (bool) $this->get('field_enable_other_affiliations')->getString();
   }
 
 }

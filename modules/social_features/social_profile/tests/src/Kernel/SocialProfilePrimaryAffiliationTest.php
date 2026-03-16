@@ -54,6 +54,10 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
     'options',
     'smart_trim',
     'social_profile',
+    'config_update',
+    'update_helper',
+    'config_modify',
+    'social_profile_fields',
   ];
 
   /**
@@ -64,6 +68,9 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
     // module or validating the schema.
     "views.view.newest_users",
     "views.view.user_information",
+    // config_modify tracks applied modifications in its own config object which
+    // doesn't have a schema definition bundled with the module.
+    "config_modify.applied",
   ];
 
   /**
@@ -82,7 +89,7 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
     $this->installEntitySchema('paragraph');
     $this->installEntitySchema('paragraphs_type');
     $this->installSchema('file', ['file_usage']);
-    $this->installConfig(['group', 'social_profile']);
+    $this->installConfig(['config_modify', 'group', 'social_profile', 'social_profile_fields']);
   }
 
   /**
@@ -107,8 +114,6 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
     assert($profile instanceof ProfileAffiliationInterface);
     $affiliation = $profile->getPrimaryAffiliation();
 
-    // @phpstan-ignore-next-line method.alreadyNarrowedType
-    $this->assertIsArray($affiliation);
     $this->assertEmpty($affiliation, 'Should return empty array when affiliation feature is disabled');
   }
 
@@ -133,8 +138,6 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
 
     $affiliation = $profile->getPrimaryAffiliation();
 
-    // @phpstan-ignore-next-line method.alreadyNarrowedType
-    $this->assertIsArray($affiliation);
     $this->assertNotEmpty($affiliation, 'Should return affiliation when platform affiliation exists');
     $this->assertEquals('Test Group', $affiliation['affiliation_name']);
     $this->assertEquals('Test Group Type', $affiliation['affiliation_type']);
@@ -166,8 +169,6 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
     $this->setCurrentUser($profile->getOwner());
     $affiliation = $profile->getPrimaryAffiliation();
 
-    // @phpstan-ignore-next-line method.alreadyNarrowedType
-    $this->assertIsArray($affiliation);
     $this->assertNotEmpty($affiliation);
     $this->assertEquals('Test Group', $affiliation['affiliation_name']);
     $this->assertEquals('Test Group Type', $affiliation['affiliation_type']);
@@ -196,8 +197,6 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
 
     $affiliation = $profile->getPrimaryAffiliation();
 
-    // @phpstan-ignore-next-line method.alreadyNarrowedType
-    $this->assertIsArray($affiliation);
     $this->assertNotEmpty($affiliation, 'Should return affiliation when non-platform affiliation exists');
     $this->assertEquals('External Organization', $affiliation['affiliation_name']);
     $this->assertEquals('External Function', $affiliation['affiliation_function']);
@@ -245,8 +244,6 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
     assert($profile instanceof ProfileAffiliationInterface);
     $affiliation = $profile->getPrimaryAffiliation();
 
-    // @phpstan-ignore-next-line method.alreadyNarrowedType
-    $this->assertIsArray($affiliation);
     $this->assertNotEmpty($affiliation);
     // Platform affiliation should take priority.
     $this->assertEquals('Platform Group', $affiliation['affiliation_name']);
@@ -277,8 +274,6 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
     assert($profile instanceof ProfileAffiliationInterface);
     $affiliation = $profile->getPrimaryAffiliation();
 
-    // @phpstan-ignore-next-line method.alreadyNarrowedType
-    $this->assertIsArray($affiliation);
     $this->assertEmpty($affiliation, 'Should return empty array when no affiliation exists');
   }
 
@@ -310,9 +305,93 @@ class SocialProfilePrimaryAffiliationTest extends KernelTestBase {
     assert($profile instanceof ProfileAffiliationInterface);
     $affiliation = $profile->getPrimaryAffiliation();
 
-    // @phpstan-ignore-next-line method.alreadyNarrowedType
-    $this->assertIsArray($affiliation);
     $this->assertEmpty($affiliation, 'Should return empty array when other affiliations are disabled');
+  }
+
+  /**
+   * Test affiliation ignoring non platform fields.
+   *
+   * Tests that non-platform affiliation is returned even when its admin
+   * setting is disabled, because access is now checked via field-level
+   * permissions.
+   */
+  public function testPrimaryAffiliationIgnoresNonPlatformFieldAdminSetting(): void {
+    $this->config('social_profile.settings')
+      ->set('group_affiliation_status', TRUE)
+      ->save();
+    Cache::invalidateTags([GroupAffiliation::GENERAL_CACHE_TAG]);
+
+    $profile = $this->createProfileWithAffiliation(
+      'non-platform',
+      NULL,
+      NULL,
+      NULL,
+      'External Organization',
+      'External Function'
+    );
+
+    // Disable the non-platform affiliation admin setting — access is now
+    // determined by field-level permissions, so this setting no longer blocks
+    // the field.
+    $this->config('social_profile_fields.settings')
+      ->set('profile_profile_field_other_affiliations', FALSE)
+      ->save();
+    drupal_static_reset();
+
+    $affiliation = $profile->getPrimaryAffiliation();
+    $this->assertNotEmpty(
+      $affiliation,
+      'Should return non-platform affiliation even when the admin setting is disabled',
+    );
+    $this->assertEquals('External Organization', $affiliation['affiliation_name']);
+  }
+
+  /**
+   * Test group affiliation is ignoring field settings.
+   *
+   * Tests that group affiliation is returned even when its admin setting is
+   * disabled, because access is now checked via field-level permissions.
+   */
+  public function testPrimaryAffiliationIgnoresGroupFieldAdminSetting(): void {
+    $this->config('social_profile.settings')
+      ->set('group_affiliation_status', TRUE)
+      ->save();
+    Cache::invalidateTags([GroupAffiliation::GENERAL_CACHE_TAG]);
+
+    $group = $this->createGroupTypeAndGroup('test_group', 'Test Group Type', 'Platform Group');
+    $user = $this->createUser();
+    $this->assertNotFalse($user);
+    $group->addMember($user);
+
+    $paragraph = $this->createNonPlatformAffiliation('External Organization', 'External Function');
+
+    $profile = Profile::create([
+      'type' => 'profile',
+      'uid' => $user->id(),
+      'status' => 1,
+      'field_group_affiliation' => $group->id(),
+      'field_enable_other_affiliations' => TRUE,
+      'field_other_affiliations' => $paragraph,
+    ]);
+    $profile->save();
+
+    $this->setCurrentUser($user);
+
+    // Disable the group affiliation admin setting — access is now determined
+    // by field-level permissions, so this setting no longer blocks the field.
+    $this->config('social_profile_fields.settings')
+      ->set('profile_profile_field_group_affiliation', FALSE)
+      ->save();
+    drupal_static_reset();
+
+    assert($profile instanceof ProfileAffiliationInterface);
+    $affiliation = $profile->getPrimaryAffiliation();
+    $this->assertEquals(
+      'Platform Group',
+      $affiliation['affiliation_name'] ?? '',
+      'Should return group affiliation even when the admin setting is disabled',
+    );
+    $this->assertEquals('Test Group Type', $affiliation['affiliation_type'] ?? '');
   }
 
   /**
