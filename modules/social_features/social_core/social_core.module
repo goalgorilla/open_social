@@ -1791,25 +1791,29 @@ function social_core_views_query_alter(ViewExecutable $view, QueryPluginBase $qu
   /** @var \Drupal\views\Plugin\views\join\Standard $join */
   $join = &$table_queue['user__roles']['join'];
   $join->type = 'LEFT';
-  $join->extraOperator = 'OR';
+  $join->extraOperator = 'AND';
   unset($join->adjusted);
-  $join->extra[0] = [
-    'field' => 'roles_target_id',
-    'value' => 'verified',
-    'numeric' => FALSE,
+  $join->extra = [
+    [
+      'field' => 'roles_target_id',
+      'value' => 'verified',
+      'numeric' => FALSE,
+    ],
   ];
 
   // Update role condition when role is none (Unverified).
+  // ManyToOneHelper::addFilter() stores the condition via addWhereExpression()
+  // with operator 'formula' and the full expression in the 'field' key.
+  // The placeholder suffix may change across view builds within the same PHP
+  // process (Sql::placeholder() uses a static counter), so use a prefix match.
   foreach ($query->where as &$condition_group) {
     foreach ($condition_group['conditions'] as &$condition) {
-      // Go to next condition when it isn't role condition.
-      if ($condition['field'] !== 'user__roles.roles_target_id = :user__roles_roles_target_id') {
+      if (!is_string($condition['field']) || !str_starts_with($condition['field'], 'user__roles.roles_target_id = :user__roles_roles_target_id')) {
         continue;
       }
 
-      // Replace old condition.
-      $condition['field'] = "user__roles.roles_target_id IS NULL";
-      unset($condition['value'][':user__roles_roles_target_id']);
+      $condition['field'] = 'user__roles.roles_target_id IS NULL';
+      $condition['value'] = [];
     }
   }
 }
