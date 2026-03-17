@@ -42,8 +42,13 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
   /**
    * {@inheritdoc}
    */
-  public function validate(mixed $items, Constraint $constraint) {
+  public function validate(mixed $items, Constraint $constraint): void {
     foreach ($items as $item) {
+      // Skip validation if the nickname field is empty (e.g. left blank
+      // during registration). An empty value is not a duplicate.
+      if ($item->isEmpty()) {
+        continue;
+      }
       // Next check if the value is unique.
       if (!$this->isUnique($item->value)) {
         $this->context->addViolation($constraint->notUnique);
@@ -61,7 +66,7 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
    *   Returns TRUE if the name is not taken. Returns FALSE if the name is
    *   taken.
    */
-  private function isUnique($value) {
+  private function isUnique(string $value): bool {
     // Get all profiles with the provided nickname.
     $profiles = $this->profileStorage->loadByProperties(['field_profile_nick_name' => $value]);
 
