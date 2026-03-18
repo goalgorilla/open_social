@@ -41,10 +41,12 @@
 
     {% if content.primary_affiliation_function|render or content.primary_affiliation_name|render %}
       <div class="teaser--small__meta">
-        {% if content.primary_affiliation_name|render %}
+        {% if content.primary_affiliation_function|render and content.primary_affiliation_name|render %}
           {{ '@affiliation_function @ <span class="notranslate">@affiliation_name</span>'|t({'@affiliation_function': content.primary_affiliation_function|render, '@affiliation_name': content.primary_affiliation_name|render}) }}
-        {% else %}
+        {% elseif content.primary_affiliation_function|render %}
           {{ content.primary_affiliation_function }}
+        {% else %}
+          <span class="notranslate">{{ content.primary_affiliation_name }}</span>
         {% endif %}
       </div>
     {% endif %}

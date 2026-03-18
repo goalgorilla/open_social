@@ -38,10 +38,12 @@
             <use xlink:href="#icon-business_center"></use>
           </svg>
           <span class="teaser__content-text">
-            {% if content.primary_affiliation_name|render %}
+            {% if content.primary_affiliation_function|render and content.primary_affiliation_name|render %}
               {{ '@function at @organization'|t({'@function': content.primary_affiliation_function|render, '@organization': content.primary_affiliation_name|render}) }}
-            {% else %}
+            {% elseif content.primary_affiliation_function|render %}
               {{ content.primary_affiliation_function }}
+            {% else %}
+              <span class="notranslate">{{ content.primary_affiliation_name }}</span>
             {% endif %}
           </span>
         </div>
