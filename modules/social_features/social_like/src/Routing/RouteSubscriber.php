@@ -17,6 +17,7 @@ class RouteSubscriber extends RouteSubscriberBase {
 
     if ($route = $collection->get('like_and_dislike.vote')) {
       $route->setRequirement('_custom_access', 'Drupal\social_like\Access\VoteAccess::access');
+      $route->setDefault('_controller', '\Drupal\social_like\Controller\VoteController::vote');
     }
   }
 
