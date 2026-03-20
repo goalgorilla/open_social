@@ -131,6 +131,11 @@ class SocialGroupDefaultRouteRedirectService {
       return $this->resolveStreamSubpageRedirect($path);
     }
 
+    // Handle paths ending with /home (e.g., /group/slug/home).
+    if (str_ends_with($path, '/home')) {
+      return $this->resolveHomeRedirect($path);
+    }
+
     return NULL;
   }
 
@@ -195,6 +200,33 @@ class SocialGroupDefaultRouteRedirectService {
     $redirect_path = $corrected_alias . $suffix;
 
     $url = Url::fromUserInput($redirect_path);
+
+    if ($url->access($this->currentUser) === FALSE) {
+      return NULL;
+    }
+
+    return new RedirectResponse($url->setAbsolute(TRUE)->toString(), 301);
+  }
+
+  /**
+   * Resolves a redirect for paths ending with /home.
+   *
+   * @param string $path
+   *   The request path (e.g., /group/slug/home).
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse|null
+   *   A redirect response, or NULL if not applicable.
+   */
+  protected function resolveHomeRedirect(string $path): ?RedirectResponse {
+    $path_without_home = rtrim(substr($path, 0, -strlen('/home')), '/') ?: '/';
+
+    $group_id = $this->resolveGroupIdFromAlias($path_without_home);
+
+    if ($group_id === NULL) {
+      return NULL;
+    }
+
+    $url = Url::fromRoute(self::DEFAULT_GROUP_ROUTE, ['group' => $group_id]);
 
     if ($url->access($this->currentUser) === FALSE) {
       return NULL;
