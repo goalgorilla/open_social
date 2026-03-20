@@ -245,12 +245,15 @@ class SocialGroupDefaultRouteRedirectService {
    *   The group ID, or NULL if the path does not resolve to a group.
    */
   protected function resolveGroupIdFromAlias(string $path): ?int {
-    if (preg_match('#^/group/(\d+)$#', $path, $m)) {
+    // Try alias resolution first so that numeric slugs (e.g. /group/456
+    // aliasing /group/123/stream) are resolved correctly.
+    $system_path = $this->pathAliasManager->getPathByAlias($path);
+    if ($system_path && $system_path !== $path && preg_match('#^/group/(\d+)(?:/stream)?$#', $system_path, $m)) {
       return (int) $m[1];
     }
 
-    $system_path = $this->pathAliasManager->getPathByAlias($path);
-    if ($system_path && preg_match('#^/group/(\d+)(?:/stream)?$#', $system_path, $m)) {
+    // Fall back to matching the original path as a system path.
+    if (preg_match('#^/group/(\d+)$#', $path, $m)) {
       return (int) $m[1];
     }
 
