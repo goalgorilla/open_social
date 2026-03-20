@@ -5,6 +5,7 @@ namespace Drupal\social_group_request\Form;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
@@ -29,6 +30,13 @@ class GroupRequestMembershipRequestForm extends GroupMembershipRequestForm {
   protected $cacheTagsInvalidator;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Constructs a new GroupRequestMembershipRequestForm.
    *
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
@@ -41,10 +49,13 @@ class GroupRequestMembershipRequestForm extends GroupMembershipRequestForm {
    *   Membership request manager.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
    *   The cache tags invalidator.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
    */
-  public function __construct(EntityRepositoryInterface $entity_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info, TimeInterface $time, MembershipRequestManager $membership_request_manager, CacheTagsInvalidatorInterface $cache_tags_invalidator) {
+  public function __construct(EntityRepositoryInterface $entity_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info, TimeInterface $time, MembershipRequestManager $membership_request_manager, CacheTagsInvalidatorInterface $cache_tags_invalidator, ConfigFactoryInterface $config_factory) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time, $membership_request_manager);
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -56,7 +67,8 @@ class GroupRequestMembershipRequestForm extends GroupMembershipRequestForm {
       $container->get('entity_type.bundle.info'),
       $container->get('datetime.time'),
       $container->get('grequest.membership_request_manager'),
-      $container->get('cache_tags.invalidator')
+      $container->get('cache_tags.invalidator'),
+      $container->get('config.factory')
     );
   }
 
@@ -216,6 +228,9 @@ class GroupRequestMembershipRequestForm extends GroupMembershipRequestForm {
    * Whether the message field is required for this group.
    */
   private function isMessageRequired(GroupInterface $group): bool {
+    if (!$this->isCustomizationAllowed($group)) {
+      return FALSE;
+    }
     if (!$group->hasField('field_grequest_form_required')) {
       return FALSE;
     }
@@ -227,6 +242,9 @@ class GroupRequestMembershipRequestForm extends GroupMembershipRequestForm {
    * Gets the custom message form description from the group, or empty string.
    */
   private function getCustomMessageDescription(GroupInterface $group): string {
+    if (!$this->isCustomizationAllowed($group)) {
+      return '';
+    }
     if (!$group->hasField('field_grequest_form_description')) {
       return '';
     }
@@ -238,6 +256,9 @@ class GroupRequestMembershipRequestForm extends GroupMembershipRequestForm {
    * Gets the default message text from the group, or empty string.
    */
   private function getDefaultMessageText(GroupInterface $group): string {
+    if (!$this->isCustomizationAllowed($group)) {
+      return '';
+    }
     if (!$group->hasField('field_grequest_form_default')) {
       return '';
     }
@@ -246,6 +267,23 @@ class GroupRequestMembershipRequestForm extends GroupMembershipRequestForm {
     return $field->isEmpty()
       ? ''
       : trim((string) $field->value);
+  }
+
+  /**
+   * Checks if customization is allowed for the group type.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group entity.
+   *
+   * @return bool
+   *   TRUE if customization is allowed, FALSE otherwise.
+   */
+  private function isCustomizationAllowed(GroupInterface $group): bool {
+    $config = $this->configFactory->get('social_group_request.settings');
+    $allow_customize = (array) ($config->get('allow_customize') ?? []);
+    $bundle = $group->bundle();
+
+    return !empty($allow_customize[$bundle]);
   }
 
   /**

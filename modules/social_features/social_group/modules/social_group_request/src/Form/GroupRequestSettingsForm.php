@@ -82,7 +82,7 @@ class GroupRequestSettingsForm extends ConfigFormBase {
     $form['allow_customize'] = [
       '#type' => 'details',
       '#title' => $this->t('Allow managers to customize the request to join form'),
-      '#description' => $this->t('When enabled, managers of the group type can make the message required, personalize the form description, and provide default message text.'),
+      '#description' => $this->t('When enabled, managers can make the message required, personalize the form description and provide a default message text.'),
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
