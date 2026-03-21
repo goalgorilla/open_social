@@ -350,7 +350,6 @@ abstract class SocialEventGraphQLKernelTestBase extends SocialGraphQLTestBase {
    *   The maximum node ID.
    */
   protected function getMaxNodeId(EntityStorageInterface $nodeStorage): int {
-    /** @phpstan-ignore method.alreadyNarrowedType */
     $ids = $nodeStorage->getQuery()->accessCheck(FALSE)->execute();
     return empty($ids) ? 0 : (int) max($ids);
   }

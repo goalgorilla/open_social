@@ -69,9 +69,6 @@ class PrivateMessageSent extends DataProducerPluginBase implements ContainerFact
 
     // Calculate the result.
     // Cast to int to satisfy the user GraphQL interface.
-    // Ignore phpstan false positive accessCheck() will always evaluate to true.
-    // phpcs:ignore
-    /** @phpstan-ignore-next-line */
     return (int) $storage->getQuery()
       ->accessCheck()
       ->condition('owner', $entity->id())
