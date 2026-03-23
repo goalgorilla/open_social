@@ -383,6 +383,57 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
   }
 
   /**
+   * Resolves the meeting entity for the submitted/validated form values.
+   *
+   * Falls back to loading an existing meeting (matching the selected bundle)
+   * or creating a new one when the in-form #meeting_entity reference did not
+   * survive form caching between AJAX rebuild and submission. Used from both
+   * ::extractFormValues() and ::validateMeetingValues() so validation always
+   * runs against a proper MeetingEntityInterface.
+   *
+   * @param array $form
+   *   The complete form structure.
+   * @param string $field_name
+   *   The field machine name.
+   * @param array $values
+   *   The submitted/validated values for the field. Expected keys:
+   *   - meeting_type: the selected meeting bundle.
+   *   - target_id: optional, the previously stored meeting id.
+   *
+   * @return \Drupal\meeting_api\MeetingEntityInterface
+   *   The resolved meeting entity (may be unsaved).
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function resolveSubmittedMeetingEntity(array $form, string $field_name, array $values): MeetingEntityInterface {
+    $meeting_type = $values['meeting_type'] ?? NULL;
+    $meeting = NestedArray::getValue($form[$field_name]['widget'], ['meeting_form', $meeting_type, '#meeting_entity']);
+    if ($meeting instanceof MeetingEntityInterface) {
+      return $meeting;
+    }
+
+    $meeting_storage = $this->entityTypeManager->getStorage('meeting_api_meeting');
+
+    if (!empty($values['target_id'])) {
+      $loaded = $meeting_storage->load($values['target_id']);
+      // If the meeting type was changed during editing, the previously stored
+      // target_id points to a meeting of the wrong bundle; ignore it so a
+      // fresh entity of the right bundle is created below.
+      if ($loaded instanceof MeetingEntityInterface && $loaded->bundle() === $meeting_type) {
+        return $loaded;
+      }
+    }
+
+    /** @var \Drupal\meeting_api\MeetingEntityInterface $meeting */
+    $meeting = $meeting_storage->create(
+      ['bundle' => $meeting_type] + $this->getMeetingDefaultValues(),
+    );
+
+    return $meeting;
+  }
+
+  /**
    * Retrieves the default values for a meeting.
    *
    * @return array
@@ -669,7 +720,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       return;
     }
 
-    $field_name = $items->getName();
+    $field_name = (string) $items->getName();
     $path = array_merge($form['#parents'], [$field_name]);
     $widget_state = $form_state->getValue($path);
 
@@ -700,45 +751,40 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       $values['target_id'] = NULL;
     }
     else {
-      $meeting = NestedArray::getValue($form[$field_name]['widget'], ['meeting_form', $values['meeting_type'], '#meeting_entity']);
+      $meeting = $this->resolveSubmittedMeetingEntity($form, $field_name, $values);
 
-      if (!$meeting instanceof MeetingEntityInterface) {
-        $values['target_id'] = NULL;
+      $default_value = $values['target_id'] ?? NULL;
+
+      // Extract values from the meeting form wrapper.
+      $meeting_form_values = $values['meeting_form'] ?? [];
+
+      if ($meeting->isNew() || $meeting->id() != $default_value) {
+        $this->putFormValuesToMeeting($meeting, $meeting_form_values, $form_state);
+        // We always save a new meeting.
+        $meeting->save();
+
+        // Unpublish previous meeting.
+        if (NULL !== $default_value) {
+          $previous_meeting = $this->entityTypeManager
+            ->getStorage('meeting_api_meeting')
+            ->load($default_value);
+
+          if ($previous_meeting instanceof MeetingEntityInterface) {
+            // Delete the previous meeting as we can't use it anywhere.
+            $previous_meeting->delete();
+          }
+        }
       }
       else {
-        $default_value = $values['target_id'] ?? NULL;
-
-        // Extract values from the meeting form wrapper.
-        $meeting_form_values = $values['meeting_form'] ?? [];
-
-        if ($meeting->isNew() || $meeting->id() != $default_value) {
-          $this->putFormValuesToMeeting($meeting, $meeting_form_values, $form_state);
-          // We always save a new meeting.
+        // Save the meeting entity if there are changes, otherwise skip.
+        if ($this->putFormValuesToMeeting($meeting, $meeting_form_values, $form_state)) {
           $meeting->save();
-
-          // Unpublish previous meeting.
-          if (NULL !== $default_value) {
-            $previous_meeting = $this->entityTypeManager
-              ->getStorage('meeting_api_meeting')
-              ->load($default_value);
-
-            if ($previous_meeting instanceof MeetingEntityInterface) {
-              // Delete the previous meeting as we can't use it anywhere.
-              $previous_meeting->delete();
-            }
-          }
         }
-        else {
-          // Save the meeting entity if there are changes, otherwise skip.
-          if ($this->putFormValuesToMeeting($meeting, $meeting_form_values, $form_state)) {
-            $meeting->save();
-          }
-        }
-
-        NestedArray::setValue($form[$field_name]['widget'], ['meeting_form', $values['meeting_type'], '#meeting_entity'], NULL);
-
-        $values['target_id'] = $meeting->id();
       }
+
+      NestedArray::setValue($form[$field_name]['widget'], ['meeting_form', $values['meeting_type'], '#meeting_entity'], NULL);
+
+      $values['target_id'] = $meeting->id();
     }
 
     // Set back the widget state.
@@ -783,7 +829,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
    */
   public function validateMeetingValues(array $element, FormStateInterface $form_state, array $form): void {
     $parents = $element['#parents'];
-    $field_name = $parents[0];
+    $field_name = (string) $parents[0];
 
     // Validate only if the event is online.
     $is_online = $form_state->getValue([$field_name, 'meeting_form', 'is_online']);
@@ -799,10 +845,13 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
 
     $meeting_type = $form_state->getValue([$field_name, 'meeting_type']);
     // Get the current meeting ID to exclude it from count (for edits).
-    $current_meeting = NestedArray::getValue($form[$field_name]['widget'], ['meeting_form', $meeting_type, '#meeting_entity']);
-    if (!$current_meeting instanceof MeetingEntityInterface) {
-      return;
-    }
+    // Use the same load/create fallback as ::extractFormValues() so validation
+    // runs even when #meeting_entity did not survive form caching.
+    $target_id = $form_state->getValue([$field_name, 'target_id']);
+    $current_meeting = $this->resolveSubmittedMeetingEntity($form, $field_name, [
+      'meeting_type' => $meeting_type,
+      'target_id' => $target_id,
+    ]);
 
     // Use a cloned meeting for validation because the values state of the
     // meeting object should be untouched until the form is submitted.

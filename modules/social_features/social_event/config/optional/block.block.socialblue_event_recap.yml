@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - social_event
+  theme:
+    - socialblue
+id: socialblue_event_recap
+theme: socialblue
+region: complementary_top
+weight: -20
+provider: null
+plugin: event_recap_block
+settings:
+  id: event_recap_block
+  label: Recap
+  label_display: visible
+  provider: social_event
+  context_mapping:
+    node: '@node.node_route_context:node'
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      event: event

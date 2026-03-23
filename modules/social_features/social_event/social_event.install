@@ -40,6 +40,9 @@ function social_event_install() {
       'view node.event.field_content_visibility:community content',
       'view events on my profile',
       'view events on other profiles',
+      'create video_recording_link media',
+      'edit own video_recording_link media',
+      'delete own video_recording_link media',
     ]
   );
   user_role_grant_permissions(
@@ -62,6 +65,9 @@ function social_event_install() {
       'override event promote to front page option',
       'override event revision option',
       'override event sticky option',
+      'create video_recording_link media',
+      'edit any video_recording_link media',
+      'delete any video_recording_link media',
     ]
   );
   user_role_grant_permissions(
@@ -87,6 +93,9 @@ function social_event_install() {
       'administer visibility settings',
       'administer social_event settings',
       'view published event enrollment entities',
+      'create video_recording_link media',
+      'edit any video_recording_link media',
+      'delete any video_recording_link media',
     ]
   );
   // Add menu links.
@@ -122,6 +131,12 @@ function social_event_update_dependencies(): array {
   $dependencies['social_profile'][250006] = [
     'social_event' => 130010,
   ];
+
+  if (\Drupal::moduleHandler()->moduleExists('social_media_system')) {
+    $dependencies['social_event'][130014] = [
+      'social_media_system' => 12104,
+    ];
+  }
 
   return $dependencies;
 }
@@ -437,5 +452,74 @@ function social_event_update_130012(): void {
     }
 
     $active_storage->write($name, $data);
+  }
+}
+
+/**
+ * Install "Meeting API BBB Recordings" module.
+ */
+function social_event_update_130013(): void {
+  if (\Drupal::moduleHandler()->moduleExists('meeting_api_bbb')) {
+    \Drupal::service('module_installer')
+      ->install(['meeting_api_bbb_recordings']);
+  }
+
+  if (!\Drupal::moduleHandler()->moduleExists('social_media_system')) {
+    // On module enabling, all configuration from the "optional" folder will be
+    // installed.
+    \Drupal::service('module_installer')
+      ->install(['social_media_system']);
+  }
+  else {
+    // Module exists, we need to install a required configuration.
+    /** @var \Drupal\update_helper\Updater $updater */
+    $updater = \Drupal::service('update_helper.updater');
+    $updater->executeUpdate('social_event', __FUNCTION__);
+  }
+}
+
+/**
+ * Add event recording field and meeting recording ID field.
+ */
+function social_event_update_130014(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_event', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
+ * Add configuration for BBB meeting entity.
+ */
+function social_event_update_130015(): ?string {
+  if (!\Drupal::moduleHandler()->moduleExists('meeting_api_bbb')) {
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_event', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
+ * Grant "video_recording_link" media permissions to roles.
+ */
+function social_event_update_130016(): void {
+  $permissions_per_role['verified'] = [
+    'create video_recording_link media',
+    'edit own video_recording_link media',
+    'delete own video_recording_link media',
+  ];
+
+  $permissions_per_role['contentmanager'] =
+  $permissions_per_role['sitemanager'] = [
+    'create video_recording_link media',
+    'edit any video_recording_link media',
+    'delete any video_recording_link media',
+  ];
+
+  foreach ($permissions_per_role as $role_id => $permissions) {
+    user_role_grant_permissions($role_id, $permissions);
   }
 }

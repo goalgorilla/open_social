@@ -18,9 +18,13 @@
       once('ajax-guard', '[data-ajax-guard]', context).forEach((form) => {
         let ajaxInProgress = false;
         let pendingSubmit = null;
-        // Track the triggering element name so we can match the
-        // ajaxComplete even if the element was removed from the DOM
+        // Track the originating jqXHR so we can match the ajaxComplete
+        // even if the triggering element was removed from the DOM
         // (e.g. by Inline Entity Form after saving a new entity).
+        // Matching by jqXHR identity is unique — matching by trigger
+        // name is not, and could be falsely released by an unrelated
+        // request that happens to share the same _triggering_element_name.
+        let pendingRequest = null;
         let pendingTriggerName = null;
 
         // jQuery global AJAX events fire on document, not on individual
@@ -31,38 +35,38 @@
             document.querySelector(`[name="${CSS.escape(settings.extraData._triggering_element_name)}"]`)
           )) {
             ajaxInProgress = true;
+            pendingRequest = jqXHR;
             pendingTriggerName = settings.extraData._triggering_element_name;
           }
         });
 
-        jQuery(document).on('ajaxComplete', (event, jqXHR, settings) => {
-          if (!ajaxInProgress) {
+        jQuery(document).on('ajaxComplete', (event, jqXHR) => {
+          if (!ajaxInProgress || jqXHR !== pendingRequest) {
             return;
           }
 
-          // Match by the stored triggering element name rather than
-          // checking the DOM, because AJAX responses (e.g. Inline Entity
-          // Form) may remove the triggering element before this fires.
-          if (settings.extraData &&
-            settings.extraData._triggering_element_name === pendingTriggerName) {
-            ajaxInProgress = false;
-            pendingTriggerName = null;
+          ajaxInProgress = false;
+          pendingRequest = null;
+          pendingTriggerName = null;
 
-            // If a submit was deferred, replay it now.
-            if (pendingSubmit) {
-              const submitter = pendingSubmit;
-              pendingSubmit = null;
-              // Use requestAnimationFrame to let the AJAX cleanup finish
-              // (re-enable disabled fields, remove throbbers, etc.).
-              requestAnimationFrame(() => {
-                if (submitter) {
-                  submitter.click();
-                }
-                else {
-                  form.requestSubmit();
-                }
-              });
-            }
+          // If a submit was deferred, replay it now.
+          if (pendingSubmit) {
+            const submitter = pendingSubmit;
+            pendingSubmit = null;
+            // Use requestAnimationFrame to let the AJAX cleanup finish
+            // (re-enable disabled fields, remove throbbers, etc.).
+            requestAnimationFrame(() => {
+              // The submitter element may have been removed or replaced by
+              // AJAX DOM updates between the deferred submit and the replay.
+              // Verify it is still connected to this form before clicking;
+              // otherwise fall back to a plain form submission.
+              if (submitter && submitter.isConnected && form.contains(submitter)) {
+                submitter.click();
+              }
+              else {
+                form.requestSubmit();
+              }
+            });
           }
         });
 

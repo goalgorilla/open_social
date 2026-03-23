@@ -1,0 +1,87 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.meeting_api_meeting.big_blue_button.recording_id
+    - meeting_api.meeting_api_meeting_type.big_blue_button
+  module:
+    - datetime_range_timezone
+    - user
+id: meeting_api_meeting.big_blue_button.default
+targetEntityType: meeting_api_meeting
+bundle: big_blue_button
+mode: default
+content:
+  created:
+    type: timestamp
+    label: above
+    settings:
+      date_format: medium
+      custom_date_format: ''
+      timezone: ''
+      tooltip:
+        date_format: long
+        custom_date_format: ''
+      time_diff:
+        enabled: false
+        future_format: '@interval hence'
+        past_format: '@interval ago'
+        granularity: 2
+        refresh: 60
+    third_party_settings: {}
+    weight: 3
+    region: content
+  datetime:
+    type: daterange_timezone
+    label: above
+    settings:
+      separator: '-'
+      format_type: medium
+      display_timezone: true
+    third_party_settings: {}
+    weight: 4
+    region: content
+  recording_id:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {}
+    weight: 6
+    region: content
+  label:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {}
+    weight: 0
+    region: content
+  max_attendees:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {}
+    weight: 5
+    region: content
+  status:
+    type: boolean
+    label: above
+    settings:
+      format: enabled-disabled
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {}
+    weight: 1
+    region: content
+  uid:
+    type: author
+    label: above
+    settings: {}
+    third_party_settings: {}
+    weight: 2
+    region: content
+hidden:
+  search_api_excerpt: true

@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_recording
+    - media.type.video_recording_link
+    - node.type.event
+id: node.event.field_event_recording
+field_name: field_event_recording
+entity_type: node
+bundle: event
+label: Resources
+description: ''
+required: false
+translatable: false
+default_value: {}
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      video_recording_link: video_recording_link
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

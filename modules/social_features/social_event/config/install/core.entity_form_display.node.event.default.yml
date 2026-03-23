@@ -16,6 +16,7 @@ dependencies:
     - field.field.node.event.field_event_all_day
     - field.field.node.event.field_files
     - field.field.node.event.field_event_meeting
+    - field.field.node.event.field_event_recording
     - image.style.social_x_large
     - node.type.event
   module:
@@ -26,6 +27,7 @@ dependencies:
     - file
     - image_widget_crop
     - path
+    - social_core
     - text
 third_party_settings:
   field_group:
@@ -35,13 +37,26 @@ third_party_settings:
         - field_event_image
         - body
       parent_name: ''
-      weight: 0
+      weight: 1
       label: 'Basic information'
       format_type: fieldset
       format_settings:
         description: ''
         classes: ''
         id: ''
+        required_fields: true
+      region: content
+    group_recap:
+      children:
+        - field_event_recording
+      parent_name: ''
+      weight: -10
+      label: Recap
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: recap
         required_fields: true
       region: content
     group_event_schedule:
@@ -288,6 +303,21 @@ content:
     weight: 129
     region: content
     settings: { }
+    third_party_settings: { }
+  field_event_recording:
+    type: social_inline_entity_form_simple_conditional
+    weight: 1
+    region: content
+    settings:
+      form_mode: event
+      override_labels: false
+      label_singular: ''
+      label_plural: ''
+      collapsible: false
+      collapsed: false
+      revision: false
+      required_fields:
+        - field_media_links
     third_party_settings: { }
   field_event_all_day:
     weight: 9

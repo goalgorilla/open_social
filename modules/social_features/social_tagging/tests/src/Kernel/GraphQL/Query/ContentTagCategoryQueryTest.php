@@ -72,6 +72,9 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
     'social_user',
     'role_delegation',
     // Modules required by social_event configurations.
+    'media',
+    'inline_entity_form',
+    'social_media_system',
     'address',
     'comment',
     'datetime',

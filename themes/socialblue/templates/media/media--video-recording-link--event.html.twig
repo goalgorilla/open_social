@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Template for Video Recording media in event view mode.
+ *
+ * Available variables:
+ * - media: The media entity.
+ * - name: Name of the media item.
+ * - content: Media content (rendered fields).
+ * - view_mode: View mode; e.g., "event".
+ * - attributes: HTML attributes for the containing element.
+ *
+ * @see template_preprocess_media()
+ */
+#}
+
+{{ attach_library('socialblue/media-event-recording') }}
+
+<div{{ attributes.addClass('event-recording', 'card__block') }}>
+  {{ content }}
+</div>

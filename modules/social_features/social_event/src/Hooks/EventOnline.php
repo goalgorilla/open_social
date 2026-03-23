@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\social_event\Hooks;
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -16,6 +19,7 @@ use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
 use Drupal\hux\Attribute\Hook;
@@ -25,6 +29,7 @@ use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\Form\EventSettingsForm;
 use Drupal\social_event\PluginForm\BigBlueButtonMeetingConfigurationForm;
 use Drupal\social_event\PluginForm\ManualMeetingConfigurationForm;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\social_event\Service\EventOnline as EventOnlineService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -47,12 +52,15 @@ final class EventOnline implements ContainerInjectionInterface {
    *   The module handler service.
    * @param \Drupal\Core\Extension\ModuleInstallerInterface $moduleInstaller
    *   The module installer service.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
+   *   The current route match.
    */
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EventOnlineService $eventOnlineService,
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly ModuleInstallerInterface $moduleInstaller,
+    private readonly RouteMatchInterface $routeMatch,
   ) {}
 
   /**
@@ -64,6 +72,7 @@ final class EventOnline implements ContainerInjectionInterface {
       $container->get(EventOnlineService::class),
       $container->get('module_handler'),
       $container->get('module_installer'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -119,7 +128,10 @@ final class EventOnline implements ContainerInjectionInterface {
 
     if (in_array('meeting_api_bbb', $modules)) {
       // Install "Meeting API Scheduler" module.
-      $this->moduleInstaller->install(['meeting_api_scheduler']);
+      $this->moduleInstaller->install([
+        'meeting_api_scheduler',
+        'meeting_api_bbb_recordings',
+      ]);
 
       // Grant a verified user role with a permission to see the scheduler.
       user_role_grant_permissions('verified', ['view any meeting_api server schedule']);
@@ -362,6 +374,173 @@ final class EventOnline implements ContainerInjectionInterface {
   }
 
   /**
+   * Shows the event recording field only for past events.
+   *
+   * The recording field should only be visible when editing an event that
+   * has already ended, as recordings are only available after the event.
+   *
+   * @param array $form
+   *   The form build.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
+   *
+   * @see hook_form_FORM_ID_alter()
+   */
+  #[Alter('form_node_event_form')]
+  #[Alter('form_node_event_edit_form')]
+  public function eventRecordingFormAlter(array &$form, FormStateInterface $form_state): void {
+    if (!isset($form['field_event_recording'])) {
+      return;
+    }
+
+    $form_object = $form_state->getFormObject();
+    assert($form_object instanceof EntityFormInterface);
+
+    $event = $form_object->getEntity();
+    assert($event instanceof Event);
+
+    // Show only for ended events.
+    $form['field_event_recording']['#access'] = !$event->isNew() && $event->isEnded();
+    // Prevent Socialblue from rendering the recording widget wrappers as cards.
+    $form['field_event_recording']['widget']['#bootstrap_panel'] = FALSE;
+
+    if (isset($form['field_event_recording']['widget'][0])) {
+      // Also disable panel styling on the inner widget wrapper.
+      $form['field_event_recording']['widget'][0]['#bootstrap_panel'] = FALSE;
+    }
+
+    // Override IEF button labels and remove card styling from the IEF fieldset.
+    $form['field_event_recording']['widget']['#after_build'][] = [static::class, 'overrideRecordingFormActions'];
+
+    // Render a description at the bottom of the Resources block.
+    $form['field_event_recording']['description'] = [
+      '#type' => 'container',
+      '#weight' => 1000,
+      '#attributes' => ['class' => ['field-event-recording__description', 'description']],
+      'text' => [
+        '#markup' => $this->t('This information is shared exclusively with event enrollees.'),
+      ],
+    ];
+  }
+
+  /**
+   * Registers an entity builder for the video recording inline entity form.
+   *
+   * When a video recording media is created via the event form's IEF widget,
+   * the name and link title fields may be left empty by the user. This hook
+   * attaches an #entity_builders callback that fills in sensible defaults
+   * ("Meeting recording" for name, "View video" for link title) before the
+   * entity is saved.
+   *
+   * @param array $entity_form
+   *   The inline entity form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @see hook_inline_entity_form_entity_form_alter()
+   */
+  #[Alter('inline_entity_form_entity_form')]
+  public function addRecordingDefaults(array &$entity_form, FormStateInterface &$form_state): void {
+    if (
+      ($entity_form['#entity_type'] ?? '') !== 'media' ||
+      ($entity_form['#bundle'] ?? '') !== 'video_recording_link'
+    ) {
+      return;
+    }
+
+    // Modify each link delta to match the UI design.
+    if (isset($entity_form['field_media_links']['widget'])) {
+      $widget = &$entity_form['field_media_links']['widget'];
+
+      foreach (Element::children($widget) as $delta) {
+        if (!is_int($delta)) {
+          continue;
+        }
+        $link = &$widget[$delta];
+
+        // Replace fieldset with container to skip social base styling.
+        $link['#type'] = 'container';
+        unset($link['#title'], $link['#description']);
+
+        if (isset($link['uri'])) {
+          $link['uri']['#title'] = $this->t('Link');
+          unset($link['uri']['#description']);
+        }
+        if (isset($link['title'])) {
+          $link['title']['#title'] = $this->t('Label');
+        }
+
+        unset($link);
+      }
+
+      unset($widget);
+    }
+
+    $entity_form['#entity_builders'][] = [static::class, 'applyRecordingDefaults'];
+
+    // Override submit button labels.
+    $entity_form['#after_build'][] = [static::class, 'overrideRecordingFormActions'];
+  }
+
+  /**
+   * Entity builder callback that fills empty name and link title with defaults.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The media entity being built.
+   * @param array $form
+   *   The entity form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  public static function applyRecordingDefaults(string $entity_type_id, ContentEntityInterface $entity, array &$form, FormStateInterface &$form_state): void {
+    $parents = $form['#parents'];
+
+    $name_parents = array_merge($parents, ['name', 0, 'value']);
+    $name_value = (string) $form_state->getValue($name_parents);
+    if (empty(trim($name_value))) {
+      $entity->set('name', 'Event recording');
+    }
+  }
+
+  /**
+   * Overrides IEF action button labels for video recording media.
+   *
+   * @param array $element
+   *   The inline entity form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array
+   *   The modified element.
+   */
+  public static function overrideRecordingFormActions(array $element, FormStateInterface $form_state): array {
+    // "Add new media item" button on the event video recording field.
+    if (isset($element['actions']['ief_add'])) {
+      $element['actions']['ief_add']['#value'] = t('Add recording');
+    }
+    // "Create media item" button on the ief form.
+    if (isset($element['actions']['ief_add_save'])) {
+      $element['actions']['ief_add_save']['#value'] = t('Create');
+    }
+    // "Update media item" button on the ief form.
+    if (isset($element['actions']['ief_edit_save'])) {
+      $element['actions']['ief_edit_save']['#value'] = t('Update');
+    }
+
+    // Disable Bootstrap panel/card styling on the IEF fieldset wrapper.
+    // The Bootstrap base theme converts fieldsets into panels by default
+    // via the #bootstrap_panel property. Must be set here (during form
+    // building) because theme suggestions run before preprocess.
+    if (isset($element['form'])) {
+      $element['form']['#bootstrap_panel'] = FALSE;
+    }
+
+    return $element;
+  }
+
+  /**
    * Specific for online events form adjustments.
    *
    * Alters the event form to add AJAX callbacks for refreshing the scheduler
@@ -508,6 +687,35 @@ final class EventOnline implements ContainerInjectionInterface {
     if (!$is_online && !$country_code) {
       $form_state->setErrorByName('field_event_address', t('The country is required.'));
     }
+  }
+
+  /**
+   * Denies standalone creation of the video_recording_link media type.
+   *
+   * Only blocks access on the /media/add/video_recording_link route.
+   * Inline Entity Form creation within the event form is still allowed.
+   *
+   * @see hook_ENTITY_TYPE_create_access()
+   */
+  #[Hook('media_create_access')]
+  public function restrictRecordingMediaCreation(AccountInterface $account, array $context, ?string $entity_bundle): AccessResultInterface {
+    // EntityAccessControlHandler::createAccess caches the bubbled AccessResult
+    // by user/bundle/language only — not by route. Every return path must
+    // carry the 'route' cache context so neutral results from non-add routes
+    // are not reused on the add routes we want to block.
+    $access = AccessResult::neutral()->addCacheContexts(['route']);
+
+    if ($entity_bundle !== 'video_recording_link') {
+      return $access;
+    }
+
+    $route_name = $this->routeMatch->getRouteName();
+    if ($route_name === 'entity.media.add_form' || $route_name === 'entity.media.add_page') {
+      return AccessResult::forbidden('This media type can only be created through the event form.')
+        ->addCacheContexts(['route']);
+    }
+
+    return $access;
   }
 
   /**

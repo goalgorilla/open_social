@@ -48,3 +48,13 @@ function social_media_system_update_12103(): string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Add a "Video Recording" media type.
+ */
+function social_media_system_update_12104(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_media_system', 'social_media_system_update_12104');
+  return $updater->logger()->output();
+}

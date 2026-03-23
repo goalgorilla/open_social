@@ -1,0 +1,49 @@
+__global_actions:
+  import_configs:
+    - field.storage.node.field_event_recording
+    - field.field.node.event.field_event_recording
+    - field.storage.meeting_api_meeting.recording_id
+    - block.block.socialblue_event_recap
+
+core.entity_form_display.node.event.default:
+  expected_config: { }
+  update_actions:
+    change:
+      field_group:
+        group_title_image:
+          weight: 1
+    add:
+      dependencies:
+        config:
+          - field.field.node.event.field_event_recording
+      third_party_settings:
+        field_group:
+          group_recap:
+            children:
+              - field_event_recording
+            parent_name: ''
+            weight: -10
+            label: Recap
+            format_type: fieldset
+            format_settings:
+              description: ''
+              classes: ''
+              id: recap
+              required_fields: true
+            region: content
+      content:
+        field_event_recording:
+          type: social_inline_entity_form_simple_conditional
+          weight: 1
+          region: content
+          settings:
+            form_mode: event
+            override_labels: false
+            label_singular: ''
+            label_plural: ''
+            collapsible: false
+            collapsed: false
+            revision: false
+            required_fields:
+              - field_media_links
+          third_party_settings: { }

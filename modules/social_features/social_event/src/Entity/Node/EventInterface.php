@@ -3,6 +3,7 @@
 namespace Drupal\social_event\Entity\Node;
 
 use Drupal\Core\Session\AccountInterface;
+use Drupal\media\MediaInterface;
 use Drupal\meeting_api\Entity\Meeting;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
@@ -157,5 +158,21 @@ interface EventInterface extends NodeInterface {
    *   FALSE otherwise.
    */
   public function isEventManager(AccountInterface|UserInterface|null $account = NULL): bool;
+
+  /**
+   * Check if the event has a meeting recording.
+   *
+   * @return bool
+   *   TRUE if the event has a recording media attached.
+   */
+  public function hasEventMeetingRecording(): bool;
+
+  /**
+   * Get the event meeting recording media entity.
+   *
+   * @return \Drupal\media\MediaInterface|null
+   *   The recording media entity, or NULL if not set.
+   */
+  public function getEventMeetingRecording(): ?MediaInterface;
 
 }

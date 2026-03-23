@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    autowire: true
+
   social_event.route_subscriber:
     class: Drupal\social_event\Routing\RouteSubscriber
     tags:
@@ -49,3 +52,6 @@ services:
     arguments:
       - '@entity_type.manager'
       - '@logger.factory'
+  Drupal\social_event\EventSubscriber\BigBlueButtonRecordingReadyEventSubscriber:
+    tags:
+      - { name: event_subscriber }

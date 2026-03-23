@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.event
+    - field.field.media.video_recording_link.field_media_links
+    - media.type.video_recording_link
+  module:
+    - link
+    - select2
+id: media.video_recording_link.event
+targetEntityType: media
+bundle: video_recording_link
+mode: event
+content:
+  field_media_links:
+    type: link_default
+    weight: 0
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  directory: true
+  groups: true
+  langcode: true
+  name: true
+  path: true
+  status: true
+  uid: true

@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.event
+    - field.field.media.video_recording_link.field_media_links
+    - media.type.video_recording_link
+  module:
+    - link
+third_party_settings: {}
+id: media.video_recording_link.event
+targetEntityType: media
+bundle: video_recording_link
+mode: event
+content:
+  field_media_links:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: '0'
+      target: '0'
+    third_party_settings: {}
+    weight: 0
+    region: content
+hidden:
+  changed: true
+  created: true
+  langcode: true
+  name: true
+  thumbnail: true
+  uid: true

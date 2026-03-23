@@ -37,3 +37,35 @@ field.storage_settings.social_external_identifier:
       sequence:
         type: string
         label: 'Target entity type'
+
+field.widget.settings.social_inline_entity_form_simple_conditional:
+  type: mapping
+  label: 'Conditional inline entity form widget settings'
+  mapping:
+    form_mode:
+      type: string
+      label: "Form mode"
+    override_labels:
+      type: boolean
+      label: "Override labels"
+    label_singular:
+      type: label
+      label: "Label (singular)"
+    label_plural:
+      type: label
+      label: "Label (plural)"
+    collapsible:
+      type: boolean
+      label: "Collapsible"
+    collapsed:
+      type: boolean
+      label: "Collapsed by default"
+    revision:
+      type: boolean
+      label: "Create new revision"
+    required_fields:
+      type: sequence
+      label: 'Fields required to keep the inline entity'
+      sequence:
+        type: string
+        label: 'Field machine name'

@@ -61,6 +61,11 @@ class QueryEventTypesTest extends SocialGraphQLTestBase {
     'meeting_api_bbb',
     'meeting_api_manual',
 
+    // Modules required by social_event configurations.
+    'media',
+    'inline_entity_form',
+    'social_media_system',
+
     'address',
     'profile',
     'social_profile',

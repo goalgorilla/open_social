@@ -102,6 +102,7 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     'meeting_api',
     'meeting_api_bbb',
     'meeting_api_manual',
+    'inline_entity_form',
 
     // Required by social_profile.
     'telephone',

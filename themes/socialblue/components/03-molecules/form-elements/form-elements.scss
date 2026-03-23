@@ -199,6 +199,74 @@ fieldset {
   }
 }
 
+.field--name-field-event-recording {
+  max-width: 500px;
+  margin-bottom: 1.5rem;
+
+  .fieldset-wrapper {
+    background: #f3f3f3;
+    padding: 1.25rem 1.25rem .25rem;
+  }
+
+  label {
+    font-weight: 400;
+    margin-bottom: .5rem;
+  }
+
+  .field--name-field-media-links {
+    .tabledrag-toggle-weight-wrapper,
+    .tabledrag-toggle-weight,
+    .tableresponsive-toggle-columns,
+    .tabledrag-handle {
+      display: none;
+    }
+
+    .table-responsive {
+      overflow: visible;
+    }
+
+    table {
+      background: transparent;
+      margin-bottom: 0;
+      border: 0;
+
+      thead {
+        display: none;
+      }
+
+      > tbody > tr {
+        background: transparent;
+
+        &:hover,
+        &.odd,
+        &.even {
+          background: transparent;
+        }
+
+        > td {
+          border: 0;
+          padding: 0 0 .75rem;
+          background: transparent;
+
+          &.field-multiple-drag {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .form-item {
+      margin-bottom: 0;
+    }
+  }
+
+  .field-event-recording__description {
+    margin-top: 1rem;
+    color: #6c757d;
+    font-size: .875rem;
+  }
+}
+
 #edit-author-info,
 #edit-tab-settings,
 #edit-menu,

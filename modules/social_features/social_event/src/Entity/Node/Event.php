@@ -5,6 +5,7 @@ namespace Drupal\social_event\Entity\Node;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\media\MediaInterface;
 use Drupal\meeting_api\Entity\Meeting;
 use Drupal\meeting_api\MeetingAttendee;
 use Drupal\meeting_api\MeetingAttendeeInterface;
@@ -335,6 +336,33 @@ class Event extends Node implements EventInterface {
     }
 
     return $is_manager ?: $account->id() === $this->getOwnerId();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasEventMeetingRecording(): bool {
+    if (!$this->hasField('field_event_recording') || $this->get('field_event_recording')->isEmpty()) {
+      return FALSE;
+    }
+
+    // An entity reference may be non-empty yet point to a deleted media
+    // entity. Resolve the reference so callers can rely on the presence of a
+    // loadable MediaInterface.
+    return $this->get('field_event_recording')->entity instanceof MediaInterface;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEventMeetingRecording(): ?MediaInterface {
+    if (!$this->hasEventMeetingRecording()) {
+      return NULL;
+    }
+
+    $media = $this->get('field_event_recording')->entity;
+
+    return $media instanceof MediaInterface ? $media : NULL;
   }
 
 }
