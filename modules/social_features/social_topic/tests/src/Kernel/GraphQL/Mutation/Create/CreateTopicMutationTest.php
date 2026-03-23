@@ -1,0 +1,1597 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\social_topic\Kernel\GraphQL\Mutation\Create;
+
+use Drupal\Core\Render\RenderContext;
+use Drupal\social_group\Entity\Group;
+use Drupal\group\Entity\GroupRelationship;
+use Drupal\node\NodeInterface;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
+use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
+use Drupal\Tests\social_topic\Kernel\SocialTopicGraphQLKernelTestBase;
+use Drupal\Tests\user\Traits\UserCreationTrait;
+use GraphQL\Server\OperationParams;
+
+/**
+ * Test coverage for the createTopic GraphQL mutation.
+ *
+ * Organization-related behavior is covered in
+ * CreateTopicOrganizationMutationTest.
+ *
+ * @group social_topic
+ */
+class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
+
+  use OAuthTestTrait;
+  use UserCreationTrait;
+  use GraphQLOAuthTestTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+
+    // Enable cross-posting for tests.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', TRUE)
+      ->set('cross_posting.content_types', ['topic'])
+      ->set('cross_posting.group_types', ['flexible_group'])
+      ->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function defaultCacheContexts(): array {
+    return [...parent::defaultCacheContexts(), 'languages:language_interface'];
+  }
+
+  /**
+   * Minimal valid Rich Text JSON body (paragraph with text).
+   */
+  private static function minimalRichTextBody(): array {
+    return [
+      'root' => [
+        'type' => 'root',
+        'version' => 1,
+        'children' => [
+          [
+            'type' => 'paragraph',
+            'version' => 1,
+            'children' => [
+              ['type' => 'text', 'version' => 1, 'text' => 'Hello'],
+            ],
+          ],
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * Test creating a topic with all required fields.
+   */
+  public function testCreateTopicSuccess(): void {
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $clientMutationId = '550e8400-e29b-41d4-a716-446655440000';
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$type: ID!, \$title: String!, \$visibility: ContentVisibility!, \$body: RichTextJSON!, \$clientMutationId: UUIDv4) {
+        createTopic(input: {
+          clientMutationId: \$clientMutationId
+          type: \$type
+          title: \$title
+          visibility: \$visibility
+          body: \$body
+        }) {
+          clientMutationId
+          errors
+          topic {
+            title
+            type { id }
+            visibility
+            bodyHtml
+          }
+        }
+      }
+      GQL,
+      [
+        'clientMutationId' => $clientMutationId,
+        'type' => $topicType->uuid(),
+        'title' => 'Test Topic',
+        'visibility' => 'PUBLIC',
+        'body' => self::minimalRichTextBody(),
+      ],
+      [
+        'createTopic' => [
+          'clientMutationId' => $clientMutationId,
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Test Topic',
+            'type' => [
+              'id' => $topicType->uuid(),
+            ],
+            'visibility' => 'PUBLIC',
+            'bodyHtml' => "<div><p>Hello</p>\n</div>",
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1', 'taxonomy_term:1', 'config:filter.format.basic_html'])
+        // @todo Remove max age once https://www.drupal.org/project/simple_oauth/issues/3573262 is fixed.
+        ->setCacheMaxAge(0)
+    );
+
+  }
+
+  /**
+   * Test validation error when Rich Text JSON is invalid (missing root).
+   */
+  public function testCreateTopicInvalidRichTextJson(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Blog',
+    ]);
+    $topicType->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertErrors(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic { id }
+          }
+        }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Invalid body',
+          'visibility' => 'PUBLIC',
+          'body' => ['notRoot' => []],
+        ],
+      ],
+      [
+        'Variable "$input" got invalid value {"type":"' . $topicType->uuid() . '","title":"Invalid body","visibility":"PUBLIC","body":{"notRoot":[]}}; Expected type RichTextJSON at value.body; Invalid Rich Text JSON document: Missing required field "root"',
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test validation error for missing required field (title).
+   */
+  public function testCreateTopicMissingTitle(): void {
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'News',
+    ]);
+    $topicType->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => '',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => [
+            'TITLE_REQUIRED',
+          ],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData(),
+    );
+  }
+
+  /**
+   * Test validation error for title too long (> 255 characters).
+   */
+  public function testCreateTopicTitleTooLong(): void {
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Blog',
+    ]);
+    $topicType->save();
+
+    // Create a title longer than 255 characters.
+    $longTitle = str_repeat('A', 256);
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => $longTitle,
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => [
+            'TITLE_TOO_LONG',
+          ],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData(),
+    );
+  }
+
+  /**
+   * Test validation error for invalid topic type UUID.
+   */
+  public function testCreateTopicInvalidTopicType(): void {
+    // Use a non-existent UUID.
+    $fakeUuid = '12345678-1234-1234-1234-123456789012';
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $fakeUuid,
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => [
+            'TOPIC_TYPE_NOT_FOUND',
+          ],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+  }
+
+  /**
+   * Test creating topic with public visibility.
+   */
+  public function testCreateTopicPublicVisibility(): void {
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'General',
+    ]);
+    $topicType->save();
+
+    $visibility = 'PUBLIC';
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            visibility
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => "Topic with $visibility visibility",
+          'visibility' => $visibility,
+          'body' => self::minimalRichTextBody(),
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'visibility' => $visibility,
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1'])
+    );
+  }
+
+  /**
+   * Test creating topic with community visibility.
+   */
+  public function testCreateTopicCommunityVisibility(): void {
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'General',
+    ]);
+    $topicType->save();
+
+    $visibility = 'COMMUNITY';
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            visibility
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => "Topic with $visibility visibility",
+          'visibility' => $visibility,
+          'body' => self::minimalRichTextBody(),
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'visibility' => $visibility,
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1'])
+    );
+  }
+
+  /**
+   * Test that creating a topic requires the topic:write scope.
+   */
+  public function testCreateTopicRequiresTopicWriteScope(): void {
+    // Act as client credentials without the required scope.
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $this->actAsClientCredentialsWithScopes([]);
+    $this->assertErrors(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+        ],
+      ],
+      [
+        "Missing scope 'topic:write' on 'createTopic'.",
+      ],
+      $this->defaultMutationCacheMetaData(),
+    );
+  }
+
+  /**
+   * Test creating a topic with content tags.
+   */
+  public function testCreateTopicWithTags(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Tutorial',
+    ]);
+    $topicType->save();
+
+    $tag1 = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Technology',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tag1->save();
+
+    $tag2 = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Education',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tag2->save();
+
+    $clientMutationId = '650e8400-e29b-41d4-a716-446655440001';
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          clientMutationId
+          errors
+          topic {
+            title
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'clientMutationId' => $clientMutationId,
+          'type' => $topicType->uuid(),
+          'title' => 'Tutorial: Getting Started',
+          'visibility' => 'COMMUNITY',
+          'body' => self::minimalRichTextBody(),
+          'contentTags' => [$tag1->uuid(), $tag2->uuid()],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'clientMutationId' => $clientMutationId,
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Tutorial: Getting Started',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:1'])
+    );
+
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $created_topic = $node_storage->load(1);
+    assert($created_topic !== NULL);
+
+    $this->assertEquals(
+      [
+        ['target_id' => $tag1->id()],
+        ['target_id' => $tag2->id()],
+      ],
+      $created_topic->get('social_tagging')->getValue(),
+      "Expected the created topic to have the content tags associated in the correct order.",
+    );
+  }
+
+  /**
+   * Test validation error for invalid content tag UUID.
+   */
+  public function testCreateTopicInvalidContentTag(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $fakeTagUuid = '12345678-1234-1234-1234-123456789999';
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'contentTags' => [$fakeTagUuid],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CONTENT_TAG_NOT_FOUND:' . $fakeTagUuid],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error for content tag with invalid usage (not for topics).
+   */
+  public function testCreateTopicWithInvalidContentTagUsage(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $tagA = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Tag',
+      'field_category_usage' => serialize(['node_event']),
+      'status' => 1,
+    ]);
+    $tagA->save();
+
+    $tagB = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Topic Tag',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $tagB->save();
+
+    $tagC = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Shared Tag',
+      'field_category_usage' => serialize(['node_event', 'node_topic']),
+      'status' => 1,
+    ]);
+    $tagC->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'contentTags' => [$tagA->uuid(), $tagB->uuid(), $tagC->uuid()],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CONTENT_TAG_INVALID_USAGE:' . $tagA->uuid()],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $query = <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+            title
+          }
+        }
+      }
+      GQL;
+
+    $variables = [
+      'input' => [
+        'type' => $topicType->uuid(),
+        'title' => 'Test Topic With Valid Tags',
+        'visibility' => 'PUBLIC',
+        'body' => self::minimalRichTextBody(),
+        'contentTags' => [$tagB->uuid(), $tagC->uuid()],
+      ],
+    ];
+
+    $context = new RenderContext();
+    $renderer = \Drupal::service('renderer');
+    $result = $renderer->executeInRenderContext(
+      $context,
+      function () use ($query, $variables) {
+        return $this->server->executeOperation(
+          OperationParams::create([
+            'query' => $query,
+            'variables' => $variables,
+          ])
+        );
+      }
+    );
+
+    $this->assertEmpty($result->errors, 'No GraphQL errors expected');
+    $data = $result->toArray();
+    $this->assertArrayHasKey('data', $data, 'No result data.');
+    $this->assertEmpty($data['data']['createTopic']['errors']);
+    $this->assertNotNull($data['data']['createTopic']['topic']);
+    $this->assertEquals('Test Topic With Valid Tags', $data['data']['createTopic']['topic']['title']);
+    $topic_id = $data['data']['createTopic']['topic']['id'];
+    $this->assertNotEmpty($topic_id, 'Topic ID should be returned');
+
+    $entity_repository = \Drupal::service('entity.repository');
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $created_topic = $entity_repository->loadEntityByUuid('node', $topic_id);
+    $this->assertNotNull($created_topic, 'Topic should be created');
+    /** @var \Drupal\node\NodeInterface $created_topic */
+    $tag_values = $created_topic->get('social_tagging')->getValue();
+    $tag_ids = [];
+    foreach ($tag_values as $value) {
+      if (!empty($value['target_id'])) {
+        $term = $term_storage->load($value['target_id']);
+        if ($term !== NULL) {
+          $tag_ids[] = $term->id();
+        }
+      }
+    }
+    $this->assertContains($tagB->id(), $tag_ids, 'Tag B (topic-only) should be assigned to topic');
+    $this->assertContains($tagC->id(), $tag_ids, 'Tag C (shared) should be assigned to topic');
+    $this->assertNotContains($tagA->id(), $tag_ids, 'Tag A (event-only) should NOT be assigned to topic');
+  }
+
+  /**
+   * Test validation error when providing too many content tags.
+   */
+  public function testCreateTopicTooManyContentTags(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $fake_tag_uuids = [];
+    for ($i = 0; $i < 200; $i++) {
+      $fake_tag_uuids[] = sprintf('12345678-1234-1234-1234-%012d', $i);
+    }
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'contentTags' => $fake_tag_uuids,
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CONTENT_TAGS_LIMIT_EXCEEDED'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test topic with child tag that inherits field_category_usage from parent.
+   */
+  public function testCreateTopicWithChildTagInheritingFromParent(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $parentTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Parent Category',
+      'field_category_usage' => serialize(['node_topic']),
+      'status' => 1,
+    ]);
+    $parentTag->save();
+
+    $childTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Child Tag',
+      'parent' => [$parentTag->id()],
+      'status' => 1,
+    ]);
+    $childTag->save();
+
+    $this->assertTrue(
+      $childTag->get('field_category_usage')->isEmpty(),
+      'Child tag should not have field_category_usage configured'
+    );
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic with Child Tag',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'contentTags' => [$childTag->uuid()],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Topic with Child Tag',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->setCacheMaxAge(0)
+        ->addCacheTags(['node:1'])
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // Verify the child tag was actually saved to the topic.
+    $entity_repository = \Drupal::service('entity.repository');
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $nodes = $node_storage->loadByProperties([
+      'type' => 'topic',
+      'title' => 'Topic with Child Tag',
+    ]);
+    $this->assertNotEmpty($nodes, 'Topic should be created');
+    $created_topic = reset($nodes);
+    /** @var \Drupal\node\NodeInterface $created_topic */
+    $tag_values = $created_topic->get('social_tagging')->getValue();
+    $tag_ids = [];
+    foreach ($tag_values as $value) {
+      if (!empty($value['target_id'])) {
+        $term = $term_storage->load($value['target_id']);
+        if ($term !== NULL) {
+          $tag_ids[] = $term->id();
+        }
+      }
+    }
+    $this->assertContains($childTag->id(), $tag_ids, 'Child tag should be assigned to topic');
+  }
+
+  /**
+   * Test tag without category_usage is rejected when parent don't allow topic.
+   */
+  public function testCreateTopicWithChildTagRejectedWhenParentDoesNotAllowTopic(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $parentTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Parent Category',
+      'field_category_usage' => serialize(['node_event']),
+      'status' => 1,
+    ]);
+    $parentTag->save();
+
+    $childTag = Term::create([
+      'vid' => 'social_tagging',
+      'name' => 'Event Child Tag',
+      'parent' => [$parentTag->id()],
+      'status' => 1,
+    ]);
+    $childTag->save();
+
+    $this->assertTrue(
+      $childTag->get('field_category_usage')->isEmpty(),
+      'Child tag should not have field_category_usage configured'
+    );
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'contentTags' => [$childTag->uuid()],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CONTENT_TAG_INVALID_USAGE:' . $childTag->uuid()],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test creating a topic with a single group successfully.
+   */
+  public function testCreateTopicWithSingleGroupSuccess(): void {
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Create a group with allowed visibility options.
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'community'],
+    ]);
+    $group->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Topic in Group',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Topic in Group',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:1'])
+    );
+
+    // Verify group relationship was created.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $topic = $node_storage->load(1);
+    assert($topic instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($topic);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group->id(), $group_ids, 'Topic should be linked to the group.');
+  }
+
+  /**
+   * Test creating a topic with cross-posting successfully.
+   */
+  public function testCreateTopicWithCrossPostingSuccess(): void {
+    // Create a topic type.
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Create groups with shared visibility options.
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public', 'community'],
+    ]);
+    $group1->save();
+
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group2->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              title
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Cross-posted Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Cross-posted Topic',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:1'])
+    );
+
+    // Verify group relationships were created.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $topic = $node_storage->load(1);
+    assert($topic instanceof NodeInterface);
+    $relationships = GroupRelationship::loadByEntity($topic);
+    $group_ids = array_map(function ($relationship) {
+      return $relationship->getGroupId();
+    }, $relationships);
+    $this->assertContains($group1->id(), $group_ids, 'Topic should be linked to group 1.');
+    $this->assertContains($group2->id(), $group_ids, 'Topic should be linked to group 2.');
+  }
+
+  /**
+   * Test validation error when primary group doesn't exist.
+   */
+  public function testCreateTopicWithInvalidPrimaryGroup(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $fakeGroupUuid,
+            'crosspostedGroups' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['GROUP_NOT_FOUND'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when cross-posted group doesn't exist.
+   */
+  public function testCreateTopicWithInvalidCrossPostedGroup(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group->save();
+
+    $fakeGroupUuid = '12345678-1234-1234-1234-123456789012';
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [$fakeGroupUuid],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CROSSPOSTED_GROUP_NOT_FOUND:' . $fakeGroupUuid],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when same group is in primary and cross-posted.
+   */
+  public function testCreateTopicWithDuplicateGroup(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [$group->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['GROUP_DUPLICATE'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when too many cross-posted groups.
+   */
+  public function testCreateTopicTooManyCrossPostedGroups(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $primaryGroup = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Primary Group',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $primaryGroup->save();
+
+    // Create 51 groups (exceeds MAX_CROSSPOSTED_GROUPS = 50).
+    $crosspostedGroups = [];
+    for ($i = 0; $i < 51; $i++) {
+      $group = Group::create([
+        'type' => 'flexible_group',
+        'label' => 'Cross-posted Group ' . $i,
+        'field_group_allowed_visibility' => ['public'],
+      ]);
+      $group->save();
+      $crosspostedGroups[] = $group->uuid();
+    }
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $primaryGroup->uuid(),
+            'crosspostedGroups' => $crosspostedGroups,
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['LIMIT_EXCEEDED_FOR_CROSSPOSTED_GROUPS'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when visibility is not allowed in single group.
+   */
+  public function testCreateTopicVisibilityNotAllowedInSingleGroup(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Group allows only PUBLIC and GROUP_MEMBERS, not COMMUNITY.
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'COMMUNITY',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['VISIBILITY_NOT_ALLOWED_IN_GROUP'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when visibility is not in intersection.
+   */
+  public function testCreateTopicVisibilityNotAllowedInCrossPosting(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // Group 1 allows PUBLIC and COMMUNITY.
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public', 'community'],
+    ]);
+    $group1->save();
+
+    // Group 2 allows PUBLIC and GROUP_MEMBERS.
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group2->save();
+
+    // Intersection: only PUBLIC is allowed. COMMUNITY should fail.
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'COMMUNITY',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['VISIBILITY_NOT_ALLOWED_IN_GROUP'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test validation error when cross-posting is disabled.
+   */
+  public function testCreateTopicCrossPostingDisabled(): void {
+    // Disable cross-posting for this test.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', FALSE)
+      ->save();
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group1 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group1->save();
+
+    $group2 = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 2',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $group2->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation CreateTopic(\$input: CreateTopicInput!) {
+          createTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'PUBLIC',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group1->uuid(),
+            'crosspostedGroups' => [$group2->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['CROSS_POSTING_IS_DISABLED'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // Re-enable cross-posting for other tests.
+    $this->config('social_group.settings')
+      ->set('cross_posting.status', TRUE)
+      ->save();
+  }
+
+  /**
+   * Test that topic created without groups has no group relationships.
+   */
+  public function testCreateTopicWithoutGroupsHasNoRelationships(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $query = <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            title
+          }
+        }
+      }
+      GQL;
+
+    $variables = [
+      'input' => [
+        'type' => $topicType->uuid(),
+        'title' => 'Topic Without Groups',
+        'visibility' => 'PUBLIC',
+        'body' => self::minimalRichTextBody(),
+      ],
+    ];
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $context = new RenderContext();
+    $renderer = \Drupal::service('renderer');
+    $result = $renderer->executeInRenderContext(
+      $context,
+      function () use ($query, $variables) {
+        return $this->server->executeOperation(
+          OperationParams::create([
+            'query' => $query,
+            'variables' => $variables,
+          ])
+        );
+      }
+    );
+
+    $this->assertEmpty($result->errors, 'No GraphQL errors expected');
+    $data = $result->toArray();
+    $this->assertArrayHasKey('data', $data, 'No result data.');
+    $this->assertEmpty($data['data']['createTopic']['errors']);
+    $this->assertNotNull($data['data']['createTopic']['topic']);
+  }
+
+  /**
+   * Test validation error when GROUP_MEMBER visibility is set without groups.
+   */
+  public function testCreateTopicGroupMemberVisibilityWithoutGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $countBefore = (int) $nodeStorage->getQuery()
+      ->count()
+      ->accessCheck(FALSE)
+      ->execute();
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => self::minimalRichTextBody(),
+          // No groups provided.
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+
+    $countAfter = (int) $nodeStorage->getQuery()
+      ->count()
+      ->accessCheck(FALSE)
+      ->execute();
+    $this->assertSame($countBefore, $countAfter, 'No topic should be created on validation failure.');
+  }
+
+  /**
+   * Test that GROUP_MEMBER visibility works when groups are provided.
+   */
+  public function testCreateTopicGroupMemberVisibilityWithGroups(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group->save();
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $maxNidBefore = $this->getMaxNodeId($nodeStorage);
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            title
+            visibility
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'Test Topic',
+            'visibility' => 'GROUP_MEMBER',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:' . ($maxNidBefore + 1)])
+    );
+
+    $topic = $nodeStorage->load($maxNidBefore + 1);
+    assert($topic instanceof NodeInterface);
+    $this->assertEquals('group', $topic->get('field_content_visibility')->value);
+  }
+
+}
