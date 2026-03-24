@@ -88,3 +88,36 @@ Feature: Add event to calendar
       END:VEVENT
       END:VCALENDAR
       """
+
+  Scenario: LU can see "Outlook Pro" in add to calendar dropdown
+    Given add to calendar is enabled for "office_365"
+    And add to calendar is enabled for "google"
+
+    And users:
+      | name         | mail             | status | timezone | roles    |
+      | regular_user | some@example.com | 1      | UTC      | verified |
+    And events with non-anonymous author:
+      | title               | body        | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Walking in the park | lorem ipsum | public                   | 2100-01-01T10:00:00 | 2100-01-01T12:00:00  | en       |
+
+    When I am logged in as "regular_user"
+    And I am viewing the event "Walking in the park"
+
+    Then I should see "Outlook Pro"
+    And I should not see "Office 365"
+
+  Scenario: Outlook Pro calendar link points to Outlook office URL
+    Given add to calendar is enabled for "office_365"
+    And add to calendar is enabled for "google"
+
+    And users:
+      | name         | mail             | status | timezone | roles    |
+      | regular_user | some@example.com | 1      | UTC      | verified |
+    And events with non-anonymous author:
+      | title               | body        | field_content_visibility | field_event_date    | field_event_date_end | langcode |
+      | Walking in the park | lorem ipsum | public                   | 2100-01-01T10:00:00 | 2100-01-01T12:00:00  | en       |
+
+    When I am logged in as "regular_user"
+    And I am viewing the event "Walking in the park"
+
+    Then the link "Outlook Pro" should contain URL "https://outlook.office.com/calendar/0/deeplink/compose"

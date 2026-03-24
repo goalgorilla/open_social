@@ -561,6 +561,27 @@ class EventContext extends RawMinkContext {
   }
 
   /**
+   * Assert that the link points to a URL.
+   *
+   * @Then the link :linkText should contain URL :expectedUrl
+   */
+  public function theLinkShouldContainUrl(string $linkText, string $expectedUrl): void {
+    $link = $this->getSession()->getPage()->findLink($linkText);
+    if ($link === NULL) {
+      throw new \RuntimeException("Could not find link with text '$linkText'.");
+    }
+
+    $href = (string) $link->getAttribute('href');
+    if (str_contains($href, $expectedUrl)) {
+      return;
+    }
+
+    throw new \RuntimeException(
+      "Expected link '$linkText' to contain URL '$expectedUrl', got '$href'."
+    );
+  }
+
+  /**
    * Create a event.
    *
    * @return \Drupal\node\Entity\Node

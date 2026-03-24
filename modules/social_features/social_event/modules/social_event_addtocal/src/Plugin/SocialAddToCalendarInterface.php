@@ -11,10 +11,12 @@ use Drupal\node\NodeInterface;
 interface SocialAddToCalendarInterface extends PluginInspectionInterface {
 
   /**
-   * Returns plugin name for label.
+   * Returns the user-facing calendar name for links and lists.
+   *
+   * May differ from the administrative plugin label when publicLabel is set.
    *
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
-   *   Plugin name.
+   *   Display name for end users.
    */
   public function getName();
 

@@ -37,7 +37,7 @@ class SocialAddToCalendarSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('plugin.manager.social_add_to_calendar')
@@ -47,7 +47,7 @@ class SocialAddToCalendarSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'social_event_addtocal.settings',
     ];
@@ -56,14 +56,14 @@ class SocialAddToCalendarSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_add_to_calendar_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_event_addtocal.settings');
 
     // Enable the 'Add to calendar' feature.
@@ -75,18 +75,20 @@ class SocialAddToCalendarSettingsForm extends ConfigFormBase {
     ];
 
     // Get all calendar plugins and generate options.
-    $addtocal_options = [];
-    $addtocal_definitions = $this->addToCalendarManager->getDefinitions();
-    foreach ($addtocal_definitions as $addtocal_definition) {
-      $addtocal_options[$addtocal_definition['id']] = $addtocal_definition['label'];
+    $addToCalOptions = [];
+    $addToCalDefinitions = $this->addToCalendarManager->getDefinitions();
+    foreach ($addToCalDefinitions as $addtocal_definition) {
+      $addToCalOptions[$addtocal_definition['id']] = $addtocal_definition['label'];
     }
+    // Sort the add to calendar item alphabetically.
+    asort($addToCalOptions, SORT_NATURAL | SORT_FLAG_CASE);
 
     // Allowed calendars.
     $form['allowed_calendars'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Allowed calendars'),
       '#description' => $this->t('Enable calendars you want to allow users to use'),
-      '#options' => $addtocal_options,
+      '#options' => $addToCalOptions,
       '#states' => [
         'visible' => [
           ':input[name="enable_add_to_calendar"]' => ['checked' => TRUE],
@@ -101,7 +103,7 @@ class SocialAddToCalendarSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
     $this->config('social_event_addtocal.settings')
       ->set('enable_add_to_calendar', $form_state->getValue('enable_add_to_calendar'))

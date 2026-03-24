@@ -91,7 +91,14 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
    * {@inheritdoc}
    */
   public function getName() {
-    return $this->pluginDefinition['label'] ?? '';
+    $definition = $this->getPluginDefinition();
+    if (!is_array($definition)) {
+      return '';
+    }
+    if (!empty($definition['publicLabel'])) {
+      return $definition['publicLabel'];
+    }
+    return $definition['label'] ?? '';
   }
 
   /**
@@ -187,7 +194,9 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
       if ($node->isOnline()) {
         $description = $this->t('You can enter the meeting by using the "Join now" button, which appears 10 minutes before the start time. The meeting might be recorded. For more information, view this <a href="@url">event</a> in your community.', $url_placeholder);
         // If event is open for anonymous and user is anonymous.
-        if (!empty($node->get('field_event_an_enroll')->value) && $this->currentUser->isAnonymous()) {
+        if ($node->hasField('field_event_an_enroll') &&
+          !empty($node->get('field_event_an_enroll')->value) && $this->currentUser->isAnonymous()
+        ) {
           $description = $this->t('This event will be held online. Contact an event manager to receive the link to the meeting. For more information, view this <a href="@url">event</a> in your community.', $url_placeholder);
         }
       }

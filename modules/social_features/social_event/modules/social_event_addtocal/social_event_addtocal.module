@@ -259,6 +259,10 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
       }
     }
   }
+  // Sort the add to calendar item alphabetically.
+  usort($links, static function (array $a, array $b): int {
+    return strnatcasecmp((string) $a['title'], (string) $b['title']);
+  });
 
   return $links;
 }

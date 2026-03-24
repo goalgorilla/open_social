@@ -26,11 +26,24 @@ class SocialAddToCalendar extends Plugin {
   /**
    * The label of the plugin.
    *
+   * Used in administrative UIs (e.g. allowed calendars on the settings form).
+   *
    * @var \Drupal\Core\Annotation\Translation
    *
    * @ingroup plugin_translatable
    */
   public $label;
+
+  /**
+   * Short label shown to end users on the site (optional).
+   *
+   * When set, event add-to-calendar links use this instead of label.
+   *
+   * @var \Drupal\Core\Annotation\Translation|null
+   *
+   * @ingroup plugin_translatable
+   */
+  public $publicLabel;
 
   /**
    * The url for adding to calendar.
