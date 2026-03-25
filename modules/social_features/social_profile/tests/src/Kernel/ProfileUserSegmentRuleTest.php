@@ -572,7 +572,7 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
 
     // Test initial state: Alice should NOT match, since they do not have the
     // role yet.
-    $this->assertNotContains($alice->id(), $user_ids, 'Should not return Alice, they are not site manager.');
+    $this->assertNotContains((int) $alice->id(), $user_ids, 'Should not return Alice, they are not site manager.');
     $this->assertCount(0, $user_ids, 'Should return exactly 0 users being site managers, because none have the role.');
 
     // Assign the site manager role to Alice.
@@ -581,7 +581,7 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
 
     // Test updated state: Alice SHOULD NOT match, since they do have the role.
     $user_ids = $this->userSegmentQueryBuilder->getUserIds($rules);
-    $this->assertContains($alice->id(), $user_ids, 'Should return Alice, they are now site manager.');
+    $this->assertContains((int) $alice->id(), $user_ids, 'Should return Alice, they are now site manager.');
     $this->assertCount(1, $user_ids, 'Should return exactly 1 user being site manager.');
   }
 
@@ -607,7 +607,7 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
 
     // Test initial state: Alice SHOULD match, since they do have the role.
     $user_ids = $this->userSegmentQueryBuilder->getUserIds($rules);
-    $this->assertContains($alice->id(), $user_ids, 'Should return Alice, they are site manager.');
+    $this->assertContains((int) $alice->id(), $user_ids, 'Should return Alice, they are site manager.');
     $this->assertCount(1, $user_ids, 'Should return exactly 1 user being site manager.');
 
     // Remove the 'sitemanager' role from Alice.
@@ -617,7 +617,7 @@ class ProfileUserSegmentRuleTest extends KernelTestBase {
     // Test updated state: Alice SHOULD NOT match, since they do not have the
     // role anymore.
     $user_ids = $this->userSegmentQueryBuilder->getUserIds($rules);
-    $this->assertNotContains($alice->id(), $user_ids, 'Should not return Alice, they are no longer site manager.');
+    $this->assertNotContains((int) $alice->id(), $user_ids, 'Should not return Alice, they are no longer site manager.');
     $this->assertCount(0, $user_ids, 'Should return exactly 0 users being site managers.');
   }
 
