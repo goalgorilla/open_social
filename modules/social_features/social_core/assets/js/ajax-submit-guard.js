@@ -18,6 +18,10 @@
       once('ajax-guard', '[data-ajax-guard]', context).forEach((form) => {
         let ajaxInProgress = false;
         let pendingSubmit = null;
+        // Track the triggering element name so we can match the
+        // ajaxComplete even if the element was removed from the DOM
+        // (e.g. by Inline Entity Form after saving a new entity).
+        let pendingTriggerName = null;
 
         // jQuery global AJAX events fire on document, not on individual
         // elements. Filter by checking if the triggering element belongs
@@ -27,6 +31,7 @@
             document.querySelector(`[name="${CSS.escape(settings.extraData._triggering_element_name)}"]`)
           )) {
             ajaxInProgress = true;
+            pendingTriggerName = settings.extraData._triggering_element_name;
           }
         });
 
@@ -35,10 +40,13 @@
             return;
           }
 
-          if (settings.extraData && form.contains(
-            document.querySelector(`[name="${CSS.escape(settings.extraData._triggering_element_name)}"]`)
-          )) {
+          // Match by the stored triggering element name rather than
+          // checking the DOM, because AJAX responses (e.g. Inline Entity
+          // Form) may remove the triggering element before this fires.
+          if (settings.extraData &&
+            settings.extraData._triggering_element_name === pendingTriggerName) {
             ajaxInProgress = false;
+            pendingTriggerName = null;
 
             // If a submit was deferred, replay it now.
             if (pendingSubmit) {
@@ -64,6 +72,7 @@
             e.stopImmediatePropagation();
             // Remember which button was clicked so we preserve its value.
             pendingSubmit = e.submitter || null;
+            console.info('[ajax-guard] Form submit deferred — AJAX request in progress for:', pendingTriggerName);
           }
         }, true); // Capture phase to intercept before Drupal's handlers.
       });
