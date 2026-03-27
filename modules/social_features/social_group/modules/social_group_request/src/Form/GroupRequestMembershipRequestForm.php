@@ -98,7 +98,7 @@ class GroupRequestMembershipRequestForm extends GroupMembershipRequestForm {
 
     $form['description'] = [
       '#type' => 'inline_template',
-      '#template' => '<p>{{ description }}</p>',
+      '#template' => '<p>{{ description|nl2br }}</p>',
       '#context' => [
         'description' => $custom_description !== '' ? $custom_description : $default_description,
       ],
