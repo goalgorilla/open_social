@@ -134,57 +134,6 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
-   * Create multiple topics at the start of a test.
-   *
-   * Creates topics provided in the form:
-   * | title    | body            | author   | field_content_visibility | field_topic_type | language  | status |
-   * | My title | My description  | username | public                   | News             | en        | 1         |
-   * | ...      | ...             | ...      | ...                      | ...              | ...       |
-   *
-   * @Given topics:
-   */
-  public function createTopics(TableNode $topicsTable) : void {
-    foreach ($topicsTable->getHash() as $topicHash) {
-      $topic = $this->topicCreate($topicHash);
-      $this->created[] = $topic->id();
-    }
-  }
-
-  /**
-   * Create multiple topics at the start of a test.
-   *
-   * Creates topics provided in the form:
-   * | title    | body            | field_content_visibility | field_topic_type | language  | status |
-   * | My title | My description  | public                   | News             | en        | 1         |
-   * | ...      | ...             | ...                      | ...              | ...       |
-   *
-   * @Given topics with non-anonymous author:
-   */
-  public function createTopicsWithAuthor(TableNode $topicsTable) : void {
-    // Create a new random user to own the content, this ensures the author
-    // isn't anonymous.
-    $user = (object) [
-      'name' => $this->drupalContext->getRandom()->name(8),
-      'pass' => $this->drupalContext->getRandom()->name(16),
-      'role' => "authenticated",
-    ];
-    $user->mail = "{$user->name}@example.com";
-
-    $this->drupalContext->userCreate($user);
-
-    foreach ($topicsTable->getHash() as $topicHash) {
-      if (isset($topicHash['author'])) {
-        throw new \RuntimeException("Can not specify an author when using the 'topics with non-anonymous owner:' step, use 'topics:' instead.");
-      }
-
-      $topicHash['author'] = $user->name;
-
-      $topic = $this->topicCreate($topicHash);
-      $this->created[] = $topic->id();
-    }
-  }
-
-  /**
    * Create comments on a topic using the topic comment field.
    *
    * Creates comments provided in the form:

@@ -11,10 +11,8 @@ Feature: Activity Stream Filter on Dashboard
       | CreateUser  | 1      | CreateUser  | verified   |
       | SeeUser     | 1      | SeeUser     | verified   |
 
-    # Create topic type for topics
-    And "topic_types" terms:
-      | name |
-      | News |
+    # "News" is a default topic type created by social_topic_install(), no
+    # need to create it here - doing so would create an ambiguous duplicate.
 
     # Clear cache to ensure the new field and permissions are available
     And the cache has been cleared
