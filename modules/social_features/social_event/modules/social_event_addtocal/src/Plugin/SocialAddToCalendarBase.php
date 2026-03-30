@@ -9,6 +9,7 @@ use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\node\NodeInterface;
@@ -45,6 +46,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   /**
    * The module extension list.
    */
+
   protected ModuleExtensionList $moduleExtensionList;
 
   /**
@@ -90,7 +92,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   /**
    * {@inheritdoc}
    */
-  public function getName() {
+  public function getName(): TranslatableMarkup|string {
     $definition = $this->getPluginDefinition();
     if (!is_array($definition)) {
       return '';
@@ -108,9 +110,11 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
     $module_path = $this->moduleExtensionList
       ->getPath('social_event_addtocal');
 
-    $plugin_icon = empty($this->pluginDefinition['id'])
+    $definition = $this->getPluginDefinition();
+    $id = is_array($definition) ? ($definition['id'] ?? '') : '';
+    $plugin_icon = empty($id)
       ? '/assets/icons/default-calendar.webp'
-      : '/assets/icons/' . $this->pluginDefinition['id'] . '.webp';
+      : '/assets/icons/' . $id . '.webp';
 
     return base_path() . $module_path . $plugin_icon;
   }
@@ -118,14 +122,14 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   /**
    * {@inheritdoc}
    */
-  public function generateUrl(NodeInterface $node) {
+  public function generateUrl(NodeInterface $node): Url {
     return Url::fromRoute('<front>');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function generateSettings(NodeInterface $node) {
+  public function generateSettings(NodeInterface $node): array {
     return [
       'title' => $node->getTitle(),
       'dates' => $this->getEventDates($node),
@@ -139,25 +143,27 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   /**
    * {@inheritdoc}
    */
-  public function getEventDates(NodeInterface $node) {
+  public function getEventDates(NodeInterface $node): array {
     // Set default values.
     $all_day = !$node->get('field_event_all_day')->isEmpty() && $node->get('field_event_all_day')->getString() === '1';
-    $start_date = new \DateTime($node->field_event_date->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
-    $end_date = new \DateTime($node->field_event_date_end->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
+    $start_date = new \DateTime($node->get('field_event_date')->getValue()[0]['value'], new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
+    $end_date = new \DateTime($node->get('field_event_date_end')->getValue()[0]['value'], new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
     $date_time = [];
 
     // Set formats for event dates.
-    $format = $this->pluginDefinition['dateFormat'] ?? self::DATE_FORMAT_DEFAULT_VALUE;
+    $definition = $this->getPluginDefinition();
+    $def = is_array($definition) ? $definition : [];
+    $format = $def['dateFormat'] ?? self::DATE_FORMAT_DEFAULT_VALUE;
     if (date_default_timezone_get() === DateTimeItemInterface::STORAGE_TIMEZONE) {
-      $format = $this->pluginDefinition['utcDateFormat'] ?? self::UTC_DATE_FORMAT_DEFAULT_VALUE;
+      $format = $def['utcDateFormat'] ?? self::UTC_DATE_FORMAT_DEFAULT_VALUE;
     }
-    $all_day_format = $this->pluginDefinition['allDayFormat'] ?? self::ALL_DAY_FORMAT_DEFAULT_VALUE;
+    $all_day_format = $def['allDayFormat'] ?? self::ALL_DAY_FORMAT_DEFAULT_VALUE;
 
     // Convert date to correct format.
     // Set dates array.
     if ($all_day) {
       $date_time['start'] = $start_date->format($all_day_format);
-      $end_date->modify($this->pluginDefinition['endDateModification'] ?? self::END_DATE_MODIFICATION_DEFAULT_VALUE);
+      $end_date->modify($def['endDateModification'] ?? self::END_DATE_MODIFICATION_DEFAULT_VALUE);
       $date_time['end'] = $end_date->format($all_day_format);
     }
     else {
@@ -177,7 +183,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   /**
    * {@inheritdoc}
    */
-  public function getEventDescription(NodeInterface $node) {
+  public function getEventDescription(NodeInterface $node): string {
     // Get event URL.
     // It is impossible to generate canonical absolute URL for an entity without
     // ID - it will trigger EntityMalformedException. This could happen when
@@ -212,12 +218,12 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   /**
    * {@inheritdoc}
    */
-  public function getEventLocation(NodeInterface $node) {
+  public function getEventLocation(NodeInterface $node): string {
     // Get event address values.
     if ($node->get('field_event_address')->isEmpty()) {
       return '';
     }
-    $address_value = $node->field_event_address->getValue();
+    $address_value = $node->get('field_event_address')->getValue();
     $address = $address_value[0];
     $location = '';
 

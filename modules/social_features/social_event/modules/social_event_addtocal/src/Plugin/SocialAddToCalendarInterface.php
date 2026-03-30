@@ -3,6 +3,7 @@
 namespace Drupal\social_event_addtocal\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\node\NodeInterface;
 
 /**
@@ -15,10 +16,10 @@ interface SocialAddToCalendarInterface extends PluginInspectionInterface {
    *
    * May differ from the administrative plugin label when publicLabel is set.
    *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
    *   Display name for end users.
    */
-  public function getName();
+  public function getName(): string|TranslatableMarkup;
 
   /**
    * Returns plugin icon.

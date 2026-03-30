@@ -102,6 +102,7 @@ Feature: Add event to calendar
 
     When I am logged in as "regular_user"
     And I am viewing the event "Walking in the park"
+    And I press "Add to calendar"
 
     Then I should see "Outlook Pro"
     And I should not see "Office 365"
