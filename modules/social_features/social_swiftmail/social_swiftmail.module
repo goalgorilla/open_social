@@ -10,7 +10,6 @@ use Drupal\Core\Url;
 use Drupal\Core\Link;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
-use Drupal\social_swiftmail\Element\SocialSwiftmailTextFormat;
 use Drupal\symfony_mailer\AddressInterface;
 use Drupal\user\UserInterface;
 
@@ -179,22 +178,6 @@ function _addresses_to_string(array $addresses): array {
   return array_map(function (AddressInterface $address) {
     return $address->getEmail();
   }, $addresses);
-}
-
-/**
- * Implements hook_element_info_alter().
- */
-function social_swiftmail_element_info_alter(array &$info): void {
-  if (isset($info['text_format'])) {
-    if (!isset($info['text_format']['#process'])) {
-      $info['text_format']['#process'] = [];
-    }
-
-    $info['text_format']['#process'][] = [
-      SocialSwiftmailTextFormat::class,
-      'process',
-    ];
-  }
 }
 
 /**
