@@ -1,0 +1,38 @@
+dependencies:
+  module:
+    - gaia_vector_index
+  config:
+    - field.storage.group.field_flexible_group_visibility
+    - group.type.flexible_group
+items:
+  search_api.index.content:
+    expected_config: { }
+    update_actions:
+      add:
+        dependencies:
+          module:
+            - social_group_flexible_group
+          config:
+            - field.storage.group.field_flexible_group_visibility
+        datasource_settings:
+          'entity:group':
+            bundles:
+              selected:
+                - flexible_group
+        field_settings:
+          field_flexible_group_visibility:
+            label: 'List (text)'
+            datasource_id: 'entity:group'
+            property_path: field_flexible_group_visibility
+            type: string
+            dependencies:
+              config:
+                - field.storage.group.field_flexible_group_visibility
+  ai_search.index.content:
+    expected_config: { }
+    update_actions:
+      add:
+        indexing_options:
+          field_flexible_group_visibility:
+            indexing_option: ignore
+            max: -1

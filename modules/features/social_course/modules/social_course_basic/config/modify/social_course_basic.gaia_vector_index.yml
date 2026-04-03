@@ -1,0 +1,62 @@
+dependencies:
+  module:
+    - social_course_basic
+    - gaia_vector_index
+items:
+  search_api.index.content:
+    expected_config: { }
+    update_actions:
+      add:
+        dependencies:
+          config:
+            - field.storage.group.field_course_opening_date
+            - field.storage.group.field_course_related_courses
+            - field.storage.group.field_course_type
+        datasource_settings:
+          'entity:node':
+            bundles:
+              selected:
+                - course_article
+          'entity:group':
+            bundles:
+              selected:
+                - course_basic
+        field_settings:
+          field_course_opening_date:
+            label: 'Opening date'
+            datasource_id: 'entity:group'
+            property_path: field_course_opening_date
+            type: date
+            dependencies:
+              config:
+                - field.storage.group.field_course_opening_date
+          field_course_related_courses:
+            label: 'Related courses'
+            datasource_id: 'entity:group'
+            property_path: field_course_related_courses
+            type: text
+            dependencies:
+              config:
+                - field.storage.group.field_course_related_courses
+          field_course_type:
+            label: 'Course type'
+            datasource_id: 'entity:group'
+            property_path: field_course_type
+            type: text
+            dependencies:
+              config:
+                - field.storage.group.field_course_type
+  ai_search.index.content:
+    expected_config: { }
+    update_actions:
+      add:
+        indexing_options:
+          field_course_opening_date:
+            indexing_option: contextual_content
+            max: -1
+          field_course_related_courses:
+            indexing_option: contextual_content
+            max: -1
+          field_course_type:
+            indexing_option: contextual_content
+            max: -1

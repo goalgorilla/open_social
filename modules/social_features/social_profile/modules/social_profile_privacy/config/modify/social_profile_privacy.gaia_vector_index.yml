@@ -1,0 +1,16 @@
+dependencies:
+  module:
+    - gaia_vector_index
+items:
+  search_api.index.content:
+    expected_config: { }
+    update_actions:
+      add:
+        dependencies:
+          module:
+            - social_profile_privacy
+        processor_settings:
+          social_profile_privacy_restricted_name:
+            plugin_id: social_profile_privacy_restricted_name
+            weights:
+              preprocess_query: 0

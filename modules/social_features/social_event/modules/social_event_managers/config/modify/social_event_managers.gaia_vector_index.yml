@@ -1,0 +1,37 @@
+dependencies:
+  module:
+    - gaia_vector_index
+  config:
+    - field.storage.node.field_event_managers
+items:
+  search_api.index.content:
+    expected_config: { }
+    update_actions:
+      add:
+        dependencies:
+          module:
+            - social_event_managers
+          config:
+            - field.storage.node.field_event_managers
+        field_settings:
+          field_event_managers:
+            label: 'Event Organizers'
+            datasource_id: 'entity:node'
+            property_path: field_event_managers
+            type: text
+            dependencies:
+              config:
+                - field.storage.node.field_event_managers
+        processor_settings:
+          social_event_managers_query_alter:
+            plugin_id: social_event_managers_query_alter
+            weights:
+              preprocess_query: 100
+  ai_search.index.content:
+    expected_config: { }
+    update_actions:
+      add:
+        indexing_options:
+          field_event_managers:
+            indexing_option: contextual_content
+            max: -1

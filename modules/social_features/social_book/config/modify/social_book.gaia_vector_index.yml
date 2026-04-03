@@ -1,0 +1,15 @@
+dependencies:
+  module:
+    - gaia_vector_index
+  config:
+    - node.type.book
+items:
+  search_api.index.content:
+    expected_config: { }
+    update_actions:
+      add:
+        datasource_settings:
+          'entity:node':
+            bundles:
+              selected:
+                - book

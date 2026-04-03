@@ -1,0 +1,15 @@
+dependencies:
+  module:
+    - gaia_vector_index
+  config:
+    - group.type.course_advanced
+items:
+  search_api.index.content:
+    expected_config: { }
+    update_actions:
+      add:
+        datasource_settings:
+          'entity:group':
+            bundles:
+              selected:
+                - course_advanced
