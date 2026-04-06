@@ -1,0 +1,36 @@
+<?php
+// phpcs:ignoreFile -- until we update coder to handle attributes.
+
+/**
+ * @file
+ * Signed File Upload hooks.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Hook\Attribute\LegacyHook;
+use Drupal\signed_file_upload\Hook\CleanExpiredUploads;
+use Drupal\signed_file_upload\UploadSessionManager;
+
+/**
+ * Implements hook_file_download().
+ */
+function signed_file_upload_file_download(string $uri) : ?int {
+  // Disallow in-progress signed file uploads.
+  $in_progress_directory = UploadSessionManager::IN_PROGRESS_DIRECTORY;
+  $prefix = "private://$in_progress_directory/";
+  if (str_starts_with($uri, $prefix)) {
+    return -1;
+  }
+
+  return NULL;
+}
+
+/**
+ * Implements hook_cron().
+ */
+// @phpstan-ignore-next-line
+#[LegacyHook]
+function signed_file_upload_cron() : void {
+  \Drupal::service(CleanExpiredUploads::class)->cron();
+}

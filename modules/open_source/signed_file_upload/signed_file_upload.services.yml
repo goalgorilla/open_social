@@ -1,0 +1,29 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  logger.channel.signed_file_upload:
+    parent: logger.channel_base
+    arguments: ['signed_file_upload']
+    public: false
+
+  Drupal\signed_file_upload\UploadSessionManagerInterface:
+    class: Drupal\signed_file_upload\UploadSessionManager
+
+  Drupal\signed_file_upload\UploadConstraintResolverInterface:
+    class: Drupal\signed_file_upload\UploadConstraintResolver
+
+  Drupal\signed_file_upload\SignedUploadFileLifecycleInterface:
+    class: Drupal\signed_file_upload\SignedUploadFileLifecycle
+    arguments:
+      $lock: '@lock'
+
+  Drupal\signed_file_upload\UploadValidatorInterface:
+    class: Drupal\signed_file_upload\UploadValidator
+    arguments:
+      $extensionMimeTypeGuesser: '@file.mime_type.guesser.extension'
+      $logger: '@logger.channel.signed_file_upload'
+
+  Drupal\signed_file_upload\EventSubscriber\TusOptionsRequestSubscriber: ~
+  Drupal\signed_file_upload\Hook\CleanExpiredUploads: ~

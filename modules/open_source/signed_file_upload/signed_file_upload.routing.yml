@@ -1,0 +1,10 @@
+signed_file_upload.tus:
+  path: '/api/tus/{token}'
+  defaults:
+    _controller: '\Drupal\signed_file_upload\Controller\TusUploadController::handle'
+  requirements:
+    _access: 'TRUE'
+    token: '.+'
+  # We don't support GET, but Drupal treats HEAD as GET and does not respect
+  # HEAD as an allowed method in this list.
+  methods: [GET, PATCH, DELETE]
