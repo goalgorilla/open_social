@@ -7,6 +7,7 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
 use Drupal\user\UserStorageInterface;
@@ -42,6 +43,13 @@ class MagicLoginController extends ControllerBase {
   public ConfigFactory $config;
 
   /**
+   * The path validator.
+   *
+   * @var \Drupal\Core\Path\PathValidatorInterface
+   */
+  protected PathValidatorInterface $pathValidator;
+
+  /**
    * MagicLoginController constructor.
    *
    * @param \Drupal\user\UserStorageInterface $user_storage
@@ -52,12 +60,15 @@ class MagicLoginController extends ControllerBase {
    *   The module handler service.
    * @param \Drupal\Core\Config\ConfigFactory $config
    *   The configuration.
+   * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
+   *   The path validator.
    */
-  public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger, ModuleHandlerInterface $module_handler, ConfigFactory $config) {
+  public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger, ModuleHandlerInterface $module_handler, ConfigFactory $config, PathValidatorInterface $path_validator) {
     $this->userStorage = $user_storage;
     $this->logger = $logger;
     $this->moduleHandler = $module_handler;
     $this->config = $config;
+    $this->pathValidator = $path_validator;
   }
 
   /**
@@ -68,7 +79,8 @@ class MagicLoginController extends ControllerBase {
       $container->get('entity_type.manager')->getStorage('user'),
       $container->get('logger.factory')->get('user'),
       $container->get('module_handler'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('path.validator')
     );
   }
 
@@ -96,21 +108,41 @@ class MagicLoginController extends ControllerBase {
       throw new AccessDeniedHttpException();
     }
 
+    // Get the destination for the redirect result.
+    $destination = base64_decode($destination);
+
     // Get the current user and check if this user is authenticated and same as
     // the user for the login link.
     $current_user = $this->currentUser();
-    if ($current_user->isAuthenticated() && $current_user->id() !== $uid) {
+
+    // If the user is already logged in as the same user, the magic link has
+    // already been consumed successfully (or another flow has logged them in).
+    // Short-circuit here to avoid showing a misleading "one-time link has
+    // expired" message and the resulting redirect cascade when the mobile app
+    // (or any other client) replays a magic link. Just honor the destination.
+    // Note: this check MUST come before the "another user" check below,
+    // because that check uses a strict !== comparison that always evaluates
+    // TRUE when one side is an int (AccountProxy::id()) and the other a
+    // string (route parameter), which would wrongly throw AccessDenied for
+    // the legitimate same-user replay case.
+    if ($current_user->isAuthenticated() && (int) $current_user->id() === (int) $uid) {
+      $destination_url = $destination !== ''
+        ? $this->pathValidator->getUrlIfValidWithoutAccessCheck($destination)
+        : NULL;
+      $target = ($destination_url ?: Url::fromRoute('<front>'))->toString();
+      return new RedirectResponse($target);
+    }
+
+    if ($current_user->isAuthenticated() && (int) $current_user->id() !== (int) $uid) {
       $this->messenger()
         ->addWarning($this->t('Another user (%other_user) is already logged into the site on this computer, but you tried to use a one-time link for user %resetting_user. Please <a href=":logout">log out</a> and try using the link again.',
           [
             '%other_user' => $current_user->getAccountName(),
             '%resetting_user' => $user->getAccountName(),
-            ':logout' => Url::fromRoute('user.logout'),
+            ':logout' => Url::fromRoute('user.logout')->toString(),
           ]));
       throw new AccessDeniedHttpException();
     }
-    // Get the destination for the redirect result.
-    $destination = base64_decode($destination);
 
     // The current user is not logged in, so check the parameters.
     $currentTime = \Drupal::time()->getRequestTime();
