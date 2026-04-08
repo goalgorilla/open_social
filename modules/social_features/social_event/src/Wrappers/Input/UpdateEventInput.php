@@ -7,6 +7,7 @@ namespace Drupal\social_event\Wrappers\Input;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_graphql\Wrappers\FileInput;
 use Drupal\taxonomy\TermInterface;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
 use OpenSocial\RichTextJson\Renderer\HtmlRenderer;
@@ -73,6 +74,20 @@ class UpdateEventInput extends EventInputBase {
    * @var \Drupal\taxonomy\TermInterface[]|null
    */
   protected ?array $contentTags = NULL;
+
+  /**
+   * Optional hero image for the event.
+   *
+   * @var \Drupal\social_graphql\Wrappers\FileInput|null
+   */
+  protected ?FileInput $heroImage = NULL;
+
+  /**
+   * Whether the heroImage key was present in the GraphQL input.
+   *
+   * @var bool
+   */
+  protected bool $heroImageProvided = FALSE;
 
   /**
    * {@inheritdoc}
@@ -222,6 +237,12 @@ class UpdateEventInput extends EventInputBase {
         'value' => $renderer->renderDocument($input['body']->getDocument()),
         'format' => $this->getBodyFieldTextFormat($this->actor),
       ];
+    }
+
+    // Process hero image if the key was sent (omit = unchanged; null = clear).
+    if (array_key_exists('heroImage', $input)) {
+      $this->heroImageProvided = TRUE;
+      $this->heroImage = $input['heroImage'] !== NULL ? FileInput::fromGraphQlInput($input['heroImage']) : NULL;
     }
 
     // Process content tags if provided (optional for updates).
@@ -460,6 +481,26 @@ class UpdateEventInput extends EventInputBase {
    */
   public function hasBody(): bool {
     return $this->body !== NULL;
+  }
+
+  /**
+   * Gets the image field input.
+   *
+   * @return \Drupal\social_graphql\Wrappers\FileInput|null
+   *   The FileInput for the image, or NULL if not set.
+   */
+  public function getHeroImage(): ?FileInput {
+    return $this->heroImage;
+  }
+
+  /**
+   * Whether the hero image field was present in the mutation input.
+   *
+   * @return bool
+   *   TRUE when the client sent heroImage (including null to clear).
+   */
+  public function hasHeroImageUpdate(): bool {
+    return $this->heroImageProvided;
   }
 
   /**

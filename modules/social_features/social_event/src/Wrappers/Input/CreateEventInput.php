@@ -6,6 +6,7 @@ namespace Drupal\social_event\Wrappers\Input;
 
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_graphql\Wrappers\FileInput;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
 use OpenSocial\RichTextJson\Renderer\HtmlRenderer;
 
@@ -24,6 +25,13 @@ class CreateEventInput extends EventInputBase {
    * @var \Drupal\taxonomy\TermInterface[]
    */
   protected array $contentTags = [];
+
+  /**
+   * Optional hero image for the event.
+   *
+   * @var \Drupal\social_graphql\Wrappers\FileInput|null
+   */
+  protected ?FileInput $heroImage = NULL;
 
   /**
    * {@inheritdoc}
@@ -53,9 +61,6 @@ class CreateEventInput extends EventInputBase {
     if ($this->title === '') {
       $this->violations[] = new Violation("TITLE_REQUIRED");
       return;
-    }
-    if (mb_strlen($this->title) > 255) {
-      $this->violations[] = new Violation("TITLE_TOO_LONG");
     }
 
     // Validate event type if provided (optional for create).
@@ -124,6 +129,10 @@ class CreateEventInput extends EventInputBase {
       $this->validateAndSetAddressFromInput($input['address']);
     }
 
+    if (isset($input['heroImage'])) {
+      $this->heroImage = FileInput::fromGraphQlInput($input['heroImage']);
+    }
+
     // Process groups if provided.
     if (array_key_exists('groups', $input) && $input['groups'] !== NULL && $this->actor !== NULL) {
       assert(is_string($this->visibility));
@@ -181,6 +190,16 @@ class CreateEventInput extends EventInputBase {
    */
   public function getContentTags(): array {
     return $this->contentTags;
+  }
+
+  /**
+   * Gets the image field input.
+   *
+   * @return \Drupal\social_graphql\Wrappers\FileInput|null
+   *   The FileInput for the image, or NULL if not set.
+   */
+  public function getHeroImage(): ?FileInput {
+    return $this->heroImage;
   }
 
 }

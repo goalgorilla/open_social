@@ -20,3 +20,7 @@ services:
     arguments: ['@logger.channel.social_graphql', '@logger.channel.social_graphql_audit', '@current_user']
     tags:
       - { name: event_subscriber }
+
+  Drupal\social_graphql\FileInputHandler:
+    class: Drupal\social_graphql\FileInputHandler
+    autowire: true

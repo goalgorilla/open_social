@@ -179,6 +179,10 @@ input CreateEventInput {
   The address of the event.
   """
   address: AddressInput
+  """
+  The image to use in teasers and the hero of the event.
+  """
+  heroImage: FileInput
 }
 
 """
@@ -250,6 +254,11 @@ input UpdateEventInput {
   If omitted, event address remains unchanged. If null, the address is cleared.
   """
   address: AddressInput
+  """
+  The image to use in teasers and the hero of the event.
+  If omitted, the image remains unchanged. Pass null to remove the hero image.
+  """
+  heroImage: FileInput
 }
 
 type UpdateEventPayload {

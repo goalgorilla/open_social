@@ -103,6 +103,7 @@ type TopicType {
   label: String
 }
 
+
 """
 Input for creating a new topic.
 """
@@ -128,6 +129,10 @@ input CreateTopicInput {
   The body of the topic in Open Social Rich Text JSON Exchange format.
   """
   body: RichTextJSON!
+  """
+  The image to use in teasers and the hero of the topic.
+  """
+  heroImage: FileInput
 }
 
 """
@@ -178,6 +183,12 @@ input UpdateTopicInput {
   If omitted, the body remains unchanged.
   """
   body: RichTextJSON
+  """
+  The image to use in teasers and the hero of the topic.
+
+  If omitted, the image remains unchanged. Pass null to remove the hero image.
+  """
+  heroImage: FileInput
 }
 
 """

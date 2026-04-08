@@ -14,8 +14,10 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
+use Drupal\signed_file_upload\DataObject\EntityFieldUploadDestination;
 use Drupal\social_event\Wrappers\Input\CreateEventInput;
 use Drupal\social_event\Wrappers\Payload\CreateEventPayload;
+use Drupal\social_graphql\FileInputHandler;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_group\SetGroupsForNodeService;
 use Drupal\social_organization\Entity\group\Organization;
@@ -60,6 +62,8 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The logger channel factory.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
+   * @param \Drupal\social_graphql\FileInputHandler $fileInputHandler
+   *   The file input handler.
    * @param \Drupal\social_group\SetGroupsForNodeService|null $setGroupsForNodeService
    *   The set groups for node service.
    */
@@ -71,6 +75,7 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     protected EntityFieldManagerInterface $entityFieldManager,
     LoggerChannelFactoryInterface $logger_factory,
     protected Connection $database,
+    protected FileInputHandler $fileInputHandler,
     protected ?SetGroupsForNodeService $setGroupsForNodeService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -99,6 +104,7 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $container->get('entity_field.manager'),
       $container->get('logger.factory'),
       $container->get('database'),
+      $container->get(FileInputHandler::class),
       $set_groups_for_node_service,
     );
   }
@@ -187,6 +193,16 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       );
     }
 
+    // @todo This should roll back if we can not create the event.
+    // @todo We should properly handle finalization errors here.
+    $image = $this->fileInputHandler->inputToFile(
+      $input->getHeroImage(),
+      new EntityFieldUploadDestination('node', 'event', 'field_event_image'),
+    );
+    if ($image !== NULL) {
+      $node_values['field_event_image'] = $image->id();
+    }
+
     /** @var \Drupal\node\NodeInterface $node */
     $node = $node_storage->create($node_values);
 
@@ -214,9 +230,13 @@ class CreateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
 
         // Build the list of group IDs to add (primary + crossposted).
         $groups_to_add = [];
-        $groups_to_add[$primary_group->id()] = $primary_group->id();
+        $primary_group_id = $primary_group->id();
+        assert($primary_group_id !== NULL);
+        $groups_to_add[$primary_group_id] = $primary_group_id;
         foreach ($crossposted_groups as $group) {
-          $groups_to_add[$group->id()] = $group->id();
+          $crossposted_group_id = $group->id();
+          assert($crossposted_group_id !== NULL);
+          $groups_to_add[$crossposted_group_id] = $crossposted_group_id;
         }
 
         // Apply group membership via the service (validates access etc.).

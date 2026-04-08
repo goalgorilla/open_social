@@ -72,3 +72,10 @@ extend type Mutation {
     input: DeleteEventInput!
   ): DeleteEventPayload! @allowBot(requiredScopes: ["event:write"])
 }
+
+extend enum StagedUploadTarget {
+  """
+  Uploads to the heroImage field for createEvent and updateEvent.
+  """
+  EVENT_HERO_IMAGE @stagedFileUploadEntityFieldDestination(entityTypeId: "node", bundle: "event", fieldName: "field_event_image")
+}

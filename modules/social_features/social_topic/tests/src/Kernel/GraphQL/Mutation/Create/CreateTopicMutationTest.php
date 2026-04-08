@@ -250,7 +250,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
       [
         'createTopic' => [
           'errors' => [
-            'TITLE_TOO_LONG',
+            'TITLE_0_VALUE_LENGTHCONSTRAINT',
           ],
           'topic' => NULL,
         ],

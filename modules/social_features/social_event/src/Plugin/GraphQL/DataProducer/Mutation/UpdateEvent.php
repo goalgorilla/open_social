@@ -13,9 +13,11 @@ use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\group\Entity\GroupRelationship;
+use Drupal\signed_file_upload\DataObject\EntityFieldUploadDestination;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Wrappers\Input\UpdateEventInput;
 use Drupal\social_event\Wrappers\Payload\UpdateEventPayload;
+use Drupal\social_graphql\FileInputHandler;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_group\SetGroupsForNodeService;
 use Drupal\social_organization\Entity\group\Organization;
@@ -56,6 +58,8 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The logger channel factory.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
+   * @param \Drupal\social_graphql\FileInputHandler $fileInputHandler
+   *   The file input handler.
    * @param \Drupal\social_group\SetGroupsForNodeService|null $setGroupsForNodeService
    *   The set groups for node service.
    */
@@ -65,6 +69,7 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     array $plugin_definition,
     LoggerChannelFactoryInterface $logger_factory,
     protected Connection $database,
+    protected FileInputHandler $fileInputHandler,
     protected ?SetGroupsForNodeService $setGroupsForNodeService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -91,6 +96,7 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $plugin_definition,
       $container->get('logger.factory'),
       $container->get('database'),
+      $container->get(FileInputHandler::class),
       $set_groups_for_node_service,
     );
   }
@@ -172,6 +178,23 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $modified = TRUE;
     }
 
+    // @todo We should properly handle finalization errors here.
+    if ($input->hasHeroImageUpdate()) {
+      $image = $this->fileInputHandler->inputToFile(
+        $input->getHeroImage(),
+        new EntityFieldUploadDestination('node', 'event', 'field_event_image'),
+      );
+      $updateHasImage = $image !== NULL;
+      $fieldHasImage = !$node->get('field_event_image')->isEmpty();
+      // Field is modified for the following state transitions:
+      // NULL -> image (update has image)
+      // image -> NULL (field has image; update does not)
+      // image -> image (field has image; update has image).
+      // Preserve previous $modified value in the FALSE case.
+      $modified = $modified || $updateHasImage || $fieldHasImage;
+      $node->set('field_event_image', $image?->id() ?? []);
+    }
+
     // Update content tags if provided.
     if ($input->hasContentTags()) {
       if (!$node->hasField('social_tagging')) {
@@ -209,9 +232,13 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       else {
         // Build the list of group IDs to add (primary + crossposted).
         $groups_to_add = [];
-        $groups_to_add[$primary_group->id()] = $primary_group->id();
+        $primary_group_id = $primary_group->id();
+        assert($primary_group_id !== NULL);
+        $groups_to_add[$primary_group_id] = $primary_group_id;
         foreach ($crossposted_groups as $group) {
-          $groups_to_add[$group->id()] = $group->id();
+          $crossposted_group_id = $group->id();
+          assert($crossposted_group_id !== NULL);
+          $groups_to_add[$crossposted_group_id] = $crossposted_group_id;
         }
 
         // Prepare the field values for the groups field on the node.
@@ -314,6 +341,7 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     $current = [];
     foreach ($relationships as $relationship) {
       $gid = $relationship->getGroup()->id();
+      assert($gid !== NULL);
       $current[$gid] = $gid;
     }
     return $current;

@@ -1,0 +1,32 @@
+extend type Query {
+  """
+  Retrieve the constraints for a specific staged upload target.
+
+  Allows the client side to determine the constraints for the usage of their upload. This enables providing information
+  to the user before uploading such as limiting a file picker to certain file types and sizes; or enabling client side
+  crop to fit an image within allowed dimensions.
+  """
+  stagedUploadTargetDetails(target: StagedUploadTarget!) : StagedUploadConstraints
+}
+
+extend type Mutation {
+  """
+  Creates staged upload targets for file uploads such as images, videos, and documents.
+
+  The `stagedUploadsCreate` mutation is the first step in Open Social's secure two-step upload process:
+
+  **Step 1: Create staged upload targets (this mutation)**
+
+  - Generate secure, temporary upload URLs for your files.
+
+  Step 2: Upload files and create assets
+
+  - Upload your files directly to the provided URLs using
+  [the tus specification](https://tus.io/protocols/resumable-upload).
+  - Use the returned finalizationToken as the originalSource in subsequent mutations like topicCreate.
+
+  This approach provides support for large files, handles network interruptions gracefully, and ensures
+  secure file transfers to Open Social's storage infrastructure.
+  """
+  stagedUploadsCreate(input : StagedUploadsCreateInput!): StagedUploadsCreatePayload!
+}

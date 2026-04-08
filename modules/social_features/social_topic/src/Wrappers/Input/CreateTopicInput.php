@@ -10,6 +10,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_graphql\Wrappers\FileInput;
 use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\social_organization\Service\OrganizationInputValidationService;
 use Drupal\social_tagging\Service\ContentTagInputValidationServiceInterface;
@@ -68,6 +69,13 @@ class CreateTopicInput extends TopicInputBase {
    * @var array{value: string, format: string}|null
    */
   protected ?array $body = NULL;
+
+  /**
+   * Optional hero image from GraphQL file input.
+   *
+   * @var \Drupal\social_graphql\Wrappers\FileInput|null
+   */
+  protected ?FileInput $heroImage = NULL;
 
   /**
    * Content tags for the topic.
@@ -145,11 +153,6 @@ class CreateTopicInput extends TopicInputBase {
     }
     $this->title = trim($input['title']);
 
-    // Validate title length (max 255 characters for node title).
-    if (mb_strlen($this->title) > 255) {
-      $this->violations[] = new Violation("TITLE_TOO_LONG");
-    }
-
     // Validate topic type.
     if (empty($input['type'])) {
       $this->violations[] = new Violation("TOPIC_TYPE_REQUIRED");
@@ -183,6 +186,11 @@ class CreateTopicInput extends TopicInputBase {
       'value' => $renderer->renderDocument($input['body']->getDocument()),
       'format' => $this->getBodyFieldTextFormat($this->actor),
     ];
+
+    // Attach an image if provided.
+    if (isset($input['heroImage'])) {
+      $this->heroImage = FileInput::fromGraphQlInput($input['heroImage']);
+    }
 
     // Process groups if provided.
     assert(is_string($this->visibility));
@@ -297,6 +305,16 @@ class CreateTopicInput extends TopicInputBase {
   public function getBody(): array {
     assert($this->body !== NULL, __FUNCTION__ . " called but body was not set.");
     return $this->body;
+  }
+
+  /**
+   * Get the image field values.
+   *
+   * @return \Drupal\social_graphql\Wrappers\FileInput|null
+   *   The FileInput for the image or NULL if not set.
+   */
+  public function getHeroImage(): ?FileInput {
+    return $this->heroImage;
   }
 
   /**

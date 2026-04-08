@@ -8,6 +8,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
+use Drupal\signed_file_upload\DataObject\EntityFieldUploadDestination;
+use Drupal\social_graphql\FileInputHandler;
 use Drupal\social_group\SetGroupsForNodeService;
 use Drupal\social_organization\Entity\group\Organization;
 use Drupal\social_topic\Wrappers\Input\CreateTopicInput;
@@ -45,6 +47,8 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\social_graphql\FileInputHandler $fileInputHandler
+   *   Resolves GraphQL file input to file entities.
    * @param \Drupal\social_group\SetGroupsForNodeService|null $setGroupsForNodeService
    *   The set groups for node service.
    */
@@ -53,6 +57,7 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     string $plugin_id,
     array $plugin_definition,
     protected EntityTypeManagerInterface $entityTypeManager,
+    protected FileInputHandler $fileInputHandler,
     protected ?SetGroupsForNodeService $setGroupsForNodeService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -77,6 +82,7 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
+      $container->get(FileInputHandler::class),
       $set_groups_for_node_service,
     );
   }
@@ -118,6 +124,16 @@ class CreateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
       'uid' => $input->getAuthor()->id(),
       'status' => 1,
     ];
+
+    // @todo This should roll back if we can not create the topic.
+    // @todo We should properly handle finalization errors here.
+    $image = $this->fileInputHandler->inputToFile(
+      $input->getHeroImage(),
+      new EntityFieldUploadDestination('node', 'topic', 'field_topic_image'),
+    );
+    if ($image !== NULL) {
+      $node_values['field_topic_image'] = $image->id();
+    }
 
     // Add content tags if provided.
     if (!empty($input->getContentTags())) {

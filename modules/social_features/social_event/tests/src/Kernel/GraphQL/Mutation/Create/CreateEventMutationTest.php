@@ -508,7 +508,7 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
       [
         'createEvent' => [
           'errors' => [
-            'TITLE_TOO_LONG',
+            'TITLE_0_VALUE_LENGTHCONSTRAINT',
           ],
           'event' => NULL,
         ],

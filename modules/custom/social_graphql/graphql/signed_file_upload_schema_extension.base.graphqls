@@ -1,0 +1,187 @@
+"""
+Maps a StagedUploadTarget enum value to an entity field upload destination (server-only metadata).
+"""
+directive @stagedFileUploadEntityFieldDestination(
+  entityTypeId: String!
+  bundle: String!
+  fieldName: String!
+) on ENUM_VALUE
+
+"""
+Maps a StagedUploadTarget enum value to a text editor upload destination (server-only metadata).
+"""
+directive @stagedFileUploadEditorDestination(
+  textFormatId: String!
+  editorId: String!
+) on ENUM_VALUE
+
+"""
+The input structure to request a staged file upload.
+"""
+input StagedUploadsCreateInput {
+  """
+  A unique identifier for the client performing the mutation.
+  Must be a valid UUIDv4 format.
+  """
+  clientMutationId: UUIDv4
+  """
+  One or more requests to upload a file.
+  """
+  requests: [StagedUploadCreateRequest!]!
+}
+
+"""
+The input structure to request a staged file upload.
+"""
+input StagedUploadCreateRequest {
+  """
+  Where the file will be used after upload.
+
+  The value of this determines constraints around the file properties (e.g. size, type, and dimensions). To retrieve
+  information about the constraints for a target see Query.stagedUploadTargetDetails.
+  """
+  target: StagedUploadTarget!
+  """
+  The name of the file.
+
+  Must always end in a file extension that's valid for the target.
+  """
+  filename: String!
+  """
+  The filesize if known at this time.
+
+  Leave NULL to defer setting a during upload, useful if the file size can not yet be determined.
+  """
+  fileSize: Int
+}
+
+"""
+The payload structure for a request for a staged file upload.
+"""
+type StagedUploadsCreatePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  List of validation errors, if any.
+  """
+  errors: [Violation!]
+  """
+  The created upload grants.
+
+  Grants are only resolved if all requested uploads are approved.
+  """
+  stagedUploadGrants: [StagedUploadGrant!]
+}
+
+"""
+Describes a grant to upload a file.
+"""
+type StagedUploadGrant {
+  """
+  The target in which the file can later be used, matching the client's request.
+  """
+  target: StagedUploadTarget!
+  """
+  The filename of the file once the upload is finalized, as provided by the client.
+  """
+  filename: String!
+  """
+  The final file size of the upload if already known by the client.
+  """
+  fileSize: Int
+  """
+  Whether the upload fileSize has been deferred to a later PATCH request.
+  """
+  sizeDeferred: Boolean!
+  """
+  The URL at which the file can be uploaded.
+
+  Uploads should follow [the tus resumable upload specification](https://tus.io/protocols/resumable-upload). Open Social
+  supports the core protocol as well as the expiration and termination extension.
+
+  This URL should be kept secret.
+  """
+  uploadUrl: StagedUploadUrl!
+  """
+  The token to finalize the staged upload.
+
+  This value should be kept secret.
+  """
+  finalizationToken: StagedUploadFinalizationToken!
+  """
+  The constraints for the file upload.
+
+  Provides information for the maximum file size, allowed file types, and any type specific limitations, depending on
+  the chosen upload target.
+  """
+  constraints: StagedUploadConstraints!
+}
+
+type StagedUploadConstraints {
+  """
+  The maximum file size that the server supports for this target, if any.
+  """
+  maxBytes: Int
+  """
+  A list of allowed file extensions.
+
+  Each extension is a string without dot. NULL in case there are no target specific file type restrictions.
+  """
+  allowedExtensions: [String!]
+  """
+  The maximum dimensions of the file.
+
+  Only applicable if the file type supports dimensions.
+  """
+  dimensionsMaximum: StagedUploadConstraintsDimensions
+  """
+  The minimum dimensions of the file.
+
+  Only applicable if the file type supports dimensions.
+  """
+  dimensionsMinimum: StagedUploadConstraintsDimensions
+}
+
+type StagedUploadConstraintsDimensions {
+  """
+  The media width.
+  """
+  width: Int!
+  """
+  The media height.
+  """
+  height: Int!
+}
+
+"""
+The secret upload URL for staged file uploads.
+
+Note that any application that has this URL can upload a file as requested. This URL should be treated as an application
+secret.
+"""
+scalar StagedUploadUrl
+
+"""
+The finalization token
+
+The finalization token is used to finalize a staged upload. This value should be treated as an application secret.
+"""
+scalar StagedUploadFinalizationToken
+
+# @todo Replace the single required field with an optional field and @oneOf after upgrading to drupal/graphql 5.
+input FileInput {
+  """
+  Provide a finalization token to attach a staged file to this object.
+  """
+  stagedUpload: StagedUploadFinalizationToken!
+}
+
+"""
+The targeted usage for which the file is being uploaded.
+
+The target of a staged upload determines where the upload can be finalized and the file used. This also determines the
+constraints for the file upload such as maximum size and dimensions.
+"""
+enum StagedUploadTarget

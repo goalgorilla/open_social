@@ -11,6 +11,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\entity_access_by_field\Traits\VisibilityTrait;
 use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\Violation;
+use Drupal\social_graphql\Wrappers\FileInput;
 use Drupal\social_group_flexible_group\Service\GroupInputValidationService;
 use Drupal\social_organization\Service\OrganizationInputValidationService;
 use Drupal\social_tagging\Service\ContentTagInputValidationServiceInterface;
@@ -80,6 +81,13 @@ class UpdateTopicInput extends TopicInputBase {
   protected ?array $body = NULL;
 
   /**
+   * Optional hero image from GraphQL file input.
+   *
+   * @var \Drupal\social_graphql\Wrappers\FileInput|null
+   */
+  protected ?FileInput $heroImage = NULL;
+
+  /**
    * The content tags.
    *
    * @var \Drupal\taxonomy\TermInterface[]|null
@@ -99,6 +107,13 @@ class UpdateTopicInput extends TopicInputBase {
    * @var bool
    */
   protected bool $organizationsProvided = FALSE;
+
+  /**
+   * Whether the heroImage key was present in the GraphQL input.
+   *
+   * @var bool
+   */
+  protected bool $heroImageProvided = FALSE;
 
   /**
    * Create a new Update Topic Input instance.
@@ -239,6 +254,12 @@ class UpdateTopicInput extends TopicInputBase {
         'value' => $renderer->renderDocument($input['body']->getDocument()),
         'format' => $this->getBodyFieldTextFormat($this->actor),
       ];
+    }
+
+    // Process hero image if the key was sent (omit = unchanged; null = clear).
+    if (array_key_exists('heroImage', $input)) {
+      $this->heroImageProvided = TRUE;
+      $this->heroImage = $input['heroImage'] !== NULL ? FileInput::fromGraphQlInput($input['heroImage']) : NULL;
     }
 
     // Process content tags if provided.
@@ -475,6 +496,26 @@ class UpdateTopicInput extends TopicInputBase {
   public function getBody(): array {
     assert($this->body !== NULL, __FUNCTION__ . " called but body was not set.");
     return $this->body;
+  }
+
+  /**
+   * Get the image field values.
+   *
+   * @return \Drupal\social_graphql\Wrappers\FileInput|null
+   *   The FileInput for the image or NULL if not set.
+   */
+  public function getHeroImage(): ?FileInput {
+    return $this->heroImage;
+  }
+
+  /**
+   * Whether the hero image field was present in the mutation input.
+   *
+   * @return bool
+   *   TRUE when the client sent heroImage (including null to clear).
+   */
+  public function hasHeroImageUpdate(): bool {
+    return $this->heroImageProvided;
   }
 
   /**

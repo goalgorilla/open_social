@@ -40,3 +40,10 @@ function social_graphql_update_25002(): string {
 
   return $updater->logger()->output();
 }
+
+/**
+ * Install the Signed File Upload module.
+ */
+function social_graphql_update_26001(): void {
+  \Drupal::service('module_installer')->install(['signed_file_upload']);
+}

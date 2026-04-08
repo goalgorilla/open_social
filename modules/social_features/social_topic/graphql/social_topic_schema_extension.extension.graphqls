@@ -96,3 +96,10 @@ extend type Mutation {
     input: DeleteTopicInput!
   ): DeleteTopicPayload! @allowBot(requiredScopes: ["topic:write"])
 }
+
+extend enum StagedUploadTarget {
+  """
+  Uploads to the heroImage field for createTopic and updateTopic.
+  """
+  TOPIC_HERO_IMAGE @stagedFileUploadEntityFieldDestination(entityTypeId: "node", bundle: "topic", fieldName: "field_topic_image")
+}

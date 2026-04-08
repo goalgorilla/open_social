@@ -11,6 +11,8 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\NodeInterface;
+use Drupal\signed_file_upload\DataObject\EntityFieldUploadDestination;
+use Drupal\social_graphql\FileInputHandler;
 use Drupal\social_graphql\GraphQL\Violation;
 use Drupal\social_group\SetGroupsForNodeService;
 use Drupal\social_organization\Entity\group\Organization;
@@ -49,6 +51,8 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\social_graphql\FileInputHandler $fileInputHandler
+   *   Resolves GraphQL file input to file entities.
    * @param \Drupal\social_group\SetGroupsForNodeService|null $setGroupsForNodeService
    *   The service to set groups for a node.
    */
@@ -57,6 +61,7 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     string $plugin_id,
     array $plugin_definition,
     protected EntityTypeManagerInterface $entityTypeManager,
+    protected FileInputHandler $fileInputHandler,
     protected ?SetGroupsForNodeService $setGroupsForNodeService = NULL,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -81,6 +86,7 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
+      $container->get(FileInputHandler::class),
       $set_groups_service,
     );
   }
@@ -150,6 +156,17 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     // Update body if provided.
     if ($input->hasBody()) {
       $node->set('body', $input->getBody());
+    }
+
+    // Update image when the client sent heroImage (new file or explicit null).
+    // @todo This finalization should roll back if we can not update the topic.
+    // @todo We should properly handle finalization errors here.
+    if ($input->hasHeroImageUpdate()) {
+      $image = $this->fileInputHandler->inputToFile(
+        $input->getHeroImage(),
+        new EntityFieldUploadDestination('node', 'topic', 'field_topic_image'),
+      );
+      $node->set('field_topic_image', $image?->id() ?? []);
     }
 
     // Process groups if provided.
