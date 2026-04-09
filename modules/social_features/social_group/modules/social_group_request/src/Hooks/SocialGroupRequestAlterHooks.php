@@ -58,9 +58,33 @@ class SocialGroupRequestAlterHooks {
       unset($form['description']['#prefix']);
       unset($form['description']['#suffix']);
 
-      // Add custom submit handler.
-      $form['actions']['submit']['#submit'][] = [$this, 'groupRejectMembershipFormSubmit'];
+      // Static callback: safe when form is cached (AJAX).
+      $form['actions']['submit']['#submit'][] = [
+        self::class,
+        'groupRejectMembershipFormSubmitStatic',
+      ];
     }
+  }
+
+  /**
+   * Static submit handler wrapper for form cache serialization safety.
+   *
+   * Using [$this, 'method'] in $form['#submit'] stores the service instance
+   * in the form array. When the form is cached (e.g. during AJAX file uploads),
+   * PHP tries to serialize the service and its injected dependencies, which
+   * fails. This static wrapper resolves the hook service from the container
+   * instead (Hux registers this class with an FQCN service id).
+   *
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  public static function groupRejectMembershipFormSubmitStatic(
+    array $form,
+    FormStateInterface $form_state,
+  ): void {
+    \Drupal::service(self::class)->groupRejectMembershipFormSubmit($form, $form_state);
   }
 
   /**

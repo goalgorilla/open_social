@@ -316,7 +316,28 @@ class SocialGroupRequestFormHooks {
       $form['#fieldgroups']['group_access_permissions']->children[] = 'request_to_join_form_wrapper';
     }
 
-    array_unshift($form['#submit'], [$this, 'groupFormSubmitRequestFormSettings']);
+    array_unshift($form['#submit'], [self::class, 'groupFormSubmitRequestFormSettingsStatic']);
+  }
+
+  /**
+   * Static submit handler wrapper for form cache serialization safety.
+   *
+   * Using [$this, 'method'] in $form['#submit'] stores the service instance
+   * in the form array. When the form is cached (e.g. during AJAX file uploads),
+   * PHP tries to serialize the service and its injected dependencies, which
+   * fails. This static wrapper resolves the service from the container instead.
+   *
+   * @param array &$form
+   *   The form array (passed by reference).
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  public static function groupFormSubmitRequestFormSettingsStatic(
+    array &$form,
+    FormStateInterface $form_state,
+  ): void {
+    \Drupal::service('social_group_request.form_hooks')
+      ->groupFormSubmitRequestFormSettings($form, $form_state);
   }
 
   /**
