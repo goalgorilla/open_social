@@ -9,10 +9,12 @@ use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_group\SocialGroupHelperService;
 use Drupal\social_user\Entity\User as SocialUserEntityUser;
@@ -118,70 +120,9 @@ function _social_user_get_groups(): array {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- *
- * @see \Drupal\user\RegisterForm
- */
-function social_user_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
-  // By default notify the user of the new account.
-  if (isset($form['account']['notify']) && $form['account']['notify']['#access'] === TRUE) {
-    $form['account']['notify']['#default_value'] = 1;
-  }
-
-  // Treat the account container as a separate fieldset so it is properly themed
-  // by the socialbase theme.
-  if (isset($form['account'])) {
-    $form['account']['#type'] = 'fieldset';
-    $form['account']['#title'] = new TranslatableMarkup('Sign up with <b>email</b>');
-
-    // If we have a help text then we display it to the user.
-    $signup_help = \Drupal::config('social_user.settings')->get('signup_help');
-    if (!empty($signup_help)) {
-      $form['account']['#description'] = $signup_help;
-    }
-
-    // Ensure fields have weights so other forms can add items.
-    if (isset($form['account']['mail'])) {
-      $form['account']['mail']['#weight'] = -150;
-    }
-    if (isset($form['account']['name'])) {
-      $form['account']['name']['#weight'] = -100;
-    }
-    if (isset($form['account']['pass'])) {
-      $form['account']['pass']['#weight'] = -50;
-    }
-
-    $link_options = [];
-
-    // Preserve the destination parameter when a user logs in instead.
-    $request = \Drupal::request();
-    if ($request->query->has('destination')) {
-      $link_options['query'] = [
-        'destination' => $request->query->get('destination'),
-      ];
-    }
-
-    // Ensure this is not shown for site managers when creating accounts through
-    // the admin interface.
-    if (\Drupal::currentUser()->isAnonymous()) {
-      $login_link = Link::createFromRoute(new TranslatableMarkup('Log in'), 'user.login', [], $link_options)->toString();
-
-      $form['account']['login-link'] = [
-        '#markup' => new TranslatableMarkup("Have an account already? @link", ["@link" => $login_link]),
-        '#weight' => 1000,
-        '#cache' => [
-          'contexts' => ['url.query_args'],
-        ],
-      ];
-    }
-  }
-
-  // Add an extra validation option, to check for existing data.
-  $form['#validate'][] = 'social_user_register_validate';
-}
-
-/**
  * Validate function for the user register form.
+ *
+ * @see \Drupal\social_user\Hooks\UserRegisterFormHooks::alter()
  */
 function social_user_register_validate(&$form, FormStateInterface $form_state) {
   // Fetch input.
@@ -557,14 +498,41 @@ function social_user_form_user_admin_settings_alter(&$form, FormStateInterface $
 
 /**
  * Stores the help texts for the social_user module.
+ *
+ * The form displays "signup_help" and "login_help" with language overrides
+ * applied (e.g. on /de/admin/config/people/accounts it shows the `language.de`
+ * value). Writing the submitted value back to the default config collection
+ * would leave that override untouched, so the UI appears to "not save" — on
+ * reload the override wins and re-displays the old text. To keep what the
+ * admin sees in sync with what they save, the translatable help texts are
+ * stored in the override of the current interface language instead.
  */
-function social_user_form_user_admin_settings_submit($form, FormStateInterface $form_state) {
-  $config = \Drupal::configFactory()
-    ->getEditable('social_user.settings');
-  $config->set('signup_help', $form_state->getValue("signup_help"));
-  $config->set('login_help', $form_state->getValue("login_help"));
-  $config->set('verified_immediately', $form_state->getValue("verified_immediately"));
+function social_user_form_user_admin_settings_submit(array $form, FormStateInterface $form_state): void {
+  // "verified_immediately" is a site-wide behaviour flag, not a translatable
+  // string, so it always belongs in the default collection.
+  $config = \Drupal::configFactory()->getEditable('social_user.settings');
+  $config->set('verified_immediately', $form_state->getValue('verified_immediately'));
   $config->save();
+
+  $language_manager = \Drupal::languageManager();
+  $langcode = $language_manager->getCurrentLanguage(LanguageInterface::TYPE_INTERFACE)->getId();
+
+  // On single-language sites there are no language overrides to worry about;
+  // the form's displayed value and the default collection are the same, so
+  // writing to the default is correct.
+  if (!$language_manager instanceof ConfigurableLanguageManagerInterface) {
+    $config->set('signup_help', $form_state->getValue('signup_help'));
+    $config->set('login_help', $form_state->getValue('login_help'));
+    $config->save();
+    return;
+  }
+
+  // Persist the submitted help texts into the same language override the form
+  // read from, so the saved value immediately matches what the admin sees.
+  $override = $language_manager->getLanguageConfigOverride($langcode, 'social_user.settings');
+  $override->set('signup_help', $form_state->getValue('signup_help'));
+  $override->set('login_help', $form_state->getValue('login_help'));
+  $override->save();
 }
 
 /**
