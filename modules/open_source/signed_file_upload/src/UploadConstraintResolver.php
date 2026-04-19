@@ -9,6 +9,8 @@ use Drupal\Component\Utility\Bytes;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Render\RenderContext;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\file\Upload\FileUploadLocationTrait;
 use Drupal\signed_file_upload\DataObject\EditorUploadDestination;
 use Drupal\signed_file_upload\DataObject\EntityFieldUploadDestination;
@@ -30,6 +32,7 @@ class UploadConstraintResolver implements UploadConstraintResolverInterface {
   public function __construct(
     protected EntityFieldManagerInterface $entityFieldManager,
     protected EntityTypeManagerInterface $entityTypeManager,
+    protected RendererInterface $renderer,
   ) {}
 
   /**
@@ -85,7 +88,14 @@ class UploadConstraintResolver implements UploadConstraintResolverInterface {
    *   The upload constraints.
    */
   protected function resolveFileFieldConstraints(FieldDefinitionInterface $definition, UploadValidationKind $validationKind = UploadValidationKind::FileField, ?ImageDimensionBounds $imageDimensionBounds = NULL) : ResolvedUploadConstraints {
-    $targetDirectory = $this->getUploadLocation($definition);
+    // Render the upload location in isolation so that we do not leak any
+    // metadata. Although we may technically store the value and it may even
+    // become outdated (e.g. the date of upload folders), we expect to capture
+    // the upload as it is at the start, so we can safely discard metadata.
+    $targetDirectory = $this->renderer->executeInRenderContext(
+      new RenderContext(),
+      fn () => $this->getUploadLocation($definition),
+    );
     assert($targetDirectory !== '', "Target directory for {$definition->getTargetEntityTypeId()}.{$definition->getTargetBundle()}.{$definition->getName()} is empty.");
     return new ResolvedUploadConstraints(
       targetDirectory: $targetDirectory,

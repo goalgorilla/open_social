@@ -1,0 +1,6 @@
+extend enum StagedUploadTarget {
+  """
+  Uploads to the image field for a test node type (`article`).
+  """
+  TEST_TARGET @stagedFileUploadEntityFieldDestination(entityTypeId: "node", bundle: "article", fieldName: "field_image")
+}

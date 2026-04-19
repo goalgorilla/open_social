@@ -105,7 +105,7 @@ class TopicFileUploadTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $topicType->save();
 
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->actAsClientCredentialsWithScopes(['graphql:staged_upload:create', 'topic:write']);
 
     // Request an upload.
     $png = base64_decode(self::PNG_11X11_B64, TRUE);
@@ -248,7 +248,7 @@ class TopicFileUploadTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $topic->save();
 
-    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->actAsClientCredentialsWithScopes(['graphql:staged_upload:create', 'topic:write']);
 
     // Request an upload.
     $png = base64_decode(self::PNG_11X11_B64, TRUE);

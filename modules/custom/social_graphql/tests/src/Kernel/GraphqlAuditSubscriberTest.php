@@ -38,6 +38,7 @@ class GraphqlAuditSubscriberTest extends KernelTestBase {
     'consumers',
     'simple_oauth_static_scope',
     'simple_oauth',
+    'social_oauth',
     "social_graphql",
     "test_social_graphql_example_audit",
   ];

@@ -81,7 +81,7 @@ class EventFileUploadTest extends SocialEventGraphQLKernelTestBase {
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
-    $this->actAsClientCredentialsWithScopes(['event:write']);
+    $this->actAsClientCredentialsWithScopes(['graphql:staged_upload:create', 'event:write']);
 
     $png = base64_decode(self::PNG_11X11_B64, TRUE);
     $this->assertNotFalse($png);
@@ -210,7 +210,7 @@ class EventFileUploadTest extends SocialEventGraphQLKernelTestBase {
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
-    $this->actAsClientCredentialsWithScopes(['event:write']);
+    $this->actAsClientCredentialsWithScopes(['graphql:staged_upload:create', 'event:write']);
 
     $png = base64_decode(self::PNG_11X11_B64, TRUE);
     $this->assertNotFalse($png);

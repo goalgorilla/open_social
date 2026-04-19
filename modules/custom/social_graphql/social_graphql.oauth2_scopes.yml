@@ -10,3 +10,16 @@
       description: 'Allow API users to use graphql'
   granularity: permission
   permission: 'execute open_social_graphql arbitrary graphql requests'
+
+"graphql:staged_upload:create":
+  description: 'Allows consumers to create a staged file upload request using Tus.'
+  umbrella: false
+  grant_types:
+    client_credentials:
+      status: true
+      description: 'Allow the application to upload files.'
+    authorization_code:
+      status: true
+      description: 'Allow the application to upload files.'
+  granularity: permissions
+  permissions: []

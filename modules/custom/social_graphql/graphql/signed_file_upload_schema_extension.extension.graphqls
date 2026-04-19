@@ -28,5 +28,5 @@ extend type Mutation {
   This approach provides support for large files, handles network interruptions gracefully, and ensures
   secure file transfers to Open Social's storage infrastructure.
   """
-  stagedUploadsCreate(input : StagedUploadsCreateInput!): StagedUploadsCreatePayload!
+  stagedUploadsCreate(input : StagedUploadsCreateInput!): StagedUploadsCreatePayload! @allowAll(requiredScopes: ["graphql:staged_upload:create"])
 }
