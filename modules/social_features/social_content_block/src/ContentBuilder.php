@@ -156,8 +156,11 @@ class ContentBuilder implements ContentBuilderInterface {
           ->addTag('social_content_block')
           ->addTag($entity_type->id() . '_access')
           ->addMetaData('block_content', $block_content)
-          ->fields('base_table', [$entity_type->getKey('id')])
-          ->condition('base_table.default_langcode', '1');
+          ->fields('base_table', [$entity_type->getKey('id')]);
+
+        if ($this->connection->schema()->fieldExists($table, 'default_langcode')) {
+          $query->condition('base_table.default_langcode', '1');
+        }
 
         if (isset($definition['bundle'])) {
           $query->condition(

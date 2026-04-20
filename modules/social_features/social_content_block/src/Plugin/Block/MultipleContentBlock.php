@@ -312,8 +312,10 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
     $query->addField('base_table', $id_key);
     $query->addField('base_table', $sorting);
 
-    // Load only default entity.
-    $query->condition('default_langcode', '1');
+    // Default translation row, only if the column exists on this data table.
+    if ($this->database->schema()->fieldExists($data_table, 'default_langcode')) {
+      $query->condition('base_table.default_langcode', '1');
+    }
 
     // Only if plugin has bundles add a condition by type.
     if ($bundles !== NULL && is_string($entity_type->getKey('bundle'))) {
