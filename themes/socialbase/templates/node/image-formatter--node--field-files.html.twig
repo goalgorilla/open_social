@@ -4,15 +4,26 @@
  * Default theme implementation to display a formatted image field.
  *
  * Available variables:
+ * - item: The field item (file fields store user text in "description").
  * - image: A collection of image data.
  * - image_style: An optional image style.
  * - url: An optional URL the image can be linked to.
+ *
+ * File attachments use the description as alternative text for images; image
+ * fields keep the alt from core (item.alt).
  *
  * @see template_preprocess_image_formatter()
  *
  * @ingroup themeable
  */
 #}
+{% set alt_text = '' %}
+{% if item.getFieldDefinition().getType() == 'file' %}
+  {% set alt_text = item.get('description').getString()|trim %}
+{% endif %}
+{% if alt_text is not empty %}
+  {% set image = image|merge({'#alt': alt_text}) %}
+{% endif %}
 <li class="card-file">
 {% if url %}
   {{ link(image, url) }}
