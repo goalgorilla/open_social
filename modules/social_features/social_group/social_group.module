@@ -2032,6 +2032,9 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
  *   The group type. Can be NULL to get visibility when it is not in a group.
  * @param \Drupal\Core\Session\AccountInterface|null $account
  *   The account object that may have impact on the visibility options.
+ * @param \Drupal\Core\Entity\EntityInterface|null $entity
+ *   The content entity for which to select a visibility or null if only the
+ *   visibilities of the groups are checked.
  *
  * @return array
  *   An array of visibility options for the given group type.
@@ -2085,7 +2088,7 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
   }
 
   \Drupal::moduleHandler()
-    ->alter('social_group_allowed_visibilities', $visibility_options, $group_type_id);
+    ->alter('social_group_allowed_visibilities', $visibility_options, $group_type_id, $entity);
 
   return $visibility_options;
 }

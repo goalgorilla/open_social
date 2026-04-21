@@ -5,6 +5,7 @@
  * Hooks provided by the Social Group module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
@@ -43,14 +44,25 @@ function hook_social_group_hide_types_alter(array &$hidden_types) {
  *
  * @param array $visibilities
  *   The visibilities list.
- * @param string $group_type_id
- *   The group type we alter the visibility setting for.
+ * @param string|null $group_type_id
+ *   The group type we alter the visibility setting for, or NULL in non-group
+ *   visibility contexts.
+ * @param \Drupal\Core\Entity\EntityInterface|null $entity
+ *   The content entity for which to select a visibility or null if only the
+ *   visibilities of the groups are checked.
+ *   Implementations must accept this parameter with a default of NULL for
+ *   forward compatibility.
  *
  * @see social_group_get_allowed_visibility_options_per_group_type()
  *
  * @ingroup social_group_api
+ *
+ * Maintainer note: if more contextual values are needed (group, account, form
+ * phase, etc.), consider replacing the growing parameter list with a single
+ * small DTO or value object passed as one argument, instead of many positional
+ * parameters.
  */
-function hook_social_group_allowed_visibilities_alter(array &$visibilities, $group_type_id) {
+function hook_social_group_allowed_visibilities_alter(array &$visibilities, $group_type_id, ?EntityInterface $entity = NULL) {
   if ($group_type_id === 'custom_public_group') {
     $visibilities['community'] = TRUE;
   }
