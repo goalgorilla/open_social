@@ -1,0 +1,37 @@
+field.field.node.book.field_files:
+  expected_config: {  }
+  update_actions:
+    change:
+      settings:
+        file_extensions: 'txt pdf doc docx xls xlsx ppt pptx csv jpg jpeg png gif'
+
+core.entity_view_display.node.book.default:
+  expected_config: {  }
+  update_actions:
+    change:
+      dependencies:
+        config:
+          - field.field.node.book.body
+          - field.field.node.book.field_book_comments
+          - field.field.node.book.field_book_image
+          - field.field.node.book.field_content_visibility
+          - field.field.node.book.field_files
+          - image.style.social_file_thumbnails
+          - node.type.book
+        module:
+          - file
+          - group_core_comments
+          - social_core
+          - text
+          - user
+          - social_book
+      content:
+        field_files:
+          type: file_image_default
+          weight: 3
+          label: above
+          settings:
+            image_style: social_file_thumbnails
+            image_link: file
+          third_party_settings: {  }
+          region: content

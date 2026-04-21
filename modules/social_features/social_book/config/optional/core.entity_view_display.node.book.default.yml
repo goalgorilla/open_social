@@ -7,10 +7,12 @@ dependencies:
     - field.field.node.book.field_book_image
     - field.field.node.book.field_content_visibility
     - field.field.node.book.field_files
+    - image.style.social_file_thumbnails
     - node.type.book
   module:
     - file
     - group_core_comments
+    - social_core
     - text
     - user
     - social_book
@@ -33,11 +35,14 @@ content:
       pager_id: 0
     third_party_settings: {  }
   field_files:
-    type: file_default
+    type: file_image_default
     weight: 3
     label: above
-    settings: {  }
+    settings:
+      image_style: social_file_thumbnails
+      image_link: file
     third_party_settings: {  }
+    region: content
   links:
     weight: 4
     region: content

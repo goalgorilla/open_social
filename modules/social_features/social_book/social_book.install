@@ -62,3 +62,13 @@ function social_book_update_130001(): void {
       ->save(TRUE);
   }
 }
+
+/**
+ * Align book field_files with Topic (extensions and file_image_default).
+ */
+function social_book_update_130002(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_book', __FUNCTION__);
+  return $updateHelper->logger()->output();
+}
