@@ -6,6 +6,14 @@ social_embed.generate:
   requirements:
     _permission: 'generate social embed content'
 
+social_embed.map_consent:
+  path: '/social-embed/map-consent'
+  defaults:
+    _controller: '\Drupal\social_embed\Controller\MapConsentController::generate'
+  requirements:
+    _permission: 'access content'
+  options:
+    _theme: ajax_base_page
 
 social_embed.settings:
   path: 'admin/config/opensocial/embed-consent'

@@ -4,6 +4,7 @@ namespace Drupal\social_embed\Hooks;
 
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -94,6 +95,16 @@ class MapBlockView implements ContainerInjectionInterface {
       return;
     }
 
+    // Always bubble cache metadata so toggling consent settings invalidates
+    // both the placeholder and the normal map cached versions.
+    $cache = CacheableMetadata::createFromRenderArray($build);
+    $cache->addCacheTags([
+      'config:social_embed.settings',
+      'user:' . $this->currentUser->id(),
+    ]);
+    $cache->addCacheContexts(['user']);
+    $cache->applyTo($build);
+
     if (!$this->isConsentRequired()) {
       return;
     }
@@ -134,7 +145,7 @@ class MapBlockView implements ContainerInjectionInterface {
    * Returns the route name for the map consent AJAX endpoint.
    */
   protected function getConsentRoute(): string {
-    return 'social_geolocation_maps.map_consent';
+    return 'social_embed.map_consent';
   }
 
   /**
@@ -146,7 +157,10 @@ class MapBlockView implements ContainerInjectionInterface {
   protected function getConsentCacheMetadata(): array {
     return [
       'contexts' => ['user'],
-      'tags' => ['config:social_embed.settings'],
+      'tags' => [
+        'config:social_embed.settings',
+        'user:' . $this->currentUser->id(),
+      ],
     ];
   }
 
