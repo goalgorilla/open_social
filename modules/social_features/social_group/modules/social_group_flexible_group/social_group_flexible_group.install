@@ -488,12 +488,27 @@ function social_group_flexible_group_update_130019(): string {
 }
 
 /**
- * Grant view unpublished topic and event for group content to group manager.
+ * Grant flexible group managers hub moderation permissions.
+ *
+ * Covers view unpublished topics/events, topics, events, stream posts, and
+ * comments.
  */
 function social_group_flexible_group_update_130020(): void {
   $group_permissions['flexible_group-group_manager'] = [
-    'view unpublished group_node:topic entity',
+    'access comments',
+    'administer comments',
+    'delete any group_node:event relationship',
+    'delete any group_node:topic relationship',
+    'delete any post entities in group',
+    'edit any post entities in group',
+    'edit own comments',
+    'post comments',
+    'update any group_node:event entity',
+    'update any group_node:event relationship',
+    'update any group_node:topic entity',
+    'update any group_node:topic relationship',
     'view unpublished group_node:event entity',
+    'view unpublished group_node:topic entity',
   ];
 
   /** @var \Drupal\group\Entity\GroupTypeInterface|null $group_type */
