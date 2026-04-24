@@ -164,7 +164,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
         ],
       ],
       [
-        'Variable "$input" got invalid value {"type":"' . $topicType->uuid() . '","title":"Invalid body","visibility":"PUBLIC","body":{"notRoot":[]}}; Expected type RichTextJSON at value.body; Invalid Rich Text JSON document: Missing required field "root"',
+        'Variable "$input" got invalid value {"notRoot":[]} at "input.body"; Invalid Rich Text JSON document: Missing required field "root"',
       ],
       $this->defaultMutationCacheMetaData()
     );

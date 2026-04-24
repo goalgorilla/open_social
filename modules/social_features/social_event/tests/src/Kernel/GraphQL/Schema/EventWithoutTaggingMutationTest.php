@@ -65,7 +65,7 @@ class EventWithoutTaggingMutationTest extends SocialEventGraphQLKernelTestBase {
         ],
       ],
       [
-        'Variable "$input" got invalid value {"clientMutationId":"' . $clientMutationId . '","type":"' . $eventType->uuid() . '","title":"Annual Conference 2026","visibility":"PUBLIC","body":{"root":{"type":"root","version":1,"children":[{"type":"paragraph","version":1,"children":[{"type":"text","version":1,"text":"Hello"}]}]}},"startDate":' . $startTimestamp . ',"endDate":' . $endTimestamp . ',"location":"Amsterdam","contentTags":["' . $clientMutationId . '"]}; Field "contentTags" is not defined by type CreateEventInput.',
+        'Variable "$input" got invalid value {"clientMutationId":"' . $clientMutationId . '","type":"' . $eventType->uuid() . '","title":"Annual Conference 2026","visibility":"PUBLIC","body":{"root":{"type":"root","version":1,"children":[{"type":"paragraph","version":1,"children":[{"type":"text","version":1,"text":"Hello"}]}]}},"startDate":' . $startTimestamp . ',"endDate":' . $endTimestamp . ',"location":"Amsterdam","contentTags":["' . $clientMutationId . '"]}; Field "contentTags" is not defined by type "CreateEventInput".',
       ],
       $this->defaultMutationCacheMetaData()
         ->setCacheMaxAge(0)
@@ -104,7 +104,7 @@ class EventWithoutTaggingMutationTest extends SocialEventGraphQLKernelTestBase {
         ],
       ],
       [
-        'Variable "$input" got invalid value {"clientMutationId":"' . $clientMutationId . '","id":"' . $event->uuid() . '","title":"Updated Event Title","contentTags":["' . $clientMutationId . '"]}; Field "contentTags" is not defined by type UpdateEventInput.',
+        'Variable "$input" got invalid value {"clientMutationId":"' . $clientMutationId . '","id":"' . $event->uuid() . '","title":"Updated Event Title","contentTags":["' . $clientMutationId . '"]}; Field "contentTags" is not defined by type "UpdateEventInput".',
       ],
       $this->defaultMutationCacheMetaData()
         ->setCacheMaxAge(0)

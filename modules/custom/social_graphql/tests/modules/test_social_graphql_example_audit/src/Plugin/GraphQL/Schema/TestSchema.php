@@ -8,6 +8,8 @@ use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
 use Drupal\social_graphql\GraphQL\ResolverRegistry;
+use GraphQL\Language\Source;
+use GraphQL\Language\SourceLocation;
 
 /**
  * A schema to test things against.
@@ -22,14 +24,14 @@ class TestSchema extends SdlSchemaPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getResolverRegistry() {
+  public function createResolverRegistry(): ResolverRegistryInterface {
     return new ResolverRegistry();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSchema(ResolverRegistryInterface $registry) {
+  public function registerResolvers(ResolverRegistryInterface $registry): void {
     $builder = new ResolverBuilder();
 
     $registry->addFieldResolver('Query', 'article',
@@ -58,15 +60,14 @@ class TestSchema extends SdlSchemaPluginBase {
       $builder->produce('entity_owner')
         ->map('entity', $builder->fromParent())
     );
-
-    return parent::getSchema($registry);
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getSchemaDefinition() {
-    return <<<EOF
+  protected function getSchemaDefinition(): Source {
+    return new Source(
+      <<<EOF
 type Query {
   article(id: ID!) : Article
 }
@@ -85,7 +86,10 @@ type Article implements Node {
   label: String
   author: User
 }
-EOF;
+EOF,
+      __FILE__,
+      new SourceLocation(__LINE__ - 20, 0)
+    );
   }
 
 }

@@ -331,7 +331,7 @@ class TopicWithoutTaggingMutationTest extends SocialGraphQLTestBase {
         ],
       ],
       [
-        'Variable "$input" got invalid value {"clientMutationId":"' . $clientMutationId . '","type":"' . $topicType->uuid() . '","title":"Test Topic","visibility":"PUBLIC","body":{"root":{"type":"root","version":1,"children":[{"type":"paragraph","version":1,"children":[{"type":"text","version":1,"text":"Hello"}]}]}},"contentTags":["' . $clientMutationId . '"]}; Field "contentTags" is not defined by type CreateTopicInput.',
+        'Variable "$input" got invalid value {"clientMutationId":"' . $clientMutationId . '","type":"' . $topicType->uuid() . '","title":"Test Topic","visibility":"PUBLIC","body":{"root":{"type":"root","version":1,"children":[{"type":"paragraph","version":1,"children":[{"type":"text","version":1,"text":"Hello"}]}]}},"contentTags":["' . $clientMutationId . '"]}; Field "contentTags" is not defined by type "CreateTopicInput".',
       ],
       $this->defaultMutationCacheMetaData()
         // @todo Remove max age once https://www.drupal.org/project/simple_oauth/issues/3573262 is fixed.
@@ -460,7 +460,7 @@ class TopicWithoutTaggingMutationTest extends SocialGraphQLTestBase {
         ],
       ],
       [
-        'Variable "$input" got invalid value {"clientMutationId":"' . $clientMutationId . '","id":"' . $topic->uuid() . '","title":"Updated Title","visibility":"PUBLIC","contentTags":["' . $clientMutationId . '"]}; Field "contentTags" is not defined by type UpdateTopicInput.',
+        'Variable "$input" got invalid value {"clientMutationId":"' . $clientMutationId . '","id":"' . $topic->uuid() . '","title":"Updated Title","visibility":"PUBLIC","contentTags":["' . $clientMutationId . '"]}; Field "contentTags" is not defined by type "UpdateTopicInput".',
       ],
       $this->defaultMutationCacheMetaData()
         // @todo Remove max age once https://www.drupal.org/project/simple_oauth/issues/3573262 is fixed.

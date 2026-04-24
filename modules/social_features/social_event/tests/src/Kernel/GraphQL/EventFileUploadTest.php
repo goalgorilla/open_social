@@ -128,6 +128,7 @@ class EventFileUploadTest extends SocialEventGraphQLKernelTestBase {
     );
 
     $this->assertResultErrors($result, []);
+    $this->assertIsArray($result->data);
     $data = $result->data['stagedUploadsCreate'];
     $this->assertNull($data['errors']);
     $this->assertIsArray($data['stagedUploadGrants']);
@@ -189,6 +190,7 @@ class EventFileUploadTest extends SocialEventGraphQLKernelTestBase {
     );
 
     $this->assertResultErrors($createResult, []);
+    $this->assertIsArray($createResult->data);
     $data = $createResult->data['createEvent'];
     $this->assertNull($data['errors']);
     $this->assertIsString($data['event']['id']);
@@ -257,6 +259,7 @@ class EventFileUploadTest extends SocialEventGraphQLKernelTestBase {
     );
 
     $this->assertResultErrors($result, []);
+    $this->assertIsArray($result->data);
     $data = $result->data['stagedUploadsCreate'];
     $this->assertNull($data['errors']);
     $this->assertIsArray($data['stagedUploadGrants']);
@@ -309,6 +312,7 @@ class EventFileUploadTest extends SocialEventGraphQLKernelTestBase {
     );
 
     $this->assertResultErrors($updateResult, []);
+    $this->assertIsArray($updateResult->data);
     $this->assertNull($updateResult->data['updateEvent']['errors']);
 
     $event = $this->reloadEvent($event);
@@ -363,6 +367,7 @@ class EventFileUploadTest extends SocialEventGraphQLKernelTestBase {
     );
 
     $this->assertResultErrors($clearResult, []);
+    $this->assertIsArray($clearResult->data);
     $this->assertNull($clearResult->data['updateEvent']['errors']);
 
     $event = $this->reloadEvent($event);

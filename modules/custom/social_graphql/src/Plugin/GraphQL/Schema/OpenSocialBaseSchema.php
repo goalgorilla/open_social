@@ -4,15 +4,13 @@ namespace Drupal\social_graphql\Plugin\GraphQL\Schema;
 
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
+use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
 use Drupal\social_graphql\GraphQL\ResolverRegistry;
-use Drupal\social_graphql\Plugin\GraphQL\Types\RichTextJSON;
-use GraphQL\Language\AST\DocumentNode;
+use Drupal\social_graphql\GraphQL\Scalar\RichTextJSON;
 use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
 use GraphQL\Language\AST\ScalarTypeDefinitionNode;
 use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\UnionTypeDefinitionNode;
-use GraphQL\Type\Schema;
-use GraphQL\Utils\BuildSchema;
 
 /**
  * The provider of the schema base for the Open Social GraphQL API.
@@ -41,29 +39,16 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getResolverRegistry() {
+  public function createResolverRegistry(): ResolverRegistryInterface {
     return new ResolverRegistry();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSchema(ResolverRegistryInterface $registry) {
-    // Add Open Social base types to the schema.
-    $this->getBaseSchema($registry);
-
-    return parent::getSchema($registry);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function buildSchema(DocumentNode $astDocument, ResolverRegistryInterface $registry): Schema {
+  protected function getTypeConfigDecorator(ResolverRegistryInterface $registry): callable {
     $resolver = [$registry, 'resolveType'];
-    // Performance: only validate the schema in development mode, skip it in
-    // production on every request.
-    $options = empty($this->inDevelopment) ? ['assumeValid' => TRUE] : [];
-    $schema = BuildSchema::build($astDocument, function ($config, TypeDefinitionNode $type) use ($resolver, $registry) {
+    return function ($config, TypeDefinitionNode $type) use ($resolver, $registry) {
       if ($type instanceof InterfaceTypeDefinitionNode || $type instanceof UnionTypeDefinitionNode) {
         $config['resolveType'] = $resolver;
       }
@@ -78,20 +63,13 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
         }
       }
       return $config;
-    }, $options);
-    return $schema;
+    };
   }
 
   /**
-   * Provides a base schema for Open Social.
-   *
-   * This ensures that other modules have common types available to them to
-   * build on.
-   *
-   * @param \Drupal\graphql\GraphQL\ResolverRegistryInterface $registry
-   *   The resolver registry.
+   * {@inheritdoc}
    */
-  protected function getBaseSchema(ResolverRegistryInterface $registry) {
+  protected function registerResolvers(ResolverRegistryInterface $registry): void {
     $builder = new ResolverBuilder();
 
     // TextFormat fields.
@@ -234,8 +212,7 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
         ->map('path', $builder->fromValue('created.value'))
     );
 
-    assert($registry instanceof ResolverRegistry, "The resolver registry should be the Open Social variant that supports scalars.");
-    $registry->addCustomScalar('RichTextJSON', RichTextJSON::class);
+    $registry->addCustomScalar('RichTextJSON', new RichTextJSON());
   }
 
   /**

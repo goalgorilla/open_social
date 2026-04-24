@@ -10,6 +10,7 @@ use Drupal\file\Entity\File;
 use Drupal\Tests\field\Kernel\FieldKernelTestBase;
 use Drupal\user\Entity\Role;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
+use GraphQL\Executor\Promise\Adapter\SyncPromiseQueue;
 
 /**
  * Tests that the MediaBridge works with FileItems.
@@ -139,7 +140,7 @@ class MediaBridgeFileTest extends FieldKernelTestBase {
    */
   protected function await($value) {
     if ($value instanceof SyncPromise) {
-      $value::runQueue();
+      SyncPromiseQueue::run();
       return $value->result;
     }
 

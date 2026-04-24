@@ -6,6 +6,7 @@ use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\social_graphql\Plugin\GraphQL\SchemaExtension\SchemaExtensionPluginBase;
+use GraphQL\Language\Source;
 
 /**
  * Adds event data to the Open Social GraphQL API.
@@ -22,7 +23,7 @@ class EventSchemaExtension extends SchemaExtensionPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function registerResolvers(ResolverRegistryInterface $registry) {
+  public function registerResolvers(ResolverRegistryInterface $registry): void {
     $builder = new ResolverBuilder();
 
     $this->addQueryFields($registry, $builder);
@@ -250,42 +251,84 @@ class EventSchemaExtension extends SchemaExtensionPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getExtensionDefinition(): ?string {
-    // First, try to load the default extension definition using parent method.
-    try {
-      $definition = parent::getExtensionDefinition() ?? "";
-    }
-    catch (InvalidPluginDefinitionException $e) {
-      // Expected fallback when base extension definition is absent.
-      $definition = "";
-    }
+  public function getExtensionDefinition(): ?Source {
+    $definition = parent::getExtensionDefinition();
+    assert($definition !== NULL, "SdlSchemaExtensionPluginBase never returns null.");
+
+    $source = $definition->body;
+    $name = $definition->name;
 
     // Then, load additional extension schemas. These files extend the base
     // Event type with groups field (flexible_group) and organizations field
     // (organization). Only load extensions if their corresponding modules are
     // enabled.
     $extension_modules = [
-      'social_group_flexible_group' => 'social_event_flexible_group_schema_extension.extension.graphqls',
-      'social_organization' => 'social_event_organization_schema_extension.extension.graphqls',
+      'social_group_flexible_group' => 'social_event_flexible_group_schema_extension',
+      'social_organization' => 'social_event_organization_schema_extension',
     ];
 
-    $event_module = $this->moduleHandler->getModule('social_event');
-    foreach ($extension_modules as $module_name => $filename) {
+    foreach ($extension_modules as $module_name => $basename) {
       // Check if the module is enabled before loading its extension.
       if (!$this->moduleHandler->moduleExists($module_name)) {
         continue;
       }
 
-      $file = $event_module->getPath() . '/graphql/' . $filename;
-      if (file_exists($file)) {
-        $contents = file_get_contents($file);
-        if ($contents) {
-          $definition .= "\n" . $contents;
-        }
-      }
+      $otherSource = $this->loadOtherDefinitionFile($basename, 'extension');
+      $source .= "\n$otherSource->body";
+      $name .= " concatenated with $otherSource->name";
     }
 
-    return !empty(trim($definition)) ? $definition : NULL;
+    return new Source(
+      $source,
+      $name
+    );
+  }
+
+  /**
+   * Loads a separate definition file.
+   *
+   * Temporary workaround until we properly use more schema extensions.
+   * Do not replicate this and do not try to abstract this into shared code,
+   * this function should not exist.
+   *
+   * @param string $baseName
+   *   The base name of the file to load.
+   * @param string $type
+   *   The type of the definition file to load.
+   *
+   * @return \GraphQL\Language\Source
+   *   The loaded definition file content.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   *   In case the file does not exist.
+   */
+  private function loadOtherDefinitionFile(string $baseName, string $type): Source {
+    $id = $this->getPluginId();
+    $definition = $this->getPluginDefinition();
+    assert(is_array($definition));
+    $module = $this->moduleHandler->getModule($definition['provider']);
+    $path = 'graphql/' . $baseName . '.' . $type . '.graphqls';
+    $file = $module->getPath() . '/' . $path;
+
+    if (!file_exists($file)) {
+      throw new InvalidPluginDefinitionException(
+        $id,
+        sprintf('The module "%s" needs to have a schema definition "%s" in its folder for "%s" to be valid.',
+          $module->getName(), $path, $definition['class']));
+    }
+
+    $contents = file_get_contents($file);
+    if (!$contents) {
+      throw new InvalidPluginDefinitionException(
+        $id,
+        sprintf(
+          'Failed to read schema file "%s".',
+          $file
+        )
+      );
+    }
+
+    return new Source($contents, $file);
   }
 
 }

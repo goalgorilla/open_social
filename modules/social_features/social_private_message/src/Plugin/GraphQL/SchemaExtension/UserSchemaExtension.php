@@ -34,7 +34,7 @@ class UserSchemaExtension extends SchemaExtensionPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getBaseDefinition() {
+  public function getBaseDefinition(): NULL {
     // Skipping social_posts_schema_extension.base.graphqls, as we have nothing
     // to write there.
     return NULL;

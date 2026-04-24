@@ -23,7 +23,7 @@ class Schema implements ResolverInterface {
   /**
    * {@inheritdoc}
    */
-  public function resolve($value, $args, ResolveContext $context, ResolveInfo $info, FieldContext $field): SchemaType {
+  public function resolve(mixed $value, array $args, ResolveContext $context, ResolveInfo $info, FieldContext $field): SchemaType {
     return $info->schema;
   }
 

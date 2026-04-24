@@ -6,6 +6,7 @@ use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\Tests\media\Kernel\MediaKernelTestBase;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
+use GraphQL\Executor\Promise\Adapter\SyncPromiseQueue;
 
 /**
  * Tests that the MediaBridge works with Media entities.
@@ -106,7 +107,7 @@ class MediaBridgeMediaTest extends MediaKernelTestBase {
    */
   protected function await($value) {
     if ($value instanceof SyncPromise) {
-      $value::runQueue();
+      SyncPromiseQueue::run();
       return $value->result;
     }
 

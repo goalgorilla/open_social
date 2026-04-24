@@ -35,7 +35,7 @@ class TopicTaggingSchemaExtension extends SchemaExtensionPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getBaseDefinition() {
+  public function getBaseDefinition(): NULL {
     // No new base types for this schema extension.
     return NULL;
   }

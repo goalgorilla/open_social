@@ -153,6 +153,8 @@ class TopicFileUploadTest extends SocialTopicGraphQLKernelTestBase {
     );
 
     $this->assertResultErrors($result, []);
+    $this->assertIsArray($result->data);
+    $this->assertIsArray($result->data['stagedUploadsCreate']);
     $data = $result->data['stagedUploadsCreate'];
     $this->assertNull($data['errors']);
     $this->assertIsArray($data['stagedUploadGrants']);
@@ -214,6 +216,8 @@ class TopicFileUploadTest extends SocialTopicGraphQLKernelTestBase {
     );
 
     $this->assertResultErrors($createResult, []);
+    $this->assertIsArray($createResult->data);
+    $this->assertIsArray($createResult->data['createTopic']);
     $data = $createResult->data['createTopic'];
     $this->assertNull($data['errors']);
     $this->assertIsString($data['topic']['id']);
@@ -296,6 +300,8 @@ class TopicFileUploadTest extends SocialTopicGraphQLKernelTestBase {
     );
 
     $this->assertResultErrors($result, []);
+    $this->assertIsArray($result->data);
+    $this->assertIsArray($result->data['stagedUploadsCreate']);
     $data = $result->data['stagedUploadsCreate'];
     $this->assertNull($data['errors']);
     $this->assertIsArray($data['stagedUploadGrants']);
@@ -351,6 +357,8 @@ class TopicFileUploadTest extends SocialTopicGraphQLKernelTestBase {
     );
 
     $this->assertResultErrors($createResult, []);
+    $this->assertIsArray($createResult->data);
+    $this->assertIsArray($createResult->data['updateTopic']);
     $this->assertNull($createResult->data['updateTopic']['errors']);
 
     // Reload the topic.
@@ -421,6 +429,8 @@ class TopicFileUploadTest extends SocialTopicGraphQLKernelTestBase {
       ],
     );
     $this->assertResultErrors($clearResult, []);
+    $this->assertIsArray($clearResult->data);
+    $this->assertIsArray($clearResult->data['updateTopic']);
     $this->assertNull($clearResult->data['updateTopic']['errors']);
 
     $topic_id = $topic->id();

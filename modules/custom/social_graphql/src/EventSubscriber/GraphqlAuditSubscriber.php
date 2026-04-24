@@ -180,7 +180,7 @@ final class GraphqlAuditSubscriber implements EventSubscriberInterface {
     $operation = $context->getOperation()->operation;
     $query = $context->getOperation()->query;
     $queryId = $context->getOperation()->queryId;
-    $readonly = $context->getOperation()->isReadOnly();
+    $readonly = $context->getOperation()->readOnly;
 
     return [
       'type' => $type,

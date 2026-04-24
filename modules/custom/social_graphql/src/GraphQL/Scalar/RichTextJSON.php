@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\social_graphql\Plugin\GraphQL\Types;
+namespace Drupal\social_graphql\GraphQL\Scalar;
 
+use Drupal\graphql\GraphQL\CustomScalarInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Language\AST\Node;
-use GraphQL\Language\AST\ValueNode;
 use GraphQL\Utils\AST;
 use OpenSocial\RichTextJson\Document\ValidatedDocument;
 use OpenSocial\RichTextJson\Exception\InvalidDocumentException;
@@ -13,21 +13,21 @@ use OpenSocial\RichTextJson\Exception\ValidationException;
 /**
  * The representation for Rich Text JSON.
  *
- * @implements \Drupal\social_graphql\Plugin\GraphQL\Types\CustomScalarInterface<\OpenSocial\RichTextJson\Document\ValidatedDocument>
+ * @implements \Drupal\graphql\GraphQL\CustomScalarInterface<\OpenSocial\RichTextJson\Document\ValidatedDocument>
  */
 class RichTextJSON implements CustomScalarInterface {
 
   /**
    * {@inheritdoc}
    */
-  public static function serialize($value): mixed {
+  public function serialize($value): mixed {
     return $value->toArray();
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function parseValue($value): mixed {
+  public function parseValue($value): ValidatedDocument {
     if (is_object($value) && $value instanceof \stdClass) {
       $value = (array) $value;
     }
@@ -35,20 +35,19 @@ class RichTextJSON implements CustomScalarInterface {
       throw new UserError('Rich Text JSON document should be a valid JSON object.');
     }
 
-    return self::convertToDocument($value);
-
+    return $this->convertToDocument($value);
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function parseLiteral(Node&ValueNode $valueNode, ?array $variables = NULL) {
+  public function parseLiteral(Node $valueNode, ?array $variables = NULL): ValidatedDocument {
     $value = AST::valueFromASTUntyped($valueNode, $variables);
     if (!is_array($value)) {
       throw new UserError('Rich Text JSON document should be a valid JSON object.');
     }
 
-    return self::convertToDocument($value);
+    return $this->convertToDocument($value);
   }
 
   /**
@@ -62,7 +61,7 @@ class RichTextJSON implements CustomScalarInterface {
    * @return \OpenSocial\RichTextJson\Document\ValidatedDocument
    *   The validated document.
    */
-  protected static function convertToDocument(array $value) : ValidatedDocument {
+  protected function convertToDocument(array $value) : ValidatedDocument {
     try {
       return ValidatedDocument::fromArray($value);
     }
