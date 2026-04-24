@@ -575,3 +575,18 @@ function social_course_advanced_update_13015(): string {
 function social_course_advanced_update_13016(): void {
   SocialCourseUninstallHelper::addEnforcedDependency('social_course_advanced');
 }
+
+/**
+ * Grant course leaders permission to edit and delete any posts in the course.
+ */
+function social_course_advanced_update_13017(): void {
+  $permissions = [
+    'edit any post entities in group',
+    'delete any post entities in group',
+  ];
+  /** @var \Drupal\group\Entity\GroupRoleInterface|null $role */
+  $role = \Drupal::entityTypeManager()->getStorage('group_role')->load('course_advanced-group_manager');
+  if ($role !== NULL) {
+    $role->grantPermissions($permissions)->save();
+  }
+}
