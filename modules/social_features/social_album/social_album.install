@@ -89,6 +89,9 @@ function _social_album_set_group_permissions() {
     ],
     'group_manager' => [
       'delete any group_node:album entity',
+      'delete any group_node:album relationship',
+      'update any group_node:album entity',
+      'update any group_node:album relationship',
       'view unpublished group_node:album entity',
     ],
     'group_admin' => [
@@ -242,23 +245,19 @@ function social_album_update_13002() : string {
 }
 
 /**
- * Grant "view unpublished group_node:album entity" to group manager.
+ * Grant group managers permissions to manage any album in the group.
  */
 function social_album_update_13003(): void {
-  $group_permissions = [
-    'flexible_group-group_manager' => ['view unpublished group_node:album entity'],
+  $permissions = [
+    'delete any group_node:album entity',
+    'delete any group_node:album relationship',
+    'update any group_node:album entity',
+    'update any group_node:album relationship',
+    'view unpublished group_node:album entity',
   ];
-
-  $group_type = \Drupal::entityTypeManager()
-    ->getStorage('group_type')
-    ->load('flexible_group');
-
-  if ($group_type) {
-    foreach ($group_type->getRoles() as $role) {
-      if (!empty($group_permissions[$role->id()])) {
-        $role->grantPermissions($group_permissions[$role->id()])
-          ->save();
-      }
-    }
+  /** @var \Drupal\group\Entity\GroupRoleInterface|null $role */
+  $role = \Drupal::entityTypeManager()->getStorage('group_role')->load('flexible_group-group_manager');
+  if ($role !== NULL) {
+    $role->grantPermissions($permissions)->save();
   }
 }
