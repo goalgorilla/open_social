@@ -78,3 +78,40 @@ Feature: Create and Delete a Post on Group
     And I am on the homepage
     And I should not see "This is a post in a group."
 
+  Scenario: Group manager deletes another member's post in group
+    Given I enable the module "social_group_flexible_group"
+    And I disable that the registered users to be verified immediately
+    And users:
+      | name        | mail                      | status | roles    |
+      | post_author | post_author_gm@example.com | 1      | verified |
+      | gm          | gm_post@example.com      | 1      | verified |
+    And groups with non-anonymous owner:
+      | label      | field_group_description | type           | langcode | field_flexible_group_visibility | field_group_allowed_join_method |
+      | Test group | Public visibility       | flexible_group | en       | public                          | direct                          |
+    And group members:
+      | group      | user        |
+      | Test group | post_author |
+    And I am logged in as "post_author"
+
+    When I am viewing the group "Test group"
+    And I click "Stream"
+    And I fill in "Say something to the group" with "This is a post for manager post delete."
+    And I press "Post"
+    And I should see "This is a post for manager post delete."
+    And I should see "post_author" in the ".media-heading" element
+    And I am logged in as "gm"
+    And I am a member of "Test group" with the "flexible_group-group_manager" role
+
+    And I am viewing the group "Test group"
+    And I click "Stream"
+    And I click the element with css selector ".btn.btn-icon-toggle.dropdown-toggle.waves-effect.waves-circle"
+    And I click "Delete"
+    And I should see "Are you sure you want to delete the post"
+    And I should see "This action cannot be undone."
+    And I press "Delete"
+    And I wait for AJAX to finish
+    And I should see "has been deleted."
+    And I should not see "This is a post for manager post delete."
+    And I am on the homepage
+    And I should not see "This is a post for manager post delete."
+

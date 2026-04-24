@@ -5,7 +5,7 @@ Feature: Test edit access for content in groups as group manager
     Given I enable the module "social_group_flexible_group"
     And I disable that the registered users to be verified immediately
 
-  Scenario Outline: Can not edit topics I don't own in a group as group manager
+  Scenario Outline: Can edit topics I don't own in a group as group manager
     Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | <group_visibility>              |
@@ -17,7 +17,8 @@ Feature: Test edit access for content in groups as group manager
 
     When I am editing the topic "Test content"
 
-    Then I should be denied access
+    Then I should not see "You are not authorized to access this page."
+    And I should see "Description"
 
   Examples:
     | role           | group_visibility | content_visibility |
@@ -40,7 +41,7 @@ Feature: Test edit access for content in groups as group manager
     | verified       | members          | community          |
     | verified       | members          | group              |
 
-  Scenario Outline: Can not edit events I don't own in a group as group manager
+  Scenario Outline: Can edit events I don't own in a group as group manager
     Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | <group_visibility>              |
@@ -52,7 +53,8 @@ Feature: Test edit access for content in groups as group manager
 
     When I am editing the event "Test content"
 
-    Then I should be denied access
+    Then I should not see "You are not authorized to access this page."
+    And I should see "Description"
 
   Examples:
     | role           | group_visibility | content_visibility |
