@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\social_embed\Unit\Controller;
 
-use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -23,21 +22,29 @@ class MapConsentControllerTest extends UnitTestCase {
 
   /**
    * The renderer mock.
+   *
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Render\RendererInterface
    */
   protected RendererInterface $renderer;
 
   /**
    * The module handler mock.
+   *
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The entity type manager mock.
+   *
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The view storage mock.
+   *
+   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Entity\EntityStorageInterface
    */
   protected EntityStorageInterface $viewStorage;
 
@@ -206,7 +213,6 @@ class MapConsentControllerTest extends UnitTestCase {
 
     $response = $this->controller->generate($request);
 
-    $this->assertInstanceOf(AjaxResponse::class, $response);
     $commands = $response->getCommands();
     $this->assertCount(1, $commands);
     $this->assertEquals('insert', $commands[0]['command']);
@@ -256,7 +262,6 @@ class MapConsentControllerTest extends UnitTestCase {
 
     $response = $this->controller->generate($request);
 
-    $this->assertInstanceOf(AjaxResponse::class, $response);
     $attachments = $response->getAttachments();
     $this->assertEmpty($attachments['library'] ?? []);
   }
