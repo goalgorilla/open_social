@@ -46,12 +46,11 @@
         self.autoSubmitForm(element);
       });
 
-      // Update the title with the member count on initial load.
-      const viewsInContext =
-        (context.querySelectorAll && context.querySelectorAll('.view')) ||
-        document.querySelectorAll('.view');
-
-      viewsInContext.forEach(function (viewElement) {
+      // Update the title with the member count on initial load. Always search
+      // the whole document because the title element and the view are often
+      // rendered in separate BigPipe/AJAX chunks, so the current `context` may
+      // not contain both.
+      document.querySelectorAll('.view').forEach(function (viewElement) {
         self.insertViewsResultCount(viewElement);
       });
 
@@ -210,31 +209,25 @@
         return;
       }
 
-      let count = 0;
+      let formattedText;
 
       // Try to find an existing results-count element within this view.
-      let resultsCountElement = viewElement.querySelector('.view-header .results-count');
+      const resultsCountElement = viewElement.querySelector('.view-header .results-count');
 
       if (resultsCountElement) {
-        // Get the count value from the result count element.
-        const countText = resultsCountElement.textContent.trim();
-        const parsedCount = parseInt(countText, 10);
-
-        if (!isNaN(parsedCount)) {
-          count = parsedCount;
-        }
-
-        // Remove the original element from the view header.
-        resultsCountElement.remove();
+        // Use the inner markup (number/label spans) and drop the wrapping
+        // block-level `.results-count` div so the count renders inline with
+        // the divider and the search field.
+        formattedText = resultsCountElement.innerHTML;
       }
       else {
         // Fallback when there is no result.
         const rows = viewElement.querySelectorAll('.view-content .views-row');
-        count = rows.length;
+        const count = rows.length;
+
+        formattedText = Drupal.formatPlural(count, '1 member', '@count members');
       }
 
-      // Create formatted plural text and update the title element.
-      const formattedText = Drupal.formatPlural(count, '1 member', '@count members');
       // Update the title with the count. Include the divider to maintain the
       // visual separator between the count and the search field.
       titleElement.innerHTML = formattedText + ' <span class="participants_title_divider">|</span>';

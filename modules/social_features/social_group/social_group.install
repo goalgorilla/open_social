@@ -1337,3 +1337,13 @@ function social_group_update_13032(): string {
 
   return $updater->logger()->output();
 }
+
+/**
+ * Replace the group members view header with a results-count template.
+ */
+function social_group_update_13033(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_group', __FUNCTION__);
+  return $updater->logger()->output();
+}

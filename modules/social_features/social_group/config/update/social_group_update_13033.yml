@@ -1,0 +1,17 @@
+views.view.group_members:
+  expected_config: { }
+  update_actions:
+    change:
+      display:
+        page_group_members:
+          display_options:
+            header:
+              area_text_custom:
+                content: |-
+                  {% set count = [view:total-rows] %}
+                  <div class="results-count hidden">
+                    <span class="results-count__number">{{ count }}</span>
+                    <span class="results-count__label">{% trans %}member{% plural count %}members{% endtrans %}</span>
+                  </div>
+                tokenize: true
+                empty: true

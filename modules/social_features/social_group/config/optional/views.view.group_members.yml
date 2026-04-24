@@ -629,9 +629,14 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: text_custom
-          empty: false
-          content: '<div class="results-count hidden">[view:total-rows]</div>'
-          tokenize: false
+          empty: true
+          content: |-
+            {% set count = [view:total-rows] %}
+            <div class="results-count hidden">
+              <span class="results-count__number">{{ count }}</span>
+              <span class="results-count__label">{% trans %}member{% plural count %}members{% endtrans %}</span>
+            </div>
+          tokenize: true
       exposed_block: true
       display_extenders:
         views_ef_fieldset:
