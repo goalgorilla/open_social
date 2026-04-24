@@ -157,6 +157,16 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
         elseif ($account->hasPermission('edit own post entities', $account) && ($account->id() == $entity->getOwnerId())) {
           return AccessResult::allowed();
         }
+        // Hub managers: edit others' posts in a group stream.
+        if ($entity->hasField('field_recipient_group') && !$entity->get('field_recipient_group')->isEmpty()) {
+          $group = $this->entityTypeManager->getStorage('group')->load($entity->get('field_recipient_group')->target_id);
+          if ($group && $group->hasPermission('edit any post entities in group', $account)) {
+            return AccessResult::allowed()
+              ->cachePerUser()
+              ->addCacheableDependency($entity)
+              ->addCacheableDependency($group);
+          }
+        }
         return AccessResult::neutral();
 
       case 'delete':
@@ -166,6 +176,15 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
         }
         elseif ($account->hasPermission('delete own post entities', $account) && ($account->id() == $entity->getOwnerId())) {
           return AccessResult::allowed();
+        }
+        if ($entity->hasField('field_recipient_group') && !$entity->get('field_recipient_group')->isEmpty()) {
+          $group = $this->entityTypeManager->getStorage('group')->load($entity->get('field_recipient_group')->target_id);
+          if ($group && $group->hasPermission('delete any post entities in group', $account)) {
+            return AccessResult::allowed()
+              ->cachePerUser()
+              ->addCacheableDependency($entity)
+              ->addCacheableDependency($group);
+          }
         }
         return AccessResult::forbidden();
     }
