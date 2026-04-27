@@ -84,3 +84,26 @@ Feature: Items per page limit on the Manage members overview page
     And should see "50" selected in the "Items per page" select field
     And I should not see the link "Next"
     And I should not see the link "Last"
+
+  Scenario: Selected members stay selected after paginating away and back
+    Given I am logged in as a user with the sitemanager role
+
+    When I am viewing the group "Flexible group"
+    And I click "Manage members"
+
+    Then I should see the text "0 Members are selected"
+
+    And I click the element with css selector "#edit-social-views-bulk-operations-bulk-form-group-0"
+    And I wait for AJAX to finish
+    And I click the element with css selector "#edit-social-views-bulk-operations-bulk-form-group-1"
+    And I wait for AJAX to finish
+    And I click "Next"
+    And I wait for AJAX to finish
+    And I should see the text "member1"
+    And I should see the text "member2"
+
+    And I click "Previous"
+    And I wait for AJAX to finish
+
+    And I should see the text "member1"
+    And I should see the text "member2"

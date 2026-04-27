@@ -205,6 +205,10 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
     // Add some JS for altering titles and switches.
     $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
 
+    // Get tempstore data so we know what messages to show based on the data.
+    $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
+    $excluded = !empty($tempstoreData['exclude_mode']);
+
     // Render select all result checkboxes.
     if (!empty($wrapper['select_all'])) {
       $total_results = $this->tempStoreData['total_results'] ?? 0;
@@ -222,29 +226,56 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
         $count = empty($this->tempStoreData['exclude_mode']) ? \count($this->tempStoreData['list']) : $this->tempStoreData['total_results'] - \count($this->tempStoreData['list']);
       }
 
-      $title = $this->formatPlural($count, '<b><em class="placeholder">@count</em> Member</b> is selected', '<b><em class="placeholder">@count</em> Members</b> are selected');
-      $wrapper['multipage']['#title'] = [
+      if ($count > 0 && !empty($wrapper['multipage']['list']['#items'])) {
+        $wrapper['multipage']['#title'] = [
+          '#type' => 'container',
+          '#attributes' => [
+            'class' => [
+              'vbo-info-list-wrapper',
+            ],
+          ],
+          'title' => [
+            '#type' => 'html_tag',
+            '#tag' => 'h3',
+            '#value' => !$excluded ? $this->t('Items selected:') : $this->t('Members excluded on other pages:'),
+          ],
+          'selected_items' => [
+            '#theme' => 'item_list',
+            '#items' => $wrapper['multipage']['list']['#items'],
+          ],
+        ];
+      }
+      else {
+        $title = $this->formatPlural($count, '<b><em class="placeholder">@count</em> Member</b> is selected', '<b><em class="placeholder">@count</em> Members</b> are selected');
+        $wrapper['multipage']['#title'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'div',
+          '#value' => $title,
+          '#attributes' => [
+            'class' => [
+              'vbo-info-list-wrapper',
+            ],
+          ],
+        ];
+      }
+
+      $wrapper['multipage']['vbo_summary'] = [
         '#type' => 'html_tag',
-        '#tag' => 'div',
-        '#value' => $title,
+        '#tag' => 'summary',
+        '#value' => $this->formatPlural($count, 'Selected 1 item', 'Selected @count items'),
         '#attributes' => [
           'class' => [
-            'vbo-info-list-wrapper',
+            'visually-hidden',
           ],
         ],
+        '#weight' => -100,
       ];
     }
 
     // Add selector so the JS of VBO applies correctly.
     $wrapper['multipage']['#attributes']['class'][] = 'vbo-multipage-selector';
 
-    // Get tempstore data so we know what messages to show based on the data.
-    $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
     if (!empty($wrapper['multipage']['list']['#items']) && count($wrapper['multipage']['list']['#items']) > 0) {
-      $excluded = FALSE;
-      if (isset($tempstoreData['exclude_mode']) && $tempstoreData['exclude_mode']) {
-        $excluded = TRUE;
-      }
       $wrapper['multipage']['list']['#title'] = !$excluded ? $this->t('See selected members on other pages') : $this->t('Members excluded on other pages:');
     }
 
