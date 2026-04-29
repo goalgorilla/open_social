@@ -305,7 +305,8 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
     $id_key = $entity_type->getKey('id');
 
     // Create select based on entity data table.
-    if (($data_table = $entity_type->getDataTable()) === NULL) {
+    $data_table = $entity_type->getDataTable() ?? $entity_type->getBaseTable();
+    if ($data_table === NULL) {
       return [];
     }
     $query = $this->database->select($data_table, 'base_table');

@@ -150,8 +150,8 @@ class ContentBuilder implements ContentBuilderInterface {
       /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
       $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
-      $table = $entity_type->getDataTable();
-      if (!empty($table) && is_string($table)) {
+      $table = $entity_type->getDataTable() ?? $entity_type->getBaseTable();
+      if (!empty($table)) {
         $query = $this->connection->select($table, 'base_table')
           ->addTag('social_content_block')
           ->addTag($entity_type->id() . '_access')
