@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,35 +22,18 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 abstract class BackfillHandlerBase extends PluginBase implements BackfillHandlerInterface, ContainerFactoryPluginInterface {
 
   /**
-   * The entity type manager.
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
-   * The entity field manager.
-   */
-  protected EntityFieldManagerInterface $entityFieldManager;
-
-  /**
-   * The container.
-   */
-  protected ContainerInterface $container;
-
-  /**
    * {@inheritdoc}
    */
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
-    EntityTypeManagerInterface $entity_type_manager,
-    EntityFieldManagerInterface $entity_field_manager,
-    ContainerInterface $container,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected EntityFieldManagerInterface $entityFieldManager,
+    protected AccountSwitcherInterface $accountSwitcher,
+    protected ContainerInterface $container,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityTypeManager = $entity_type_manager;
-    $this->entityFieldManager = $entity_field_manager;
-    $this->container = $container;
   }
 
   /**
@@ -67,6 +51,7 @@ abstract class BackfillHandlerBase extends PluginBase implements BackfillHandler
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('entity_field.manager'),
+      $container->get('account_switcher'),
       $container
     );
   }
@@ -286,17 +271,21 @@ abstract class BackfillHandlerBase extends PluginBase implements BackfillHandler
       ));
     }
 
-    // Set the actor on the handler if it supports actor awareness and
-    // an actor is available.
-    // @phpstan-ignore-next-line
-    if ($handler instanceof BackfillActorAwareInterface) {
-      $actor = $this->getActorFromEntity($entity);
-      if ($actor instanceof UserInterface) {
-        $handler->setActor($actor);
-      }
+    // Store the account before we act on behalf of someone else.
+    $actor = $this->getActorFromEntity($entity);
+    $impersonating = $actor instanceof UserInterface;
+    if ($impersonating) {
+      $this->accountSwitcher->switchTo($actor);
     }
 
-    $handler->{$handler_method}($entity);
+    try {
+      $handler->{$handler_method}($entity);
+    }
+    finally {
+      if ($impersonating) {
+        $this->accountSwitcher->switchBack();
+      }
+    }
   }
 
 }

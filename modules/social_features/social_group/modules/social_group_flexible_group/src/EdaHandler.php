@@ -5,7 +5,6 @@ namespace Drupal\social_group_flexible_group;
 use CloudEvents\V1\CloudEvent;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -13,102 +12,71 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_eda\DispatcherInterface;
-use Drupal\social_eda\Plugin\BackfillActorAwareInterface;
-use Drupal\social_eda\Traits\SetActorTrait;
-use Drupal\social_eda\UuidNamespace;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\Address;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Href;
 use Drupal\social_eda\Types\User;
+use Drupal\social_eda\UuidNamespace;
 use Drupal\social_group_flexible_group\Event\GroupEntityData;
 use Drupal\social_group_flexible_group\Types\GroupMembershipMethod;
 use Drupal\social_group_flexible_group\Types\GroupVisibility;
-use Drupal\user\UserInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Handles hook invocations for EDA related operations of the event entity.
  */
-final class EdaHandler implements BackfillActorAwareInterface {
-
-  use SetActorTrait;
+final class EdaHandler {
 
   /**
-   * The source.
-   *
-   * @var string
-   */
-  protected string $source;
-
-  /**
-   * The current route name.
-   *
-   * @var string
-   */
-  protected string $routeName;
-
-  /**
-   * The community namespace.
-   *
-   * @var string
-   */
-  protected string $namespace;
-
-  /**
-   * The topic name.
-   *
-   * @var string
-   */
-  protected string $topicName;
-
-  /**
-   * The request time.
-   *
-   * @var int
-   */
-  protected int $requestTime;
-
-  /**
-   * {@inheritDoc}
+   * Constructs the EdaHandler.
    */
   public function __construct(
     private readonly ?DispatcherInterface $dispatcher,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $account,
+    private readonly AccountProxyInterface $currentUser,
     private readonly RouteMatchInterface $routeMatch,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TimeInterface $time,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
-  ) {
-    // Initialize $this->currentUser (from SetActorTrait) with
-    // the authenticated user entity. This can be overridden via setActor().
-    $account_id = $this->account->id();
-    if ($account_id > 0) {
-      $user = $this->entityTypeManager->getStorage('user')->load($account_id);
-      if ($user instanceof UserInterface) {
-        $this->currentUser = $user;
-      }
-    }
+  ) {}
 
-    // Set source.
+  /**
+   * Returns the configured EDA namespace prefix.
+   */
+  private function namespace(): string {
+    return $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
+  }
+
+  /**
+   * Returns the Kafka topic name for group events.
+   */
+  private function topicName(): string {
+    return "{$this->namespace()}.cms.group.v1";
+  }
+
+  /**
+   * Returns the CloudEvents source (request path).
+   */
+  private function source(): string {
     $request = $this->requestStack->getCurrentRequest();
-    $this->source = $request ? $request->getPathInfo() : '';
+    return $request ? $request->getPathInfo() : '';
+  }
 
-    // Set route name.
-    $this->routeName = $this->routeMatch->getRouteName() ?: '';
+  /**
+   * Returns the current route name.
+   */
+  private function routeName(): string {
+    return $this->routeMatch->getRouteName() ?: '';
+  }
 
-    // Set the community namespace.
-    $this->namespace = $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
-
-    // Set the community namespace.
-    $this->topicName = "{$this->namespace}.cms.group.v1";
-
-    // Set the request time.
-    $this->requestTime = $this->time->getRequestTime();
+  /**
+   * Returns the request time as a Unix timestamp.
+   */
+  private function requestTime(): int {
+    return $this->time->getRequestTime();
   }
 
   /**
@@ -116,7 +84,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function groupCreate(GroupInterface $group): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.group.create",
       group: $group
     );
@@ -127,7 +94,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function groupPublish(GroupInterface $group): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.group.publish",
       group: $group
     );
@@ -138,7 +104,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function groupUnpublish(GroupInterface $group): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.group.unpublish",
       group: $group
     );
@@ -149,7 +114,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function groupUpdate(GroupInterface $group): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.group.update",
       group: $group
     );
@@ -160,7 +124,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function groupDelete(GroupInterface $group): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.group.delete",
       group: $group
     );
@@ -219,7 +182,7 @@ final class EdaHandler implements BackfillActorAwareInterface {
 
     return new CloudEvent(
       id: $this->generateEventId($event_type, $group),
-      source: $this->source,
+      source: $this->source(),
       type: $event_type,
       data: [
         'group' => new GroupEntityData(
@@ -241,20 +204,18 @@ final class EdaHandler implements BackfillActorAwareInterface {
           ),
           href: Href::fromEntity($group),
         ),
-        'actor' => Actor::fromContext($this->currentUser, $this->routeName),
+        'actor' => Actor::fromContext($this->currentUser, $this->routeName()),
       ],
       dataContentType: 'application/json',
       dataSchema: NULL,
       subject: NULL,
-      time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
+      time: DateTime::fromTimestamp($this->requestTime())->toImmutableDateTime(),
     );
   }
 
   /**
    * Dispatches the event.
    *
-   * @param string $topic_name
-   *   The topic name.
    * @param string $event_type
    *   The event type.
    * @param \Drupal\group\Entity\GroupInterface $group
@@ -265,11 +226,12 @@ final class EdaHandler implements BackfillActorAwareInterface {
    * @throws \Drupal\Core\Entity\EntityMalformedException
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  private function dispatch(string $topic_name, string $event_type, GroupInterface $group, string $op = ''): void {
+  private function dispatch(string $event_type, GroupInterface $group, string $op = ''): void {
     // Skip if required modules are not enabled.
     if (!$this->moduleHandler->moduleExists('social_eda') || !$this->dispatcher) {
       return;
     }
+    $topic_name = $this->topicName();
 
     try {
       // Build the event.

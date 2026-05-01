@@ -10,9 +10,11 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
 use Drupal\Tests\UnitTestCase;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -38,6 +40,11 @@ abstract class GroupMembershipRequestBackfillHandlerTestBase extends UnitTestCas
   protected $entityFieldManager;
 
   /**
+   * The account switcher interface.
+   */
+  protected AccountSwitcherInterface $accountSwitcher;
+
+  /**
    * The container.
    *
    * @var \Symfony\Component\DependencyInjection\ContainerInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -52,6 +59,7 @@ abstract class GroupMembershipRequestBackfillHandlerTestBase extends UnitTestCas
 
     $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $this->entityFieldManager = $this->createMock(EntityFieldManagerInterface::class);
+    $this->accountSwitcher = $this->createMock(AccountSwitcherInterface::class);
     $this->container = $this->createMock(ContainerInterface::class);
   }
 
@@ -101,6 +109,8 @@ abstract class GroupMembershipRequestBackfillHandlerTestBase extends UnitTestCas
    */
   public function testProcess(): void {
     $request = $this->createMock(GroupRelationshipInterface::class);
+    $request->method('getOwner')
+      ->willReturn($this->createMock(User::class));
     // EdaHandler is final, so we create a test double that implements
     // the method dynamically using __call.
     $method_name = $this->getExpectedHandlerMethodName();

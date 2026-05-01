@@ -8,8 +8,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -101,13 +99,6 @@ class EdaHandlerTest extends UnitTestCase {
    * Represents an HTTP request.
    */
   protected Request $request;
-
-  /**
-   * Manages entity types and their storage handlers.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Represents the route match.
@@ -206,6 +197,12 @@ class EdaHandlerTest extends UnitTestCase {
     // Mock the AccountProxyInterface.
     $this->account = $this->createMock(AccountProxyInterface::class);
     $this->account->method('id')->willReturn(1);
+    $this->account->method('isAnonymous')->willReturn(FALSE);
+    $account_actor = $this->createMock(UserInterface::class);
+    $account_actor->method('uuid')->willReturn('follower-user-uuid-456');
+    $account_actor->method('getDisplayName')->willReturn('Follower User');
+    $account_actor->method('isAnonymous')->willReturn(FALSE);
+    $this->account->method('getAccount')->willReturn($account_actor);
 
     // Mock the RouteMatchInterface.
     $this->routeMatch = $this->createMock(RouteMatchInterface::class);
@@ -267,13 +264,6 @@ class EdaHandlerTest extends UnitTestCase {
     $this->flagging->method('getFlagId')->willReturn('follow_user');
     $this->flagging->method('getOwner')->willReturn($this->followerUser);
     $this->flagging->method('getFlaggable')->willReturn($this->profile);
-
-    // Mock the EntityTypeManagerInterface and the corresponding storage.
-    $userStorageMock = $this->createMock(EntityStorageInterface::class);
-    $userStorageMock->method('load')->with(1)->willReturn($this->targetUser);
-
-    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-    $this->entityTypeManager->method('getStorage')->with('user')->willReturn($userStorageMock);
 
     // Mock the CloudEvent class.
     $this->cloudEvent = $this->createMock(CloudEventInterface::class);
@@ -401,7 +391,6 @@ class EdaHandlerTest extends UnitTestCase {
     $handler = new EdaHandler(
       $this->requestStack,
       $moduleHandlerMock,
-      $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
       $this->configFactory,
@@ -428,7 +417,6 @@ class EdaHandlerTest extends UnitTestCase {
     $handler = new EdaHandler(
       $this->requestStack,
       $this->moduleHandler,
-      $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
       $this->configFactory,
@@ -451,7 +439,6 @@ class EdaHandlerTest extends UnitTestCase {
     return new EdaHandler(
       $this->requestStack,
       $this->moduleHandler,
-      $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
       $this->configFactory,

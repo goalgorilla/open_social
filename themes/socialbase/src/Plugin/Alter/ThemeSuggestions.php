@@ -59,13 +59,13 @@ class ThemeSuggestions extends BaseThemeSuggestions implements ContainerFactoryP
           $plugin_definition,
     RouteMatchInterface $route_match,
     ConfigFactoryInterface $config,
-    AccountProxyInterface $account_proxy,
+    AccountProxyInterface $account_switcher,
     ThemeManagerInterface $theme_manager
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $route_match;
     $this->config = $config;
-    $this->currentUser = $account_proxy;
+    $this->currentUser = $account_switcher;
     $this->themeManager = $theme_manager;
   }
 

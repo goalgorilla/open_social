@@ -11,9 +11,11 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
 use Drupal\Tests\UnitTestCase;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -39,6 +41,11 @@ abstract class EventEnrollmentRequestInviteBackfillHandlerTestBase extends UnitT
   protected $entityFieldManager;
 
   /**
+   * The account switcher service.
+   */
+  protected AccountSwitcherInterface $accountSwitcher;
+
+  /**
    * The container.
    *
    * @var \Symfony\Component\DependencyInjection\ContainerInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -53,6 +60,7 @@ abstract class EventEnrollmentRequestInviteBackfillHandlerTestBase extends UnitT
 
     $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $this->entityFieldManager = $this->createMock(EntityFieldManagerInterface::class);
+    $this->accountSwitcher = $this->createMock(AccountSwitcherInterface::class);
     $this->container = $this->createMock(ContainerInterface::class);
   }
 
@@ -102,6 +110,8 @@ abstract class EventEnrollmentRequestInviteBackfillHandlerTestBase extends UnitT
    */
   public function testProcess(): void {
     $enrollment = $this->createMock(EventEnrollmentInterface::class);
+    $enrollment->method('getOwner')
+      ->willReturn($this->createMock(User::class));
     // EdaHandler is final, so we create a test double that implements
     // the method dynamically using __call.
     $method_name = $this->getExpectedHandlerMethodName();

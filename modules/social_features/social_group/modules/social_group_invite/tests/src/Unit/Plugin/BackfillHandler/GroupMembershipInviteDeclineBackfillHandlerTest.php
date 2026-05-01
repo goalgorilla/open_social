@@ -33,6 +33,7 @@ final class GroupMembershipInviteDeclineBackfillHandlerTest extends GroupMembers
       $plugin_definition,
       $this->entityTypeManager,
       $this->entityFieldManager,
+      $this->accountSwitcher,
       $this->container
     );
   }

@@ -9,7 +9,6 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -17,7 +16,6 @@ use Drupal\social_eda\DispatcherInterface;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\EntityReference;
-use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -27,85 +25,50 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class EdaHandler {
 
   /**
-   * The current logged-in user.
-   *
-   * @var \Drupal\user\UserInterface|null
-   */
-  protected ?UserInterface $currentUser = NULL;
-
-  /**
-   * The source.
-   *
-   * @var string
-   */
-  protected string $source;
-
-  /**
-   * The community namespace.
-   *
-   * @var string
-   */
-  protected string $namespace;
-
-  /**
-   * The topic name.
-   *
-   * @var string
-   */
-  protected string $topicName;
-
-  /**
-   * The request time.
-   *
-   * @var int
-   */
-  protected int $requestTime;
-
-  /**
-   * Constructor for the Page View EDA handler.
+   * Constructs the Page View EDA handler.
    */
   public function __construct(
     private readonly UuidInterface $uuid,
     private readonly RequestStack $requestStack,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $account,
+    private readonly AccountProxyInterface $currentUser,
     private readonly RouteMatchInterface $routeMatch,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TimeInterface $time,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
     private readonly ?DispatcherInterface $dispatcher = NULL,
-  ) {
-    // Load the full user entity if the account is authenticated.
-    $account_id = $this->account->id();
-    if ($account_id > 0) {
-      $user = $this->entityTypeManager->getStorage('user')->load($account_id);
-      if ($user instanceof UserInterface) {
-        $this->currentUser = $user;
-      }
-    }
+  ) {}
 
-    // Set source from current request path.
+  /**
+   * Returns the configured EDA namespace prefix.
+   */
+  private function namespace(): string {
+    return $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
+  }
+
+  /**
+   * Returns the Kafka topic name for session / page view events.
+   */
+  private function topicName(): string {
+    return "{$this->namespace()}.cms.session.v1";
+  }
+
+  /**
+   * Returns the CloudEvents source (request path).
+   */
+  private function source(): string {
     $request = $this->requestStack->getCurrentRequest();
     if ($request) {
-      $this->source = $request->getPathInfo() ?: '/';
-    }
-    else {
-      $this->source = '/';
+      return $request->getPathInfo() ?: '/';
     }
 
-    // Ensure source is never empty - CloudEvents requires a non-empty source.
-    if (empty($this->source)) {
-      $this->source = '/';
-    }
+    return '/';
+  }
 
-    // Set the community namespace.
-    $this->namespace = $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
-
-    // Set the topic name.
-    $this->topicName = "{$this->namespace}.cms.session.v1";
-
-    // Set the request time.
-    $this->requestTime = $this->time->getRequestTime();
+  /**
+   * Returns the request time as a Unix timestamp.
+   */
+  private function requestTime(): int {
+    return $this->time->getRequestTime();
   }
 
   /**
@@ -113,7 +76,7 @@ final class EdaHandler {
    */
   public function trackPageView(): void {
     // We care only about authenticated users as of now.
-    if (!$this->currentUser) {
+    if (!$this->currentUser->isAuthenticated()) {
       return;
     }
 
@@ -124,7 +87,6 @@ final class EdaHandler {
     }
 
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.page_view",
       request: $request,
     );
@@ -141,14 +103,14 @@ final class EdaHandler {
 
     return new CloudEvent(
       id: $this->uuid->generate(),
-      source: $this->source,
+      source: $this->source(),
       type: $event_type,
       data: [
         'url' => $request->getUri(),
         'target' => $entity ? [EntityReference::fromEntity($entity)] : NULL,
         'actor' => Actor::fromContext($this->currentUser, $this->routeMatch->getRouteName() ?: ''),
       ],
-      time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
+      time: DateTime::fromTimestamp($this->requestTime())->toImmutableDateTime(),
     );
   }
 
@@ -186,17 +148,16 @@ final class EdaHandler {
   /**
    * Dispatch the event to the message broker.
    *
-   * @param string $topic_name
-   *   The topic name.
    * @param string $event_type
    *   The event type.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The current request.
    */
-  protected function dispatch(string $topic_name, string $event_type, Request $request): void {
+  protected function dispatch(string $event_type, Request $request): void {
     if (!$this->dispatcher) {
       return;
     }
+    $topic_name = $this->topicName();
 
     try {
       $event = $this->fromPageView($request, $event_type);

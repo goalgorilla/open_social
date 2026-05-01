@@ -6,7 +6,6 @@ use CloudEvents\V1\CloudEvent;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -15,84 +14,52 @@ use Drupal\Core\Site\Settings;
 use Drupal\social_comment\Event\CommentEntityData;
 use Drupal\social_comment\Event\Thread;
 use Drupal\social_eda\DispatcherInterface;
-use Drupal\social_eda\Plugin\BackfillActorAwareInterface;
-use Drupal\social_eda\Traits\SetActorTrait;
-use Drupal\social_eda\UuidNamespace;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\EntityReference;
 use Drupal\social_eda\Types\Href;
 use Drupal\social_eda\Types\User;
-use Drupal\user\UserInterface;
+use Drupal\social_eda\UuidNamespace;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Handles hook invocations for EDA related operations of the comment entity.
  */
-final class EdaHandler implements BackfillActorAwareInterface {
-
-  use SetActorTrait;
+final class EdaHandler {
 
   /**
-   * The source.
-   *
-   * @var string
-   */
-  protected string $source;
-
-  /**
-   * The current route name.
-   *
-   * @var string
-   */
-  protected string $routeName;
-
-  /**
-   * The community namespace.
-   *
-   * @var string
-   */
-  protected string $namespace;
-
-  /**
-   * The topic name.
-   *
-   * @var string
-   */
-  protected string $topicName;
-
-  /**
-   * The request time.
-   *
-   * @var int
-   */
-  protected int $requestTime;
-
-  /**
-   * {@inheritDoc}
+   * Constructs the EdaHandler.
    */
   public function __construct(
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $account,
+    private readonly AccountProxyInterface $currentUser,
     private readonly RouteMatchInterface $routeMatch,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TimeInterface $time,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
     private readonly ?DispatcherInterface $dispatcher = NULL,
-  ) {
-    // Initialize $this->currentUser (from SetActorTrait) with
-    // the authenticated user entity. This can be overridden via setActor().
-    $account_id = $this->account->id();
-    if ($account_id > 0) {
-      $user = $this->entityTypeManager->getStorage('user')->load($account_id);
-      if ($user instanceof UserInterface) {
-        $this->currentUser = $user;
-      }
-    }
+  ) {}
 
+  /**
+   * Returns the configured EDA namespace prefix.
+   */
+  private function namespace(): string {
+    return $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
+  }
+
+  /**
+   * Returns the Kafka topic name for comment events.
+   */
+  private function topicName(): string {
+    return "{$this->namespace()}.cms.comment.v1";
+  }
+
+  /**
+   * Returns the CloudEvents source (referrer path or request path).
+   */
+  private function source(): string {
     // Set source from HTTP referrer or current request path.
     // This is required as otherwise the source is always the form submit URL.
     $request = $this->requestStack->getCurrentRequest();
@@ -102,28 +69,26 @@ final class EdaHandler implements BackfillActorAwareInterface {
       if ($referrer) {
         // Extract just the path from the referrer URL.
         $parsed_url = parse_url($referrer);
-        $this->source = $parsed_url['path'] ?? $referrer;
+        return $parsed_url['path'] ?? $referrer;
       }
-      else {
-        // Fallback to current request path.
-        $this->source = $request->getPathInfo();
-      }
+      // Fallback to current request path.
+      return $request->getPathInfo();
     }
-    else {
-      $this->source = '';
-    }
+    return '';
+  }
 
-    // Set route name.
-    $this->routeName = $this->routeMatch->getRouteName() ?: '';
+  /**
+   * Returns the current route name.
+   */
+  private function routeName(): string {
+    return $this->routeMatch->getRouteName() ?: '';
+  }
 
-    // Set the community namespace.
-    $this->namespace = $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
-
-    // Set the topic name.
-    $this->topicName = "{$this->namespace}.cms.comment.v1";
-
-    // Set the request time.
-    $this->requestTime = $this->time->getRequestTime();
+  /**
+   * Returns the request time as a Unix timestamp.
+   */
+  private function requestTime(): int {
+    return $this->time->getRequestTime();
   }
 
   /**
@@ -131,7 +96,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function commentCreate(CommentInterface $comment): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.comment.create",
       comment: $comment
     );
@@ -142,7 +106,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function commentPublish(CommentInterface $comment): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.comment.publish",
       comment: $comment
     );
@@ -153,7 +116,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function commentUnpublish(CommentInterface $comment): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.comment.unpublish",
       comment: $comment
     );
@@ -164,7 +126,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function commentUpdate(CommentInterface $comment): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.comment.update",
       comment: $comment
     );
@@ -175,7 +136,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function commentDelete(CommentInterface $comment): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.comment.delete",
       comment: $comment,
       op: 'delete'
@@ -243,7 +203,7 @@ final class EdaHandler implements BackfillActorAwareInterface {
 
     return new CloudEvent(
       id: $this->generateEventId($event_type, $comment),
-      source: $this->source,
+      source: $this->source(),
       type: $event_type,
       data: [
         'comment' => new CommentEntityData(
@@ -256,12 +216,12 @@ final class EdaHandler implements BackfillActorAwareInterface {
           author: User::fromEntity($comment->getOwner()),
           href: Href::fromEntity($comment),
         ),
-        'actor' => Actor::fromContext($this->currentUser, $this->routeName),
+        'actor' => Actor::fromContext($this->currentUser, $this->routeName()),
       ],
       dataContentType: 'application/json',
       dataSchema: NULL,
       subject: NULL,
-      time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
+      time: DateTime::fromTimestamp($this->requestTime())->toImmutableDateTime(),
     );
   }
 
@@ -337,8 +297,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
   /**
    * Dispatches the event.
    *
-   * @param string $topic_name
-   *   The topic name.
    * @param string $event_type
    *   The event type.
    * @param \Drupal\comment\CommentInterface $comment
@@ -349,11 +307,12 @@ final class EdaHandler implements BackfillActorAwareInterface {
    * @throws \Drupal\Core\Entity\EntityMalformedException
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  private function dispatch(string $topic_name, string $event_type, CommentInterface $comment, string $op = ''): void {
+  private function dispatch(string $event_type, CommentInterface $comment, string $op = ''): void {
     // Skip if required modules are not enabled.
     if (!$this->moduleHandler->moduleExists('social_eda') || !$this->dispatcher) {
       return;
     }
+    $topic_name = $this->topicName();
 
     try {
       // Build the event.

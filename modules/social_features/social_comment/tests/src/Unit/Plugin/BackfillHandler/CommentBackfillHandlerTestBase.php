@@ -11,8 +11,10 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
 use Drupal\Tests\UnitTestCase;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,6 +37,11 @@ abstract class CommentBackfillHandlerTestBase extends UnitTestCase {
   protected $entityFieldManager;
 
   /**
+   * The account switcher service.
+   */
+  protected AccountSwitcherInterface $accountSwitcher;
+
+  /**
    * The container.
    *
    * @var \Symfony\Component\DependencyInjection\ContainerInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -49,6 +56,7 @@ abstract class CommentBackfillHandlerTestBase extends UnitTestCase {
 
     $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $this->entityFieldManager = $this->createMock(EntityFieldManagerInterface::class);
+    $this->accountSwitcher = $this->createMock(AccountSwitcherInterface::class);
     $this->container = $this->createMock(ContainerInterface::class);
   }
 
@@ -98,6 +106,8 @@ abstract class CommentBackfillHandlerTestBase extends UnitTestCase {
    */
   public function testProcess(): void {
     $comment = $this->createMock(CommentInterface::class);
+    $comment->method('getOwner')
+      ->willReturn($this->createMock(User::class));
     // EdaHandler is final, so we create a test double that implements
     // the method.
     $eda_handler = new class() {

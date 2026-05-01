@@ -9,9 +9,11 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\flag\FlaggingInterface;
 use Drupal\social_follow_user\Plugin\BackfillHandler\FollowUserBackfillHandler;
 use Drupal\Tests\UnitTestCase;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -37,6 +39,11 @@ final class FollowUserBackfillHandlerTest extends UnitTestCase {
   protected $entityFieldManager;
 
   /**
+   * The account switcher service.
+   */
+  protected AccountSwitcherInterface $accountSwitcher;
+
+  /**
    * The container.
    *
    * @var \Symfony\Component\DependencyInjection\ContainerInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -51,6 +58,7 @@ final class FollowUserBackfillHandlerTest extends UnitTestCase {
 
     $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $this->entityFieldManager = $this->createMock(EntityFieldManagerInterface::class);
+    $this->accountSwitcher = $this->createMock(AccountSwitcherInterface::class);
     $this->container = $this->createMock(ContainerInterface::class);
   }
 
@@ -73,6 +81,7 @@ final class FollowUserBackfillHandlerTest extends UnitTestCase {
       $plugin_definition,
       $this->entityTypeManager,
       $this->entityFieldManager,
+      $this->accountSwitcher,
       $this->container
     );
   }
@@ -95,6 +104,8 @@ final class FollowUserBackfillHandlerTest extends UnitTestCase {
    */
   public function testProcess(): void {
     $flagging = $this->createMock(FlaggingInterface::class);
+    $flagging->method('getOwner')
+      ->willReturn($this->createMock(User::class));
     // EdaHandler is final, so we create a test double that implements
     // the method.
     $eda_handler = new class() {

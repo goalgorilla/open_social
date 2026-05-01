@@ -12,8 +12,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -346,23 +344,10 @@ class EdaHandlerTest extends UnitTestCase {
     $url = $this->createMock(Url::class);
     $url->method('toString')->willReturn('https://example.com/test-page');
 
-    // Mock the user interface.
-    $userInterface = $this->createMock(UserInterface::class);
-    $userInterface->method('uuid')->willReturn('user-uuid-123');
-    $userInterface->method('getDisplayName')->willReturn('Test User');
-    $userInterface->method('toUrl')->willReturn($url);
-
     // Mock the node interface.
     $node = $this->createMock(NodeInterface::class);
     $node->method('uuid')->willReturn('node-uuid-123');
     $node->method('toUrl')->willReturn($url);
-
-    // Mock the entity type manager.
-    /** @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager */
-    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-    $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->willReturn($anonymous ? NULL : $userInterface);
-    $entityTypeManager->method('getStorage')->willReturn($userStorage);
 
     // Mock the route match.
     /** @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Routing\RouteMatchInterface $routeMatch */
@@ -397,11 +382,19 @@ class EdaHandlerTest extends UnitTestCase {
 
     $routeMatch->method('getParameters')->willReturn($parameterBag);
 
-    // Mock the account proxy.
+    // Mock the account proxy; ActorUser resolves UUID via getAccount().
     /** @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Session\AccountProxyInterface $account */
     $account = $this->createMock(AccountProxyInterface::class);
     $account->method('id')->willReturn($anonymous ? 0 : 1);
     $account->method('isAuthenticated')->willReturn(!$anonymous);
+    $account->method('isAnonymous')->willReturn($anonymous);
+    if (!$anonymous) {
+      $account_actor = $this->createMock(UserInterface::class);
+      $account_actor->method('uuid')->willReturn('user-uuid-123');
+      $account_actor->method('getDisplayName')->willReturn('Test User');
+      $account_actor->method('isAnonymous')->willReturn(FALSE);
+      $account->method('getAccount')->willReturn($account_actor);
+    }
 
     // Mock the config factory.
     /** @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Config\ConfigFactoryInterface $configFactory */
@@ -428,7 +421,6 @@ class EdaHandlerTest extends UnitTestCase {
     return new EdaHandler(
       $uuid,
       $requestStack,
-      $entityTypeManager,
       $account,
       $routeMatch,
       $configFactory,

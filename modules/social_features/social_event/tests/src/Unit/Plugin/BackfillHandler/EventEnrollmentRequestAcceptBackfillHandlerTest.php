@@ -34,6 +34,7 @@ final class EventEnrollmentRequestAcceptBackfillHandlerTest extends EventEnrollm
       $plugin_definition,
       $this->entityTypeManager,
       $this->entityFieldManager,
+      $this->accountSwitcher,
       $this->container
     );
   }

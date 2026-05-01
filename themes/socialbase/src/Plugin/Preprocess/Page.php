@@ -60,13 +60,13 @@ class Page extends PreprocessBase implements ContainerFactoryPluginInterface {
     $plugin_definition,
     RouteMatchInterface $route_match,
     ModuleHandlerInterface $module_handler,
-    AccountProxyInterface $account_proxy,
+    AccountProxyInterface $account_switcher,
     EntityTypeManagerInterface $entity,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $route_match;
     $this->moduleHander = $module_handler;
-    $this->currentUser = $account_proxy;
+    $this->currentUser = $account_switcher;
     $this->nodeStorage = $entity->getStorage('node');
   }
 

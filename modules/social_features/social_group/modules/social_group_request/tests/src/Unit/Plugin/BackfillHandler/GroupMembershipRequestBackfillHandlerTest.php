@@ -32,6 +32,7 @@ final class GroupMembershipRequestBackfillHandlerTest extends GroupMembershipReq
       $plugin_definition,
       $this->entityTypeManager,
       $this->entityFieldManager,
+      $this->accountSwitcher,
       $this->container
     );
   }

@@ -11,7 +11,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\social_eda\Plugin\BackfillActorAwareInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
@@ -47,6 +48,13 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
   protected $container;
 
   /**
+   * The current user proxy (backfill temporarily switches its account).
+   *
+   * @var \Drupal\Core\Session\AccountSwitcherInterface&\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected AccountSwitcherInterface $accountSwitcher;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -55,6 +63,7 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
     $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $this->entityFieldManager = $this->createMock(EntityFieldManagerInterface::class);
     $this->container = $this->createMock(ContainerInterface::class);
+    $this->accountSwitcher = $this->createMock(AccountSwitcherInterface::class);
   }
 
   /**
@@ -67,6 +76,7 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
       $plugin_definition,
       $this->entityTypeManager,
       $this->entityFieldManager,
+      $this->accountSwitcher,
       $this->container
     ) extends BackfillHandlerBase {};
   }
@@ -112,12 +122,12 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
   }
 
   /**
-   * Tests process() sets actor when handler implements interface.
+   * Tests process() switches current_user account to the resolved actor.
    *
    * @covers ::process
    * @covers ::getActorFromEntity
    */
-  public function testProcessSetsActorWhenHandlerIsActorAware(): void {
+  public function testProcessSetsAccountOnCurrentUserWhenActorResolved(): void {
     $plugin_definition = [
       'handler_service' => 'test.handler',
       'handler_method' => 'testMethod',
@@ -126,30 +136,14 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
     $entity = $this->createMock(EntityInterface::class);
     $actor = $this->createMock(UserInterface::class);
 
-    $handler = new class() implements BackfillActorAwareInterface {
+    $this->accountSwitcher->expects($this->exactly(1))
+      ->method('switchTo');
+
+    $handler = new class() {
       /**
        * Whether the handler method was called.
        */
       public bool $called = FALSE;
-
-      /**
-       * The actor that was set.
-       */
-      public ?UserInterface $setActor = NULL;
-
-      /**
-       * {@inheritdoc}
-       */
-      public function setActor(?UserInterface $user): void {
-        $this->setActor = $user;
-      }
-
-      /**
-       * {@inheritdoc}
-       */
-      public function getActor(): ?UserInterface {
-        return $this->setActor;
-      }
 
       /**
        * Test handler method.
@@ -167,6 +161,7 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
       $plugin_definition,
       $this->entityTypeManager,
       $this->entityFieldManager,
+      $this->accountSwitcher,
       $this->container,
       $actor
     ) extends BackfillHandlerBase {
@@ -184,10 +179,11 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
         array $plugin_definition,
         EntityTypeManagerInterface $entity_type_manager,
         EntityFieldManagerInterface $entity_field_manager,
+        AccountSwitcherInterface $account_switcher,
         ContainerInterface $container,
         ?UserInterface $testActor = NULL,
       ) {
-        parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $container);
+        parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $account_switcher, $container);
         $this->testActor = $testActor;
       }
 
@@ -210,47 +206,28 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
     $plugin->process($entity);
 
     $this->assertTrue($handler->called);
-    $this->assertSame($actor, $handler->setActor);
   }
 
   /**
-   * Tests process() does not set actor when getActorFromEntity returns NULL.
+   * Tests process() does not call setAccount when actor is NULL.
    *
    * @covers ::process
    * @covers ::getActorFromEntity
    */
-  public function testProcessDoesNotSetActorWhenActorIsNull(): void {
+  public function testProcessLeavesCurrentUserUnchangedWhenActorIsNull(): void {
     $plugin_definition = [
       'handler_service' => 'test.handler',
       'handler_method' => 'testMethod',
     ];
 
     $entity = $this->createMock(EntityInterface::class);
+    $this->accountSwitcher->expects($this->never())->method('switchTo');
 
-    $handler = new class() implements BackfillActorAwareInterface {
+    $handler = new class() {
       /**
        * Whether the handler method was called.
        */
       public bool $called = FALSE;
-
-      /**
-       * Whether setActor was called.
-       */
-      public bool $setActorCalled = FALSE;
-
-      /**
-       * {@inheritdoc}
-       */
-      public function setActor(?UserInterface $user): void {
-        $this->setActorCalled = TRUE;
-      }
-
-      /**
-       * {@inheritdoc}
-       */
-      public function getActor(): ?UserInterface {
-        return NULL;
-      }
 
       /**
        * Test handler method.
@@ -268,20 +245,18 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
       ->with('test.handler')
       ->willReturn($handler);
 
-    // Default implementation returns NULL, so setActor should not be called.
     $plugin = $this->createPlugin($plugin_definition);
     $plugin->process($entity);
 
     $this->assertTrue($handler->called);
-    $this->assertFalse($handler->setActorCalled);
   }
 
   /**
-   * Tests process() does not set actor when handler is not actor aware.
+   * Tests process() switches account even when the handler is not actor-aware.
    *
    * @covers ::process
    */
-  public function testProcessDoesNotSetActorWhenHandlerIsNotActorAware(): void {
+  public function testProcessSetsAccountOnCurrentUserEvenWhenHandlerNotActorAware(): void {
     $plugin_definition = [
       'handler_service' => 'test.handler',
       'handler_method' => 'testMethod',
@@ -310,15 +285,17 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
       ->with('test.handler')
       ->willReturn($handler);
 
-    // Create a plugin that overrides getActorFromEntity to return an actor,
-    // but handler doesn't implement BackfillActorAwareInterface.
     $actor = $this->createMock(UserInterface::class);
+    $this->accountSwitcher->expects($this->exactly(1))
+      ->method('switchTo');
+
     $plugin = new class(
       [],
       'test_plugin',
       $plugin_definition,
       $this->entityTypeManager,
       $this->entityFieldManager,
+      $this->accountSwitcher,
       $this->container,
       $actor
     ) extends BackfillHandlerBase {
@@ -336,10 +313,11 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
         array $plugin_definition,
         EntityTypeManagerInterface $entity_type_manager,
         EntityFieldManagerInterface $entity_field_manager,
+        AccountSwitcherInterface $account_switcher,
         ContainerInterface $container,
         ?UserInterface $testActor = NULL,
       ) {
-        parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $container);
+        parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $account_switcher, $container);
         $this->testActor = $testActor;
       }
 
@@ -355,8 +333,6 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
     $plugin->process($entity);
 
     $this->assertTrue($handler->called);
-    // Handler doesn't implement BackfillActorAwareInterface, so setActor
-    // should not be called (and wouldn't exist anyway).
   }
 
   /**
@@ -440,18 +416,22 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
     $container = $this->createMock(ContainerInterface::class);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_field_manager = $this->createMock(EntityFieldManagerInterface::class);
+    $account_switcher = $this->createMock(AccountSwitcherInterface::class);
+    $current_user = $this->createMock(AccountProxyInterface::class);
 
     /** @var \PHPUnit\Framework\MockObject\MockObject $container_mock */
     $container_mock = $container;
-    $container_mock->expects($this->exactly(2))
+    $container_mock->expects($this->exactly(3))
       ->method('get')
-      ->willReturnCallback(function (string $service_id) use ($entity_type_manager, $entity_field_manager) {
-        return match ($service_id) {
+      ->willReturnCallback(
+        fn (string $service_id) => match ($service_id) {
           'entity_type.manager' => $entity_type_manager,
           'entity_field.manager' => $entity_field_manager,
+          'account_switcher' => $account_switcher,
+          'current_user' => $current_user,
           default => throw new \RuntimeException(sprintf('Unknown service: %s', $service_id)),
-        };
-      });
+        }
+      );
 
     $plugin = BackfillHandlerBaseTestTestPlugin::create(
       $container,

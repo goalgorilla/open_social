@@ -12,13 +12,11 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\social_eda\DispatcherInterface;
-use Drupal\social_eda\Plugin\BackfillActorAwareInterface;
-use Drupal\social_eda\Traits\SetActorTrait;
-use Drupal\social_eda\UuidNamespace;
 use Drupal\social_eda\Types\Actor;
 use Drupal\social_eda\Types\Address;
 use Drupal\social_eda\Types\DateTime;
 use Drupal\social_eda\Types\Href;
+use Drupal\social_eda\UuidNamespace;
 use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_user\Event\UserEventData;
 use Drupal\social_user\Event\UserEventDataLite;
@@ -30,84 +28,57 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Handles hook invocations for EDA related operations of the user entity.
  */
-final class EdaHandler implements BackfillActorAwareInterface {
-
-  use SetActorTrait;
+final class EdaHandler {
 
   /**
-   * The source.
-   *
-   * @var string
-   */
-  protected string $source;
-
-  /**
-   * The current route name.
-   *
-   * @var string
-   */
-  protected string $routeName;
-
-  /**
-   * The community namespace.
-   *
-   * @var string
-   */
-  protected string $namespace;
-
-  /**
-   * The topic name.
-   *
-   * @var string
-   */
-  protected string $topicName;
-
-  /**
-   * The request time.
-   *
-   * @var int
-   */
-  protected int $requestTime;
-
-  /**
-   * {@inheritDoc}
+   * Constructs the EdaHandler.
    */
   public function __construct(
     private readonly ?DispatcherInterface $dispatcher,
     private readonly RequestStack $requestStack,
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $account,
+    private readonly AccountProxyInterface $currentUser,
     private readonly RouteMatchInterface $routeMatch,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TimeInterface $time,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
-  ) {
-    // Initialize $this->currentUser (from SetActorTrait) with
-    // the authenticated user entity. This can be overridden via setActor().
-    $account_id = $this->account->id();
-    if ($account_id > 0) {
-      $user = $this->entityTypeManager->getStorage('user')->load($account_id);
-      if ($user instanceof UserInterface) {
-        $this->currentUser = $user;
-      }
-    }
+  ) {}
 
-    // Set source.
+  /**
+   * Returns the configured EDA namespace prefix.
+   */
+  private function namespace(): string {
+    return $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
+  }
+
+  /**
+   * Returns the Kafka topic name for user events.
+   */
+  private function topicName(): string {
+    return "{$this->namespace()}.cms.user.v1";
+  }
+
+  /**
+   * Returns the CloudEvents source (request path).
+   */
+  private function source(): string {
     $request = $this->requestStack->getCurrentRequest();
-    $this->source = $request ? $request->getPathInfo() : '';
+    return $request ? $request->getPathInfo() : '';
+  }
 
-    // Set route name.
-    $this->routeName = $this->routeMatch->getRouteName() ?: '';
+  /**
+   * Returns the current route name.
+   */
+  private function routeName(): string {
+    return $this->routeMatch->getRouteName() ?: '';
+  }
 
-    // Set the community namespace.
-    $this->namespace = $this->configFactory->get('social_eda.settings')->get('namespace') ?? 'com.getopensocial';
-
-    // Set the community namespace.
-    $this->topicName = "{$this->namespace}.cms.user.v1";
-
-    // Set the request time.
-    $this->requestTime = $this->time->getRequestTime();
+  /**
+   * Returns the request time as a Unix timestamp.
+   */
+  private function requestTime(): int {
+    return $this->time->getRequestTime();
   }
 
   /**
@@ -115,7 +86,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function userCreate(UserInterface $user): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.user.create",
       user: $user,
     );
@@ -126,7 +96,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function userPending(UserInterface $user): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.user.pending",
       user: $user,
     );
@@ -137,7 +106,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function profileUpdate(UserInterface $user): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.user.profile.update",
       user: $user,
     );
@@ -148,7 +116,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function userLogin(UserInterface $user): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.user.login",
       user: $user,
     );
@@ -159,7 +126,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function userLogout(UserInterface $user): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.user.logout",
       user: $user,
     );
@@ -170,7 +136,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function userBlock(UserInterface $user): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.user.block",
       user: $user,
     );
@@ -181,7 +146,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function userUnblock(UserInterface $user): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.user.unblock",
       user: $user,
     );
@@ -192,7 +156,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function userEmailUpdate(UserInterface $user): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.user.settings.email",
       user: $user,
     );
@@ -203,7 +166,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function userDelete(UserInterface $user): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.user.delete",
       user: $user,
     );
@@ -214,7 +176,6 @@ final class EdaHandler implements BackfillActorAwareInterface {
    */
   public function userLocaleInformationUpdate(UserInterface $user): void {
     $this->dispatch(
-      topic_name: $this->topicName,
       event_type: "com.getopensocial.cms.user.settings.locale",
       user: $user,
     );
@@ -368,34 +329,33 @@ final class EdaHandler implements BackfillActorAwareInterface {
 
     return new CloudEvent(
       id: $this->generateEventId($event_type, $user),
-      source: $this->source,
+      source: $this->source(),
       type: $event_type,
       data: [
         'user' => $user_data,
-        'actor' => Actor::fromContext($this->currentUser, $this->routeName),
+        'actor' => Actor::fromContext($this->currentUser, $this->routeName()),
       ],
       dataContentType: 'application/json',
       dataSchema: NULL,
       subject: NULL,
-      time: DateTime::fromTimestamp($this->requestTime)->toImmutableDateTime(),
+      time: DateTime::fromTimestamp($this->requestTime())->toImmutableDateTime(),
     );
   }
 
   /**
    * Dispatches the event.
    *
-   * @param string $topic_name
-   *   The topic name.
    * @param string $event_type
    *   The event type.
    * @param \Drupal\user\UserInterface $user
    *   The user object.
    */
-  private function dispatch(string $topic_name, string $event_type, UserInterface $user): void {
+  private function dispatch(string $event_type, UserInterface $user): void {
     // Skip if required modules are not enabled.
     if (!$this->moduleHandler->moduleExists('social_eda') || !$this->dispatcher) {
       return;
     }
+    $topic_name = $this->topicName();
 
     try {
       // Build the event.

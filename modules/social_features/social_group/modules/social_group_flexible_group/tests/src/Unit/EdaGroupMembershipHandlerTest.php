@@ -6,7 +6,6 @@ namespace Drupal\Tests\social_group_flexible_group\Unit;
 
 use Drupal\Core\Url;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\social_group_flexible_group\EdaGroupMembershipHandler;
 use Drupal\group\Entity\GroupMembershipInterface;
@@ -16,7 +15,6 @@ use Drupal\user\UserInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -73,13 +71,6 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
    * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \PHPUnit\Framework\MockObject\MockObject&\Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
 
   /**
    * The current user account.
@@ -171,9 +162,6 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
 
     $this->requestStack = $this->createMock(RequestStack::class);
     $this->moduleHandler = $this->createMock(ModuleHandlerInterface::class);
-    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-    $userStorage = $this->createMock(EntityStorageInterface::class);
-    $this->entityTypeManager->method('getStorage')->with('user')->willReturn($userStorage);
     $this->account = $this->createMock(AccountProxyInterface::class);
     $this->routeMatch = $this->createMock(RouteMatchInterface::class);
     $this->configFactory = $this->createMock(ConfigFactoryInterface::class);
@@ -185,6 +173,12 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     // Set up basic mocks.
     $this->time->method('getRequestTime')->willReturn(1234567890);
     $this->account->method('id')->willReturn(1);
+    $this->account->method('isAnonymous')->willReturn(FALSE);
+    $account_actor = $this->createMock(UserInterface::class);
+    $account_actor->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $account_actor->method('getDisplayName')->willReturn('User name');
+    $account_actor->method('isAnonymous')->willReturn(FALSE);
+    $this->account->method('getAccount')->willReturn($account_actor);
 
     // Set up request stack.
     $request = $this->createMock(Request::class);
@@ -208,7 +202,6 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $this->edaHandler = new EdaGroupMembershipHandler(
       $this->requestStack,
       $this->moduleHandler,
-      $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
       $this->configFactory,
@@ -1017,7 +1010,6 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $edaHandler = new EdaGroupMembershipHandler(
       $this->requestStack,
       $this->moduleHandler,
-      $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
       $this->configFactory,
@@ -1051,7 +1043,6 @@ class EdaGroupMembershipHandlerTest extends UnitTestCase {
     $edaHandler = new EdaGroupMembershipHandler(
       $this->requestStack,
       $this->moduleHandler,
-      $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
       $this->configFactory,

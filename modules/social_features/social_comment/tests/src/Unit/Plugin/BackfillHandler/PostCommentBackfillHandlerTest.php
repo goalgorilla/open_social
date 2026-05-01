@@ -55,6 +55,7 @@ final class PostCommentBackfillHandlerTest extends CommentBackfillHandlerTestBas
       $plugin_definition,
       $this->entityTypeManager,
       $this->entityFieldManager,
+      $this->accountSwitcher,
       $this->container
     );
   }

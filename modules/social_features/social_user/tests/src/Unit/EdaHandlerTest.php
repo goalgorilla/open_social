@@ -301,9 +301,15 @@ class EdaHandlerTest extends UnitTestCase {
       return NULL;
     });
 
-    // Mock the AccountProxyInterface.
+    // Mock the AccountProxyInterface; ActorUser resolves UUID via getAccount().
     $this->account = $this->createMock(AccountProxyInterface::class);
     $this->account->method('id')->willReturn(1);
+    $this->account->method('isAnonymous')->willReturn(FALSE);
+    $account_actor = $this->createMock(UserInterface::class);
+    $account_actor->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $account_actor->method('getDisplayName')->willReturn('User name');
+    $account_actor->method('isAnonymous')->willReturn(FALSE);
+    $this->account->method('getAccount')->willReturn($account_actor);
 
     // Mock the RouteMatchInterface.
     $this->routeMatch = $this->createMock(RouteMatchInterface::class);

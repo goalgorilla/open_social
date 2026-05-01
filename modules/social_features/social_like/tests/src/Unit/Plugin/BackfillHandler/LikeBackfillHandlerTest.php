@@ -10,8 +10,10 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\social_like\Plugin\BackfillHandler\LikeBackfillHandler;
 use Drupal\Tests\UnitTestCase;
+use Drupal\user\Entity\User;
 use Drupal\votingapi\VoteInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -38,6 +40,11 @@ final class LikeBackfillHandlerTest extends UnitTestCase {
   protected $entityFieldManager;
 
   /**
+   * The account switcher service.
+   */
+  protected AccountSwitcherInterface $accountSwitcher;
+
+  /**
    * The container.
    *
    * @var \Symfony\Component\DependencyInjection\ContainerInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -52,6 +59,7 @@ final class LikeBackfillHandlerTest extends UnitTestCase {
 
     $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $this->entityFieldManager = $this->createMock(EntityFieldManagerInterface::class);
+    $this->accountSwitcher = $this->createMock(AccountSwitcherInterface::class);
     $this->container = $this->createMock(ContainerInterface::class);
   }
 
@@ -74,6 +82,7 @@ final class LikeBackfillHandlerTest extends UnitTestCase {
       $plugin_definition,
       $this->entityTypeManager,
       $this->entityFieldManager,
+      $this->accountSwitcher,
       $this->container
     );
   }
@@ -96,6 +105,8 @@ final class LikeBackfillHandlerTest extends UnitTestCase {
    */
   public function testProcess(): void {
     $vote = $this->createMock(VoteInterface::class);
+    $vote->method('getOwner')
+      ->willReturn($this->createMock(User::class));
     // EdaHandler is final, so we create a test double that implements
     // the method.
     $eda_handler = new class() {

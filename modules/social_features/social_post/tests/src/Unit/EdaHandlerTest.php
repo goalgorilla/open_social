@@ -7,8 +7,6 @@ use Consolidation\Config\ConfigInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
@@ -90,13 +88,6 @@ class EdaHandlerTest extends UnitTestCase {
    * Represents an HTTP request.
    */
   protected Request $request;
-
-  /**
-   * Manages entity types and their storage handlers.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Represents the route match.
@@ -192,14 +183,15 @@ class EdaHandlerTest extends UnitTestCase {
     // Mock the Dispatcher service.
     $this->dispatcher = $this->createMock(DispatcherInterface::class);
 
-    // Mock the EntityTypeManagerInterface and the corresponding storage.
-    $entityStorageMock = $this->createMock(EntityStorageInterface::class);
-    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-    $this->entityTypeManager->method('getStorage')->with('user')->willReturn($entityStorageMock);
-
-    // Mock the AccountProxyInterface.
+    // Mock the AccountProxyInterface; ActorUser resolves UUID via getAccount().
     $this->account = $this->createMock(AccountProxyInterface::class);
     $this->account->method('id')->willReturn(1);
+    $this->account->method('isAnonymous')->willReturn(FALSE);
+    $account_actor = $this->createMock(UserInterface::class);
+    $account_actor->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $account_actor->method('getDisplayName')->willReturn('User name');
+    $account_actor->method('isAnonymous')->willReturn(FALSE);
+    $this->account->method('getAccount')->willReturn($account_actor);
 
     // Mock the RouteMatchInterface.
     $this->routeMatch = $this->createMock(RouteMatchInterface::class);
@@ -661,7 +653,6 @@ class EdaHandlerTest extends UnitTestCase {
     $handler = new EdaHandler(
       $this->requestStack,
       $moduleHandler,
-      $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
       $this->configFactory,
@@ -689,7 +680,6 @@ class EdaHandlerTest extends UnitTestCase {
     return new EdaHandler(
       $this->requestStack,
       $this->moduleHandler,
-      $this->entityTypeManager,
       $this->account,
       $this->routeMatch,
       $this->configFactory,
