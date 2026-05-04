@@ -55,5 +55,15 @@
         </svg>
       </a>
     </div>
+    {% if show_gaia_ask_control %}
+      <div class="navbar__open-search-control">
+        <a href="{{ '/search/all' }}" class="navbar__open-search-block gaia-ask-open" title="{{ 'Click to ask Gaia'|t }}">
+          <svg class="navbar-nav__icon navbar-nav__icon--search" aria-hidden="true">
+            <title>{{ 'Ask Gaia'|t }}</title>
+            <use xlink:href="#icon-comment"></use>
+          </svg>
+        </a>
+      </div>
+    {% endif %}
   {% endif %}
 </div>
