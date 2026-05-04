@@ -5,6 +5,7 @@ namespace Drupal\social_user\EventSubscriber;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Session\SessionConfigurationInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -38,9 +39,9 @@ class RoleIdentificationSubscriber implements EventSubscriberInterface {
   protected CurrentRouteMatch $currentRouteMatch;
 
   /**
-   * The session lifetime in seconds.
+   * The session configuration.
    */
-  protected int $sessionLifetime;
+  protected SessionConfigurationInterface $sessionConfiguration;
 
   /**
    * Constructs a RoleIdentificationSubscriber object.
@@ -53,19 +54,21 @@ class RoleIdentificationSubscriber implements EventSubscriberInterface {
    *   The private tempStore factory.
    * @param \Drupal\Core\Routing\CurrentRouteMatch $current_route_match
    *   The current route match service.
+   * @param \Drupal\Core\Session\SessionConfigurationInterface $session_configuration
+   *   Session options from parameters (must match the PHP session cookie).
    */
   public function __construct(
     AccountProxyInterface $current_user,
     ConfigFactoryInterface $config_factory,
     PrivateTempStoreFactory $temp_store_factory,
     CurrentRouteMatch $current_route_match,
+    SessionConfigurationInterface $session_configuration,
   ) {
     $this->currentUser = $current_user;
     $this->configFactory = $config_factory;
     $this->tempStoreFactory = $temp_store_factory;
     $this->currentRouteMatch = $current_route_match;
-    // Get session lifetime from config, fallback to 86400 (24h) if not set.
-    $this->sessionLifetime = (int) ($config_factory->get('session.settings')->get('gc_maxlifetime') ?? 86400);
+    $this->sessionConfiguration = $session_configuration;
   }
 
   /**
@@ -139,7 +142,7 @@ class RoleIdentificationSubscriber implements EventSubscriberInterface {
             new Cookie(
               'rid',
               $cookie_value,
-              time() + $this->sessionLifetime,
+              $this->getRidCookieExpire($event->getRequest()),
               '/',
               NULL,
               TRUE,
@@ -154,6 +157,29 @@ class RoleIdentificationSubscriber implements EventSubscriberInterface {
       // Clean up tempStore.
       $tempStore->delete('role_identification_login');
     }
+  }
+
+  /**
+   * Expire time for the rid cookie, kept in sync with the session cookie.
+   *
+   * Uses \Drupal\Core\Session\SessionConfiguration, which reads
+   * session.storage.options cookie_lifetime. That keeps rid and the PHP session
+   * cookie on the same browser lifetime so they are discarded together.
+   * Set the fallback to Drupal default as defined in the services file.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
+   *
+   * @return int
+   *   Unix timestamp for Cookie expiry.
+   */
+  private function getRidCookieExpire(Request $request): int {
+    $options = $this->sessionConfiguration->getOptions($request);
+    $cookie_lifetime = (int) ($options['cookie_lifetime'] ?? 2000000);
+    if ($cookie_lifetime > 0) {
+      return time() + $cookie_lifetime;
+    }
+    return 0;
   }
 
   /**
