@@ -273,7 +273,7 @@ class DeleteEventMutationTest extends SocialEventGraphQLKernelTestBase {
     $event = $this->createEventNode(['title' => 'Test Event']);
     $event_uuid = $event->uuid();
 
-    $this->actAsClientCredentialsWithScopes([]);
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertErrors(
       <<<GQL
         mutation DeleteEvent(\$input: DeleteEventInput!) {

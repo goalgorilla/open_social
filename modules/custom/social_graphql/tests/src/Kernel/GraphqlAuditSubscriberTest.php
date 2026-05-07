@@ -70,9 +70,12 @@ class GraphqlAuditSubscriberTest extends KernelTestBase {
     $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('graphql_server');
 
-    $this->installConfig("test_social_graphql_example_audit");
-
+    // Install OAuth config first and set scope_provider to static before any
+    // module with *.oauth2_scopes.yml is resolved (simple_oauth 6.0+).
+    $this->installConfig(['simple_oauth', 'simple_oauth_static_scope']);
     $this->config('simple_oauth.settings')->set('scope_provider', 'static')->save();
+
+    $this->installConfig("test_social_graphql_example_audit");
     $this->setUpKeys();
 
     $this->auditLogger = new InMemoryLogger();
@@ -351,7 +354,7 @@ EOF;
    * Test that a query executed with OAuth client credentials is logged.
    */
   public function testAuditLoggerLogsOauthClientCredentialsExecutedQuery() : void {
-    $viewer = $this->actAsClientCredentialsWithScopes([]);
+    $viewer = $this->actAsClientCredentialsWithScopes(['test']);
 
     [$node, $query] = $this->setupContent();
 
@@ -399,7 +402,7 @@ EOF;
    * Test that a query cache hit with OAuth client credentials is logged.
    */
   public function testAuditLoggerLogsOauthClientCredentialsCachedQuery() : void {
-    $viewer = $this->actAsClientCredentialsWithScopes([]);
+    $viewer = $this->actAsClientCredentialsWithScopes(['test']);
 
     [$node, $query] = $this->setupContent();
 

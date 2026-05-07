@@ -402,7 +402,7 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     ]);
     $topicType->save();
 
-    $this->actAsClientCredentialsWithScopes([]);
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $this->assertErrors(
       <<<GQL
       mutation CreateTopic(\$input: CreateTopicInput!) {

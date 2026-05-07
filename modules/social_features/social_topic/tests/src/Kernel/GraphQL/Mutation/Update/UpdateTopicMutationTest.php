@@ -604,7 +604,7 @@ class UpdateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     $topic->save();
 
     // Execute mutation without the required scope.
-    $this->actAsClientCredentialsWithScopes([]);
+    $this->actAsClientCredentialsWithScopes(['event:write']);
     $context = new RenderContext();
     $renderer = \Drupal::service('renderer');
     $result = $renderer->executeInRenderContext(

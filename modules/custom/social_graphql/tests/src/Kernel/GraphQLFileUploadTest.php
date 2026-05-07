@@ -75,10 +75,18 @@ class GraphQLFileUploadTest extends SocialGraphQLTestBase {
   }
 
   /**
-   * Test that the stagedUploadsCreate mutation requires a scope.
+   * Test that the stagedUploadsCreate mutation requires the upload scope.
+   *
+   * Uses 'graphql:use' (a real, discoverable scope that does NOT grant the
+   * staged-upload permission) instead of an empty scope set: under
+   * simple_oauth ^6 / league/oauth2-server ^9, empty-scope tokens issue but
+   * have no token-derived roles, which makes the assertion path fragile.
+   * Using a non-matching scope preserves the original intent: confirm the
+   * GraphQL `@oauth(scope: "graphql:staged_upload:create")` directive
+   * rejects callers that don't carry the required scope.
    */
   public function testUploadRequiresAuth() : void {
-    $this->actAsClientCredentialsWithScopes([]);
+    $this->actAsClientCredentialsWithScopes(['graphql:use']);
     $this->assertErrors(
       <<<GQL
       mutation RequestFileUpload(\$input : StagedUploadsCreateInput!) {

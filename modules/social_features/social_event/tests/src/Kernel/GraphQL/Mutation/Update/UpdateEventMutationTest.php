@@ -1557,7 +1557,7 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     $eventType = $this->createEventType();
     $event = $this->createEvent($eventType);
 
-    $this->actAsClientCredentialsWithScopes([]);
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
     $this->assertErrors(
       <<<GQL
         mutation UpdateEvent(\$input: UpdateEventInput!) {

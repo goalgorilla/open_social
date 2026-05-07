@@ -1351,7 +1351,7 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
-    $this->actAsClientCredentialsWithScopes([]);
+    $this->actAsClientCredentialsWithScopes(['event:read']);
     $this->assertErrors(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
@@ -1389,7 +1389,7 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     $startTimestamp = (new \DateTimeImmutable('2026-06-15T10:00:00Z'))->getTimestamp();
     $endTimestamp = (new \DateTimeImmutable('2026-06-15T18:00:00Z'))->getTimestamp();
 
-    $this->actAsClientCredentialsWithScopes([]);
+    $this->actAsClientCredentialsWithScopes(['event:read']);
     $this->assertErrors(
       <<<GQL
         mutation CreateEvent(\$input: CreateEventInput!) {
