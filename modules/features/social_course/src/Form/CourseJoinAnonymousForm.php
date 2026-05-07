@@ -52,7 +52,7 @@ class CourseJoinAnonymousForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('string_translation'),
       $container->get('request_stack'),
@@ -63,7 +63,7 @@ class CourseJoinAnonymousForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_course_join_anonymous';
   }
 
@@ -74,7 +74,7 @@ class CourseJoinAnonymousForm extends FormBase {
     array $form,
     FormStateInterface $form_state,
     ?GroupInterface $group = NULL,
-  ) {
+  ): array {
     $form['description'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
@@ -85,16 +85,29 @@ class CourseJoinAnonymousForm extends FormBase {
 
     if (($this->group = $group) !== NULL) {
       $previous_url = $this->getRequest()->headers->get('referer');
-      $request = Request::create($previous_url);
-      $referer_path = $request->getRequestUri();
 
-      if ($this->moduleHandler->moduleExists('social_group_quickjoin')) {
-        $destination = Url::fromRoute(
-          'social_group_quickjoin.quickjoin_group',
-          ['group' => $group->id()],
-        )->toString();
+      // The HTTP Referer header is optional and may be NULL, empty, or
+      // malformed. Only build a Request from it when we have a usable
+      // string; downstream link builders already guard with isset() on
+      // $referer_path and $destination, so skipping is safe.
+      if (is_string($previous_url) && $previous_url !== '') {
+        try {
+          $request = Request::create($previous_url);
+          $referer_path = $request->getRequestUri();
+        }
+        catch (\Throwable) {
+          // Ignore malformed referers; fall through to the no-destination
+          // flow.
+        }
 
-        $referer_path .= '?' . $destination;
+        if (isset($referer_path) && $this->moduleHandler->moduleExists('social_group_quickjoin')) {
+          $destination = Url::fromRoute(
+            'social_group_quickjoin.quickjoin_group',
+            ['group' => $group->id()],
+          )->toString();
+
+          $referer_path .= '?' . $destination;
+        }
       }
     }
 
@@ -138,6 +151,6 @@ class CourseJoinAnonymousForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {}
+  public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
 }
