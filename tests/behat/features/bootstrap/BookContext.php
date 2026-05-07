@@ -151,7 +151,15 @@ class BookContext extends RawMinkContext {
         $this->minkContext->iWaitForAjaxToFinish();
       }
       elseif ($key === "visibility") {
-        $page->selectFieldOption("field_content_visibility", $value);
+        // The visibility options are rebuilt by AJAX when the group changes,
+        // so we must wait for the desired option to be present.
+        $this->selectFieldOptionWhenAvailable("field_content_visibility", $value);
+      }
+      elseif ($key === "book") {
+        // The book parent dropdown is rebuilt by AJAX when the group changes
+        // (it lists books that exist in the selected group). We must wait
+        // for the desired option to be present before selecting it.
+        $this->selectFieldOptionWhenAvailable($field, $value);
       }
       else {
         $page->fillField($field, $value);
@@ -338,6 +346,81 @@ class BookContext extends RawMinkContext {
    */
   private function getBookIdFromTitle(string $title) : ?int {
     return $this->getNodeIdFromTitle("book", $title);
+  }
+
+  /**
+   * Select an option once it appears in the field, polling for up to a timeout.
+   *
+   * Drupal's AJAX form rebuild can finish (clearing the AJAX-idle flag that
+   * iWaitForAjaxToFinish() polls) a moment before the dependent widget has
+   * been re-rendered with its new options, causing intermittent failures
+   * when calling selectFieldOption() against a stale field.
+   *
+   * Supports both <select> widgets and radio/checkbox groups (e.g. Drupal's
+   * 'options_buttons' widget used for field_content_visibility).
+   *
+   * @param string $field
+   *   The field locator (name, id or label).
+   * @param string $value
+   *   The option value or visible text to select.
+   * @param int $timeout
+   *   Maximum number of seconds to wait for the option to appear.
+   */
+  private function selectFieldOptionWhenAvailable(string $field, string $value, int $timeout = 10) : void {
+    $page = $this->getSession()->getPage();
+    $deadline = microtime(TRUE) + $timeout;
+
+    do {
+      if ($this->fieldHasOption($field, $value)) {
+        $page->selectFieldOption($field, $value);
+        return;
+      }
+      usleep(100000);
+    } while (microtime(TRUE) < $deadline);
+
+    throw new \RuntimeException("Option '{$value}' did not appear in field '{$field}' within {$timeout} seconds.");
+  }
+
+  /**
+   * Whether a form field currently exposes an option matching the given value.
+   *
+   * Handles <select> widgets (matching by option value or visible text) and
+   * radio/checkbox groups (matching by input value or associated label text).
+   */
+  private function fieldHasOption(string $field, string $value) : bool {
+    $page = $this->getSession()->getPage();
+    $element = $page->findField($field);
+    if ($element === NULL) {
+      return FALSE;
+    }
+
+    if ($element->getTagName() === 'select') {
+      foreach ($element->findAll('css', 'option') as $option) {
+        if ($option->getValue() === $value || trim($option->getText()) === $value) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+    }
+
+    $name = $element->getAttribute('name');
+    if ($name === NULL) {
+      return FALSE;
+    }
+
+    foreach ($page->findAll('css', sprintf('input[name="%s"]', $name)) as $input) {
+      if ($input->getValue() === $value) {
+        return TRUE;
+      }
+      $id = $input->getAttribute('id');
+      if ($id !== NULL) {
+        $label = $page->find('css', sprintf('label[for="%s"]', $id));
+        if ($label !== NULL && trim($label->getText()) === $value) {
+          return TRUE;
+        }
+      }
+    }
+    return FALSE;
   }
 
 }
