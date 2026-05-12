@@ -44,6 +44,7 @@
 .title-with-sorts .sorting-group {
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+  width: 100%;
 }
 
 .title-with-sorts .sorting-group .js-form-item-sort-by {
@@ -264,12 +265,6 @@
 }
 
 @media (min-width: 600px) {
-  .title-with-sorts .sorting-group,
-  .title-with-sorts .sorting-group-wrapper {
-    -webkit-box-flex: 1;
-        -ms-flex: 1;
-            flex: 1;
-  }
   .title-with-sorts .sorting-group .js-form-item-sort-by {
     -webkit-box-flex: 1;
         -ms-flex: 1;
@@ -277,6 +272,11 @@
     -webkit-box-pack: end;
         -ms-flex-pack: end;
             justify-content: flex-end;
+  }
+  .title-with-sorts .sorting-group .form-item-safety-issues-search {
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
   }
 }
 

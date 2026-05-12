@@ -40,14 +40,11 @@
     align-items: center;
     gap: 8px;
     margin: 0;
-
-    @include for-tablet-portrait-up {
-      flex: 1;
-    }
   }
 
   .sorting-group {
     flex-wrap: wrap;
+    width: 100%;
 
     .js-form-item-sort-by {
       display: flex;
@@ -126,6 +123,12 @@
     .form-item-safety-issues-search {
       position: relative;
       margin: 0;
+    }
+
+    .form-item-safety-issues-search {
+      @include for-tablet-portrait-up {
+        flex: 1;
+      }
     }
 
     .participants_title_divider {
