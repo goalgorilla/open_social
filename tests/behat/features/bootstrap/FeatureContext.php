@@ -1060,4 +1060,15 @@ class FeatureContext extends RawMinkContext {
       }
     }
 
+  /**
+   * @When I visit :path expecting a :status status code
+   */
+    public function visitWithoutSuccess(string $path, int $code): void {
+      assert($code !== 200, "Use the simpler, 'I visit \"$path\"' instead.");
+      $this->visitPath($path);
+
+      $this->getSession()->getStatusCode();
+      $this->assertSession()->statusCodeEquals($code);
+    }
+
 }

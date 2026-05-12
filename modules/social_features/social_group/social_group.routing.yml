@@ -5,6 +5,11 @@ social_group.page_redirect:
     _title: 'Group'
   requirements:
     _user_is_logged_in: 'TRUE'
+    group: \d+
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
 
 social_group.anonymous_join:
   path: '/group/{group}/anonymous-join'

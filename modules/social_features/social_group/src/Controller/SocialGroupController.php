@@ -234,11 +234,11 @@ class SocialGroupController extends ControllerBase {
   /**
    * Redirects users to the main group page.
    *
-   * @param int $group
-   *   The group entity identifier.
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group to redirect for.
    */
-  public function otherGroupPage(int $group): RedirectResponse {
-    return $this->redirect('entity.group.canonical', ['group' => $group]);
+  public function otherGroupPage(GroupInterface $group): RedirectResponse {
+    return $this->redirect('entity.group.canonical', ['group' => $group->id()]);
   }
 
   /**
