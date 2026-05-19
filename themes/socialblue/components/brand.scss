@@ -605,6 +605,10 @@ html:not(.js) .navbar-default {
   fill: $navbar-default-link-color;
 }
 
+.navbar-nav__icon--gaia-ask {
+  background-color: $navbar-default-link-color;
+}
+
 .navbar__open-search-block {
   background-color: $navbar-default-bg;
 
@@ -1014,4 +1018,62 @@ body.media-directory {
 .ai-deepchat--header:hover,
 .ai-deepchat--header.active {
   background-color: $navbar-default-bg;
+}
+
+// Ask Gaia search takeover — theme colors for mode toggle + send icon (gaia_ask module).
+.search-take-over.search--with-suggestions {
+  background-color: $navbar-default-bg;
+
+  .gaia-ask-mode-btn.is-active {
+    color: $navbar-default-bg;
+    background-color: $navbar-default-link-color;
+  }
+
+  .gaia-ask-mode-btn:not(.is-active) {
+    color: $navbar-default-link-color;
+  }
+
+  .gaia-ask-mode-ask:not(.is-active)::before {
+    background-color: $navbar-default-link-color;
+  }
+
+  .gaia-ask-mode-ask.is-active::before {
+    background-color: $navbar-default-bg;
+  }
+
+  .gaia-ask-panel .form-submit.gaia-ask-panel-submit,
+  button.form-submit.gaia-ask-panel-submit {
+    background-color: $navbar-default-link-color;
+  }
+
+  &:has(.gaia-ask-panel-result-found) {
+    .gaia-ask-panel .form-submit.gaia-ask-panel-submit,
+    button.form-submit.gaia-ask-panel-submit {
+      background-color: $brand-primary;
+    }
+
+    .gaia-ask-panel-query,
+    .gaia-ask-panel-answer * { 
+      color: $brand-accent-text;
+    }
+
+    .gaia-ask-query-row .form-item::before {
+      background-color: $brand-accent-text;
+    }
+  }
+
+  .form-group:not(.form-actions).gaia-ask-hint {
+    p {
+      color: color-mix(in srgb, $navbar-default-link-color 64%, transparent);
+    }
+  }
+
+  .gaia-ask-panel-status:not(.visually-hidden) {
+    color: color-mix(in srgb, $navbar-default-link-color 64%, transparent);
+  }
+
+  .gaia-ask-mode-toggle {
+    background-color: $navbar-default-link-color;
+    background-color: color-mix(in srgb, $navbar-default-link-color 16%, transparent);
+  }
 }

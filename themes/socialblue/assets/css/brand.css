@@ -536,6 +536,10 @@ html:not(.js) .navbar-default .dropdown:hover > button .navbar-nav__icon {
   fill: #ffffff;
 }
 
+.navbar-nav__icon--gaia-ask {
+  background-color: #ffffff;
+}
+
 .navbar__open-search-block {
   background-color: #333333;
 }
@@ -843,6 +847,59 @@ body.media-directory .dz-preview .dz-progress .dz-upload {
   background-color: #333333;
 }
 
+.search-take-over.search--with-suggestions {
+  background-color: #333333;
+}
+
+.search-take-over.search--with-suggestions .gaia-ask-mode-btn.is-active {
+  color: #333333;
+  background-color: #ffffff;
+}
+
+.search-take-over.search--with-suggestions .gaia-ask-mode-btn:not(.is-active) {
+  color: #ffffff;
+}
+
+.search-take-over.search--with-suggestions .gaia-ask-mode-ask:not(.is-active)::before {
+  background-color: #ffffff;
+}
+
+.search-take-over.search--with-suggestions .gaia-ask-mode-ask.is-active::before {
+  background-color: #333333;
+}
+
+.search-take-over.search--with-suggestions .gaia-ask-panel .form-submit.gaia-ask-panel-submit,
+.search-take-over.search--with-suggestions button.form-submit.gaia-ask-panel-submit {
+  background-color: #ffffff;
+}
+
+.search-take-over.search--with-suggestions:has(.gaia-ask-panel-result-found) .gaia-ask-panel .form-submit.gaia-ask-panel-submit,
+.search-take-over.search--with-suggestions:has(.gaia-ask-panel-result-found) button.form-submit.gaia-ask-panel-submit {
+  background-color: #29abe2;
+}
+
+.search-take-over.search--with-suggestions:has(.gaia-ask-panel-result-found) .gaia-ask-panel-query,
+.search-take-over.search--with-suggestions:has(.gaia-ask-panel-result-found) .gaia-ask-panel-answer * {
+  color: #343434;
+}
+
+.search-take-over.search--with-suggestions:has(.gaia-ask-panel-result-found) .gaia-ask-query-row .form-item::before {
+  background-color: #343434;
+}
+
+.search-take-over.search--with-suggestions .form-group:not(.form-actions).gaia-ask-hint p {
+  color: color-mix(in srgb, #ffffff 64%, transparent);
+}
+
+.search-take-over.search--with-suggestions .gaia-ask-panel-status:not(.visually-hidden) {
+  color: color-mix(in srgb, #ffffff 64%, transparent);
+}
+
+.search-take-over.search--with-suggestions .gaia-ask-mode-toggle {
+  background-color: #ffffff;
+  background-color: color-mix(in srgb, #ffffff 16%, transparent);
+}
+
 @media (min-width: 900px) {
   .search-take-over .form-text {
     color: #ffffff;
@@ -901,8 +958,4 @@ body.media-directory .dz-preview .dz-progress .dz-upload {
     color: #343434;
     background-color: #ffc142;
   }
-}
-
-.table th a::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12h14M3 6h18M3 18h10' fill='none' stroke='%2329abe2' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }

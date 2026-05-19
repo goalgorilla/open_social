@@ -711,7 +711,7 @@ body {
 @include for-tablet-landscape-up {
 
   .search-take-over {
-    display: none;
+    display: block;
     height: 100%;
     position: fixed;
     top: 0;
@@ -719,8 +719,13 @@ body {
     padding-top: 19vh;
     width: 100%;
     z-index: $zindex-modal;
+    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: all 0.3s ease-in-out;
+    transition:
+      opacity 0.3s ease-in-out,
+      visibility 0s linear 0.3s;
+    background-color: #343434;
 
     .form-group:not(.form-actions) {
       margin: auto;
@@ -788,8 +793,13 @@ body {
     top: 80px;
     right: 80px;
     opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
     transform: scale(1);
-    transition: transform 0.2s linear;
+    transition:
+      opacity 0.3s ease-in-out,
+      visibility 0s linear 0.3s,
+      transform 0.2s linear;
 
     &:focus,
     &:focus-visible {
@@ -810,15 +820,16 @@ body {
     overflow: hidden;
 
     .search-take-over {
-      display: initial;
+      opacity: 1;
+      visibility: visible;
       pointer-events: all;
+      transition:
+        opacity 0.3s ease-in-out,
+        visibility 0s linear 0s;
     }
 
     .navbar__open-search-block {
-      transform: scale(70);
-      -moz-transform: scale(70) rotate(0.02deg);
       pointer-events: none;
-      @include z-depth-3;
     }
 
     .navbar-nav__icon {
@@ -832,7 +843,12 @@ body {
 
     .btn--close-search-take-over {
       opacity: 1;
+      visibility: visible;
       pointer-events: all;
+      transition:
+        opacity 0.3s ease-in-out,
+        visibility 0s linear 0s,
+        transform 0.2s linear;
     }
 
     .navbar-default {

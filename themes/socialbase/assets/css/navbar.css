@@ -467,7 +467,7 @@
     display: none;
   }
   .search-take-over {
-    display: none;
+    display: block;
     height: 100%;
     position: fixed;
     top: 0;
@@ -475,9 +475,12 @@
     padding-top: 19vh;
     width: 100%;
     z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    -webkit-transition: all 0.3s ease-in-out;
-    transition: all 0.3s ease-in-out;
+    -webkit-transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
+    background-color: #343434;
   }
   .search-take-over .form-group:not(.form-actions) {
     margin: auto;
@@ -549,12 +552,14 @@
     top: 80px;
     right: 80px;
     opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
     -webkit-transform: scale(1);
             transform: scale(1);
-    -webkit-transition: -webkit-transform 0.2s linear;
-    transition: -webkit-transform 0.2s linear;
-    transition: transform 0.2s linear;
-    transition: transform 0.2s linear, -webkit-transform 0.2s linear;
+    -webkit-transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s, -webkit-transform 0.2s linear;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s, -webkit-transform 0.2s linear;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s, transform 0.2s linear;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s, transform 0.2s linear, -webkit-transform 0.2s linear;
   }
   .btn--close-search-take-over:focus, .btn--close-search-take-over:focus-visible {
     outline: -webkit-focus-ring-color auto 1px;
@@ -571,16 +576,14 @@
     overflow: hidden;
   }
   .mode-search .search-take-over {
-    display: initial;
+    opacity: 1;
+    visibility: visible;
     pointer-events: all;
+    -webkit-transition: opacity 0.3s ease-in-out, visibility 0s linear 0s;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0s;
   }
   .mode-search .navbar__open-search-block {
-    -webkit-transform: scale(70);
-            transform: scale(70);
-    -moz-transform: scale(70) rotate(0.02deg);
     pointer-events: none;
-    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
-            box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   }
   .mode-search .navbar-nav__icon {
     opacity: 0;
@@ -591,7 +594,12 @@
   }
   .mode-search .btn--close-search-take-over {
     opacity: 1;
+    visibility: visible;
     pointer-events: all;
+    -webkit-transition: opacity 0.3s ease-in-out, visibility 0s linear 0s, -webkit-transform 0.2s linear;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0s, -webkit-transform 0.2s linear;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0s, transform 0.2s linear;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0s, transform 0.2s linear, -webkit-transform 0.2s linear;
   }
   .mode-search .navbar-default {
     z-index: 1030;
