@@ -787,14 +787,22 @@ function social_group_update_13001() : void {
     }
   }
 
-  // Uninstall the secret group module if enabled.
-  // This should take care of removing everything from a secret group.
-  \Drupal::service("module_installer")->uninstall(["social_group_secret"]);
+  // Uninstall the secret group module and its sub-modules if enabled. We must
+  // uninstall social_secret_group_featured explicitly because during the
+  // upgrade from 12.x the original module files were removed by Composer and
+  // the dependency chain may not be fully available from the stub info files.
+  $module_installer = \Drupal::service("module_installer");
+  if (\Drupal::moduleHandler()->moduleExists("social_secret_group_featured")) {
+    $module_installer->uninstall(["social_secret_group_featured"]);
+  }
+  if (\Drupal::moduleHandler()->moduleExists("social_group_secret")) {
+    $module_installer->uninstall(["social_group_secret"]);
+  }
 
   // Delete our old group types.
   $group_type_storage = \Drupal::entityTypeManager()
     ->getStorage("group_type");
-  foreach ($group_type_storage->loadMultiple(["closed_group", "open_group", "public_group"]) as $group_type) {
+  foreach ($group_type_storage->loadMultiple(["closed_group", "open_group", "public_group", "secret_group"]) as $group_type) {
     if (!$group_type instanceof GroupType) {
       continue;
     }
