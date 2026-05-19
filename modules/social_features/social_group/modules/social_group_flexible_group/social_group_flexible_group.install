@@ -9,8 +9,6 @@ use Drupal\Core\Config\FileStorage;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\GroupMembership;
-use Drupal\social_group\Entity\Group;
-use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
 
@@ -184,11 +182,14 @@ function social_group_flexible_group_update_130003(array &$sandbox): string {
     $sandbox['max'] = count($sandbox['ids']);
     $sandbox['progress'] = 0;
   }
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $user_storage = $entity_type_manager->getStorage('user');
+  $group_storage = $entity_type_manager->getStorage('group');
   $items = array_slice($sandbox['ids'], $sandbox['progress'], 25);
   foreach ($items as $item) {
     $updated = FALSE;
-    $account = User::load($item->uid);
-    $group = Group::load($item->gid);
+    $account = $user_storage->load($item->uid);
+    $group = $group_storage->load($item->gid);
     $manager_role = 'flexible_group-group_manager';
 
     /** @var \Drupal\group\GroupMembership $membership */
