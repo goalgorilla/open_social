@@ -136,6 +136,8 @@
 # modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.info.yml: n/a
 # modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.info.yml: n/a
 # modules/social_features/social_group/modules/social_group_request/social_group_request.info.yml: n/a
+# modules/social_features/social_group/modules/social_group_secret/social_group_secret.info.yml: n/a
+# modules/social_features/social_group/modules/social_group_secret/modules/social_secret_group_featured/social_secret_group_featured.info.yml: n/a
 # modules/social_features/social_landing_page/social_landing_page.info.yml: n/a
 # modules/social_features/social_like/social_like.info.yml: n/a
 # modules/social_features/social_mentions/social_mentions.info.yml: n/a
@@ -2207,7 +2209,7 @@ msgstr ""
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
-"POT-Creation-Date: 2026-05-14 13:40+0000\n"
+"POT-Creation-Date: 2026-05-20 09:43+0000\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Project-Id-Version: social\n"
 
@@ -5643,6 +5645,10 @@ msgstr ""
 msgid "Asc"
 msgstr ""
 
+#: themes/socialbase/templates/block/block--system-menu-block--main.html.twig:62
+msgid "Ask Gaia"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_managers/config/install/field.field.node.event.field_event_managers.yml:0
 msgid "Assign event organisers to this event."
 msgstr ""
@@ -6303,7 +6309,7 @@ msgstr ""
 
 #: modules/features/social_course/modules/social_course_advanced/social_course_advanced.install:334
 #: modules/features/social_course/modules/social_course_basic/social_course_basic.install:290
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:242
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:243
 msgid "Checked @progress from @max users."
 msgstr ""
 
@@ -6395,6 +6401,10 @@ msgstr ""
 
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:212
 msgid "Click here to go to the social tagging overview"
+msgstr ""
+
+#: themes/socialbase/templates/block/block--system-menu-block--main.html.twig:60
+msgid "Click to ask Gaia"
 msgstr ""
 
 #: themes/socialbase/templates/block/block--views-exposed-filter-block.html.twig:70
@@ -8352,6 +8362,11 @@ msgstr ""
 
 #: modules/social_features/social_core/social_core.install:818
 msgid "Deprecated modules uninstalled."
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_secret/social_group_secret.info.yml:0
+#: modules/social_features/social_group/modules/social_group_secret/modules/social_secret_group_featured/social_secret_group_featured.info.yml:0
+msgid "Deprecated stub module kept for the upgrade path from Open Social 12.x to 13.x. Will be uninstalled automatically during database updates."
 msgstr ""
 
 #: modules/social_features/social_profile/modules/social_profile_preview/social_profile_preview.info.yml:0
@@ -14739,7 +14754,7 @@ msgstr ""
 msgid "Platform has opted out of alias fixes for the Group Default Route changes."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.install:1059
+#: modules/social_features/social_group/social_group.install:1067
 msgid "Platform has opted out of group migration, you must clean up later manually."
 msgstr ""
 
@@ -14752,7 +14767,7 @@ msgstr ""
 #: modules/social_features/social_event/social_event.install:216
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.install:91
 #: modules/social_features/social_featured_content/social_featured_content.install:39
-#: modules/social_features/social_group/social_group.install:286;714;815
+#: modules/social_features/social_group/social_group.install:286;714;823
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.install:41
 #: modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.install:81
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.install:80
@@ -17957,6 +17972,8 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.info.yml:0
 #: modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.info.yml:0
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.info.yml:0
+#: modules/social_features/social_group/modules/social_group_secret/social_group_secret.info.yml:0
+#: modules/social_features/social_group/modules/social_group_secret/modules/social_secret_group_featured/social_secret_group_featured.info.yml:0
 #: modules/social_features/social_landing_page/social_landing_page.info.yml:0
 #: modules/social_features/social_like/social_like.info.yml:0
 #: modules/social_features/social_mentions/social_mentions.info.yml:0
@@ -18643,6 +18660,14 @@ msgstr ""
 
 #: modules/social_features/social_search/social_search.info.yml:0
 msgid "Social Search"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_secret/social_group_secret.info.yml:0
+msgid "Social Secret Group"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_secret/modules/social_secret_group_featured/social_secret_group_featured.info.yml:0
+msgid "Social Secret Group on Landing pages"
 msgstr ""
 
 #: modules/social_features/social_sharing/social_sharing.info.yml:0
@@ -19852,7 +19877,7 @@ msgstr ""
 msgid "The entity-form-display from Event Type taxonomy is empty."
 msgstr ""
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:339
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:340
 msgid "The entity-form-display from Group Type taxonomy is empty."
 msgstr ""
 
@@ -20078,7 +20103,7 @@ msgstr ""
 msgid "The path field already is hidden on Course Type taxonomy."
 msgstr ""
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:347
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install:348
 msgid "The path field already is hidden on Group Type taxonomy."
 msgstr ""
 
