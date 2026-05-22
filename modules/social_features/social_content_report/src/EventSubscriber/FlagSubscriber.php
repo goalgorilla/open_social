@@ -4,6 +4,8 @@ namespace Drupal\social_content_report\EventSubscriber;
 
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -107,9 +109,11 @@ class FlagSubscriber implements EventSubscriberInterface {
     // Do nothing unless we need to unpublish the entity immediately.
     if ($this->unpublishImmediately) {
       try {
-        $entity->setPublished(FALSE);
-        $entity->save();
-        $invalidated = TRUE;
+        $unpublished = $this->unpublishEntity($entity);
+        if ($unpublished) {
+          $entity->save();
+          $invalidated = TRUE;
+        }
       }
       catch (EntityStorageException $exception) {
         $this->getLogger('social_content_report')
@@ -127,6 +131,32 @@ class FlagSubscriber implements EventSubscriberInterface {
     if (!$invalidated) {
       $this->cacheInvalidator->invalidateTags([$entity_type . ':' . $entity_id]);
     }
+  }
+
+  /**
+   * Handles entity unpublishing.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to be unpublished.
+   *
+   * @return bool
+   *   TRUE if unpublished, otherwise FALSE.
+   */
+  private function unpublishEntity(EntityInterface $entity): bool {
+    // Entities implement EntityPublishedInterface via EntityPublishedTrait,
+    // where setPublished() takes no argument and setUnpublished() is the
+    // correct API.
+    if ($entity instanceof EntityPublishedInterface) {
+      $entity->setUnpublished();
+      return TRUE;
+    }
+    // Case when entities appear to use the older/custom
+    // setPublished($published) shape.
+    if (method_exists($entity, 'setPublished')) {
+      $entity->setPublished(FALSE);
+      return TRUE;
+    }
+    return FALSE;
   }
 
 }
