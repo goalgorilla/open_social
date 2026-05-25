@@ -10,10 +10,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Describes how a node access query can be altered in Social.
  *
- *   "Social" gets rid of "hook_node_grands()" for counting access to node
+ *   "Social" gets rid of "hook_node_grants()" for counting access to node
  *   entities in queries. Now it is replaced with query builders.
  *   If you need to add your own query access rules to a node query, rather than
- *   adding "hook_node_grands()", you should add an event subscriber
+ *   adding "hook_node_grants()", you should add an event subscriber
  *   implementing this interface.
  */
 interface SocialNodeQueryAccessAlterInterface extends EventSubscriberInterface {

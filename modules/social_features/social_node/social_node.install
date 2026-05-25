@@ -39,19 +39,21 @@ function social_node_install(): void {
  * Implements hook_requirements().
  */
 function social_node_requirements(string $phase): array {
-  // Make sure there are no "hook_node_grands()" implementations.
+  // Make sure there are no "hook_node_grants()" implementations.
   // If at least one exists, a node entity query will be broken.
   if ($phase === 'runtime') {
     $hooks_exist = \Drupal::moduleHandler()->hasImplementations('node_grants');
 
-    $requirements['unwanted_node_grands']['title'] = t('"hook_node_grands()" absence');
+    $requirements['unwanted_node_grands']['title'] = t('social_node: hook_node_grants()');
     if ($hooks_exist) {
-      $requirements['unwanted_node_grands']['value'] = t('"hook_node_grands()" implementations exist');
-      $requirements['unwanted_node_grands']['description'] = t('This hook implementations break your node entity queries. You should remove remove them and implement event subscriber with query altering instead (see "\Drupal\social_node\SocialNodeQueryAccessAlterInterface")');
+      $requirements['unwanted_node_grands']['value'] = t('Implementations found');
+      $requirements['unwanted_node_grands']['description'] = t('At least one hook_node_grants() implementation breaks node entity queries with the Social Node module. Remove those implementations and use an event subscriber with query altering instead (see @interface).', [
+        '@interface' => '\Drupal\social_node\SocialNodeQueryAccessAlterInterface',
+      ]);
       $requirements['unwanted_node_grands']['severity'] = REQUIREMENT_ERROR;
     }
     else {
-      $requirements['unwanted_node_grands']['value'] = t('"hook_node_grands()" implementations does not exist');
+      $requirements['unwanted_node_grands']['value'] = t('No implementations');
       $requirements['unwanted_node_grands']['severity'] = REQUIREMENT_OK;
     }
   }
