@@ -58,6 +58,7 @@ function social_core_install() {
     [
       'access content',
       'view own unpublished content',
+      'use text format basic_html',
       'use text format simple_text',
       'view the administration theme',
     ]
@@ -66,7 +67,6 @@ function social_core_install() {
     'verified',
     [
       'use select2 autocomplete',
-      'use text format basic_html',
     ]
   );
   user_role_grant_permissions(
@@ -997,16 +997,4 @@ function social_core_update_130027(): void {
   /** @var \Drupal\social_core\SocialCoreInstallHelper $helper */
   $helper = \Drupal::classResolver(SocialCoreInstallHelper::class);
   $helper->prepareContentViewVboActions();
-}
-
-/**
- * Restrict basic_html to verified users.
- */
-function social_core_update_130028(): void {
-  user_role_revoke_permissions(RoleInterface::AUTHENTICATED_ID, [
-    'use text format basic_html',
-  ]);
-  user_role_grant_permissions('verified', [
-    'use text format basic_html',
-  ]);
 }
