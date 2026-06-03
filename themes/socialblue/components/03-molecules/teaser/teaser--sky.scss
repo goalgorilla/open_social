@@ -20,11 +20,19 @@
   }
 
   .teaser__title {
+    display: flex;
+    align-items: flex-start;
+    gap: .25rem;
     margin-bottom: .75rem;
 
     a {
-      display: flex;
-      align-items: center;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+      flex: 1;
     }
   }
 
