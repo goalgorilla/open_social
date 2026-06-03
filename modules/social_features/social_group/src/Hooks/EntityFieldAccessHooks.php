@@ -13,7 +13,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\hux\Attribute\Hook;
 use Drupal\social_group\CurrentGroupProviderInterface;
-use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -69,16 +68,12 @@ final class EntityFieldAccessHooks implements ContainerInjectionInterface {
     AccountInterface $account,
     ?FieldItemListInterface $items = NULL,
   ): AccessResultInterface {
-    if ($items === NULL) {
-      return AccessResult::neutral();
-    }
-
-    $user = $items->getEntity();
-    if (!$user instanceof UserInterface) {
-      return AccessResult::neutral();
-    }
-
-    if ($operation !== 'view' || $field_definition->getName() !== 'status') {
+    // Views calls fieldAccess() with $items === NULL for the column-level
+    // access check, so the target type cannot be derived from items here —
+    // check the field definition instead.
+    if ($operation !== 'view'
+      || $field_definition->getName() !== 'status'
+      || $field_definition->getTargetEntityTypeId() !== 'user') {
       return AccessResult::neutral();
     }
 
