@@ -81,13 +81,17 @@ class SocialEventInviteAccessHelper {
   /**
    * Custom access check for the event invite features for event managers.
    *
+   * @param bool $check_group_invite
+   *   When FALSE, skip the per-group invite check (e.g. Manage enrollments
+   *   block access). Invite links in the block still use the default TRUE.
+   *
    * @return \Drupal\Core\Access\AccessResult
    *   Returns the access result.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function eventFeatureAccess() {
+  public function eventFeatureAccess($check_group_invite = TRUE) {
     $config = $this->configFactory->get('social_event_invite.settings');
     $enabled_global = $config->get('invite_enroll');
 
@@ -114,47 +118,41 @@ class SocialEventInviteAccessHelper {
       return AccessResult::forbidden();
     }
 
-    $node = $node->id();
     $gid_from_entity = $this->groupHelperService->getGroupFromEntity([
       'target_type' => 'node',
-      'target_id' => $node,
+      'target_id' => $node->id(),
     ]);
 
     // If we have a group we need to additional checks.
-    if ($gid_from_entity !== NULL) {
-      /** @var \Drupal\group\Entity\GroupInterface $group */
+    if ($check_group_invite && $gid_from_entity !== NULL) {
+      /** @var \Drupal\group\Entity\GroupInterface|null $group */
       $group = $this->entityTypeManager
         ->getStorage('group')
         ->load($gid_from_entity);
 
+      if ($group === NULL) {
+        return AccessResult::forbidden();
+      }
+
       $enabled_for_group = $config->get('invite_group_types');
       $enabled = FALSE;
       if (is_array($enabled_for_group)) {
-        foreach ($enabled_for_group as $group_type) {
-          if ($group_type === $group->bundle()) {
-            $enabled = TRUE;
-            break;
-          }
-        }
+        $enabled_for_group = array_filter($enabled_for_group);
+        $enabled = in_array($group->bundle(), $enabled_for_group, TRUE);
       }
 
       // If it's not enabled for the group this event belongs to,
-      // we don't want to show the block.
-      if (!$enabled) {
+      // we don't want to show the block. CM/SM can still use invite features.
+      if (!$enabled && !$this->currentUser->hasPermission('manage everything enrollments')) {
         return AccessResult::forbidden();
       }
     }
 
-    // If the user is not an event owner or organizer don't give access.
-    // @todo can be combined with the next check into a service.
     if (!social_event_manager_or_organizer()) {
       return AccessResult::forbidden();
     }
 
-    // If we've got this far we can be sure the user is allowed to see this
-    // block.
-    // @todo move that function to a service.
-    return AccessResult::allowedIf(social_event_manager_or_organizer());
+    return AccessResult::allowed();
   }
 
   /**

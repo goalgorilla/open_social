@@ -46,8 +46,8 @@ class EventInviteSettingsForm extends ConfigFormBase {
 
     $form['invite_group_types'] = [
       '#type' => 'checkboxes',
-      '#title' => $this->t('Enable event invite per group type'),
-      '#description' => $this->t('Select the group types for which you want to enable the event invite feature.'),
+      '#title' => $this->t('Enable invite-by-email per group type'),
+      '#description' => $this->t('Enable email invitations for events within the selected group types. Event Managers can always add attendees directly on the manage enrollment page.'),
       '#options' => $group_types,
       '#default_value' => $social_event_config->get('invite_group_types'),
     ];

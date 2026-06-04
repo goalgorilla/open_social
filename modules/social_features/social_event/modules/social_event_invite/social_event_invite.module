@@ -145,7 +145,7 @@ function social_event_invite_preprocess_views_view(&$variables) {
   if ($variables['view']->id() === 'event_manage_enrollments') {
     /** @var \Drupal\social_event_invite\SocialEventInviteAccessHelper $access */
     $access = \Drupal::service('social_event_invite.access_helper');
-    $access = $access->eventFeatureAccess();
+    $access = $access->eventFeatureAccess(FALSE);
 
     if (!$access instanceof AccessResultForbidden) {
       // Add the roster-link block to the build-array.
@@ -154,7 +154,11 @@ function social_event_invite_preprocess_views_view(&$variables) {
         ->createInstance('social_event_invite_block');
 
       if (NULL !== $block) {
-        $block->setContextValue('node', Node::load(\Drupal::routeMatch()->getParameter('node')));
+        $event_node = \Drupal::routeMatch()->getParameter('node');
+        if (!$event_node instanceof NodeInterface) {
+          $event_node = Node::load($event_node);
+        }
+        $block->setContextValue('node', $event_node);
         $block_content = $block->build();
 
         if (!empty($block_content)) {

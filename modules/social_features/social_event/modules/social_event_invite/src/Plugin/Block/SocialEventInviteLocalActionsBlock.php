@@ -79,7 +79,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
    */
   protected function blockAccess(AccountInterface $account) {
     try {
-      return $this->accessHelper->eventFeatureAccess();
+      return $this->accessHelper->eventFeatureAccess(FALSE);
     }
     catch (InvalidPluginDefinitionException $e) {
       return AccessResult::neutral();
@@ -98,35 +98,53 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
     // Get current node so we can build correct links.
     $event = $this->getContextValue('node');
     if ($event instanceof NodeInterface) {
-      $links = [
-        '#type' => 'dropbutton',
-        '#attributes' => [
-          'class' => ['add-users-dropbutton'],
-          'no-split' => [
-            'title' => $this->t('Add enrollees'),
-            'alignment' => 'right',
-          ],
-        ],
-        '#links' => [
-          'add_directly' => [
-            'title' => $this->t('Add directly'),
-            'url' => Url::fromRoute('social_event_managers.add_enrollees', ['node' => $event->id()]),
-          ],
-          'invite_by_mail' => [
-            'title' => $this->t('Invite users'),
-            'url' => Url::fromRoute('social_event_invite.invite_email', ['node' => $event->id()]),
-          ],
-          'view_invites' => [
-            'title' => $this->t('View invites'),
-            'url' => Url::fromRoute('view.event_manage_enrollment_invites.page_manage_enrollment_invites', ['node' => $event->id()]),
-          ],
+      $add_enrollees_url = Url::fromRoute('social_event_managers.add_enrollees', ['node' => $event->id()]);
+      $dropbutton_links = [
+        'add_directly' => [
+          'title' => $this->t('Add directly'),
+          'url' => $add_enrollees_url,
         ],
       ];
 
-      $build['content'] = $links;
+      if ($this->accessHelper->eventFeatureAccess()->isAllowed()) {
+        $dropbutton_links['invite_by_mail'] = [
+          'title' => $this->t('Invite users'),
+          'url' => Url::fromRoute('social_event_invite.invite_email', ['node' => $event->id()]),
+        ];
+        $dropbutton_links['view_invites'] = [
+          'title' => $this->t('View invites'),
+          'url' => Url::fromRoute('view.event_manage_enrollment_invites.page_manage_enrollment_invites', ['node' => $event->id()]),
+        ];
+      }
+
+      if (count($dropbutton_links) === 1) {
+        $build['content'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Add enrollees'),
+          '#url' => $add_enrollees_url,
+          '#attributes' => [
+            'class' => ['btn', 'btn-default', 'btn-raised', 'waves-effect'],
+          ],
+        ];
+      }
+      else {
+        $build['content'] = [
+          '#type' => 'dropbutton',
+          '#attributes' => [
+            'class' => ['add-users-dropbutton'],
+            'no-split' => [
+              'title' => $this->t('Add enrollees'),
+              'alignment' => 'right',
+            ],
+          ],
+          '#links' => $dropbutton_links,
+        ];
+      }
+
       $build['#cache'] = [
         'keys' => ['social_event_invite_block', 'node', $event->id()],
-        'contexts' => ['user'],
+        'contexts' => ['user.permissions'],
+        'tags' => array_merge($event->getCacheTags(), ['config:social_event_invite.settings']),
       ];
     }
     return $build;

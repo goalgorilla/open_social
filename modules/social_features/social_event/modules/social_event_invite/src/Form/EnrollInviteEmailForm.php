@@ -16,6 +16,7 @@ use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_max_enroll\Service\EventMaxEnrollService;
+use Drupal\social_event_invite\SocialEventInviteAccessHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -56,6 +57,11 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   protected FileUrlGenerator $fileUrlGenerator;
 
   /**
+   * The event invite access helper.
+   */
+  protected SocialEventInviteAccessHelper $accessHelper;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -75,6 +81,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $instance->eventMaxEnrollService = $container->get('social_event_max_enroll.service');
     }
     $instance->fileUrlGenerator = $container->get('file_url_generator');
+    $instance->accessHelper = $container->get('social_event_invite.access_helper');
 
     return $instance;
   }
@@ -291,7 +298,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
 
     // Allow for event managers/organizers.
     if (social_event_manager_or_organizer()) {
-      return AccessResult::allowed();
+      return $this->accessHelper->eventFeatureAccess();
     }
 
     // Disable access for non-enrolled users, invite by users was disabled in
