@@ -36,20 +36,21 @@
 
 .file {
   display: flex;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
   margin: 10px 0;
   width: 100%;
   background: #fff;
   border: 1px solid $gray-lighter;
-  padding: 0.5em 0;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  gap: 0.75rem;
 
   @include for-tablet-portrait-up {
     margin-top: 5px;
   }
 
   > span {
-    padding-left:0.5em;
-    padding-right: 0.5em;
     align-self: center;
   }
 
@@ -68,7 +69,6 @@
 
 .file-icon {
   user-select: none;
-  flex: 0 0 32px;
 
   .node-file__icon {
     display: block;
@@ -77,10 +77,16 @@
 
 .file-link {
   flex: 1;
-  white-space: normal;
-  word-break: break-word;
+  min-width: 0;
+  overflow: hidden;
 
   a, a:hover, a:focus, a:active {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
     text-decoration: none;
     color: inherit;
     font-weight: 400;
