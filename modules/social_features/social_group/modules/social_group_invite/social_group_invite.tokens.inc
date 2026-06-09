@@ -30,9 +30,6 @@ function social_group_invite_tokens(string $type, array $tokens, array $data, ar
 
   $group_relationship = $data['group_content'];
   assert($group_relationship instanceof GroupRelationshipInterface);
-  if ($group_relationship->isNew()) {
-    return [];
-  }
 
   $gid = $group_relationship->id();
 
@@ -70,7 +67,7 @@ function social_group_invite_tokens(string $type, array $tokens, array $data, ar
 
       // For new users for register_link token.
       $link = $ginvite_replacements[$original];
-      $replacements[$original] = "{$link}&{$destination}";
+      $replacements[$original] = $destination ? "{$link}&{$destination}" : $link;
     }
 
     if ($name === 'my_invitations_link') {
