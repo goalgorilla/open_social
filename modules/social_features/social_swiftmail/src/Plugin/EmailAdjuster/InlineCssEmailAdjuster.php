@@ -58,7 +58,7 @@ class InlineCssEmailAdjuster extends EmailAdjusterBase implements ContainerFacto
    * @param \Drupal\Core\Asset\AssetOptimizerInterface $cssOptimizer
    *   The Drupal CSS optimizer.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, AssetResolverInterface $asset_resolver, AssetOptimizerInterface $cssOptimizer = NULL) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, AssetResolverInterface $asset_resolver, ?AssetOptimizerInterface $cssOptimizer = NULL) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->assetResolver = $asset_resolver;
     $this->cssInliner = new CssToInlineStyles();

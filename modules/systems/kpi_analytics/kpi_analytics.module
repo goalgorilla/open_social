@@ -25,21 +25,21 @@ function kpi_analytics_help($route_name) {
 /**
  * Retrieve the Datasource plugins.
  */
-function _kpi_datasource_allowed_values(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL) {
+function _kpi_datasource_allowed_values(FieldStorageDefinitionInterface $definition, ?FieldableEntityInterface $entity = NULL) {
   return \Drupal::service('plugin.manager.kpi_datasource.processor')->getOptionsList();
 }
 
 /**
  * Retrieve the Data formatter plugins.
  */
-function _kpi_data_formatter_allowed_values(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL) {
+function _kpi_data_formatter_allowed_values(FieldStorageDefinitionInterface $definition, ?FieldableEntityInterface $entity = NULL) {
   return \Drupal::service('plugin.manager.kpi_data_formatter.processor')->getOptionsList();
 }
 
 /**
  * Retrieve the Data visualization plugins.
  */
-function _kpi_visualization_allowed_values(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL) {
+function _kpi_visualization_allowed_values(FieldStorageDefinitionInterface $definition, ?FieldableEntityInterface $entity = NULL) {
   return \Drupal::service('plugin.manager.kpi_visualization.processor')->getOptionsList();
 }
 
