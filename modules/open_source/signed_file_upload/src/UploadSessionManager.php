@@ -153,13 +153,16 @@ class UploadSessionManager implements UploadSessionManagerInterface {
         $this->time->getRequestTime()
       );
     }
-    return $date
-      ->add(
-        \DateInterval::createFromDateString(
-          $this->configFactory->get('signed_file_upload.settings')
-            ->get('expiry_time')
-        )
-      );
+    $expiry_time = $this->configFactory->get('signed_file_upload.settings')
+      ->get('expiry_time');
+    if (!is_string($expiry_time) || $expiry_time === '') {
+      throw new \RuntimeException(sprintf('Invalid signed_file_upload.settings:expiry_time value %s; expected a non-empty string.', var_export($expiry_time, TRUE)));
+    }
+    $interval = \DateInterval::createFromDateString($expiry_time);
+    if ($interval === FALSE) {
+      throw new \RuntimeException(sprintf('Invalid signed_file_upload.settings:expiry_time value "%s".', $expiry_time));
+    }
+    return $date->add($interval);
   }
 
   /**
