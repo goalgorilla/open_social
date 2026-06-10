@@ -1792,7 +1792,7 @@ function social_core_views_query_alter(ViewExecutable $view, QueryPluginBase $qu
   $join = &$table_queue['user__roles']['join'];
   $join->type = 'LEFT';
   $join->extraOperator = 'AND';
-  unset($join->adjusted);
+  $join->adjusted = FALSE;
   $join->extra = [
     [
       'field' => 'roles_target_id',
