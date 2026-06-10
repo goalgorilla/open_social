@@ -173,7 +173,8 @@ class QueryHiddenCommentFieldTest extends SocialGraphQLTestBase {
       $this->defaultCacheMetaData()
         ->addCacheableDependency($parent)
         ->addCacheableDependency($comment)
-        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheContexts(['languages:language_interface', 'user'])
+        ->addCacheTags(['access_policies'])
     );
   }
 

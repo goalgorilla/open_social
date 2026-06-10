@@ -27,6 +27,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
   protected static $modules = [
     // For the comment functionality.
     'social_comment',
+    'hux',
     'comment',
     // For checking access to a comment.
     'entity',
