@@ -3,7 +3,11 @@
 namespace Drupal\Tests\social_comment\Kernel;
 
 use Drupal\comment\CommentInterface;
+use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\node\Entity\NodeType;
 use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
 use Drupal\user\UserInterface;
@@ -41,6 +45,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
     'views',
     'views_bulk_operations',
     'group',
+    'group_core_comments',
     'variationcache',
     'flexible_permissions',
   ];
@@ -68,11 +73,43 @@ class CommentViewAccessTest extends EntityKernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
     $this->installEntitySchema('comment');
+    $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', 'comment_entity_statistics');
     $this->installConfig(['filter', 'comment', 'social_comment']);
 
+    $this->ensurePageCommentField();
     $this->storage = $this->entityTypeManager->getStorage('comment');
-    $this->node = $this->createNode();
+    $this->node = $this->createNode(['type' => 'page']);
+  }
+
+  /**
+   * Ensures the page bundle has a comment field for access tests.
+   */
+  private function ensurePageCommentField(): void {
+    if (NodeType::load('page') === NULL) {
+      NodeType::create(['type' => 'page', 'name' => 'Page'])->save();
+    }
+    if (FieldStorageConfig::load('node.field_page_comments') === NULL) {
+      FieldStorageConfig::create([
+        'field_name' => 'field_page_comments',
+        'entity_type' => 'node',
+        'type' => 'comment',
+        'settings' => ['comment_type' => 'comment'],
+        'module' => 'comment',
+      ])->save();
+    }
+    if (FieldConfig::load('node.page.field_page_comments') === NULL) {
+      FieldConfig::create([
+        'field_name' => 'field_page_comments',
+        'entity_type' => 'node',
+        'bundle' => 'page',
+        'label' => 'Comments',
+        'settings' => [
+          'default_mode' => 1,
+          'per_page' => 50,
+        ],
+      ])->save();
+    }
   }
 
   /**
@@ -170,6 +207,60 @@ class CommentViewAccessTest extends EntityKernelTestBase {
       ->condition('comment_type', 'comment')
       ->execute();
     self::assertCount(0, $visible_comments);
+  }
+
+  /**
+   * Members cannot view comments when the parent comment field is Hidden.
+   */
+  public function testUserCanNotViewCommentWhenCommentFieldHidden(): void {
+    $this->setUpCurrentUser([], ['access comments']);
+    $comment = $this->createComment($this->node, [
+      'field_name' => 'field_page_comments',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $this->node->set('field_page_comments', [
+      'status' => CommentItemInterface::HIDDEN,
+    ]);
+    $this->node->save();
+
+    $member = $this->setUpCurrentUser([], ['access comments']);
+
+    self::assertFalse($comment->access('view', $member));
+
+    $visible_comments = $this->storage
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('cid', $comment->id())
+      ->execute();
+    self::assertCount(0, $visible_comments);
+  }
+
+  /**
+   * Node owners can view comments when the parent comment field is Hidden.
+   */
+  public function testNodeOwnerCanViewCommentWhenCommentFieldHidden(): void {
+    $owner = $this->setUpCurrentUser([], ['access comments', 'access content']);
+    $node = $this->createNode([
+      'type' => 'page',
+      'uid' => $owner->id(),
+    ]);
+    $comment = $this->createComment($node, [
+      'field_name' => 'field_page_comments',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $node->set('field_page_comments', [
+      'status' => CommentItemInterface::HIDDEN,
+    ]);
+    $node->save();
+
+    self::assertTrue($comment->access('view', $owner));
+
+    $visible_comments = $this->storage
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('cid', $comment->id())
+      ->execute();
+    self::assertCount(1, $visible_comments);
   }
 
   /**
