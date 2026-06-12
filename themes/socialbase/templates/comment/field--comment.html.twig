@@ -29,7 +29,7 @@
 {{ attach_library('socialbase/pagination') }}
 
 {# extra condition to make sure the card is not shown when there are no comments and comments are closed #}
-{% if (comment_count > 0) or (comment_form and comment_open) %}
+{% if (comment_count > 0) or (comment_form and comment_open) or comment_hidden_viewable %}
 
   <a id="section-comments"></a>
   <section{{ attributes }}>

@@ -3,7 +3,9 @@
 namespace Drupal\group_core_comments\Plugin\Field\FieldFormatter;
 
 use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
+use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -15,6 +17,8 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupRelationship;
+use Drupal\group_core_comments\Access\HiddenCommentFieldAccessLocator;
+use Drupal\social_comment\HiddenCommentFieldAccessInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,6 +33,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class CommentGroupContentFormatter extends CommentDefaultFormatter {
+
+  /**
+   * Hidden comment field access service.
+   */
+  protected HiddenCommentFieldAccessInterface $hiddenCommentFieldAccess;
 
   /**
    * The renderer.
@@ -62,41 +71,13 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
       $container->get('current_route_match'),
       $container->get('entity_display.repository'),
       $container->get('renderer'),
-      $container->get('request_stack')->getCurrentRequest()->isXmlHttpRequest()
+      $container->get('request_stack')->getCurrentRequest()->isXmlHttpRequest(),
+      HiddenCommentFieldAccessLocator::get($container),
     );
   }
 
   /**
    * Constructs a new CommentDefaultFormatter.
-   *
-   * @param string $plugin_id
-   *   The plugin_id for the formatter.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
-   *   The definition of the field to which the formatter is associated.
-   * @param array $settings
-   *   The formatter settings.
-   * @param string $label
-   *   The formatter label display setting.
-   * @param string $view_mode
-   *   The view mode.
-   * @param array $third_party_settings
-   *   Third party settings.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
-   *   The entity form builder.
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *   The route match object.
-   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
-   *   The entity display repository.
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer interface.
-   * @param bool $is_xml_http_request
-   *   TRUE if the request is a XMLHttpRequest.
    */
   public function __construct(
     $plugin_id,
@@ -112,7 +93,8 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
     RouteMatchInterface $route_match,
     EntityDisplayRepositoryInterface $entity_display_repository,
     RendererInterface $renderer,
-    $is_xml_http_request,
+    bool $is_xml_http_request,
+    HiddenCommentFieldAccessInterface $hidden_comment_field_access,
   ) {
     parent::__construct(
       $plugin_id,
@@ -131,22 +113,69 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
 
     $this->renderer = $renderer;
     $this->isXmlHttpRequest = $is_xml_http_request;
+    $this->hiddenCommentFieldAccess = $hidden_comment_field_access;
   }
 
   /**
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $output = parent::viewElements($items, $langcode);
+    $gate_elements = [];
     $entity = $items->getEntity();
+    $values = $items->getValue();
+    $status = !empty($values) ? (int) $values[0]['status'] : 0;
+    $field_name = $this->fieldDefinition->getName();
 
-    // Exclude entities without the set id.
+    $hidden_access = NULL;
+    if ($status === CommentItemInterface::HIDDEN) {
+      $gate_elements['#cache']['contexts'][] = 'user';
+      $gate_elements['#cache']['contexts'][] = 'user.permissions';
+      $hidden_access = $this->hiddenCommentFieldAccess->accessHiddenField(
+        $this->currentUser,
+        $entity,
+        $field_name,
+      );
+      CacheableMetadata::createFromRenderArray($gate_elements)
+        ->addCacheableDependency($hidden_access)
+        ->applyTo($gate_elements);
+      if ($hidden_access->isForbidden()) {
+        return $gate_elements;
+      }
+    }
+
+    $output = parent::viewElements($items, $langcode);
+    if ($gate_elements !== []) {
+      CacheableMetadata::createFromRenderArray($gate_elements)
+        ->applyTo($output);
+    }
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+    $field_definition = $this->fieldDefinition;
+    $field_id = $field_definition->id();
+    $may_view_hidden_field = $status === CommentItemInterface::HIDDEN;
+    $can_render_comments = $this->currentUser->hasPermission('access comments')
+      || $this->currentUser->hasPermission('administer comments')
+      || $this->currentUser->hasPermission("access {$field_id} comments")
+      || $may_view_hidden_field;
+
+    $build_hidden_comment_list = $status === CommentItemInterface::HIDDEN
+      && $can_render_comments;
+
+    if ($build_hidden_comment_list) {
+      $output[0] ??= [
+        '#comment_type' => $this->getFieldSetting('comment_type'),
+        '#comment_display_mode' => $this->getFieldSetting('default_mode'),
+        'comments' => [],
+        'comment_form' => [],
+      ];
+      $output[0]['comments'] = [];
+    }
+
     if (!empty($entity->id())) {
       $group_contents = GroupRelationship::loadByEntity($entity);
     }
 
     if (!empty($group_contents)) {
-      // Add cache contexts.
       $output['#cache']['contexts'][] = 'route.group';
       $output['#cache']['contexts'][] = 'user.group_permissions';
 
@@ -168,7 +197,6 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
           $join_directly_bool = TRUE;
         }
 
-        // If a user can't join directly, about page makes more sense.
         if (!$join_directly_bool) {
           $group_url = Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()]);
         }
@@ -230,7 +258,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
       }
 
       $access_view_comments = $this->getPermissionInGroups('access comments', $account, $group_contents, $output);
-      if ($access_view_comments->isForbidden()) {
+      if ($access_view_comments->isForbidden() && !$may_view_hidden_field) {
         $description = $this->t('You are not allowed to view comments on content in a group you are not member of. You can join the group @group_link.',
           [
             '@group_link' => Link::fromTextAndUrl($this->t('here'), $group_url)
@@ -245,7 +273,10 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
 
     }
 
-    if (!empty($output[0]['comments']) && !$this->isXmlHttpRequest) {
+    if (
+      (!empty($output[0]['comments']) || $build_hidden_comment_list)
+      && !$this->isXmlHttpRequest
+    ) {
       $comment_settings = $this->getFieldSettings();
       $output[0]['comments'] = [
         '#lazy_builder' => [
@@ -265,7 +296,6 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
     }
 
     if (!$this->currentUser->hasPermission('post comments')) {
-      // Add log in and sign up links below discussion comments for AN user.
       $log_in_url = Url::fromRoute('user.login', ['destination' => Url::fromRoute('<current>')->toString() . '#section-comments']);
       $log_in_link = Link::fromTextAndUrl(t('log in'), $log_in_url)
         ->toString();
@@ -291,7 +321,6 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
     foreach ($group_contents as $group_content) {
       $group = $group_content->getGroup();
 
-      // Add cacheable dependency.
       $membership = $group->getMember($account);
       $this->renderer->addCacheableDependency($output, $membership);
 
@@ -299,7 +328,6 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
         return AccessResult::allowed()->cachePerUser();
       }
     }
-    // Fallback.
     return AccessResult::forbidden()->cachePerUser();
   }
 

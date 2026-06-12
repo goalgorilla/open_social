@@ -288,6 +288,44 @@ class CommentViewAccessTest extends EntityKernelTestBase {
   }
 
   /**
+   * Users with administer comments can view hidden comment fields globally.
+   */
+  public function testUserWithAdministerCommentsCanViewCommentWhenCommentFieldHidden(): void {
+    $this->setUpCurrentUser([], ['access comments']);
+    $comment = $this->createComment($this->node, [
+      'field_name' => 'field_page_comments',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $this->node->set('field_page_comments', [
+      'status' => CommentItemInterface::HIDDEN,
+    ]);
+    $this->node->save();
+
+    $viewer = $this->setUpCurrentUser([], [
+      'access comments',
+      'access content',
+      'administer comments',
+    ]);
+
+    self::assertTrue($comment->access('view', $viewer));
+
+    $visible_comments = $this->storage
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('cid', $comment->id())
+      ->execute();
+    self::assertCount(1, $visible_comments);
+
+    /** @var \Drupal\social_comment\HiddenCommentFieldAccessInterface $hidden_comment_field_access */
+    $hidden_comment_field_access = $this->container->get('social_comment.hidden_comment_field_access');
+    self::assertFalse($hidden_comment_field_access->accessHiddenField(
+      $viewer,
+      $this->node,
+      'field_page_comments',
+    )->isForbidden());
+  }
+
+  /**
    * Node owners can view comments when the parent comment field is Hidden.
    */
   public function testNodeOwnerCanViewCommentWhenCommentFieldHidden(): void {
@@ -313,6 +351,14 @@ class CommentViewAccessTest extends EntityKernelTestBase {
       ->condition('cid', $comment->id())
       ->execute();
     self::assertCount(1, $visible_comments);
+
+    /** @var \Drupal\social_comment\HiddenCommentFieldAccessInterface $hidden_comment_field_access */
+    $hidden_comment_field_access = $this->container->get('social_comment.hidden_comment_field_access');
+    self::assertFalse($hidden_comment_field_access->accessHiddenField(
+      $owner,
+      $node,
+      'field_page_comments',
+    )->isForbidden());
   }
 
   /**
