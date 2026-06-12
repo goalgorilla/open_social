@@ -1,4 +1,21 @@
 services:
+  _defaults:
+    autowire: true
+
+  social_comment.hidden_comment_field_map_cache:
+    class: Drupal\social_comment\Cache\HiddenCommentFieldMapCache
+    arguments:
+      - '@cache.data'
+      - '@entity_type.manager'
+      - '@entity_field.manager'
+  Drupal\social_comment\Cache\HiddenCommentFieldMapCache: '@social_comment.hidden_comment_field_map_cache'
+  access_policy.social_comment.hidden_comment_node_owner:
+    class: Drupal\social_comment\Access\HiddenCommentNodeOwnerAccessPolicy
+    tags:
+      - { name: access_policy }
+  social_comment.hidden_comment_field_access:
+    class: Drupal\social_comment\HiddenCommentFieldAccess
+  Drupal\social_comment\HiddenCommentFieldAccessInterface: '@social_comment.hidden_comment_field_access'
   social_comment.breadcrumb:
     arguments: ['@entity_type.manager']
     class: Drupal\social_comment\SocialCommentBreadcrumbBuilder
@@ -28,3 +45,10 @@ services:
       - '@?social_eda.dispatcher'
     tags:
       - { name: social.eda.handler }
+
+  social_comment.hidden_comment_field_cache_invalidation.hooks:
+    class: Drupal\social_comment\Hooks\HiddenCommentFieldCacheInvalidationHooks
+    autowire: true
+    tags:
+      - { name: hooks }
+  Drupal\social_comment\Hooks\HiddenCommentFieldCacheInvalidationHooks: '@social_comment.hidden_comment_field_cache_invalidation.hooks'

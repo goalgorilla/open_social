@@ -4,6 +4,7 @@ namespace Drupal\Tests\social_comment\Kernel;
 
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -234,6 +235,56 @@ class CommentViewAccessTest extends EntityKernelTestBase {
       ->condition('cid', $comment->id())
       ->execute();
     self::assertCount(0, $visible_comments);
+  }
+
+  /**
+   * Forbidden hidden-field view access varies per user account.
+   */
+  public function testHiddenCommentFieldAccessViewCachesPerUser(): void {
+    $this->setUpCurrentUser([], ['access comments']);
+    $comment = $this->createComment($this->node, [
+      'field_name' => 'field_page_comments',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $this->node->set('field_page_comments', [
+      'status' => CommentItemInterface::HIDDEN,
+    ]);
+    $this->node->save();
+
+    $member = $this->setUpCurrentUser([], ['access comments']);
+    $access = \Drupal::service('social_comment.hidden_comment_field_access')
+      ->accessView($comment, $member);
+
+    self::assertTrue($access->isForbidden());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $access);
+    self::assertContains('user', $access->getCacheContexts());
+  }
+
+  /**
+   * Comment list query access includes user context for hidden fields.
+   */
+  public function testCommentQueryAccessIncludesUserCacheContextForHiddenFields(): void {
+    $this->setUpCurrentUser([], ['access comments']);
+    $comment = $this->createComment($this->node, [
+      'field_name' => 'field_page_comments',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $this->node->set('field_page_comments', [
+      'status' => CommentItemInterface::HIDDEN,
+    ]);
+    $this->node->save();
+
+    $member = $this->setUpCurrentUser([], ['access comments']);
+    /** @var \Drupal\social_comment\Entity\Access\CommentQueryAccessHandler $handler */
+    $handler = $this->entityTypeManager->getHandler('comment', 'query_access');
+    $conditions = $handler->buildConditions('view', $member);
+
+    self::assertContains('user', $conditions->getCacheContexts());
+    self::assertCount(0, $this->storage
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('cid', $comment->id())
+      ->execute());
   }
 
   /**
