@@ -1,33 +1,44 @@
 @api
-Feature: Comments settings
-  As a manager I want to hide comments
-  on a topic
-  so that users can't see the comment on the content
+Feature: Validate topic comment visibility by comment status
 
-Scenario: I add a comment on a topic
-  Given I am logged in as a user with the contentmanager role
+  Scenario Outline: Users cannot view or add comments on topics with hidden comments
+    Given topics with non-anonymous author:
+      | title                       | body       | field_content_visibility | field_topic_type | status |
+      | Topic with hidden comments  | Topic body | community                | News             | 1      |
+    And topic with "Topic with hidden comments" have "hidden" comments
+    And comments with non-anonymous author:
+      | target_type | target_label               | status | subject                | field_comment_body                  | comment_type |
+      | node:topic  | Topic with hidden comments | 1      | Hidden comment subject | Hidden comments should not be seen. | comment      |
+    And I am logged in as a user with the <role> role
 
-  When I go to "/node/add/topic"
-  And I fill in "Title" with "Topic with comments"
-  And I fill in the "edit-body-0-value" WYSIWYG editor with "Topic description"
-  And I check the box "News"
-  And I press "Create topic"
-  And I should see "Topic Topic with comments has been created."
-  And I should see "Topic with comments" in the "Hero block"
-  And I should see "Topic description" in the "Main content"
-  And I fill in the following:
-    | Add a comment | This is a test comment |
-  And I press "Comment"
+    When I open the "topic" node with title "Topic with hidden comments"
 
-  Then I should see the success message "Your comment has been posted."
-  And I should see the heading "Comments (1)" in the "Main content"
-  And I should see "This is a test comment" in the "Main content"
+    Then I should see "Topic with hidden comments"
+    And I should not see "Hidden comments should not be seen."
+    And I should not see a field labeled "Add a comment"
 
-  # Scenario: I hide comments on the topic
-  And I am editing the topic "Topic with comments"
-  And I fill in "Title" with "Topic with hidden comments"
-  And I click radio button "Hidden"
-  And I press "Save"
-  And I should see "Topic Topic with hidden comments has been updated."
-  And I should see "Topic with hidden comments" in the "Hero block"
-  And I should not see "This is a test comment" in the "Main content"
+    Examples:
+      | role          |
+      | verified      |
+      | authenticated |
+
+  Scenario Outline: Users with elevated permissions can view comments on topics with hidden comments
+    Given topics with non-anonymous author:
+      | title                       | body       | field_content_visibility | field_topic_type | status |
+      | Topic with hidden comments  | Topic body | community                | News             | 1      |
+    And topic with "Topic with hidden comments" have "hidden" comments
+    And comments with non-anonymous author:
+      | target_type | target_label               | status | subject                | field_comment_body                  | comment_type |
+      | node:topic  | Topic with hidden comments | 1      | Hidden comment subject | Hidden comments should not be seen. | comment      |
+    And I am logged in as a user with the <role> role
+
+    When I open the "topic" node with title "Topic with hidden comments"
+
+    Then I should see "Topic with hidden comments"
+    And I should see "Hidden comments should not be seen."
+    And I should not see a field labeled "Add a comment"
+
+    Examples:
+      | role           |
+      | sitemanager    |
+      | contentmanager |

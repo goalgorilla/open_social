@@ -6,6 +6,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\comment\Plugin\Field\FieldType\CommentItem;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
@@ -23,6 +24,17 @@ class TopicContext extends RawMinkContext {
   use GroupTrait;
 
   private const CREATE_PAGE = "/node/add/topic";
+
+  /**
+   * Human-readable comment status values for topic fixtures.
+   *
+   * @see \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface
+   */
+  private const TOPIC_COMMENT_STATUSES = [
+    'open' => 2,
+    'closed' => 1,
+    'hidden' => 0,
+  ];
 
   /**
    * Keep track of the topics that were created.
@@ -169,6 +181,39 @@ class TopicContext extends RawMinkContext {
       $topic = $this->topicCreate($topicHash);
       $this->created[] = $topic->id();
     }
+  }
+
+  /**
+   * Change the comment status for a topic.
+   *
+   * @Given topic with :title have :status comments
+   */
+  public function setTopicCommentsStatus(string $title, string $status): void {
+    $status = strtolower($status);
+    if (!isset(self::TOPIC_COMMENT_STATUSES[$status])) {
+      throw new \InvalidArgumentException('Topic comment status must be open, closed, or hidden.');
+    }
+
+    $topic_id = $this->getTopicIdFromTitle($title);
+    if ($topic_id === NULL) {
+      throw new \RuntimeException(sprintf("Topic '%s' does not exist.", $title));
+    }
+
+    $node = Node::load($topic_id);
+    if (!$node instanceof Node || !$node->hasField('field_topic_comments')) {
+      throw new \RuntimeException(sprintf("Topic '%s' does not have topic comments.", $title));
+    }
+
+    $comment_item = $node->get('field_topic_comments')->first();
+    if (!$comment_item instanceof CommentItem) {
+      throw new \RuntimeException(sprintf(
+        "Topic '%s' does not have a valid topic comments field item.",
+        $title,
+      ));
+    }
+
+    $comment_item->status = self::TOPIC_COMMENT_STATUSES[$status];
+    $node->save();
   }
 
   /**
