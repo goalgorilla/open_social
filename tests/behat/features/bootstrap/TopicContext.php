@@ -6,6 +6,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\comment\Entity\Comment;
 use Drupal\comment\Plugin\Field\FieldType\CommentItem;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\DrupalExtension\Context\DrupalContext;
@@ -180,6 +181,52 @@ class TopicContext extends RawMinkContext {
 
       $topic = $this->topicCreate($topicHash);
       $this->created[] = $topic->id();
+    }
+  }
+
+  /**
+   * Create comments on a topic using the topic comment field.
+   *
+   * Creates comments provided in the form:
+   * | topic                      | subject    | field_comment_body | status |
+   * | Topic with hidden comments | My subject | My comment text    | 1      |
+   *
+   * @Given topic comments:
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function createTopicComments(TableNode $table): void {
+    $user = (object) [
+      'name' => $this->drupalContext->getRandom()->name(8),
+      'pass' => $this->drupalContext->getRandom()->name(16),
+      'role' => ['authenticated', 'verified'],
+    ];
+    $user->mail = "{$user->name}@example.com";
+
+    $this->drupalContext->userCreate($user);
+    $account = user_load_by_name($user->name);
+
+    foreach ($table->getHash() as $line) {
+      $topic_id = $this->getTopicIdFromTitle($line['topic']);
+      if ($topic_id === NULL) {
+        throw new \RuntimeException(sprintf("Topic '%s' does not exist.", $line['topic']));
+      }
+      unset($line['topic']);
+
+      $status = $line['status'] ?? FALSE;
+
+      $line += [
+        'comment_type' => 'comment',
+        'entity_type' => 'node',
+        'entity_id' => $topic_id,
+        'field_name' => 'field_topic_comments',
+        'uid' => $account->id(),
+      ];
+
+      $comment = Comment::create($line);
+      $comment->save();
+      $status ? $comment->setPublished() : $comment->setUnpublished();
+      $comment->save();
     }
   }
 
