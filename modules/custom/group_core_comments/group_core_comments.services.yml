@@ -1,0 +1,7 @@
+services:
+  _defaults:
+    autowire: true
+
+  group_core_comments.hidden_comment_field_access.kernel_fallback:
+    class: Drupal\group_core_comments\Access\KernelHiddenCommentFieldAccessFallback
+  Drupal\social_comment\HiddenCommentFieldAccessInterface: '@group_core_comments.hidden_comment_field_access.kernel_fallback'
