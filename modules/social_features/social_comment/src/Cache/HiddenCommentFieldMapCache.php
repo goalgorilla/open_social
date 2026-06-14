@@ -50,6 +50,37 @@ class HiddenCommentFieldMapCache {
   }
 
   /**
+   * Updates one node entry in the cached hidden comment field map.
+   *
+   * Avoids rebuilding the full map when a single node's comment status changes.
+   *
+   * @param int $nid
+   *   The node ID.
+   * @param string[] $hidden_field_names
+   *   Hidden comment field names on the node, or empty to remove the node.
+   */
+  public function refreshNode(int $nid, array $hidden_field_names): void {
+    $cached = $this->cache->get(self::CACHE_ID);
+    if ($cached === FALSE) {
+      return;
+    }
+
+    $map = $cached->data;
+    if ($hidden_field_names === []) {
+      unset($map[$nid]);
+    }
+    else {
+      $map[$nid] = array_values($hidden_field_names);
+    }
+
+    $tags = [];
+    foreach (array_keys($map) as $map_nid) {
+      $tags[] = 'node:' . $map_nid;
+    }
+    $this->cache->set(self::CACHE_ID, $map, Cache::PERMANENT, $tags);
+  }
+
+  /**
    * Builds the hidden comment field map from storage.
    *
    * @return array<int, string[]>

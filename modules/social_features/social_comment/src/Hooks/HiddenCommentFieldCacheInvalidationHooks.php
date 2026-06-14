@@ -56,13 +56,19 @@ final class HiddenCommentFieldCacheInvalidationHooks implements ContainerInjecti
    */
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {
-    if (!$entity instanceof NodeInterface) {
+    if (!$entity instanceof NodeInterface || !$this->nodeHasCommentFields($entity)) {
       return;
     }
 
     $original = NULL;
     if (!$entity->isNew()) {
-      $original = $this->entityTypeManager->getStorage('node')->loadUnchanged($entity->id());
+      if (isset($entity->original) && $entity->original instanceof NodeInterface) {
+        $original = $entity->original;
+      }
+      else {
+        $loaded = $this->entityTypeManager->getStorage('node')->loadUnchanged($entity->id());
+        $original = $loaded instanceof NodeInterface ? $loaded : NULL;
+      }
     }
 
     if ($this->requiresHiddenCommentFieldCacheReset($entity, $original)) {
@@ -98,13 +104,32 @@ final class HiddenCommentFieldCacheInvalidationHooks implements ContainerInjecti
    * Resets caches when a pending reset was queued during presave.
    */
   private function resetPendingHiddenCommentFieldCaches(NodeInterface $node): void {
-    $key = $this->pendingCacheResetKey($node);
-    if (!isset(self::$pendingCacheResets[$key])) {
+    $matched = FALSE;
+    foreach ([(int) $node->id(), 'new:' . spl_object_id($node)] as $key) {
+      if (!isset(self::$pendingCacheResets[$key])) {
+        continue;
+      }
+      unset(self::$pendingCacheResets[$key]);
+      $matched = TRUE;
+    }
+    if (!$matched) {
       return;
     }
 
-    unset(self::$pendingCacheResets[$key]);
     $this->resetHiddenCommentFieldCaches($node);
+  }
+
+  /**
+   * Whether the node has at least one comment field.
+   */
+  private function nodeHasCommentFields(NodeInterface $node): bool {
+    foreach ($node->getFieldDefinitions() as $field_name => $definition) {
+      if ($definition->getType() === 'comment' && $node->hasField($field_name)) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
   /**
@@ -118,7 +143,10 @@ final class HiddenCommentFieldCacheInvalidationHooks implements ContainerInjecti
 
       $comment_field_status = $this->getCommentFieldItemStatus($node->get($field_name)->first());
       if ($original === NULL) {
-        return $comment_field_status === CommentItemInterface::HIDDEN;
+        if ($comment_field_status === CommentItemInterface::HIDDEN) {
+          return TRUE;
+        }
+        continue;
       }
 
       if (!$original->hasField($field_name)) {
@@ -148,6 +176,28 @@ final class HiddenCommentFieldCacheInvalidationHooks implements ContainerInjecti
   }
 
   /**
+   * Returns hidden comment field names on the node.
+   *
+   * @return string[]
+   *   Hidden comment field machine names.
+   */
+  private function getHiddenCommentFieldNames(NodeInterface $node): array {
+    $field_names = [];
+    foreach ($node->getFieldDefinitions() as $field_name => $definition) {
+      if ($definition->getType() !== 'comment' || !$node->hasField($field_name)) {
+        continue;
+      }
+
+      $status = $this->getCommentFieldItemStatus($node->get($field_name)->first());
+      if ($status === CommentItemInterface::HIDDEN) {
+        $field_names[] = $field_name;
+      }
+    }
+
+    return $field_names;
+  }
+
+  /**
    * Returns the comment field status from a field item, if present.
    */
   private function getCommentFieldItemStatus(?FieldItemInterface $item): ?int {
@@ -159,10 +209,11 @@ final class HiddenCommentFieldCacheInvalidationHooks implements ContainerInjecti
   }
 
   /**
-   * Resets hidden comment field map cache and related access policy tags.
+   * Updates hidden comment field map cache and related access policy tags.
    */
   private function resetHiddenCommentFieldCaches(NodeInterface $node): void {
-    $this->hiddenCommentFieldMapCache->reset();
+    $nid = (int) $node->id();
+    $this->hiddenCommentFieldMapCache->refreshNode($nid, $this->getHiddenCommentFieldNames($node));
     CommentQueryAccessHandler::resetNodeCommentAccessCache();
     $this->cacheTagsInvalidator->invalidateTags(array_merge(
       $node->getCacheTagsToInvalidate(),

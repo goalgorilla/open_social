@@ -60,10 +60,7 @@ final class HiddenCommentFieldAccess implements HiddenCommentFieldAccessInterfac
     );
 
     $excluded = [];
-    foreach ($hidden_map as $nid => $field_names) {
-      if (!isset($accessible_lookup[$nid])) {
-        continue;
-      }
+    foreach (array_intersect_key($hidden_map, $accessible_lookup) as $nid => $field_names) {
       foreach ($field_names as $field_name) {
         $item = $calculated_permissions->getItem(
           HiddenCommentFieldAccessPolicy::SCOPE_HIDDEN_COMMENT_FIELD,
@@ -83,7 +80,7 @@ final class HiddenCommentFieldAccess implements HiddenCommentFieldAccessInterfac
    */
   public function accessHiddenField(AccountInterface $account, FieldableEntityInterface $parent, string $field_name): AccessResultInterface {
     if (!$this->isHiddenOnParent($parent, $field_name)) {
-      return AccessResult::neutral();
+      return AccessResult::neutral()->addCacheableDependency($parent);
     }
 
     if ($account->hasPermission('administer comments')) {

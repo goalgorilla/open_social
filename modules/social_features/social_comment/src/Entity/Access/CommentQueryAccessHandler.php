@@ -2,7 +2,6 @@
 
 namespace Drupal\social_comment\Entity\Access;
 
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -57,11 +56,6 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
   protected HiddenCommentFieldAccessInterface $hiddenCommentFieldAccess;
 
   /**
-   * The database connection.
-   */
-  protected Connection $database;
-
-  /**
    * Constructs a CommentQueryAccessHandler.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -76,14 +70,11 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
    *   The entity type manager.
    * @param \Drupal\social_comment\HiddenCommentFieldAccessInterface $hidden_comment_field_access
    *   Hidden comment field access helper.
-   * @param \Drupal\Core\Database\Connection $database
-   *   The database connection.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityTypeBundleInfoInterface $bundle_info, EventDispatcherInterface $event_dispatcher, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, HiddenCommentFieldAccessInterface $hidden_comment_field_access, Connection $database) {
+  public function __construct(EntityTypeInterface $entity_type, EntityTypeBundleInfoInterface $bundle_info, EventDispatcherInterface $event_dispatcher, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, HiddenCommentFieldAccessInterface $hidden_comment_field_access) {
     parent::__construct($entity_type, $bundle_info, $event_dispatcher, $current_user);
     $this->entityTypeManager = $entity_type_manager;
     $this->hiddenCommentFieldAccess = $hidden_comment_field_access;
-    $this->database = $database;
   }
 
   /**
@@ -97,7 +88,6 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
       $container->get('current_user'),
       $container->get('entity_type.manager'),
       $container->get('social_comment.hidden_comment_field_access'),
-      $container->get('database'),
     );
   }
 
@@ -179,16 +169,16 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
           $node_conditions = new ConditionGroup('AND');
           $node_conditions->addCacheContexts(['user.permissions', 'user']);
           $node_cache_tags = ['node_list'];
-          foreach ($node_access['accessible_nids'] as $nid) {
-            $node_cache_tags[] = 'node:' . $nid;
-          }
           foreach (array_keys($node_access['hidden_exclusions']) as $nid) {
             $node_cache_tags[] = 'node:' . $nid;
+          }
+          if ($node_access['hidden_exclusions'] !== []) {
+            $node_cache_tags[] = 'access_policies';
           }
           $node_conditions->addCacheTags(array_values(array_unique($node_cache_tags)));
           $node_conditions->addCondition('entity_type', 'node');
           $node_conditions->addCondition('entity_id', $node_access['accessible_nids']);
-          $this->addHiddenCommentFieldExclusions($node_conditions, $node_access['forbidden_cids']);
+          $this->addHiddenCommentFieldExclusions($node_conditions, $node_access['hidden_exclusions']);
           $conditions->addCondition($node_conditions);
         }
         // Comments on other entity types (e.g. post): allow for now; per-entity
@@ -204,7 +194,7 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
   /**
    * Per-request cache of node comment query access data per account.
    *
-   * @var array<int, array{accessible_nids: int[], hidden_exclusions: array<int, string[]>, forbidden_cids: int[]}>
+   * @var array<int, array{accessible_nids: int[], hidden_exclusions: array<int, string[]>}>
    */
   protected static array $nodeCommentAccessCache = [];
 
@@ -218,53 +208,28 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
   /**
    * Excludes comments on hidden node/field pairs from list queries.
    *
+   * Uses entity_id and field_name conditions instead of loading comment IDs.
+   *
    * @param \Drupal\entity\QueryAccess\ConditionGroup $node_conditions
    *   The node comment condition group to extend.
-   * @param int[] $forbidden_cids
-   *   Comment IDs attached to hidden fields the account may not view.
+   * @param array<int, string[]> $hidden_exclusions
+   *   Node ID to comment field names the account may not view.
    */
-  protected function addHiddenCommentFieldExclusions(ConditionGroup $node_conditions, array $forbidden_cids): void {
-    if ($forbidden_cids === []) {
+  protected function addHiddenCommentFieldExclusions(ConditionGroup $node_conditions, array $hidden_exclusions): void {
+    if ($hidden_exclusions === []) {
       return;
     }
 
-    $node_conditions->addCondition('cid', $forbidden_cids, 'NOT IN');
-  }
-
-  /**
-   * Returns comment IDs attached to hidden node/field pairs.
-   *
-   * @param array<int, string[]> $hidden_exclusions
-   *   Node ID to excluded comment field names.
-   *
-   * @return int[]
-   *   Comment IDs that must be excluded from list queries.
-   */
-  protected function getForbiddenHiddenCommentIds(array $hidden_exclusions): array {
-    if ($hidden_exclusions === []) {
-      return [];
-    }
-
-    $query = $this->database->select('comment_field_data', 'cfd');
-    $query->addField('cfd', 'cid');
-    $query->condition('cfd.entity_type', 'node');
-    $or = $query->orConditionGroup();
+    $exclusions = new ConditionGroup('AND');
     foreach ($hidden_exclusions as $nid => $field_names) {
       foreach ($field_names as $field_name) {
-        $and = $query->andConditionGroup();
-        $and->condition('cfd.entity_id', $nid);
-        $and->condition('cfd.field_name', $field_name);
-        $or->condition($and);
+        $pair = new ConditionGroup('OR');
+        $pair->addCondition('entity_id', $nid, '<>');
+        $pair->addCondition('field_name', $field_name, '<>');
+        $exclusions->addCondition($pair);
       }
     }
-    $query->condition($or);
-
-    $result = $query->execute();
-    if ($result === NULL) {
-      return [];
-    }
-
-    return array_values(array_map('intval', $result->fetchCol()));
+    $node_conditions->addCondition($exclusions);
   }
 
   /**
@@ -273,8 +238,8 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account.
    *
-   * @return array{accessible_nids: int[], hidden_exclusions: array<int, string[]>, forbidden_cids: int[]}
-   *   Accessible node IDs, field exclusions, and forbidden comment IDs.
+   * @return array{accessible_nids: int[], hidden_exclusions: array<int, string[]>}
+   *   Accessible node IDs and field exclusions.
    */
   protected function getNodeCommentAccessData(AccountInterface $account): array {
     $uid = (int) $account->id();
@@ -294,7 +259,6 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
     static::$nodeCommentAccessCache[$uid] = [
       'accessible_nids' => $accessible_nids,
       'hidden_exclusions' => $hidden_exclusions,
-      'forbidden_cids' => $this->getForbiddenHiddenCommentIds($hidden_exclusions),
     ];
 
     return static::$nodeCommentAccessCache[$uid];
