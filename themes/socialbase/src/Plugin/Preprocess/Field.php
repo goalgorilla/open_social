@@ -5,12 +5,10 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
-use Drupal\comment\CommentInterface;
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\node\Entity\Node;
 use Drupal\social_comment\HiddenCommentFieldAccessInterface;
-use Drupal\social_discussion_group\Service\CommentAccessControlService;
 
 /**
  * Pre-processes variables for the "field" theme hook.
@@ -83,21 +81,14 @@ class Field extends PreprocessBase {
       $node = !empty($attached['#object']) ? $attached['#object'] : NULL;
       // Count the number of comments placed on a Node.
       if ($node instanceof Node) {
+        $comment_field_name = $element['#field_name'];
         // Discussion comments are counted using their formatter.
         if ($node->bundle() !== 'discussion') {
-          $comment_count = (int) $node->get($element['#field_name'])->comment_count;
+          $comment_count = (int) $node->get($comment_field_name)->comment_count;
           // Add it to the title.
           $variables['comment_count'] = $comment_count;
         }
-        // Check on our node if we have the comment type field somewhere.
-        $comment_field_name = '';
-        $fields_on_node = $node->getFieldDefinitions();
-        foreach ($fields_on_node as $field) {
-          if ($field->getType() === 'comment') {
-            $comment_field_name = $field->getName();
-          }
-        }
-        $variables['comment_open'] = (int) $node->$comment_field_name->status === CommentItemInterface::OPEN;
+        $variables['comment_open'] = (int) $node->get($comment_field_name)->status === CommentItemInterface::OPEN;
 
         if ((int) $node->get($comment_field_name)->status === CommentItemInterface::HIDDEN) {
           if (\Drupal::moduleHandler()->moduleExists('social_comment')) {
@@ -119,22 +110,6 @@ class Field extends PreprocessBase {
 
           if (!$hidden_access->isForbidden()) {
             $variables['comment_hidden_viewable'] = TRUE;
-            if (
-              $node->bundle() === 'discussion'
-              && \Drupal::moduleHandler()->moduleExists('social_discussion_group')
-            ) {
-              $field_definition = $node->getFieldDefinition($comment_field_name);
-              $mode = $field_definition->getSetting('default_mode');
-              $comments = \Drupal::entityTypeManager()
-                ->getStorage('comment')
-                ->loadThread($node, $comment_field_name, $mode);
-              $comments = \Drupal::service(CommentAccessControlService::class)
-                ->filterCommentsByAccess($comments, \Drupal::currentUser(), $node);
-              $published_comments = array_filter($comments, static function ($comment) {
-                return $comment instanceof CommentInterface && $comment->isPublished();
-              });
-              $variables['comment_count'] = count($published_comments);
-            }
           }
         }
       }
