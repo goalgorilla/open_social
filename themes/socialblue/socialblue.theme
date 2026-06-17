@@ -100,4 +100,8 @@ function socialblue_preprocess_html(array &$variables): void {
   if (in_array($route_name, $group_routes)) {
     $variables['attributes']['class'][] = 'page-group-edit';
   }
+
+  if (theme_get_setting('header_style') === 'two_lines') {
+    $variables['attributes']['class'][] = 'has-two-line-header';
+  }
 }

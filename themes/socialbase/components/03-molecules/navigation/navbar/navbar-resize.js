@@ -1,4 +1,4 @@
-(function ($, debounce) {
+(function ($, debounce, once) {
 
   Drupal.behaviors.navbarProfileDropdown = {
     attach: function (context, settings) {
@@ -26,34 +26,46 @@
     }
   }
 
+  // Keeps .main-container clear of the fixed navbar when its height changes
+  // (e.g. wraps to two lines for anonymous users with extra header items).
   Drupal.behaviors.navbarFlexibleHeight = {
-    attach: function (context, settings) {
+    attach: function (context) {
+      // Avoid duplicate ResizeObservers when Drupal re-attaches behaviors (AJAX/BigPipe).
+      once('navbar-flexible-height', '.navbar-fixed-top, .navbar-second-line', context).forEach(function (navbar) {
+        var $mainContent = $('.main-container');
+        // Measure .container--navbar only — not the absolute .navbar-collapse panel.
+        var navbarContainer = navbar.querySelector('.container--navbar') || navbar;
 
-      function headerFlexibleHeight() {
-        var $navbarHeight = $('.navbar-fixed-top').height();
-        var $mainContent = $('.main-container ');
+        var updateHeight = function () {
+          var navbarContainerRect = navbarContainer.getBoundingClientRect();
+          var navbarHeight = navbarContainerRect.height;
+          var isDesktop = window.matchMedia('(min-width: 976px)').matches;
+          var isLoggedIn = document.body.classList.contains('user-logged-in');
 
-        if (window.matchMedia('(min-width: 976px)').matches) {
-          $mainContent.css({
-            'padding-top': $navbarHeight,
-            'min-height': `calc(100vh - ${$navbarHeight}px)`
-          })
-        } else {
-          $mainContent.css({
-            'padding-top': '0',
-            'min-height': '100vh'
-          })
-        }
-      }
+          // Used by navbar.scss: height: calc(100vh - var(--navbar-offset)).
+          navbar.style.setProperty('--navbar-offset', navbarContainerRect.bottom + 'px');
 
-      headerFlexibleHeight();
+          // Offset content for logged-in users on desktop, or anonymous on all viewports.
+          if ((isLoggedIn && isDesktop) || !isLoggedIn) {
+            $mainContent.css({
+              'padding-top': navbarHeight + 'px',
+              'min-height': 'calc(100vh - ' + navbarHeight + 'px)'
+            });
+          } else {
+            $mainContent.css({
+              'padding-top': '0px',
+              'min-height': '100vh'
+            });
+          }
+        };
 
-      var headerFlexibleHeightBehaviour = debounce(function () {
-        headerFlexibleHeight();
-      }, 250);
-      window.addEventListener('resize', headerFlexibleHeightBehaviour);
+        var observer = new ResizeObserver(function () {
+          updateHeight();
+        });
 
+        observer.observe(navbarContainer);
+      });
     }
-  }
+  };
 
-})(jQuery, Drupal.debounce);
+})(jQuery, Drupal.debounce, once);

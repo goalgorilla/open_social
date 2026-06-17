@@ -55,17 +55,6 @@ class Container extends PreprocessBase implements ContainerFactoryPluginInterfac
   public function preprocess(array &$variables, $hook, array $info): void {
     parent::preprocess($variables, $hook, $info);
 
-    // For pages in search we would like to render containers without divs.
-    $routename = $this->request
-      ->get(RouteObjectInterface::ROUTE_NAME);
-    if (strpos($routename, 'search') !== FALSE) {
-
-      // Exclude the filter block on the search page.
-      if (!isset($variables['element']['#exposed_form'])) {
-        $variables['bare'] = TRUE;
-      }
-    }
-
     // Remove extra wrapper for container of post image form.
     if (isset($variables['element']['#id']) && $variables['element']['#id'] == 'edit-field-comment-files-wrapper') {
       $variables['bare'] = TRUE;

@@ -331,7 +331,15 @@ blockquote {
   background-color: #1f1f1f;
 }
 
+.navbar-default .navbar-collapse {
+  background-color: #333333;
+}
+
 .navbar-default.navbar-second-line {
+  background-color: #004494;
+}
+
+.navbar-default.navbar-second-line .navbar-collapse {
   background-color: #004494;
 }
 
@@ -387,6 +395,15 @@ blockquote {
 
 .navbar-default.navbar-second-line .navbar-nav__icon {
   fill: #fffff1;
+}
+
+.navbar-default.navbar-second-line .navbar-toggle {
+  color: #fffff1;
+}
+
+.navbar-default.navbar-second-line .navbar-toggle:hover, .navbar-default.navbar-second-line .navbar-toggle:focus {
+  color: #002f67;
+  background-color: #f2f5f9;
 }
 
 .header-top {
@@ -487,8 +504,8 @@ blockquote {
 
 .navbar-second-line + main .search-take-over .form-text:focus {
   border-color: #fffff1;
-  -webkit-box-shadow: 0 2px 0 0 #fffff1;
-          box-shadow: 0 2px 0 0 #fffff1;
+  -webkit-box-shadow: inset 0 -2px 0 0 #fffff1;
+          box-shadow: inset 0 -2px 0 0 #fffff1;
 }
 
 .navbar-second-line + main .search--with-suggestions .spinner > div {
@@ -540,6 +557,21 @@ html:not(.js) .navbar-default .dropdown:hover > button .navbar-nav__icon {
 
 .search-take-over .form-control ::-ms-input-placeholder {
   color: #ffffff !important;
+}
+
+.search-take-over .form-text {
+  color: #ffffff;
+}
+
+.search-take-over .form-text:focus {
+  border-color: #ffffff;
+  -webkit-box-shadow: inset 0 -2px 0 0 #ffffff;
+          box-shadow: inset 0 -2px 0 0 #ffffff;
+}
+
+.search-take-over .btn--close-search-take-over svg,
+.search-take-over svg {
+  fill: #ffffff;
 }
 
 .navbar-nav__icon {
@@ -865,6 +897,10 @@ body.media-directory .dz-preview .dz-progress .dz-upload {
   background-color: #333333;
 }
 
+.has-two-line-header .search-take-over.search--with-suggestions {
+  background-color: #004494;
+}
+
 .search-take-over.search--with-suggestions .gaia-ask-mode-btn.is-active {
   color: #333333;
   background-color: #ffffff;
@@ -912,21 +948,6 @@ body.media-directory .dz-preview .dz-progress .dz-upload {
 .search-take-over.search--with-suggestions .gaia-ask-mode-toggle {
   background-color: #ffffff;
   background-color: color-mix(in srgb, #ffffff 16%, transparent);
-}
-
-@media (min-width: 900px) {
-  .search-take-over .form-text {
-    color: #ffffff;
-  }
-  .search-take-over .form-text:focus {
-    border-color: #ffffff;
-    -webkit-box-shadow: 0 2px 0 0 #ffffff;
-            box-shadow: 0 2px 0 0 #ffffff;
-  }
-  .btn--close-search-take-over svg,
-  .search-take-over svg {
-    fill: #ffffff;
-  }
 }
 
 @media (max-width: 899px) {

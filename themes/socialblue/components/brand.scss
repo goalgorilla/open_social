@@ -345,8 +345,16 @@ blockquote {
     }
   }
 
+  .navbar-collapse {
+    background-color: $navbar-default-bg;
+  }
+
   &.navbar-second-line {
     background-color: $second-line-navbar-bg;
+
+    .navbar-collapse {
+      background-color: $second-line-navbar-bg;
+    }
 
     .navbar-nav {
       > li > a,
@@ -415,6 +423,16 @@ blockquote {
 
     .navbar-nav__icon {
       fill: $second-line-navbar-text;
+    }
+
+    .navbar-toggle {
+      color: $second-line-navbar-text;
+
+      &:hover,
+      &:focus {
+        color: $second-line-navbar-active-text;
+        background-color: $second-line-navbar-active-bg;
+      }
     }
   }
 }
@@ -508,7 +526,7 @@ blockquote {
 
       &:focus {
         border-color: $second-line-navbar-text;
-        box-shadow: 0 2px 0 0 $second-line-navbar-text;
+        box-shadow: inset 0 -2px 0 0 $second-line-navbar-text;
       }
     }
   }
@@ -586,7 +604,7 @@ html:not(.js) .navbar-default {
   }
 }
 
-// Placeholder color for the search overlay form.
+// Placeholder, text and icon color for the search overlay form.
 .search-take-over {
   .form-control {
     // Placeholder chrome
@@ -610,6 +628,21 @@ html:not(.js) .navbar-default {
       color: $navbar-default-link-color !important;
     }
   }
+
+  .form-text {
+    color: $navbar-default-link-color;
+
+    &:focus {
+      border-color: $navbar-default-link-color;
+      box-shadow: inset 0 -2px 0 0 $navbar-default-link-color;
+    }
+
+  }
+
+  .btn--close-search-take-over svg,
+  svg {
+    fill: $navbar-default-link-color;
+  }
 }
 
 
@@ -631,25 +664,6 @@ html:not(.js) .navbar-default {
 
 .search--with-suggestions .spinner > div {
   background-color: $navbar-default-color;
-}
-
-@include for-tablet-landscape-up {
-
-  .search-take-over .form-text {
-    color: $navbar-default-link-color;
-
-    &:focus {
-      border-color: $navbar-default-link-color;
-      box-shadow: 0 2px 0 0 $navbar-default-link-color;
-    }
-
-  }
-
-  .btn--close-search-take-over svg,
-  .search-take-over svg {
-    fill: $navbar-default-link-color;
-  }
-
 }
 
 .form-item-data-policy {
@@ -1044,6 +1058,10 @@ body.media-directory {
 // Ask Gaia search takeover — theme colors for mode toggle + send icon (gaia_ask module).
 .search-take-over.search--with-suggestions {
   background-color: $navbar-default-bg;
+
+  .has-two-line-header & {
+    background-color: $second-line-navbar-bg;
+  }
 
   .gaia-ask-mode-btn.is-active {
     color: $navbar-default-bg;

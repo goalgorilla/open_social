@@ -34,33 +34,36 @@
  */
 #}
 
-<button href="#" data-toggle="collapse" data-target="#main-navigation" type="button" aria-expanded="false" class="navbar-toggle collapsed">
-  <span>{% trans %} Menu {% endtrans %}</span>
-  <span class="sr-only">
-    {% trans %} Toggle navigation {% endtrans %}
-  </span>
-</button>
+<div class="navbar-menu">
+  <button href="#" data-toggle="collapse" data-target="#main-navigation" type="button" aria-expanded="false" class="navbar-toggle collapsed">
+    <span>{% trans %} Menu {% endtrans %}</span>
+    <span class="sr-only">
+      {% trans %} Toggle navigation {% endtrans %}
+    </span>
+  </button>
 
-<div id="main-navigation" class="collapse navbar-collapse">
-  <div class="navbar-search">{{ content.links.search_block }}</div>
-  {% block content %}
-    {{ content }}
-  {% endblock %}
+  <div id="main-navigation" class="collapse navbar-collapse">
+    {% block content %}
+      {{ content }}
+    {% endblock %}
+  </div>
+
   {% if content.links.search_block is defined %}
-    <div class="navbar__open-search-control">
-      <a href="{{ '/search/all' }}" class="navbar__open-search-block" rel="search" title="{{ 'Click to open search box'|t }}">
-        <svg class="navbar-nav__icon navbar-nav__icon--search" aria-hidden="true">
-          <title>{{ 'Search'|t }}</title>
-          <use xlink:href="#icon-search"></use>
-        </svg>
-      </a>
-    </div>
-    {% if show_gaia_ask_control %}
+    <div class="navbar__open-search-controls">
       <div class="navbar__open-search-control">
-        <a href="{{ '/search/all' }}" class="navbar__open-search-block gaia-ask-open" title="{{ 'Click to ask Gaia'|t }}" aria-label="{{ 'Ask Gaia'|t }}">
-          <span class="navbar-nav__icon navbar-nav__icon--gaia-ask" aria-hidden="true"></span>
+        <a href="{{ path('view.search_all.page_no_value') }}" class="navbar__open-search-block" rel="search" title="{{ 'Click to open search box'|t }}" aria-label="{{ 'Open search'|t }}">
+          <svg class="navbar-nav__icon navbar-nav__icon--search" aria-hidden="true">
+            <use xlink:href="#icon-search"></use>
+          </svg>
         </a>
       </div>
-    {% endif %}
+      {% if show_gaia_ask_control %}
+        <div class="navbar__open-search-control">
+          <a href="{{ path('view.search_all.page_no_value') }}" class="navbar__open-search-block gaia-ask-open" title="{{ 'Click to ask Gaia'|t }}" aria-label="{{ 'Ask Gaia'|t }}">
+            <span class="navbar-nav__icon navbar-nav__icon--gaia-ask" aria-hidden="true"></span>
+          </a>
+        </div>
+      {% endif %}
+    </div>
   {% endif %}
 </div>
