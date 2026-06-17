@@ -31,17 +31,19 @@ function social_group_invite_tokens(string $type, array $tokens, array $data, ar
   $group_relationship = $data['group_content'];
   assert($group_relationship instanceof GroupRelationshipInterface);
 
-  $gid = $group_relationship->id();
+  $gcid = $group_relationship->id();
 
-  $group_invite_url = Url::fromRoute(
-    route_name: 'social_group_invite.invitation.accept',
-    route_parameters: ['group_content' => $gid],
-    options: ['absolute' => TRUE],
-  )->toString();
+  if ($gcid) {
+    $group_invite_url = Url::fromRoute(
+      route_name: 'social_group_invite.invitation.accept',
+      route_parameters: ['group_content' => $gcid],
+      options: ['absolute' => TRUE],
+    )->toString();
 
-  // We are using a destination for use with the register link.
-  // This destination is only used when user's don't have an account yet.
-  $destination = UrlHelper::buildQuery(['destination' => $group_invite_url]);
+    // We are using a destination for use with the register link.
+    // This destination is only used when user's don't have an account yet.
+    $destination = UrlHelper::buildQuery(['destination' => $group_invite_url]);
+  }
 
   // For groups that only group members have access to, we should change the
   // destination to the user's invites page.
@@ -60,17 +62,17 @@ function social_group_invite_tokens(string $type, array $tokens, array $data, ar
   // So, after a signup/sign step, the invite will be accepted and
   // a user will be redirected to the invited page.
   foreach ($tokens as $name => $original) {
-    if ($name === 'register_link') {
+    if ($name === 'register_link' && !empty($destination)) {
       // To avoid duplication we want to get only "register_link" token from
       // the "ginvite" module.
       $ginvite_replacements = ginvite_tokens($type, ['register_link' => $tokens['register_link']], $data, $options, $bubbleable_metadata);
 
       // For new users for register_link token.
       $link = $ginvite_replacements[$original];
-      $replacements[$original] = $destination ? "{$link}&{$destination}" : $link;
+      $replacements[$original] = "{$link}&{$destination}";
     }
 
-    if ($name === 'my_invitations_link') {
+    if ($name === 'my_invitations_link' && !empty($group_invite_url)) {
       // For existing users for my_invitations_link token.
       $replacements[$original] = $group_invite_url;
     }
