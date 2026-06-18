@@ -227,22 +227,41 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
 
     $attendees = (int) $parent_form_state->getValue(['field_event_meeting', 'meeting_form', 'max_attendees', 0, 'value']);
 
-    // Add the scheduler field to the entity form.
+    // Wrap the calendar in the replaceable container together with an
+    // explanatory message. The calendar is only shown when the chosen
+    // timeslot is full, which is confusing without context. The message lives
+    // inside this element so it appears together with the calendar and
+    // disappears with it (the empty wrapper is rendered otherwise). The
+    // wrapper id is preserved so the AJAX ReplaceCommand keeps targeting it.
+    // @see \Drupal\social_event\Hooks\EventOnline::refreshOnEventDatesChange()
     return [
-      '#type' => 'meeting_api_period_schedule',
-      '#meeting_request' => new MeetingRequest(
-        startTime: $start_date,
-        endTime: $end_date,
-        attendeesCount: $attendees ?: (int) $meeting_entity->get('max_attendees')->getString(),
-        serverId: $meeting_entity->getServerId(),
-        meetingId: !$meeting_entity->isNew() ? $meeting_entity->id() : NULL,
-      ),
-      '#calendar_view' => PeriodScheduleCalendarView::Week,
-      '#show_prev_next_controls' => FALSE,
-      '#prefix' => '<div id="meeting-scheduler-wrapper">',
-      '#suffix' => '</div>',
-      '#attached' => [
-        'library' => ['social_event/event_meeting_scheduler'],
+      '#type' => 'container',
+      '#attributes' => ['id' => 'meeting-scheduler-wrapper'],
+      'message' => [
+        '#theme' => 'status_messages',
+        '#message_list' => [
+          'warning' => [
+            $this->t('This time slot is already full, reduce the number of attendees or find a free slot in the BigBlueButton agenda below.'),
+          ],
+        ],
+        '#status_headings' => [
+          'warning' => $this->t('Warning message'),
+        ],
+      ],
+      'calendar' => [
+        '#type' => 'meeting_api_period_schedule',
+        '#meeting_request' => new MeetingRequest(
+          startTime: $start_date,
+          endTime: $end_date,
+          attendeesCount: $attendees ?: (int) $meeting_entity->get('max_attendees')->getString(),
+          serverId: $meeting_entity->getServerId(),
+          meetingId: !$meeting_entity->isNew() ? $meeting_entity->id() : NULL,
+        ),
+        '#calendar_view' => PeriodScheduleCalendarView::Week,
+        '#show_prev_next_controls' => FALSE,
+        '#attached' => [
+          'library' => ['social_event/event_meeting_scheduler'],
+        ],
       ],
     ];
   }
@@ -294,7 +313,7 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
 
       $entity_form['max_attendees']['widget'][0]['value']['#max'] = $max;
       $entity_form['max_attendees']['widget'][0]['value']['#min'] = $min;
-      $entity_form['max_attendees']['widget'][0]['value']['#description'] = $this->t('The maximum allowed number of attendees. Allowed value is from <em>@min</em> to <em>@max</em>.', [
+      $entity_form['max_attendees']['widget'][0]['value']['#description'] = $this->t('@min to @max per event max', [
         '@min' => $min,
         '@max' => $max,
       ]);
