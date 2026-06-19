@@ -1,4 +1,17 @@
 services:
+  Drupal\social_analytics\Hooks\IndividualMetricsUserFormAlter:
+    class: Drupal\social_analytics\Hooks\IndividualMetricsUserFormAlter
+    factory: ['Drupal\social_analytics\Hooks\IndividualMetricsUserFormAlter', 'create']
+    arguments: ['@service_container']
+    tags:
+      - { name: hooks }
+
+  social_analytics.individual_metrics_preference:
+    class: Drupal\social_analytics\IndividualMetricsPreferenceService
+    arguments:
+      - '@user.data'
+      - '@config.factory'
+
   social_analytics.eda_handler:
     class: Drupal\social_analytics\EdaHandler
     arguments:

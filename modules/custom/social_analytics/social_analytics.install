@@ -25,4 +25,5 @@ function social_analytics_update_26000(): void {
  */
 function social_analytics_uninstall(): void {
   \Drupal::configFactory()->getEditable('social_analytics.settings')->delete();
+  \Drupal::service('user.data')->delete('social_analytics');
 }
