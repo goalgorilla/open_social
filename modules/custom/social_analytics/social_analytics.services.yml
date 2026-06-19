@@ -19,6 +19,12 @@ services:
       $dispatcher: '@?social_eda.dispatcher'
   Drupal\social_analytics\IndividualMetricsEdaHandler: '@social_analytics.individual_metrics_eda_handler'
 
+  social_analytics.analytics_settings_eda_handler:
+    class: Drupal\social_analytics\AnalyticsSettingsEdaHandler
+    bind:
+      $dispatcher: '@?social_eda.dispatcher'
+  Drupal\social_analytics\AnalyticsSettingsEdaHandler: '@social_analytics.analytics_settings_eda_handler'
+
   social_analytics.eda_handler:
     class: Drupal\social_analytics\EdaHandler
     bind:

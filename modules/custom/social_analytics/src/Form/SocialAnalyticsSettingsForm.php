@@ -4,13 +4,36 @@ declare(strict_types=1);
 
 namespace Drupal\social_analytics\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_analytics\AnalyticsSettingsEdaHandler;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure individual metrics preference platform settings.
  */
 final class SocialAnalyticsSettingsForm extends ConfigFormBase {
+
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    ?TypedConfigManagerInterface $typed_config_manager,
+    private readonly AnalyticsSettingsEdaHandler $analyticsSettingsEdaHandler,
+  ) {
+    parent::__construct($config_factory, $typed_config_manager);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('config.typed'),
+      $container->get('social_analytics.analytics_settings_eda_handler'),
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -59,16 +82,21 @@ final class SocialAnalyticsSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $this->config('social_analytics.settings')
+    $config = $this->config('social_analytics.settings');
+    $previous_show_by_default = (bool) $config->get('individual_metrics_show_by_default');
+    $show_by_default = (bool) $form_state->getValue('individual_metrics_show_by_default');
+
+    $config
       ->set(
         'individual_metrics_preference_visibility_enabled',
         (bool) $form_state->getValue('individual_metrics_preference_visibility_enabled')
       )
-      ->set(
-        'individual_metrics_show_by_default',
-        (bool) $form_state->getValue('individual_metrics_show_by_default')
-      )
+      ->set('individual_metrics_show_by_default', $show_by_default)
       ->save();
+
+    if ($previous_show_by_default !== $show_by_default) {
+      $this->analyticsSettingsEdaHandler->dispatchDefaultChange($show_by_default);
+    }
 
     parent::submitForm($form, $form_state);
   }

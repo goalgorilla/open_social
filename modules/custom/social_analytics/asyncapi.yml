@@ -51,6 +51,29 @@ channels:
                           description: Whether the user name appears in individual metrics reports and rankings.
                     actor:
                       $ref: '#/components/schemas/Common.Actor'
+  analyticsSettings:
+    address: com.getopensocial.cms.analytics.v1
+    messages:
+      analyticsSettings:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.analytics.settings
+                data:
+                  type: object
+                  properties:
+                    settings:
+                      type: object
+                      properties:
+                        showInIndividualMetrics:
+                          type: boolean
+                          description: Platform default for individual metrics visibility.
+                    actor:
+                      $ref: '#/components/schemas/Common.Actor'
 
 operations:
   onPageView:
@@ -61,3 +84,7 @@ operations:
     action: 'receive'
     channel:
       $ref: '#/channels/userSettingsAnalytics'
+  onAnalyticsSettings:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/analyticsSettings'
