@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_analytics\Kernel;
 
+use CloudEvents\V1\CloudEventInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Site\Settings;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\social_analytics\Hooks\IndividualMetricsUserFormAlter;
+use Drupal\social_analytics\IndividualMetricsEdaHandler;
 use Drupal\social_analytics\IndividualMetricsPreferenceService;
+use Drupal\social_eda\DispatcherInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\ProfileForm;
 use Drupal\user\UserInterface;
@@ -204,6 +209,86 @@ final class IndividualMetricsPreferenceTest extends KernelTestBase {
   }
 
   /**
+   * Unchanged effective value on submit must not emit preference events.
+   *
+   * @covers \Drupal\social_analytics\Hooks\IndividualMetricsUserFormAlter::submitUserForm
+   */
+  public function testFormSubmitDoesNotDispatchWhenEffectiveValueUnchanged(): void {
+    $user = $this->createUser();
+    $this->setPlatformSettings(TRUE, FALSE);
+
+    $dispatcher = $this->createMock(DispatcherInterface::class);
+    $dispatcher->expects(self::never())->method('dispatch');
+    $this->replaceIndividualMetricsEdaHandler($dispatcher);
+
+    $form = $this->buildUserForm($user);
+    $form_state = $this->createFormState($user);
+    $this->formAlter->alterUserForm($form, $form_state);
+
+    $form_state->setValue('profile_privacy', [
+      'show_in_individual_metrics' => 0,
+    ]);
+    $this->formAlter->submitUserForm($form, $form_state);
+  }
+
+  /**
+   * Unchanged stored preference on submit must not emit preference events.
+   *
+   * @covers \Drupal\social_analytics\Hooks\IndividualMetricsUserFormAlter::submitUserForm
+   */
+  public function testFormSubmitDoesNotDispatchWhenStoredPreferenceUnchanged(): void {
+    $user = $this->createUser();
+    $uid = (int) $user->id();
+    $this->setPlatformSettings(TRUE, TRUE);
+    $this->preferenceService->setShowInIndividualMetrics($uid, FALSE);
+
+    $dispatcher = $this->createMock(DispatcherInterface::class);
+    $dispatcher->expects(self::never())->method('dispatch');
+    $this->replaceIndividualMetricsEdaHandler($dispatcher);
+
+    $form = $this->buildUserForm($user);
+    $form_state = $this->createFormState($user);
+    $this->formAlter->alterUserForm($form, $form_state);
+
+    $form_state->setValue('profile_privacy', [
+      'show_in_individual_metrics' => 0,
+    ]);
+    $this->formAlter->submitUserForm($form, $form_state);
+  }
+
+  /**
+   * Preference change on submit must emit a preference change event.
+   *
+   * @covers \Drupal\social_analytics\Hooks\IndividualMetricsUserFormAlter::submitUserForm
+   */
+  public function testFormSubmitDispatchesWhenPreferenceChanges(): void {
+    $user = $this->createUser();
+    $this->setPlatformSettings(TRUE, FALSE);
+
+    $dispatcher = $this->createMock(DispatcherInterface::class);
+    $dispatcher->expects(self::once())
+      ->method('dispatch')
+      ->with(
+        'com.getopensocial.cms.user.v1',
+        self::callback(static function (CloudEventInterface $event) use ($user): bool {
+          return $event->getType() === 'com.getopensocial.cms.user.settings.analytics'
+            && $event->getData()['user']['id'] === $user->uuid()
+            && $event->getData()['analytics']['showInIndividualMetrics'] === TRUE;
+        }),
+      );
+    $this->replaceIndividualMetricsEdaHandler($dispatcher);
+
+    $form = $this->buildUserForm($user);
+    $form_state = $this->createFormState($user);
+    $this->formAlter->alterUserForm($form, $form_state);
+
+    $form_state->setValue('profile_privacy', [
+      'show_in_individual_metrics' => 1,
+    ]);
+    $this->formAlter->submitUserForm($form, $form_state);
+  }
+
+  /**
    * Site manager edits save the preference on the target user account.
    */
   public function testSiteManagerEditSavesPreferenceForTargetUser(): void {
@@ -283,6 +368,47 @@ final class IndividualMetricsPreferenceTest extends KernelTestBase {
     $form_object->setEntity($user);
 
     return (new FormState())->setFormObject($form_object);
+  }
+
+  /**
+   * Replaces the individual metrics EDA handler using a test dispatcher.
+   */
+  private function replaceIndividualMetricsEdaHandler(DispatcherInterface $dispatcher): void {
+    $this->ensureProjectIdSetting();
+
+    $module_handler = $this->createMock(ModuleHandlerInterface::class);
+    $module_handler->method('moduleExists')
+      ->willReturnCallback(static fn (string $module): bool => $module === 'social_eda');
+
+    $handler = new IndividualMetricsEdaHandler(
+      $dispatcher,
+      $module_handler,
+      $this->container->get('request_stack'),
+      $this->container->get('current_user'),
+      $this->container->get('current_route_match'),
+      $this->container->get('config.factory'),
+      $this->container->get('datetime.time'),
+      $this->container->get('logger.factory'),
+    );
+    $this->container->set('social_analytics.individual_metrics_eda_handler', $handler);
+    $this->container->set(IndividualMetricsEdaHandler::class, $handler);
+    $this->formAlter = IndividualMetricsUserFormAlter::create($this->container);
+  }
+
+  /**
+   * Ensures project_id is configured for deterministic EDA event IDs.
+   */
+  private function ensureProjectIdSetting(): void {
+    try {
+      $settings = Settings::getAll();
+    }
+    catch (\BadMethodCallException) {
+      $settings = [];
+    }
+
+    if (empty($settings['project_id'])) {
+      new Settings($settings + ['project_id' => 'test-project-id']);
+    }
   }
 
 }

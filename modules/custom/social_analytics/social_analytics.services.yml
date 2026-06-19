@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    autowire: true
+
   Drupal\social_analytics\Hooks\IndividualMetricsUserFormAlter:
     class: Drupal\social_analytics\Hooks\IndividualMetricsUserFormAlter
     factory: ['Drupal\social_analytics\Hooks\IndividualMetricsUserFormAlter', 'create']
@@ -8,28 +11,24 @@ services:
 
   social_analytics.individual_metrics_preference:
     class: Drupal\social_analytics\IndividualMetricsPreferenceService
-    arguments:
-      - '@user.data'
-      - '@config.factory'
+  Drupal\social_analytics\IndividualMetricsPreferenceService: '@social_analytics.individual_metrics_preference'
+
+  social_analytics.individual_metrics_eda_handler:
+    class: Drupal\social_analytics\IndividualMetricsEdaHandler
+    bind:
+      $dispatcher: '@?social_eda.dispatcher'
+  Drupal\social_analytics\IndividualMetricsEdaHandler: '@social_analytics.individual_metrics_eda_handler'
 
   social_analytics.eda_handler:
     class: Drupal\social_analytics\EdaHandler
-    arguments:
-      - '@uuid'
-      - '@request_stack'
-      - '@current_user'
-      - '@current_route_match'
-      - '@config.factory'
-      - '@datetime.time'
-      - '@logger.factory'
-      - '@?social_eda.dispatcher'
+    bind:
+      $dispatcher: '@?social_eda.dispatcher'
     tags:
       - { name: social.eda.handler }
+  Drupal\social_analytics\EdaHandler: '@social_analytics.eda_handler'
 
   social_analytics.page_view_subscriber:
     class: Drupal\social_analytics\EventSubscriber\PageViewSubscriber
-    arguments:
-      - '@social_analytics.eda_handler'
-      - '@current_user'
     tags:
       - { name: event_subscriber }
+  Drupal\social_analytics\EventSubscriber\PageViewSubscriber: '@social_analytics.page_view_subscriber'

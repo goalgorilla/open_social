@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\hux\Attribute\Alter;
+use Drupal\social_analytics\IndividualMetricsEdaHandler;
 use Drupal\social_analytics\IndividualMetricsPreferenceService;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -38,6 +39,7 @@ final class IndividualMetricsUserFormAlter implements ContainerInjectionInterfac
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly IndividualMetricsPreferenceService $preferenceService,
+    private readonly IndividualMetricsEdaHandler $edaHandler,
   ) {}
 
   /**
@@ -45,8 +47,9 @@ final class IndividualMetricsUserFormAlter implements ContainerInjectionInterfac
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('config.factory'),
-      $container->get('social_analytics.individual_metrics_preference'),
+      $container->get(ConfigFactoryInterface::class),
+      $container->get(IndividualMetricsPreferenceService::class),
+      $container->get(IndividualMetricsEdaHandler::class),
     );
   }
 
@@ -118,6 +121,14 @@ final class IndividualMetricsUserFormAlter implements ContainerInjectionInterfac
     }
 
     $this->preferenceService->setShowInIndividualMetrics($uid, $submitted);
+
+    $form_object = $form_state->getFormObject();
+    if ($form_object instanceof EntityFormInterface) {
+      $account = $form_object->getEntity();
+      if ($account instanceof UserInterface) {
+        $this->edaHandler->dispatchPreferenceChange($account, $submitted);
+      }
+    }
   }
 
   /**

@@ -22,9 +22,42 @@ channels:
                         $ref: '#/components/schemas/Common.TargetRef'
                     actor:
                       $ref: '#/components/schemas/Common.Actor'
+  userSettingsAnalytics:
+    address: com.getopensocial.cms.user.v1
+    messages:
+      userSettingsAnalytics:
+        payload:
+          allOf:
+            - $ref: '#/components/schemas/cloudEventsSchema'
+            - type: object
+              properties:
+                type:
+                  type: string
+                  const: com.getopensocial.cms.user.settings.analytics
+                data:
+                  type: object
+                  properties:
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The UUID of the user whose preference changed.
+                    analytics:
+                      type: object
+                      properties:
+                        showInIndividualMetrics:
+                          type: boolean
+                          description: Whether the user name appears in individual metrics reports and rankings.
+                    actor:
+                      $ref: '#/components/schemas/Common.Actor'
 
 operations:
   onPageView:
     action: 'receive'
     channel:
       $ref: '#/channels/pageView'
+  onUserSettingsAnalytics:
+    action: 'receive'
+    channel:
+      $ref: '#/channels/userSettingsAnalytics'
