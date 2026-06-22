@@ -128,21 +128,31 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       return $empty_value;
     }
 
-    // Compatibility with the "All day" event option. In event, "All day" means
-    // both start and end dates have the same time.
-    if ($start_date->getTimestamp() === $end_date->getTimestamp()) {
-      $end_date->modify('23 hours 59 minutes 59 seconds');
-    }
-
     // We need to make sure the user can see the calendar in
     // the preferred timezone.
     $timezone = $this->currentUser->getTimeZone() ?: date_default_timezone_get();
     try {
-      $start_date->setTimezone(new \DateTimeZone($timezone));
-      $end_date->setTimezone(new \DateTimeZone($timezone));
+      $user_timezone = new \DateTimeZone($timezone);
     }
     catch (\Exception $e) {
       return $empty_value;
+    }
+
+    // Compatibility with the "All day" event option. In event, "All day" means
+    // both start and end dates have the same time (stored as midnight UTC).
+    // An all-day event represents a floating calendar day rather than a fixed
+    // point in time, so it must be anchored to the user's local day. Simply
+    // converting the stored UTC midnight to the user timezone would shift the
+    // start by the timezone offset, making the calendar appear "cut" at e.g.
+    // 02:00 and the busy slot bleed into the next day.
+    if ($start_date->getTimestamp() === $end_date->getTimestamp()) {
+      $day = $start_date->format('Y-m-d');
+      $start_date = new DrupalDateTime($day . ' 00:00:00', $user_timezone);
+      $end_date = new DrupalDateTime($day . ' 23:59:59', $user_timezone);
+    }
+    else {
+      $start_date->setTimezone($user_timezone);
+      $end_date->setTimezone($user_timezone);
     }
 
     return [
@@ -493,10 +503,19 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
       return FALSE;
     }
 
+    $storage_timezone = new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE);
+
     // Compatibility with the "All day" event option. In event, "All day" means
-    // both start and end dates have the same time.
+    // both start and end dates have the same time, and they arrive as midnight
+    // UTC (a floating calendar day). The meeting datetime is consumed as a real
+    // UTC instant, so storing the literal midnight UTC would shift the meeting
+    // by the user's timezone offset. Re-anchor the all-day span to the user's
+    // local day so the stored value holds the correct UTC instant for that day.
     if ($event_start->getTimestamp() === $event_end->getTimestamp()) {
-      $event_end->modify('23 hours 59 minutes 59 seconds');
+      $user_timezone = new \DateTimeZone($this->currentUser->getTimeZone() ?: date_default_timezone_get());
+      $day = $event_start->format('Y-m-d');
+      $event_start = new DrupalDateTime($day . ' 00:00:00', $user_timezone);
+      $event_end = new DrupalDateTime($day . ' 23:59:59', $user_timezone);
     }
 
     $values_from_event = [
@@ -504,8 +523,8 @@ final class EventMeetingWidget extends WidgetBase implements ContainerFactoryPlu
         '@title' => $form_state->getValue(['title', 0, 'value']) ?: 'Meeting',
       ]),
       'datetime' => [
-        'value' => $event_start->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
-        'end_value' => $event_end->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
+        'value' => $event_start->setTimezone($storage_timezone)->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
+        'end_value' => $event_end->setTimezone($storage_timezone)->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
         'timezone' => date_default_timezone_get(),
       ],
     ];
