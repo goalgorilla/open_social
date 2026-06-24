@@ -316,6 +316,49 @@ class CommentViewAccessTest extends EntityKernelTestBase {
   }
 
   /**
+   * Hidden comment access follows node ownership after reassignment.
+   */
+  public function testNodeOwnerAccessChangesWhenOwnershipTransferred(): void {
+    $original_owner = $this->setUpCurrentUser([], ['access comments', 'access content']);
+    $node = $this->createNode([
+      'type' => 'page',
+      'uid' => $original_owner->id(),
+    ]);
+    $comment = $this->createComment($node, [
+      'field_name' => 'field_page_comments',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $node->set('field_page_comments', [
+      'status' => CommentItemInterface::HIDDEN,
+    ]);
+    $node->save();
+
+    self::assertTrue($comment->access('view', $original_owner));
+    $visible_comments = $this->storage
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('cid', $comment->id())
+      ->execute();
+    self::assertCount(1, $visible_comments);
+
+    $new_owner = $this->setUpCurrentUser([], ['access comments', 'access content']);
+    $node->setOwnerId((int) $new_owner->id());
+    $node->save();
+    $comment = $this->storage->load($comment->id());
+    self::assertInstanceOf(CommentInterface::class, $comment);
+
+    self::assertFalse($comment->access('view', $original_owner));
+    self::assertTrue($comment->access('view', $new_owner));
+
+    $visible_comments = $this->storage
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('cid', $comment->id())
+      ->execute();
+    self::assertCount(1, $visible_comments);
+  }
+
+  /**
    * Test that a user can view everyone's published comments.
    */
   public function testUserCanViewOnlyPublishedComment() {
