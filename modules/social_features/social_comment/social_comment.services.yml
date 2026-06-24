@@ -49,6 +49,8 @@ services:
   social_comment.hidden_comment_field_cache_invalidation.hooks:
     class: Drupal\social_comment\Hooks\HiddenCommentFieldCacheInvalidationHooks
     autowire: true
+    arguments:
+      $accessPolicyMemoryCache: '@cache.access_policy_memory'
     tags:
       - { name: hooks }
   Drupal\social_comment\Hooks\HiddenCommentFieldCacheInvalidationHooks: '@social_comment.hidden_comment_field_cache_invalidation.hooks'

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Drupal\social_comment\Hooks;
 
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityAccessControlHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemInterface;
@@ -38,6 +40,7 @@ final class HiddenCommentFieldCacheInvalidationHooks implements ContainerInjecti
     protected HiddenCommentFieldMapCache $hiddenCommentFieldMapCache,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected CacheTagsInvalidatorInterface $cacheTagsInvalidator,
+    protected CacheBackendInterface $accessPolicyMemoryCache,
   ) {}
 
   /**
@@ -48,6 +51,7 @@ final class HiddenCommentFieldCacheInvalidationHooks implements ContainerInjecti
       $container->get('social_comment.hidden_comment_field_map_cache'),
       $container->get('entity_type.manager'),
       $container->get('cache_tags.invalidator'),
+      $container->get('cache.access_policy_memory'),
     );
   }
 
@@ -133,7 +137,7 @@ final class HiddenCommentFieldCacheInvalidationHooks implements ContainerInjecti
   }
 
   /**
-   * Whether hidden comment field status changed for this node save.
+   * Whether hidden comment field status or node ownership changed on save.
    */
   private function requiresHiddenCommentFieldCacheReset(NodeInterface $node, ?NodeInterface $original): bool {
     foreach ($node->getFieldDefinitions() as $field_name => $definition) {
@@ -159,6 +163,16 @@ final class HiddenCommentFieldCacheInvalidationHooks implements ContainerInjecti
       if ($was_hidden !== $is_hidden) {
         return TRUE;
       }
+    }
+
+    if ($original !== NULL
+      && (int) $node->getOwnerId() !== (int) $original->getOwnerId()
+      && (
+        $this->getHiddenCommentFieldNames($node) !== []
+        || $this->getHiddenCommentFieldNames($original) !== []
+      )
+    ) {
+      return TRUE;
     }
 
     return FALSE;
@@ -215,6 +229,11 @@ final class HiddenCommentFieldCacheInvalidationHooks implements ContainerInjecti
     $nid = (int) $node->id();
     $this->hiddenCommentFieldMapCache->refreshNode($nid, $this->getHiddenCommentFieldNames($node));
     CommentQueryAccessHandler::resetNodeCommentAccessCache();
+    $comment_access = $this->entityTypeManager->getHandler('comment', 'access');
+    assert($comment_access instanceof EntityAccessControlHandlerInterface);
+    $comment_access->resetCache();
+    // Tag invalidation does not clear the per-request access policy memory bin.
+    $this->accessPolicyMemoryCache->invalidateAll();
     $this->cacheTagsInvalidator->invalidateTags(array_merge(
       $node->getCacheTagsToInvalidate(),
       ['access_policies'],
