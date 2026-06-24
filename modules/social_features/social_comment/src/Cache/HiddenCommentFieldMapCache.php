@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\social_comment\Cache;
 
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
