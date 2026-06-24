@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_search module.
  */
 
+use Drupal\Core\Form\FormState;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\user\RoleInterface;
@@ -194,4 +195,46 @@ function social_search_update_13005(): string {
   $updateHelper = \Drupal::service('update_helper.updater');
   $updateHelper->executeUpdate('social_search', __FUNCTION__);
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Regenerate Social Blue color module CSS files from current color settings.
+ */
+function social_search_update_26000(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('color')) {
+    return;
+  }
+
+  \Drupal::moduleHandler()->loadInclude('color', 'module');
+  if (!function_exists('color_get_info') || !function_exists('color_scheme_form_submit')) {
+    return;
+  }
+
+  $theme = 'socialblue';
+  $info = color_get_info($theme);
+  if (empty($info['css'])) {
+    return;
+  }
+
+  // Merge stored palette with theme defaults so new color fields (e.g.
+  // second-line-navbar-*) do not trigger undefined array key warnings during
+  // CSS regeneration on sites that saved their palette before those fields
+  // existed.
+  $color_config = \Drupal::configFactory()->getEditable('color.theme.socialblue');
+  $stored_palette = $color_config->get('palette') ?: [];
+  $palette = array_merge(color_get_palette($theme, TRUE), $stored_palette);
+  $color_config->set('palette', $palette)->save();
+
+  $form_state = new FormState();
+  $form_state->setValue('theme', $theme);
+  $form_state->setValue('palette', $palette);
+  $form_state->setValue('scheme', '');
+  $form_state->setValue('info', $info);
+  color_scheme_form_submit([], $form_state);
+
+  // Re-save theme settings only when config already exists.
+  $theme_settings = \Drupal::configFactory()->getEditable('socialblue.settings');
+  if (!$theme_settings->isNew()) {
+    $theme_settings->save();
+  }
 }
