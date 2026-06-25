@@ -85,8 +85,8 @@ final class BigBlueButtonRecordingReadyEventSubscriber implements EventSubscribe
       'uid' => $node->getOwnerId(),
       'name' => 'Video recording',
       'field_media_links' => [
-        'uri' => 'internal:' . Url::fromRoute('social_event.view_recording', ['node' => $node->id()])
-          ->toString(),
+        'uri' => 'internal:/' . Url::fromRoute('social_event.view_recording', ['node' => $node->id()])
+          ->getInternalPath(),
         'title' => 'view',
       ],
     ]);
