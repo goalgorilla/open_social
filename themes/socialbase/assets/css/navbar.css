@@ -413,7 +413,7 @@
 .search-take-over:not(.layout-builder-configure-block) .form-text.form-control {
   display: block;
   width: 100%;
-  max-width: 28rem;
+  max-width: 27rem;
   padding: 0.5rem 2.75rem 0.5rem 0;
   text-overflow: ellipsis;
 }
@@ -422,9 +422,9 @@
   padding: 0.5rem 0 0.5rem 2.75rem;
 }
 
-.search-take-over .form-group:not(.form-actions) {
+.search-take-over > .form-group {
   margin: auto;
-  width: 80%;
+  width: 85%;
   max-width: 600px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -460,7 +460,7 @@
   margin-bottom: 0;
 }
 
-.search-take-over .form-submit {
+.search-take-over button:not(.gaia-ask-mode-btn).form-submit {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -487,18 +487,18 @@
   bottom: 0;
 }
 
-[dir='rtl'] .search-take-over .form-submit {
+[dir='rtl'] .search-take-over button:not(.gaia-ask-mode-btn).form-submit {
   right: auto;
   left: 0;
   margin-left: 0;
   margin-right: 20px;
 }
 
-.search-take-over .form-submit:focus, .search-take-over .form-submit:focus-visible {
+.search-take-over button:not(.gaia-ask-mode-btn).form-submit:focus, .search-take-over button:not(.gaia-ask-mode-btn).form-submit:focus-visible {
   outline: -webkit-focus-ring-color auto 1px;
 }
 
-.search-take-over .form-submit svg {
+.search-take-over button:not(.gaia-ask-mode-btn).form-submit svg {
   width: 30px;
   height: 30px;
 }

@@ -636,7 +636,6 @@ html:not(.js) .navbar-default {
       border-color: $navbar-default-link-color;
       box-shadow: inset 0 -2px 0 0 $navbar-default-link-color;
     }
-
   }
 
   .btn--close-search-take-over svg,
@@ -1085,7 +1084,7 @@ body.media-directory {
     background-color: $navbar-default-link-color;
   }
 
-  &:has(.gaia-ask-panel-result-found) {
+  &:not(.layout-builder-configure-block):has(.gaia-ask-panel-result-found) {
     .gaia-ask-panel .form-submit.gaia-ask-panel-submit,
     button.form-submit.gaia-ask-panel-submit {
       background-color: $brand-primary;
