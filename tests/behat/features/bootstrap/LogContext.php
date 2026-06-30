@@ -93,14 +93,20 @@ class LogContext implements Context {
    * @Then I should see log message :value
    */
   public function iShouldSeeLogMessage($value) {
-    $log_messages = $this->getLogMessages();
-    $log_message_exist = FALSE;
-
-    foreach ($log_messages as $log_message) {
-      if ($log_message->message === $value) {
-        return TRUE;
-      }
-    }
+    // Query the watchdog directly for this exact message rather than paging
+    // through ::getLogMessages(). The pager there limits results to a single
+    // page, so under a noisy log (e.g. PHP 8.4 deprecations) the asserted
+    // message can be pushed off the first page and missed. A targeted condition
+    // finds it regardless of how many entries exist.
+    //
+    // @todo Revert this back to iterating ::getLogMessages() once the pager is
+    //   removed from that method, as this direct query is only a workaround for
+    //   the paging issue.
+    $log_message_exist = (bool) \Drupal::database()->select('watchdog', 'w')
+      ->condition('w.message', $value)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
 
     if (!$log_message_exist) {
       throw new \Exception('The log message with value "' . $value . '" was not found in logs.');
@@ -214,6 +220,11 @@ class LogContext implements Context {
    *   The result of the log message query.
    */
   private function getLogMessages() : StatementWrapperIterator {
+    // @todo Remove the pager entirely so the after-step check reports on all
+    //   log entries instead of just the first page. The pager silently hides
+    //   problems that land beyond the first page (made worse by PHP 8.4's
+    //   deprecation noise), which is why ::iShouldSeeLogMessage() queries the
+    //   watchdog directly instead of relying on this method.
     $query = \Drupal::database()->select('watchdog', 'w')
       ->extend(PagerSelectExtender::class)
       ->extend(TableSortExtender::class);

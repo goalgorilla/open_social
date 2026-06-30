@@ -143,7 +143,6 @@ class UploadSessionManager implements UploadSessionManagerInterface {
   protected function getExpirationTime() : \DateTimeImmutable {
     // Keep only the if-clause in PHP 8.4 or later.
     if (PHP_VERSION_ID >= 80400) {
-      // @phpstan-ignore-next-line staticMethod.notFound
       $date = \DateTimeImmutable::createFromTimestamp(
         $this->time->getRequestTime()
       );
