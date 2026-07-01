@@ -11,24 +11,26 @@ use Drupal\Core\Url;
 use Drupal\group\Entity\GroupRelationshipInterface;
 
 /**
- * Implements hook_tokens().
+ * Implements hook_tokens_alter().
  *
- * This function needs mainly to replace "ginvite_tokens()" tokens build.
+ * The ginvite module builds the "register_link" and "my_invitations_link"
+ * tokens, but they must point at Open Social's invitation accept flow instead
+ * of ginvite's default destinations. We let ginvite generate the base tokens
+ * and only override the final replacements here.
  */
-function social_group_invite_tokens(string $type, array $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
-  if ($type !== 'group_content' || empty($data[$type])) {
-    return [];
+function social_group_invite_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
+  if ($context['type'] !== 'group_content' || empty($context['data']['group_content'])) {
+    return;
   }
 
-  // We need to build only these two tokens.
-  if (
-    !isset($tokens['register_link']) &&
-    !isset($tokens['my_invitations_link'])
-  ) {
-    return [];
+  $tokens = $context['tokens'];
+
+  // We only override these two tokens.
+  if (!isset($tokens['register_link']) && !isset($tokens['my_invitations_link'])) {
+    return;
   }
 
-  $group_relationship = $data['group_content'];
+  $group_relationship = $context['data']['group_content'];
   assert($group_relationship instanceof GroupRelationshipInterface);
 
   $gcid = $group_relationship->id();
@@ -58,25 +60,19 @@ function social_group_invite_tokens(string $type, array $tokens, array $data, ar
     $group_invite_url = Url::fromRoute('social_core.my_invites', [], ['absolute' => TRUE])->toString();
   }
 
-  // Attach destination to accept invite.
-  // So, after a signup/sign step, the invite will be accepted and
-  // a user will be redirected to the invited page.
-  foreach ($tokens as $name => $original) {
-    if ($name === 'register_link' && !empty($destination)) {
-      // To avoid duplication we want to get only "register_link" token from
-      // the "ginvite" module.
-      $ginvite_replacements = ginvite_tokens($type, ['register_link' => $tokens['register_link']], $data, $options, $bubbleable_metadata);
-
-      // For new users for register_link token.
-      $link = $ginvite_replacements[$original];
-      $replacements[$original] = "{$link}&{$destination}";
-    }
-
-    if ($name === 'my_invitations_link' && !empty($group_invite_url)) {
-      // For existing users for my_invitations_link token.
-      $replacements[$original] = $group_invite_url;
-    }
+  // Attach the destination to the ginvite-provided register link so that after
+  // a signup/sign in step the invite is accepted and the user is redirected to
+  // the invited content. Only new users receive the register link.
+  if (
+    isset($tokens['register_link']) &&
+    !empty($destination) &&
+    isset($replacements[$tokens['register_link']])
+  ) {
+    $replacements[$tokens['register_link']] = "{$replacements[$tokens['register_link']]}&{$destination}";
   }
 
-  return $replacements ?? [];
+  // Existing users are sent straight to the invitation accept URL.
+  if (isset($tokens['my_invitations_link']) && !empty($group_invite_url)) {
+    $replacements[$tokens['my_invitations_link']] = $group_invite_url;
+  }
 }

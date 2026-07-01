@@ -38,13 +38,6 @@ function social_group_invite_module_implements_alter(array &$implementations, st
   if ($hook === 'group_content_presave' && isset($implementations['ginvite'])) {
     unset($implementations['ginvite']);
   }
-
-  // Unset ginvite tokens replacement.
-  // We have own implementation for required tokens as this module can't work
-  // with invites by email (anonymous users) and throw error on tokens build.
-  if ($hook === 'tokens' && isset($implementations['ginvite'])) {
-    unset($implementations['ginvite']);
-  }
 }
 
 /**
