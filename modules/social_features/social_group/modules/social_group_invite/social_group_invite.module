@@ -721,27 +721,26 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
   ) {
     /** @var \Drupal\group\Entity\GroupRelationshipInterface $group_content */
     $group_content = $context["data"]["group_content"];
-    $group_content_id = $group_content->get('id')->getString();
-
-    // We are using a destination for use with the register link.
-    // This destination is only used when user's don't have an account yet.
-    $destination = 'destination=/social-group-invite/' . $group_content_id . '/accept';
-    $group_invite_url = Url::fromRoute('social_group_invite.invitation.accept', ['group_content' => $group_content_id], ['absolute' => TRUE])->toString();
-
-    // For groups that only group members have access to, we should change the
-    // destination to the user's invites page.
+    $group_content_id = $group_content->get('id')->getString() ?? FALSE;
     $group = $group_content->getGroup();
-    if (
-      ($group->hasField('field_flexible_group_visibility') &&
-      !$group->get('field_flexible_group_visibility')->isEmpty() &&
-      $group->get('field_flexible_group_visibility')->getValue()[0]['value'] === 'members')
-    ) {
 
-      // Update the destination for use with the register link.
+    $members_only = ($group->hasField('field_flexible_group_visibility') &&
+      !$group->get('field_flexible_group_visibility')->isEmpty() &&
+      $group->get('field_flexible_group_visibility')->getValue()[0]['value'] === 'members');
+
+    // The ginvite module sends the email notifications in a hook_presave()
+    // before the invitation id exists, so we fallback to the invites overview
+    // route, or the group's visibility is set to members only.
+    if ($members_only || !$group_content_id) {
       $url = Url::fromRoute('social_core.my_invites')->toString();
       $destination = 'destination=' . $url;
       $group_invite_url = Url::fromRoute('social_core.my_invites', [], ['absolute' => TRUE])->toString();
     }
+    else {
+      $destination = 'destination=/social-group-invite/' . $group_content_id . '/accept';
+      $group_invite_url = Url::fromRoute('social_group_invite.invitation.accept', ['group_content' => $group_content_id], ['absolute' => TRUE])->toString();
+    }
+
     // Attach destination to accept invite. So, after sign up/sign step the
     // invite will be accepted and user  will be redirected to the invited page.
     if (
