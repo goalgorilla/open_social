@@ -67,3 +67,20 @@ function activity_send_update_8003(): void {
     $config->save();
   }
 }
+
+/**
+ * Normalise activity_send_offline_window to an integer.
+ *
+ * The settings form previously saved this value as a string (e.g. "0"), which
+ * broke the strict "=== 0" always-send bypass in
+ * SendActivityDestinationBase::isUserOffline() and could suppress emails to
+ * users who are active on the platform.
+ */
+function activity_send_update_26000(): void {
+  $config = \Drupal::configFactory()->getEditable('activity_send.settings');
+  $offline_window = $config->get('activity_send_offline_window');
+  if ($offline_window !== NULL && !is_int($offline_window)) {
+    $config->set('activity_send_offline_window', (int) $offline_window);
+    $config->save();
+  }
+}

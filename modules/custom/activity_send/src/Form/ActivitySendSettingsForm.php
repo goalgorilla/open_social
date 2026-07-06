@@ -52,7 +52,7 @@ class ActivitySendSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('activity_send.settings');
-    $config->set('activity_send_offline_window', $form_state->getValue('activity_send_offline_window'))
+    $config->set('activity_send_offline_window', (int) $form_state->getValue('activity_send_offline_window'))
       ->save();
     parent::submitForm($form, $form_state);
   }

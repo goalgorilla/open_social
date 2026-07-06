@@ -200,7 +200,10 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @throws \Exception
    */
   public static function isUserOffline(User $account): bool {
-    $offline_window = \Drupal::config('activity_send.settings')->get('activity_send_offline_window');
+    // Cast to int: the config value can be stored as a string (e.g. "0") when
+    // saved through the settings form, which would break the strict comparison
+    // below and the timestamp arithmetic further down.
+    $offline_window = (int) \Drupal::config('activity_send.settings')->get('activity_send_offline_window');
 
     // When offline_window is 0, emails should always be sent regardless of
     // user's online status. Return TRUE to bypass the online check.
