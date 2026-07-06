@@ -1,0 +1,19 @@
+dependencies:
+  module:
+    - gaia_vector_index
+    - social_book
+    - search_api_attachments
+  config:
+    - node.type.book
+    - field.field.node.book.field_files
+    - search_api.index.attachments
+items:
+  search_api.index.attachments:
+    expected_config: { }
+    update_actions:
+      add:
+        datasource_settings:
+          'entity:node':
+            bundles:
+              selected:
+                - book

@@ -1,0 +1,19 @@
+dependencies:
+  module:
+    - gaia_vector_index
+    - social_event
+    - search_api_attachments
+  config:
+    - field.field.node.event.field_files
+    - node.type.event
+    - search_api.index.attachments
+items:
+  search_api.index.attachments:
+    expected_config: { }
+    update_actions:
+      add:
+        datasource_settings:
+          'entity:node':
+            bundles:
+              selected:
+                - event

@@ -1,0 +1,19 @@
+dependencies:
+  module:
+    - gaia_vector_index
+    - social_page
+    - search_api_attachments
+  config:
+    - field.field.node.page.field_files
+    - node.type.page
+    - search_api.index.attachments
+items:
+  search_api.index.attachments:
+    expected_config: { }
+    update_actions:
+      add:
+        datasource_settings:
+          'entity:node':
+            bundles:
+              selected:
+                - page
