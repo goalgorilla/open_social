@@ -220,14 +220,26 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
       return;
     }
 
-    $exclusions = new ConditionGroup('AND');
+    // Invert to field_name => node IDs where that field is hidden.
+    $nids_by_field = [];
     foreach ($hidden_exclusions as $nid => $field_names) {
       foreach ($field_names as $field_name) {
-        $pair = new ConditionGroup('OR');
-        $pair->addCondition('entity_id', $nid, '<>');
-        $pair->addCondition('field_name', $field_name, '<>');
-        $exclusions->addCondition($pair);
+        $nids_by_field[$field_name][] = (int) $nid;
       }
+    }
+
+    // A comment is excluded when its field is hidden on its node, so keep a
+    // comment only when, for each comment field, it either belongs to a
+    // different field or to a node where that field is not hidden. Grouping
+    // per field keeps the number of condition groups (and the table joins
+    // the query compiler derives from them) bounded by the number of comment
+    // field types rather than the number of nodes with hidden fields.
+    $exclusions = new ConditionGroup('AND');
+    foreach ($nids_by_field as $field_name => $nids) {
+      $pair = new ConditionGroup('OR');
+      $pair->addCondition('field_name', $field_name, '<>');
+      $pair->addCondition('entity_id', array_values(array_unique($nids)), 'NOT IN');
+      $exclusions->addCondition($pair);
     }
     $node_conditions->addCondition($exclusions);
   }

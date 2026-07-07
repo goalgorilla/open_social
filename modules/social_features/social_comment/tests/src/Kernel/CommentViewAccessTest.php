@@ -405,6 +405,59 @@ class CommentViewAccessTest extends EntityKernelTestBase {
   }
 
   /**
+   * Hidden comment field exclusions work with many hidden fields.
+   *
+   * The query access handler must express the hidden field exclusions in a
+   * fixed number of conditions, because databases limit the number of tables
+   * in a join and each condition on comment base fields adds a join. This
+   * test only passes when the exclusions do not grow with the number of
+   * nodes that have a hidden comment field.
+   */
+  public function testCommentQueryStaysWithinJoinLimitWithManyHiddenFields(): void {
+    $author = $this->setUpCurrentUser([], ['access comments']);
+
+    // Hide the comment field on enough nodes to exceed the database join
+    // limit if the query access handler were to add a join per hidden pair.
+    for ($i = 0; $i < 70; $i++) {
+      $node = $this->createNode([
+        'type' => 'page',
+        'field_page_comments' => ['status' => CommentItemInterface::HIDDEN],
+      ]);
+      $this->createComment($node, [
+        'field_name' => 'field_page_comments',
+        'uid' => $author->id(),
+        'status' => CommentInterface::PUBLISHED,
+      ]);
+    }
+
+    // One node with an open comment field that must remain visible.
+    $open_node = $this->createNode(['type' => 'page']);
+    $visible_comment = $this->createComment($open_node, [
+      'field_name' => 'field_page_comments',
+      'uid' => $author->id(),
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+
+    $member = $this->setUpCurrentUser([], ['access comments']);
+    $this->setCurrentUser($member);
+
+    // List all comments the member may view; every comment on a hidden
+    // field must be excluded.
+    $visible_comments = $this->storage
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('entity_type', 'node')
+      ->condition('comment_type', 'comment')
+      ->execute();
+
+    self::assertSame(
+      [$visible_comment->id()],
+      array_values($visible_comments),
+      'Only the comment on the open comment field is visible.'
+    );
+  }
+
+  /**
    * Test that a user can view everyone's published comments.
    */
   public function testUserCanViewOnlyPublishedComment() {
