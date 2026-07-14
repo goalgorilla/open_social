@@ -204,13 +204,25 @@ class EdaHandlerTest extends UnitTestCase {
     $configUserSettingsMock = $this->createMock(ConfigInterface::class);
     $configUserSettingsMock->method('get')->with('register')->willReturn('visitors_admin_approval');
 
+    // Mock the configuration for `system.date`.
+    $configSystemDateMock = $this->createMock(ConfigInterface::class);
+    $configSystemDateMock->method('get')->willReturnCallback(function ($key) {
+      if ($key === 'timezone.default') {
+        return 'Europe/Amsterdam';
+      }
+      return NULL;
+    });
+
     $this->configFactory = $this->createMock(ConfigFactoryInterface::class);
-    $this->configFactory->method('get')->willReturnCallback(function ($config_name) use ($configSocialEdaMock, $configUserSettingsMock) {
+    $this->configFactory->method('get')->willReturnCallback(function ($config_name) use ($configSocialEdaMock, $configUserSettingsMock, $configSystemDateMock) {
       if ($config_name === 'social_eda.settings') {
         return $configSocialEdaMock;
       }
       if ($config_name === 'user.settings') {
         return $configUserSettingsMock;
+      }
+      if ($config_name === 'system.date') {
+        return $configSystemDateMock;
       }
       return NULL;
     });
@@ -356,6 +368,66 @@ class EdaHandlerTest extends UnitTestCase {
     $this->assertEquals('com.getopensocial.cms.user.create', $event->getType());
     $this->assertEquals('/user/register', $event->getSource());
     $this->assertEquals('ac632030-e33b-50d6-9bd1-3436127a2cd1', $event->getId());
+  }
+
+  /**
+   * Test fromEntity() falls back to site default timezone when user has none.
+   *
+   * @covers ::fromEntity
+   * @covers ::resolveUserTimezone
+   */
+  public function testFromEntityUsesSiteDefaultTimezoneWhenUserTimezoneIsNull(): void {
+    $user = $this->createMock(UserInterface::class);
+    $user->method('get')->with('uuid')->willReturn((object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af']);
+    $user->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $user->method('id')->willReturn(3517);
+    $user->method('getCreatedTime')->willReturn(1692614400);
+    $user->method('getChangedTime')->willReturn(1692618000);
+    $user->method('getLastLoginTime')->willReturn(1692618000);
+    $user->method('isActive')->willReturn(TRUE);
+    $user->method('getDisplayName')->willReturn('User Name');
+    $user->method('getEmail')->willReturn('user@example.com');
+    $user->method('getRoles')->willReturn(['authenticated']);
+    $user->method('getPreferredLangcode')->willReturn('en');
+    $user->method('getTimeZone')->willReturn(NULL);
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
+
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($user, 'com.getopensocial.cms.user.create');
+
+    $this->assertEquals('Europe/Amsterdam', $event->getData()['user']->timezone);
+  }
+
+  /**
+   * Test fromEntity() uses the user timezone when set.
+   *
+   * @covers ::fromEntity
+   * @covers ::resolveUserTimezone
+   */
+  public function testFromEntityUsesUserTimezoneWhenSet(): void {
+    $user = $this->createMock(UserInterface::class);
+    $user->method('get')->with('uuid')->willReturn((object) ['value' => 'a5715874-5859-4d8a-93ba-9f8433ea44af']);
+    $user->method('uuid')->willReturn('a5715874-5859-4d8a-93ba-9f8433ea44af');
+    $user->method('id')->willReturn(1);
+    $user->method('getCreatedTime')->willReturn(1692614400);
+    $user->method('getChangedTime')->willReturn(1692618000);
+    $user->method('getLastLoginTime')->willReturn(1692618000);
+    $user->method('isActive')->willReturn(TRUE);
+    $user->method('getDisplayName')->willReturn('User Name');
+    $user->method('getEmail')->willReturn('user@example.com');
+    $user->method('getRoles')->willReturn(['authenticated']);
+    $user->method('getPreferredLangcode')->willReturn('en');
+    $user->method('getTimeZone')->willReturn('America/New_York');
+    $user->method('toUrl')
+      ->with('canonical', ['absolute' => TRUE, 'path_processing' => FALSE])
+      ->willReturn($this->url);
+
+    $handler = $this->getMockedHandler();
+    $event = $handler->fromEntity($user, 'com.getopensocial.cms.user.create');
+
+    $this->assertEquals('America/New_York', $event->getData()['user']->timezone);
   }
 
   /**

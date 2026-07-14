@@ -82,6 +82,22 @@ final class EdaHandler {
   }
 
   /**
+   * Resolves the timezone for a user entity in EDA payloads.
+   *
+   * Falls back to the site default from system.date when the user has none
+   * stored, matching Drupal core TimeZoneResolver logic for queue/CLI contexts
+   * where date_default_timezone_get() may not reflect site configuration.
+   */
+  private function resolveUserTimezone(UserInterface $user): string {
+    /** @var string|null $timezone */
+    $timezone = $user->getTimeZone();
+    if ($timezone !== NULL && $timezone !== '') {
+      return $timezone;
+    }
+    return $this->configFactory->get('system.date')->get('timezone.default') ?? 'UTC';
+  }
+
+  /**
    * Create user handler.
    */
   public function userCreate(UserInterface $user): void {
@@ -285,7 +301,7 @@ final class EdaHandler {
         status: $status,
         displayName: $user->getDisplayName(),
         roles: array_values($user->getRoles()),
-        timezone: $user->getTimeZone(),
+        timezone: $this->resolveUserTimezone($user),
         language: $user->getPreferredLangcode(),
         href: Href::fromEntity($user),
       );
@@ -299,7 +315,7 @@ final class EdaHandler {
         displayName: $user->getDisplayName(),
         email: (string) $user->getEmail(),
         roles: array_values($user->getRoles()),
-        timezone: $user->getTimeZone(),
+        timezone: $this->resolveUserTimezone($user),
         language: $user->getPreferredLangcode(),
         href: Href::fromEntity($user),
       );
@@ -315,7 +331,7 @@ final class EdaHandler {
         lastName: $last_name ?? '',
         email: (string) $user->getEmail(),
         roles: array_values($user->getRoles()),
-        timezone: $user->getTimeZone(),
+        timezone: $this->resolveUserTimezone($user),
         language: $user->getPreferredLangcode(),
         address: Address::fromFieldItem(
           item: $address ?? NULL,
