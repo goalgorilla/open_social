@@ -13,6 +13,7 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Session\AccountSwitcherInterface;
+use Drupal\node\NodeInterface;
 use Drupal\social_eda\Plugin\BackfillHandlerBase;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
@@ -221,6 +222,50 @@ final class BackfillHandlerBaseTest extends UnitTestCase {
     ];
 
     $entity = $this->createMock(EntityInterface::class);
+    $this->accountSwitcher->expects($this->never())->method('switchTo');
+
+    $handler = new class() {
+      /**
+       * Whether the handler method was called.
+       */
+      public bool $called = FALSE;
+
+      /**
+       * Test handler method.
+       */
+      public function testMethod(EntityInterface $entity): void {
+        $this->called = TRUE;
+      }
+
+    };
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject $container_mock */
+    $container_mock = $this->container;
+    $container_mock->expects($this->once())
+      ->method('get')
+      ->with('test.handler')
+      ->willReturn($handler);
+
+    $plugin = $this->createPlugin($plugin_definition);
+    $plugin->process($entity);
+
+    $this->assertTrue($handler->called);
+  }
+
+  /**
+   * Tests process() completes when entity owner reference is missing.
+   *
+   * @covers ::process
+   * @covers ::getActorFromEntity
+   */
+  public function testProcessLeavesCurrentUserUnchangedWhenOwnerIsNull(): void {
+    $plugin_definition = [
+      'handler_service' => 'test.handler',
+      'handler_method' => 'testMethod',
+    ];
+
+    $entity = $this->createMock(NodeInterface::class);
+    $entity->method('getOwner')->willReturn(NULL);
     $this->accountSwitcher->expects($this->never())->method('switchTo');
 
     $handler = new class() {

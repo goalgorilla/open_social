@@ -41,8 +41,12 @@ final class EventEnrollmentRequestAcceptBackfillHandler extends BackfillHandlerB
     // For request accept, the actor is the user who approved (stored in owner).
     // The owner is set to the approver in UpdateEnrollRequestController.
     if ($entity instanceof EventEnrollmentInterface) {
+      /** @var \Drupal\user\UserInterface|null $owner */
       $owner = $entity->getOwner();
-      return !$owner->isAnonymous() ? $owner : NULL;
+      if ($owner === NULL || $owner->isAnonymous()) {
+        return NULL;
+      }
+      return $owner;
     }
     return parent::getActorFromEntity($entity);
   }

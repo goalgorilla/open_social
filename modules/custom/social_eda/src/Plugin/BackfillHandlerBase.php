@@ -136,8 +136,12 @@ abstract class BackfillHandlerBase extends PluginBase implements BackfillHandler
    */
   protected function getActorFromEntity(EntityInterface $entity): ?UserInterface {
     if ($entity instanceof EntityOwnerInterface) {
+      /** @var \Drupal\user\UserInterface|null $owner */
       $owner = $entity->getOwner();
-      return !$owner->isAnonymous() ? $owner : NULL;
+      if ($owner === NULL || $owner->isAnonymous()) {
+        return NULL;
+      }
+      return $owner;
     }
     return NULL;
   }

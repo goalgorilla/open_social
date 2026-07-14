@@ -42,6 +42,8 @@ abstract class EventEnrollmentRequestInviteBackfillHandlerTestBase extends UnitT
 
   /**
    * The account switcher service.
+   *
+   * @var \Drupal\Core\Session\AccountSwitcherInterface&\PHPUnit\Framework\MockObject\MockObject
    */
   protected AccountSwitcherInterface $accountSwitcher;
 
