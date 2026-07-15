@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_gdpr module.
  */
 
+use Drupal\Core\Config\FileStorage;
+
 /**
  * Implements hook_install().
  */
@@ -37,4 +39,51 @@ function social_gdpr_install() {
  */
 function social_gdpr_update_last_removed() : int {
   return 111101;
+}
+
+/**
+ * Place the Data Policy inform block if it isn't placed yet.
+ */
+function social_gdpr_update_260001(): void {
+  $block_storage = \Drupal::entityTypeManager()->getStorage('block');
+  $theme_handler = \Drupal::service('theme_handler');
+
+  $path = \Drupal::service('extension.list.module')->getPath('social_gdpr');
+  $source = new FileStorage($path . '/config/optional');
+
+  $config_names = [
+    'block.block.data_policy_inform',
+    'block.block.socialblue_data_policy_inform',
+  ];
+
+  foreach ($config_names as $config_name) {
+    $data = $source->read($config_name);
+    if (!is_array($data)) {
+      continue;
+    }
+
+    // Only place the block in themes that are actually installed.
+    if (!$theme_handler->themeExists($data['theme'])) {
+      continue;
+    }
+
+    // Nothing to do if this exact placement already exists.
+    if ($block_storage->load($data['id']) !== NULL) {
+      continue;
+    }
+
+    // Avoid duplicates: skip if an inform block is already placed in this
+    // theme under a different id (for example social_saas_core's
+    // "data_policy" block).
+    $existing = $block_storage->getQuery()
+      ->condition('plugin', 'data_policy_inform_block')
+      ->condition('theme', $data['theme'])
+      ->accessCheck(FALSE)
+      ->execute();
+    if (!empty($existing)) {
+      continue;
+    }
+
+    $block_storage->create($data)->save();
+  }
 }

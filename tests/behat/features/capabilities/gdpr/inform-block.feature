@@ -7,22 +7,12 @@ Feature: Inform about personal data collection
   Background:
 
     Given users:
-      | name               | mail                           | status | roles         |
-      | behatadministrator | behatadministrator@example.com | 1      | administrator |
-      | behatsitemanager   | behatsitemanager@example.com   | 1      | sitemanager   |
-      | behatuser          | behatuser@example.com          | 1      | verified      |
+      | name             | mail                         | status | roles       |
+      | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
+      | behatuser        | behatuser@example.com        | 1      | verified    |
     And I enable the module "social_gdpr"
     And I turn off ckeditor
     And I set the GDPR Consent Text to "I read and consent to the [id:1*]"
-
-    # Add data policy block
-    And I am logged in as "behatadministrator"
-    And I am on "admin/structure/block/add/data_policy_inform_block/"
-    And I should see "Data Policy Inform" in the ".form-item--settings-admin-label" element
-    And I select "Complementary top" from "Region"
-    And I click the xth "0" element with the css ".button.form-submit"
-    And I should see "The block configuration has been saved."
-    And I logout
 
   Scenario: Check fields at Inform Consent form
 
@@ -61,6 +51,8 @@ Feature: Inform about personal data collection
     Given inform_blocks:
       | id | label                               | page           | summary                                    | body                                      | status |
       | 1  | Inform block title for sign up page | /user/register | Inform block summary for sign up page      | Inform block description for sign up page | 1      |
+    And I am an anonymous user
+    And I am on the homepage
     And I click "Sign up"
     And I should see the heading "Inform block title for sign up page" in the "Sidebar second" region
     And I should see the text "Inform block summary for sign up page"
