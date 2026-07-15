@@ -35,6 +35,9 @@ services:
 
   social_analytics.page_view_subscriber:
     class: Drupal\social_analytics\EventSubscriber\PageViewSubscriber
+    arguments:
+      - '@social_analytics.eda_handler'
+      - '@current_user'
     tags:
       - { name: event_subscriber }
   Drupal\social_analytics\EventSubscriber\PageViewSubscriber: '@social_analytics.page_view_subscriber'

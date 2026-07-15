@@ -4,6 +4,7 @@ namespace Drupal\social_analytics\EventSubscriber;
 
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_analytics\EdaHandler;
+use Drupal\social_core\EdaDummyHandler;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -17,10 +18,8 @@ class PageViewSubscriber implements EventSubscriberInterface {
 
   /**
    * The EDA handler for page view tracking.
-   *
-   * @var \Drupal\social_analytics\EdaHandler
    */
-  protected EdaHandler $edaHandler;
+  private EdaHandler|EdaDummyHandler $edaHandler;
 
   /**
    * The current user.
@@ -32,13 +31,13 @@ class PageViewSubscriber implements EventSubscriberInterface {
   /**
    * Constructs a PageViewSubscriber object.
    *
-   * @param \Drupal\social_analytics\EdaHandler $eda_handler
+   * @param \Drupal\social_analytics\EdaHandler|\Drupal\social_core\EdaDummyHandler $eda_handler
    *   The EDA handler for page view tracking.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
    */
   public function __construct(
-    EdaHandler $eda_handler,
+    EdaHandler|EdaDummyHandler $eda_handler,
     AccountProxyInterface $current_user,
   ) {
     $this->edaHandler = $eda_handler;
@@ -85,7 +84,9 @@ class PageViewSubscriber implements EventSubscriberInterface {
     // Track page view.
     // Static files are not tracked this way, so we don't need to check for
     // them separately.
-    $this->edaHandler->trackPageView();
+    if ($this->edaHandler instanceof EdaHandler) {
+      $this->edaHandler->trackPageView();
+    }
   }
 
   /**
