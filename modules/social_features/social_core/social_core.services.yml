@@ -46,3 +46,29 @@ services:
   social_core.members_page_helper:
     class: Drupal\social_core\Service\MembersPageHelperService
     arguments: [ '@user.data', '@current_user' ]
+
+  Drupal\social_core\FeatureFlag\FeatureFlagState:
+    autowire: true
+    arguments:
+      $lock: '@lock'
+
+  Drupal\social_core\FeatureFlag\FeatureFlagDiscovery:
+    autowire: true
+    public: false
+    arguments:
+      $cache: '@cache.default'
+
+  Drupal\social_core\FeatureFlag\FeatureFlagValidator:
+    autowire: true
+    public: false
+
+  Drupal\social_core\Service\FeatureFlagChecker:
+    autowire: true
+
+  Drupal\social_core\Service\FeatureFlagCheckerInterface: "@Drupal\\social_core\\Service\\FeatureFlagChecker"
+
+  Drupal\social_core\Service\FeatureFlagManager:
+    autowire: true
+    public: false
+
+  Drupal\social_core\Service\FeatureFlagManagerInterface: "@Drupal\\social_core\\Service\\FeatureFlagManager"

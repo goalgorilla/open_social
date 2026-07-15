@@ -22,6 +22,14 @@ social_core.admin.config.social:
   requirements:
     _permission: 'access administration pages'
 
+social_core.feature_flags:
+  path: '/admin/config/opensocial/feature-flags'
+  defaults:
+    _form: '\Drupal\social_core\Form\FeatureFlagManagementForm'
+    _title: 'Feature flags'
+  requirements:
+    _permission: 'manage social feature flags'
+
 social_core.my_invites:
   path: '/my-invites'
   defaults:
