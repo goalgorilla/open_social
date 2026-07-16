@@ -55,6 +55,22 @@ use Drupal\views\ViewExecutable;
 use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
 
 /**
+ * Implements hook_page_attachments().
+ */
+function social_group_page_attachments(array &$attachments): void {
+  if (\Drupal::routeMatch()->getRouteName() !== 'view.newest_groups.page_all_groups') {
+    return;
+  }
+
+  $attachments['#attached']['library'][] = 'social_core/views_ajax_url';
+  $attachments['#attached']['drupalSettings']['socialCore']['viewsAjaxUrl']['pages']['all_groups'] = [
+    'viewName' => 'newest_groups',
+    'displayId' => 'page_all_groups',
+    'bodyClass' => 'path-all-groups',
+  ];
+}
+
+/**
  * Implements hook_theme().
  */
 function social_group_theme() {

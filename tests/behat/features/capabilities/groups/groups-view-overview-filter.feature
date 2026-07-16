@@ -47,3 +47,41 @@ Feature: All group overview filters
 
     Then I should see "This is a local group"
     And I should not see "This is not a local one"
+
+  Scenario: Filter selection is reflected in the URL after AJAX
+    Given I am an anonymous user
+    And "group_type" terms:
+      | name |
+      | Local Group |
+    And groups with non-anonymous owner:
+      | label                   | field_group_description | field_flexible_group_visibility | type           | created  |
+      | This is a local group   | This is a local group   | public                          | flexible_group | 01/01/01 |
+      | This is not a local one | Just an ordinary one    | public                          | flexible_group | 01/01/01 |
+    And I add the group type "Local Group" to the group "This is a local group"
+
+    When I am viewing the groups overview
+    And I select "Local Group" from "Type"
+    And I press "Filter"
+    And I wait for AJAX to finish
+
+    Then the browser URL should match "^/all-groups\\?.*field_group_type_target_id"
+
+  Scenario: Pre-filtered groups list can be opened via URL
+    Given I am an anonymous user
+    And "group_type" terms:
+      | name |
+      | Local Group |
+    And groups with non-anonymous owner:
+      | label                   | field_group_description | field_flexible_group_visibility | type           | created  |
+      | This is a local group   | This is a local group   | public                          | flexible_group | 01/01/01 |
+      | This is not a local one | Just an ordinary one    | public                          | flexible_group | 01/01/01 |
+    And I add the group type "Local Group" to the group "This is a local group"
+
+    When I am viewing the groups overview
+    And I select "Local Group" from "Type"
+    And I press "Filter"
+    And I wait for AJAX to finish
+    And I reload the page
+
+    Then I should see "This is a local group"
+    And I should not see "This is not a local one"

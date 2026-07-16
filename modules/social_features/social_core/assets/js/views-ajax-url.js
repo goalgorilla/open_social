@@ -40,15 +40,127 @@
     writeParamsToViewAjax: writeParamsToViewAjax,
     isViewAjax: isViewAjax,
     getViewDisplayId: getViewDisplayId,
+    collectExposedParams: collectExposedParams,
     buildHrefFromParams: buildHrefFromParams,
+    mergeExposedFormQueryParams: mergeExposedFormQueryParams,
+    applyExposedParamsToViewAjax: applyExposedParamsToViewAjax,
     syncViewsAjaxUrlFromLocation: syncViewsAjaxUrlFromLocation,
     syncExposedSortControlsFromUrl: syncExposedSortControlsFromUrl,
     replaceBrowserUrl: replaceBrowserUrl,
   };
 
   // ---------------------------------------------------------------------------
+  // Behavior (entry point for registered overview pages)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Auto-syncs browser URL from exposed filters for registered overview pages.
+   */
+  Drupal.behaviors.socialCoreViewsAjaxUrl = {
+    attach: function () {
+      once('social-core-views-ajax-url', 'body', document).forEach(function () {
+        if (!getRegisteredPages().length) {
+          return;
+        }
+
+        var ajaxBeforeSend = Drupal.Ajax.prototype.beforeSend;
+        var ajaxSuccess = Drupal.Ajax.prototype.success;
+
+        Drupal.Ajax.prototype.beforeSend = function (xmlhttprequest, options) {
+          var page = getActivePage();
+          if (page && isViewAjax(options, page.viewName)) {
+            applyExposedParamsToViewAjax(
+              options,
+              page.viewName,
+              getViewDisplayId(options, page.displayId)
+            );
+          }
+
+          return ajaxBeforeSend.apply(this, arguments);
+        };
+
+        Drupal.Ajax.prototype.success = function (response, status) {
+          var result = ajaxSuccess.apply(this, arguments);
+          var page = getActivePage();
+          var options = this.options || {};
+
+          if (page && isViewAjax(options, page.viewName)) {
+            replaceBrowserUrl(
+              mergeExposedFormQueryParams(
+                window.location.href,
+                page.viewName,
+                getViewDisplayId(options, page.displayId)
+              )
+            );
+            syncViewsAjaxUrlFromLocation(page.viewName);
+          }
+
+          return result;
+        };
+      });
+    },
+  };
+
+  // ---------------------------------------------------------------------------
   // Primary operations (what consumers call for URL sync)
   // ---------------------------------------------------------------------------
+
+  /**
+   * Returns the registered page that matches the current body class, if any.
+   */
+  function getActivePage() {
+    return getRegisteredPages().find(function (page) {
+      return !page.bodyClass || document.body.classList.contains(page.bodyClass);
+    }) || null;
+  }
+
+  /**
+   * Registered page configs from drupalSettings.
+   */
+  function getRegisteredPages() {
+    var pages = drupalSettings.socialCore &&
+      drupalSettings.socialCore.viewsAjaxUrl &&
+      drupalSettings.socialCore.viewsAjaxUrl.pages;
+    if (!pages) {
+      return [];
+    }
+    return Object.keys(pages).map(function (key) {
+      return pages[key];
+    }).filter(function (page) {
+      return page && page.viewName && page.displayId;
+    });
+  }
+
+  /**
+   * Ensures a Views AJAX request includes current exposed form params.
+   *
+   * Clears previous exposed-filter keys from the AJAX URL/data first so
+   * emptied filters are not left behind as stale query parameters.
+   */
+  function applyExposedParamsToViewAjax(options, viewName, displayId) {
+    var mergedParams = collectExposedParams(viewName, displayId);
+    var result = parseAjaxUrlAndData(options);
+    var exposedNames = getExposedFormParamNames(viewName, displayId);
+
+    Object.keys(exposedNames).forEach(function (key) {
+      delete result[key];
+    });
+
+    Object.keys(mergedParams).forEach(function (key) {
+      if (mergedParams[key] !== undefined && mergedParams[key] !== '') {
+        result[key] = mergedParams[key];
+      }
+    });
+
+    writeParamsToViewAjax(options, result);
+  }
+
+  /**
+   * Merges current exposed form values onto a page href.
+   */
+  function mergeExposedFormQueryParams(href, viewName, displayId) {
+    return buildHrefFromParams(getPathBase(href), collectExposedParams(viewName, displayId));
+  }
 
   /**
    * Updates the browser location via history.replaceState.
@@ -185,6 +297,108 @@
 
     var query = toQueryString(cleanParams);
     return query ? pathBase + '?' + query : pathBase;
+  }
+
+  /**
+   * Collects exposed filter values from the form (includes form="…" associates).
+   */
+  function collectExposedParams(viewName, displayId) {
+    var form = document.querySelector(getExposedFormSelector(viewName, displayId));
+    if (!form) {
+      return {};
+    }
+
+    var queryParts = [];
+    new FormData(form).forEach(function (value, name) {
+      queryParts.push(encodeURIComponent(name) + '=' + encodeURIComponent(value));
+    });
+
+    if (!queryParts.length) {
+      return {};
+    }
+
+    return sanitizeQueryParams(parseQueryStringPreserveArrays(queryParts.join('&')));
+  }
+
+  /**
+   * Collects exposed control names from the form and form="…" associates.
+   */
+  function getExposedFormParamNames(viewName, displayId) {
+    var names = {};
+    var form = document.querySelector(getExposedFormSelector(viewName, displayId));
+    if (!form) {
+      return names;
+    }
+
+    Array.prototype.forEach.call(form.elements, function (control) {
+      if (control.name) {
+        names[control.name] = true;
+      }
+    });
+
+    if (form.id) {
+      document.querySelectorAll('[form="' + form.id + '"]').forEach(function (control) {
+        if (control.name) {
+          names[control.name] = true;
+        }
+      });
+    }
+
+    return names;
+  }
+
+  /**
+   * Accumulates a form value, preserving multi-value "[]" keys as arrays.
+   *
+   * Drupal.Views.parseQueryString() keeps only the last value for a repeated
+   * key, which breaks multi-value exposed filters (e.g. Select2 + "[]" names).
+   * Non-array fields still use last-wins so duplicated sort/form params from
+   * form + form="…" associates do not become arrays.
+   */
+  function accumulateParam(params, name, value) {
+    if (name.slice(-2) === '[]') {
+      if (Object.prototype.hasOwnProperty.call(params, name)) {
+        if (!Array.isArray(params[name])) {
+          params[name] = [params[name]];
+        }
+        params[name].push(value);
+        return;
+      }
+      params[name] = value;
+      return;
+    }
+    params[name] = value;
+  }
+
+  /**
+   * Parses a query string while preserving repeated "[]" keys as arrays.
+   */
+  function parseQueryStringPreserveArrays(query) {
+    var params = {};
+    if (!query) {
+      return params;
+    }
+    if (query.indexOf('?') !== -1) {
+      query = query.substring(query.indexOf('?') + 1);
+    }
+    if (!query) {
+      return params;
+    }
+
+    query.split('&').forEach(function (pair) {
+      if (!pair) {
+        return;
+      }
+      var parts = pair.split('=');
+      var name = decodeURIComponent((parts[0] || '').replace(/\+/g, ' '));
+      if (name === 'q') {
+        return;
+      }
+      var value = decodeURIComponent((parts[1] || '').replace(/\+/g, ' '));
+      accumulateParam(params, name, value);
+    });
+
+    return params;
   }
 
   // ---------------------------------------------------------------------------
