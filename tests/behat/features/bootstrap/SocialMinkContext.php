@@ -237,12 +237,9 @@ class SocialMinkContext extends MinkContext {
   /**
    * Handles Select2 autocomplete selection.
    *
-   * @todo When there are multiple select2 fields on the page (single vs
-   *   multiple), this method should use '.select2-container--open
-   *   .select2-search__field' to find the correct input, similar to the removed
-   *   iFillInSelectInputWithAndSelect method. This
-   *   ensures we find the correct open select2 dropdown when multiple select2
-   *   fields exist.
+   * For named selects (e.g. [name='...'] on multi-Select2 pages), opens that
+   * widget via the Select2 API and scopes search/results to the open container.
+   * Other selectors keep the legacy click/setValue path.
    *
    * @param NodeElement $inputField
    *   The input element.
@@ -256,8 +253,134 @@ class SocialMinkContext extends MinkContext {
    */
   private function handleSelect2Autocomplete(NodeElement $inputField, string $value, string $entry): void {
     $page = $this->getSession()->getPage();
+    $session = $this->getSession();
+    $ajaxTimeoutMs = 1000 * (int) $this->getMinkParameter('ajax_timeout');
+    $fieldName = NULL;
 
-    $this->getSession()->wait(1000);
+    // Named <select> targets (AMC / multi-Select2 forms): open that widget only.
+    if (strtolower($inputField->getTagName()) === 'select') {
+      $fieldName = $inputField->getAttribute('name') ?: $inputField->getAttribute('id');
+    }
+
+    if ($fieldName !== NULL && $fieldName !== '') {
+      $fieldNameJson = json_encode($fieldName, JSON_THROW_ON_ERROR);
+      // Chrome Mink evaluateScript() does not support arguments[] — use selectors.
+      $openResult = $session->evaluateScript(<<<JS
+        (function (fieldName) {
+          var select = document.querySelector('[name=' + JSON.stringify(fieldName) + ']') ||
+            document.getElementById(fieldName);
+          if (!select) {
+            return 'missing';
+          }
+          if (!window.jQuery || !jQuery(select).data('select2')) {
+            return 'not_select2';
+          }
+          // Close any open Select2 so .select2-container--open is unambiguous.
+          jQuery('.select2-hidden-accessible').each(function () {
+            if (jQuery(this).data('select2')) {
+              jQuery(this).select2('close');
+            }
+          });
+          jQuery(select).select2('open');
+          return 'opened';
+        })({$fieldNameJson});
+JS
+      );
+
+      if ($openResult === 'missing') {
+        throw new \RuntimeException(sprintf(
+          'Select2 field "%s" was not found on the page.',
+          $fieldName
+        ));
+      }
+      if ($openResult === 'not_select2') {
+        throw new \RuntimeException(sprintf(
+          'Field "%s" is not a recognized Select2 instance.',
+          $fieldName
+        ));
+      }
+      if ($openResult !== 'opened') {
+        throw new \RuntimeException(sprintf(
+          'Failed to open Select2 field "%s".',
+          $fieldName
+        ));
+      }
+
+      $session->wait($ajaxTimeoutMs, "document.querySelector('.select2-container--open') !== null");
+
+      $select2Input = $page->find('css', '.select2-container--open .select2-search__field');
+      if (!$select2Input) {
+        throw new \RuntimeException('No Select2 search input found.');
+      }
+
+      $select2Input->setValue($value);
+
+      // Mink setValue often does not fire events Select2 AJAX listens for.
+      $session->evaluateScript(<<<JS
+        (function () {
+          var field = document.querySelector('.select2-container--open .select2-search__field');
+          if (field) {
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        })();
+JS
+      );
+
+      $this->iWaitForAjaxToFinish();
+      $entryJson = json_encode($entry, JSON_THROW_ON_ERROR);
+      $session->wait($ajaxTimeoutMs, <<<JS
+        (function (entry) {
+          var options = document.querySelectorAll('.select2-container--open .select2-results__option');
+          for (var i = 0; i < options.length; i++) {
+            var text = options[i].textContent.trim();
+            if (!text || text.indexOf('Searching') === 0 || text === 'No results found') {
+              continue;
+            }
+            if (text === entry || text.indexOf(entry) !== -1) {
+              return true;
+            }
+          }
+          return false;
+        })({$entryJson});
+JS
+      );
+
+      $availableOptions = [];
+      $partialMatch = NULL;
+      foreach ($page->findAll('css', '.select2-container--open .select2-results__option') as $result) {
+        $resultText = trim($result->getText());
+        if ($resultText === '' || $result->hasClass('select2-results__message')) {
+          continue;
+        }
+        $availableOptions[] = $resultText;
+
+        if ($resultText === $entry) {
+          $result->click();
+          $this->iWaitForAjaxToFinish();
+          return;
+        }
+
+        if ($partialMatch === NULL && str_contains($resultText, $entry)) {
+          $partialMatch = $result;
+        }
+      }
+
+      if ($partialMatch !== NULL) {
+        $partialMatch->click();
+        $this->iWaitForAjaxToFinish();
+        return;
+      }
+
+      throw new \RuntimeException(sprintf(
+        'Could not select Select2 option "%s" after searching for "%s". Available options: %s',
+        $entry,
+        $value,
+        implode(', ', $availableOptions)
+      ));
+    }
+
+    // Legacy path for wrappers such as .form-type-select.
+    $session->wait($ajaxTimeoutMs);
 
     // Open the Select2 dropdown.
     $select2Selection = $inputField->getParent()->find('css', '.select2-selection');
@@ -279,11 +402,9 @@ class SocialMinkContext extends MinkContext {
 
     // Type the search value.
     $select2Input->setValue($value);
-    $this->getSession()->wait(1000);
+    $session->wait($ajaxTimeoutMs);
 
-    $chosenResults = $page->findAll('css', '.select2-results__options li');
-
-    foreach ($chosenResults as $result) {
+    foreach ($page->findAll('css', '.select2-results__options li') as $result) {
       if ($result->getText() === $entry) {
         $result->click();
         break;
