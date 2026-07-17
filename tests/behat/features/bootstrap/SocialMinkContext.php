@@ -382,25 +382,21 @@ JS
     // Legacy path for wrappers such as .form-type-select.
     $session->wait($ajaxTimeoutMs);
 
-    // Open the Select2 dropdown.
     $select2Selection = $inputField->getParent()->find('css', '.select2-selection');
     if (!$select2Selection) {
       throw new \RuntimeException('No select2 choice found');
     }
     $select2Selection->press();
 
-    // Find the search input.
     $select2Input = $inputField->getParent()->find('css', '.select2-search__field');
     if (!$select2Input) {
       $select2Input = $page->find('css', '.select2-search__field');
     }
 
     if (!$select2Input) {
-      // Try to find an input globally on the page.
       throw new \RuntimeException('No input found');
     }
 
-    // Type the search value.
     $select2Input->setValue($value);
     $session->wait($ajaxTimeoutMs);
 
