@@ -138,21 +138,21 @@ function social_path_manager_module_implements_alter(&$implementations, $hook) {
  * Implements hook_entity_insert().
  */
 function social_path_manager_entity_insert(EntityInterface $entity) {
-  _social_path_manager_update_alias($entity, 'create');
+  social_path_manager_update_alias($entity, 'create');
 }
 
 /**
  * Implements hook_entity_update().
  */
 function social_path_manager_entity_update(EntityInterface $entity) {
-  _social_path_manager_update_alias($entity, 'update');
+  social_path_manager_update_alias($entity, 'update');
 }
 
 /**
  * Implements hook_entity_delete().
  */
 function social_path_manager_entity_delete(EntityInterface $entity) {
-  _social_path_manager_update_alias($entity, 'delete');
+  social_path_manager_update_alias($entity, 'delete');
 }
 
 /**
@@ -194,7 +194,7 @@ function _social_path_manager_update_group_tab_aliases($id, $action) {
 
   $groups = Group::loadMultiple($group_ids);
   foreach ($groups as $group) {
-    _social_path_manager_update_alias($group, $action, TRUE);
+    social_path_manager_update_alias($group, $action, TRUE);
     $created++;
   }
 
@@ -289,18 +289,18 @@ function _social_path_manager_get_path_suffix(GroupInterface $group, $route) {
 }
 
 /**
- * Create the aliases for the views of the group.
+ * Creates or updates path aliases for group tabs.
  *
  * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The entity that is the parent for the alias.
  * @param string $op
  *   The operation that is being performed.
  * @param bool $bulk
- *   Parameter to tell if the operation is coming from a bulk or not.
+ *   Whether this is a bulk operation.
  *
  * @throws \Exception
  */
-function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk = FALSE) {
+function social_path_manager_update_alias(EntityInterface $entity, string $op, bool $bulk = FALSE): void {
   if ($entity->getEntityTypeId() === 'group') {
     switch ($op) {
       case 'all':
@@ -321,8 +321,10 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
           if ($bulk === TRUE) {
             $url = Url::fromRoute('entity.group.canonical', ['group' => $entity->id()]);
             $url = $url->getInternalPath();
+            $langcode = $entity->language()->getId();
 
-            $path['alias'] = $pam->getAliasByPath('/' . $url);
+            // Resolve this entity language's alias, not the request language.
+            $path['alias'] = $pam->getAliasByPath('/' . $url, $langcode);
           }
           else {
             // New alias.
@@ -344,8 +346,8 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
               continue;
             }
 
-            // Get alias of the group tab.
-            $grouptab_alias = $pam->getAliasByPath('/group/' . $entity->id() . '/' . $suffix);
+            // Get alias of the group tab for this language.
+            $grouptab_alias = $pam->getAliasByPath('/group/' . $entity->id() . '/' . $suffix, $entity_language);
 
             /** @var \Drupal\path_alias\PathAliasStorage $pas */
             $pas = \Drupal::entityTypeManager()->getStorage('path_alias');
@@ -365,15 +367,20 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
               ])->save();
             }
 
-            // Update alias by deleting the old one and creating a new one.
-            // This is necessary because path alias doesn't update our
-            // group view aliases whenever we update the Group entity.
+            // Replace tab aliases for this language only.
             if ($op === 'update' || $op === 'all') {
-              \Drupal::service('pathauto.alias_storage_helper')
-                ->deleteBySourcePrefix('/group/' . $entity->id() . '/' . $suffix);
+              $tab_path = '/group/' . $entity->id() . '/' . $suffix;
+              $existing_ids = $pas->getQuery()
+                ->accessCheck(FALSE)
+                ->condition('path', $tab_path)
+                ->condition('langcode', $entity_language)
+                ->execute();
+              if ($existing_ids) {
+                $pas->delete($pas->loadMultiple($existing_ids));
+              }
 
               $pas->create([
-                'path' => '/group/' . $entity->id() . '/' . $suffix,
+                'path' => $tab_path,
                 'alias' => $path['alias'] . '/' . $suffix,
                 'langcode' => $entity_language,
               ])->save();
