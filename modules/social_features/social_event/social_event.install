@@ -482,6 +482,12 @@ function social_event_update_130013(): void {
  * Add event recording field and meeting recording ID field.
  */
 function social_event_update_130014(): string {
+  // "inline_entity_form" was never enabled in an update hook before, so we
+  // enable it here because the update below requires it, otherwise it breaks.
+  if (!\Drupal::moduleHandler()->moduleExists('inline_entity_form')) {
+    \Drupal::service('module_installer')->install(['inline_entity_form']);
+  }
+
   /** @var \Drupal\update_helper\Updater $updater */
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_event', __FUNCTION__);
