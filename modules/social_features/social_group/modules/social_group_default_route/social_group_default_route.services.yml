@@ -18,6 +18,3 @@ services:
     class: Drupal\social_group_default_route\GroupLandingTabManager
     arguments: ['@cache.discovery', '@module_handler']
 
-  Drupal\social_group_default_route\GroupPathAliasFixService:
-    arguments: ['@database', '@entity_type.manager', '@path_alias.manager', '@language_manager']
-
