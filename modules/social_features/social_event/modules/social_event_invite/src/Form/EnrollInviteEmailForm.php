@@ -207,7 +207,8 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     // Check if the user is already enrolled.
     foreach ($form_state->getValue('users_fieldset')['user'] as $user) {
       // Check if the user is a filled in email.
-      $email = $this->extractEmailsFrom($user);
+      $emails = $this->extractEmailsFrom($user);
+      $email = $emails[0] ?? NULL;
       if ($email) {
         $conditions = [
           'field_email' => $email,

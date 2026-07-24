@@ -164,8 +164,8 @@ class SocialEventInviteBulkHelper {
       // @todo Should be merged with extractEmailsFrom from InviteEmailBaseForm.
       // Remove select2 ID parameter.
       $user = str_replace('$ID:', '', $user);
-      preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $user, $email);
-      $email = $email[0];
+      preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $user, $matches);
+      $email = $matches[0][0] ?? NULL;
 
       // If the user is an email.
       if ($email) {

@@ -35,8 +35,8 @@ Feature: Send invite event email notifications
     And I fill in input ".form-type-select" with "new_test_user@example.com" and select "new_test_user@example.com"
     And I press "Send your invite(s) by email"
     And I wait for the batch job to finish
-    And I wait for the queue to be empty
     And I should see "Invite(s) have been successfully sent."
+    And I wait for the queue to be empty
     And I should have an email with subject "site_manager_1 has invited you to the event Invite Event on Open Social" and in the content:
       | Hi, I would like to invite you to my event Invite Event on Open Social. Kind regards, site_manager_1 See event About Open Social |
 
@@ -67,8 +67,8 @@ Feature: Send invite event email notifications
     And I fill in input ".form-type-select" with "existing_user_1@example.com" and select "existing_user_1@example.com"
     And I press "Send your invite(s) by email"
     And I wait for the batch job to finish
+    And I should see "Invite(s) have been successfully sent."
     And I wait for the queue to be empty
-    And I should see "Invite(s) have been successfully sent. "
 
     And I should have an email with subject "site_manager_1 has invited you to the event Invite Event on Open Social" and in the content:
       | Hi, I would like to invite you to my event Invite Event on Open Social. Kind regards, site_manager_1 |
@@ -79,3 +79,42 @@ Feature: Send invite event email notifications
     And I go to "/my-invites"
     And I should see "1 Event invites"
     And I should see "Invite Event"
+
+  Scenario: Non-member sees group-visibility event invite on the invites list
+    Given I enable the module "social_group_flexible_group"
+    And users:
+      | name            | mail                        | status | roles       |
+      | site_manager_1  | site_manager_1@example.com  | 1      | sitemanager |
+      | existing_user_1 | existing_user_1@example.com | 1      | verified    |
+    And groups:
+      | label                     | field_group_description        | author         | type           | langcode | field_flexible_group_visibility | field_group_allowed_visibility |
+      | Flexible group for invite | Description of Flexible group  | site_manager_1 | flexible_group | en       | public                          | public,community,group         |
+    And events:
+      | title                     | body                   | author         | group                     | field_event_date    | field_event_date_end | field_content_visibility | status |
+      | Secret group invite event | Body description text. | site_manager_1 | Flexible group for invite | 2035-01-01T11:00:00 | 2035-01-01T18:00:00  | group                    | 1      |
+
+    # Invite a verified user who is not a group member.
+    And I am logged in as "site_manager_1"
+    And I open the "event" node with title "Secret group invite event"
+    And I click "Manage enrollments"
+    And I should see "Add enrollees"
+    And I click the xth "1" element with the css ".btn.dropdown-toggle"
+    And I click "Invite users"
+    And I should see "Find people by name or email address"
+    And I fill in input ".form-type-select" with "existing_user_1@example.com" and select "existing_user_1@example.com"
+    And I press "Send your invite(s) by email"
+    And I wait for the batch job to finish
+    And I should see "Invite(s) have been successfully sent."
+
+    # Non-member invitee must see the invite in the list (not empty despite node query access).
+    And I logout
+    And I am logged in as "existing_user_1"
+    And I go to "/my-invites"
+    And I should see "1 Event invites"
+    And I should see "Secret group invite event"
+    And I should not see "You don't have any event invites yet."
+
+    # Entity access still allows the invitee to open the event directly.
+    And I open the "event" node with title "Secret group invite event"
+    And I should see "Secret group invite event"
+    And I should not see "Access denied"
