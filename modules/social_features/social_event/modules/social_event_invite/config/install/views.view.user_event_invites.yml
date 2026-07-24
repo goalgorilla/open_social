@@ -4,7 +4,6 @@ dependencies:
   config:
     - field.storage.event_enrollment.field_event
   module:
-    - node
     - options
     - social_event
     - user
@@ -414,48 +413,6 @@ display:
             group_items: {  }
           entity_type: user
           plugin_id: user_current
-        langcode:
-          id: langcode
-          table: node_field_data
-          field: langcode
-          relationship: field_event
-          group_type: group
-          admin_label: ''
-          operator: in
-          value:
-            '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: { }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: { }
-            group_items: { }
-          entity_type: node
-          entity_field: langcode
-          plugin_id: language
       sorts:
         created:
           id: created
@@ -498,15 +455,6 @@ display:
           content: 'You don''t have any event invites yet.'
           plugin_id: text_custom
       relationships:
-        field_event:
-          id: field_event
-          table: event_enrollment__field_event
-          field: field_event
-          relationship: none
-          group_type: group
-          admin_label: 'field_event: Content'
-          required: false
-          plugin_id: standard
         field_account:
           id: field_account
           table: event_enrollment__field_account
