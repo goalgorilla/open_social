@@ -216,6 +216,46 @@ class EmailContext extends RawMinkContext {
   }
 
   /**
+   * Fail when any email sent during the scenario leaks an unresolved token.
+   *
+   * A correctly built email never contains a raw Drupal token: the token
+   * system either replaces it with a value or clears it. When a token such as
+   * [node:title] or [social_event_an_enroll:enrolled_event] survives into a
+   * sent email it means the email was built without the data needed to replace
+   * it, which is always a bug. Rather than making every feature assert this by
+   * hand, we guard it automatically for every email any scenario sends.
+   *
+   * @AfterScenario
+   */
+  public function assertSentEmailsHaveNoUnprocessedTokens() : void {
+    // A Drupal token is [type:name] where the type is a machine name (starts
+    // with a letter) and the name may contain chained :parts. Requiring a
+    // leading letter avoids matching unrelated bracketed text such as [10:30].
+    $token_pattern = '/\[[a-z][a-z0-9_-]*:[a-z0-9_:-]+\]/i';
+
+    $result = $this->mailpit->search(after: $this->previousEmailDate);
+
+    foreach ($result->messages as $message) {
+      $sources = [
+        'subject' => $message->subject,
+        'text body' => $this->mailpit->renderMessageText($message),
+        'HTML body' => $this->mailpit->renderMessageHtml($message),
+      ];
+      foreach ($sources as $location => $content) {
+        if (preg_match($token_pattern, $content, $matches) === 1) {
+          throw new \Exception(sprintf(
+            "Email with subject '%s' was sent with an unprocessed token '%s' in its %s (Message ID: %s). Emails must never contain raw tokens; this one was likely built without the data needed to replace it.",
+            $message->subject,
+            $matches[0],
+            $location,
+            $message->id,
+          ));
+        }
+      }
+    }
+  }
+
+  /**
    * Ensure at least one email exists matching the provided subject and body.
    *
    * @param string $subject

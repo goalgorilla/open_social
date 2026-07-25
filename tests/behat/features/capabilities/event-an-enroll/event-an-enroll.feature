@@ -45,31 +45,25 @@ Feature: Enroll for an event without an account
     And I should see "AN Event 1" in the "Hero block"
 #    And I should see the link "Enroll" in the "Hero block"
     # Duplicate Enrollment.
-#    When I click "Enroll"
-#    And I wait for AJAX to finish
-#    When I click "Enroll as guest"
-#    And I wait for AJAX to finish
-#    Then I should see "Enroll in AN Event 1 Event" in the ".ui-dialog-title" element
-#    And I fill in the following:
-#      | First name    | John         |
-#      | Last name     | Doe          |
-#      | Email address | john@doe.com |
-#    And I press "Enroll in event" in the "Modal"
-#    And I wait for AJAX to finish
-#    Then I should see the text "Meetup: AN Event 1" in the "Modal"
-#    And I press the "Close" button
-#    Given I am an anonymous user
-#    And I open the "event" node with title "AN Event 1"
-#    When I click "Enroll"
-#    And I wait for AJAX to finish
-#    When I click "Enroll as guest"
-#    And I wait for AJAX to finish
-#    And I fill in the following:
-#      | First name    | John         |
-#      | Last name     | Doe          |
-#      | Email address | john@doe.com |
-#    And I press "Enroll in event"
-#    Then I should see the success message "You have been already enrolled to this event. You have also received a notification via email"
+    And I am an anonymous user
+    And I open the "event" node with title "AN Event 1"
+    And I click "Enroll"
+    And I wait for AJAX to finish
+    And I click "Enroll as guest"
+    And I wait for AJAX to finish
+    And I should see "Enroll in AN Event 1 Event" in the ".ui-dialog-title" element
+    And I fill in the following:
+      | First name    | John         |
+      | Last name     | Doe          |
+      | Email address | john@doe.com |
+    And I press "Enroll in event" in the "Modal"
+    And I wait for AJAX to finish
+
+    Then I should see the success message "You have been already enrolled to this event. You have also received a notification via email."
+    And I should have an email with subject "You are enrolled in the event AN Event 1" and in the content:
+      | content                                                          |
+      | You have been enrolled in the event AN Event 1                   |
+      | You can cancel your enrollment anytime using the following link: |
     # AS CM+ I should see Guest enrollments.
     And I am logged in as a user with the "contentmanager" role
     And I open the "event" node with title "AN Event 1"
