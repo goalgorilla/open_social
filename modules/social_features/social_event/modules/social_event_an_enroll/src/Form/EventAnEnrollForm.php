@@ -184,6 +184,7 @@ class EventAnEnrollForm extends EnrollActionForm {
 
     if ($enrollment = array_pop($enrollments)) {
       $token = $enrollment->get('field_token')->getString();
+      $values['field_token'] = $token;
       $response->addCommand(new CloseDialogCommand());
       $response->addCommand(new MessageCommand(
         $this->t('You have been already enrolled to this event. You have also received a notification via email.'),
