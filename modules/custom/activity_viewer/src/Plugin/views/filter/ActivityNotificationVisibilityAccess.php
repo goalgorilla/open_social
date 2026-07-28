@@ -116,13 +116,6 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
 
-    if ($account->isAnonymous()) {
-      $configuration['table'] = 'node_field_data';
-      /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
-      $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-      $query->addRelationship('node_field_data', $join, 'node_field_data');
-    }
-
     // Add queries.
     $and_wrapper = new Condition('AND');
     $or = new Condition('OR');
