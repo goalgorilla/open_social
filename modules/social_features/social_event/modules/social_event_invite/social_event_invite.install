@@ -131,3 +131,13 @@ function social_event_invite_update_26000(): string {
   $update_helper->executeUpdate('social_event_invite', __FUNCTION__);
   return $update_helper->logger()->output();
 }
+
+/**
+ * Hide unpublished events from the user event invites list.
+ */
+function social_event_invite_update_26001(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+  $update_helper->executeUpdate('social_event_invite', __FUNCTION__);
+  return $update_helper->logger()->output();
+}

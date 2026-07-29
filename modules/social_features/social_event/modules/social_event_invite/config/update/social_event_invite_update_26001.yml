@@ -1,0 +1,57 @@
+views.view.user_event_invites:
+  expected_config: {  }
+  update_actions:
+    add:
+      display:
+        default:
+          cache_metadata:
+            tags:
+              - 'config:field.storage.event_enrollment.field_event'
+              - 'node_list:event'
+          display_options:
+            filters:
+              event_published:
+                id: event_published
+                table: event_enrollment_field_data
+                field: event_published
+                relationship: none
+                group_type: group
+                admin_label: ''
+                operator: '='
+                value: ''
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                  reduce: false
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: {  }
+                  group_items: {  }
+                entity_type: event_enrollment
+                plugin_id: social_event_invite_event_published
+        page_user_event_invites:
+          cache_metadata:
+            tags:
+              - 'config:field.storage.event_enrollment.field_event'
+              - 'node_list:event'

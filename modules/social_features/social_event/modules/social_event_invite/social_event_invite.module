@@ -102,6 +102,14 @@ function social_event_invite_views_data() {
       'id' => 'social_event_invite_recipient',
     ],
   ];
+  $data['event_enrollment_field_data']['event_published'] = [
+    'title' => t('Event is published'),
+    'help' => t('Filters out invites for events that are not published.'),
+    'filter' => [
+      'id' => 'social_event_invite_event_published',
+    ],
+  ];
+
   return $data;
 }
 
