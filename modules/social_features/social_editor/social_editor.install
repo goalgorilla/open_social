@@ -73,3 +73,51 @@ function social_editor_update_13003(): string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Replace the deprecated fullscreen plugin with the CKEditor 5 Plugin Pack one.
+ */
+function social_editor_update_26000(): void {
+  $module_handler = \Drupal::service('module_handler');
+  $module_installer = \Drupal::service('module_installer');
+
+  if (!$module_handler->moduleExists('ckeditor5_plugin_pack_fullscreen')) {
+    $module_installer->install(['ckeditor5_plugin_pack_fullscreen']);
+  }
+
+  // The deprecated plugin registers the "fullScreen" toolbar item, the
+  // maintained one registers "fullscreen". Swap them in place so the button
+  // keeps its position in every toolbar it was added to.
+  $editors = \Drupal::entityTypeManager()
+    ->getStorage('editor')
+    ->loadByProperties(['editor' => 'ckeditor5']);
+
+  /** @var \Drupal\editor\EditorInterface $editor */
+  foreach ($editors as $editor) {
+    $settings = $editor->getSettings();
+    $key = array_search('fullScreen', $settings['toolbar']['items'] ?? [], TRUE);
+
+    if ($key === FALSE) {
+      continue;
+    }
+
+    $settings['toolbar']['items'][$key] = 'fullscreen';
+    $editor->setSettings($settings);
+    $editor->save();
+  }
+
+  if ($module_handler->moduleExists('ckeditor5_premium_features_fullscreen')) {
+    // Its hook_uninstall() delegates to a function declared in the
+    // ckeditor5_premium_features base module, which is uninstalled here, so
+    // that file never gets loaded. Load it to avoid a missing function error.
+    $module_list = \Drupal::service('extension.list.module');
+    $function = 'ckeditor5_premium_features_remove_ckeditor_plugins';
+
+    if (!function_exists($function) && $module_list->exists('ckeditor5_premium_features')) {
+      $path = $module_list->getPath('ckeditor5_premium_features');
+      require_once DRUPAL_ROOT . '/' . $path . '/ckeditor5_premium_features.module';
+    }
+
+    $module_installer->uninstall(['ckeditor5_premium_features_fullscreen']);
+  }
+}
