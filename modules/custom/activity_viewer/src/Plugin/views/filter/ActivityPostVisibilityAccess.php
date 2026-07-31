@@ -4,6 +4,7 @@ namespace Drupal\activity_viewer\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\social_group\SocialGroupHelperService;
@@ -102,18 +103,41 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    */
   public function query(): void {
     $account = $this->view->getUser();
+    $is_group_stream = $this->view->id() === 'activity_stream_group';
+    $group = $this->routeMatch->getParameter('group');
+    $group_id = NULL;
 
-    if ($this->moduleHandler->moduleExists('social_group')) {
-      // @todo This creates a dependency on Social Group which shouldn't exist,
-      // this access logic should be in that module instead.
-      $group_memberships = $this->groupHelper->getAllGroupsForUser($account->id());
+    if ($group instanceof GroupInterface) {
+      $group_id = (int) $group->id();
+    }
+    elseif ($is_group_stream && !empty($this->view->args[0])) {
+      $group_id = (int) $this->view->args[0];
     }
 
-    $groups = [
-      ...$group_memberships ?? [],
-    ];
-
-    $groups_unique = array_unique($groups);
+    // Group stream is already scoped by activity_group_argument to one
+    // recipient group. Using getAllGroupsForUser() here builds a huge OR/IN
+    // over all memberships and causes multi-minute queries on large groups.
+    // Only scope membership clauses to the current group for confirmed members.
+    if ($is_group_stream && $group_id) {
+      $stream_group = $group instanceof GroupInterface ? $group : Group::load($group_id);
+      if ($stream_group instanceof GroupInterface && $stream_group->getMember($account) !== FALSE) {
+        $groups_unique = [$group_id];
+      }
+      elseif ($this->moduleHandler->moduleExists('social_group')) {
+        $groups_unique = array_unique($this->groupHelper->getAllGroupsForUser((int) $account->id()));
+      }
+      else {
+        $groups_unique = [];
+      }
+    }
+    elseif ($this->moduleHandler->moduleExists('social_group')) {
+      // @todo This creates a dependency on Social Group which shouldn't exist,
+      // this access logic should be in that module instead.
+      $groups_unique = array_unique($this->groupHelper->getAllGroupsForUser((int) $account->id()));
+    }
+    else {
+      $groups_unique = [];
+    }
 
     // Add tables and joins.
     $this->query->addTable('activity__field_activity_recipient_group');
@@ -201,7 +225,6 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post');
 
     // Get group from url-parameter.
-    $group = $this->routeMatch->getParameter('group');
     // If the group parameter isn't group entity, visibility rules.
     // And check group permission when group parameter is group entity.
     if (!$group instanceof GroupInterface || !$group->hasPermission('access content overview', $account)) {
