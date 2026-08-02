@@ -262,8 +262,6 @@ class EventContext extends RawMinkContext {
     }
     $this->visitPath("/node/$event_id/edit");
 
-    $this->minkContext->saveScreenshot("edit-event.png", "/var/www/html/profiles/contrib/social/tests/behat/logs");
-
     $this->updatedEventData = $this->fillOutEventForm($fields);
     $this->getSession()->getPage()->pressButton("Save");
 

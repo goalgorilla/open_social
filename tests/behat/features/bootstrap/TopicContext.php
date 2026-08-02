@@ -280,8 +280,6 @@ class TopicContext extends RawMinkContext {
     }
     $this->visitPath("/node/$topic_id/edit");
 
-    $this->minkContext->saveScreenshot("edit-topic.png", "/var/www/html/profiles/contrib/social/tests/behat/logs");
-
     $this->updatedTopicData = $this->fillOutTopicForm($fields);
     $this->getSession()->getPage()->pressButton("Save");
 
