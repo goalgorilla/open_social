@@ -18,7 +18,8 @@ use Drupal\Driver\DrushDriver;
 class DatabaseContext implements Context {
 
   public const DATABASE_ENV = "TEST_DATABASE";
-  public const FALLBACK_DUMP = "fallback.dump.sql";
+  public const ARCHIVE_ENV = "TEST_ARCHIVE";
+  public const FALLBACK_ARCHIVE = "fallback.tar.gz";
 
   /**
    * Whether the environment for the given scenario was validated.
@@ -79,27 +80,43 @@ class DatabaseContext implements Context {
       return;
     }
 
+    $archive_file = getenv(self::ARCHIVE_ENV);
     $database_file = getenv(self::DATABASE_ENV);
 
-    if (empty($database_file)) {
-      $fallback = $this->fixturePath . DIRECTORY_SEPARATOR . self::FALLBACK_DUMP;
+    if (!empty($archive_file)) {
+      if ($archive_file[0] !== "/") {
+        // Make the relative path absolute.
+        putenv(self::ARCHIVE_ENV . "=" . $this->fixturePath . DIRECTORY_SEPARATOR . $archive_file);
+      }
+    }
+    elseif (!empty($database_file)) {
+      // @trigger_error is used instead of throwing so that developers relying
+      // on this for local development are not blocked while we transition
+      // fully to packed site archives.
+      @trigger_error(
+        "Loading a scaffold from a database dump via '" . self::DATABASE_ENV . "' is deprecated and will be removed. Use '" . self::ARCHIVE_ENV . "' with a packed site archive (see `drush os:pack-site`) instead.",
+        E_USER_DEPRECATED
+      );
+      if ($database_file[0] !== "/") {
+        // Make the relative path absolute.
+        putenv(self::DATABASE_ENV . "=" . $this->fixturePath . DIRECTORY_SEPARATOR . $database_file);
+      }
+    }
+    else {
+      $fallback = $this->fixturePath . DIRECTORY_SEPARATOR . self::FALLBACK_ARCHIVE;
       if (!is_file($fallback)) {
-        fwrite(STDERR, "No database file specified, creating a fallback at '$fallback'. Specify a database file using '" . self::DATABASE_ENV . "'." . PHP_EOL);
+        fwrite(STDERR, "No database or archive specified, creating a fallback archive at '$fallback'. Specify an archive using '" . self::ARCHIVE_ENV . "'." . PHP_EOL);
         try {
-          $this->drushDriver->drush("sql-dump",  ["--result-file='$fallback'"]);
+          $this->drushDriver->drush("os:pack-site", [$fallback]);
         }
         catch (\RuntimeException $e) {
-          throw new \RuntimeException("Could not create fallback database dump.", 0, $e);
+          throw new \RuntimeException("Could not create fallback site archive.", 0, $e);
         }
       }
       else {
-        fwrite(STDERR, "No database file specified, using the fallback at '$fallback'. Specify a database file using '" . self::DATABASE_ENV . "'." . PHP_EOL);
+        fwrite(STDERR, "No database or archive specified, using the fallback archive at '$fallback'. Specify an archive using '" . self::ARCHIVE_ENV . "'." . PHP_EOL);
       }
-      putenv(self::DATABASE_ENV . "=" . $fallback);
-    }
-    elseif ($database_file[0] !== "/") {
-      // Make the relative path absolute.
-      putenv(self::DATABASE_ENV . "=" . $this->fixturePath . DIRECTORY_SEPARATOR . $database_file);
+      putenv(self::ARCHIVE_ENV . "=" . $fallback);
     }
 
     $this->hasValidatedEnvironment = TRUE;
@@ -118,10 +135,48 @@ class DatabaseContext implements Context {
     }
 
     $this->ensureValidatedEnvironment($scope);
+
+    $archive_file = getenv(self::ARCHIVE_ENV);
+    if (!empty($archive_file)) {
+      $this->unpackArchive($archive_file);
+      return;
+    }
+
     $database_file = getenv(self::DATABASE_ENV);
     assert(is_string($database_file), "SetupContext::validateEnvironmentVariables has not correctly validated the environment variables.");
 
     $this->loadDatabase($database_file);
+  }
+
+  /**
+   * Load a packed site archive as fixture.
+   *
+   * Unlike loadDatabase() this also restores the public/private files that
+   * were packed alongside the database, and does not need a separate drop of
+   * the existing database since os:unpack-site already does this itself.
+   *
+   * @param string $archive_file
+   *   The path to the packed site archive (see os:pack-site). May be
+   *   relative to the configured fixture path or an absolute path.
+   */
+  private function unpackArchive(string $archive_file) : void {
+    // Ensure we have an absolute path.
+    if ($archive_file[0] !== DIRECTORY_SEPARATOR) {
+      $archive_file = $this->fixturePath . DIRECTORY_SEPARATOR . $archive_file;
+    }
+
+    if (!is_file($archive_file)) {
+      throw new \RuntimeException("Scaffold archive '$archive_file' does not exist.");
+    }
+
+    try {
+      $this->drushDriver->drush("os:unpack-site", ["-y", $archive_file]);
+    }
+    catch (\RuntimeException $e) {
+      throw new \RuntimeException("Could not unpack site archive.", 0, $e);
+    }
+
+    $this->resetDrupalState();
   }
 
   /**
@@ -158,6 +213,16 @@ class DatabaseContext implements Context {
       throw new \RuntimeException("Could not drop existing database.", 0, $e);
     }
 
+    $this->resetDrupalState();
+  }
+
+  /**
+   * Gets Drupal out of install mode and clears caches after a database load.
+   *
+   * Shared by loadDatabase() and unpackArchive() since both replace the
+   * database out from under a running Drupal.
+   */
+  private function resetDrupalState() : void {
     // Drush CR is run because it ensures that all caches are cleared, including
     // non-database caches like Redis.
     // The additional database clears below duplicate effort but are needed to
