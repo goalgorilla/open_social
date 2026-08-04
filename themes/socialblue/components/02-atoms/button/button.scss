@@ -83,8 +83,14 @@
   @include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
 }
 
+// Button with primary border and default button text color.
 .btn-default--color-primary {
   @include button-variant($btn-default-color, $btn-default-bg, $btn-primary-border);
+}
+
+// Button with primary text color and border.
+.btn-default--color-primary-text {
+  @include button-variant($brand-primary, $btn-default-bg, $btn-primary-border);
 }
 
 .btn-primary {
