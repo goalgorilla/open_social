@@ -1,0 +1,25 @@
+/**
+ * @file
+ * Keeps CKEditor 5 balloons above jQuery UI dialogs.
+ *
+ * Core raises the balloon z-index with a sibling selector:
+ * `.ui-dialog ~ .ck-body-wrapper { --ck-z-panel: 1261; }`
+ * @see core/modules/ckeditor5/css/ckeditor5.dialog.fix.css
+ *
+ * That only matches while `.ck-body-wrapper` sits *after* a `.ui-dialog` in
+ * `<body>`. CKEditor appends the wrapper once, on first editor init, and
+ * jQuery UI appends each dialog on open, so the order flips as soon as a
+ * wrapper outlives the dialog it was created in (an editor on the page
+ * itself, or an editor whose teardown was interrupted). The balloon then
+ * falls back to `--ck-z-panel: 1000` and renders behind the dialog
+ * (off-canvas is 1050, modal 1260) — the image/link toolbars look like they
+ * never open.
+ *
+ * Applying the same value unconditionally removes the dependency on DOM
+ * order. The value matches core's, so nothing changes when core's rule does
+ * match.
+ */
+
+.ck-body-wrapper {
+  --ck-z-panel: 1261;
+}
