@@ -78,22 +78,6 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
 }
 
 /**
- * Implements hook_library_info_alter().
- */
-function social_editor_library_info_alter(array &$libraries, string $extension): void {
-  if ($extension !== 'core' || !isset($libraries['drupal.dialog'])) {
-    return;
-  }
-
-  // Core attaches its own CKEditor 5 z-index fix to this library, but that fix
-  // relies on the position of `.ck-body-wrapper` in the DOM. Ship a rule that
-  // does not, so balloons stay above dialogs in every case.
-  // @see ckeditor5_library_info_alter()
-  $path = '/' . \Drupal::service('extension.list.module')->getPath('social_editor') . '/assets/css/ckeditor5-dialog-z-index.css';
-  $libraries['drupal.dialog']['css']['component'][$path] = [];
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  *
  * Removes class, id and rel attributes introduced by Editor Advanced Link.
