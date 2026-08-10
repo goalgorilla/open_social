@@ -110,11 +110,133 @@ class SocialEmbedHelper {
    *   Returns TRUE if the URL is whitelisted, otherwise FALSE.
    */
   public function isWhitelisted(string $url): bool {
-    // Fetch allowed patterns.
-    $patterns = $this->getCombinedPatterns();
+    $parts = $this->parseEmbeddableUrl($url);
+    if ($parts === NULL) {
+      return FALSE;
+    }
 
-    // Check if the URL matches any of the allowed patterns.
-    return preg_match($patterns, $url) === 1;
+    $provider = $this->getProviderHost($parts['host']);
+    if ($provider === NULL) {
+      return FALSE;
+    }
+
+    // Rebuild from the trusted parts, so the patterns only decide whether this
+    // is embeddable content. Matching the original URL would let a provider
+    // name in a query string stand in for the path.
+    $target = $provider . $parts['path'];
+    if ($parts['query'] !== '') {
+      $target .= '?' . $parts['query'];
+    }
+
+    return preg_match($this->getAnchoredPatterns(), $target) === 1;
+  }
+
+  /**
+   * Resolves the host a URL would be requested from.
+   *
+   * @param string $url
+   *   The URL to resolve the host for.
+   *
+   * @return string|null
+   *   The lower-cased host without its "www." prefix, or NULL when the URL is
+   *   not a plain web URL with a host we can trust.
+   */
+  public function getUrlHost(string $url): ?string {
+    return $this->parseEmbeddableUrl($url)['host'] ?? NULL;
+  }
+
+  /**
+   * Resolves the provider a host belongs to.
+   *
+   * Sub domains are matched on the dot boundary, so "m.youtube.com" resolves
+   * while "youtube.com.example.com" does not.
+   *
+   * @param string $host
+   *   The host to resolve, as returned by ::getUrlHost().
+   *
+   * @return string|null
+   *   The allowed host this host belongs to, or NULL for none of them.
+   */
+  public function getProviderHost(string $host): ?string {
+    foreach ($this->getAllowedHosts() as $allowed) {
+      if ($host === $allowed || str_ends_with($host, '.' . $allowed)) {
+        return $allowed;
+      }
+    }
+
+    return NULL;
+  }
+
+  /**
+   * Splits a URL into the parts that decide whether we can embed it.
+   *
+   * @param string $url
+   *   The URL to split.
+   *
+   * @return array{host: string, path: string, query: string}|null
+   *   The parsed URL, or NULL when it is not a plain web URL with a host we
+   *   can trust.
+   */
+  protected function parseEmbeddableUrl(string $url): ?array {
+    // The convert filter also picks up URLs typed without a scheme, treat
+    // those as https so the host is not parsed as part of the path.
+    if (preg_match('~^[a-z][a-z0-9+.\-]*:~i', $url) !== 1) {
+      $url = 'https://' . ltrim($url, '/');
+    }
+
+    $parts = parse_url($url);
+    if ($parts === FALSE || empty($parts['host'])) {
+      return NULL;
+    }
+
+    // Embedding only makes sense over http(s), this keeps file:// and the
+    // like out.
+    $scheme = strtolower($parts['scheme'] ?? '');
+    if (!in_array($scheme, ['http', 'https'], TRUE)) {
+      return NULL;
+    }
+
+    // The port is not part of what we match on, so refuse anything but the
+    // default to keep it from reaching the request unchecked.
+    if (isset($parts['port']) && $parts['port'] !== ($scheme === 'https' ? 443 : 80)) {
+      return NULL;
+    }
+
+    // Credentials are only ever used to disguise the real host, as in
+    // "http://youtube.com@127.0.0.1/".
+    if (isset($parts['user']) || isset($parts['pass'])) {
+      return NULL;
+    }
+
+    $host = strtolower(rtrim($parts['host'], '.'));
+
+    return [
+      'host' => str_starts_with($host, 'www.') ? substr($host, 4) : $host,
+      'path' => $parts['path'] ?? '',
+      'query' => $parts['query'] ?? '',
+    ];
+  }
+
+  /**
+   * The hosts the whitelisted patterns belong to.
+   *
+   * @return string[]
+   *   The list of allowed hosts, without their "www." prefix.
+   */
+  public function getAllowedHosts(): array {
+    return [
+      'facebook.com',
+      'flickr.com',
+      'flic.kr',
+      'instagram.com',
+      'open.spotify.com',
+      'twitter.com',
+      'x.com',
+      'vimeo.com',
+      'youtube.com',
+      'youtu.be',
+      'ted.com',
+    ];
   }
 
   /**
@@ -156,6 +278,23 @@ class SocialEmbedHelper {
 
     // Return the combined version of the patterns.
     return "/\b(?:https?:\/\/)?(?:www\.)?($combined_patterns)/i";
+  }
+
+  /**
+   * The anchored version of the patterns, for validating a parsed URL.
+   *
+   * ::getCombinedPatterns() searches for a URL inside a larger text, so it
+   * allows a scheme and "www." prefix. Here the URL is already parsed.
+   *
+   * @return string
+   *   The anchored version of the patterns.
+   *
+   * @see \Drupal\social_embed\Service\SocialEmbedHelper::isWhitelisted()
+   */
+  public function getAnchoredPatterns(): string {
+    $combined_patterns = implode('|', $this->getPatterns());
+
+    return "/^($combined_patterns)/i";
   }
 
   /**

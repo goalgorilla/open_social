@@ -10,6 +10,7 @@ use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
+use Drupal\social_embed\Service\SocialEmbedHelper;
 use Drupal\social_embed\SocialUrlEmbedHelperInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,16 +33,24 @@ class EmbedController extends ControllerBase {
   protected FloodInterface $flood;
 
   /**
+   * The social embed helper service.
+   */
+  protected SocialEmbedHelper $embedHelper;
+
+  /**
    * The EmbedController constructor.
    *
    * @param \Drupal\social_embed\SocialUrlEmbedHelperInterface $social_url_embed_helper
    *   The url embed services.
    * @param \Drupal\Core\Flood\FloodInterface $flood
    *   The flood service.
+   * @param \Drupal\social_embed\Service\SocialEmbedHelper $embed_helper
+   *   The social embed helper service.
    */
-  public function __construct(SocialUrlEmbedHelperInterface $social_url_embed_helper, FloodInterface $flood) {
+  public function __construct(SocialUrlEmbedHelperInterface $social_url_embed_helper, FloodInterface $flood, SocialEmbedHelper $embed_helper) {
     $this->socialUrlEmbedHelper = $social_url_embed_helper;
     $this->flood = $flood;
+    $this->embedHelper = $embed_helper;
   }
 
   /**
@@ -55,7 +64,8 @@ class EmbedController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('social_embed.url_embed_helper'),
-      $container->get('flood')
+      $container->get('flood'),
+      $container->get('social_embed.helper_service')
     );
   }
 
@@ -89,6 +99,11 @@ class EmbedController extends ControllerBase {
     // If $url or $uuid is not present or not valid, then request is malformed.
     assert(is_string($url) && is_string($uuid), new \InvalidArgumentException());
     if (Uuid::isValid($uuid) === FALSE) {
+      throw new NotFoundHttpException();
+    }
+
+    // Only fetch providers we embed, so this can not request any address.
+    if (!$this->embedHelper->isWhitelisted($url)) {
       throw new NotFoundHttpException();
     }
 

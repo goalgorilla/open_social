@@ -117,4 +117,48 @@ class SocialUserEmbedTest extends KernelTestBase {
     }
   }
 
+  /**
+   * Test that the generate endpoint refuses URLs we do not embed.
+   *
+   * The endpoint fetches the URL it is given, so it must only accept the
+   * providers we support.
+   *
+   * @dataProvider providerNonWhitelistedUrls
+   */
+  public function testGenerateRefusesNonWhitelistedUrl(string $url): void {
+    // Generate random UUID.
+    $uuid = (new Php())->generate();
+
+    /** @var \Symfony\Component\HttpKernel\HttpKernelInterface $http_kernel */
+    $http_kernel = $this->container->get('http_kernel');
+
+    $request = Request::create('/api/opensocial/social-embed/generate?' . http_build_query([
+      'url' => $url,
+      'uuid' => $uuid,
+    ]));
+    $response = $http_kernel->handle($request);
+
+    // Reaching this assertion at all means no request was made for the URL.
+    $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+    $this->assertStringNotContainsString($url, (string) $response->getContent());
+  }
+
+  /**
+   * URLs the generate endpoint must refuse.
+   *
+   * Each contains a supported provider somewhere in the URL while the request
+   * would go to a different host.
+   *
+   * @return array<string, array<int, string>>
+   *   The test cases, keyed by a description of the URL.
+   */
+  public static function providerNonWhitelistedUrls(): array {
+    return [
+      'cloud metadata address' => ['http://169.254.169.254/youtu.be/x'],
+      'loopback address' => ['http://127.0.0.1/youtube.com/watch?v=1'],
+      'provider as credentials' => ['http://youtube.com@127.0.0.1/watch?v=1'],
+      'unsupported host' => ['https://example.com/watch?v=1'],
+    ];
+  }
+
 }
