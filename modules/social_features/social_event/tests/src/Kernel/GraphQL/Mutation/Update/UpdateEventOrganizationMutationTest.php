@@ -597,7 +597,7 @@ class UpdateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
   }
 
   /**
-   * Test updating to GROUP_MEMBER with organizations only (no groups).
+   * Test updating to GROUP_MEMBER with organizations only (no groups) fails.
    */
   public function testUpdateEventToGroupMemberVisibilityWithOrganizations(): void {
     if (!static::socialOrganizationExists()) {
@@ -630,6 +630,60 @@ class UpdateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
       ],
       [
         'updateEvent' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $reloadedEvent = $this->reloadEvent($event);
+    $this->assertSame('community', $reloadedEvent->get('field_content_visibility')->value);
+    $eventId = $reloadedEvent->id();
+    assert($eventId !== NULL);
+    $this->assertEventNotInAnyOrganization($eventId);
+  }
+
+  /**
+   * Test update to GROUP_MEMBER with flexible group and organization succeeds.
+   */
+  public function testUpdateEventToGroupMemberVisibilityWithGroupAndOrganization(): void {
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
+
+    $eventType = $this->createEventType();
+    $group = $this->createTestGroup('Test Group', ['public', 'group']);
+    $organization = $this->createOrganization('Public Organization', 'public');
+    $event = $this->createEvent($eventType);
+
+    $this->assertResults(
+      <<<GQL
+      mutation UpdateEvent(\$input: UpdateEventInput!) {
+        updateEvent(input: \$input) {
+          errors
+          event { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'visibility' => 'GROUP_MEMBER',
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'updateEvent' => [
           'errors' => NULL,
           'event' => ['id' => $event->uuid()],
         ],
@@ -640,16 +694,19 @@ class UpdateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     );
 
     $reloadedEvent = $this->reloadEvent($event);
-    $this->assertEquals('group', $reloadedEvent->get('field_content_visibility')->value);
-    $event_id = $reloadedEvent->id();
-    $organization_id = $organization->id();
-    assert($event_id !== NULL);
-    assert($organization_id !== NULL);
-    $this->assertEventInOrganization($event_id, $organization_id);
+    $this->assertSame('group', $reloadedEvent->get('field_content_visibility')->value);
+    $relationships = GroupRelationship::loadByEntity($reloadedEvent);
+    $groupIds = array_map(fn ($rel) => $rel->getGroupId(), $relationships);
+    $this->assertContains($group->id(), $groupIds, 'Event should be linked to the flexible group.');
+    $eventId = $reloadedEvent->id();
+    $organizationId = $organization->id();
+    assert($eventId !== NULL);
+    assert($organizationId !== NULL);
+    $this->assertEventInOrganization($eventId, $organizationId);
   }
 
   /**
-   * Clearing groups succeeds when the event already has organizations.
+   * Clearing groups fails when visibility remains GROUP_MEMBER even with orgs.
    */
   public function testUpdateEventClearGroupsWithOrganizationRemaining(): void {
     if (!static::socialOrganizationExists()) {
@@ -687,12 +744,11 @@ class UpdateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
       ],
       [
         'updateEvent' => [
-          'errors' => NULL,
-          'event' => ['id' => $event->uuid()],
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'event' => NULL,
         ],
       ],
       $this->defaultMutationCacheMetaData()
-        ->addCacheableDependency($event)
         ->addCacheContexts(['languages:language_interface'])
     );
 
@@ -700,7 +756,7 @@ class UpdateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     $this->assertEquals('group', $reloadedEvent->get('field_content_visibility')->value);
     $relationships = GroupRelationship::loadByEntity($reloadedEvent);
     $groupIds = array_map(fn ($rel) => $rel->getGroupId(), $relationships);
-    $this->assertNotContains($group->id(), $groupIds, 'Event should no longer be linked to the group after clearing groups.');
+    $this->assertContains($group->id(), $groupIds, 'Event should still be linked to the group after failed mutation.');
     $event_id = $reloadedEvent->id();
     $organization_id = $organization->id();
     assert($event_id !== NULL);
@@ -709,7 +765,7 @@ class UpdateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
   }
 
   /**
-   * Removing groups succeeds when organizations are provided in the same.
+   * Removing groups fails when visibility remains GROUP_MEMBER even with orgs.
    */
   public function testUpdateEventRemoveGroupsWithOrganizationsProvidedInSameMutation(): void {
     if (!static::socialOrganizationExists()) {
@@ -750,12 +806,11 @@ class UpdateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
       ],
       [
         'updateEvent' => [
-          'errors' => NULL,
-          'event' => ['id' => $event->uuid()],
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'event' => NULL,
         ],
       ],
       $this->defaultMutationCacheMetaData()
-        ->addCacheableDependency($event)
         ->addCacheContexts(['languages:language_interface'])
     );
 
@@ -763,12 +818,10 @@ class UpdateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
     $this->assertEquals('group', $reloadedEvent->get('field_content_visibility')->value);
     $relationships = GroupRelationship::loadByEntity($reloadedEvent);
     $groupIds = array_map(fn ($rel) => $rel->getGroupId(), $relationships);
-    $this->assertNotContains($group->id(), $groupIds, 'Event should no longer be linked to the group.');
+    $this->assertContains($group->id(), $groupIds, 'Event should still be linked to the group after failed mutation.');
     $event_id = $reloadedEvent->id();
-    $organization_id = $organization->id();
     assert($event_id !== NULL);
-    assert($organization_id !== NULL);
-    $this->assertEventInOrganization($event_id, $organization_id);
+    $this->assertEventNotInAnyOrganization($event_id);
   }
 
 }

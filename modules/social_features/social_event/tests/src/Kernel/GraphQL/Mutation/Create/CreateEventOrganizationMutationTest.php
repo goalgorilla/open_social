@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\social_event\Kernel\GraphQL\Mutation\Create;
 
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\Tests\social_event\Kernel\SocialEventGraphQLKernelTestBase;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
@@ -589,7 +590,7 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
   }
 
   /**
-   * Test that GROUP_MEMBER works when organizations are provided (no groups).
+   * Test that GROUP_MEMBER is rejected when only organizations are provided.
    */
   public function testCreateEventGroupMemberVisibilityWithOrganizations(): void {
     if (!static::socialOrganizationExists()) {
@@ -626,9 +627,67 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
       ],
       [
         'createEvent' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'event' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $this->assertSame(
+      0,
+      $this->getEventCountByTitle('Event GROUP_MEMBER with organizations'),
+      'No event should be created for GROUP_MEMBER without a flexible group.'
+    );
+  }
+
+  /**
+   * Test that GROUP_MEMBER succeeds with a flexible group and an organization.
+   */
+  public function testCreateEventGroupMemberVisibilityWithGroupAndOrganization(): void {
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+    $this->actAsClientCredentialsWithScopes(['event:write', 'organization:read']);
+
+    $eventType = $this->createEventType();
+    [$start, $end] = $this->eventTimestamps();
+    $group = $this->createTestGroup('Test Group', ['public', 'group']);
+    $organization = $this->createOrganization('Test Organization', 'public');
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateEvent(\$input: CreateEventInput!) {
+        createEvent(input: \$input) {
+          errors
+          event { title }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $eventType->uuid(),
+          'title' => 'Event GROUP_MEMBER with group and organization',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => $this->minimalRichTextBody(),
+          'startDate' => $start,
+          'endDate' => $end,
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createEvent' => [
           'errors' => NULL,
           'event' => [
-            'title' => 'Event GROUP_MEMBER with organizations',
+            'title' => 'Event GROUP_MEMBER with group and organization',
           ],
         ],
       ],
@@ -637,9 +696,17 @@ class CreateEventOrganizationMutationTest extends SocialEventGraphQLKernelTestBa
         ->addCacheTags(['node:1'])
     );
 
-    $node = $this->getEventByTitle('Event GROUP_MEMBER with organizations');
+    $node = $this->getEventByTitle('Event GROUP_MEMBER with group and organization');
     $this->assertNotNull($node);
-    $this->assertEquals('group', $node->get('field_content_visibility')->value);
+    $this->assertSame('group', $node->get('field_content_visibility')->value);
+    $relationships = GroupRelationship::loadByEntity($node);
+    $groupIds = array_map(fn ($rel) => $rel->getGroupId(), $relationships);
+    $this->assertContains($group->id(), $groupIds, 'Event should be linked to the flexible group.');
+    $eventId = $node->id();
+    $organizationId = $organization->id();
+    assert($eventId !== NULL);
+    assert($organizationId !== NULL);
+    $this->assertEventInOrganization($eventId, $organizationId);
   }
 
 }

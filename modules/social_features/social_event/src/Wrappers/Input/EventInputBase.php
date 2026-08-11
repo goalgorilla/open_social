@@ -33,11 +33,6 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 abstract class EventInputBase extends InputBase {
 
   /**
-   * The field name on the node that stores organization.
-   */
-  protected const string ORGANIZATIONS_GROUP_FIELD = 'organizations_group';
-
-  /**
    * The entity type manager.
    */
   protected EntityTypeManagerInterface $entityTypeManager;
@@ -627,6 +622,13 @@ abstract class EventInputBase extends InputBase {
    */
   public function getCrosspostedGroups(): array {
     return $this->crosspostedGroups;
+  }
+
+  /**
+   * Whether the input currently has a primary flexible group assigned.
+   */
+  protected function hasAssignedPrimaryGroups(): bool {
+    return $this->primaryGroup !== NULL;
   }
 
   /**

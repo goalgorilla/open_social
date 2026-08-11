@@ -1477,6 +1477,75 @@ class CreateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
   }
 
   /**
+   * Test error when groups input has crosspostedGroups but no primary group.
+   *
+   * CrosspostedGroups require a primary group. GroupInputValidationService
+   * must reject this (PRIMARY_GROUP_REQUIRED) before hasAssignedPrimaryGroups()
+   * could treat invalid group input as satisfying GROUP_MEMBER visibility.
+   */
+  public function testCreateTopicGroupsWithCrosspostedGroupsOnlyRejected(): void {
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group->save();
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $countBefore = (int) $nodeStorage->getQuery()
+      ->count()
+      ->accessCheck(FALSE)
+      ->execute();
+
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic {
+            id
+          }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'Test Topic',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => '',
+            'crosspostedGroups' => [$group->uuid()],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['PRIMARY_GROUP_REQUIRED'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $countAfter = (int) $nodeStorage->getQuery()
+      ->count()
+      ->accessCheck(FALSE)
+      ->execute();
+    $this->assertSame($countBefore, $countAfter, 'No topic should be created on validation failure.');
+  }
+
+  /**
    * Test validation error when GROUP_MEMBER visibility is set without groups.
    */
   public function testCreateTopicGroupMemberVisibilityWithoutGroups(): void {

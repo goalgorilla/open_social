@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_topic\Kernel\GraphQL\Mutation\Create;
 
-use Drupal\social_group\Entity\Group;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\NodeInterface;
+use Drupal\social_group\Entity\Group;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
@@ -210,9 +211,9 @@ class CreateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
    * Data provider for topic visibility × organization visibility combinations.
    */
   public static function topicVisibilityInOrganizationProvider(): array {
-    $topicVisibilities = ['PUBLIC', 'COMMUNITY', 'GROUP_MEMBER'];
+    $topicVisibilities = ['PUBLIC', 'COMMUNITY'];
     $organizationVisibilities = ['public', 'community', 'members'];
-    $topicLabels = ['PUBLIC' => 'Public', 'COMMUNITY' => 'Community', 'GROUP_MEMBER' => 'Members'];
+    $topicLabels = ['PUBLIC' => 'Public', 'COMMUNITY' => 'Community'];
     $organizationLabels = ['public' => 'Public', 'community' => 'Community', 'members' => 'Members'];
 
     $datasets = [];
@@ -334,6 +335,127 @@ class CreateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
       $this->defaultMutationCacheMetaData()->addCacheTags(['node:' . ($maxNidBefore + 1)])
     );
 
+    $organizationId = $organization->id();
+    assert($organizationId !== NULL);
+    $this->assertTopicInOrganization($maxNidBefore + 1, $organizationId);
+  }
+
+  /**
+   * Test: GROUP_MEMBER with organizations only (no flexible group) is rejected.
+   */
+  public function testCreateTopicGroupMemberVisibilityWithOrganizationsOnlyFails(): void {
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+    $organization = $this->createOrganization('Public Organization', 'public');
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $countBefore = (int) $nodeStorage->getQuery()->count()->accessCheck(FALSE)->execute();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'GROUP_MEMBER Topic with Organization Only',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => self::minimalRichTextBody(),
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+    );
+
+    $countAfter = (int) $nodeStorage->getQuery()->count()->accessCheck(FALSE)->execute();
+    $this->assertSame($countBefore, $countAfter, 'No topic should be created for GROUP_MEMBER without a flexible group.');
+  }
+
+  /**
+   * Test: GROUP_MEMBER succeeds with a flexible group and an organization.
+   */
+  public function testCreateTopicGroupMemberVisibilityWithGroupAndOrganization(): void {
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group->save();
+    $organization = $this->createOrganization('Public Organization', 'public');
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $maxNidBefore = $this->getMaxNodeId($nodeStorage);
+
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+    $this->assertResults(
+      <<<GQL
+      mutation CreateTopic(\$input: CreateTopicInput!) {
+        createTopic(input: \$input) {
+          errors
+          topic { title visibility }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'type' => $topicType->uuid(),
+          'title' => 'GROUP_MEMBER Topic with Group and Organization',
+          'visibility' => 'GROUP_MEMBER',
+          'body' => self::minimalRichTextBody(),
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'createTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'title' => 'GROUP_MEMBER Topic with Group and Organization',
+            'visibility' => 'GROUP_MEMBER',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheTags(['node:' . ($maxNidBefore + 1)])
+    );
+
+    $topic = $nodeStorage->load($maxNidBefore + 1);
+    assert($topic instanceof NodeInterface);
+    $this->assertSame('group', $topic->get('field_content_visibility')->value);
+    $relationships = GroupRelationship::loadByEntity($topic);
+    $groupIds = array_map(fn ($rel) => $rel->getGroupId(), $relationships);
+    $this->assertContains($group->id(), $groupIds, 'Topic should be linked to the flexible group.');
     $organizationId = $organization->id();
     assert($organizationId !== NULL);
     $this->assertTopicInOrganization($maxNidBefore + 1, $organizationId);

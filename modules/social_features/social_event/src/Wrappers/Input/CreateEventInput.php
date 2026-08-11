@@ -173,8 +173,8 @@ class CreateEventInput extends EventInputBase {
       return FALSE;
     }
 
-    // Validate that GROUP_MEMBER visibility requires one group or organization.
-    if ($this->visibility === 'GROUP_MEMBER' && $this->primaryGroup === NULL && $this->primaryOrganization === NULL) {
+    // Validate that GROUP_MEMBER visibility requires a flexible group.
+    if ($this->visibility === 'GROUP_MEMBER' && !$this->hasAssignedPrimaryGroups()) {
       $this->violations[] = new Violation("GROUP_REQUIRED_FOR_GROUP_VISIBILITY");
       return FALSE;
     }

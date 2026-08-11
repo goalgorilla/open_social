@@ -34,11 +34,6 @@ abstract class TopicInputBase extends InputBase {
   const CONTENT_BUNDLE = 'topic';
 
   /**
-   * The field name on the node that stores organization.
-   */
-  protected const string ORGANIZATIONS_GROUP_FIELD = 'organizations_group';
-
-  /**
    * Validated primary group data.
    *
    * @var \Drupal\group\Entity\GroupInterface|null
@@ -273,6 +268,13 @@ abstract class TopicInputBase extends InputBase {
    */
   public function getCrosspostedGroups(): array {
     return $this->crosspostedGroups ?? [];
+  }
+
+  /**
+   * Whether the input currently has a primary flexible group assigned.
+   */
+  protected function hasAssignedPrimaryGroups(): bool {
+    return $this->primaryGroup !== NULL;
   }
 
   /**

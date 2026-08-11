@@ -1420,7 +1420,7 @@ class CreateEventMutationTest extends SocialEventGraphQLKernelTestBase {
   }
 
   /**
-   * Test error when GROUP_MEMBER is set without groups or organizations.
+   * Test error when GROUP_MEMBER is set without groups.
    */
   public function testCreateEventGroupMemberVisibilityWithoutGroups(): void {
     $this->actAsClientCredentialsWithScopes(['event:write']);

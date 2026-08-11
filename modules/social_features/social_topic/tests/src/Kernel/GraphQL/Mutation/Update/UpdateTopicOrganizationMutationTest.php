@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_topic\Kernel\GraphQL\Mutation\Update;
 
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
@@ -448,9 +450,9 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
    * Mirrors CreateTopicMutationTest::topicVisibilityInOrganizationProvider.
    */
   public static function topicVisibilityInOrganizationProvider(): array {
-    $topicVisibilities = ['PUBLIC', 'COMMUNITY', 'GROUP_MEMBER'];
+    $topicVisibilities = ['PUBLIC', 'COMMUNITY'];
     $organizationVisibilities = ['public', 'community', 'members'];
-    $topicLabels = ['PUBLIC' => 'Public', 'COMMUNITY' => 'Community', 'GROUP_MEMBER' => 'Members'];
+    $topicLabels = ['PUBLIC' => 'Public', 'COMMUNITY' => 'Community'];
     $organizationLabels = ['public' => 'Public', 'community' => 'Community', 'members' => 'Members'];
 
     $datasets = [];
@@ -548,6 +550,297 @@ class UpdateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     $orgId = $organization->id();
     assert($topicId !== NULL && $orgId !== NULL);
     $this->assertTopicInOrganization($topicId, $orgId);
+  }
+
+  /**
+   * Test: Updating to GROUP_MEMBER with organizations only (no group) fails.
+   */
+  public function testUpdateTopicToGroupMemberVisibilityWithOrganizationsOnlyFails(): void {
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+    $organization = $this->createOrganization('Public Organization', 'public');
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Community Topic',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+    $this->assertResults(
+      <<<GQL
+      mutation UpdateTopic(\$input: UpdateTopicInput!) {
+        updateTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'visibility' => 'GROUP_MEMBER',
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $topicId = $topic->id();
+    assert($topicId !== NULL);
+    $nodeStorage->resetCache([$topicId]);
+    $reloaded = $nodeStorage->load($topicId);
+    assert($reloaded instanceof NodeInterface);
+    $this->assertSame('community', $reloaded->get('field_content_visibility')->value);
+    $this->assertTrue($reloaded->get('organizations_group')->isEmpty());
+  }
+
+  /**
+   * Test update to GROUP_MEMBER with flexible group and organization succeeds.
+   */
+  public function testUpdateTopicToGroupMemberVisibilityWithGroupAndOrganization(): void {
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group->save();
+    $organization = $this->createOrganization('Public Organization', 'public');
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Community Topic',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'community',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+    $this->assertResults(
+      <<<GQL
+      mutation UpdateTopic(\$input: UpdateTopicInput!) {
+        updateTopic(input: \$input) {
+          errors
+          topic { id visibility }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'visibility' => 'GROUP_MEMBER',
+          'groups' => [
+            'group' => $group->uuid(),
+            'crosspostedGroups' => [],
+          ],
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => NULL,
+          'topic' => [
+            'id' => $topic->uuid(),
+            'visibility' => 'GROUP_MEMBER',
+          ],
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheableDependency($topic)
+        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheTags(['node:' . $topic->id()])
+    );
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $topicId = $topic->id();
+    assert($topicId !== NULL);
+    $nodeStorage->resetCache([$topicId]);
+    $reloaded = $nodeStorage->load($topicId);
+    assert($reloaded instanceof NodeInterface);
+    $this->assertSame('group', $reloaded->get('field_content_visibility')->value);
+    $relationships = GroupRelationship::loadByEntity($reloaded);
+    $groupIds = array_map(fn ($rel) => $rel->getGroupId(), $relationships);
+    $this->assertContains($group->id(), $groupIds, 'Topic should be linked to the flexible group.');
+    $organizationId = $organization->id();
+    assert($organizationId !== NULL);
+    $this->assertTopicInOrganization($topicId, $organizationId);
+  }
+
+  /**
+   * Clearing groups fails when visibility remains GROUP_MEMBER even with orgs.
+   */
+  public function testUpdateTopicClearGroupsWithOrganizationRemaining(): void {
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group->save();
+    $organization = $this->createOrganization('Public Organization', 'public');
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Group Member Topic',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'group',
+      'field_topic_type' => $topicType->id(),
+      'groups' => [['target_id' => $group->id()]],
+      'organizations_group' => [['target_id' => $organization->id()]],
+      'status' => 1,
+    ]);
+    $topic->save();
+    $group->addRelationship($topic, 'group_node:topic', ['uid' => $topic->getOwnerId()]);
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+      mutation UpdateTopic(\$input: UpdateTopicInput!) {
+        updateTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => NULL,
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $topicId = $topic->id();
+    assert($topicId !== NULL);
+    $nodeStorage->resetCache([$topicId]);
+    $reloaded = $nodeStorage->load($topicId);
+    assert($reloaded instanceof NodeInterface);
+    $this->assertSame('group', $reloaded->get('field_content_visibility')->value);
+    $relationships = GroupRelationship::loadByEntity($reloaded);
+    $groupIds = array_map(fn ($rel) => $rel->getGroupId(), $relationships);
+    $this->assertContains($group->id(), $groupIds, 'Topic should still be linked to the group after failed mutation.');
+    $organizationId = $organization->id();
+    assert($organizationId !== NULL);
+    $this->assertTopicInOrganization($topicId, $organizationId);
+  }
+
+  /**
+   * Removing groups fails when visibility remains GROUP_MEMBER even with orgs.
+   */
+  public function testUpdateTopicRemoveGroupsWithOrganizationsProvidedInSameMutation(): void {
+    if (!static::socialOrganizationExists()) {
+      $this->markTestSkipped('social_organization is not available.');
+    }
+
+    $topicType = Term::create(['vid' => 'topic_types', 'name' => 'Article']);
+    $topicType->save();
+
+    $group = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Test Group',
+      'field_group_allowed_visibility' => ['public', 'group'],
+    ]);
+    $group->save();
+    $organization = $this->createOrganization('Public Organization', 'public');
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Group Member Topic',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'group',
+      'field_topic_type' => $topicType->id(),
+      'groups' => [['target_id' => $group->id()]],
+      'status' => 1,
+    ]);
+    $topic->save();
+    $group->addRelationship($topic, 'group_node:topic', ['uid' => $topic->getOwnerId()]);
+
+    $this->actAsClientCredentialsWithScopes(['topic:write', 'organization:read']);
+    $this->assertResults(
+      <<<GQL
+      mutation UpdateTopic(\$input: UpdateTopicInput!) {
+        updateTopic(input: \$input) {
+          errors
+          topic { id }
+        }
+      }
+      GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => NULL,
+          'organizations' => [
+            'organization' => $organization->uuid(),
+            'crosspostedOrganizations' => [],
+          ],
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['GROUP_REQUIRED_FOR_GROUP_VISIBILITY'],
+          'topic' => NULL,
+        ],
+      ],
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $topicId = $topic->id();
+    assert($topicId !== NULL);
+    $nodeStorage->resetCache([$topicId]);
+    $reloaded = $nodeStorage->load($topicId);
+    assert($reloaded instanceof NodeInterface);
+    $this->assertSame('group', $reloaded->get('field_content_visibility')->value);
+    $relationships = GroupRelationship::loadByEntity($reloaded);
+    $groupIds = array_map(fn ($rel) => $rel->getGroupId(), $relationships);
+    $this->assertContains($group->id(), $groupIds, 'Topic should still be linked to the group after failed mutation.');
+    $this->assertTopicNotInAnyOrganization($topicId);
   }
 
   /**
