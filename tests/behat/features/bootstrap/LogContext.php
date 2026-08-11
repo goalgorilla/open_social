@@ -3,24 +3,40 @@
 namespace Drupal\social\Behat;
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\AfterStepScope;
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Drupal\Component\Utility\Xss;
-use Drupal\Core\Database\Query\PagerSelectExtender;
-use Drupal\Core\Database\Query\TableSortExtender;
-use Drupal\Core\Database\StatementWrapperIterator;
-use Drupal\Core\Logger\RfcLogLevel;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\social\Behat\Loki\Client as LokiClient;
+use Drupal\social\Behat\Loki\LogEntry;
 
 /**
  * Ensures that logs are clean at the end of tests.
  *
  * It's possible that tests functionally pass but still signal problems that
- * should be fixed. By enabling the dblog module and checking that there are no
- * notices, warnings or errors generated during the test we improve product
- * stability.
+ * should be fixed. By querying the Loki backend that local/CI environments
+ * ship CMS logs to, and checking that there are no notices, warnings or
+ * errors generated during the test, we improve product stability.
  */
 class LogContext implements Context {
+
+  /**
+   * Our client for the Loki HTTP API.
+   */
+  protected LokiClient $loki;
+
+  /**
+   * The start of the window checked for log problems.
+   *
+   * Reset to "now" every time a database fixture is loaded, mirroring the
+   * previous dblog-based behaviour of truncating the watchdog table at that
+   * point.
+   */
+  protected \DateTimeImmutable $since;
+
+  public function __construct() {
+    $this->loki = new LokiClient();
+    $this->since = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+  }
 
   /**
    * Gets an array of log level labels.
@@ -29,29 +45,28 @@ class LogContext implements Context {
    * logs).
    *
    * @return array<string, string>
-   *   An array of log level labels.
+   *   An array of log level labels, keyed by OTel severity text (i.e.
+   *   Monolog's upper-case level name).
    */
   private static function getLogLevelLabelMap() : array {
     return [
-      RfcLogLevel::NOTICE => 'Notice',
-      RfcLogLevel::WARNING => 'Warning',
-      RfcLogLevel::ERROR => 'Error',
-      RfcLogLevel::CRITICAL => 'Critical Error',
-      RfcLogLevel::ALERT => 'Alert',
-      RfcLogLevel::EMERGENCY => 'Emergency',
+      'NOTICE' => 'Notice',
+      'WARNING' => 'Warning',
+      'ERROR' => 'Error',
+      'CRITICAL' => 'Critical Error',
+      'ALERT' => 'Alert',
+      'EMERGENCY' => 'Emergency',
     ];
   }
 
   /**
-   * Ensure the dblog is enabled and store existing log entry count.
+   * Mark the start of the window checked for log problems.
    *
    * This is triggered by DatabaseContext::triggerOnDatabaseLoaded so it runs
    * every time a database is imported.
    */
   public function onDatabaseLoaded() : void {
-    \Drupal::service('module_installer')->install(['dblog']);
-
-    $this->deleteAllLogMessages();
+    $this->since = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
   }
 
   /**
@@ -63,23 +78,7 @@ class LogContext implements Context {
    * @AfterStep
    */
   public function afterStep(AfterStepScope $scope) : void {
-    $messages = $this->getLogMessages();
-
-    $error_labels = static::getLogLevelLabelMap();
-
-    $problems = [];
-    foreach ($messages as $dblog) {
-      // Ignore debug information and only trigger on errors.
-      if (!isset($error_labels[$dblog->severity])) {
-        continue;
-      }
-
-      if ($this->isIgnoredLogMessage($dblog)) {
-        continue;
-      }
-
-      $problems[] = $error_labels[$dblog->severity] . "(" . $dblog->type . "): " . $this->formatMessage($dblog);
-    }
+    $problems = $this->findProblems();
 
     $problem_count = count($problems);
     if ($problem_count !== 0) {
@@ -88,159 +87,173 @@ class LogContext implements Context {
   }
 
   /**
-   * I should see log message
+   * Give the last step's logs a final chance to reach Loki.
+   *
+   * afterStep() only queries Loki once per step. A problem logged by an
+   * earlier step gets a second chance to surface via the *next* step's
+   * afterStep() call if cms-otel-collector hadn't shipped it yet, but the
+   * scenario's last step has no such follow-up. Wait briefly and check once
+   * more before the scenario ends, so a slow-to-ship problem from that last
+   * step still fails the scenario instead of passing silently.
+   *
+   * @AfterScenario
+   */
+  public function afterScenario(AfterScenarioScope $scope) : void {
+    if (!$scope->getTestResult()->isPassed()) {
+      return;
+    }
+
+    usleep(500_000);
+    $problems = $this->findProblems();
+
+    $problem_count = count($problems);
+    if ($problem_count !== 0) {
+      throw new \Exception("The log showed $problem_count issues raised during this scenario.\n\n" . implode("\n--------------\n", $problems));
+    }
+  }
+
+  /**
+   * Find unexpected log entries logged since the scenario started.
+   *
+   * @return string[]
+   *   Formatted problem descriptions, or an empty array if none were found.
+   */
+  private function findProblems() : array {
+    $error_labels = static::getLogLevelLabelMap();
+
+    $severity_pattern = implode('|', array_keys($error_labels));
+    $entries = $this->loki->query(
+      '{service_name="cms"} | severity_text=~"' . $severity_pattern . '"',
+      $this->since,
+    );
+
+    $problems = [];
+    foreach ($entries as $entry) {
+      if ($this->isIgnoredLogMessage($entry)) {
+        continue;
+      }
+
+      $severity = $entry->getSeverityText();
+      $problems[] = $error_labels[$severity] . "(" . ($entry->getChannel() ?? 'unknown') . "): " . $this->formatMessage($entry);
+    }
+
+    return $problems;
+  }
+
+  /**
+   * I should see log message.
+   *
+   * A message logged by the previous step is not queryable immediately: it
+   * travels php-fpm -> log file -> cms-otel-collector -> Loki before a query
+   * can return it. Poll for a bounded window instead of querying once. The
+   * window is generous on purpose: on a contended CI node the pipeline latency
+   * plus the request that produces the message has exceeded 5 seconds, so a
+   * short window fails scenarios that are otherwise fine. The loop returns as
+   * soon as the message shows up, so the full window only costs time when the
+   * message is genuinely missing.
    *
    * @Then I should see log message :value
    */
   public function iShouldSeeLogMessage($value) {
-    // Query the watchdog directly for this exact message rather than paging
-    // through ::getLogMessages(). The pager there limits results to a single
-    // page, so under a noisy log (e.g. PHP 8.4 deprecations) the asserted
-    // message can be pushed off the first page and missed. A targeted condition
-    // finds it regardless of how many entries exist.
-    //
-    // @todo Revert this back to iterating ::getLogMessages() once the pager is
-    //   removed from that method, as this direct query is only a workaround for
-    //   the paging issue.
-    $log_message_exist = (bool) \Drupal::database()->select('watchdog', 'w')
-      ->condition('w.message', $value)
-      ->countQuery()
-      ->execute()
-      ->fetchField();
+    $deadline = microtime(TRUE) + 30;
+    do {
+      foreach ($this->loki->query('{service_name="cms"}', $this->since) as $entry) {
+        if ($entry->message === $value) {
+          return;
+        }
+      }
+      usleep(250_000);
+    } while (microtime(TRUE) < $deadline);
 
-    if (!$log_message_exist) {
-      throw new \Exception('The log message with value "' . $value . '" was not found in logs.');
-    }
+    throw new \Exception('The log message with value "' . $value . '" was not found in logs.');
   }
 
   /**
    * Drupal can produce a lot of log messages that are not actual problems.
    *
-   * @param \StdClass $row
-   *   The row from the watchdog table.
+   * @param \Drupal\social\Behat\Loki\LogEntry $entry
+   *   The log entry to check.
    *
    * @return bool
    *   Whether to ignore this message.
    */
-  protected function isIgnoredLogMessage($row) : bool {
+  protected function isIgnoredLogMessage(LogEntry $entry) : bool {
+    $channel = $entry->getChannel();
+    $severity = $entry->getSeverityText();
+    $message = $entry->message;
+
     return
       // Ignore notices from the user module since we don't really care about
       // users logging in or being deleted, those conditions are part of test
       // assertions.
-      ($row->type === 'user' && (int) $row->severity === RfcLogLevel::NOTICE)
+      ($channel === 'user' && $severity === 'NOTICE')
       // Ignore notices for the content type since we don't care about content
       // creation (and those should really be INFO anywhere, but that's a Drupal
       // core problem for another day).
-      || ($row->type === 'content' && (int) $row->severity === RfcLogLevel::NOTICE)
+      || ($channel === 'content' && $severity === 'NOTICE')
       // Ignore comments being posted.
-      || ($row->type === 'comment' && (int) $row->severity === RfcLogLevel::NOTICE)
+      || ($channel === 'comment' && $severity === 'NOTICE')
       // Ignore language creation notices.
-      || ($row->type === 'language' && (int) $row->severity === RfcLogLevel::NOTICE && str_contains($row->message, "language has been created"))
+      || ($channel === 'language' && $severity === 'NOTICE' && str_contains($message, "language has been created"))
       // Drupal treats access denied results as warnings but they're actually
       // just part of business as usual.
-      || ($row->type === 'access denied' && (int) $row->severity === RfcLogLevel::WARNING)
+      || ($channel === 'access denied' && $severity === 'WARNING')
       // Ignore group content deletions.
-      || ($row->type === 'group_content' && (int) $row->severity === RfcLogLevel::NOTICE && str_contains($row->message, "deleted"))
+      || ($channel === 'group_content' && $severity === 'NOTICE' && str_contains($message, "deleted"))
       // Ignore block content additions.
-      || ($row->type === 'block_content' && (int) $row->severity === RfcLogLevel::NOTICE)
+      || ($channel === 'block_content' && $severity === 'NOTICE')
       // Ignore page not found warnings since they may be part of tests and
       // should be asserted.
-      || ($row->type === 'page not found' && (int) $row->severity === RfcLogLevel::WARNING)
-      // Ignore an existing bug.
+      || ($channel === 'page not found' && $severity === 'WARNING')
+      // Ignore an existing bug. Monolog interpolates Drupal's log placeholders
+      // before the message reaches Loki, so what used to be checked against
+      // dblog's separate `variables` column is now checked against the
+      // rendered message text instead.
       // @todo https://www.drupal.org/project/social/issues/3319407
-      || ($row->type === 'php' && (int) $row->severity === RfcLogLevel::WARNING && str_contains($row->variables, 'Undefined array key "arguments"') && str_contains($row->variables, "ViewsBulkOperationsBulkForm"))
+      || ($channel === 'php' && $severity === 'WARNING' && str_contains($message, 'Undefined array key "arguments"') && str_contains($message, "ViewsBulkOperationsBulkForm"))
       // Ignore an existing bug.
       // @todo https://www.drupal.org/project/social/issues/3319408
-      || ($row->type === 'search_api' && (int) $row->severity === RfcLogLevel::WARNING && str_contains($row->variables, 'Social Groups') && str_contains($row->variables, "rendered_item"))
+      || ($channel === 'search_api' && $severity === 'WARNING' && str_contains($message, 'Social Groups') && str_contains($message, "rendered_item"))
       // Ignore an existing bug.
       // @todo https://www.drupal.org/project/social/issues/3319409
-      || ($row->type === 'search_api_db' && (int) $row->severity === RfcLogLevel::WARNING && str_contains($row->variables, "field_group_allowed_join_method") && str_contains($row->message, "Unknown field @field: please check (and re-save) the index's fields settings."))
+      || ($channel === 'search_api_db' && $severity === 'WARNING' && str_contains($message, "field_group_allowed_join_method") && str_contains($message, "Unknown field @field: please check (and re-save) the index's fields settings."))
       // Ignore an existing bug.
       // @todo https://www.drupal.org/project/social/issues/3319526
-      || ($row->type === 'activity_send_email_worker' && (int) $row->severity === RfcLogLevel::NOTICE && str_contains($row->message, "The activity was already deleted. We marked it as successful."))
+      || ($channel === 'activity_send_email_worker' && $severity === 'NOTICE' && str_contains($message, "The activity was already deleted. We marked it as successful."))
       // Ignore an existing bug.
       // @todo https://www.drupal.org/project/social/issues/3320117
-      || ($row->type === 'php' && (int) $row->severity === RfcLogLevel::WARNING && (str_contains($row->variables, 'Undefined array key "#comment_display_mode"') || str_contains($row->variables, 'Undefined array key "#comment_type"')))
+      || ($channel === 'php' && $severity === 'WARNING' && (str_contains($message, 'Undefined array key "#comment_display_mode"') || str_contains($message, 'Undefined array key "#comment_type"')))
       // Ignore update notices.
-      || ($row->type === 'update' && (int) $row->severity === RfcLogLevel::NOTICE)
-      // Ignore group type created notice.
-      || ($row->type === 'group' ) && (int)  $row->severity === RfcLogLevel::NOTICE && (str_contains($row->message, 'Added group type %label.'))
-      // Ignore grequest notices.
-      || ($row->type === 'group_relationship' ) && (int)  $row->severity === RfcLogLevel::NOTICE && (str_contains($row->message, '@type: '))
+      || ($channel === 'update' && $severity === 'NOTICE')
+      // Ignore group type created notice. The original check matched the raw,
+      // unsubstituted "Added group type %label." template; the interpolated
+      // message instead reads e.g. "Added group type Marketing Team.", so we
+      // match on the fixed prefix instead.
+      || ($channel === 'group' && $severity === 'NOTICE' && str_starts_with($message, 'Added group type '))
+      // Ignore grequest notices. The original check matched a raw "@type: "
+      // placeholder token that no longer appears verbatim once interpolated,
+      // so (per the "Ignore grequest notices" intent) we ignore all NOTICE
+      // severity group_relationship messages instead.
+      || ($channel === 'group_relationship' && $severity === 'NOTICE')
       ;
   }
 
   /**
-   * Format a message with variables provided.
+   * Prepare a log message for inclusion in a Behat failure.
    *
-   * Modified from DbLogcontroller::formatMessage.
+   * Unlike dblog, Loki entries carry the message with any Drupal log
+   * placeholders (e.g. "%type", "@message") already interpolated by
+   * drupal/monolog's MessagePlaceholderProcessor, so no further substitution
+   * is needed here.
    *
-   * @param \StdClass $row
-   *   The watchdog database row.
+   * @param \Drupal\social\Behat\Loki\LogEntry $entry
+   *   The log entry to format.
    *
-   * @return string|null
-   *   A formatted string or NULL if message or variable were missing.
+   * @return string
+   *   The formatted message.
    */
-  private function formatMessage($row) : ?string {
-    if (!isset($row->message, $row->variables)) {
-      return NULL;
-    }
-
-    // allowed_classes TRUE: dblog variables can contain serialized objects (e.g. exceptions); we allow classes so Behat can format log messages correctly.
-    $variables = @unserialize($row->variables, ['allowed_classes' => TRUE]);
-
-    // Messages without variables or user specified text.
-    if ($variables === NULL) {
-      return Xss::filterAdmin($row->message);
-    }
-
-    if (!is_array($variables)) {
-      return 'Log data is corrupted and cannot be unserialized: ' . Xss::filterAdmin($row->message);
-    }
-
-    // Format message with injected variables. We don't do translation in tests.
-    // @phpcs:ignore Drupal.Semantics.FunctionT.NotLiteralString
-    return (string) (new TranslatableMarkup(Xss::filterAdmin($row->message), $variables, [], \Drupal::service('string_translation')));
-  }
-
-  /**
-   * Clear out the watchdog table.
-   */
-  private function deleteAllLogMessages() : void {
-    \Drupal::database()->truncate('watchdog')->execute();
-  }
-
-  /**
-   * Get the messages stored in the watchdog table.
-   *
-   * We must query for this manually taking inspiration from the DbLogController
-   * because there's no service that provides proper non-database access.
-   *
-   * @return \Drupal\Core\Database\StatementWrapperIterator
-   *   The result of the log message query.
-   */
-  private function getLogMessages() : StatementWrapperIterator {
-    // @todo Remove the pager entirely so the after-step check reports on all
-    //   log entries instead of just the first page. The pager silently hides
-    //   problems that land beyond the first page (made worse by PHP 8.4's
-    //   deprecation noise), which is why ::iShouldSeeLogMessage() queries the
-    //   watchdog directly instead of relying on this method.
-    $query = \Drupal::database()->select('watchdog', 'w')
-      ->extend(PagerSelectExtender::class)
-      ->extend(TableSortExtender::class);
-    $query->fields('w', [
-      'wid',
-      'uid',
-      'severity',
-      'type',
-      'timestamp',
-      'message',
-      'variables',
-      'link',
-    ]);
-    $query->leftJoin('users_field_data', 'ufd', '[w].[uid] = [ufd].[uid]');
-
-    return $query->execute();
+  private function formatMessage(LogEntry $entry) : string {
+    return Xss::filterAdmin($entry->message);
   }
 
 }
