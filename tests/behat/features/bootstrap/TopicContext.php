@@ -8,10 +8,8 @@ use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Plugin\Field\FieldType\CommentItem;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
-use Drupal\group\Entity\Group;
 use Drupal\node\Entity\Node;
 use Symfony\Component\Yaml\Yaml;
 
@@ -213,30 +211,6 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
-   * Create multiple topics at the start of a test.
-   *
-   * Creates topics provided in the form:
-   * | title    | body            | field_content_visibility | field_topic_type | language  | status |
-   * | My title | My description  | public                   | News             | en        | 1         |
-   * | ...      | ...             | ...                      | ...              | ...       |
-   *
-   * @Given topics authored by current user:
-   */
-  public function createTopicsAuthoredByCurrentUser(TableNode $topicsTable) : void {
-    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-    foreach ($topicsTable->getHash() as $topicHash) {
-      if (isset($topicHash['author'])) {
-        throw new \RuntimeException("Can not specify an author when using the 'topics authored by current user:' step, use 'topics:' instead.");
-      }
-
-      $topicHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
-
-      $topic = $this->topicCreate($topicHash);
-      $this->created[] = $topic->id();
-    }
-  }
-
-  /**
    * Fill out the topic creation form and submit.
    *
    * Example: When I create a topic using its creation page:
@@ -414,59 +388,6 @@ class TopicContext extends RawMinkContext {
     }
 
     $this->minkContext->assertPageContainsText("Create a topic");
-  }
-
-  /**
-   * Create a topic.
-   *
-   * @return \Drupal\node\Entity\Node
-   *   The topic values.
-   */
-  private function topicCreate($topic) : Node {
-    if (!isset($topic['author'])) {
-      throw new \RuntimeException("You must specify an `author` when creating a topic. Specify the `author` field if using `@Given topics:` or use one of `@Given topics with non-anonymous author:` or `@Given topics authored by current user:` instead.");
-    }
-
-    $account = user_load_by_name($topic['author']);
-    if ($account === FALSE) {
-      throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $topic['author']));
-    }
-    $topic['uid'] = $account->id();
-    unset($topic['author']);
-
-    if (isset($topic['group'])) {
-      $group_id = $this->getNewestGroupIdFromTitle($topic['group']);
-      if ($group_id === NULL) {
-        throw new \RuntimeException("Group '{$topic['group']}' does not exist.");
-      }
-      unset($topic['group']);
-    }
-
-    $topic['type'] = 'topic';
-
-    $this->validateEntityFields("node", $topic);
-    $topic_object = Node::create($topic);
-    $violations = $topic_object->validate();
-    if ($violations->count() !== 0) {
-      throw new \RuntimeException("The topic you tried to create is invalid: $violations");
-    }
-    if (!$topic_object->body->format) {
-      $topic_object->body->format = 'basic_html';
-    }
-    $topic_object->save();
-
-    // Adding to group usually happens in a form handler so for initialization
-    // we must do that ourselves.
-    if (isset($group_id)) {
-      try {
-        Group::load($group_id)?->addRelationship($topic_object, "group_node:topic");
-      }
-      catch (PluginNotFoundException $_) {
-        throw new \RuntimeException("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
-      }
-    }
-
-    return $topic_object;
   }
 
   /**

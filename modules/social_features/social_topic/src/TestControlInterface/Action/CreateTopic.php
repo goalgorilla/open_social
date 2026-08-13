@@ -9,6 +9,7 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\group\Entity\Group;
 use Drupal\node\Entity\Node;
@@ -48,6 +49,7 @@ final class CreateTopic {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountSwitcherInterface $accountSwitcher,
+    private readonly AccountProxyInterface $currentUser,
   ) {
   }
 
@@ -201,6 +203,65 @@ final class CreateTopic {
   }
 
   /**
+   * Creates multiple topics authored by the request's current user.
+   *
+   * Proof-of-concept consumer for the Test Control Interface's current-user
+   * mechanism: the request's current user is switched in automatically by
+   * TCI framework plumbing before this operation runs, so `$this->currentUser`
+   * is Drupal's normal current-user API — no bespoke service to inject. The
+   * author here comes from that current user, not from an explicit `author`
+   * parameter, which stays reserved for "created by Y on behalf of X" (see
+   * `topics with non-anonymous author:` above). An anonymous current user is
+   * legitimate here (matches the pre-TCI `TopicContext` behavior it
+   * replaces) and falls back to a user named `anonymous`, same as `topics
+   * with non-anonymous author:` requires a real account to attribute
+   * content to.
+   *
+   * @param list<CreateTopicRequest> $body
+   *   The list of topics to create.
+   *
+   * @return \Drupal\social_topic\TestControlInterface\Success\TopicsBulkCreatedSuccess
+   *   The operation result.
+   */
+  #[Operation(
+    id: 'topics_create_by_current_user',
+    patterns: ['topics authored by current user:'],
+    type: OperationType::Write,
+  )]
+  public function createTopicsAuthoredByCurrentUser(
+    #[Example([
+      [
+        'title' => 'An awesome title',
+        'body' => 'B',
+        'field_content_visibility' => 'public',
+        'field_topic_type' => 'News',
+        'langcode' => 'en',
+        'status' => TRUE,
+      ],
+    ])]
+    array $body,
+  ): TopicsBulkCreatedSuccess {
+    if ($body === []) {
+      throw new BadRequestHttpException('No topic rows in request body; refusing to return success with zero topics created.');
+    }
+    foreach ($body as $topic) {
+      if ($topic->author !== NULL) {
+        throw new BadRequestHttpException("Can not specify an author when using the 'topics authored by current user:' step, use 'topics:' instead.");
+      }
+    }
+
+    $authorName = $this->currentUser->isAuthenticated() ? $this->currentUser->getAccountName() : 'anonymous';
+
+    $nids = [];
+    foreach ($body as $topic) {
+      $row = $topic->withAuthor($authorName)->toRowArray();
+      $nids[] = (int) $this->createTopicFromRow($row)->id();
+    }
+
+    return new TopicsBulkCreatedSuccess(nids: $nids);
+  }
+
+  /**
    * Create a topic from a row.
    *
    * @param array<string, mixed> $topic
@@ -231,7 +292,7 @@ final class CreateTopic {
 
     // The `role_visibility` field and the `visibility_by_role` option on
     // `field_content_visibility` compute their allowed values from the
-    // acting user (see
+    // current user (see
     // social_role_visibility_allowed_role_visibility_options()), not from the
     // entity being created. The TCI endpoint is called unauthenticated, so
     // without impersonating the topic's author here, those allowed-value lists
