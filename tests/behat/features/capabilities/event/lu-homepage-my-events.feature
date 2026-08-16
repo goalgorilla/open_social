@@ -14,15 +14,15 @@ Feature: See my upcoming events
     And I should see "My upcoming events"
     And I should see "No upcoming events"
 
-    And I am viewing my event:
-      | title            | My Behat Event created |
-      | field_event_date | +8 days                |
-      | status           | 1                      |
+    And events authored by current user:
+      | title                  | body                  | field_event_date | status | field_content_visibility |
+      | My Behat Event created | Body description text | +8 days          | 1      | public                   |
+    And I am viewing the event "My Behat Event created"
 
-    And I am viewing an event:
-      | title            | My Behat Event enrolled |
-      | field_event_date | +8 days                 |
-      | status           | 1                       |
+    And events with non-anonymous author:
+      | title                   | body                  | field_event_date | status | field_content_visibility |
+      | My Behat Event enrolled | Body description text | +8 days          | 1      | public                   |
+    And I am viewing the event "My Behat Event enrolled"
 
     And I press the "Enroll" button
     And I wait for AJAX to finish

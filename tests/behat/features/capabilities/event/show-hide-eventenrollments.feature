@@ -7,14 +7,10 @@ Feature: Show/hide enrollments on Event
   @verified @security
   Scenario: Event author can successfully see hidden enrollments
     Given I am logged in as an "verified"
-    And I am viewing my event:
-      | title                    | My Behat Event created |
-      | body                     | this is description    |
-      | field_event_date         | +8 days                |
-      | field_event_date_end     | +9 days                |
-      | status                   | 1                      |
-      | field_content_visibility | public                 |
-      | field_hide_enrollments   | 1                      |
+    And events authored by current user:
+      | title                  | body                | field_event_date | field_event_date_end | status | field_content_visibility | field_hide_enrollments |
+      | My Behat Event created | this is description | +8 days          | +9 days              | 1      | public                   | 1                      |
+    And I am viewing the event "My Behat Event created"
 
     When I click "Manage enrollments"
 
@@ -28,14 +24,10 @@ Feature: Show/hide enrollments on Event
       | event_visitor  | event_visitor  | event_visitor@example.com       | 1      | verified     |
 
     And I am logged in as "event_creator"
-    And I am viewing my event:
-      | title                    | My Behat Event created |
-      | body                     | this is description    |
-      | field_event_date         | +8 days                |
-      | field_event_date_end     | +9 days                |
-      | status                   | 1                      |
-      | field_content_visibility | public                 |
-      | field_hide_enrollments   | 1                      |
+    And events authored by current user:
+      | title                  | body                | field_event_date | field_event_date_end | status | field_content_visibility | field_hide_enrollments |
+      | My Behat Event created | this is description | +8 days          | +9 days              | 1      | public                   | 1                      |
+    And I am viewing the event "My Behat Event created"
 
     And I am logged in as "event_visitor"
     And I open the "event" node with title "My Behat Event created"

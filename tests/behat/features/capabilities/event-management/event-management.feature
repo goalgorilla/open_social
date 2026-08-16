@@ -111,13 +111,10 @@ Feature: Event Management
     And I press "Add language"
     And I wait for AJAX to finish
 
-    And I am viewing my event:
-      | title                    | My awesome event |
-      | body                     | Body text        |
-      | field_event_date         | +7 days          |
-      | field_event_date_end     | +7 days          |
-      | status                   | 1                |
-      | field_content_visibility | public           |
+    And events authored by current user:
+      | title            | body      | field_event_date | field_event_date_end | status | field_content_visibility |
+      | My awesome event | Body text | +7 days          | +7 days              | 1      | public                   |
+    And I am viewing the event "My awesome event"
 
     And users:
       | name         | pass            | mail                        | status | roles        |

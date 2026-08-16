@@ -78,11 +78,10 @@ Feature: Enroll for an event without an account
   Scenario: Control the site-wide default of AN enrollment
     Given I enable the module "social_event_an_enroll"
     And I am an anonymous user
-    And I am viewing an event:
-      | title                    | No guest enrollment |
-      | field_event_date         | +3 days             |
-      | field_event_date_end     | +4 days             |
-      | field_content_visibility | public              |
+    And events with non-anonymous author:
+      | title               | body                  | field_event_date | field_event_date_end | field_content_visibility |
+      | No guest enrollment | Body description text | +3 days          | +4 days              | public                   |
+    And I am viewing the event "No guest enrollment"
     And I press "Enroll"
     And I should not see "Enroll as guest"
 
@@ -126,12 +125,10 @@ Feature: Enroll for an event without an account
       | Dude (Dutch)   | event_user_2@example.com | 1      |             |
 
     And I am logged in as an "authenticated user"
-    And I am viewing my event:
-      | title                    | My Behat Event |
-      | field_event_date         | +8 days        |
-      | status                   | 1              |
-      | field_content_visibility | public         |
-      | langcode                 | und            |
+    And events authored by current user:
+      | title          | body                  | field_event_date | status | field_content_visibility | langcode |
+      | My Behat Event | Body description text | +8 days          | 1      | public                   | und      |
+    And I am viewing the event "My Behat Event"
 
     # Add Dutch language.
     When I am logged in as an "administrator"

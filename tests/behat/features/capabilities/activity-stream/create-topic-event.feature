@@ -12,16 +12,15 @@ Feature: See and get notified when content is created
       | SeeUser    | 1      | SeeUser     | verified |
     And I am logged in as "CreateUser"
     And I am on the homepage
-    And I am viewing my event:
-      | title                    | My Behat Event created |
-      | field_event_date         | +8 days                |
-      | status                   | 1                      |
-      | field_content_visibility | public                 |
+    And events authored by current user:
+      | title                  | body                  | field_event_date | status | field_content_visibility |
+      | My Behat Event created | Body description text | +8 days          | 1      | public                   |
+    And I am viewing the event "My Behat Event created"
 
-    And I am viewing my topic:
-      | title                    | My Behat Topic created |
-      | status                   | 1                      |
-      | field_content_visibility | public                 |
+    And topics authored by current user:
+      | title                  | body                  | field_content_visibility | field_topic_type | status |
+      | My Behat Topic created | Body description text | public                   | News             | 1      |
+    And I am viewing the topic "My Behat Topic created"
 
     When I wait for the queue to be empty
     And I go to "user"
@@ -67,16 +66,15 @@ Feature: See and get notified when content is created
       | SeeUser     | 1      | SeeUser     | verified |
     And I am logged in as "CreateUser"
     And I am on the homepage
-    And I am viewing my event:
-      | title                    | My Behat Event created |
-      | field_event_date         | +8 days                |
-      | status                   | 1                      |
-      | field_content_visibility | community              |
+    And events authored by current user:
+      | title                  | body                  | field_event_date | status | field_content_visibility |
+      | My Behat Event created | Body description text | +8 days          | 1      | community                |
+    And I am viewing the event "My Behat Event created"
 
-    And I am viewing my topic:
-      | title                    | My Behat Topic created |
-      | status                   | 1                      |
-      | field_content_visibility | community              |
+    And topics authored by current user:
+      | title                  | body                  | field_content_visibility | field_topic_type | status |
+      | My Behat Topic created | Body description text | community                | News             | 1      |
+    And I am viewing the topic "My Behat Topic created"
 
     When I wait for the queue to be empty
     And I go to "user"
