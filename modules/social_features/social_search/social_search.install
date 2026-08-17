@@ -198,9 +198,9 @@ function social_search_update_13005(): string {
 }
 
 /**
- * Regenerate Social Blue color module CSS files from current color settings.
+ * Regenerates Social Blue color module CSS from the current theme template.
  */
-function social_search_update_26000(): void {
+function _social_search_regenerate_socialblue_color_css(): void {
   if (!\Drupal::moduleHandler()->moduleExists('color')) {
     return;
   }
@@ -237,4 +237,21 @@ function social_search_update_26000(): void {
   if (!$theme_settings->isNew()) {
     $theme_settings->save();
   }
+}
+
+/**
+ * Regenerate Social Blue color module CSS files from current color settings.
+ *
+ * Superseded by social_search_update_26001() which runs after.
+ * Kept as a no-op so sites do not regenerate twice.
+ */
+function social_search_update_26000(): void {
+  // Intentionally empty.
+}
+
+/**
+ * Regenerate Social Blue color CSS after PROD-35691 navbar brand.css changes.
+ */
+function social_search_update_26001(): void {
+  _social_search_regenerate_socialblue_color_css();
 }
