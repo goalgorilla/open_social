@@ -161,9 +161,10 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
         /** @var \DOMElement $node */
         $url = $node->getAttribute('data-embed-url');
 
-        // Abort if the URL is not whitelisted,
-        // or if achieved max_embed_per_content.
-        if (!$this->embedHelper->isWhitelisted($url) || $count > $embed_settings->get('max_embeds_per_content')) {
+        // Abort if achieved max_embed_per_content. URLs of providers we do not
+        // embed are refused by the URL embed helper itself, and fall back to
+        // the plain link below.
+        if ($count > $embed_settings->get('max_embeds_per_content')) {
           $this->replaceNodeContent($node, _filter_url($url, $this));
           continue;
         }
@@ -171,6 +172,11 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
         $url_output = '';
         try {
           $info = $this->socialUrlEmbedHelper->getUrlInfo($url);
+          if ($info === NULL) {
+            $this->replaceNodeContent($node, _filter_url($url, $this));
+            continue;
+          }
+
           /** @var \Drupal\user\Entity\User $user */
           $user = $this->currentUser->isAnonymous() ? NULL : User::load($this->currentUser->id());
           if (!empty($info['code'])
@@ -187,7 +193,9 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
             $url_output = $this->embedHelper->getPlaceholderMarkupForProvider($info['providerName'], $url);
           }
           else {
-            $url_output = $info['code'] ?? $url;
+            // Without an embed code there is nothing to show, the block below
+            // then falls back to the URL as a plain link.
+            $url_output = $info['code'] ?? '';
           }
         }
         catch (\Exception $e) {
@@ -201,7 +209,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
           if ($url_output == NULL || $url_output == '') {
             // The reason of using _filter_url() function here is to make
             // sure that the maximum URL cases e.g., emails are covered.
-            $url_output = UrlHelper::isValid($url) ? _filter_url($url, $this) : $url;
+            $url_output = UrlHelper::isValid($url) ? _filter_url($url, $this) : Html::escape($url);
           }
         }
 

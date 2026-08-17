@@ -4,6 +4,7 @@ namespace Drupal\social_embed;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\social_embed\Service\SocialEmbedHelper;
 use Drupal\url_embed\UrlEmbedInterface;
 
 /**
@@ -27,28 +28,36 @@ class SocialUrlEmbedHelper implements SocialUrlEmbedHelperInterface {
   protected TimeInterface $time;
 
   /**
+   * The social embed helper service.
+   */
+  protected SocialEmbedHelper $embedHelper;
+
+  /**
    * Constructs a new SocialUrlEmbedHelper object.
    */
   public function __construct(
     UrlEmbedInterface $urlEmbed,
     CacheBackendInterface $cacheBackend,
     TimeInterface $time,
+    SocialEmbedHelper $embedHelper,
   ) {
     $this->urlEmbed = $urlEmbed;
     $this->cacheBackend = $cacheBackend;
     $this->time = $time;
+    $this->embedHelper = $embedHelper;
   }
 
   /**
-   * Get the embed info for a URL.
-   *
-   * @param string $url
-   *   The URL to embed.
-   *
-   * @return array|null
-   *   Embed metadata or null.
+   * {@inheritdoc}
    */
   public function getUrlInfo(string $url): ?array {
+    // Fetching the URL happens here, so this is the one place that decides
+    // whether it may be requested at all. Guarding it here rather than in each
+    // caller means a new caller can not forget the check.
+    if (!$this->embedHelper->isWhitelisted($url)) {
+      return NULL;
+    }
+
     $data = [];
     $keys = [
       'code',

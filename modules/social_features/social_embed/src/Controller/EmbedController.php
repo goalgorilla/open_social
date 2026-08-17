@@ -10,7 +10,6 @@ use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
-use Drupal\social_embed\Service\SocialEmbedHelper;
 use Drupal\social_embed\SocialUrlEmbedHelperInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,24 +32,16 @@ class EmbedController extends ControllerBase {
   protected FloodInterface $flood;
 
   /**
-   * The social embed helper service.
-   */
-  protected SocialEmbedHelper $embedHelper;
-
-  /**
    * The EmbedController constructor.
    *
    * @param \Drupal\social_embed\SocialUrlEmbedHelperInterface $social_url_embed_helper
    *   The url embed services.
    * @param \Drupal\Core\Flood\FloodInterface $flood
    *   The flood service.
-   * @param \Drupal\social_embed\Service\SocialEmbedHelper $embed_helper
-   *   The social embed helper service.
    */
-  public function __construct(SocialUrlEmbedHelperInterface $social_url_embed_helper, FloodInterface $flood, SocialEmbedHelper $embed_helper) {
+  public function __construct(SocialUrlEmbedHelperInterface $social_url_embed_helper, FloodInterface $flood) {
     $this->socialUrlEmbedHelper = $social_url_embed_helper;
     $this->flood = $flood;
-    $this->embedHelper = $embed_helper;
   }
 
   /**
@@ -64,8 +55,7 @@ class EmbedController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('social_embed.url_embed_helper'),
-      $container->get('flood'),
-      $container->get('social_embed.helper_service')
+      $container->get('flood')
     );
   }
 
@@ -102,11 +92,6 @@ class EmbedController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
-    // Only fetch providers we embed, so this can not request any address.
-    if (!$this->embedHelper->isWhitelisted($url)) {
-      throw new NotFoundHttpException();
-    }
-
     // The maximum number of times each user can do this event per time window.
     $retries = Settings::get('social_embed_flood_retries', 50);
     // Number of seconds in the time window for embed.
@@ -122,7 +107,14 @@ class EmbedController extends ControllerBase {
     $selector = "#social-embed-iframe-$uuid";
     // If the content is embeddable then return the iFrame.
     $info = $this->socialUrlEmbedHelper->getUrlInfo($url);
-    if ($info && !empty($iframe = $info['code'])) {
+
+    // Only providers we embed are fetched, so anything else is not a URL this
+    // endpoint knows about.
+    if ($info === NULL) {
+      throw new NotFoundHttpException();
+    }
+
+    if (!empty($iframe = $info['code'])) {
       $provider = strtolower($info['providerName']);
       $content = "<div id='social-embed-iframe-$uuid' class='social-embed-iframe-$provider'><p>$iframe</p></div>";
     }
