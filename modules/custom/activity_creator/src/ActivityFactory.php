@@ -527,11 +527,16 @@ class ActivityFactory extends ControllerBase {
    *   Message object we get the text for.
    * @param string $langcode
    *   The language code we try to get the translation for.
+   * @param string|null $view_mode
+   *   (optional) The view mode the activity is being rendered in, or NULL when
+   *   the text is not rendered for an on-platform activity (email, digest, push
+   *   or creation time). Passed on to the token replacement so that consumers
+   *   can decide per channel what they emit.
    *
    * @return array
    *   Message text array.
    */
-  public function getMessageText(Message $message, $langcode = '') {
+  public function getMessageText(Message $message, $langcode = '', ?string $view_mode = NULL) {
     /** @var \Drupal\message\Entity\MessageTemplate $message_template */
     $message_template = $message->getTemplate();
 
@@ -560,6 +565,7 @@ class ActivityFactory extends ControllerBase {
       $options = [
         'langcode' => !empty($langcode) ? $langcode : '',
         'clear' => !empty($token_options['clear']),
+        'activity_view_mode' => $view_mode,
       ];
       // Token should be processed.
       $output = $this->processTokens($output, $options, $message);
@@ -675,6 +681,10 @@ class ActivityFactory extends ControllerBase {
    *      array of token replacements after they are generated.
    *    - clear: A boolean flag indicating that tokens should be removed from
    *      the final text if no replacement value can be generated.
+   *    - activity_view_mode: The view mode the activity is being rendered in,
+   *      or NULL when the text is not rendered for an on-platform activity.
+   *      Token providers that may only emit on the streams gate on it, so NULL
+   *      has to mean "deny" for them.
    *   This will be passed to \Drupal\Core\Utility\Token::replace().
    * @param \Drupal\message\Entity\Message $message
    *   Message object.

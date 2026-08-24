@@ -43,6 +43,12 @@ services:
     class: Drupal\social_profile\Service\SocialProfilePreviewHelper
     arguments: ['@config.factory', '@theme.manager', '@module_handler']
 
+  # Alias by class name so the affiliation display service can be autowired.
+  Drupal\social_profile\GroupAffiliation: '@social_profile.group_affiliation'
+
+  Drupal\social_profile\Service\AffiliationDisplay:
+    autowire: true
+
   social_profile.profile_affiliatable_type_resolver:
     class: Drupal\social_profile\GraphQL\ProfileAffiliatableTypeResolver
     arguments:

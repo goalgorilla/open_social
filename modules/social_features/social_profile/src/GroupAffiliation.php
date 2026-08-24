@@ -78,9 +78,15 @@ class GroupAffiliation {
    * This is status for group affiliation part only, which is automatically set
    * based on condition below. This status is used to show/hide the group
    * affiliation field in user profile. Group affiliation can not exist without
-   * affiliation feature enabled. Affiliation feature without group affiliation
-   * enabled means that users will be able to use non-platform affiliation
-   * without group affiliations.
+   * affiliation feature enabled.
+   *
+   * When no group type has affiliation enabled, a non-platform affiliation can
+   * still be stored on the profile and stays readable through the data API
+   * (SCIM, GraphQL, the CSV export and the EDA), but it is no longer displayed
+   * anywhere on the platform: with the feature switched off for every group
+   * type it is off for display as a whole, non-platform affiliations included.
+   *
+   * @see \Drupal\social_profile\Service\AffiliationDisplay::getDisplayableAffiliation()
    *
    * Condition:
    *  - There should be at least one group type affiliation candidate enabled.

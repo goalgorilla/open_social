@@ -21,7 +21,6 @@ use Drupal\node\Entity\Node;
 use Drupal\social_group\GroupStatistics;
 use Drupal\social_post\Entity\Post;
 use Drupal\user\Entity\User;
-use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 
 /**
  * Helper functions for replacing the tokens in messages.
@@ -280,8 +279,6 @@ class EmailTokenServices {
       '#profile_name' => $user->getDisplayName(),
       '#profile_home' => Url::fromRoute('entity.user.canonical', ['user' => $user->id()]),
       '#profile_image' => $image_url ?? NULL,
-      '#profile_function' => $profile instanceof ProfileAffiliationInterface ? $profile->getPrimaryAffiliationFunction() : '',
-      '#profile_organization' => $profile instanceof ProfileAffiliationInterface ? $profile->getPrimaryAffiliationName() : '',
       '#profile_class' => $this->moduleHandler->moduleExists('lazy') ? $this->config->get('lazy.settings')->get('skipClass') : '',
     ];
 

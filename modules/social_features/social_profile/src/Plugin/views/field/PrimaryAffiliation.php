@@ -2,13 +2,12 @@
 
 namespace Drupal\social_profile\Plugin\views\field;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Link;
-use Drupal\Core\Url;
-use Drupal\group\Entity\GroupInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_profile\GroupAffiliation;
+use Drupal\social_profile\Service\AffiliationDisplay;
 use Drupal\user\UserInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
@@ -34,15 +33,15 @@ class PrimaryAffiliation extends FieldPluginBase {
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
-   * @param \Drupal\social_profile\GroupAffiliation $group_affiliation
-   *   The group affiliation service.
+   * @param \Drupal\social_profile\Service\AffiliationDisplay $affiliation_display
+   *   The affiliation display service.
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
     protected EntityTypeManagerInterface $entity_type_manager,
-    protected GroupAffiliation $group_affiliation,
+    protected AffiliationDisplay $affiliation_display,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -56,7 +55,7 @@ class PrimaryAffiliation extends FieldPluginBase {
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('social_profile.group_affiliation'),
+      $container->get(AffiliationDisplay::class),
     );
   }
 
@@ -70,48 +69,27 @@ class PrimaryAffiliation extends FieldPluginBase {
    */
   public function render(ResultRow $values) {
     // Check if we have a relationship of group user entity.
-    if (isset($values->_relationship_entities['gc__user'])) {
-      $user = $values->_relationship_entities['gc__user'];
-      if ($user instanceof UserInterface) {
-        // Check if the affiliation feature is enabled.
-        $affiliation_enabled = $this->group_affiliation->isAffiliationFeatureEnabled();
-
-        if ($affiliation_enabled) {
-          // Get primary affiliation from profile.
-          $profile = $this->getUserProfile($user);
-          if ($profile instanceof ProfileAffiliationInterface) {
-            $affiliation = $profile->getPrimaryAffiliation();
-            if (!empty($affiliation['affiliation_name'])) {
-              $affiliation_name = $affiliation['affiliation_name'];
-              $affiliation_type = $affiliation['affiliation_type'] ?? '';
-
-              // If it's not a non-platform affiliation (i.e., it's a platform
-              // affiliation), make it a link to the group.
-              if ($affiliation_type !== 'External') {
-                // Get the group from the profile field.
-                if (
-                  $profile->hasField(GroupAffiliation::AFFILIATION_FIELD_NAME) &&
-                  !$profile->get(GroupAffiliation::AFFILIATION_FIELD_NAME)->isEmpty()
-                ) {
-                  $group = $profile->get(GroupAffiliation::AFFILIATION_FIELD_NAME)->entity;
-                  if ($group instanceof GroupInterface) {
-                    $url = Url::fromRoute('entity.group.canonical', ['group' => $group->id()]);
-                    $link = Link::fromTextAndUrl($affiliation_name, $url);
-                    $link_renderable = $link->toRenderable();
-                    return $this->getRenderer()->render($link_renderable);
-                  }
-                }
-              }
-
-              // For non-platform affiliations or if a group is not available,
-              // return plain text.
-              return $affiliation_name;
-            }
-          }
-        }
-      }
+    if (!isset($values->_relationship_entities['gc__user'])) {
+      return '';
     }
-    return '';
+
+    $user = $values->_relationship_entities['gc__user'];
+    if (!$user instanceof UserInterface) {
+      return '';
+    }
+
+    $profile = $this->getUserProfile($user);
+    if (!$profile instanceof ProfileAffiliationInterface) {
+      return '';
+    }
+
+    // Rendering an empty build still bubbles the metadata into the view, which
+    // matters: hiding the affiliation is as viewer specific as showing it.
+    $cacheability = new CacheableMetadata();
+    $build = $this->affiliation_display->buildLabel($profile, $cacheability);
+    $cacheability->applyTo($build);
+
+    return $this->getRenderer()->render($build);
   }
 
   /**

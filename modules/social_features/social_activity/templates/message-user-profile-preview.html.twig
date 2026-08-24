@@ -6,15 +6,5 @@
     <span class="teaser--small__title">
       {{ profile_name }}
     </span>
-
-    {% if profile_function or profile_organization %}
-      <div class="list-item__text--small">
-        {% if profile_organization %}
-          {{ '@function @ @organization'|t({'@function': profile_function, '@organization': profile_organization}) }}
-        {% else %}
-          {{ profile_function }}
-        {% endif %}
-      </div>
-    {% endif %}
   </span>
 </div>

@@ -14,6 +14,7 @@ use Drupal\Core\Site\Settings;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
+use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
@@ -687,4 +688,121 @@ function social_profile_update_250013(): string {
   $updater = \Drupal::service('update_helper.updater');
   $updater->executeUpdate('social_profile', __FUNCTION__);
   return $updater->logger()->output();
+}
+
+/**
+ * Add the primary affiliation token to the activity stream message templates.
+ */
+function social_profile_update_260001(): string {
+  // The affiliation used to be glued onto the author's display name by a token
+  // alter, which fed every channel at once. It is a template level token now,
+  // so the templates that render an on-platform stream have to carry it.
+  // Keyed by the token prefix the template's author link is built from.
+  // Templates shipped outside this profile are listed too, the old alter was
+  // template blind and gave them an affiliation as well. Ones that are not
+  // installed are skipped by the isNew() guard below.
+  $templates = [
+    'author' => [
+      'create_comment_community_node',
+      'create_comment_community_post',
+      'create_comment_group_node',
+      'create_comment_group_post',
+      'create_discussion',
+      'create_discussion_gc',
+      'create_discussion_group',
+      'create_idea_gc',
+      'create_idea_group',
+      'create_mention_comment_stream',
+      'create_mention_post_stream',
+      'create_post_community',
+      'create_post_following_tag',
+      'create_post_group',
+      'create_post_profile_stream',
+      'file_group',
+      'file_stream',
+      'file_version_group',
+      'file_version_stream',
+      'link_group',
+      'link_stream',
+      'media_directory_group',
+      'media_directory_stream',
+      'moved_content_between_groups',
+      'update_node_following_tag',
+      'update_post_following_tag',
+    ],
+    'revision_author' => [
+      'create_book_group',
+      'create_event_community',
+      'create_event_gc',
+      'create_event_group',
+      'create_topic_community',
+      'create_topic_gc',
+      'create_topic_group',
+    ],
+  ];
+
+  $config_factory = \Drupal::configFactory();
+  $language_manager = \Drupal::languageManager();
+  $patched = [];
+  $skipped = [];
+
+  foreach ($templates as $token_prefix => $template_ids) {
+    $search = '[message:' . $token_prefix . ':display-name]</a>';
+    $replace = $search . '[message:' . $token_prefix . ':primary-affiliation:link]';
+
+    foreach ($template_ids as $template_id) {
+      $name = 'message.template.' . $template_id;
+
+      // Translated overrides take precedence over the English config when the
+      // activity text is built, so they have to be patched as well or a
+      // multilingual site shows no affiliation at all.
+      $targets = [$name => $config_factory->getEditable($name)];
+      if ($language_manager instanceof ConfigurableLanguageManagerInterface) {
+        foreach (array_keys($language_manager->getLanguages()) as $langcode) {
+          $targets[$name . ' (' . $langcode . ')'] = $language_manager->getLanguageConfigOverride($langcode, $name);
+        }
+      }
+
+      foreach ($targets as $label => $target) {
+        // Templates shipped in config/optional are absent when their module is
+        // not installed, and not every language has an override. Writing them
+        // would create an empty shell config.
+        if ($target->isNew()) {
+          continue;
+        }
+
+        $text = $target->get('text');
+        $value = $text[0]['value'] ?? NULL;
+        if (!is_string($value) || str_contains($value, $replace)) {
+          // Nothing to patch, or the token is already there. Running this
+          // update a second time ends here.
+          continue;
+        }
+
+        if (!str_contains($value, $search)) {
+          // A locally rewritten template that no longer has the author link
+          // this token attaches to. Reported so support can see it.
+          $skipped[] = $label;
+          continue;
+        }
+
+        // Only the first delta. Delta 1 is the aggregated stream text that is
+        // never rendered, delta 2 is the mail body which must stay clean.
+        $text[0]['value'] = str_replace($search, $replace, $value);
+        $target->set('text', $text)->save();
+        $patched[] = $label;
+      }
+    }
+  }
+
+  $output = sprintf('Added the affiliation token to %d message template(s).', count($patched));
+  if ($skipped !== []) {
+    $output .= sprintf(
+      ' Skipped %d template(s) without the expected author link, they keep showing no affiliation: %s.',
+      count($skipped),
+      implode(', ', $skipped)
+    );
+  }
+
+  return $output;
 }

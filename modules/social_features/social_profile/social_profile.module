@@ -9,6 +9,7 @@ use Drupal\block\Entity\Block;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -32,6 +33,7 @@ use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile\Entity\ProfileAffiliationInterface;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
+use Drupal\social_profile\Service\AffiliationDisplay;
 use Drupal\social_profile\Service\SocialProfileMarkupHelper;
 use Drupal\social_profile\Service\SocialProfilePreviewHelper;
 use Drupal\social_profile\SocialProfileUserFormAlter;
@@ -1321,11 +1323,12 @@ function social_profile_preprocess_node(array &$variables): void {
   $profile = reset($profile);
 
   if ($profile instanceof ProfileAffiliationInterface) {
-    $variables['author_organization'] = $profile->getPrimaryAffiliationName();
-    $variables['#cache']['contexts'][] = 'user';
-    $variables['#cache']['tags'] = Cache::mergeTags(
-      $variables['#cache']['tags'] ?? [],
-      Cache::mergeTags($profile->getCacheTags())
-    );
+    // Route through the display service so the node teaser honours the same
+    // visibility rules as the activity streams do.
+    $cacheability = CacheableMetadata::createFromRenderArray($variables);
+    /** @var \Drupal\social_profile\Service\AffiliationDisplay $affiliation_display */
+    $affiliation_display = \Drupal::service(AffiliationDisplay::class);
+    $variables['author_organization'] = $affiliation_display->getPlainLabel($profile, $cacheability);
+    $cacheability->applyTo($variables);
   }
 }
