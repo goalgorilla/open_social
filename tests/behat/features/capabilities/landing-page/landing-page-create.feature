@@ -10,10 +10,6 @@ Feature: Create Landing Page
     And event content:
       | title          | field_event_date | status | field_content_visibility |
       | Featured Event | +10 minutes      | 1      | public                   |
-    And "topic_types" terms:
-      | name                  |
-      | News                  |
-      | Blog                  |
     And topic content:
       | title            | field_topic_type | status | field_content_visibility |
       | Featured Topic 1 | News             | 1      | public                   |

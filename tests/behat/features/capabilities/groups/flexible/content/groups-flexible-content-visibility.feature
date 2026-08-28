@@ -7,9 +7,6 @@ Feature: Verify that selected group content visibility applies correctly for con
     And groups with non-anonymous owner:
       | label           | field_group_description      | field_flexible_group_visibility | field_group_allowed_visibility  |type            |
       | Flexible group  | Description of Flexible group| public                          | public,community,group          |flexible_group  |
-    And "topic_type" terms:
-      | name    |
-      | Blog    |
     And topics with non-anonymous author:
       | title           | body         | group          | field_content_visibility | field_topic_type |
       | Topic public    | Descriptions | Flexible group | public                   | Blog             |

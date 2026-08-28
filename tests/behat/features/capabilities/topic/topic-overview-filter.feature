@@ -6,10 +6,7 @@ Feature: Topic Overview Filter
 
   @perfect @critical
   Scenario: Successfully filter the topic overview
-    Given "topic_types" terms:
-      | name                  |
-      | News                  |
-    And I am logged in as an "verified"
+    Given I am logged in as an "verified"
 
     When I am on "/all-topics"
 

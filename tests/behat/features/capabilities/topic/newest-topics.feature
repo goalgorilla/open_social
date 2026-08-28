@@ -7,8 +7,6 @@ Feature: See newest topics in the community
   Background:
     Given "topic_types" terms:
       | name          |
-      | Blog          |
-      | News          |
       | Article       |
 
     And "topic" content:
