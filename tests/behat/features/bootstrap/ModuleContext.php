@@ -67,6 +67,9 @@ class ModuleContext extends RawMinkContext {
 
     // @todo This can be removed when we no longer rely on Drupal state.
     $this->drupalContext->assertCacheClear();
+    // Ensure that new installed modules are loaded, can also be removed after
+    // we no longer rely on Drupal state.
+    \Drupal::moduleHandler()->loadAll();
   }
 
   /**

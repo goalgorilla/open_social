@@ -254,6 +254,10 @@ class DatabaseContext implements Context {
     \Drupal::currentUser()->setInitialAccountId(0);
 
     $this->triggerOnDatabaseLoaded();
+
+    // Ensure all modules are loaded in the Behat context since
+    // `drupal_flush_all_caches()` may have unloaded some.
+    \Drupal::moduleHandler()->loadAll();
   }
 
   /**
