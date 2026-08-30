@@ -221,6 +221,13 @@ class DatabaseContext implements Context {
    *
    * Shared by loadDatabase() and unpackArchive() since both replace the
    * database out from under a running Drupal.
+   *
+   * @see \Drupal\social\Behat\ModuleContext::resyncDrupalState()
+   *   Deliberately duplicates part of this sequence for a narrower
+   *   in-process resync after installing or uninstalling a single module
+   *   mid-scenario. If you change something here, check whether that method
+   *   needs the same change (and vice versa) — see the comment there for
+   *   exactly what it skips and why.
    */
   private function resetDrupalState() : void {
     // Drush CR is run because it ensures that all caches are cleared, including
