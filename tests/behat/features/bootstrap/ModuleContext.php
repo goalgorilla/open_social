@@ -5,6 +5,7 @@ namespace Drupal\social\Behat;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\social\Installer\OptionalModuleManager;
+use OpenSocial\Behat\Extension\TestControlInterface\Definition\TciOpenApiSearchEngine;
 
 /**
  * Defines test steps around management of modules.
@@ -58,6 +59,7 @@ class ModuleContext extends RawMinkContext {
   public function iEnableTheModule(string $module) : void {
     $this->testBridge->installModules([$module]);
     $this->resyncDrupalState();
+    TciOpenApiSearchEngine::requestRefresh();
   }
 
   /**
@@ -68,6 +70,7 @@ class ModuleContext extends RawMinkContext {
   public function uninstallModule(string $module) : void {
     $this->testBridge->uninstallModules([$module], FALSE);
     $this->resyncDrupalState();
+    TciOpenApiSearchEngine::requestRefresh();
   }
 
   /**
@@ -78,6 +81,7 @@ class ModuleContext extends RawMinkContext {
   public function uninstallModuleAndDependants(string $module) : void {
     $this->testBridge->uninstallModules([$module], TRUE);
     $this->resyncDrupalState();
+    TciOpenApiSearchEngine::requestRefresh();
   }
 
   /**
