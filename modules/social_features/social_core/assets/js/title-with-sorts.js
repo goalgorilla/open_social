@@ -155,9 +155,12 @@
               self.submitForm(event.target);
             }, delay);
           });
+          // Without this return, search would also get the change listener
+          // below. On a text field, change fires when the user clicks away
+          // and would submit the form a second time.
+          return;
         }
 
-        // Keep change event for select/radio and as fallback for text inputs.
         formElement.addEventListener('change', function (event) {
           self.submitForm(event.target);
         });
