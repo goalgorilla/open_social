@@ -64,6 +64,42 @@ Feature: Items per page limit on the Manage members overview page
       | Flexible group  | member25 |
       | Flexible group  | member26 |
 
+    # All 26 memberships above are created in one fast Background step with
+    # no explicit join date, so they can land on identical (or near-
+    # identical) real timestamps. "Selected members stay selected after
+    # paginating away and back" relies on member1/member2 being the first
+    # two rows (oldest by join date, this view's default sort), so give
+    # every member a distinct, widely-spaced join date instead of leaving
+    # that order to depend on real elapsed time between requests, matching
+    # the root cause and fix in
+    # manage-digital-iar-approved-requests.feature.
+    And I set the join date of "member1" in "Flexible group" group to "-260 seconds"
+    And I set the join date of "member2" in "Flexible group" group to "-250 seconds"
+    And I set the join date of "member3" in "Flexible group" group to "-240 seconds"
+    And I set the join date of "member4" in "Flexible group" group to "-230 seconds"
+    And I set the join date of "member5" in "Flexible group" group to "-220 seconds"
+    And I set the join date of "member6" in "Flexible group" group to "-210 seconds"
+    And I set the join date of "member7" in "Flexible group" group to "-200 seconds"
+    And I set the join date of "member8" in "Flexible group" group to "-190 seconds"
+    And I set the join date of "member9" in "Flexible group" group to "-180 seconds"
+    And I set the join date of "member10" in "Flexible group" group to "-170 seconds"
+    And I set the join date of "member11" in "Flexible group" group to "-160 seconds"
+    And I set the join date of "member12" in "Flexible group" group to "-150 seconds"
+    And I set the join date of "member13" in "Flexible group" group to "-140 seconds"
+    And I set the join date of "member14" in "Flexible group" group to "-130 seconds"
+    And I set the join date of "member15" in "Flexible group" group to "-120 seconds"
+    And I set the join date of "member16" in "Flexible group" group to "-110 seconds"
+    And I set the join date of "member17" in "Flexible group" group to "-100 seconds"
+    And I set the join date of "member18" in "Flexible group" group to "-90 seconds"
+    And I set the join date of "member19" in "Flexible group" group to "-80 seconds"
+    And I set the join date of "member20" in "Flexible group" group to "-70 seconds"
+    And I set the join date of "member21" in "Flexible group" group to "-60 seconds"
+    And I set the join date of "member22" in "Flexible group" group to "-50 seconds"
+    And I set the join date of "member23" in "Flexible group" group to "-40 seconds"
+    And I set the join date of "member24" in "Flexible group" group to "-30 seconds"
+    And I set the join date of "member25" in "Flexible group" group to "-20 seconds"
+    And I set the join date of "member26" in "Flexible group" group to "-10 seconds"
+
   Scenario: User can control the number of items displayed on the Manage members overview page
     Given I am logged in as a user with the sitemanager role
 
