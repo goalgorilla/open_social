@@ -239,7 +239,9 @@ class EntityAccessHelper {
           ->addCacheableDependency($entity);
 
       case self::FORBIDDEN:
-        return AccessResult::forbidden();
+        return AccessResult::forbidden()
+          ->cachePerPermissions()
+          ->addCacheableDependency($entity);
     }
 
     return AccessResult::neutral();

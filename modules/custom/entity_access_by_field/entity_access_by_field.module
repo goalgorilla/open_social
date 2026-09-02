@@ -28,12 +28,25 @@ function entity_access_by_field_node_access(
   string $operation,
   AccountInterface $account,
 ): AccessResultInterface {
-  return EntityAccessHelper::getEntityAccessResult(
+  $access = EntityAccessHelper::getEntityAccessResult(
     $entity,
     $operation,
     $account,
     'administer nodes',
   );
+
+  // Other modules can replace the access with their own.
+  // @see hook_entity_access_by_field_node_access_alter()
+  \Drupal::moduleHandler()->alter(
+    'entity_access_by_field_node_access',
+    $access,
+    $entity,
+    $account,
+  );
+
+  assert($access instanceof AccessResultInterface, 'An implementation of hook_entity_access_by_field_node_access_alter() replaced the access result with something that is not an access result.');
+
+  return $access;
 }
 
 /**
