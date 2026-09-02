@@ -191,6 +191,17 @@ class BookContext extends RawMinkContext {
 
     $fields = end($this->created);
 
+    // The status message isn't necessarily part of the page's initial HTML:
+    // this site uses BigPipe, which renders status messages into
+    // `[data-drupal-messages-fallback]` via a `<script>` tag streamed later
+    // in the same response (see core/misc/message.js), not synchronously.
+    // That fallback element only gains the `data-drupal-messages` attribute
+    // (dropping the `-fallback` suffix) once something has actually been
+    // rendered into it, so that's the specific condition to wait for here
+    // — this isn't Drupal.ajax/jQuery activity, so a generic AJAX-wait
+    // wouldn't catch it.
+    $this->getSession()->wait(10000, "document.querySelector('[data-drupal-messages]') !== null");
+
     $this->minkContext->assertPageContainsText("Book page {$fields['title']} has been created.");
 
     foreach ($fields as $field => $value) {
