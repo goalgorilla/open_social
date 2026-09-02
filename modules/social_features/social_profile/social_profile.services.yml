@@ -42,3 +42,16 @@ services:
   Drupal\social_profile\Service\SocialProfilePreviewHelper:
     class: Drupal\social_profile\Service\SocialProfilePreviewHelper
     arguments: ['@config.factory', '@theme.manager', '@module_handler']
+
+  social_profile.profile_affiliatable_type_resolver:
+    class: Drupal\social_profile\GraphQL\ProfileAffiliatableTypeResolver
+    arguments:
+      $mappers: !tagged_iterator social_profile.profile_affiliatable_type
+  Drupal\social_profile\GraphQL\ProfileAffiliatableTypeResolver: '@social_profile.profile_affiliatable_type_resolver'
+
+  social_profile.profile_external_affiliation_type_mapper:
+    class: Drupal\social_profile\GraphQL\ProfileExternalAffiliationProfileAffiliatableTypeMapper
+    autowire: true
+    tags:
+      - { name: social_profile.profile_affiliatable_type }
+  Drupal\social_profile\GraphQL\ProfileExternalAffiliationProfileAffiliatableTypeMapper: '@social_profile.profile_external_affiliation_type_mapper'

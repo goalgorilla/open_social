@@ -62,3 +62,17 @@ services:
     arguments:
       - '@entity_type.manager'
       - '@config.factory'
+
+  social_group_flexible_group.hub_type_mapper:
+    class: Drupal\social_group_flexible_group\GraphQL\FlexibleGroupHubTypeMapper
+    autowire: true
+    tags:
+      - { name: social_group.hub_type }
+  Drupal\social_group_flexible_group\GraphQL\FlexibleGroupHubTypeMapper: '@social_group_flexible_group.hub_type_mapper'
+
+  social_group_flexible_group.profile_affiliatable_type_mapper:
+    class: Drupal\social_group_flexible_group\GraphQL\FlexibleGroupProfileAffiliatableTypeMapper
+    autowire: true
+    tags:
+      - { name: social_profile.profile_affiliatable_type }
+  Drupal\social_group_flexible_group\GraphQL\FlexibleGroupProfileAffiliatableTypeMapper: '@social_group_flexible_group.profile_affiliatable_type_mapper'

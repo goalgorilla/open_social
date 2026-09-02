@@ -1,3 +1,35 @@
+################################################################################
+#                              Type Information                                #
+################################################################################
+
+"""
+A social group.
+"""
+type Group implements Hub & Node {
+  """
+  UUID of the group.
+  """
+  id: ID!
+  """
+  The name of the group.
+  """
+  name: String!
+}
+
+"""
+Affiliation with a flexible group. This is the platform affiliation.
+"""
+type UserGroupAffiliation implements Node & ProfileAffiliatable {
+  id: ID!
+  function: String
+  user: User!
+  group: Group!
+}
+
+################################################################################
+#                              Mutation Types                                  #
+################################################################################
+
 """
 Input to set the groups of a piece of content.
 """

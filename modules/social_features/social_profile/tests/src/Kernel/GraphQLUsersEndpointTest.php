@@ -3,6 +3,7 @@
 namespace Drupal\Tests\social_profile\Kernel;
 
 use Drupal\Core\Session\AccountInterface;
+use Drupal\paragraphs\ParagraphInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_profile\Entity\Bundle\SocialProfile;
 use Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelperInterface;
@@ -89,6 +90,11 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     $test_user = $this->createUser();
     $profile = $this->ensureTestProfile($test_user, 'profile');
     assert($profile instanceof SocialProfile);
+
+    // External affiliations appear on Profile; primary is null without a hub.
+    $paragraph = $profile->get('field_other_affiliations')->entity;
+    assert($paragraph instanceof ParagraphInterface);
+
     $query = "
       query {
         user(id: \"{$test_user->uuid()}\") {
@@ -105,6 +111,20 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
             phone
             function
             organization
+            primaryAffiliation {
+              __typename
+              function
+              ... on ExternalProfileAffiliation {
+                name
+              }
+            }
+            affiliations {
+              __typename
+              function
+              ... on ExternalProfileAffiliation {
+                name
+              }
+            }
           }
         }
       }
@@ -125,6 +145,18 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
             'phone' => $profile->get('field_profile_phone_number')->first()->getString(),
             'function' => $profile->getPrimaryAffiliationFunction(),
             'organization' => $profile->getPrimaryAffiliationName(),
+            'primaryAffiliation' => [
+              '__typename' => 'ExternalProfileAffiliation',
+              'function' => $paragraph->get('field_affiliation_org_function')->getString(),
+              'name' => $paragraph->get('field_affiliation_org_name')->getString(),
+            ],
+            'affiliations' => [
+              [
+                '__typename' => 'ExternalProfileAffiliation',
+                'function' => $paragraph->get('field_affiliation_org_function')->getString(),
+                'name' => $paragraph->get('field_affiliation_org_name')->getString(),
+              ],
+            ],
           ],
         ],
       ],

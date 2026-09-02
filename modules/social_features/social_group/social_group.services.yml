@@ -92,3 +92,9 @@ services:
       - '@plugin.manager.social_group.join'
     tags:
       - { name: access_check, applies_to: _social_group_access }
+
+  social_group.hub_type_resolver:
+    class: Drupal\social_group\GraphQL\HubTypeResolver
+    arguments:
+      $mappers: !tagged_iterator social_group.hub_type
+  Drupal\social_group\GraphQL\HubTypeResolver: '@social_group.hub_type_resolver'

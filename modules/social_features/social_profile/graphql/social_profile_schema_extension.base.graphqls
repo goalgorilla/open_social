@@ -1,3 +1,7 @@
+################################################################################
+#                              Type Information                                #
+################################################################################
+
 """
 Profile information for an Open Social user.
 
@@ -40,4 +44,34 @@ type Profile {
   The name of the organization a user belongs to.
   """
   organization: String
+  """
+  First group affiliation item when that hub is visible to the viewer,
+  otherwise the first external affiliation when other affiliations are enabled.
+  Null when the feature is disabled or no visible affiliation exists.
+  """
+  primaryAffiliation: ProfileAffiliatable
+  """
+  Visible hub memberships from group affiliation, then external affiliations.
+  Empty when none, or when the feature is disabled.
+  """
+  affiliations: [ProfileAffiliatable!]!
+}
+
+"""
+Something that may appear as a profile affiliation.
+function is the shared teaser contract and is not required to have a value.
+"""
+interface ProfileAffiliatable {
+  """
+  Role at that group or organisation (same meaning as Profile.function today).
+  """
+  function: String
+}
+
+"""
+Freeform affiliation. No in-platform membership.
+"""
+type ExternalProfileAffiliation implements ProfileAffiliatable {
+  name: String!
+  function: String
 }
