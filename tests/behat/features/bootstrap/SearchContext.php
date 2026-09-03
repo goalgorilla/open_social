@@ -80,11 +80,29 @@ class SearchContext extends RawMinkContext {
     // test memory that might be outdated, don't affect what we're indexing.
     $this->drushDriver->drush("search-api:index");
 
-    // With the move to SOLR indexing has become asynchronous, so we must wait
-    // a small moment to ensure SOLR has actually settled.
-    // See also search_api_solr's own code in the commits linked for
-    // https://www.drupal.org/project/search_api_solr/issues/2940539.
-    sleep(1);
+    // search_api_solr only issues a delayed "commitWithin" for the items
+    // just indexed above (see SolrConnectorPluginBase::update()), so content
+    // isn't guaranteed to be searchable as soon as drush returns. Rather
+    // than guessing how long that delay takes, issue an explicit commit
+    // with waitSearcher enabled for every Solr-backed index: Solr blocks
+    // that request until the new searcher is registered, which is the
+    // actual signal that the indexed content has become searchable.
+    /** @var \Drupal\search_api\IndexInterface[] $indexes */
+    $indexes = \Drupal::service("entity_type.manager")
+      ->getStorage('search_api_index')
+      ->loadMultiple();
+
+    foreach ($indexes as $index) {
+      $backend = $index->getServerInstance()?->getBackend();
+      if (!$backend instanceof SearchApiSolrBackend) {
+        continue;
+      }
+
+      $connector = $backend->getSolrConnector();
+      $update_query = $connector->getUpdateQuery();
+      $update_query->addCommit(TRUE, TRUE);
+      $connector->update($update_query, $backend->getCollectionEndpoint($index));
+    }
   }
 
   /**
