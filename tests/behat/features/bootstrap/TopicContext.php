@@ -8,7 +8,6 @@ use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Plugin\Field\FieldType\CommentItem;
-use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
 use Drupal\node\Entity\Node;
 use Symfony\Component\Yaml\Yaml;
@@ -66,7 +65,7 @@ class TopicContext extends RawMinkContext {
   /**
    * The Drupal context which gives us access to user management.
    */
-  private DrupalContext $drupalContext;
+  private SocialDrupalContext $drupalContext;
 
   /**
    * Make some contexts available here so we can delegate steps.

@@ -7,7 +7,6 @@ namespace Drupal\social\Behat;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\Entity\User;
@@ -23,7 +22,7 @@ class ProfileContext extends RawMinkContext {
   /**
    * The Drupal context which gives us access to user management.
    */
-  private DrupalContext $drupalContext;
+  private SocialDrupalContext $drupalContext;
 
   /**
    * Make some contexts available here, so we can delegate steps.

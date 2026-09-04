@@ -9,7 +9,6 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
-use Drupal\DrupalExtension\Context\DrupalContext;
 
 /**
  * Defines test steps around the usage of comments.
@@ -21,7 +20,7 @@ class CommentContext extends RawMinkContext {
   /**
    * The Drupal context which gives us access to user management.
    */
-  private DrupalContext $drupalContext;
+  private SocialDrupalContext $drupalContext;
 
   /**
    * The IDs of the comments created during the test.

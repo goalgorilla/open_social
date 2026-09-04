@@ -4,7 +4,6 @@ namespace Drupal\social\Behat;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Drupal\DrupalExtension\Context\DrupalContext;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Cookie\SetCookie;
@@ -18,7 +17,7 @@ class FileContext extends RawMinkContext {
   /**
    * The Drupal context which gives us access to user management.
    */
-  private DrupalContext $drupalContext;
+  private SocialDrupalContext $drupalContext;
 
   /**
    * I try to download file status code.

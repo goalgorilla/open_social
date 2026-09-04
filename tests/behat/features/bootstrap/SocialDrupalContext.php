@@ -3,9 +3,9 @@
 
 namespace Drupal\social\Behat;
 
+use Behat\Behat\Context\Context;
 use Behat\Mink\Element\NodeElement;
-use Drupal\DrupalExtension\Context\DrupalContext;
-use Drupal\user\Entity\User;
+use Drupal\DrupalExtension\Context\RawDrupalContext;
 use Drupal\big_pipe\Render\Placeholder\BigPipeStrategy;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -14,8 +14,23 @@ use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 
 /**
  * Provides pre-built step definitions for interacting with Open Social.
+ *
+ * Extends RawDrupalContext rather than DrupalContext so this class is the
+ * sole owner of the step patterns it registers: DrupalContext ships its own
+ * `@Given`/`@When`/`@Then`-annotated step methods, which Behat's default
+ * search engine (priority 50) always matches before this project's
+ * OpenAPI-driven Test Control Interface search engine (priority 40) gets a
+ * chance to — so any TCI operation using the same step pattern as an
+ * inherited-but-unoverridden DrupalContext method is silently unreachable,
+ * no matter how many feature files use that step text.
+ *
+ * The DrupalContext methods below are verbatim copies of the upstream
+ * implementations, kept only because this suite still relies on them and
+ * they haven't been migrated to Test Control Interface operations yet. This
+ * is a short-term "adopt as-is" move, not a redesign of each one; migrate
+ * and delete them here as they gain a TCI equivalent.
  */
-class SocialDrupalContext extends DrupalContext {
+class SocialDrupalContext extends RawDrupalContext implements Context {
 
   use AvoidCleanupTrait;
   use NodeTrait;
@@ -72,63 +87,155 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * Creates content of the given type for the current user,
-   * provided in the form:
-   * | title     | My node        |
-   * | Field One | My field value |
-   * | status    | 1              |
-   * | ...       | ...            |
+   * @Given I am an anonymous user
+   * @Given I am not logged in
+   * @Then I log out
    *
-   * @Given I am viewing my :type( content):
+   * Verbatim copy of DrupalContext::assertAnonymousUser(); see the class
+   * docblock above for why.
    */
-  public function assertViewingMyNode($type, TableNode $fields) {
+  public function assertAnonymousUser() {
+    // Verify the user is logged out.
+    $this->logout(TRUE);
+  }
 
-    $user_manager = $this->getUserManager();
-    $user = $user_manager->getCurrentUser();
-    if (!$user) {
-      throw new \Exception(sprintf('There is no current logged in user to create a node for.'));
-    }
-
-    $node = (object) array(
+  /**
+   * Asserts that a given content type is editable.
+   *
+   * @Then I should be able to edit a/an :type( content)
+   *
+   * Verbatim copy of DrupalContext::assertEditNodeOfType(); see the class
+   * docblock above for why.
+   */
+  public function assertEditNodeOfType($type) {
+    $node = (object) [
       'type' => $type,
-    );
-    foreach ($fields->getRowsHash() as $field => $value) {
-      if (strpos($field, 'date') !== FALSE) {
-        $value =  date('Y-m-d H:i:s', strtotime($value));
-      }
-      $node->{$field} = $value;
-    }
-
-    $node->uid = $user->uid;
+      'title' => "Test $type",
+    ];
     $saved = $this->nodeCreate($node);
 
-    // Set internal browser on the node.
+    // Set internal browser on the node edit page.
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
+
+    // Test status.
+    $this->assertSession()->statusCodeEquals('200');
+  }
+
+  /**
+   * Creates content of the given type.
+   *
+   * Verbatim copy of DrupalContext::createNode(); see the class docblock
+   * above for why.
+   *
+   * @Given I am viewing a/an :type (content )with the title :title
+   * @Given a/an :type (content )with the title :title
+   */
+  public function createNode($type, $title) {
+    // @todo make this easily extensible.
+    $node = (object) [
+      'title' => $title,
+      'type' => $type,
+    ];
+    $saved = $this->nodeCreate($node);
+    // Set internal page on the new node.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
   }
 
   /**
-   * @override DrupalContext:assertViewingNode().
+   * Creates content authored by the current user.
    *
-   * To support relative dates.
+   * Verbatim copy of DrupalContext::createMyNode(); see the class docblock
+   * above for why.
+   *
+   * @Given I am viewing my :type (content )with the title :title
    */
-  public function assertViewingNode($type, TableNode $fields) {
-    $node = (object) array(
-      'type' => $type,
-    );
-    foreach ($fields->getRowsHash() as $field => $value) {
-      if (strpos($field, 'date') !== FALSE) {
-        $value = date('Y-m-d H:i:s', strtotime($value));
-      }
-      $node->{$field} = $value;
+  public function createMyNode($type, $title) {
+    if ($this->getUserManager()->currentUserIsAnonymous()) {
+      throw new \Exception('There is no current logged in user to create a node for.');
     }
 
+    $node = (object) [
+      'title' => $title,
+      'type' => $type,
+      'body' => $this->getRandom()->name(255),
+      'uid' => $this->getUserManager()->getCurrentUser()->uid,
+    ];
     $saved = $this->nodeCreate($node);
 
-    // Set internal browser on the node.
+    // Set internal page on the new node.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
   }
 
   /**
+   * Creates one or more terms on an existing vocabulary.
+   *
+   * Provide term data in the following format:
+   *
+   * | name  | parent | description | weight | taxonomy_field_image |
+   * | Snook | Fish   | Marine fish | 10     | snook-123.jpg        |
+   * | ...   | ...    | ...         | ...    | ...                  |
+   *
+   * Only the 'name' field is required.
+   *
+   * @Given :vocabulary terms:
+   *
+   * Verbatim copy of DrupalContext::createTerms(); see the class docblock
+   * above for why.
+   */
+  public function createTerms($vocabulary, TableNode $termsTable) {
+    foreach ($termsTable->getHash() as $termsHash) {
+      $term = (object) $termsHash;
+      $term->vocabulary_machine_name = $vocabulary;
+      $this->termCreate($term);
+    }
+  }
+
+  /**
+   * @Given the cache has been cleared
+   *
+   * Verbatim copy of DrupalContext::assertCacheClear(); see the class
+   * docblock above for why.
+   */
+  public function assertCacheClear() {
+    $this->getDriver()->clearCache();
+  }
+
+  /**
+   * @Given I run cron
+   *
+   * Verbatim copy of DrupalContext::assertCron(); see the class docblock
+   * above for why.
+   */
+  public function assertCron() {
+    $this->getDriver()->runCron();
+  }
+
+  /**
+   * Creates one or more languages.
+   *
+   * Provide language data in the following format:
+   *
+   * | langcode |
+   * | en       |
+   * | fr       |
+   *
+   * @Given the/these (following )languages are available:
+   *
+   * Verbatim copy of DrupalContext::createLanguages(); see the class
+   * docblock above for why.
+   */
+  public function createLanguages(TableNode $langcodesTable) {
+    foreach ($langcodesTable->getHash() as $row) {
+      $language = (object) [
+        'langcode' => $row['languages'],
+      ];
+      $this->languageCreate($language);
+    }
+  }
+
+  /**
+   * @Given :type content:
+   *
    * @override DrupalContext:createNodes().
    *
    * To support relative dates.
@@ -286,28 +393,6 @@ class SocialDrupalContext extends DrupalContext {
         $schema->dropTable($table_name);
       }
     }
-  }
-
-  /**
-   * @Given I am logged in as :name with the :permissions permission(s)
-   */
-  public function assertLoggedInWithPermissionsByName($name, $permissions) {
-    // Create a temporary role with given permissions.
-    $permissions = array_map('trim', explode(',', $permissions));
-    $role = $this->getDriver()->roleCreate($permissions);
-
-    $manager = $this->getUserManager();
-
-    // Change internal current user.
-    $manager->setCurrentUser($manager->getUser($name));
-    $user = $manager->getUser($name);
-
-    // Assign the temporary role with given permissions.
-    $this->getDriver()->userAddRole($user, $role);
-    $this->roles[] = $role;
-
-    // Login.
-    $this->login($user);
   }
 
   /**

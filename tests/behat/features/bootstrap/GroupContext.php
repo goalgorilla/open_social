@@ -6,7 +6,6 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
 use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\Group;
@@ -53,7 +52,7 @@ class GroupContext extends RawMinkContext {
   /**
    * The Drupal context which gives us access to user management.
    */
-  private DrupalContext $drupalContext;
+  private SocialDrupalContext $drupalContext;
 
   /**
    * Make some contexts available here so we can delegate steps.

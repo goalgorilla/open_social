@@ -7,7 +7,6 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
-use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\social_post\Entity\Post;
 
 /**
@@ -26,7 +25,7 @@ class PostContext extends RawMinkContext {
   /**
    * The Drupal context which gives us access to user management.
    */
-  private DrupalContext $drupalContext;
+  private SocialDrupalContext $drupalContext;
 
   /**
    * Make some contexts available here so we can delegate steps.
