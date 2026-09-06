@@ -256,7 +256,17 @@ class DatabaseContext implements Context {
     //    loaded database. This will trigger another container rebuild but
     //    that's fine.
     drupal_flush_all_caches();
-    // 5. We must clear the current user, since the container rebuild saves it,
+    // 5. Register the stream wrappers of the modules in the restored database.
+    //    The initial boot happened in install mode, so only core's wrappers
+    //    (public://, private://, temporary://) were registered with PHP. The
+    //    rebuilt container knows about module-provided wrappers such as
+    //    secret:// but nothing re-registers them at the PHP level, which
+    //    breaks any in-process file operation on those schemes. This used to
+    //    be masked by the dblog install in LogContext::onDatabaseLoaded(),
+    //    because ModuleInstaller::install() registers wrappers as a side
+    //    effect.
+    \Drupal::service('stream_wrapper_manager')->register();
+    // 6. We must clear the current user, since the container rebuild saves it,
     //    but it references a non-existent user now.
     \Drupal::currentUser()->setInitialAccountId(0);
 

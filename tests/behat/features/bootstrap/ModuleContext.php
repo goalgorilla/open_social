@@ -109,7 +109,10 @@ class ModuleContext extends RawMinkContext {
    *   this one doesn't need: `drush cr` (no external caches like Redis need
    *   invalidating, we didn't swap the database), removing the
    *   install-mode global (irrelevant mid-scenario), triggerOnDatabaseLoaded()
-   *   (that hook is for a database swap, not a module change), and
+   *   (that hook is for a database swap, not a module change),
+   *   stream_wrapper_manager->register() (ModuleInstaller::install() already
+   *   registers the wrappers of a newly installed module and an uninstall
+   *   leaves nothing new to register), and
    *   currentUser()->setInitialAccountId(0) (this can run after a real
    *   login, and that call throws if an account is already set). If you
    *   change one of these two methods, check whether the other needs the
