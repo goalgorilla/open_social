@@ -2013,7 +2013,12 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
   $original_groups = [];
   $groups_to_add = [];
   $groups_to_remove = [];
-  foreach ($form_state->getValue('groups') as $new_group_key => $new_group) {
+  // Read the wanted groups from the entity rather than from the raw submitted
+  // value. SocialGroupReferenceItemList::postSave() has already reconciled the
+  // relationships during the save and put back the groups this editor had no
+  // standing to remove; the raw value still lacks them, and honouring it would
+  // delete right here what the save just preserved.
+  foreach ($node->get('groups')->getValue() as $new_group) {
     $groups_to_add[$new_group['target_id']] = $new_group['target_id'];
   }
   // The node already exists, so lets also change the logic accordingly,

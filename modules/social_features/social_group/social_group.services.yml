@@ -22,9 +22,12 @@ services:
   social_group.cross_posting:
     class: Drupal\social_group\CrossPostingService
     arguments: ['@entity_type.manager', '@database', '@group_relation_type.manager', '@config.factory']
+  social_group.group_relationship_standing:
+    class: Drupal\social_group\GroupRelationshipStanding
+    arguments: ['@entity_type.manager', '@group_relation_type.manager', '@current_user']
   social_group.set_groups_for_node_service:
     class: Drupal\social_group\SetGroupsForNodeService
-    arguments: ['@entity_type.manager', '@module_handler']
+    arguments: ['@entity_type.manager', '@module_handler', '@social_group.group_relationship_standing']
   social_group.group_content_visibility_update:
     class: Drupal\social_group\GroupContentVisibilityUpdate
     arguments: ['@entity_type.manager', '@module_handler']
@@ -46,6 +49,17 @@ services:
   social_group.group_mute_notify:
     class: Drupal\social_group\GroupMuteNotify
     arguments: ['@flag', '@entity_type.manager']
+
+  # Lifts Group's "forbidden" veto when an owner views their own unpublished
+  # content. A lower decoration_priority than the other access control
+  # decorators (social_event_managers, social_collaboration, both 100) puts this
+  # one on the outside of the chain, so it judges the combined result.
+  social_group.relation_handler.access_control.own_unpublished.decorator:
+    class: Drupal\social_group\Plugin\Group\RelationHandler\OwnUnpublishedGroupContentAccessControl
+    decorates: 'group.relation_handler.access_control'
+    decoration_priority: 50
+    arguments: ['@social_group.relation_handler.access_control.own_unpublished.decorator.inner']
+    shared: false
 
   cache_context.social_group_join_method:
     class: Drupal\social_group\CacheContext\SocialGroupJoinMethodCacheContext

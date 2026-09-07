@@ -16,6 +16,7 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
 use Drupal\node\NodeInterface;
+use Drupal\social_group\GroupRelationshipStanding;
 use Drupal\social_group\SetGroupsForNodeService;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -144,7 +145,11 @@ final class SetGroupsForNodeServiceTest extends UnitTestCase {
     $this->node->method('getOwnerId')->willReturn(7);
 
     $this->moduleHandler = $this->createMock(ModuleHandlerInterface::class);
-    $this->service = new SetGroupsForNodeService($this->entityTypeManager, $this->moduleHandler);
+    $this->service = new SetGroupsForNodeService(
+      $this->entityTypeManager,
+      $this->moduleHandler,
+      $this->createMock(GroupRelationshipStanding::class),
+    );
   }
 
   /**

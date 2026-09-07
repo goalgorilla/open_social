@@ -21,6 +21,7 @@ use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
+use Drupal\social_group\GroupRelationshipStanding;
 use Drupal\social_group\Plugin\Field\SocialGroupReferenceItemList;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -123,10 +124,16 @@ final class SocialGroupReferenceItemListTest extends UnitTestCase {
 
     $this->fieldTypeManager = $this->createMock(FieldTypePluginManagerInterface::class);
 
+    // Locked groups are covered by SocialGroupReferenceItemListPostSaveTest;
+    // here no group is locked, so the submitted value is reconciled as is.
+    $group_relationship_standing = $this->createMock(GroupRelationshipStanding::class);
+    $group_relationship_standing->method('lockedGroupIds')->willReturn([]);
+
     $container = new ContainerBuilder();
     $container->set('entity_type.manager', $this->entityTypeManager);
     $container->set('entity_type.repository', $entity_type_repository);
     $container->set('plugin.manager.field.field_type', $this->fieldTypeManager);
+    $container->set('social_group.group_relationship_standing', $group_relationship_standing);
     \Drupal::setContainer($container);
   }
 

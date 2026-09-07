@@ -3,14 +3,15 @@
 namespace Drupal\social_group\Plugin\Field;
 
 use Drupal\activity_creator\FirstPublicationMarker;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Field\EntityReferenceFieldItemList;
 use Drupal\Core\TypedData\ComputedItemListTrait;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
-use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationship;
+use Drupal\social_group\GroupRelationshipStanding;
 
 /**
  * A computed property for the related groups.
@@ -27,6 +28,17 @@ class SocialGroupReferenceItemList extends EntityReferenceFieldItemList {
    * @var \Drupal\Core\Entity\EntityTypeManager
    */
   protected $entityTypeManager;
+
+  /**
+   * The single owner of the group relationship standing rule.
+   *
+   * Resolved on first use rather than in the constructor: this list is built
+   * for every entity carrying the field, on every load, while the rule is only
+   * consulted when the entity is saved.
+   *
+   * @var \Drupal\social_group\GroupRelationshipStanding|null
+   */
+  protected ?GroupRelationshipStanding $groupRelationshipStanding = NULL;
 
   /**
    * Constructs a SocialGroupReferenceItemList object.
@@ -142,6 +154,25 @@ class SocialGroupReferenceItemList extends EntityReferenceFieldItemList {
       // Cache the relationship in array to make possible to use
       // it later.
       $group_relationship_existing[$gid] = $group_relationship;
+    }
+
+    // Reconciling here rather than in the group selector widget covers every
+    // write path, because a locked form control only constrains an honest
+    // browser (PROD-36392). Keep in sync with the same guard in
+    // SetGroupsForNodeService::setGroupsForNode(), which covers the writes
+    // that delete relationships outside an entity save.
+    $this->groupRelationshipStanding ??= \Drupal::service('social_group.group_relationship_standing');
+
+    foreach ($this->groupRelationshipStanding->lockedGroupIds($entity, $group_relationship_existing) as $gid) {
+      if (!isset($gids_wanted[$gid])) {
+        $gids_wanted[$gid] = $gid;
+
+        // Keep the computed value in step with what is actually written. Code
+        // running after the save - social_group_save_group_from_node()
+        // reconciles the very same relationships once more - must see the
+        // groups that were preserved, not the value that was submitted.
+        $this->appendItem(['target_id' => $gid]);
+      }
     }
 
     // Union for existing and wanted groups.

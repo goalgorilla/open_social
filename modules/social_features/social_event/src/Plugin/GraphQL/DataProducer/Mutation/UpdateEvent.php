@@ -179,6 +179,8 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
     }
 
     // @todo We should properly handle finalization errors here.
+    // @todo Every early return below leaves this finalized file orphaned.
+    //   See https://getopensocial.atlassian.net/browse/PROD-36534.
     if ($input->hasHeroImageUpdate()) {
       $image = $this->fileInputHandler->inputToFile(
         $input->getHeroImage(),
@@ -222,16 +224,9 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
       $crossposted_groups = $input->getCrosspostedGroups();
       $current_groups = $this->getCurrentGroupsFromRelationships($node);
 
-      if ($primary_group === NULL) {
-        // Clearing groups: remove all group memberships.
-        $node->set('groups', []);
-        $groups_sync_pending = TRUE;
-        $groups_sync_current = $current_groups;
-        $groups_sync_to_add = [];
-      }
-      else {
-        // Build the list of group IDs to add (primary + crossposted).
-        $groups_to_add = [];
+      $groups_to_add = [];
+
+      if ($primary_group !== NULL) {
         $primary_group_id = $primary_group->id();
         assert($primary_group_id !== NULL);
         $groups_to_add[$primary_group_id] = $primary_group_id;
@@ -240,7 +235,28 @@ class UpdateEvent extends DataProducerPluginBase implements ContainerFactoryPlug
           assert($crossposted_group_id !== NULL);
           $groups_to_add[$crossposted_group_id] = $crossposted_group_id;
         }
+      }
 
+      $groups_to_detach = array_diff($current_groups, $groups_to_add);
+
+      // A group the acting account has no standing in was never its to detach
+      // (PROD-36392), and setGroupsForNode() will silently drop it from the
+      // removal set. Report it instead: an integration whose machine account is
+      // missing the group permission must fail loudly on its first call rather
+      // than believe for weeks that it has been moving content.
+      if ($this->setGroupsForNodeService?->lockedGroupIds($node, $groups_to_detach)) {
+        $payload->addViolation(new Violation('GROUPS_REMOVAL_NOT_PERMITTED'));
+        return $payload;
+      }
+
+      if ($primary_group === NULL) {
+        // Clearing groups: remove all group memberships.
+        $node->set('groups', []);
+        $groups_sync_pending = TRUE;
+        $groups_sync_current = $current_groups;
+        $groups_sync_to_add = [];
+      }
+      else {
         // Prepare the field values for the groups field on the node.
         $groups_field_values = [];
         $groups_field_values[] = ['target_id' => $primary_group->id()];

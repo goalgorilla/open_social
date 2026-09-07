@@ -6,6 +6,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
@@ -13,12 +14,13 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\select2\Plugin\Field\FieldWidget\Select2EntityReferenceWidget;
-use Drupal\user\EntityOwnerInterface;
+use Drupal\social_group\GroupRelationshipStanding;
 use Drupal\user\UserInterface;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -48,6 +50,11 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
   protected array $options;
 
   /**
+   * IDs of the entity's groups the current user is not allowed to detach.
+   */
+  protected array $lockedGroupIds = [];
+
+  /**
    * The config factory.
    */
   protected ConfigFactoryInterface $configFactory;
@@ -73,6 +80,11 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
   protected UserStorageInterface $userManager;
 
   /**
+   * The single owner of the group relationship standing rule.
+   */
+  protected GroupRelationshipStanding $groupRelationshipStanding;
+
+  /**
    * Creates a SocialGroupSelectorWidget instance.
    *
    * {@inheritdoc}
@@ -88,6 +100,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
     ModuleHandlerInterface $moduleHandler,
     GroupRelationTypeManagerInterface $pluginManager,
     EntityTypeManagerInterface $entity_type_manager,
+    GroupRelationshipStanding $group_relationship_standing,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->configFactory = $configFactory;
@@ -96,6 +109,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
     $this->pluginManager = $pluginManager;
     $this->entityTypeManager = $entity_type_manager;
     $this->userManager = $entity_type_manager->getStorage('user');
+    $this->groupRelationshipStanding = $group_relationship_standing;
   }
 
   /**
@@ -112,7 +126,8 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
       $container->get('current_user'),
       $container->get('module_handler'),
       $container->get('group_relation_type.manager'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('social_group.group_relationship_standing')
     );
   }
 
@@ -136,38 +151,17 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
 
     $groupsAdmin = $account->hasPermission('manage all groups');
 
-    // If the user can administer content and groups, we allow them to
-    // override this. Otherwise, we stick to the original owner.
-    if ($entity instanceof EntityOwnerInterface && !$groupsAdmin) {
-      if ($type === 'node') {
-        $permission = 'administer nodes';
-      }
-      else {
-        $definition = $this->entityTypeManager->getDefinition($type);
-
-        if ($definition !== NULL) {
-          $permission = $definition->getAdminPermission();
-        }
-      }
-
-      if (
-        empty($permission) ||
-        !is_string($permission) ||
-        !$account->hasPermission($permission)
-      ) {
-        $account = $entity->getOwner();
-      }
-    }
-
-    // Limit the settable options for the current user account.
+    // The options have to be built for the editor rather than the owner: an
+    // option this widget does not carry is never submitted, and the save
+    // reconciles the relationships against the submitted value (PROD-36392).
     $optionsProvider = $this->fieldDefinition
       ->getFieldStorageDefinition()
       ->getOptionsProvider($this->column, $entity);
 
+    $storage = $this->entityTypeManager->getStorage('group');
+
     if ($optionsProvider !== NULL) {
       $options = $optionsProvider->getSettableOptions($account);
-
-      $storage = $this->entityTypeManager->getStorage('group');
 
       // Check for each group type if the content type is installed.
       foreach ($options as $key => $optgroup) {
@@ -224,6 +218,52 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
       $this->options = $options ?? parent::getOptions($entity);
     }
 
+    // The entity can already be in groups that are not offered here, because
+    // the editor left the group or was never in it. Those groups are added back
+    // to the list: an option the widget does not carry is not submitted, and
+    // saving that shorter value is exactly what drops content out of its group.
+    // They are deliberately added after hook_options_list_alter() - a group an
+    // alter put back is already selectable - and after $this->options is kept,
+    // because isMultipleSelectionAvailable() may only count what this editor
+    // can pick.
+    $relationships = $this->currentGroupRelationships($entity);
+
+    // Which of them the editor may not detach is decided by the same rule the
+    // save applies, not by their absence from the list above. Deriving the lock
+    // from the option list instead would disable - and therefore drop - groups
+    // that SocialGroupReferenceItemList::postSave() does not put back, for
+    // example for an account holding the entity admin permission.
+    $this->lockedGroupIds = array_map(
+      'intval',
+      array_values($this->groupRelationshipStanding->lockedGroupIds($entity, $relationships)),
+    );
+
+    $missing = array_diff(
+      array_keys($relationships),
+      array_map('intval', array_keys(OptGroup::flattenOptions($options))),
+    );
+
+    // Locked groups go first, so the last of the preselected options is always
+    // one the editor can act on: on a single-value select every group the
+    // entity is in is preselected and the browser keeps only the last of them.
+    $missing = array_merge(
+      array_intersect($missing, $this->lockedGroupIds),
+      array_diff($missing, $this->lockedGroupIds),
+    );
+
+    foreach (array_reverse($missing) as $gid) {
+      $group = $storage->load($gid);
+
+      if (!$group instanceof GroupInterface) {
+        continue;
+      }
+
+      $label = (string) $group->label();
+      $this->sanitizeLabel($label);
+
+      $options = [$gid => $label] + $options;
+    }
+
     return $options;
   }
 
@@ -274,12 +314,28 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
       }
     }
 
-    // We don't allow to LU to edit field if there are multiple values.
-    if (count($element['#default_value']) > 1) {
+    // We don't allow to LU to edit field if there are multiple values. Locked
+    // groups do not count: the editor cannot act on them anyway, and letting
+    // them trip this check would take away the one group the editor does have
+    // standing in.
+    $editableDefaults = array_diff($element['#default_value'], $this->lockedGroupIds);
+
+    if (count($editableDefaults) > 1) {
       if ($socialGroupSettings->get('cross_posting.status') && !$this->currentUser->hasPermission('access cross-group posting')) {
         $element['#disabled'] = TRUE;
         $element['#description'] = $this->t('You are not allowed to edit this field!');
       }
+    }
+
+    // Show the groups this editor may not act on as locked. getOptions()
+    // collected them for $items->getEntity() while the parent built the
+    // element, so they are right for embedded widgets too. This is
+    // presentation only, and only in themes that render #options_attributes
+    // (socialbase does, Claro does not): the enforcement lives in
+    // SocialGroupReferenceItemList::postSave(), which recomputes the same rule
+    // from stored state on every entity save.
+    foreach ($this->lockedGroupIds as $gid) {
+      $element['#options_attributes'][$gid]['disabled'] = 'disabled';
     }
 
     return $element;
@@ -378,6 +434,36 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
       ->loadMultiple($groupIds);
 
     return social_group_get_allowed_content_visibility_options_for_multiple_groups($groups, $entity);
+  }
+
+  /**
+   * Get the group relationships the entity currently has, keyed by group ID.
+   *
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+   *   The entity the widget edits.
+   *
+   * @return \Drupal\group\Entity\GroupRelationshipInterface[]
+   *   The relationships, read from storage rather than from the field value, so
+   *   a tampered submission cannot influence them.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  private function currentGroupRelationships(FieldableEntityInterface $entity): array {
+    if (!$entity instanceof ContentEntityInterface || $entity->id() === NULL) {
+      return [];
+    }
+
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('group_content');
+
+    $relationships = [];
+
+    foreach ($storage->loadByEntity($entity) as $relationship) {
+      $relationships[(int) $relationship->getGroupId()] = $relationship;
+    }
+
+    return $relationships;
   }
 
   /**

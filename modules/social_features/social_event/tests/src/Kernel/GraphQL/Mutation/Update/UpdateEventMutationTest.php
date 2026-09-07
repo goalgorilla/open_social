@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_event\Kernel\GraphQL\Mutation\Update;
 
+use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRelationship;
+use Drupal\group\Entity\GroupType;
 use Drupal\Tests\social_event\Kernel\SocialEventGraphQLKernelTestBase;
 use Drupal\Tests\social_graphql\Kernel\GraphQLOAuthTestTrait;
 use Drupal\Tests\social_graphql\Kernel\OAuthTestTrait;
@@ -1182,6 +1184,96 @@ class UpdateEventMutationTest extends SocialEventGraphQLKernelTestBase {
     // @todo use assertResults once we have groups as part of the read schema.
     $relationships = GroupRelationship::loadByEntity($this->reloadEvent($event));
     $this->assertEmpty($relationships, 'Event should not be in any group.');
+  }
+
+  /**
+   * A refused group removal is reported, not silently swallowed.
+   *
+   * PROD-36392. The event:write scope grants "create group_node:event entity"
+   * to an outsider of a flexible_group, so a correctly scoped integration keeps
+   * full control - that is what every other group test here relies on. An
+   * integration that is NOT scoped for the group type it touches has no
+   * standing over it, and setGroupsForNode() drops the removal from its work
+   * list. The mutation must say so: returning a success that quietly kept the
+   * content in the group would let a misprovisioned integration believe it had
+   * been moving content for weeks.
+   */
+  public function testUpdateEventRemoveFromGroupWithoutStandingIsReported(): void {
+    $eventType = $this->createEventType();
+
+    // A group type the event:write scope says nothing about: its outsider grant
+    // is bound to flexible_group, so the machine account has no standing here.
+    $groupType = GroupType::create([
+      'id' => 'unscoped_group',
+      'label' => 'Unscoped group',
+    ]);
+    $groupType->save();
+
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $relationshipTypeStorage */
+    $relationshipTypeStorage = $this->container->get('entity_type.manager')
+      ->getStorage('group_content_type');
+    $relationshipTypeStorage->createFromPlugin($groupType, 'group_node:event')->save();
+
+    $unscopedGroup = Group::create([
+      'type' => 'unscoped_group',
+      'label' => 'Unscoped group 1',
+    ]);
+    $unscopedGroup->save();
+
+    // A normal group alongside it, so the call asks to leave both: the scoped
+    // one the caller may detach, the unscoped one it may not.
+    $scopedGroup = $this->createTestGroup('Group 1');
+
+    $event = $this->createEvent($eventType);
+    $this->container->get('social_group.set_groups_for_node_service')
+      ->setGroupsForNode($event, [], [$scopedGroup->id() => $scopedGroup->id()], [], FALSE);
+    $event->set('groups', [['target_id' => $scopedGroup->id()]]);
+    $event->save();
+
+    // After the save, so the computed groups field reconciled during that save
+    // cannot drop it again while the test still runs as the setUp user.
+    $unscopedGroup->addRelationship($event, 'group_node:event', ['uid' => $event->getOwnerId()]);
+
+    $this->assertCount(
+      2,
+      GroupRelationship::loadByEntity($this->reloadEvent($event)),
+      'precondition: the event is in both groups before the mutation runs',
+    );
+
+    $this->actAsClientCredentialsWithScopes(['event:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateEvent(\$input: UpdateEventInput!) {
+          updateEvent(input: \$input) {
+            errors
+            event { id }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $event->uuid(),
+          'groups' => NULL,
+        ],
+      ],
+      [
+        'updateEvent' => [
+          'errors' => ['GROUPS_REMOVAL_NOT_PERMITTED'],
+          'event' => NULL,
+        ],
+      ],
+      // The refusal returns before the node is saved or rendered, so the
+      // response carries no node cache metadata.
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // The refusal is real: the whole call is declined, nothing is detached.
+    $this->assertCount(
+      2,
+      GroupRelationship::loadByEntity($this->reloadEvent($event)),
+      'The event must still be in both groups.',
+    );
   }
 
   /**

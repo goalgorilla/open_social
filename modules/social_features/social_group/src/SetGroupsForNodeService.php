@@ -31,16 +31,26 @@ class SetGroupsForNodeService {
   protected $moduleHandler;
 
   /**
+   * The single owner of the group relationship standing rule.
+   *
+   * @var \Drupal\social_group\GroupRelationshipStanding
+   */
+  protected GroupRelationshipStanding $groupRelationshipStanding;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\social_group\GroupRelationshipStanding $group_relationship_standing
+   *   The group relationship standing rule.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, GroupRelationshipStanding $group_relationship_standing) {
     $this->entityTypeManager = $entity_type_manager;
     $this->moduleHandler = $module_handler;
+    $this->groupRelationshipStanding = $group_relationship_standing;
   }
 
   /**
@@ -68,6 +78,18 @@ class SetGroupsForNodeService {
    */
   public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], bool $is_new = FALSE): NodeInterface {
     $moved = FALSE;
+
+    // Keep in sync with SocialGroupReferenceItemList::postSave(): the callers
+    // that reach this method delete group_content entities outside any entity
+    // save, so that guard never sees them (PROD-36392).
+    //
+    // Filtering has to happen before the early return below, or a removal that
+    // is entirely blocked still deletes the activity items of a move that
+    // never happened.
+    $groups_to_remove = array_diff(
+      $groups_to_remove,
+      $this->lockedGroupIds($node, $groups_to_remove),
+    );
 
     // If we don't have to add or remove groups, we don't need to move anything.
     // the node is just updated for other values.
@@ -191,6 +213,39 @@ class SetGroupsForNodeService {
   }
 
   /**
+   * Gets the group ids, among those requested, this account may not detach.
+   *
+   * Callers that report errors to a client should ask this first and surface a
+   * violation: setGroupsForNode() drops the refused ids from the removal set,
+   * so a caller that does not ask gets a silent partial no-op. The rule itself
+   * is owned by \Drupal\social_group\GroupRelationshipStanding.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node whose group relationships are being reconciled.
+   * @param array $group_ids
+   *   The group ids the caller asks to detach.
+   *
+   * @return array<int|string, int|string>
+   *   The subset of $group_ids that will be refused, keyed by group id.
+   */
+  public function lockedGroupIds(NodeInterface $node, array $group_ids): array {
+    if (empty($group_ids)) {
+      return [];
+    }
+
+    $relationships = [];
+
+    foreach (GroupRelationship::loadByEntity($node) as $relationship) {
+      $relationships[$relationship->getGroupId()] = $relationship;
+    }
+
+    return array_intersect(
+      $group_ids,
+      $this->groupRelationshipStanding->lockedGroupIds($node, $relationships),
+    );
+  }
+
+  /**
    * Adds the node to a group by creating a group_content (relationship) entity.
    *
    * Adds only if the node is not already in this group. That way the node can
@@ -234,6 +289,12 @@ class SetGroupsForNodeService {
 
   /**
    * Deletes a group relationship.
+   *
+   * Unguarded primitive: it deletes whatever it is handed. The standing rule -
+   * "an account cannot detach a group it was never able to act on" - is applied
+   * by setGroupsForNode(), the only caller, which filters $groups_to_remove
+   * before it gets here. Anything reaching this method directly bypasses that
+   * protection, so route new callers through setGroupsForNode() instead.
    *
    * @param \Drupal\node\NodeInterface $node
    *   Object of a node.

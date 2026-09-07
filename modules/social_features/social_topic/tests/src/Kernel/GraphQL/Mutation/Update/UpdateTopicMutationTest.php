@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\social_topic\Kernel\GraphQL\Mutation\Update;
 
 use Drupal\Core\Render\RenderContext;
+use Drupal\group\Entity\GroupType;
 use Drupal\social_group\Entity\Group;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\Entity\Node;
@@ -1558,6 +1559,113 @@ class UpdateTopicMutationTest extends SocialTopicGraphQLKernelTestBase {
     assert($updated_topic instanceof NodeInterface);
     $relationships = GroupRelationship::loadByEntity($updated_topic);
     $this->assertEmpty($relationships, 'Topic should not be linked to any groups.');
+  }
+
+  /**
+   * A refused group removal is reported, not silently swallowed.
+   *
+   * PROD-36392. The topic:write scope grants "create group_node:topic entity"
+   * to an outsider of a flexible_group, so a correctly scoped integration keeps
+   * full control - that is what every other group test here relies on. An
+   * integration that is NOT scoped for the group type it touches has no
+   * standing over it, and setGroupsForNode() drops the removal from its work
+   * list. The mutation must say so: returning a success that quietly kept the
+   * content in the group would let a misprovisioned integration believe it had
+   * been moving content for weeks.
+   */
+  public function testUpdateTopicRemoveFromGroupWithoutStandingIsReported(): void {
+    $topicType = Term::create([
+      'vid' => 'topic_types',
+      'name' => 'Article',
+    ]);
+    $topicType->save();
+
+    // A group type the topic:write scope says nothing about: its outsider grant
+    // is bound to flexible_group, so the machine account has no standing here.
+    $groupType = GroupType::create([
+      'id' => 'unscoped_group',
+      'label' => 'Unscoped group',
+    ]);
+    $groupType->save();
+
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $relationshipTypeStorage */
+    $relationshipTypeStorage = $this->container->get('entity_type.manager')
+      ->getStorage('group_content_type');
+    $relationshipTypeStorage->createFromPlugin($groupType, 'group_node:topic')->save();
+
+    $unscopedGroup = Group::create([
+      'type' => 'unscoped_group',
+      'label' => 'Unscoped group 1',
+    ]);
+    $unscopedGroup->save();
+
+    // A normal group alongside it, so the call asks to leave both: the scoped
+    // one the caller may detach, the unscoped one it may not.
+    $scopedGroup = Group::create([
+      'type' => 'flexible_group',
+      'label' => 'Group 1',
+      'field_group_allowed_visibility' => ['public'],
+    ]);
+    $scopedGroup->save();
+
+    $topic = Node::create([
+      'type' => 'topic',
+      'title' => 'Topic in an unscoped group',
+      'body' => [['value' => ' ']],
+      'field_content_visibility' => 'public',
+      'field_topic_type' => $topicType->id(),
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $scopedGroup->addRelationship($topic, 'group_node:topic', ['uid' => $topic->getOwnerId()]);
+    $unscopedGroup->addRelationship($topic, 'group_node:topic', ['uid' => $topic->getOwnerId()]);
+
+    $this->assertCount(
+      2,
+      GroupRelationship::loadByEntity($topic),
+      'precondition: the topic is in both groups before the mutation runs',
+    );
+
+    $this->actAsClientCredentialsWithScopes(['topic:write']);
+    $this->assertResults(
+      <<<GQL
+        mutation UpdateTopic(\$input: UpdateTopicInput!) {
+          updateTopic(input: \$input) {
+            errors
+            topic {
+              id
+            }
+          }
+        }
+        GQL,
+      [
+        'input' => [
+          'id' => $topic->uuid(),
+          'groups' => NULL,
+        ],
+      ],
+      [
+        'updateTopic' => [
+          'errors' => ['GROUPS_REMOVAL_NOT_PERMITTED'],
+          'topic' => NULL,
+        ],
+      ],
+      // The refusal returns before the node is saved or rendered, so the
+      // response carries no node cache metadata.
+      $this->defaultMutationCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+
+    // The refusal is real: the relationship is still there.
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $updated_topic = $node_storage->load($topic->id());
+    assert($updated_topic instanceof NodeInterface);
+    $this->assertCount(
+      2,
+      GroupRelationship::loadByEntity($updated_topic),
+      'The whole call is refused, so neither relationship is touched.',
+    );
   }
 
   /**

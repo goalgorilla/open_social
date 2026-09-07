@@ -161,6 +161,8 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
     // Update image when the client sent heroImage (new file or explicit null).
     // @todo This finalization should roll back if we can not update the topic.
     // @todo We should properly handle finalization errors here.
+    // @todo Every early return below leaves this finalized file orphaned.
+    //   See https://getopensocial.atlassian.net/browse/PROD-36534.
     if ($input->hasHeroImageUpdate()) {
       $image = $this->fileInputHandler->inputToFile(
         $input->getHeroImage(),
@@ -176,6 +178,20 @@ class UpdateTopic extends DataProducerPluginBase implements ContainerFactoryPlug
 
       // Get current groups from relationships.
       $current_groups = $this->getCurrentGroupsFromRelationships($node);
+
+      $groups_to_detach = $primary_group === NULL
+        ? $current_groups
+        : array_diff($current_groups, $this->prepareGroupsToAdd($primary_group, $crossposted_groups));
+
+      // A group the acting account has no standing in was never its to detach
+      // (PROD-36392), and setGroupsForNode() will silently drop it from the
+      // removal set. Report it instead: an integration whose machine account is
+      // missing the group permission must fail loudly on its first call rather
+      // than believe for weeks that it has been moving content.
+      if ($this->setGroupsForNodeService?->lockedGroupIds($node, $groups_to_detach)) {
+        $payload->addViolation(new Violation('GROUPS_REMOVAL_NOT_PERMITTED'));
+        return $payload;
+      }
 
       // Remove from all groups.
       if ($primary_group === NULL) {
