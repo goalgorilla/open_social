@@ -230,9 +230,9 @@ class AffiliationDisplayTest extends UnitTestCase {
   /**
    * With affiliation off for every group type, external affiliations go too.
    *
-   * PROD-35675: switching "Enable affiliation for Groups" off on every group
-   * type turns the feature off for display as a whole, so the free-text
-   * non-platform affiliation must disappear from the streams as well.
+   * Switching "Enable affiliation for Groups" off on every group type turns
+   * the feature off for display as a whole, so the free-text non-platform
+   * affiliation must disappear from the streams as well.
    *
    * @covers ::getDisplayableAffiliation
    */
@@ -489,6 +489,9 @@ class AffiliationDisplayTest extends UnitTestCase {
   protected function createProfile(array $affiliation, array $fields = [], array $cache_tags = []): ProfileAffiliationInterface&MockObject {
     $profile = $this->createMock(ProfileAffiliationInterface::class);
     $profile->method('getPrimaryAffiliation')->willReturn($affiliation);
+    // Mirrors SocialProfile::getPrimaryAffiliationType(), which reads the same
+    // key off the same array.
+    $profile->method('getPrimaryAffiliationType')->willReturn($affiliation['affiliation_type'] ?? '');
     $profile->method('getCacheContexts')->willReturn([]);
     $profile->method('getCacheTags')->willReturn($cache_tags);
     $profile->method('getCacheMaxAge')->willReturn(Cache::PERMANENT);

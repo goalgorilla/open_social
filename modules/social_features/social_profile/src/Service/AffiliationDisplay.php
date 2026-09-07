@@ -68,10 +68,10 @@ final class AffiliationDisplay {
       return [];
     }
 
-    if (($affiliation['affiliation_type'] ?? '') === self::EXTERNAL_AFFILIATION_TYPE) {
-      // PROD-35675: with no group type affiliation-enabled, the affiliation
-      // feature is effectively off for display, so the non-platform
-      // affiliation is hidden too.
+    if ($profile->getPrimaryAffiliationType() === self::EXTERNAL_AFFILIATION_TYPE) {
+      // With no group type affiliation-enabled, the affiliation feature is
+      // effectively off for display, so the non-platform affiliation is hidden
+      // too.
       // @see \Drupal\social_profile\GroupAffiliation::isGroupAffiliationEnabled()
       if (!$this->groupAffiliation->isGroupAffiliationEnabled()) {
         return [];
