@@ -1,0 +1,79 @@
+# Group scopes for GraphQL API access.
+"group":
+  description: 'Provides access to groups data on the platform.'
+  umbrella: true
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read any published groups information you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read any published groups information on the platform.'
+
+"group:read":
+  parent: group
+  description: 'Provides the ability to read any published groups the actor has access to.'
+  umbrella: false
+  granularity: permissions
+  permissions:
+    - scope: drupal
+      permission: 'view public flexible_group group'
+    - scope: drupal
+      permission: 'view community flexible_group group'
+    - scope: drupal
+      permission: 'view members flexible_group group'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read any published group you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read any published group on the platform.'
+
+"group:read:public":
+  parent: group
+  description: 'Provides the ability to read any published public groups the actor has access to.'
+  umbrella: false
+  granularity: permissions
+  permissions:
+    - scope: drupal
+      permission: 'view public flexible_group group'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read any published group you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read any published group on the platform.'
+
+"group:read:community":
+  parent: group
+  description: 'Provides the ability to read any published community groups the actor has access to.'
+  umbrella: false
+  granularity: permissions
+  permissions:
+    - scope: drupal
+      permission: 'view community flexible_group group'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read any published group you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read any published group on the platform.'
+
+"group:read:members":
+  parent: group
+  description: 'Provides the ability to read any published members groups the actor has access to.'
+  umbrella: false
+  granularity: permissions
+  permissions:
+    - scope: drupal
+      permission: 'view members flexible_group group'
+  grant_types:
+    authorization_code:
+      status: true
+      description: 'Allow the application to read any published group you have access to.'
+    client_credentials:
+      status: true
+      description: 'Allow the application to read any published group on the platform.'

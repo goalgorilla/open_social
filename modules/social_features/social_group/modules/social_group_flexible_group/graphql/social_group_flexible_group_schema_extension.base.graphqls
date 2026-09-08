@@ -26,6 +26,35 @@ type UserGroupAffiliation implements Node & ProfileAffiliatable {
   group: Group!
 }
 
+"""
+User group membership.
+"""
+type UserGroupMembership implements Node {
+  id: ID!
+  joined: DateTime!
+  user: User!
+  group: Group!
+}
+
+type UserGroupMembershipEdge implements Edge {
+  cursor: Cursor!
+  node: UserGroupMembership!
+}
+
+type UserGroupMembershipConnection implements Connection {
+  edges: [UserGroupMembershipEdge!]!
+  nodes: [UserGroupMembership!]!
+  pageInfo: PageInfo!
+}
+
+"""
+The set of valid sort keys for group membership connections.
+"""
+enum GroupMembershipSortKeys {
+  """Sort by membership creation date (join date)."""
+  JOINED_AT
+}
+
 ################################################################################
 #                              Mutation Types                                  #
 ################################################################################

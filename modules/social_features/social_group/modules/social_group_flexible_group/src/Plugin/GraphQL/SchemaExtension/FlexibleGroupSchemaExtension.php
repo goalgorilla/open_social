@@ -33,6 +33,17 @@ class FlexibleGroupSchemaExtension extends SchemaExtensionPluginBase {
         ->map('entity', $builder->fromParent())
     );
 
+    $registry->addFieldResolver('User', 'groupMemberships',
+      $builder->produce('query_user_group_memberships')
+        ->map('entity', $builder->fromParent())
+        ->map('after', $builder->fromArgument('after'))
+        ->map('before', $builder->fromArgument('before'))
+        ->map('first', $builder->fromArgument('first'))
+        ->map('last', $builder->fromArgument('last'))
+        ->map('reverse', $builder->fromArgument('reverse'))
+        ->map('sortKey', $builder->fromArgument('sortKey'))
+    );
+
     $registry->addFieldResolver('Group', 'id',
       $builder->produce('entity_uuid')
         ->map('entity', $builder->fromParent())
@@ -40,6 +51,22 @@ class FlexibleGroupSchemaExtension extends SchemaExtensionPluginBase {
     $registry->addFieldResolver('Group', 'name',
       $builder->produce('entity_label')
         ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('UserGroupMembership', 'id',
+      $builder->produce('entity_uuid')
+        ->map('entity', $builder->fromParent())
+    );
+    $registry->addFieldResolver('UserGroupMembership', 'joined',
+      $builder->produce('entity_created')
+        ->map('entity', $builder->fromParent())
+        ->map('format', $builder->fromValue('U'))
+    );
+    $registry->addFieldResolver('UserGroupMembership', 'user',
+      $builder->fromPath('entity:group_content', 'entity_id.entity')
+    );
+    $registry->addFieldResolver('UserGroupMembership', 'group',
+      $builder->fromPath('entity:group_content', 'gid.entity')
     );
 
     $this->addProfileAffiliationMembershipResolvers($registry, $builder, 'UserGroupAffiliation', 'group');

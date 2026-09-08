@@ -4,4 +4,23 @@ extend type User {
     This only counts flexibleGroupMembership that still exist on the platform and where the user is set as author.
     """
     flexibleGroupMembership: Int!
+    """
+    Group memberships for this user.
+
+    Only memberships whose group is visible to the current viewer are listed.
+    """
+    groupMemberships(
+      """Returns the elements that come after the specified cursor."""
+      after: Cursor
+      """Returns the elements that come before the specified cursor."""
+      before: Cursor
+      """Returns up to the first `n` elements from the list."""
+      first: Int
+      """Returns up to the last `n` elements from the list."""
+      last: Int
+      """Reverse the order of the underlying list."""
+      reverse: Boolean = false
+      """Sort the underlying list by the given key."""
+      sortKey: GroupMembershipSortKeys = JOINED_AT
+    ): UserGroupMembershipConnection!
 }
