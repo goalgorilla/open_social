@@ -176,8 +176,6 @@ class GroupAffiliationCacheInvalidationHooks implements ContainerInjectionInterf
    * Why this is needed:
    *   - If the group label is changed the group affiliation options by user
    *     must be reordered (cache deleted).
-   *   - If flexible groups visibility is changed (members only (secret) groups,
-   *     can not be on the list).
    *   - If group status is changed (published/unpublished).
    *
    * Custom cache tags:
@@ -210,7 +208,7 @@ class GroupAffiliationCacheInvalidationHooks implements ContainerInjectionInterf
     // would become a performance bottleneck, it is suggested to invalidate the
     // general "group_affiliation_options_by_user" cache tag instead.
     // @todo This cache invalidation should be ideally triggered only on label
-    //   change, status change or flexible group visibility change.
+    //   or status change.
     $memberships = $this->loadByGroup($group);
     /** @var \Drupal\group\Entity\GroupMembership $membership */
     foreach ($memberships as $membership) {

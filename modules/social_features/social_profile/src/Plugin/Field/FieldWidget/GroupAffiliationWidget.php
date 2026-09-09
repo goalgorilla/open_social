@@ -225,8 +225,7 @@ class GroupAffiliationWidget extends WidgetBase {
    *  - Group type must be affiliation candidate
    *  - Group type must have affiliation enabled
    *  - User must be member of a group
-   *  - Group must be published
-   *  - Group visibility must not be limited to members (Flexible group only)
+   *  - Group must be published.
    *
    * Method cache_id:
    *   group_affiliation_options_by_user:{user_id}
@@ -357,11 +356,6 @@ class GroupAffiliationWidget extends WidgetBase {
       ->condition('group_type', $group_type)
       ->condition('gid.entity.status', 1)
       ->accessCheck(FALSE);
-
-    if ($group_type === 'flexible_group') {
-      // Remove flexible groups visible to members only (secret).
-      $query->condition('gid.entity.field_flexible_group_visibility.value', 'members', '!=');
-    }
 
     if (isset($roles)) {
       $query->condition('group_roles', (array) $roles, 'IN');
