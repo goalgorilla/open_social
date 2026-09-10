@@ -998,3 +998,69 @@ function social_core_update_130027(): void {
   $helper = \Drupal::classResolver(SocialCoreInstallHelper::class);
   $helper->prepareContentViewVboActions();
 }
+
+/**
+ * Show cross-posted content once in the content overview, with its groups.
+ *
+ * Content that is published in multiple groups was listed once per group. Make
+ * the view distinct and add a "Group" column that lists all groups at once.
+ */
+function social_core_update_130028(): void {
+  $view = View::load('content');
+  if (!$view instanceof View) {
+    return;
+  }
+
+  $displays = $view->get('display');
+  $displays['default']['display_options']['query']['options']['distinct'] = TRUE;
+
+  $field = [
+    'groups' => [
+      'id' => 'groups',
+      'table' => 'node_field_data',
+      'field' => 'social_group_node_groups',
+      'plugin_id' => 'social_group_node_groups',
+      'label' => 'Group',
+      'exclude' => FALSE,
+      'alter' => ['alter_text' => FALSE],
+      'element_class' => '',
+      'element_default_classes' => TRUE,
+      'empty' => '',
+      'hide_empty' => FALSE,
+      'empty_zero' => FALSE,
+      'hide_alter_empty' => TRUE,
+    ],
+  ];
+
+  // A display that overrides the fields of the default one needs the column
+  // of its own.
+  foreach ($displays as $display_id => $display) {
+    $fields = $display['display_options']['fields'] ?? NULL;
+    if ($fields === NULL || isset($fields['groups'])) {
+      continue;
+    }
+
+    // Show the groups right after the author, the column order of a table
+    // style follows the order of the fields.
+    $position = array_search('name', array_keys($fields), TRUE);
+    $displays[$display_id]['display_options']['fields'] = $position === FALSE
+      ? $fields + $field
+      : array_slice($fields, 0, $position + 1, TRUE)
+      + $field
+      + array_slice($fields, $position + 1, NULL, TRUE);
+  }
+
+  $options = &$displays['default']['display_options'];
+  $options['style']['options']['columns']['groups'] = 'groups';
+  $options['style']['options']['info']['groups'] = [
+    'sortable' => TRUE,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => FALSE,
+    'responsive' => 'priority-low',
+  ];
+
+  $view->set('display', $displays);
+  $view->save();
+}

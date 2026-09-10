@@ -44,6 +44,25 @@ function social_group_views_data_alter(array &$data) {
     ],
   ];
 
+  // All groups a content item is published in. Cross-posted content is related
+  // to multiple groups, so this can not be a relationship without multiplying
+  // the rows of a view.
+  $data['node_field_data']['social_group_node_groups'] = [
+    'title' => t('Groups'),
+    'group' => t('Content'),
+    'real field' => 'nid',
+    'field' => [
+      'title' => t('Groups'),
+      'help' => t('All groups the content is published in.'),
+      'id' => 'social_group_node_groups',
+    ],
+    'filter' => [
+      'title' => t('Groups'),
+      'help' => t('Filter the content by the groups it is published in.'),
+      'id' => 'social_group_node_groups',
+    ],
+  ];
+
   // Group filtration by a name.
   $data['groups_field_data']['filter_by_group'] = [
     'title' => t('Filter by group'),

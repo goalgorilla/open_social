@@ -13,6 +13,18 @@ views.filter.filter_by_group:
   type: views.filter.in_operator
   label: 'Filter by group'
 
+# The handlers live in social_group, but this view ships with social_comment,
+# which is installed before social_group. Their schema is defined here as well
+# so that this view can be validated without social_group, the same reason the
+# schema of "filter_by_group" above lives here.
+views.field.social_group_node_groups:
+  type: views_field
+  label: 'Groups'
+
+views.filter.social_group_node_groups:
+  type: views.filter.in_operator
+  label: 'Groups'
+
 views.relationship.group_content:
   type: views_relationship_with_group_plugin_filter
   label: 'Group relationship'

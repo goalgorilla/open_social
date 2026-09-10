@@ -350,16 +350,14 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        label:
-          id: label
-          table: groups_field_data
-          field: label
-          relationship: gid
+        groups:
+          id: groups
+          table: node_field_data
+          field: social_group_node_groups
+          relationship: node
           group_type: group
           admin_label: ''
-          entity_type: group
-          entity_field: label
-          plugin_id: field
+          plugin_id: social_group_node_groups
           label: Group
           exclude: false
           alter:
@@ -401,20 +399,6 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: true
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
         changed:
           id: changed
           table: comment_field_data
@@ -1025,13 +1009,12 @@ display:
             group_items: {  }
         filter_by_group:
           id: filter_by_group
-          table: groups_field_data
-          field: filter_by_group
-          relationship: gid
+          table: node_field_data
+          field: social_group_node_groups
+          relationship: node
           group_type: group
           admin_label: ''
-          entity_type: group
-          plugin_id: filter_by_group
+          plugin_id: social_group_node_groups
           operator: in
           value: {  }
           group: 1
@@ -1084,7 +1067,7 @@ display:
             name: name
             entity_id: entity_id
             type: type
-            label: label
+            groups: groups
             changed: changed
             operations: operations
             name_1: name_1
@@ -1123,8 +1106,8 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            label:
-              sortable: false
+            groups:
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
@@ -1162,7 +1145,7 @@ display:
         options:
           query_comment: ''
           disable_sql_rewrite: false
-          distinct: false
+          distinct: true
           replica: false
           query_tags: {  }
       relationships:
@@ -1185,31 +1168,6 @@ display:
           group_type: group
           admin_label: Content
           entity_type: comment
-          plugin_id: standard
-          required: false
-        group_content:
-          id: group_content
-          table: node_field_data
-          field: group_content
-          relationship: node
-          group_type: group
-          admin_label: 'Content group content'
-          entity_type: node
-          plugin_id: group_content_to_entity_reverse
-          required: false
-          group_content_plugins:
-            'group_node:event': '0'
-            'group_node:page': '0'
-            'group_node:topic': '0'
-        gid:
-          id: gid
-          table: group_relationship_field_data
-          field: gid
-          relationship: group_content
-          group_type: group
-          admin_label: Group
-          entity_type: group_content
-          entity_field: gid
           plugin_id: standard
           required: false
         profile:
@@ -1244,6 +1202,8 @@ display:
       tags:
         - 'config:field.storage.profile.field_profile_first_name'
         - 'config:field.storage.profile.field_profile_last_name'
+        - group_content_list
+        - group_list
       cacheable: false
   page_published:
     id: page_published
@@ -1275,6 +1235,8 @@ display:
       tags:
         - 'config:field.storage.profile.field_profile_first_name'
         - 'config:field.storage.profile.field_profile_last_name'
+        - group_content_list
+        - group_list
       cacheable: false
   page_unapproved:
     id: page_unapproved
@@ -1605,16 +1567,14 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        label:
-          id: label
-          table: groups_field_data
-          field: label
-          relationship: gid
+        groups:
+          id: groups
+          table: node_field_data
+          field: social_group_node_groups
+          relationship: node
           group_type: group
           admin_label: ''
-          entity_type: group
-          entity_field: label
-          plugin_id: field
+          plugin_id: social_group_node_groups
           label: Group
           exclude: false
           alter:
@@ -1656,20 +1616,6 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: true
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
         changed:
           id: changed
           table: comment_field_data
@@ -2211,13 +2157,12 @@ display:
             group_items: {  }
         filter_by_group:
           id: filter_by_group
-          table: groups_field_data
-          field: filter_by_group
-          relationship: gid
+          table: node_field_data
+          field: social_group_node_groups
+          relationship: node
           group_type: group
           admin_label: ''
-          entity_type: group
-          plugin_id: filter_by_group
+          plugin_id: social_group_node_groups
           operator: in
           value: {  }
           group: 1
@@ -2284,4 +2229,6 @@ display:
       tags:
         - 'config:field.storage.profile.field_profile_first_name'
         - 'config:field.storage.profile.field_profile_last_name'
+        - group_content_list
+        - group_list
       cacheable: false

@@ -3,6 +3,7 @@ status: true
 dependencies:
   module:
     - node
+    - social_group
     - user
     - views_bulk_operations
 id: content
@@ -221,6 +222,21 @@ display:
           empty_zero: false
           hide_alter_empty: true
           type: user_name
+        groups:
+          id: groups
+          table: node_field_data
+          field: social_group_node_groups
+          plugin_id: social_group_node_groups
+          label: Group
+          exclude: false
+          alter:
+            alter_text: false
+          element_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
         status:
           id: status
           table: node_field_data
@@ -564,6 +580,7 @@ display:
             title: title
             type: type
             name: name
+            groups: groups
             status: status
             changed: changed
             edit_node: edit_node
@@ -593,6 +610,13 @@ display:
               responsive: ''
             name:
               sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: priority-low
+            groups:
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
@@ -650,6 +674,8 @@ display:
         type: fields
       query:
         type: views_query
+        options:
+          distinct: true
       relationships:
         uid:
           id: uid
@@ -669,7 +695,9 @@ display:
         - url.query_args
         - user
         - user.permissions
-      tags: {  }
+      tags:
+        - group_content_list
+        - group_list
   page_1:
     id: page_1
     display_title: Page
@@ -700,4 +728,6 @@ display:
         - url.query_args
         - user
         - user.permissions
-      tags: {  }
+      tags:
+        - group_content_list
+        - group_list
