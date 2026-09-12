@@ -42,3 +42,21 @@ Feature: Validate topic comment visibility by comment status
       | role           |
       | sitemanager    |
       | contentmanager |
+
+  Scenario Outline: Users with elevated permissions do not see an empty comment section on topics with hidden comments
+    Given topics with non-anonymous author:
+      | title                             | body       | field_content_visibility | field_topic_type | status |
+      | Topic without any hidden comments | Topic body | community                | News             | 1      |
+    And topic with "Topic without any hidden comments" have "hidden" comments
+    And I am logged in as a user with the <role> role
+
+    When I open the "topic" node with title "Topic without any hidden comments"
+
+    Then I should see "Topic without any hidden comments"
+    And I should not see a "#section-comments" element
+
+    Examples:
+      | role           |
+      | verified       |
+      | sitemanager    |
+      | contentmanager |

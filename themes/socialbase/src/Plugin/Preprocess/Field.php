@@ -108,7 +108,13 @@ class Field extends PreprocessBase {
             ->applyTo($cache_target);
           $variables['#cache'] = $cache_target['#cache'];
 
-          if (!$hidden_access->isForbidden()) {
+          // Only open the section when there is something to review. A hidden
+          // comment field can not be commented on, so with no comments the
+          // section is an empty "Comments" card that reads as if hiding the
+          // comments had not worked.
+          $has_comments = (int) $node->get($comment_field_name)->comment_count > 0;
+
+          if (!$hidden_access->isForbidden() && $has_comments) {
             $variables['comment_hidden_viewable'] = TRUE;
           }
         }
