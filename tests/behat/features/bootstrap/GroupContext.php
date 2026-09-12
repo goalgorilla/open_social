@@ -7,14 +7,8 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Context\MinkContext;
-use Drupal\grequest\Plugin\Group\Relation\GroupMembershipRequest;
 use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupRelationship;
 use Drupal\group\Entity\GroupRelationshipType;
-use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\GroupRole;
-use Drupal\user\Entity\User;
-use Drupal\user\UserInterface;
 
 /**
  * Defines test steps around the usage of groups.
@@ -50,11 +44,6 @@ class GroupContext extends RawMinkContext {
   private CKEditorContext $cKEditorContext;
 
   /**
-   * The Drupal context which gives us access to user management.
-   */
-  private SocialDrupalContext $drupalContext;
-
-  /**
    * Make some contexts available here so we can delegate steps.
    *
    * @BeforeScenario
@@ -64,7 +53,6 @@ class GroupContext extends RawMinkContext {
 
     $this->cKEditorContext = $environment->getContext(CKEditorContext::class);
     $this->minkContext = $environment->getContext(SocialMinkContext::class);
-    $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
   }
 
   /**
@@ -75,194 +63,6 @@ class GroupContext extends RawMinkContext {
   public function whenIViewTheGroupCreationPage() : void {
     $this->visitPath(self::CREATE_PAGE);
     $this->assertSession()->statusCodeEquals(200);
-  }
-
-  /**
-   * Create multiple groups at the start of a test.
-   *
-   * Creates group of a given type provided in the form:
-   * | author | title      | description     | author   | type        | language | field_group_allowed_visibility |
-   * | user-1 | My title 1 | My description  | username | flexible_group  | en       | public                         |
-   * | user-1 | My title 2 | My description  | username | flexible_group  | en       | public,community,group         |
-   * | ...    | ...        | ...             | ...      | ...         | ...      | ...                            |
-   *
-   * @Given groups:
-   */
-  public function createGroups(TableNode $groupsTable) {
-    foreach ($groupsTable->getHash() as $groupHash) {
-      $group = $this->groupCreate($groupHash);
-      $this->groups[$group->id()] = $group;
-    }
-  }
-
-  /**
-   * Create multiple groups at the start of a test.
-   *
-   * Creates group of a given type provided in the form:
-   * | title    | description     | author   | type        | language
-   * | My title | My description  | username | flexible_group  | en
-   * | ...      | ...             | ...      | ...         | ...
-   *
-   * @Given groups with non-anonymous owner:
-   */
-  public function createGroupsWithOwner(TableNode $groupsTable) {
-    // Create a new random user to own our groups, this ensures the author
-    // isn't anonymous.
-    $user = (object) [
-      'name' => $this->drupalContext->getRandom()->name(8),
-      'pass' => $this->drupalContext->getRandom()->name(16),
-      'role' => "authenticated",
-    ];
-    $user->mail = "{$user->name}@example.com";
-
-    $this->drupalContext->userCreate($user);
-
-    foreach ($groupsTable->getHash() as $groupHash) {
-      if (isset($groupHash['author'])) {
-        throw new \RuntimeException("Can not specify an author when using the 'groups with non-anonymous owner:' step, use 'groups:' instead.");
-      }
-
-      // We specify the owner for each group to be the current user.
-      // `groupCreate` will load the user by name so we fall back to 'anyonmous'
-      // if the current user isn't logged in.
-      $groupHash['author'] = $user->name;
-
-      $group = $this->groupCreate($groupHash);
-      $this->groups[$group->id()] = $group;
-    }
-  }
-
-  /**
-   * Create multiple groups at the start of a test.
-   *
-   * Creates group of a given type provided in the form:
-   * | title    | description     | author   | type        | language
-   * | My title | My description  | username | flexible_group  | en
-   * | ...      | ...             | ...      | ...         | ...
-   *
-   * @Given groups owned by current user:
-   */
-  public function createGroupsOwnedByCurrentUser(TableNode $groupsTable) {
-    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-    foreach ($groupsTable->getHash() as $groupHash) {
-      if (isset($groupHash['author'])) {
-        throw new \RuntimeException("Can not specify an author when using the 'groups owned by current user:' step, use 'groups:' instead.");
-      }
-
-      // We specify the owner for each group to be the current user.
-      // `groupCreate` will load the user by name so we fall back to 'anyonmous'
-      // if the current user isn't logged in.
-      $groupHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
-
-      $group = $this->groupCreate($groupHash);
-      $this->groups[$group->id()] = $group;
-    }
-  }
-
-  /**
-   * Create membership requests for users in a specified group.
-   *
-   * The membership requests are created in a `pending` state if none is
-   * specified.
-   *
-   * This function does not create group memberships, which should be created
-   * separately for approved requests. This ensures that it's easy to simulate
-   * a situation in which a user may have left after an approved request.
-   *
-   * ```
-   * Given group membership requests:
-   *   | group    | user      | status   |
-   *   | My group | Jane Doe  |          |
-   *   | My group | Jane Doe  | approved |
-   * ```
-   *
-   * @Given group membership requests:
-   */
-  public function createGroupMembershipRequests(TableNode $groupMembershipRequestsTable) {
-    $plugin_id = 'group_membership_request';
-    $relationship_type_storage = \Drupal::entityTypeManager()->getStorage('group_content_type');
-
-    // The allowed statuses.
-    $statuses = [
-      'pending',
-      'approved',
-      'rejected',
-    ];
-
-    foreach ($groupMembershipRequestsTable->getHash() as $groupMemberHash) {
-      $status = ($groupMemberHash['status'] ?? NULL) ?: "pending";
-      assert(in_array($status, $statuses, TRUE), "status must be one of " . implode(", ", $statuses) . " got '$status'.");
-      $group_id = $this->getNewestGroupIdFromTitle($groupMemberHash['group']);
-      if ($group_id === NULL) {
-        throw new \InvalidArgumentException("Group '{$groupMemberHash['group']}' not found.");
-      }
-      $group = Group::load($group_id);
-      assert($group instanceof GroupInterface);
-
-      $user = user_load_by_name($groupMemberHash['user']);
-      assert($user !== NULL && $user->id() !== 0, "User {$groupMemberHash['user']} does not exist.");
-
-      $group_type_id = $group->getGroupType()->id();
-      $group_content = GroupRelationship::create([
-        'type' => $relationship_type_storage->getRelationshipTypeId($group_type_id, $plugin_id),
-        'gid' => $group->id(),
-        'entity_id' => $user->id(),
-        'grequest_status' => $status,
-      ]);
-      $group_content->save();
-    }
-  }
-
-  /**
-   * Add members to a group.
-   *
-   * Adds users to a specific group
-   * | group    | user      |
-   * | My group | Jane Doe  |
-   * | ...      | ...       |
-   *
-   * @Given group members:
-   */
-  public function createGroupMembers(TableNode $groupMembersTable) {
-    foreach ($groupMembersTable->getHash() as $groupMemberHash) {
-      $group_id = $this->getNewestGroupIdFromTitle($groupMemberHash['group']);
-      if ($group_id === NULL) {
-        throw new \InvalidArgumentException("Group '{$groupMemberHash['group']}' not found.");
-      }
-      $group = Group::load($group_id);
-      assert($group instanceof GroupInterface);
-
-      $user = User::load($this->drupalContext->getUserManager()->getUser($groupMemberHash['user'])->uid);
-      assert($user instanceof UserInterface);
-
-      $group->addMember($user);
-    }
-  }
-
-  /**
-   * Remove members from a group.
-   *
-   * Remove users from a specific group
-   * | group    | user      |
-   * | My group | Jane Doe  |
-   * | ...      | ...       |
-   *
-   * @Given I remove group members:
-   */
-  public function removeGroupMembers(TableNode $groupMembersTable) {
-    foreach ($groupMembersTable->getHash() as $groupMemberHash) {
-      $group_id = $this->getNewestGroupIdFromTitle($groupMemberHash['group']);
-      if ($group_id === NULL) {
-        throw new \InvalidArgumentException("Group '{$groupMemberHash['group']}' not found.");
-      }
-      $group = Group::load($group_id);
-      assert($group instanceof GroupInterface);
-
-      $user = User::load($this->drupalContext->getUserManager()->getUser($groupMemberHash['user'])->uid);
-      assert($user instanceof UserInterface);
-
-      $group->removeMember($user);
-    }
   }
 
   /**
@@ -387,62 +187,6 @@ class GroupContext extends RawMinkContext {
         $this->minkContext->assertPageContainsText($value);
       }
     }
-  }
-
-  /**
-   * Makes the current LU a member of a group by a given title.
-   *
-   * @param string $group_title
-   *   The title of the group to make the current user a member of.
-   *
-   * @Given I am a member of :group
-   */
-  public function iAmMemberOf(string $group_title) : void {
-    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-    assert($current_user !== FALSE, "Must be logged in before adding a user to a group in a test step.");
-    $current_user = User::load($current_user->uid);
-    assert($current_user instanceof UserInterface, "Could not load the current user.");
-
-    $group_id = $this->getNewestGroupIdFromTitle($group_title);
-    if ($group_id === NULL) {
-      throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group_title));
-    }
-
-    $group = Group::load($group_id);
-    assert($group !== NULL);
-
-    $group->addMember($current_user);
-  }
-
-  /**
-   * Makes the current LU a member of a group by a given title.
-   *
-   * @param string $group_title
-   *   The title of the group to make the current user a member of.
-   * @param string $group_role
-   *   The role in the group of the member.
-   *
-   * @Given I am a member of :group with the :group_role role
-   */
-  public function iAmMemberOfWithRole(string $group_title, string $group_role) : void {
-    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-    assert($current_user !== FALSE, "Must be logged in before adding a user to a group in a test step.");
-    $current_user = User::load($current_user->uid);
-    assert($current_user instanceof UserInterface, "Could not load the current user.");
-
-    $group_id = $this->getNewestGroupIdFromTitle($group_title);
-    if ($group_id === NULL) {
-      throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group_title));
-    }
-
-    $group = Group::load($group_id);
-    assert($group !== NULL);
-
-    if (GroupRole::load($group_role) === NULL) {
-      throw new \InvalidArgumentException(sprintf('Could not find group role "%s"', $group_role));
-    }
-
-    $group->addMember($current_user, ['group_roles' => [$group_role]]);
   }
 
   /**
@@ -730,45 +474,6 @@ class GroupContext extends RawMinkContext {
    */
   public function iVisitTheGroupCreateForm(string $group_type) : void {
     $this->visitPath("/group/add/{$group_type}_group");
-  }
-
-  /**
-   * Create a group.
-   *
-   * @param array $group
-   *   The values to pass to Group::create. `author` can be set to a username
-   *   which will be converted to a uid.
-   *
-   * @return \Drupal\group\Entity\Group
-   *   The created group.
-   */
-  private function groupCreate(array $group) {
-    if (!isset($group['author'])) {
-      throw new \RuntimeException("You must specify an `author` when creating a group. Specify the `author` field if using `@Given groups:` or use one of `@Given groups with non-anonymous owner:` or `@Given groups owned by current user:` instead.");
-    }
-
-    $account = user_load_by_name($group['author']);
-    if ($account === FALSE) {
-      throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $group['author']));
-    }
-    $group['uid'] = $account->id();
-    unset($group['author']);
-
-    // Allow using multiple values.
-    if (isset($group['field_group_allowed_visibility']) && str_contains($group['field_group_allowed_visibility'], ',')) {
-      $group['field_group_allowed_visibility'] = explode(',', $group['field_group_allowed_visibility']);
-    }
-
-    // Let's create some groups.
-    $this->validateEntityFields('group', $group);
-    $group_object = Group::create($group);
-    $violations = $group_object->validate();
-    if ($violations->count() !== 0) {
-      throw new \RuntimeException("The group you tried to create is invalid: $violations");
-    }
-    $group_object->save();
-
-    return $group_object;
   }
 
   /**
