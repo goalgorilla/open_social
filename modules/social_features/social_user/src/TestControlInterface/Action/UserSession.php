@@ -80,7 +80,13 @@ final class UserSession {
    */
   #[Operation(
     id: 'logout_user',
-    patterns: ['logout', 'I logout'],
+    patterns: [
+      'logout',
+      'I logout',
+      'I log out',
+      'I am an anonymous user',
+      'I am not logged in',
+    ],
     type: OperationType::Write,
     changesSession: TRUE,
   )]

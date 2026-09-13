@@ -96,19 +96,6 @@ class SocialDrupalContext extends RawDrupalContext implements Context {
   }
 
   /**
-   * @Given I am an anonymous user
-   * @Given I am not logged in
-   * @Then I log out
-   *
-   * Verbatim copy of DrupalContext::assertAnonymousUser(); see the class
-   * docblock above for why.
-   */
-  public function assertAnonymousUser() {
-    // Verify the user is logged out.
-    $this->logout(TRUE);
-  }
-
-  /**
    * Asserts that a given content type is editable.
    *
    * @Then I should be able to edit a/an :type( content)
