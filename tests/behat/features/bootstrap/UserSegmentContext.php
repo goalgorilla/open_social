@@ -6,22 +6,13 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Context\MinkContext;
-use Drupal\user\Entity\User;
-use Drupal\user\UserInterface;
-use Drupal\user_segments\DataObject\Rule;
-use Drupal\user_segments\DataObject\RuleGroup;
 use Drupal\user_segments\Entity\UserSegment;
-use Drupal\social\Behat\EntityTrait;
-use Drupal\social\Behat\UserSegmentTrait;
-use Drupal\social\Behat\SocialMinkContext;
-use Drupal\social\Behat\SocialDrupalContext;
 
 /**
  * Defines test steps around the usage of user segments.
  */
 class UserSegmentContext extends RawMinkContext {
 
-  use EntityTrait;
   use UserSegmentTrait;
 
   private const CREATE_PAGE = "/admin/people/segment/add";
@@ -42,11 +33,6 @@ class UserSegmentContext extends RawMinkContext {
   private MinkContext $minkContext;
 
   /**
-   * The Drupal context which gives us access to user management.
-   */
-  private SocialDrupalContext $drupalContext;
-
-  /**
    * Make some contexts available here so we can delegate steps.
    *
    * @BeforeScenario
@@ -55,7 +41,6 @@ class UserSegmentContext extends RawMinkContext {
     $environment = $scope->getEnvironment();
 
     $this->minkContext = $environment->getContext(SocialMinkContext::class);
-    $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
   }
 
   /**
@@ -66,85 +51,6 @@ class UserSegmentContext extends RawMinkContext {
   public function whenIViewTheUserSegmentCreationPage() : void {
     $this->visitPath(self::CREATE_PAGE);
     $this->assertSession()->statusCodeEquals(200);
-  }
-
-  /**
-   * Create multiple user segments at the start of a test.
-   *
-   * Creates user segments provided in the form:
-   * | author | label        | description     | status | visibility_option | rules         |
-   * | user-1 | My Segment   | My description  | 1      | 1                 | {"rules": []} |
-   * | user-1 | My Segment 2 | My description  | 1      | 0                 | {"rules": []} |
-   * | ...    | ...          | ...             | ...    | ...               | ...           |
-   *
-   * @Given user segments:
-   */
-  public function createUserSegments(TableNode $userSegmentsTable) {
-    foreach ($userSegmentsTable->getHash() as $userSegmentHash) {
-      $userSegment = $this->userSegmentCreate($userSegmentHash);
-      $this->userSegments[$userSegment->id()] = $userSegment;
-    }
-  }
-
-  /**
-   * Create multiple user segments at the start of a test.
-   *
-   * Creates user segments provided in the form:
-   * | label      | description     | status | visibility_option | rules |
-   * | My Segment | My description  | 1      | 1                 | {"rules": []} |
-   * | ...        | ...             | ...    | ...               | ...   |
-   *
-   * @Given user segments with non-anonymous owner:
-   */
-  public function createUserSegmentsWithOwner(TableNode $userSegmentsTable) {
-    // Create a new random user to own our user segments, this ensures the author
-    // isn't anonymous.
-    $user = (object) [
-      'name' => $this->drupalContext->getRandom()->name(8),
-      'pass' => $this->drupalContext->getRandom()->name(16),
-      'role' => "authenticated",
-    ];
-    $user->mail = "{$user->name}@example.com";
-
-    $this->drupalContext->userCreate($user);
-
-    foreach ($userSegmentsTable->getHash() as $userSegmentHash) {
-      if (isset($userSegmentHash['author'])) {
-        throw new \RuntimeException("Can not specify an author when using the 'user segments with non-anonymous owner:' step, use 'user segments:' instead.");
-      }
-
-      $userSegmentHash['author'] = $user->name;
-
-      $userSegment = $this->userSegmentCreate($userSegmentHash);
-      $this->userSegments[$userSegment->id()] = $userSegment;
-    }
-  }
-
-  /**
-   * Create multiple user segments at the start of a test.
-   *
-   * Creates user segments provided in the form:
-   * | label      | description     | status | visibility_option | rules |
-   * | My Segment | My description  | 1      | 1                 | {"rules": []} |
-   * | ...        | ...             | ...    | ...               | ...   |
-   *
-   * @Given user segments owned by current user:
-   */
-  public function createUserSegmentsOwnedByCurrentUser(TableNode $userSegmentsTable) {
-    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-    foreach ($userSegmentsTable->getHash() as $userSegmentHash) {
-      if (isset($userSegmentHash['author'])) {
-        throw new \RuntimeException("Can not specify an author when using the 'user segments owned by current user:' step, use 'user segments:' instead.");
-      }
-
-      // We specify the owner for each user segment to be the current user.
-      // `userSegmentCreate` will load the user by name so we fall back to 'anonymous'
-      // if the current user isn't logged in.
-      $userSegmentHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
-
-      $userSegment = $this->userSegmentCreate($userSegmentHash);
-      $this->userSegments[$userSegment->id()] = $userSegment;
-    }
   }
 
   /**
@@ -171,7 +77,7 @@ class UserSegmentContext extends RawMinkContext {
       $key = strtolower($field);
       $userSegment[$key] = $value;
 
-      // Handle different field types
+      // Handle different field types.
       if ($key === "label") {
         $page->fillField("Label", $value);
       }
@@ -181,14 +87,16 @@ class UserSegmentContext extends RawMinkContext {
       elseif ($key === "status") {
         if ($value == '1' || $value === 'TRUE' || $value === 'true') {
           $page->checkField("Status");
-        } else {
+        }
+        else {
           $page->uncheckField("Status");
         }
       }
       elseif ($key === "visibility_option") {
         if ($value == '1' || $value === 'TRUE' || $value === 'true') {
           $page->checkField("Use this segment as a visibility option");
-        } else {
+        }
+        else {
           $page->uncheckField("Use this segment as a visibility option");
         }
       }
@@ -244,14 +152,16 @@ class UserSegmentContext extends RawMinkContext {
       elseif ($field === "status") {
         if ($value == '1' || $value === 'TRUE' || $value === 'true') {
           $this->minkContext->assertPageContainsText("Enabled");
-        } else {
+        }
+        else {
           $this->minkContext->assertPageContainsText("Disabled");
         }
       }
       elseif ($field === "visibility_option") {
         if ($value == '1' || $value === 'TRUE' || $value === 'true') {
           $this->minkContext->assertPageContainsText("Yes");
-        } else {
+        }
+        else {
           $this->minkContext->assertPageContainsText("No");
         }
       }
@@ -331,119 +241,6 @@ class UserSegmentContext extends RawMinkContext {
     }
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->addressEquals("/admin/people/segment/$userSegmentId");
-  }
-
-  /**
-   * Update an existing user segment.
-   *
-   * Updates user segments provided in the form:
-   * | label     | outcome    |
-   * | User role | outcome_id |
-   * | User role |            | (empty outcome clears it)
-   *
-   * @Given I update user segments:
-   */
-  public function updateUserSegments(TableNode $userSegmentsTable): void {
-    foreach ($userSegmentsTable->getHash() as $userSegmentHash) {
-      if (!isset($userSegmentHash['label'])) {
-        throw new \RuntimeException("You must specify a 'label' when updating a user segment.");
-      }
-
-      $segment = $this->getUserSegmentByLabel($userSegmentHash['label']);
-      if ($segment === NULL) {
-        throw new \RuntimeException(sprintf("User segment '%s' does not exist.", $userSegmentHash['label']));
-      }
-
-      // Handle outcome field - convert string to array if needed.
-      if (isset($userSegmentHash['outcome'])) {
-        if (is_string($userSegmentHash['outcome'])) {
-          // Single outcome as string - convert to array.
-          // Empty string means clear outcomes.
-          $outcomes = $userSegmentHash['outcome'] === '' ? [] : [$userSegmentHash['outcome']];
-        }
-        elseif (is_array($userSegmentHash['outcome']) && empty($userSegmentHash['outcome'])) {
-          // Empty array means clear outcomes.
-          $outcomes = [];
-        }
-        else {
-          // Already an array with values.
-          $outcomes = $userSegmentHash['outcome'];
-        }
-        $segment->setOutcomes($outcomes);
-      }
-
-      // Handle other fields that can be updated.
-      foreach ($userSegmentHash as $field => $value) {
-        if ($field === 'label' || $field === 'outcome') {
-          // Already handled above.
-          continue;
-        }
-        $segment->set($field, $value);
-      }
-
-      $violations = $segment->validate();
-      if ($violations->count() !== 0) {
-        throw new \RuntimeException("The user segment you tried to update is invalid: $violations");
-      }
-      $segment->save();
-    }
-  }
-
-  /**
-   * Create a user segment.
-   *
-   * @param array $userSegment
-   *   The values to pass to UserSegment::create. `author` can be set to a username
-   *   which will be converted to a uid.
-   *
-   * @return \Drupal\user_segments\Entity\UserSegment
-   *   The created user segment.
-   */
-  private function userSegmentCreate(array $userSegment) {
-    if (!isset($userSegment['author'])) {
-      throw new \RuntimeException("You must specify an `author` when creating a user segment. Specify the `author` field if using `@Given user segments:` or use one of `@Given user segments with non-anonymous owner:` or `@Given user segments owned by current user:` instead.");
-    }
-
-    $account = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['name' => $userSegment['author']]);
-    $account = !empty($account) ? reset($account) : FALSE;
-    if ($account === FALSE) {
-      throw new \RuntimeException(sprintf("User with username '%s' does not exist.", $userSegment['author']));
-    }
-    $userSegment['uid'] = $account->id();
-    unset($userSegment['author']);
-
-    // Handle outcome field - convert string to array if needed.
-    if (isset($userSegment['outcome'])) {
-      if (is_string($userSegment['outcome'])) {
-        // Single outcome as string - convert to array.
-        $userSegment['outcome'] = [$userSegment['outcome']];
-      }
-      elseif (!is_array($userSegment['outcome'])) {
-        // Invalid format.
-        throw new \InvalidArgumentException("Outcome must be a string or an array.");
-      }
-    }
-
-    // User segment rules are passed as JSON string from the test to the entity.
-    if (isset($userSegment['rules']) && is_string($userSegment['rules'])) {
-      $rules = json_decode($userSegment['rules'], TRUE, 512, JSON_THROW_ON_ERROR);
-      $userSegment['rules'] = match ($rules['type'] ?? '') {
-        'rule' => Rule::fromArray($rules),
-        'rule_group' => RuleGroup::fromArray($rules),
-        default => throw new \InvalidArgumentException("Unknown top-level type '{$rules['type']}', expected 'rule' or 'rule_group'."),
-      };
-    }
-
-    // Create new segment.
-    $this->validateEntityFields('user_segment', $userSegment);
-    $userSegmentObject = UserSegment::create($userSegment);
-    $violations = $userSegmentObject->validate();
-    if ($violations->count() !== 0) {
-      throw new \RuntimeException("The user segment you tried to create is invalid: $violations");
-    }
-    $userSegmentObject->save();
-
-    return $userSegmentObject;
   }
 
 }
