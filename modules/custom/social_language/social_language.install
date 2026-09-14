@@ -93,3 +93,17 @@ function social_language_update_12301(): void {
     }
   }
 }
+
+/**
+ * Grant Site Managers permissions to translate site settings.
+ */
+function social_language_update_26000(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_language', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

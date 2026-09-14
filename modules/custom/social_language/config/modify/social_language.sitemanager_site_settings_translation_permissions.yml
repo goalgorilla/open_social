@@ -1,0 +1,14 @@
+dependencies:
+  module:
+    - config_translation
+    - content_translation
+items:
+  user.role.sitemanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'translate account settings'
+          - 'translate system information'
+          - 'translate menu_link_content'
