@@ -21,7 +21,8 @@ final readonly class CreateUserRequest {
    * @param string $name
    *   The username.
    * @param string|null $mail
-   *   The email address, or NULL to derive one from the username.
+   *   The email address, or NULL to derive one from the username (see
+   *   CreateUser::deriveMailFromUsername()).
    * @param bool $status
    *   Whether the account is active.
    * @param string|null $pass

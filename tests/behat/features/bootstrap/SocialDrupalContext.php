@@ -11,6 +11,7 @@ use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
+use Drupal\social_profile\TestControlInterface\Action\CreateUser;
 
 /**
  * Provides pre-built step definitions for interacting with Open Social.
@@ -81,8 +82,16 @@ class SocialDrupalContext extends RawDrupalContext implements Context {
     // If we add a user, using the Given users:
     // we can allow it not to have en email. However we use some
     // contrib modules that need an email for hook_user_insert().
+    //
+    // The `users:` step itself is now handled by the users_create_bulk TCI
+    // operation (social_profile\TestControlInterface\Action\CreateUser),
+    // which does its own RFC 5322-safe derivation. This hook only still
+    // fires for the handful of legacy *Context::userCreate() call sites
+    // that build a $user stub directly; reuse the same mapping so an
+    // un-migrated caller can't reintroduce an invalid address (e.g. from a
+    // username containing a space).
     if (!isset($user->mail)) {
-      $user->mail = strtolower(trim($user->name)) . '@example.com';
+      $user->mail = CreateUser::deriveMailFromUsername($user->name);
     }
   }
 

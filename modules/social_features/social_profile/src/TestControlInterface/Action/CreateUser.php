@@ -38,7 +38,7 @@ final class CreateUser {
     type: OperationType::Write,
   )]
   public function createUsers(
-    #[Example([['name' => 'user foo', 'mail' => 'foo@example.com', 'roles' => 'verified']])]
+    #[Example([['name' => 'user foo', 'roles' => 'verified']])]
     array $body,
   ): UsersBulkCreatedSuccess {
     if ($body === []) {
@@ -66,7 +66,7 @@ final class CreateUser {
 
     $values = [
       'name' => $row->name,
-      'mail' => $row->mail ?? strtolower(trim($row->name)) . '@example.com',
+      'mail' => $row->mail ?? self::deriveMailFromUsername($row->name),
       'status' => $row->status,
     ];
     if ($row->pass !== NULL) {
@@ -105,6 +105,45 @@ final class CreateUser {
     $this->setProfileFields($user, $row, $created);
 
     return (int) $user->id();
+  }
+
+  /**
+   * Derives an RFC 5322-valid mail address from a username.
+   *
+   * Feature files routinely use a human-readable display name (which may
+   * contain spaces or punctuation) as the username and rely on this method
+   * to fill in `mail` when a row doesn't supply one explicitly. A raw
+   * `"$name@example.com"` is not safe: a name like "Group member 2" produces
+   * "Group member 2@example.com", which `symfony_mailer` refuses to send to
+   * ("does not comply with addr-spec of RFC 2822").
+   *
+   * Any character that isn't valid unquoted `atext` (or the `.` separator)
+   * is collapsed to a single `.`, so this only changes the result for a
+   * username that wasn't already mapping to a valid address — a name like
+   * "user_foo" (already valid: `_` is atext) still maps to
+   * "user_foo@example.com", exactly as before.
+   */
+  public static function deriveMailFromUsername(string $name): string {
+    $localPart = strtolower(trim($name));
+    // Collapse each run of non-atext characters (whitespace, punctuation
+    // outside RFC 5322's allowed set, non-ASCII, ...) into a single '.'.
+    // preg_replace() is typed to allow a NULL return (a regex engine
+    // failure, e.g. hitting the backtrack limit); fall back to the
+    // pre-replace value rather than let NULL flow into the next step.
+    $localPart = preg_replace('/[^a-z0-9!#$%&\'*+\/=?^_`{|}~.-]+/', '.', $localPart) ?? $localPart;
+    // Dot-atom-text may not start/end with '.' or contain consecutive '.'s,
+    // which the collapsing above can still produce (e.g. a literal '.'
+    // immediately followed by a collapsed run).
+    $localPart = trim(preg_replace('/\.{2,}/', '.', $localPart) ?? $localPart, '.');
+    if ($localPart === '') {
+      // The name had no atext characters at all (e.g. entirely non-Latin
+      // script or punctuation outside the allowed set). Fall back to a
+      // deterministic, always-valid address rather than an empty local
+      // part.
+      $localPart = 'user-' . substr(hash('sha256', $name), 0, 12);
+    }
+
+    return $localPart . '@example.com';
   }
 
   /**
