@@ -95,9 +95,9 @@ final class GetUsers {
    * listed user doesn't exist.
    *
    * @param list<string> $body
-   *   Usernames to look up, one per table row (no header needed, but any
-   *   single-column header works — this table format doesn't inspect the
-   *   column name, unlike a CreateXRequest-backed `:` step).
+   *   Usernames to look up, one per table row. A scalar-list table is all
+   *   data with no header row, unlike a CreateXRequest-backed `:` step: a
+   *   header line would be read as a username.
    *
    * @return \Drupal\social_user\TestControlInterface\Success\UsersInfoSuccess|\Drupal\social_user\TestControlInterface\Error\UsersNotFound
    *   The operation result.
