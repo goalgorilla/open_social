@@ -105,9 +105,9 @@ class ModuleContext extends RawMinkContext {
    * @see \Drupal\social\Behat\DatabaseContext::resetDrupalState()
    *   Deliberately duplicates part of that method's sequence, but for a
    *   narrower resync after a single module (un)install rather than a full
-   *   database swap. This intentionally skips steps that method has and
-   *   this one doesn't need: `drush cr` (no external caches like Redis need
-   *   invalidating, we didn't swap the database), removing the
+   *   database swap. Like that method it leaves non-database caches like
+   *   Redis alone, since we didn't swap the database. This intentionally
+   *   skips steps that method has and this one doesn't need: removing the
    *   install-mode global (irrelevant mid-scenario), triggerOnDatabaseLoaded()
    *   (that hook is for a database swap, not a module change),
    *   stream_wrapper_manager->register() (ModuleInstaller::install() already

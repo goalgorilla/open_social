@@ -213,6 +213,10 @@ class DatabaseContext implements Context {
       throw new \RuntimeException("Could not drop existing database.", 0, $e);
     }
 
+    // Loading a dump with Drush's SQL commands leaves the caches as they were,
+    // so rebuild them in a Drush process, which also clears non-database caches
+    // like Redis.
+    $this->drushDriver->drush("cr", ["-y"]);
     $this->resetDrupalState();
   }
 
@@ -220,7 +224,9 @@ class DatabaseContext implements Context {
    * Gets Drupal out of install mode and clears caches after a database load.
    *
    * Shared by loadDatabase() and unpackArchive() since both replace the
-   * database out from under a running Drupal.
+   * database out from under a running Drupal. Non-database caches like Redis
+   * must already have been rebuilt when this runs: `os:unpack-site` does so
+   * itself, and loadDatabase() runs `drush cr`.
    *
    * @see \Drupal\social\Behat\ModuleContext::resyncDrupalState()
    *   Deliberately duplicates part of this sequence for a narrower
@@ -230,12 +236,6 @@ class DatabaseContext implements Context {
    *   exactly what it skips and why.
    */
   private function resetDrupalState() : void {
-    // Drush CR is run because it ensures that all caches are cleared, including
-    // non-database caches like Redis.
-    // The additional database clears below duplicate effort but are needed to
-    // clear the memory of Behat.
-    $this->drushDriver->drush("cr", ["-y"]);
-
     // When there's no database Drupal kicks into Install mode which sets up a
     // read only config. Now that we have a database loaded we need to get
     // Drupal out of that mode.
@@ -253,8 +253,8 @@ class DatabaseContext implements Context {
     // 3. Reload all the modules to ensure the system module is loaded
     \Drupal::moduleHandler()->reload();
     // 4. Flush all the caches to ensure we don't cache data from the previously
-    //    loaded database. This will trigger another container rebuild but
-    //    that's fine.
+    //    loaded database. This clears the memory of Behat and will trigger
+    //    another container rebuild but that's fine.
     drupal_flush_all_caches();
     // 5. Register the stream wrappers of the modules in the restored database.
     //    The initial boot happened in install mode, so only core's wrappers
