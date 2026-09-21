@@ -7,6 +7,7 @@ use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Testwork\Hook\Scope\HookScope;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Driver\DrushDriver;
 
 /**
@@ -252,11 +253,19 @@ class DatabaseContext implements Context {
     $kernel->rebuildContainer();
     // 3. Reload all the modules to ensure the system module is loaded
     \Drupal::moduleHandler()->reload();
-    // 4. Flush all the caches to ensure we don't cache data from the previously
+    // 4. Make the current user anonymous. The kernel carries the id of the
+    //    current user over to every rebuilt container, but that user does not
+    //    exist in the restored database. Anything that reads the current user
+    //    while caches are flushed (e.g. an access check on a query) would
+    //    otherwise load it. Setting the account here works whether or not one
+    //    was already loaded, unlike setInitialAccountId(), and unlike
+    //    AccountSwitcher::switchTo() it doesn't load the current account first.
+    \Drupal::currentUser()->setAccount(new AnonymousUserSession());
+    // 5. Flush all the caches to ensure we don't cache data from the previously
     //    loaded database. This clears the memory of Behat and will trigger
     //    another container rebuild but that's fine.
     drupal_flush_all_caches();
-    // 5. Register the stream wrappers of the modules in the restored database.
+    // 6. Register the stream wrappers of the modules in the restored database.
     //    The initial boot happened in install mode, so only core's wrappers
     //    (public://, private://, temporary://) were registered with PHP. The
     //    rebuilt container knows about module-provided wrappers such as
@@ -266,9 +275,6 @@ class DatabaseContext implements Context {
     //    because ModuleInstaller::install() registers wrappers as a side
     //    effect.
     \Drupal::service('stream_wrapper_manager')->register();
-    // 6. We must clear the current user, since the container rebuild saves it,
-    //    but it references a non-existent user now.
-    \Drupal::currentUser()->setInitialAccountId(0);
 
     $this->triggerOnDatabaseLoaded();
 

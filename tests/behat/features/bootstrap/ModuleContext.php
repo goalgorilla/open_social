@@ -112,9 +112,9 @@ class ModuleContext extends RawMinkContext {
    *   (that hook is for a database swap, not a module change),
    *   stream_wrapper_manager->register() (ModuleInstaller::install() already
    *   registers the wrappers of a newly installed module and an uninstall
-   *   leaves nothing new to register), and
-   *   currentUser()->setInitialAccountId(0) (this can run after a real
-   *   login, and that call throws if an account is already set). If you
+   *   leaves nothing new to register), and making the current user anonymous
+   *   (the database isn't swapped, so the current user still exists and this
+   *   can run after a real login that has to survive the resync). If you
    *   change one of these two methods, check whether the other needs the
    *   same change.
    */
