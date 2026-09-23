@@ -261,3 +261,17 @@ function social_album_update_13003(): void {
     $role->grantPermissions($permissions)->save();
   }
 }
+
+/**
+ * Aggregate the album overview pages so cross-posted albums are listed once.
+ */
+function social_album_update_26000() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_album', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
