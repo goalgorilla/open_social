@@ -184,6 +184,18 @@ class SocialGroupSettings extends ConfigFormBase {
       ],
     ];
 
+    $form['cross_posting']['notify_all_groups'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Notify the members of every cross-posted group'),
+      '#description' => $this->t('If enabled, members of every group the content is posted to receive a notification when it is published. Users who are a member of more than one of those groups will receive one notification per group. Notifications are only sent the first time the content is published, not when groups are added later.'),
+      '#default_value' => $config->get('cross_posting.notify_all_groups'),
+      '#states' => [
+        'visible' => [
+          ':input[name="cross_posting[status]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     $roles = $this->currentUser()->getRoles();
 
     if (in_array('sitemanager', $roles) || in_array('administrator', $roles)) {
@@ -224,7 +236,7 @@ class SocialGroupSettings extends ConfigFormBase {
     }
 
     $cross_posting_status = $form_state->getValue(['cross_posting', 'status']);
-    $config->set('cross_posting.status', $cross_posting_status);
+    $config->set('cross_posting.status', (bool) $cross_posting_status);
     $config->set('cross_posting.content_types', $cross_posting_status
       ? Checkboxes::getCheckedCheckboxes($form_state->getValue([
         'cross_posting', 'content_types',
@@ -237,6 +249,11 @@ class SocialGroupSettings extends ConfigFormBase {
       ]))
       : []
     );
+    // The checkbox is hidden rather than disabled when cross-posting is off,
+    // so a stale checked value would still be submitted. Force it to FALSE,
+    // the same way the content and group types above are reset.
+    $config->set('cross_posting.notify_all_groups', (bool) $cross_posting_status
+      && (bool) $form_state->getValue(['cross_posting', 'notify_all_groups']));
 
     $config->save();
 

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group;
 
+use Drupal\activity_creator\FirstPublicationMarker;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\NodeInterface;
@@ -44,6 +45,22 @@ class SetGroupsForNodeService {
 
   /**
    * Save groups for a given node.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node to set the groups for.
+   * @param array $groups_to_remove
+   *   The ids of the groups the node must be removed from.
+   * @param array $groups_to_add
+   *   The ids of the groups the node must be added to.
+   * @param array $original_groups
+   *   (optional) The ids of the groups the node was in before this change.
+   * @param bool $is_new
+   *   (optional) TRUE when the node is being created, FALSE when it is being
+   *   updated. It decides whether the members of every cross-posted group are
+   *   notified, so only creation paths may pass TRUE.
+   *
+   * @return \Drupal\node\NodeInterface
+   *   The node the groups were set for.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Core\Entity\EntityStorageException
@@ -137,8 +154,31 @@ class SetGroupsForNodeService {
     // Add the content to the Group if we placed it in a group.
     if (!empty($groups_to_add)) {
       $groups = Group::loadMultiple($groups_to_add);
-      foreach ($groups as $group) {
-        self::addGroupRelationship($node, $group);
+      // Adding a relationship saves it synchronously, so the activity entity
+      // conditions run inside this loop. Tell them whether the content is
+      // becoming visible in its groups for the first time, so that they can
+      // notify the members of every cross-posted group on creation but stay
+      // silent when a later edit adds another group. The signal is the $is_new
+      // argument, which the GraphQL createTopic and createEvent mutations pass
+      // as TRUE. Those mutations depend on this loop: they create the
+      // relationships here, before the "groups" field is ever set. The node
+      // add form reaches this loop too, with $is_new TRUE and a populated
+      // $groups_to_add, but every iteration is a no-op there:
+      // SocialGroupReferenceItemList::postSave() already created the
+      // relationships earlier in the same request, and addGroupRelationship()
+      // skips groups the node is already in. That guard is what keeps the add
+      // form from creating a second relationship, and so a second
+      // notification.
+      $previously_raised = FirstPublicationMarker::isRaised();
+      FirstPublicationMarker::setRaised((bool) $is_new);
+
+      try {
+        foreach ($groups as $group) {
+          self::addGroupRelationship($node, $group);
+        }
+      }
+      finally {
+        FirstPublicationMarker::setRaised($previously_raised);
       }
     }
 

@@ -5,6 +5,7 @@
  * Contains activity_basics.module.
  */
 
+use Drupal\activity_creator\FirstPublicationMarker;
 use Drupal\activity_creator\Plugin\ActivityActionInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -69,8 +70,21 @@ function activity_basics_entity_presave(EntityInterface $entity): void {
         ->getStorage('group_content')
         ->loadByEntity($entity);
 
-      foreach ($group_contents as $group_content) {
-        _activity_basics_entity_action($group_content, 'create_entitiy_action');
+      // The content becomes visible to the members of its groups for the
+      // first time here, so the activity entity conditions may notify the
+      // members of every group it is cross-posted to. Raising the marker
+      // unconditionally keeps this module independent from the setting that
+      // governs the fan-out, which the condition plugin reads itself.
+      $previously_raised = FirstPublicationMarker::isRaised();
+      FirstPublicationMarker::setRaised(TRUE);
+
+      try {
+        foreach ($group_contents as $group_content) {
+          _activity_basics_entity_action($group_content, 'create_entitiy_action');
+        }
+      }
+      finally {
+        FirstPublicationMarker::setRaised($previously_raised);
       }
     }
   }

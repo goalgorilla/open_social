@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\Field;
 
+use Drupal\activity_creator\FirstPublicationMarker;
 use Drupal\Core\Field\EntityReferenceFieldItemList;
 use Drupal\Core\TypedData\ComputedItemListTrait;
 use Drupal\Core\TypedData\DataDefinitionInterface;
@@ -148,43 +149,61 @@ class SocialGroupReferenceItemList extends EntityReferenceFieldItemList {
 
     // The current entity gets a new group relations.
     $should_be_created = array_diff($gids_union, $gids_existing);
-    foreach ($should_be_created as $gid) {
-      $group = Group::load($gid);
-      if (!$group instanceof GroupInterface) {
-        // Group can't be loaded.
-        continue;
+
+    // Creating a relationship saves it synchronously, so the activity entity
+    // conditions run inside this loop. Tell them whether the content is
+    // entering its groups for the first time: $update is FALSE only on the
+    // entity's own insert, so a later edit that adds a group stays silent.
+    // $entity->original is still available here, because the storage unsets it
+    // only after invoking the insert and update hooks, but it is deliberately
+    // not used: a save that publishes a draft is an update, and the acceptance
+    // criteria scope the notification to creation.
+    $previously_raised = FirstPublicationMarker::isRaised();
+    FirstPublicationMarker::setRaised(!$update);
+
+    try {
+      foreach ($should_be_created as $gid) {
+        $group = Group::load($gid);
+        if (!$group instanceof GroupInterface) {
+          // Group can't be loaded.
+          continue;
+        }
+
+        /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+        $storage = $this->entityTypeManager->getStorage('group_content_type');
+
+        [
+          // Some group relationships have non-bundle ids like
+          // "group_membership".
+          $plugin_type,
+          // Other ones are bundled, like "group_node:topic".
+          $derivative_plugin_type,
+        ] = [
+          $storage->getRelationshipTypeId($group->bundle(), 'group_' . $entity->getEntityTypeId()),
+          $storage->getRelationshipTypeId($group->bundle(), 'group_' . $entity->getEntityTypeId() . ':' . $entity->bundle()),
+        ];
+
+        // First try to load non-bundled, then with using bundle id.
+        if (!$group_relationship_entity_type = $storage->load($plugin_type)) {
+          $group_relationship_entity_type = $storage->load($derivative_plugin_type);
+        }
+
+        if (!$group_relationship_entity_type) {
+          // It seems like we can't detect the relationship entity for the
+          // current group and entity.
+          continue;
+        }
+
+        $group_content = GroupRelationship::create([
+          'type' => $group_relationship_entity_type->id(),
+          'gid' => $group->id(),
+          'entity_id' => $entity->id(),
+        ]);
+        $group_content->save();
       }
-
-      /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
-      $storage = $this->entityTypeManager->getStorage('group_content_type');
-
-      [
-        // Some group relationships have non-bundle ids like "group_membership".
-        $plugin_type,
-        // Other ones are bundled, like "group_node:topic".
-        $derivative_plugin_type,
-      ] = [
-        $storage->getRelationshipTypeId($group->bundle(), 'group_' . $entity->getEntityTypeId()),
-        $storage->getRelationshipTypeId($group->bundle(), 'group_' . $entity->getEntityTypeId() . ':' . $entity->bundle()),
-      ];
-
-      // First try to load non-bundled, then with using bundle id.
-      if (!$group_relationship_entity_type = $storage->load($plugin_type)) {
-        $group_relationship_entity_type = $storage->load($derivative_plugin_type);
-      }
-
-      if (!$group_relationship_entity_type) {
-        // It seems like we can't detect the relationship entity for the current
-        // group and entity.
-        continue;
-      }
-
-      $group_content = GroupRelationship::create([
-        'type' => $group_relationship_entity_type->id(),
-        'gid' => $group->id(),
-        'entity_id' => $entity->id(),
-      ]);
-      $group_content->save();
+    }
+    finally {
+      FirstPublicationMarker::setRaised($previously_raised);
     }
 
     // The group relation entities that should be deleted. It because

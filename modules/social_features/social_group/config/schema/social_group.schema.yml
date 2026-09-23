@@ -11,6 +11,26 @@ social_group.settings:
     address_visibility_settings:
       type: boolean
       label: 'Only show the group address to the group members'
+    cross_posting:
+      type: mapping
+      label: 'Cross-posting settings'
+      mapping:
+        status:
+          type: boolean
+          label: 'Enable cross-posting'
+        content_types:
+          type: sequence
+          label: 'Content types'
+          sequence:
+            type: string
+        group_types:
+          type: sequence
+          label: 'Group types'
+          sequence:
+            type: string
+        notify_all_groups:
+          type: boolean
+          label: 'Notify members of all cross-posted groups'
 
 views.access.group_managers_only:
   type: mapping
