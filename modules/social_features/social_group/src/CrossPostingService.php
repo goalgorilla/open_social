@@ -147,6 +147,40 @@ class CrossPostingService {
   }
 
   /**
+   * Returns the group of every node relationship, keyed by relationship id.
+   *
+   * Unlike the other lookups of this service the result is deliberately *not*
+   * filtered by access. Callers that run outside a user request, such as the
+   * notification queue workers, run as cron or as the anonymous user, so an
+   * access check would answer a question about the wrong account and make the
+   * result depend on when the queue happens to be processed.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   Node object.
+   *
+   * @return array<int, string>
+   *   The group id of every group relationship of the node, keyed by the id of
+   *   that relationship.
+   */
+  public function getGroupIdsByRelationshipForNodeWithoutAccessCheck(NodeInterface $node): array {
+    $validPlugins = $this->getValidGroupRelationPluginIds();
+    // If no node relation plugin is installed - nothing return.
+    if (!$validPlugins) {
+      return [];
+    }
+
+    $query = $this->database->select('group_relationship_field_data', 'gc');
+    $query->addField('gc', 'id');
+    $query->addField('gc', 'gid');
+    $query->condition('gc.entity_id', $node->id());
+    $query->condition('gc.type', $validPlugins, 'IN');
+
+    $statement = $query->execute();
+
+    return $statement === NULL ? [] : $statement->fetchAllKeyed(0, 1);
+  }
+
+  /**
    * Returns groups list have the same group content entity (node).
    *
    * @param \Drupal\group\Entity\GroupRelationshipInterface $groupContent

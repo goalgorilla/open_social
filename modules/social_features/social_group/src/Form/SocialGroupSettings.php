@@ -187,7 +187,7 @@ class SocialGroupSettings extends ConfigFormBase {
     $form['cross_posting']['notify_all_groups'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Notify the members of every cross-posted group'),
-      '#description' => $this->t('If enabled, members of every group the content is posted to receive a notification when it is published. Users who are a member of more than one of those groups will receive one notification per group. Notifications are only sent the first time the content is published, not when groups are added later.'),
+      '#description' => $this->t('If enabled, members of every group the content is posted to receive a notification when it is published. Users who are a member of more than one of those groups receive a single notification, naming one of the groups they belong to. Notifications are only sent the first time the content is published, not when groups are added later.'),
       '#default_value' => $config->get('cross_posting.notify_all_groups'),
       '#states' => [
         'visible' => [

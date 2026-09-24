@@ -5,12 +5,16 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\node\NodeInterface;
+use Drupal\social_group\CrossPostingService;
 use Drupal\social_group\GroupMuteNotify;
 use Drupal\social_post\Entity\PostInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -27,11 +31,37 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ContentInMyGroupActivityContext extends ActivityContextBase {
 
   /**
+   * How many member ids are looked up in a single membership query.
+   */
+  private const MEMBER_QUERY_CHUNK_SIZE = 1000;
+
+  /**
+   * The configuration factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * The group mute notifications.
    *
    * @var \Drupal\social_group\GroupMuteNotify
    */
   protected $groupMuteNotify;
+
+  /**
+   * The cross-posting service.
+   *
+   * @var \Drupal\social_group\CrossPostingService
+   */
+  protected $crossPostingService;
+
+  /**
+   * The database connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
 
   /**
    * Constructs a GroupRelationshipInMyGroupActivityContext object.
@@ -50,6 +80,12 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
    *   The activity factory service.
    * @param \Drupal\social_group\GroupMuteNotify $group_mute_notify
    *   The group mute notifications.
+   * @param \Drupal\social_group\CrossPostingService $cross_posting_service
+   *   The cross-posting service.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
    */
   public function __construct(
     array $configuration,
@@ -59,10 +95,16 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
     EntityTypeManagerInterface $entity_type_manager,
     ActivityFactory $activity_factory,
     GroupMuteNotify $group_mute_notify,
+    CrossPostingService $cross_posting_service,
+    Connection $database,
+    ConfigFactoryInterface $config_factory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 
     $this->groupMuteNotify = $group_mute_notify;
+    $this->crossPostingService = $cross_posting_service;
+    $this->database = $database;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -76,7 +118,10 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
       $container->get('entity.query.sql'),
       $container->get('entity_type.manager'),
       $container->get('activity_creator.activity_factory'),
-      $container->get('social_group.group_mute_notify')
+      $container->get('social_group.group_mute_notify'),
+      $container->get('social_group.cross_posting'),
+      $container->get('database'),
+      $container->get('config.factory')
     );
   }
 
@@ -90,6 +135,10 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $referenced_entity = $this->activityFactory->getActivityRelatedEntity($data);
       $owner_id = '';
+      // The id of the group relationship this activity is built for. It stays
+      // NULL for posts, which are related to a group by a field instead of by
+      // a relationship and are therefore never cross-posted.
+      $relationship_id = NULL;
 
       if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] === 'post') {
         try {
@@ -135,6 +184,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         }
 
         $gid = $group_content->get('gid')->getValue();
+        $relationship_id = (int) $group_content->id();
       }
 
       if ($gid && isset($gid[0]['target_id'])) {
@@ -157,24 +207,52 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
         $memberships = $group->getMembers();
 
+        // Index the accounts of this group by user id. There can be incidences
+        // where even if the user was deleted its membership data was left in
+        // the table group_relationship_field_data, so it is necessary to check
+        // if the user actually exists in system.
+        $member_accounts = [];
         /** @var \Drupal\group\GroupMembership $membership */
         foreach ($memberships as $membership) {
+          $group_user = $membership->getUser();
+          if ($group_user !== NULL) {
+            $member_accounts[(int) $group_user->id()] = $group_user;
+          }
+        }
+
+        // Content cross-posted to several groups produces one message, and
+        // therefore one activity, per group. Readers who belong to more than
+        // one of those groups are kept as a recipient of a single activity so
+        // that every channel delivers the notification once.
+        $covered_uids = [];
+        if (
+          $relationship_id !== NULL &&
+          $entity instanceof NodeInterface &&
+          isset($data['message_template'])
+        ) {
+          $covered_uids = $this->getUidsCoveredByLowerGroup(
+            (string) $data['message_template'],
+            $entity,
+            $relationship_id,
+            $member_accounts
+          );
+        }
+
+        foreach ($member_accounts as $uid => $group_user) {
           // Check if this is not the created user and didn't mute the group
           // notifications.
-          // There can be incidences where even if the user was deleted
-          // its membership data was left in the table
-          // group_relationship_field_data, so, it is necessary to check
-          // if the user actually exists in system.
-          $group_user = $membership->getUser();
           if (
-            $group_user !== NULL &&
-            $owner_id != $membership->getUser()->id() &&
-            !$this->groupMuteNotify->groupNotifyIsMuted($group, $membership->getUser()) &&
+            $owner_id != $uid &&
+            // A lower cross-posted group already notifies this reader. Tested
+            // before the mute and access checks because it is an array lookup
+            // and they are queries.
+            !isset($covered_uids[$uid]) &&
+            !$this->groupMuteNotify->groupNotifyIsMuted($group, $group_user) &&
             $entity->access('view', $group_user)
           ) {
             $recipients[] = [
               'target_type' => 'user',
-              'target_id' => $membership->getUser()->id(),
+              'target_id' => $group_user->id(),
             ];
           }
         }
@@ -182,6 +260,184 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
     }
 
     return $recipients;
+  }
+
+  /**
+   * Finds the readers a lower cross-posted group already notifies.
+   *
+   * Cross-posted content carries one group relationship per group, each of
+   * which produces its own message and its own activity. A reader belonging to
+   * several of those groups would be a recipient of several activities and see
+   * the same notification once per group. To keep a single notification per
+   * reader, every reader is attached to exactly one of those activities: the
+   * one of the lowest group id among the cross-posted groups they are an
+   * unmuted member of. This method answers, for the relationship currently
+   * being processed, which readers belong to an earlier one.
+   *
+   * Only relationships that already carry a message of this template are taken
+   * into account. A relationship without a message notifies nobody, so
+   * counting it would suppress readers on behalf of a notification that is
+   * never sent. That is what happens when group-less content is edited to join
+   * several groups at once: only the first relationship inserted gets a
+   * message.
+   *
+   * The mute of each earlier group is honoured for the same reason: a reader
+   * who muted their lowest cross-posted group is not covered by it and must
+   * still be notified through the next one.
+   *
+   * Two assumptions are worth naming, because neither is enforced here.
+   *
+   * The ordering is by group id, which is only stable while every message of
+   * the content exists before the first of them is turned into an activity.
+   * That is what `activity_create_direct: FALSE` on the message template
+   * guarantees: the messages are all written during the save, and the queue
+   * runs afterwards. A template that creates its activities directly computes
+   * its recipients while the later messages do not exist yet, and a reader of
+   * two of its groups is deduplicated only when the relationship inserted
+   * first happens to carry the lower group id.
+   *
+   * Membership and mute are read as they are now, not as they were when the
+   * message was written. A reader who joins or unmutes the lowest cross-posted
+   * group between two queue items is therefore covered by an activity whose
+   * recipients were resolved before they qualified, and is notified by
+   * neither. Closing that window needs the notified state to be persisted,
+   * which is the overhaul this ticket's acceptance criteria rule out.
+   *
+   * @param string $message_template
+   *   The message template the activity is created for.
+   * @param \Drupal\node\NodeInterface $node
+   *   The cross-posted node.
+   * @param int $relationship_id
+   *   The id of the group relationship the activity is created for.
+   * @param \Drupal\Core\Session\AccountInterface[] $member_accounts
+   *   The accounts of the members of the current group, keyed by user id.
+   *
+   * @return int[]
+   *   The ids of the members an earlier cross-posted group already notifies,
+   *   keyed by user id. Empty whenever the content is not cross-posted or the
+   *   current relationship is the earliest one that notifies.
+   */
+  private function getUidsCoveredByLowerGroup(string $message_template, NodeInterface $node, int $relationship_id, array $member_accounts): array {
+    if ($member_accounts === []) {
+      return [];
+    }
+
+    // Without cross-post notifications only one relationship of a node ever
+    // carries a message, so the lookups below are provably a no-op. They are
+    // skipped rather than run to completion: this method sits on the
+    // notification queue's hot path, and a site that never enabled the
+    // feature should pay nothing for it.
+    $cross_posting = $this->configFactory->get('social_group.settings')->get('cross_posting');
+    if (empty($cross_posting['status']) || empty($cross_posting['notify_all_groups'])) {
+      return [];
+    }
+
+    // The access check of the other cross-posting lookups would be evaluated
+    // against the account processing the queue, which is cron or the anonymous
+    // user, so the unfiltered lookup is used here on purpose.
+    $gids_per_relationship = $this->crossPostingService
+      ->getGroupIdsByRelationshipForNodeWithoutAccessCheck($node);
+
+    if (count($gids_per_relationship) < 2) {
+      return [];
+    }
+
+    $message_ids = $this->entityTypeManager->getStorage('message')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('template', $message_template)
+      ->condition('field_message_related_object.target_type', 'group_content')
+      ->condition('field_message_related_object.target_id', array_keys($gids_per_relationship), 'IN')
+      ->execute();
+
+    if (!$message_ids) {
+      return [];
+    }
+
+    $notifying = [];
+    /** @var \Drupal\message\MessageInterface $message */
+    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($message_ids) as $message) {
+      foreach ($message->get('field_message_related_object')->getValue() as $value) {
+        $notifying[(int) $value['target_id']] = TRUE;
+      }
+    }
+
+    $notifying_gids = array_intersect_key($gids_per_relationship, $notifying);
+    // The lookup reads the ids as strings, so the sort is pinned to a numeric
+    // comparison rather than relying on how PHP compares numeric strings.
+    asort($notifying_gids, SORT_NUMERIC);
+
+    // Without a message of its own the current relationship has no place in
+    // the ordering, and nothing can be said about who it covers.
+    if (!isset($notifying_gids[$relationship_id])) {
+      return [];
+    }
+
+    $position = array_search($relationship_id, array_keys($notifying_gids), TRUE);
+    if ($position === 0) {
+      return [];
+    }
+
+    $lower_gids = array_slice($notifying_gids, 0, (int) $position, TRUE);
+
+    // Which of the members of the current group are also a member of one of
+    // the lower groups. Read as two columns rather than as entities: the
+    // worst case of this query is every member of the current group in every
+    // lower group, and hydrating that many relationships would cost far more
+    // than the two values each of them is read for.
+    // The groups a member of the current group also belongs to, per user id,
+    // ordered by ascending group id like the relationships above. The member
+    // ids are chunked: a large group would otherwise put a five-figure
+    // placeholder list in a single statement, which fails outright rather
+    // than merely running slowly.
+    $lower_gids_per_uid = [];
+    foreach (array_chunk(array_keys($member_accounts), self::MEMBER_QUERY_CHUNK_SIZE) as $uid_chunk) {
+      $query = $this->database->select('group_relationship_field_data', 'gc');
+      $query->addField('gc', 'gid');
+      $query->addField('gc', 'entity_id');
+      $query->condition('gc.gid', array_values($lower_gids), 'IN');
+      $query->condition('gc.plugin_id', 'group_membership');
+      $query->condition('gc.entity_id', $uid_chunk, 'IN');
+
+      $statement = $query->execute();
+
+      if ($statement === NULL) {
+        continue;
+      }
+
+      foreach ($statement as $row) {
+        $lower_gids_per_uid[(int) $row->entity_id][] = (int) $row->gid;
+      }
+    }
+
+    if ($lower_gids_per_uid === []) {
+      return [];
+    }
+
+    $lower_groups = $this->entityTypeManager->getStorage('group')
+      ->loadMultiple(array_values($lower_gids));
+
+    // @todo Prefetch the mute flaggings for these groups and users in one
+    // query. Doing it here would mean re-implementing the rule that
+    // GroupMuteNotify owns, so it belongs behind a bulk method on that
+    // service rather than in this loop.
+    $covered_uids = [];
+    foreach ($lower_gids_per_uid as $uid => $gids) {
+      sort($gids);
+
+      foreach ($gids as $gid) {
+        $lower_group = $lower_groups[$gid] ?? NULL;
+
+        if (
+          $lower_group instanceof GroupInterface &&
+          !$this->groupMuteNotify->groupNotifyIsMuted($lower_group, $member_accounts[$uid])
+        ) {
+          $covered_uids[$uid] = $uid;
+          break;
+        }
+      }
+    }
+
+    return $covered_uids;
   }
 
   /**
