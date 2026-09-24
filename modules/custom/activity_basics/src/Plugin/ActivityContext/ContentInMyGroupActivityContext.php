@@ -243,9 +243,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           // notifications.
           if (
             $owner_id != $uid &&
-            // A lower cross-posted group already notifies this reader. Tested
-            // before the mute and access checks because it is an array lookup
-            // and they are queries.
+            // An array lookup, so tested before the two queries below.
             !isset($covered_uids[$uid]) &&
             !$this->groupMuteNotify->groupNotifyIsMuted($group, $group_user) &&
             $entity->access('view', $group_user)
@@ -265,43 +263,21 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * Finds the readers a lower cross-posted group already notifies.
    *
-   * Cross-posted content carries one group relationship per group, each of
-   * which produces its own message and its own activity. A reader belonging to
-   * several of those groups would be a recipient of several activities and see
-   * the same notification once per group. To keep a single notification per
-   * reader, every reader is attached to exactly one of those activities: the
-   * one of the lowest group id among the cross-posted groups they are an
-   * unmuted member of. This method answers, for the relationship currently
-   * being processed, which readers belong to an earlier one.
+   * Cross-posted content produces one activity per group. Each reader is
+   * attached to a single one of them — the lowest group id they are an
+   * unmuted member of — so that every channel delivers once.
    *
-   * Only relationships that already carry a message of this template are taken
-   * into account. A relationship without a message notifies nobody, so
-   * counting it would suppress readers on behalf of a notification that is
-   * never sent. That is what happens when group-less content is edited to join
-   * several groups at once: only the first relationship inserted gets a
-   * message.
+   * Only relationships already carrying a message of this template count, and
+   * each lower group's mute is honoured. Both rules exist for the same
+   * reason: suppressing a reader on behalf of a notification that is never
+   * sent would leave them with nothing.
    *
-   * The mute of each earlier group is honoured for the same reason: a reader
-   * who muted their lowest cross-posted group is not covered by it and must
-   * still be notified through the next one.
-   *
-   * Two assumptions are worth naming, because neither is enforced here.
-   *
-   * The ordering is by group id, which is only stable while every message of
-   * the content exists before the first of them is turned into an activity.
-   * That is what `activity_create_direct: FALSE` on the message template
-   * guarantees: the messages are all written during the save, and the queue
-   * runs afterwards. A template that creates its activities directly computes
-   * its recipients while the later messages do not exist yet, and a reader of
-   * two of its groups is deduplicated only when the relationship inserted
-   * first happens to carry the lower group id.
-   *
-   * Membership and mute are read as they are now, not as they were when the
-   * message was written. A reader who joins or unmutes the lowest cross-posted
-   * group between two queue items is therefore covered by an activity whose
-   * recipients were resolved before they qualified, and is notified by
-   * neither. Closing that window needs the notified state to be persisted,
-   * which is the overhaul this ticket's acceptance criteria rule out.
+   * Two limits, neither enforced here. The ordering holds only while every
+   * message exists before the first activity is queued, which
+   * `activity_create_direct: FALSE` guarantees. And membership and mute are
+   * read at queue time, so a reader who joins or unmutes the lowest group
+   * between two queue items is notified by neither; closing that needs
+   * persisted state, which the acceptance criteria rule out.
    *
    * @param string $message_template
    *   The message template the activity is created for.
@@ -322,11 +298,9 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
       return [];
     }
 
-    // Without cross-post notifications only one relationship of a node ever
-    // carries a message, so the lookups below are provably a no-op. They are
-    // skipped rather than run to completion: this method sits on the
-    // notification queue's hot path, and a site that never enabled the
-    // feature should pay nothing for it.
+    // With the feature off only one relationship ever carries a message, so
+    // the lookups below are a no-op. This sits on the notification queue's
+    // hot path, so they are skipped rather than run to completion.
     $cross_posting = $this->configFactory->get('social_group.settings')->get('cross_posting');
     if (empty($cross_posting['status']) || empty($cross_posting['notify_all_groups'])) {
       return [];
@@ -362,8 +336,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
     }
 
     $notifying_gids = array_intersect_key($gids_per_relationship, $notifying);
-    // The lookup reads the ids as strings, so the sort is pinned to a numeric
-    // comparison rather than relying on how PHP compares numeric strings.
+    // The lookup reads the ids as strings, hence the explicit numeric sort.
     asort($notifying_gids, SORT_NUMERIC);
 
     // Without a message of its own the current relationship has no place in
@@ -379,16 +352,10 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
     $lower_gids = array_slice($notifying_gids, 0, (int) $position, TRUE);
 
-    // Which of the members of the current group are also a member of one of
-    // the lower groups. Read as two columns rather than as entities: the
-    // worst case of this query is every member of the current group in every
-    // lower group, and hydrating that many relationships would cost far more
-    // than the two values each of them is read for.
-    // The groups a member of the current group also belongs to, per user id,
-    // ordered by ascending group id like the relationships above. The member
-    // ids are chunked: a large group would otherwise put a five-figure
-    // placeholder list in a single statement, which fails outright rather
-    // than merely running slowly.
+    // Which members of the current group also belong to a lower group. Read
+    // as two columns rather than entities, and chunked: a large group would
+    // otherwise put a five-figure placeholder list in one statement, which
+    // fails outright rather than merely running slowly.
     $lower_gids_per_uid = [];
     foreach (array_chunk(array_keys($member_accounts), self::MEMBER_QUERY_CHUNK_SIZE) as $uid_chunk) {
       $query = $this->database->select('group_relationship_field_data', 'gc');

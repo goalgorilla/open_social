@@ -250,8 +250,7 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
   /**
    * The cross-posting settings the plugin reads.
    *
-   * Cross-posting enabled and notifying every group is the state in which the
-   * deduplication exists at all, so it is the default for these cases.
+   * Both on is the state in which the deduplication exists at all.
    *
    * @var array<string, mixed>
    */
@@ -342,8 +341,7 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
    * Returns a config factory answering the cross-posting settings.
    *
    * @return \Drupal\Core\Config\ConfigFactoryInterface
-   *   A config factory whose social_group.settings carries the cross-posting
-   *   values the current test case set up.
+   *   A config factory carrying the values the current case set up.
    */
   private function configFactory(): ConfigFactoryInterface {
     $config = $this->createMock(ImmutableConfig::class);
@@ -984,10 +982,6 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
   /**
    * Without the notify-all-groups setting nobody is suppressed.
    *
-   * The deduplication only exists for the notifications that setting creates,
-   * so with it off the method must return what it returned before the feature
-   * existed: every member of every relationship.
-   *
    * @covers ::getRecipients
    */
   public function testTheSettingOffSuppressesNobody(): void {
@@ -1006,8 +1000,7 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
   /**
    * Cross-posting disabled altogether suppresses nobody either.
    *
-   * Notify_all_groups cannot be reached with cross-posting off, but the two
-   * keys are independent in configuration and a stale TRUE can outlive the
+   * The two config keys are independent, so a stale TRUE can outlive the
    * feature being switched off.
    *
    * @covers ::getRecipients
@@ -1025,9 +1018,7 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
   /**
    * With the setting off the dedup lookups are not run at all.
    *
-   * The point of the guard is the cost, not only the behaviour: a site that
-   * never enabled cross-post notifications must pay nothing for them. The
-   * membership lookup is the first query the partition issues.
+   * The guard is about cost, not only behaviour.
    *
    * @covers ::getRecipients
    */
@@ -1038,8 +1029,7 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
     $this->groupMembers = [1 => [5, 6], 2 => [5, 8]];
 
     // Relationship 11 carries the higher group id, so it is the one that
-    // would look up which of its members a lower group already covers.
-    // Asking relationship 10 would prove nothing: it is first in the
+    // issues the lookup. Asking 10 would prove nothing: it is first in the
     // ordering and returns before any query, guard or no guard.
     $this->notifiedUids(11);
 
