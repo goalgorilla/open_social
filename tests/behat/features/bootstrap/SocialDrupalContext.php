@@ -163,30 +163,6 @@ class SocialDrupalContext extends RawDrupalContext implements Context {
   }
 
   /**
-   * Creates one or more terms on an existing vocabulary.
-   *
-   * Provide term data in the following format:
-   *
-   * | name  | parent | description | weight | taxonomy_field_image |
-   * | Snook | Fish   | Marine fish | 10     | snook-123.jpg        |
-   * | ...   | ...    | ...         | ...    | ...                  |
-   *
-   * Only the 'name' field is required.
-   *
-   * @Given :vocabulary terms:
-   *
-   * Verbatim copy of DrupalContext::createTerms(); see the class docblock
-   * above for why.
-   */
-  public function createTerms($vocabulary, TableNode $termsTable) {
-    foreach ($termsTable->getHash() as $termsHash) {
-      $term = (object) $termsHash;
-      $term->vocabulary_machine_name = $vocabulary;
-      $this->termCreate($term);
-    }
-  }
-
-  /**
    * @Given the cache has been cleared
    *
    * Verbatim copy of DrupalContext::assertCacheClear(); see the class
