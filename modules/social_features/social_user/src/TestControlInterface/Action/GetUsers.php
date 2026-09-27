@@ -72,7 +72,7 @@ final class GetUsers {
    */
   #[Operation(
     id: 'user_by_name',
-    patterns: ['the user with :name exists'],
+    patterns: ['the user with :name exists', 'the user :name'],
     type: OperationType::Read,
   )]
   public function getUserByName(
