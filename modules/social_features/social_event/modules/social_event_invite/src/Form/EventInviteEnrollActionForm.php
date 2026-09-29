@@ -31,11 +31,14 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     $nid = $this->routeMatch->getRawParameter('node');
     $current_user = $this->currentUser();
 
+    // Logged-out visitors use the route event, same as the parent form.
+    // Logged-in visitors keep the event passed into this form.
+    $event = $current_user->isAnonymous() ? $this->routeNode() : $node;
+    if ($event === NULL || ($event instanceof Event && !$event->isEnrollmentEnabled())) {
+      return [];
+    }
+
     if (!$current_user->isAnonymous()) {
-      // Check if enrollment is enabled.
-      if ($node === NULL || ($node instanceof Event && !$node->isEnrollmentEnabled())) {
-        return [];
-      }
       $conditions = [
         'field_account' => $current_user->id(),
         'field_event' => $nid,
@@ -48,7 +51,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       // Unless you are the node owner or organizer.
       $enrollment = array_pop($enrollments);
       if ($enrollment === NULL) {
-        if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
+        if ((int) $event->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
           && social_event_manager_or_organizer() === FALSE) {
           return [];
         }
@@ -132,16 +135,27 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       }
     }
 
-    // For AN users it can be rendered on a Public event with
-    // invite only as option. Let's make it similar to a Group experience
-    // where there is no button rendered.
-    // We unset it here because in the parent form and this form
-    // a lot of times this button get's overridden.
+    // The Enroll button is rendered inside enroll_wrapper. Hide it for
+    // logged-out visitors. Invite-only events do not offer self-enrollment.
     if ($current_user->isAnonymous()) {
       unset($form['enroll_for_this_event']);
+      if (isset($form['enroll_wrapper'])) {
+        $form['enroll_wrapper']['#access'] = FALSE;
+      }
     }
 
     return $form;
+  }
+
+  /**
+   * Loads the event from the route, including a raw node id.
+   */
+  protected function routeNode(): ?Node {
+    $node = $this->routeMatch->getParameter('node');
+    if (is_numeric($node)) {
+      $node = $this->entityTypeManager->getStorage('node')->load($node);
+    }
+    return $node instanceof Node ? $node : NULL;
   }
 
   /**
