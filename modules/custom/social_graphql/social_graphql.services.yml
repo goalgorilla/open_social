@@ -24,3 +24,8 @@ services:
   Drupal\social_graphql\FileInputHandler:
     class: Drupal\social_graphql\FileInputHandler
     autowire: true
+
+  Drupal\social_graphql\Routing\GraphqlAuthRouteSync:
+    autowire: true
+    tags:
+      - { name: event_subscriber }

@@ -13,6 +13,9 @@ function social_graphql_install() {
   // We rely on normal access rules for authorization.
   user_role_grant_permissions('anonymous', ['execute open_social_graphql arbitrary graphql requests']);
   user_role_grant_permissions('authenticated', ['execute open_social_graphql arbitrary graphql requests']);
+  // Site managers toggle the session-auth opt-out. social_core installs the
+  // role before this module; a missing role is a no-op.
+  user_role_grant_permissions('sitemanager', ['administer social_graphql settings']);
 }
 
 /**
@@ -46,4 +49,18 @@ function social_graphql_update_25002(): string {
  */
 function social_graphql_update_26001(): void {
   \Drupal::service('module_installer')->install(['signed_file_upload']);
+}
+
+/**
+ * Default session auth off and grant GraphQL settings to site managers.
+ *
+ * Writes allow_session_auth only when the key is still unset, so a site
+ * that already opted in is not reset if this update runs again.
+ */
+function social_graphql_update_26002(): void {
+  $config = \Drupal::configFactory()->getEditable('social_graphql.settings');
+  if ($config->get('allow_session_auth') === NULL) {
+    $config->set('allow_session_auth', FALSE)->save();
+  }
+  user_role_grant_permissions('sitemanager', ['administer social_graphql settings']);
 }
