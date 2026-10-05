@@ -4,7 +4,6 @@ namespace Drupal\social_activity\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\FirstPublicationMarker;
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\social_group\CrossPostingService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,13 +33,6 @@ class GroupContentSingleActivityEntityCondition extends ActivityEntityConditionB
   protected $crossPostingService;
 
   /**
-   * The configuration factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
    * Constructs a GroupContentSingleActivityEntityCondition object.
    *
    * @param array $configuration
@@ -51,13 +43,10 @@ class GroupContentSingleActivityEntityCondition extends ActivityEntityConditionB
    *   The plugin implementation definition.
    * @param \Drupal\social_group\CrossPostingService $cross_posting_service
    *   The cross-posting service.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, CrossPostingService $cross_posting_service, ConfigFactoryInterface $config_factory) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, CrossPostingService $cross_posting_service) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->crossPostingService = $cross_posting_service;
-    $this->configFactory = $config_factory;
   }
 
   /**
@@ -68,8 +57,7 @@ class GroupContentSingleActivityEntityCondition extends ActivityEntityConditionB
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('social_group.cross_posting'),
-      $container->get('config.factory')
+      $container->get('social_group.cross_posting')
     );
   }
 
@@ -86,8 +74,7 @@ class GroupContentSingleActivityEntityCondition extends ActivityEntityConditionB
       // The content is cross-posted. Notify the members of every group only
       // when a site manager enabled it and the content is being made visible
       // for the first time, not when a later edit adds another group.
-      return (bool) $this->configFactory->get('social_group.settings')
-        ->get('cross_posting.notify_all_groups')
+      return $this->crossPostingService->notifiesAllGroups()
         && FirstPublicationMarker::isRaised();
     }
 

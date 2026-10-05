@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Drupal\Tests\social_activity\Unit\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\FirstPublicationMarker;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\social_activity\Plugin\ActivityEntityCondition\GroupContentSingleActivityEntityCondition;
 use Drupal\social_group\CrossPostingService;
@@ -30,20 +28,12 @@ final class GroupContentSingleActivityEntityConditionTest extends UnitTestCase {
   private CrossPostingService&MockObject $crossPostingService;
 
   /**
-   * The configuration factory mock.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface&\PHPUnit\Framework\MockObject\MockObject
-   */
-  private ConfigFactoryInterface&MockObject $configFactory;
-
-  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
 
     $this->crossPostingService = $this->createMock(CrossPostingService::class);
-    $this->configFactory = $this->createMock(ConfigFactoryInterface::class);
   }
 
   /**
@@ -65,7 +55,8 @@ final class GroupContentSingleActivityEntityConditionTest extends UnitTestCase {
   public function testOtherEntityTypeIsNotValid(): void {
     $this->crossPostingService->expects($this->never())
       ->method('nodeExistsInMultipleGroups');
-    $this->configFactory->expects($this->never())->method('get');
+    $this->crossPostingService->expects($this->never())
+      ->method('notifiesAllGroups');
 
     $this->assertFalse($this->plugin()->isValidEntityCondition($this->entity('node')));
   }
@@ -85,7 +76,8 @@ final class GroupContentSingleActivityEntityConditionTest extends UnitTestCase {
       ->method('nodeExistsInMultipleGroups')
       ->with($entity)
       ->willReturn(FALSE);
-    $this->configFactory->expects($this->never())->method('get');
+    $this->crossPostingService->expects($this->never())
+      ->method('notifiesAllGroups');
 
     $this->assertTrue($this->plugin()->isValidEntityCondition($entity));
   }
@@ -150,18 +142,6 @@ final class GroupContentSingleActivityEntityConditionTest extends UnitTestCase {
   }
 
   /**
-   * A site that has not run the update yet has no value for the setting.
-   *
-   * @covers ::isValidEntityCondition
-   */
-  public function testCrossPostedIsNotValidWhenSettingIsAbsent(): void {
-    $this->expectSetting(NULL);
-    FirstPublicationMarker::setRaised(TRUE);
-
-    $this->assertFalse($this->plugin()->isValidEntityCondition($this->crossPostedEntity()));
-  }
-
-  /**
    * Builds the plugin under test.
    *
    * @return \Drupal\social_activity\Plugin\ActivityEntityCondition\GroupContentSingleActivityEntityCondition
@@ -173,7 +153,6 @@ final class GroupContentSingleActivityEntityConditionTest extends UnitTestCase {
       'group_content_node_single_group',
       [],
       $this->crossPostingService,
-      $this->configFactory,
     );
   }
 
@@ -211,23 +190,16 @@ final class GroupContentSingleActivityEntityConditionTest extends UnitTestCase {
   }
 
   /**
-   * Makes the configuration factory return the given setting value.
+   * Makes the cross-posting service answer notifiesAllGroups() once.
    *
-   * @param bool|null $value
-   *   The value stored for cross_posting.notify_all_groups, or NULL when the
-   *   key is absent because the site has not been updated yet.
+   * @param bool $value
+   *   What the service reports; the status and notify-all-groups combinations
+   *   behind it are covered by CrossPostingServiceTest.
    */
-  private function expectSetting(?bool $value): void {
-    $config = $this->createMock(ImmutableConfig::class);
-    $config->expects($this->once())
-      ->method('get')
-      ->with('cross_posting.notify_all_groups')
+  private function expectSetting(bool $value): void {
+    $this->crossPostingService->expects($this->once())
+      ->method('notifiesAllGroups')
       ->willReturn($value);
-
-    $this->configFactory->expects($this->once())
-      ->method('get')
-      ->with('social_group.settings')
-      ->willReturn($config);
   }
 
 }

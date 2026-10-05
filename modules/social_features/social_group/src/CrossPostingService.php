@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
@@ -38,6 +39,13 @@ class CrossPostingService {
   protected $database;
 
   /**
+   * The configuration factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * The Group storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
@@ -53,12 +61,29 @@ class CrossPostingService {
    *   The database connection.
    * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $groupRelationTypeManager
    *   The group relation type manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $database, GroupRelationTypeManagerInterface $groupRelationTypeManager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $database, GroupRelationTypeManagerInterface $groupRelationTypeManager, ConfigFactoryInterface $config_factory) {
     $this->entityTypeManager = $entity_type_manager;
     $this->groupStorage = $entity_type_manager->getStorage('group');
     $this->database = $database;
     $this->groupRelationTypeManager = $groupRelationTypeManager;
+    $this->configFactory = $config_factory;
+  }
+
+  /**
+   * Checks whether cross-posted content notifies the members of every group.
+   *
+   * The single place that reads this setting: the notify option only applies
+   * while cross-posting itself is enabled, as the settings form saves them.
+   *
+   * @return bool
+   *   TRUE when cross-posting and the notify-all-groups option are both on.
+   */
+  public function notifiesAllGroups(): bool {
+    $cross_posting = $this->configFactory->get('social_group.settings')->get('cross_posting');
+    return !empty($cross_posting['status']) && !empty($cross_posting['notify_all_groups']);
   }
 
   /**

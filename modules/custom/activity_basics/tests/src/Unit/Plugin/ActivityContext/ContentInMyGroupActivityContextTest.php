@@ -7,8 +7,6 @@ namespace Drupal\Tests\activity_basics\Unit\Plugin\ActivityContext;
 use Drupal\activity_basics\Plugin\ActivityContext\ContentInMyGroupActivityContext;
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -248,16 +246,11 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
   private array $membershipQueries = [];
 
   /**
-   * The cross-posting settings the plugin reads.
+   * What the cross-posting service answers for notifiesAllGroups().
    *
-   * Both on is the state in which the deduplication exists at all.
-   *
-   * @var array<string, mixed>
+   * On is the state in which the deduplication exists at all.
    */
-  private array $crossPosting = [
-    'status' => TRUE,
-    'notify_all_groups' => TRUE,
-  ];
+  private bool $notifiesAllGroups = TRUE;
 
   /**
    * {@inheritdoc}
@@ -315,6 +308,8 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
 
     $this->crossPostingService->method('getGroupIdsByRelationshipForNodeWithoutAccessCheck')
       ->willReturnCallback(fn (): array => $this->relationships);
+    $this->crossPostingService->method('notifiesAllGroups')
+      ->willReturnCallback(fn (): bool => $this->notifiesAllGroups);
 
     $this->wireStorages();
   }
@@ -332,29 +327,8 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
       $this->activityFactory,
       $this->groupMuteNotify,
       $this->crossPostingService,
-      $this->database,
-      $this->configFactory()
+      $this->database
     );
-  }
-
-  /**
-   * Returns a config factory answering the cross-posting settings.
-   *
-   * @return \Drupal\Core\Config\ConfigFactoryInterface
-   *   A config factory carrying the values the current case set up.
-   */
-  private function configFactory(): ConfigFactoryInterface {
-    $config = $this->createMock(ImmutableConfig::class);
-    $config->method('get')->willReturnCallback(
-      fn (string $key): mixed => $key === 'cross_posting' ? $this->crossPosting : NULL
-    );
-
-    $config_factory = $this->createMock(ConfigFactoryInterface::class);
-    $config_factory->method('get')->willReturnCallback(
-      fn (string $name): ImmutableConfig => $config
-    );
-
-    return $config_factory;
   }
 
   /**
@@ -985,7 +959,7 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
    * @covers ::getRecipients
    */
   public function testTheSettingOffSuppressesNobody(): void {
-    $this->crossPosting = ['status' => TRUE, 'notify_all_groups' => FALSE];
+    $this->notifiesAllGroups = FALSE;
     $this->relationships = [10 => 1, 11 => 2];
     $this->relationshipsWithMessage = [10, 11];
     $this->groupMembers = [1 => [5, 6], 2 => [5, 8]];
@@ -998,24 +972,6 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
   }
 
   /**
-   * Cross-posting disabled altogether suppresses nobody either.
-   *
-   * The two config keys are independent, so a stale TRUE can outlive the
-   * feature being switched off.
-   *
-   * @covers ::getRecipients
-   */
-  public function testCrossPostingDisabledSuppressesNobody(): void {
-    $this->crossPosting = ['status' => FALSE, 'notify_all_groups' => TRUE];
-    $this->relationships = [10 => 1, 11 => 2];
-    $this->relationshipsWithMessage = [10, 11];
-    $this->groupMembers = [1 => [5, 6], 2 => [5, 8]];
-
-    $this->assertEqualsCanonicalizing([5, 6], $this->notifiedUids(10));
-    $this->assertEqualsCanonicalizing([5, 8], $this->notifiedUids(11));
-  }
-
-  /**
    * With the setting off the dedup lookups are not run at all.
    *
    * The guard is about cost, not only behaviour.
@@ -1023,7 +979,7 @@ final class ContentInMyGroupActivityContextTest extends UnitTestCase {
    * @covers ::getRecipients
    */
   public function testTheSettingOffIssuesNoDedupQuery(): void {
-    $this->crossPosting = ['status' => TRUE, 'notify_all_groups' => FALSE];
+    $this->notifiesAllGroups = FALSE;
     $this->relationships = [10 => 1, 11 => 2];
     $this->relationshipsWithMessage = [10, 11];
     $this->groupMembers = [1 => [5, 6], 2 => [5, 8]];

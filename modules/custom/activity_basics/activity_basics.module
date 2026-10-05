@@ -70,13 +70,26 @@ function activity_basics_entity_presave(EntityInterface $entity): void {
         ->getStorage('group_content')
         ->loadByEntity($entity);
 
-      // The content becomes visible to the members of its groups for the
-      // first time here, so the activity entity conditions may notify the
-      // members of every group it is cross-posted to. Raising the marker
-      // unconditionally keeps this module independent from the setting that
-      // governs the fan-out, which the condition plugin reads itself.
+      // A draft published for the first time may notify the members of every
+      // group it is cross-posted to. A republish must not: a group added
+      // while the content was published has no message yet and would be
+      // notified on the second publication. The setting itself is read by
+      // the condition plugin, which keeps this module independent from it.
+      $relationship_ids = array_map(static fn (EntityInterface $group_content) => $group_content->id(), $group_contents);
+      $notified_before = $relationship_ids !== [] && (bool) \Drupal::entityTypeManager()
+        ->getStorage('message')
+        ->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('template', 'create_content_in_joined_group')
+        ->condition('field_message_related_object.target_type', 'group_content')
+        ->condition('field_message_related_object.target_id', $relationship_ids, 'IN')
+        ->count()
+        ->execute();
+
       $previously_raised = FirstPublicationMarker::isRaised();
-      FirstPublicationMarker::setRaised(TRUE);
+      if (!$notified_before) {
+        FirstPublicationMarker::setRaised(TRUE);
+      }
 
       try {
         foreach ($group_contents as $group_content) {

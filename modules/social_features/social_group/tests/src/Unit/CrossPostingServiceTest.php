@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\social_group\Unit;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Database\StatementInterface;
@@ -56,6 +58,13 @@ final class CrossPostingServiceTest extends UnitTestCase {
   private NodeInterface&MockObject $node;
 
   /**
+   * The social_group.settings cross_posting value the config factory returns.
+   *
+   * @var array<string, bool>|null
+   */
+  private ?array $crossPosting = NULL;
+
+  /**
    * The service under test.
    */
   private CrossPostingService $service;
@@ -95,10 +104,18 @@ final class CrossPostingServiceTest extends UnitTestCase {
       }
     );
 
+    $config = $this->createMock(ImmutableConfig::class);
+    $config->method('get')->willReturnCallback(
+      fn (string $key): ?array => $key === 'cross_posting' ? $this->crossPosting : NULL
+    );
+    $config_factory = $this->createMock(ConfigFactoryInterface::class);
+    $config_factory->method('get')->with('social_group.settings')->willReturn($config);
+
     $this->service = new CrossPostingService(
       $entity_type_manager,
       $this->database,
-      $this->groupRelationTypeManager
+      $this->groupRelationTypeManager,
+      $config_factory
     );
   }
 
@@ -242,6 +259,39 @@ final class CrossPostingServiceTest extends UnitTestCase {
       [11 => '3', 12 => '1'],
       $this->service->getGroupIdsByRelationshipForNodeWithoutAccessCheck($this->node)
     );
+  }
+
+  /**
+   * Notifying every group needs cross-posting and the option both on.
+   *
+   * @param array<string, bool>|null $cross_posting
+   *   The stored cross_posting value, NULL when the site has none yet.
+   * @param bool $expected
+   *   Whether every group is notified.
+   *
+   * @covers ::notifiesAllGroups
+   * @dataProvider notifiesAllGroupsProvider
+   */
+  public function testNotifiesAllGroups(?array $cross_posting, bool $expected): void {
+    $this->crossPosting = $cross_posting;
+
+    $this->assertSame($expected, $this->service->notifiesAllGroups());
+  }
+
+  /**
+   * Cross-posting settings and whether they notify every group.
+   *
+   * @return array<string, array{0: array<string, bool>|null, 1: bool}>
+   *   The stored value and the expected answer.
+   */
+  public static function notifiesAllGroupsProvider(): array {
+    return [
+      'both on' => [['status' => TRUE, 'notify_all_groups' => TRUE], TRUE],
+      'option off' => [['status' => TRUE, 'notify_all_groups' => FALSE], FALSE],
+      'leftover option with cross-posting off' => [['status' => FALSE, 'notify_all_groups' => TRUE], FALSE],
+      'option not saved yet' => [['status' => TRUE], FALSE],
+      'no cross-posting settings' => [NULL, FALSE],
+    ];
   }
 
 }

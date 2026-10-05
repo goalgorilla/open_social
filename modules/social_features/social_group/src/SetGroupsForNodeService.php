@@ -66,7 +66,7 @@ class SetGroupsForNodeService {
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], $is_new = FALSE) {
+  public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], bool $is_new = FALSE): NodeInterface {
     $moved = FALSE;
 
     // If we don't have to add or remove groups, we don't need to move anything.

@@ -5,7 +5,6 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
@@ -34,13 +33,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
    * How many member ids are looked up in a single membership query.
    */
   private const MEMBER_QUERY_CHUNK_SIZE = 1000;
-
-  /**
-   * The configuration factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
 
   /**
    * The group mute notifications.
@@ -84,8 +76,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
    *   The cross-posting service.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
    */
   public function __construct(
     array $configuration,
@@ -97,14 +87,12 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
     GroupMuteNotify $group_mute_notify,
     CrossPostingService $cross_posting_service,
     Connection $database,
-    ConfigFactoryInterface $config_factory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 
     $this->groupMuteNotify = $group_mute_notify;
     $this->crossPostingService = $cross_posting_service;
     $this->database = $database;
-    $this->configFactory = $config_factory;
   }
 
   /**
@@ -120,8 +108,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
       $container->get('activity_creator.activity_factory'),
       $container->get('social_group.group_mute_notify'),
       $container->get('social_group.cross_posting'),
-      $container->get('database'),
-      $container->get('config.factory')
+      $container->get('database')
     );
   }
 
@@ -301,8 +288,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
     // With the feature off only one relationship ever carries a message, so
     // the lookups below are a no-op. This sits on the notification queue's
     // hot path, so they are skipped rather than run to completion.
-    $cross_posting = $this->configFactory->get('social_group.settings')->get('cross_posting');
-    if (empty($cross_posting['status']) || empty($cross_posting['notify_all_groups'])) {
+    if (!$this->crossPostingService->notifiesAllGroups()) {
       return [];
     }
 
