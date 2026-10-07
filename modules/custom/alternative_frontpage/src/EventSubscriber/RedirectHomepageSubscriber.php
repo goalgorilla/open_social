@@ -197,6 +197,10 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
       if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language)) {
         $this->doRedirect($event, 'administrator', $authenticated_page_url);
       }
+
+      // Administrators are fully handled above, continuing would overwrite the
+      // redirect with the one for their other roles.
+      return;
     }
 
     $current_user_roles = $this->currentUser->getRoles(FALSE);
