@@ -225,3 +225,35 @@ new PluralTranslatableMarkup(0, '1 group invite', '@count group invites');
 new PluralTranslatableMarkup(0, 'User with @error_message e-mail already a member of this group', 'Users with: @error_message e-mails already members of this group');
 new TranslatableMarkup('Send a welcome message to new group members');
 new TranslatableMarkup('Group roles');
+
+// POTX doesn't pick up labels from third party settings
+// like field groups yet. Remove once our POTX patch is in.
+new TranslatableMarkup('A background task has been finished');
+new TranslatableMarkup('Additional');
+new TranslatableMarkup('Additional Information');
+new TranslatableMarkup('Additional information');
+new TranslatableMarkup('Advanced Course leader');
+new TranslatableMarkup('Advanced Course member');
+new TranslatableMarkup('Affiliation representation');
+new TranslatableMarkup('Basic Course leader');
+new TranslatableMarkup('Basic Course member');
+new TranslatableMarkup('Basic information');
+new TranslatableMarkup('Block content');
+new TranslatableMarkup('Course starting time');
+new TranslatableMarkup('Date and time');
+new TranslatableMarkup('Enrollment');
+new TranslatableMarkup('Enrollment options fieldset');
+new TranslatableMarkup('Group manager');
+new TranslatableMarkup('Group member');
+new TranslatableMarkup('Ideas advancement settings');
+new TranslatableMarkup('Locale settings');
+new TranslatableMarkup('Performance');
+new TranslatableMarkup('Personalisation');
+new TranslatableMarkup('Phase Statistics');
+new TranslatableMarkup('Phase permissions');
+new TranslatableMarkup('Privacy');
+new TranslatableMarkup('Recurring');
+new TranslatableMarkup('Request membership');
+new TranslatableMarkup('Result information');
+new TranslatableMarkup('Schedule');
+new TranslatableMarkup('You’ve enrolled for an event');

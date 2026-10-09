@@ -24,9 +24,11 @@ class SocialEventManagersConfigOverride implements ConfigFactoryOverrideInterfac
     if (in_array($config_name, $names)) {
       $config = \Drupal::service('config.factory')->getEditable($config_name);
       // Add a field group.
+      // Only override the children, overriding the whole group would replace
+      // the translated label with the untranslated one.
       if ($group_attachment = $config->get('third_party_settings.field_group.group_attachments')) {
         $group_attachment['children'][] = 'field_event_managers';
-        $overrides[$config_name]['third_party_settings']['field_group']['group_attachments'] = $group_attachment;
+        $overrides[$config_name]['third_party_settings']['field_group']['group_attachments']['children'] = $group_attachment['children'];
       }
 
       // Add the field to the content.

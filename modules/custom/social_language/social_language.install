@@ -38,6 +38,7 @@ function social_language_install() {
 
   \Drupal::configFactory()->getEditable('locale.settings')
     ->set('translation.path', '/tmp')
+    ->set('translation.update_interval_days', 7)
     ->save();
 
   // Changing the schedule for locale cron.
@@ -98,6 +99,20 @@ function social_language_update_12301(): void {
  * Grant Site Managers permissions to translate site settings.
  */
 function social_language_update_26000(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_language', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Check for translation updates weekly when it was set to never.
+ */
+function social_language_update_26001(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
