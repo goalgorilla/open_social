@@ -9,6 +9,9 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupRelationship;
+use Drupal\node\NodeInterface;
+use Drupal\social_event\Entity\Node\Event;
+use Drupal\social_event\ExternalRegistrationLinkBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -36,6 +39,11 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
   protected $formBuilder;
 
   /**
+   * The external registration link builder.
+   */
+  protected ExternalRegistrationLinkBuilder $externalRegistrationLinkBuilder;
+
+  /**
    * EnrollActionBlock constructor.
    *
    * @param array $configuration
@@ -48,11 +56,14 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    *   The route match.
    * @param \Drupal\Core\Form\FormBuilderInterface $formBuilder
    *   The form builder.
+   * @param \Drupal\social_event\ExternalRegistrationLinkBuilder $externalRegistrationLinkBuilder
+   *   The external registration link builder.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, FormBuilderInterface $formBuilder) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, FormBuilderInterface $formBuilder, ExternalRegistrationLinkBuilder $externalRegistrationLinkBuilder) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $routeMatch;
     $this->formBuilder = $formBuilder;
+    $this->externalRegistrationLinkBuilder = $externalRegistrationLinkBuilder;
   }
 
   /**
@@ -64,7 +75,8 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
       $plugin_id,
       $plugin_definition,
       $container->get('current_route_match'),
-      $container->get('form_builder')
+      $container->get('form_builder'),
+      $container->get('social_event.external_registration_link_builder')
     );
   }
 
@@ -81,12 +93,15 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
       'view.managers.view_managers',
     ];
     if (in_array($route_name, $routes_to_check)) {
-      $node = $this->routeMatch->getParameter('node');
-      if (!is_null($node) && !is_object($node)) {
-        $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($node);
-      }
+      $node = $this->routeNode();
 
       if (is_object($node) && $node->getType() === 'event') {
+        // External registration is shown to everyone who can view the event,
+        // regardless of the group enrolment permissions checked below.
+        if ($node instanceof Event && $node->isExternalRegistration()) {
+          return AccessResult::allowed()->addCacheableDependency($node);
+        }
+
         // Retrieve the group and if there are groups respect group permission.
         $groups = $this->getGroups($node);
         if (!empty($groups)) {
@@ -110,6 +125,11 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function build() {
+    $node = $this->routeNode();
+    if ($node instanceof Event && $node->isExternalRegistration()) {
+      return $this->externalRegistrationLinkBuilder->build($node);
+    }
+
     $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollActionForm');
 
     $render_array = [
@@ -119,13 +139,30 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
     $text = (string) $this->t('You have enrolled for this event.');
 
     // Add extra text to.
-    if ($form['to_enroll_status']['#value'] === '0') {
+    if (($form['to_enroll_status']['#value'] ?? NULL) === '0') {
       $render_array['feedback_user_has_enrolled'] = [
         '#markup' => '<div><strong>' . $text . '</strong></div>',
       ];
     }
 
     return $render_array;
+  }
+
+  /**
+   * Loads the node from the current route.
+   *
+   * @return null|NodeInterface
+   *   The route node, or NULL when the route has no loadable node.
+   */
+  private function routeNode(): ?NodeInterface {
+    $node = $this->routeMatch->getParameter('node');
+    if (!is_object($node)) {
+      if ($node === NULL) {
+        return NULL;
+      }
+      $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($node);
+    }
+    return $node instanceof NodeInterface ? $node : NULL;
   }
 
   /**

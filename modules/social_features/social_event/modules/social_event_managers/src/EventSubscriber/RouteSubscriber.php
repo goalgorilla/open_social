@@ -33,6 +33,9 @@ class RouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
+    if ($route = $collection->get('view.event_manage_enrollments.page_manage_enrollments')) {
+      $route->setRequirement('_social_event_external_registration_access', 'TRUE');
+    }
   }
 
   /**
@@ -55,6 +58,7 @@ class RouteSubscriber extends RouteSubscriberBase {
         ],
         [
           '_views_bulk_operation_access' => 'TRUE',
+          '_social_event_external_registration_access' => 'TRUE',
         ]
       );
       $collection->add('social_event_managers.vbo.execute_configurable', $route);
@@ -69,6 +73,7 @@ class RouteSubscriber extends RouteSubscriberBase {
         ],
         [
           '_views_bulk_operation_access' => 'TRUE',
+          '_social_event_external_registration_access' => 'TRUE',
         ]
       );
       $collection->add('social_event_managers.vbo.confirm', $route);

@@ -29,6 +29,8 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\system\Entity\Menu;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -791,6 +793,31 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
       $route_name === 'entity.node.canonical'
     ) {
       return AccessResult::forbidden();
+    }
+  }
+
+  // The enrollments hero title is path-only because Views routes have no
+  // typed node context. That path still matches on 404/403, which duplicates
+  // "Page not found" in the title region. Hide the hero instance when there
+  // is no node to render.
+  if (
+    $block->getPluginId() === 'social_page_title_block'
+    && str_ends_with((string) $block->id(), '_pagetitleblock_2')
+  ) {
+    $exception = \Drupal::request()->attributes->get('exception');
+    if (
+      $exception instanceof NotFoundHttpException
+      || $exception instanceof AccessDeniedHttpException
+    ) {
+      $nid = \Drupal::routeMatch()->getRawParameter('node');
+      $node = is_numeric($nid)
+        ? \Drupal::entityTypeManager()->getStorage('node')->load($nid)
+        : NULL;
+      if (!$node instanceof NodeInterface) {
+        return AccessResult::forbidden()
+          ->addCacheContexts(['url.path'])
+          ->addCacheTags(['node_list']);
+      }
     }
   }
 

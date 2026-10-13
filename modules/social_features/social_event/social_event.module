@@ -533,7 +533,10 @@ function social_event_preprocess_node(array &$variables) {
 
     if ($view_mode === 'hero') {
       // Add Enroll button.
-      if (empty($variables['event_enrollment'])) {
+      if (empty($variables['event_enrollment']) && $node->isExternalRegistration()) {
+        $variables['event_enrollment'] = \Drupal::service('social_event.external_registration_link_builder')->build($node);
+      }
+      elseif (empty($variables['event_enrollment'])) {
         $form = \Drupal::formBuilder()
           ->getForm('Drupal\social_event\Form\EnrollActionForm');
         $render_array = [
@@ -905,6 +908,20 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     // Alter visibility of enrollment methods.
     social_event_field_visibility($form, 'field_event_enroll', ['field_event_enroll_outside_group']);
 
+    if (isset($form['field_external_registration'], $form['field_event_enroll'])) {
+      $form['#attached']['library'][] = 'social_event/external_registration';
+      if (isset($form['field_event_enroll']['widget']['value'])) {
+        $form['field_event_enroll']['widget']['value']['#states']['disabled'] = [
+          ':input[name="field_external_registration[value]"]' => ['checked' => TRUE],
+        ];
+      }
+      if (isset($form['field_event_registration_url'])) {
+        $form['field_event_registration_url']['#states']['visible'] = [
+          ':input[name="field_external_registration[value]"]' => ['checked' => TRUE],
+        ];
+      }
+    }
+
     $form['field_event_enroll_outside_group']['#states'] = [
       'visible' => [
         ':input[name="groups"]' => ['!value' => '_none'],
@@ -1012,12 +1029,12 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
     }
 
-    if ($node instanceof NodeInterface) {
+    if ($node instanceof NodeInterface && !($node instanceof Event && $node->isExternalRegistration())) {
       $access = $node instanceof Event && $node->isEnrollmentEnabled();
       if (isset($form['enroll_wrapper'])) {
         $form['enroll_wrapper']['#access'] = $access;
       }
-      else {
+      elseif (isset($form['enroll_for_this_event'])) {
         $form['enroll_for_this_event']['#access'] = $access;
       }
     }
@@ -1561,6 +1578,9 @@ function social_event_field_group_form_process_build_alter(array &$element, Form
     $field_group['#states']['visible'] = [
       ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
     ];
+    if (isset($element['field_external_registration'])) {
+      $field_group['#states']['visible'][':input[name="field_external_registration[value]"]'] = ['checked' => FALSE];
+    }
     $field_group['#title'] = '';
   }
 
@@ -1569,7 +1589,21 @@ function social_event_field_group_form_process_build_alter(array &$element, Form
     isset($element['group_enrollment']) &&
     $event_settings->get('disable_event_enroll')
   ) {
-    $element['group_enrollment']['#access'] = FALSE;
+    // Site-wide native enrolment is off. External registration stays
+    // available; only the native enrolment controls are removed.
+    if (isset($element['field_external_registration'])) {
+      foreach ([
+        'field_event_enroll',
+        'group_enrollment_methods',
+      ] as $child) {
+        if (isset($element[$child])) {
+          $element[$child]['#access'] = FALSE;
+        }
+      }
+    }
+    else {
+      $element['group_enrollment']['#access'] = FALSE;
+    }
   }
 }
 

@@ -87,7 +87,7 @@ final class MenuLocalTasksAlter implements ContainerInjectionInterface {
 
         // For non-managers, change the title of the management tab to be more
         // generic.
-        if (!$is_manager_or_organizer) {
+        if (!$is_manager_or_organizer && isset($data['tabs'][0][self::VIEW_EVENT_MANAGE_ENROLLMENT_TAB_ID])) {
           $data['tabs'][0][self::VIEW_EVENT_MANAGE_ENROLLMENT_TAB_ID]['#link']['title'] = $this->t('Enrollments');
         }
       }

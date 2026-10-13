@@ -129,6 +129,34 @@ class EventContext extends RawMinkContext {
   }
 
   /**
+   * Selects the first real option of a required select, addressed by name.
+   *
+   * The event type label "Type" is also used by other selects on the form.
+   * Sites can make the event type required without shipping a fixed term, so
+   * the step uses the field name and skips the field when it is absent or
+   * optional.
+   *
+   * @When I select the first option from :field when that field is required
+   */
+  public function selectFirstOptionWhenRequired(string $field): void {
+    $element = $this->getSession()->getPage()->findField($field);
+    if ($element === NULL || !$element->hasAttribute('required')) {
+      return;
+    }
+
+    foreach ($element->findAll('css', 'option') as $option) {
+      $value = (string) $option->getAttribute('value');
+      if ($value === '' || $value === '_none') {
+        continue;
+      }
+      $element->selectOption($value);
+      return;
+    }
+
+    throw new \RuntimeException("The required field '$field' has no option to select.");
+  }
+
+  /**
    * View the event manager page for a specific event.
    *
    * @When I am viewing the event manager page for :event

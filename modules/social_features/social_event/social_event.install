@@ -529,3 +529,29 @@ function social_event_update_130016(): void {
     user_role_grant_permissions($role_id, $permissions);
   }
 }
+
+/**
+ * Add the per-event external registration fields.
+ */
+function social_event_update_260001(): string {
+  // The registration URL is a link field. Existing sites do not pick up the
+  // new link dependency automatically, so enable it before the field import.
+  if (!\Drupal::moduleHandler()->moduleExists('link')) {
+    \Drupal::service('module_installer')->install(['link']);
+  }
+
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_event', __FUNCTION__);
+  return $updater->logger()->output();
+}
+
+/**
+ * Show external registration on the event form and hide it on event displays.
+ */
+function social_event_update_260002(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+  $updater->executeUpdate('social_event', __FUNCTION__);
+  return $updater->logger()->output();
+}

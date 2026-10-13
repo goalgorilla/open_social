@@ -24,6 +24,22 @@ interface EventInterface extends NodeInterface {
   public function isEnrollmentEnabled(): bool;
 
   /**
+   * Whether registration is sent to an external URL.
+   *
+   * @return bool
+   *   TRUE when this event uses external registration.
+   */
+  public function isExternalRegistration(): bool;
+
+  /**
+   * Returns the configured external registration URL.
+   *
+   * @return string|null
+   *   The registration URL, or NULL when it is empty.
+   */
+  public function getExternalRegistrationUrl(): ?string;
+
+  /**
    * Check if access to enrollments is open.
    *
    * @return bool

@@ -22,6 +22,13 @@ services:
     class: Drupal\social_event\Access\EventEnrollmentsAccessCheck
     tags:
       - { name: access_check, applies_to: _social_event_enrollments_access }
+  social_event.external_registration_link_builder:
+    class: Drupal\social_event\ExternalRegistrationLinkBuilder
+  Drupal\social_event\ExternalRegistrationLinkBuilder: '@social_event.external_registration_link_builder'
+  social_event.external_registration_enrollment_access:
+    class: Drupal\social_event\Access\ExternalRegistrationEnrollmentAccess
+    tags:
+      - { name: access_check, applies_to: _social_event_external_registration_access }
   social_event.eda_handler:
     class: Drupal\social_event\EdaHandler
     arguments:

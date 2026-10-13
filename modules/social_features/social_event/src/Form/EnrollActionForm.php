@@ -128,6 +128,12 @@ class EnrollActionForm extends FormBase {
       return [];
     }
 
+    // Externally registered events have no native enrolment action; their
+    // button is built by the external registration link builder instead.
+    if ($node->isExternalRegistration()) {
+      return [];
+    }
+
     // We check if the node is placed in a Group I am a member of. If not,
     // we are not going to build anything.
     $groups = $this->getGroups($node);
@@ -424,6 +430,10 @@ class EnrollActionForm extends FormBase {
 
     $event = $this->entityTypeManager->getStorage('node')->load($nid);
     assert($event instanceof EventInterface);
+
+    if ($event->isExternalRegistration()) {
+      return $response;
+    }
 
     if ($event->isOnline() && $event->joiningMeetingIsOpen()) {
       // We should redirect the user to the meeting page.

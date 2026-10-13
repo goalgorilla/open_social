@@ -5,6 +5,7 @@ namespace Drupal\social_event\Entity\Node;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\link\LinkItemInterface;
 use Drupal\media\MediaInterface;
 use Drupal\meeting_api\Entity\Meeting;
 use Drupal\meeting_api\MeetingAttendee;
@@ -22,7 +23,39 @@ class Event extends Node implements EventInterface {
   /**
    * {@inheritdoc}
    */
+  public function isExternalRegistration(): bool {
+    if (!$this->hasField('field_external_registration') || $this->get('field_external_registration')->isEmpty()) {
+      return FALSE;
+    }
+
+    return (bool) $this->get('field_external_registration')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExternalRegistrationUrl(): ?string {
+    if (!$this->hasField('field_event_registration_url')) {
+      return NULL;
+    }
+
+    $item = $this->get('field_event_registration_url')->first();
+    if (!$item instanceof LinkItemInterface || $item->isEmpty()) {
+      return NULL;
+    }
+
+    $url = trim((string) $item->get('uri')->getValue());
+    return $url === '' ? NULL : $url;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isEnrollmentEnabled(): bool {
+    if ($this->isExternalRegistration()) {
+      return FALSE;
+    }
+
     // Get global event settings.
     $settings = \Drupal::config('social_event.settings');
     if (
@@ -191,6 +224,10 @@ class Event extends Node implements EventInterface {
    * {@inheritdoc}
    */
   public function getParticipation(?AccountInterface $account = NULL): bool {
+    if ($this->isExternalRegistration()) {
+      return FALSE;
+    }
+
     $participation = &drupal_static(__METHOD__, []);
 
     if ($account === NULL) {

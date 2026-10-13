@@ -9,6 +9,7 @@ social_event_invite.invite_email:
         type: entity:node
   requirements:
     _custom_access: '\Drupal\social_event_invite\Form\EnrollInviteEmailForm::inviteAccess'
+    _social_event_external_registration_access: 'TRUE'
 
 social_event_invite.invite_user:
   path: '/node/{node}/invite/user'
@@ -21,6 +22,7 @@ social_event_invite.invite_user:
         type: entity:node
   requirements:
     _permission: 'access content'
+    _social_event_external_registration_access: 'TRUE'
 
 social_event_invite.settings:
   path: '/admin/config/opensocial/event-invite'
@@ -44,6 +46,7 @@ social_event_invite.cancel_enrollment_invite:
         type: entity:event_enrollment
   requirements:
     _custom_access: '\Drupal\social_event_invite\Controller\CancelEnrollInviteController::access'
+    _social_event_external_registration_access: 'TRUE'
 
 social_event_invite.update_enrollment_invite:
   path: '/user/{user}/event-invites/{event_enrollment}/{accept_decline}'
@@ -57,4 +60,5 @@ social_event_invite.update_enrollment_invite:
         type: entity:event_enrollment
   requirements:
     _custom_access: '\Drupal\social_event_invite\Controller\UserEnrollInviteController::access'
+    _social_event_external_registration_access: 'TRUE'
     accept_decline: '[0-1]+'

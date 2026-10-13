@@ -15,6 +15,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
 
@@ -205,7 +206,8 @@ function social_event_invite_preprocess_node(array &$variables) {
     // support AN enrollments, don't add this. This will add the Enroll
     // button to the Hero for AN on Public events with Invite enabled.
     if ($variables['view_mode'] === 'hero' && $node->hasField('field_enroll_method') &&
-      (int) $node->getFieldValue('field_enroll_method', 'value') === EventEnrollmentInterface::ENROLL_METHOD_INVITE) {
+      (int) $node->getFieldValue('field_enroll_method', 'value') === EventEnrollmentInterface::ENROLL_METHOD_INVITE &&
+      !($node instanceof Event && $node->isExternalRegistration())) {
       $form = \Drupal::formBuilder()
         ->getForm('Drupal\social_event_invite\Form\EventInviteEnrollActionForm', $node);
 

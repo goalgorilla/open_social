@@ -27,6 +27,7 @@ social_event.update_enrollment_request:
         type: entity:event_enrollment
   requirements:
     _custom_access: '\Drupal\social_event\Controller\UpdateEnrollRequestController::access'
+    _social_event_external_registration_access: 'TRUE'
     approve: '[0-1]+'
     _csrf_token: 'TRUE'
 
@@ -43,6 +44,7 @@ social_event.enrollment_request_decline_form:
         type: entity:event_enrollment
   requirements:
     _custom_access: '\Drupal\social_event\Controller\UpdateEnrollRequestController::access'
+    _social_event_external_registration_access: 'TRUE'
 
 social_event.view_recording:
   path: '/node/{node}/view-recording'
@@ -69,3 +71,4 @@ social_event.request_enroll_dialog:
         type: entity:node
   requirements:
     _custom_access: '\Drupal\social_event\Controller\EnrollRequestDialogController::enrollAccess'
+    _social_event_external_registration_access: 'TRUE'

@@ -37,6 +37,17 @@ class RouteSubscriber extends RouteSubscriberBase {
         $route->setRequirements($requirements);
       }
     }
+
+    // Native enrolment views stay closed when registration is external.
+    $external_registration_routes = [
+      'view.event_enrollments.view_enrollments',
+      'view.event_manage_enrollment_requests.page_manage_enrollment_requests',
+    ];
+    foreach ($external_registration_routes as $name) {
+      if ($route = $collection->get($name)) {
+        $route->setRequirement('_social_event_external_registration_access', 'TRUE');
+      }
+    }
   }
 
 }

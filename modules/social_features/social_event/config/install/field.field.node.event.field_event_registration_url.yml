@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_registration_url
+    - node.type.event
+  module:
+    - link
+id: node.event.field_event_registration_url
+field_name: field_event_registration_url
+entity_type: node
+bundle: event
+label: 'Registration link'
+description: 'Members will register using the link above, their enrollment won''t show on the event page'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 16
+field_type: link

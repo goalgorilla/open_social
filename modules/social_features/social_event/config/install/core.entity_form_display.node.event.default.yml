@@ -11,6 +11,8 @@ dependencies:
     - field.field.node.event.field_event_date_end
     - field.field.node.event.field_event_enroll
     - field.field.node.event.field_event_enroll_outside_group
+    - field.field.node.event.field_external_registration
+    - field.field.node.event.field_event_registration_url
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_event_all_day
@@ -26,6 +28,7 @@ dependencies:
     - field_group
     - file
     - image_widget_crop
+    - link
     - path
     - social_core
     - text
@@ -135,6 +138,8 @@ third_party_settings:
       region: hidden
     group_enrollment:
       children:
+        - field_external_registration
+        - field_event_registration_url
         - group_enrollment_methods
         - field_event_enroll
       parent_name: group_event_visibility
@@ -245,6 +250,21 @@ content:
       display_label: true
     type: boolean_checkbox
     weight: 19
+    third_party_settings: {  }
+  field_external_registration:
+    region: content
+    settings:
+      display_label: true
+    type: boolean_checkbox
+    weight: 17
+    third_party_settings: {  }
+  field_event_registration_url:
+    region: content
+    settings:
+      placeholder_url: 'https://'
+      placeholder_title: ''
+    type: link_default
+    weight: 18
     third_party_settings: {  }
   field_event_enroll_outside_group:
     weight: 123
