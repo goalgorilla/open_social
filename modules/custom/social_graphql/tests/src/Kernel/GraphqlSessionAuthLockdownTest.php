@@ -156,12 +156,17 @@ final class GraphqlSessionAuthLockdownTest extends SocialGraphQLTestBase {
   }
 
   /**
-   * Install grants the settings form to the site manager role.
+   * Only administrators get the settings form, not site managers.
    */
-  public function testInstallGrantsSettingsPermission(): void {
+  public function testSiteManagerLacksSettingsPermission(): void {
+    $permissions = $this->container->get('user.permissions')->getPermissions();
+    self::assertTrue($permissions['administer social_graphql settings']['restrict access'] ?? FALSE);
+
+    \social_graphql_update_26002();
+
     $role = Role::load('sitemanager');
     self::assertNotNull($role);
-    self::assertTrue($role->hasPermission('administer social_graphql settings'));
+    self::assertFalse($role->hasPermission('administer social_graphql settings'));
   }
 
   /**
@@ -182,21 +187,6 @@ final class GraphqlSessionAuthLockdownTest extends SocialGraphQLTestBase {
     \social_graphql_update_26002();
     \social_graphql_update_26002();
     self::assertFalse($this->config('social_graphql.settings')->get('allow_session_auth'));
-  }
-
-  /**
-   * The update grants the settings permission when the role lacks it.
-   */
-  public function testUpdateGrantsSettingsPermission(): void {
-    $role = Role::load('sitemanager');
-    self::assertNotNull($role);
-    $role->revokePermission('administer social_graphql settings')->save();
-
-    \social_graphql_update_26002();
-
-    $reloaded = Role::load('sitemanager');
-    self::assertNotNull($reloaded);
-    self::assertTrue($reloaded->hasPermission('administer social_graphql settings'));
   }
 
   /**
