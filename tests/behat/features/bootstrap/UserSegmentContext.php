@@ -58,7 +58,6 @@ class UserSegmentContext extends RawMinkContext {
    *
    * Example: When I create a user segment using its creation page:
    *              | Label       | My Test Segment  |
-   *              | Description | It's for testing |
    *              | Status      | 1                |
    *
    * @When I create a user segment using its creation page:
@@ -79,17 +78,14 @@ class UserSegmentContext extends RawMinkContext {
 
       // Handle different field types.
       if ($key === "label") {
-        $page->fillField("Label", $value);
-      }
-      elseif ($key === "description") {
-        $page->fillField("Description", $value);
+        $page->fillField("Segment name", $value);
       }
       elseif ($key === "status") {
         if ($value == '1' || $value === 'TRUE' || $value === 'true') {
-          $page->checkField("Status");
+          $page->checkField("Enabled");
         }
         else {
-          $page->uncheckField("Status");
+          $page->uncheckField("Enabled");
         }
       }
       elseif ($key === "visibility_option") {
@@ -101,7 +97,7 @@ class UserSegmentContext extends RawMinkContext {
         }
       }
       elseif ($key === "visibility_option_label") {
-        $page->fillField("Visibility option label", $value);
+        $page->fillField("A custom name for visibility settings", $value);
       }
       elseif ($key === "rules") {
         $id = "user-segment-value";
@@ -144,9 +140,6 @@ class UserSegmentContext extends RawMinkContext {
 
     foreach ($this->lastCreatedValues as $field => $value) {
       if ($field === "label") {
-        $this->minkContext->assertPageContainsText($value);
-      }
-      elseif ($field === "description") {
         $this->minkContext->assertPageContainsText($value);
       }
       elseif ($field === "status") {
