@@ -471,6 +471,10 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
     $variables['profile_groups'] = \Drupal::service('social_group.helper_service')
       ->countGroupMembershipsForUser($user->id());
+    // The counts are queried from node tables, not stored on the profile.
+    // Saving an event or topic must invalidate this cached statistic.
+    $variables['#cache']['tags'][] = 'node_list:event';
+    $variables['#cache']['tags'][] = 'node_list:topic';
   }
 
   /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */

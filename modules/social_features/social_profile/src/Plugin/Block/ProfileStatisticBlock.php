@@ -87,6 +87,10 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
     $profile = $storage->loadByUser($account, 'profile');
     $tags = [
       'user:' . $account->id(),
+      // Event and topic totals are computed at render time. The block must
+      // follow the same list tags core invalidates on node save.
+      'node_list:event',
+      'node_list:topic',
     ];
 
     if ($profile) {
