@@ -66,3 +66,23 @@ function social_course_basic_invite_update_10001(): void {
 function social_course_basic_invite_update_10002(): void {
   SocialCourseUninstallHelper::addEnforcedDependency('social_course_basic_invite');
 }
+
+/**
+ * Store the invitation status default value as a list of items.
+ *
+ * The field was installed with a bare 0, which doesn't match the config schema
+ * and differs from the list ginvite stores when it creates the field.
+ */
+function social_course_basic_invite_update_26000(): void {
+  $config = \Drupal::configFactory()->getEditable('field.field.group_content.course_basic-group_invitation.invitation_status');
+  if ($config->isNew()) {
+    return;
+  }
+
+  $default_value = $config->get('default_value');
+  if ($default_value === NULL || is_array($default_value)) {
+    return;
+  }
+
+  $config->set('default_value', [['value' => $default_value]])->save();
+}
