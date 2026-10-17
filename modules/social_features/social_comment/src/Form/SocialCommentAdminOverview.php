@@ -185,8 +185,9 @@ class SocialCommentAdminOverview extends FormBase {
 
     foreach ($comments as $comment) {
       // Get a render array for the comment body field. We'll render it in the
-      // table.
-      $comment_body = $comment->field_comment_body->view('full');
+      // table. Dynamically find the body field based on field type to support
+      // different comment types with different field names.
+      $comment_body = $this->getCommentBodyRenderArray($comment);
 
       $options[$comment->id()] = [
         'title' => ['data' => ['#title' => $comment->getSubject() ?: $comment->id()]],
@@ -198,7 +199,7 @@ class SocialCommentAdminOverview extends FormBase {
         ],
         'comment' => [
           'data' => [
-            '#markup' => $this->renderer->renderRoot($comment_body),
+            '#markup' => $comment_body ? $this->renderer->renderRoot($comment_body) : '',
           ],
         ],
         'changed' => $this->dateFormatter->format($comment->getChangedTimeAcrossTranslations(), 'short'),
@@ -292,6 +293,30 @@ class SocialCommentAdminOverview extends FormBase {
         ->set($this->currentUser()->id(), $info);
       $form_state->setRedirect('comment.multiple_delete_confirm');
     }
+  }
+
+  /**
+   * Gets the render array for the comment body field.
+   *
+   * Dynamically finds the body field by looking for text_long or
+   * text_with_summary field types.
+   *
+   * @param \Drupal\comment\CommentInterface $comment
+   *   The comment entity.
+   *
+   * @return array
+   *   A render array for the body field, or empty array if not found.
+   */
+  protected function getCommentBodyRenderArray(CommentInterface $comment): array {
+    foreach ($comment->getFieldDefinitions() as $field_name => $definition) {
+      $field_type = $definition->getType();
+      if (in_array($field_type, ['text_long', 'text_with_summary'])) {
+        if ($comment->hasField($field_name) && !$comment->get($field_name)->isEmpty()) {
+          return $comment->get($field_name)->view('full');
+        }
+      }
+    }
+    return [];
   }
 
 }
