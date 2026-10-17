@@ -243,9 +243,9 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
     // Unfortunately, validateGroupSelection is cast as a static function,
     // So I have to add this setting to the form to use it later on.
     $defaultVisibility = $this->configFactory->get('entity_access_by_field.settings')
-      ->get('defaultVisibility');
+      ->get('default_visibility');
 
-    $form['defaultVisibility'] = [
+    $form['default_visibility'] = [
       '#type' => 'value',
       '#value' => $defaultVisibility,
     ];
@@ -315,7 +315,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
       $allowedVisibilityOptions = self::getVisibilityOptionsForMultipleGroups(array_column($selectedGroups, 'target_id'), $entity);
     }
     else {
-      $defaultVisibility = $form_state->getValue('defaultVisibility');
+      $defaultVisibility = $form_state->getValue('default_visibility');
 
       $allowedVisibilityOptions = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
       // Drupal selectors don't use underscores, but hyphens.
