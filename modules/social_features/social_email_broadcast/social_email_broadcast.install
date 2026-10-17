@@ -37,6 +37,7 @@ function social_email_broadcast_schema(): array {
         'default' => 'immediately',
       ],
     ],
+    'primary key' => ['uid', 'name'],
     'indexes' => [
       'ues_uid' => ['uid'],
       'ues_name' => ['name'],
@@ -44,4 +45,18 @@ function social_email_broadcast_schema(): array {
   ];
 
   return $schema;
+}
+
+/**
+ * Add a primary key to user_email_send.
+ */
+function social_email_broadcast_update_130001(): ?string {
+  $schema = \Drupal::database()->schema();
+
+  if ($schema->indexExists('user_email_send', 'PRIMARY')) {
+    return \t('The user_email_send table already has a primary key, skipping.');
+  }
+
+  $schema->addPrimaryKey('user_email_send', ['uid', 'name']);
+  return \t('Added primary key to the user_email_send table.');
 }
