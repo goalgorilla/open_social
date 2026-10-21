@@ -226,6 +226,10 @@ new PluralTranslatableMarkup(0, 'User with @error_message e-mail already a membe
 new TranslatableMarkup('Send a welcome message to new group members');
 new TranslatableMarkup('Group roles');
 
+// Strings added to replace the old ones due to ticket PROD-36837.
+new TranslatableMarkup('Create digital spaces that empower your members to share');
+new TranslatableMarkup('#MadeToShare');
+
 // POTX doesn't pick up labels from third party settings
 // like field groups yet. Remove once our POTX patch is in.
 new TranslatableMarkup('A background task has been finished');
