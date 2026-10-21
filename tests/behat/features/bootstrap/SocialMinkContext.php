@@ -909,13 +909,14 @@ JS
    * Override iWaitForAjaxToFinish to handle redirects and VBO operations.
    *
    * This override is more lenient than the parent implementation:
-   * 1. Returns immediately if page content indicates navigation occurred.
+   * 1. Waits for the document to be ready if a click navigated.
    * 2. Handles VBO operations with button state checks.
    * 3. Uses a reduced timeout to fail faster on actual AJAX issues.
    */
   public function iWaitForAjaxToFinish($event = null) {
     $session = $this->getSession();
     $page = $session->getPage();
+    $justLoaded = FALSE;
 
     // For clicks/submits that might redirect, check if navigation occurred.
     // Some redirects are so fast that by the time this hook runs,
@@ -945,9 +946,10 @@ JS
 
           if ($justLoaded) {
             // Page recently loaded - this was likely a redirect.
-            // Wait for full readiness and return.
+            // Wait for full readiness, then still check for AJAX below: an
+            // AJAX request does not update loadEventEnd, so a click that
+            // starts one within 2 seconds of a page load also lands here.
             $session->wait(2000, "document.readyState === 'complete'");
-            return;
           }
         } catch (\Exception $e) {
           // Script evaluation failed, possibly navigating.
@@ -969,6 +971,12 @@ JS
     } catch (\Exception $e) {
       // If we can't evaluate, assume no VBO form.
     }
+    // A page that just loaded has no VBO operation running, and its Actions
+    // button stays disabled until rows are selected.
+    if ($justLoaded) {
+      $hasVboForm = FALSE;
+    }
+    $checkVbo = $hasVboForm ? 'true' : 'false';
 
     $condition = <<<JS
     (function() {
@@ -985,8 +993,7 @@ JS
         // For VBO operations, check if the Actions button is enabled.
         // This indicates VBO AJAX completed.
         var vbo_complete = true;
-        var vboForms = document.querySelectorAll('.vbo-view-form');
-        if (vboForms.length > 0) {
+        if ({$checkVbo}) {
           var actionsButton = document.querySelector('button[data-vbo="vbo-action"], input[data-vbo="vbo-action"]');
           if (actionsButton && actionsButton.disabled) {
             vbo_complete = false;
