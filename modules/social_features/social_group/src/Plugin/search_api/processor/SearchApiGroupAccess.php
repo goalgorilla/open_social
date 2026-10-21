@@ -119,7 +119,7 @@ class SearchApiGroupAccess extends ProcessorPluginBase {
     }
 
     // We should allow access to all group types without visibility.
-    $or->addCondition($visibility_field->getFieldIdentifier(), NULL, 'IS NULL');
+    $or->addCondition($visibility_field->getFieldIdentifier(), NULL);
 
     // Get all group types where we have visibility field.
     $group_bundles = SocialGroupHelperService::getGroupBundlesWithVisibility();

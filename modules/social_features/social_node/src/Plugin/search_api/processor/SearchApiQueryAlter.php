@@ -183,7 +183,7 @@ class SearchApiQueryAlter extends ProcessorPluginBase {
       // and our specific bypass check will be ignored.
       $or->addCondition($visibility_field->getFieldIdentifier(), (string) SocialSearchApi::BYPASS_VALUE, '<>');
       // Also include entities where the visibility field is NULL.
-      $or->addCondition($visibility_field->getFieldIdentifier(), NULL, 'IS NULL');
+      $or->addCondition($visibility_field->getFieldIdentifier(), NULL);
       // Add bypass tag to allow other modules check and skip conditions
       // building for grand users.
       SocialSearchApi::applyBypassAccessTag($or);
