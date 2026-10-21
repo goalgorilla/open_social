@@ -7,6 +7,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
 
 use Behat\Testwork\Environment\Environment;
 use Drupal\Driver\DrushDriver;
+use Drupal\search_api_opensearch\Plugin\search_api\backend\OpenSearchBackend;
 use Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend;
 
 /**
@@ -42,7 +43,7 @@ class SearchContext extends RawMinkContext {
   }
 
   /**
-   * When the database is loaded, delete all data from SOLR.
+   * When the database is loaded, delete all data from the search backends.
    *
    * The search_api and search_api_solr modules create specific delete queries
    * for SOLR data based on the indexes. However, the site hash that they use
@@ -51,6 +52,9 @@ class SearchContext extends RawMinkContext {
    * try to load it.
    *
    * See https://www.drupal.org/project/search_api_solr/issues/3218868.
+   *
+   * Other backends have no site hash, so clearing the index through Search
+   * API removes all of its data.
    */
   public function onDatabaseLoaded() {
     /** @var \Drupal\search_api\IndexInterface[] $indexes */
@@ -62,6 +66,10 @@ class SearchContext extends RawMinkContext {
       /** @var \Drupal\search_api\ServerInterface $server */
       $server = $index->getServerInstance();
       $backend = $server->getBackend();
+      if ($backend instanceof OpenSearchBackend) {
+        $index->clear();
+        continue;
+      }
       if (!$backend instanceof SearchApiSolrBackend) {
         continue;
       }
@@ -92,8 +100,16 @@ class SearchContext extends RawMinkContext {
       ->getStorage('search_api_index')
       ->loadMultiple();
 
+    // search_api_opensearch never refreshes after indexing, so content only
+    // becomes searchable once the index refresh interval (1s by default) has
+    // passed. An explicit refresh returns once it is searchable.
     foreach ($indexes as $index) {
       $backend = $index->getServerInstance()?->getBackend();
+      if ($backend instanceof OpenSearchBackend) {
+        $prefix = $backend->getConfiguration()['advanced']['prefix'] ?? '';
+        $backend->getClient()->indices()->refresh(['index' => $prefix . $index->id()]);
+        continue;
+      }
       if (!$backend instanceof SearchApiSolrBackend) {
         continue;
       }
