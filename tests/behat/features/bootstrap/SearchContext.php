@@ -106,6 +106,11 @@ class SearchContext extends RawMinkContext {
     foreach ($indexes as $index) {
       $backend = $index->getServerInstance()?->getBackend();
       if ($backend instanceof OpenSearchBackend) {
+        // Disabling an index deletes it from OpenSearch, and refreshing an
+        // index that does not exist fails.
+        if (!$index->status()) {
+          continue;
+        }
         $prefix = $backend->getConfiguration()['advanced']['prefix'] ?? '';
         $backend->getClient()->indices()->refresh(['index' => $prefix . $index->id()]);
         continue;
