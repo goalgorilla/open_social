@@ -290,37 +290,39 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
   /**
    * Returns list of entities and their values for sorting.
    *
+   * Access is applied on the entity query before the range, so inaccessible
+   * rows do not consume the configured amount.
+   *
    * @param string $type
    *   The content type.
    * @param array|null $bundles
    *   List of bundes.
    *
    * @return array
-   *   List of entities for render.
+   *   List of entities for render, keyed by "{type}__{id}".
    */
   protected function getEntitiesByDefinitions(string $type, ?array $bundles): array {
     $sorting = $this->getSelectedSorting();
     /** @var \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type */
     $entity_type = $this->entityTypeManager->getDefinition($type);
-    $id_key = $entity_type->getKey('id');
-
-    // Create select based on entity data table.
-    $data_table = $entity_type->getDataTable() ?? $entity_type->getBaseTable();
-    if ($data_table === NULL) {
+    if ($entity_type->getBaseTable() === NULL) {
       return [];
     }
-    $query = $this->database->select($data_table, 'base_table');
-    $query->addField('base_table', $id_key);
-    $query->addField('base_table', $sorting);
 
-    // Default translation row, only if the column exists on this data table.
-    if ($this->database->schema()->fieldExists($data_table, 'default_langcode')) {
-      $query->condition('base_table.default_langcode', '1');
+    $storage = $this->entityTypeManager->getStorage($type);
+    $query = $storage->getQuery()
+      ->accessCheck(TRUE);
+
+    // Default translation row. Entity query uses the data table when the
+    // entity type is translatable.
+    if ($entity_type->isTranslatable()) {
+      $query->condition('default_langcode', 1);
     }
 
     // Only if plugin has bundles add a condition by type.
-    if ($bundles !== NULL && is_string($entity_type->getKey('bundle'))) {
-      $query->condition($entity_type->getKey('bundle'), $bundles, 'IN');
+    $bundle_key = $entity_type->getKey('bundle');
+    if ($bundles !== NULL && is_string($bundle_key)) {
+      $query->condition($bundle_key, $bundles, 'IN');
     }
 
     // Only if we select content tags add a condition.
@@ -328,26 +330,28 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
       $content_tag_table = "{$type}__social_tagging";
       if ($this->database->schema()->tableExists($content_tag_table)) {
         $tags = array_column($this->getSelectedContentTags(), 'target_id');
-        $query->innerJoin($content_tag_table, 'st', "st.entity_id = base_table.$id_key");
-        $query->condition('st.social_tagging_target_id', $tags, 'IN');
+        $query->condition('social_tagging', $tags, 'IN');
       }
     }
 
-    // Sort by provided sorting field.
-    $query->orderBy($sorting, 'DESC');
+    // Sort and limit after access checks.
+    $query->sort($sorting, 'DESC');
+    $query->range(0, (int) $this->getAmountItems());
 
-    // Select only specific number of items provided by block configuration.
-    $query->range(0, $this->getAmountItems());
-    $result = $query->execute();
-
-    if ($result !== NULL) {
-      // Prepare list of entities with values for sorting process.
-      foreach ($result->fetchAll() as $row) {
-        $entities["{$type}__{$row->{$id_key}}"] = $row->{$sorting};
-      }
+    $ids = $query->execute();
+    // An empty ID list must not be passed to loadMultiple(), which treats it
+    // as "load all".
+    if (!$ids) {
+      return [];
     }
 
-    return $entities ?? [];
+    $entities = [];
+    foreach ($storage->loadMultiple($ids) as $id => $entity) {
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+      $entities["{$type}__{$id}"] = $entity->get($sorting)->value;
+    }
+
+    return $entities;
   }
 
   /**
