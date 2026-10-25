@@ -15,6 +15,9 @@ function social_sharing_install(bool $is_syncing) {
     // Add 'add this'.
     $services['addthis'] = 'addthis';
     \Drupal::configFactory()->getEditable('shariff.settings')->set('shariff_services', $services)->save();
+
+    // Allow SM to manage sharing.
+    user_role_grant_permissions('sitemanager', ['administer social sharing settings']);
   }
 }
 
@@ -23,4 +26,15 @@ function social_sharing_install(bool $is_syncing) {
  */
 function social_sharing_update_last_removed() : int {
   return 8001;
+}
+
+/**
+ * Enable sharing and allow SM to manage it.
+ */
+function social_sharing_update_260001(): void {
+  \Drupal::configFactory()->getEditable('social_sharing.settings')
+    ->set('enabled', TRUE)
+    ->save();
+
+  user_role_grant_permissions('sitemanager', ['administer social sharing settings']);
 }
