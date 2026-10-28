@@ -27,6 +27,13 @@ function activity_send_email_uninstall() {
 function activity_send_email_schema() {
   $schema['user_activity_digest'] = [
     'fields' => [
+      'id' => [
+        'description' => 'Primary Key: Unique row ID.',
+        'type' => 'serial',
+        'size' => 'big',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
       'uid' => [
         'description' => 'The {user}.uid of the target user.',
         'type' => 'int',
@@ -54,6 +61,7 @@ function activity_send_email_schema() {
         'unsigned' => TRUE,
       ],
     ],
+    'primary key' => ['id'],
     'indexes' => [
       'uad_uid' => ['uid'],
       'uad_frequency' => ['frequency'],
@@ -68,4 +76,25 @@ function activity_send_email_schema() {
  */
 function activity_send_email_update_last_removed() : int {
   return 8001;
+}
+
+/**
+ * Add a primary key to the user_activity_digest table.
+ */
+function activity_send_email_update_26000(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->fieldExists('user_activity_digest', 'id')) {
+    return;
+  }
+
+  // Galera and Drupal's READ COMMITTED isolation level need a primary key on
+  // every table. A new ID column keeps every existing row, where a natural
+  // key would first need duplicates removed: plain inserts can create them.
+  $schema->addField('user_activity_digest', 'id', [
+    'description' => 'Primary Key: Unique row ID.',
+    'type' => 'serial',
+    'size' => 'big',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+  ], ['primary key' => ['id']]);
 }

@@ -16,6 +16,12 @@ function social_email_broadcast_schema(): array {
   // or not receive such emails.
   $schema['user_email_send'] = [
     'fields' => [
+      'id' => [
+        'description' => 'Primary Key: Unique row ID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
       'uid' => [
         'description' => 'The {user}.uid of user.',
         'type' => 'int',
@@ -37,6 +43,7 @@ function social_email_broadcast_schema(): array {
         'default' => 'immediately',
       ],
     ],
+    'primary key' => ['id'],
     'indexes' => [
       'ues_uid' => ['uid'],
       'ues_name' => ['name'],
@@ -44,4 +51,24 @@ function social_email_broadcast_schema(): array {
   ];
 
   return $schema;
+}
+
+/**
+ * Add a primary key to the user_email_send table.
+ */
+function social_email_broadcast_update_26000(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->fieldExists('user_email_send', 'id')) {
+    return;
+  }
+
+  // Galera and Drupal's READ COMMITTED isolation level need a primary key on
+  // every table. A new ID column keeps every existing row, including any
+  // duplicate settings rows that a natural key would reject.
+  $schema->addField('user_email_send', 'id', [
+    'description' => 'Primary Key: Unique row ID.',
+    'type' => 'serial',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+  ], ['primary key' => ['id']]);
 }

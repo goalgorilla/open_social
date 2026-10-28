@@ -11,6 +11,12 @@
 function activity_send_schema() {
   $schema['user_activity_send'] = [
     'fields' => [
+      'id' => [
+        'description' => 'Primary Key: Unique row ID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
       'uid' => [
         'description' => 'The {user}.uid of user.',
         'type' => 'int',
@@ -39,6 +45,7 @@ function activity_send_schema() {
         'default' => 'immediately',
       ],
     ],
+    'primary key' => ['id'],
     'indexes' => [
       'uas_uid' => ['uid'],
       'uas_destination' => ['destination'],
@@ -83,4 +90,24 @@ function activity_send_update_26000(): void {
     $config->set('activity_send_offline_window', (int) $offline_window);
     $config->save();
   }
+}
+
+/**
+ * Add a primary key to the user_activity_send table.
+ */
+function activity_send_update_26001(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->fieldExists('user_activity_send', 'id')) {
+    return;
+  }
+
+  // Galera and Drupal's READ COMMITTED isolation level need a primary key on
+  // every table. A new ID column keeps every existing row, including any
+  // duplicate settings rows that a natural key would reject.
+  $schema->addField('user_activity_send', 'id', [
+    'description' => 'Primary Key: Unique row ID.',
+    'type' => 'serial',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+  ], ['primary key' => ['id']]);
 }

@@ -11,6 +11,13 @@
 function activity_creator_schema() {
   $schema['activity_notification_status'] = [
     'fields' => [
+      'id' => [
+        'description' => 'Primary Key: Unique row ID.',
+        'type' => 'serial',
+        'size' => 'big',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
       'uid' => [
         'description' => 'The {user}.uid of user.',
         'type' => 'int',
@@ -31,6 +38,7 @@ function activity_creator_schema() {
         'default' => 1,
       ],
     ],
+    'primary key' => ['id'],
     'indexes' => [
       'ans_uid' => ['uid'],
       'ans_aid' => ['aid'],
@@ -65,4 +73,25 @@ function activity_creator_update_13000() : string {
 
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
+}
+
+/**
+ * Add a primary key to the activity_notification_status table.
+ */
+function activity_creator_update_26000(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->fieldExists('activity_notification_status', 'id')) {
+    return;
+  }
+
+  // Galera and Drupal's READ COMMITTED isolation level need a primary key on
+  // every table. A new ID column keeps every existing row, where a (uid, aid)
+  // key would first need duplicates removed: plain inserts can create them.
+  $schema->addField('activity_notification_status', 'id', [
+    'description' => 'Primary Key: Unique row ID.',
+    'type' => 'serial',
+    'size' => 'big',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+  ], ['primary key' => ['id']]);
 }
