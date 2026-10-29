@@ -173,7 +173,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends FilterBase implements Container
 
       // Full URL with protocol (http, https etc.). Providers we do not embed
       // are refused there, which leaves the URL as the plain link below.
-      $info = \Drupal::service('social_embed.url_embed_helper')->getUrlInfo($url);
+      $info = \Drupal::service('social_embed.url_embed_helper')->getUrlInfo($url_for_processing);
 
       if ($info) {
         /** @var \Drupal\user\Entity\User $user */

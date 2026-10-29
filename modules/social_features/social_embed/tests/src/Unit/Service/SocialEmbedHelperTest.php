@@ -67,6 +67,8 @@ class SocialEmbedHelperTest extends UnitTestCase {
       'vimeo player sub domain' => ['https://player.vimeo.com/video/123456789'],
       'facebook web sub domain' => ['https://web.facebook.com/opensocial/videos/123'],
       'vimeo' => ['https://vimeo.com/123456789'],
+      'vimeo unlisted hash' => ['https://vimeo.com/123456789/cdcddad642'],
+      'vimeo share link' => ['https://vimeo.com/123456789/cdcddad642?share=copy&fl=sv&fe=ci'],
       'spotify track' => ['https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC'],
       'twitter status' => ['https://twitter.com/opensocial/status/123456789'],
       'x status' => ['https://x.com/opensocial/status/123456789'],
@@ -155,6 +157,81 @@ class SocialEmbedHelperTest extends UnitTestCase {
       'front page' => ['https://youtube.com/'],
       // Provider name in the query string, not the path.
       'other provider in query' => ['https://youtube.com/?next=vimeo.com/123'],
+      // The query tail can not stand in for the video path.
+      'vimeo query without video' => ['https://vimeo.com/?share=copy'],
+    ];
+  }
+
+  /**
+   * Tests what the combined pattern hands to the convert filter.
+   *
+   * The convert filter and the max-embeds count read capture group 1; the
+   * filter leaves whatever the group omits behind as visible text.
+   *
+   * @dataProvider providerCombinedPatternMatches
+   * @covers ::getCombinedPatterns
+   */
+  public function testCombinedPatternCapture(string $text, array $expected): void {
+    preg_match_all($this->helper->getCombinedPatterns(), $text, $matches);
+    $this->assertSame($expected, $matches[1]);
+  }
+
+  /**
+   * Texts with the URLs the combined pattern must capture.
+   *
+   * @return array<string, array<int, string|array<int, string>>>
+   *   The test cases, keyed by a description of the text.
+   */
+  public static function providerCombinedPatternMatches(): array {
+    return [
+      'vimeo share link as stored by the editor' => [
+        'See https://vimeo.com/1222036163/cdcddad642?share=copy&amp;fl=sv&amp;fe=ci.',
+        ['vimeo.com/1222036163/cdcddad642?share=copy&amp;fl=sv&amp;fe=ci'],
+      ],
+      'vimeo share link with raw ampersands' => [
+        'https://vimeo.com/1222036163/cdcddad642?share=copy&fl=sv',
+        ['vimeo.com/1222036163/cdcddad642?share=copy&fl=sv'],
+      ],
+      'question mark ending a sentence' => [
+        'Watch https://vimeo.com/123?',
+        ['vimeo.com/123'],
+      ],
+      'time index fragment stays out as before' => [
+        'https://vimeo.com/123/abc#t=10s',
+        ['vimeo.com/123/abc'],
+      ],
+      'non-breaking space after the share link' => [
+        '<p>https://vimeo.com/123/abc?share=copy&amp;fl=sv&nbsp;</p>',
+        ['vimeo.com/123/abc?share=copy&amp;fl=sv'],
+      ],
+      'dangling ampersand stays out' => [
+        'https://vimeo.com/123/abc?share=copy&amp; next',
+        ['vimeo.com/123/abc?share=copy'],
+      ],
+      'percent-encoded query value' => [
+        'https://vimeo.com/123/abc?ref=a%2Fb&amp;share=copy',
+        ['vimeo.com/123/abc?ref=a%2Fb&amp;share=copy'],
+      ],
+      'plus sign in a query value' => [
+        'https://vimeo.com/123/abc?share=copy&ref=a+b',
+        ['vimeo.com/123/abc?share=copy&ref=a+b'],
+      ],
+      'dot inside a query value' => [
+        'https://vimeo.com/123/abc?utm=news.letter&amp;share=copy',
+        ['vimeo.com/123/abc?utm=news.letter&amp;share=copy'],
+      ],
+      'sentence punctuation after a query value stays out' => [
+        'Watch https://vimeo.com/123/abc?share=copy, then https://vimeo.com/456?ref=a+b.',
+        ['vimeo.com/123/abc?share=copy', 'vimeo.com/456?ref=a+b'],
+      ],
+      'two vimeo links' => [
+        'https://vimeo.com/123?share=copy https://vimeo.com/456',
+        ['vimeo.com/123?share=copy', 'vimeo.com/456'],
+      ],
+      'youtube is unchanged' => [
+        'https://www.youtube.com/watch?v=ojafuCcUZzU',
+        ['youtube.com/watch?v=ojafuCcUZzU'],
+      ],
     ];
   }
 

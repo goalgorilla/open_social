@@ -256,7 +256,11 @@ class SocialEmbedHelper {
       '(open.spotify.com\/track\/(.*))',
       '(twitter.com\/(.*)\/status\/(.*))',
       '(x.com\/(.*)\/status\/(.*))',
-      '(vimeo.com\/[a-zA-Z0-9]+(?:\/[a-zA-Z0-9]+)?\/?)',
+      // Share links of unlisted videos end in a query, e.g. ?share=copy.
+      // Each "&" must start a key=value pair, so an entity such as &nbsp;
+      // after the link stays outside the capture. A value may hold "." ":" ","
+      // only between other characters, so sentence punctuation stays text.
+      '(vimeo.com\/[a-zA-Z0-9]+(?:\/[a-zA-Z0-9]+)?\/?(?:\?[\w%-]+(?:=(?:[\w%~+-]+(?:[.:,][\w%~+-]+)*)?)?(?:&(?:amp;)?[\w%-]+=(?:[\w%~+-]+(?:[.:,][\w%~+-]+)*)?)*)?)',
       '(youtube.com\/watch[?]v=(.*))',
       '(youtu.be\/(.*))',
       '(ted.com\/talks\/(.*))',
