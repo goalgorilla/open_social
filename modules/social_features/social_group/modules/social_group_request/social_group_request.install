@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\Sql\SqlEntityStorageInterface;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 
@@ -338,4 +339,73 @@ function social_group_request_update_13012(): void {
 
   $config->set('visibility.request_path.pages', implode("\r\n", $filtered));
   $config->save();
+}
+
+/**
+ * Sync the installed group_content.grequest_status definition with its config.
+ *
+ * Update 13005 converted the field from an integer to a state field in the
+ * database and in config, but left Drupal's record of the installed field
+ * definition and its schema at the old integer field. That makes the status
+ * report claim the field needs an update. The data is already correct, so this
+ * only aligns the column with a fresh install and rewrites the stored records.
+ */
+function social_group_request_update_26000(): string {
+  $entity_type_id = 'group_content';
+  $field_name = 'grequest_status';
+
+  /** @var \Drupal\Core\Entity\EntityLastInstalledSchemaRepositoryInterface $last_installed_repository */
+  $last_installed_repository = \Drupal::service('entity.last_installed_schema.repository');
+  $installed_definition = $last_installed_repository->getLastInstalledFieldStorageDefinitions($entity_type_id)[$field_name] ?? NULL;
+  if ($installed_definition === NULL) {
+    return 'The group_content.grequest_status field is not installed, nothing to do.';
+  }
+  if ($installed_definition->getType() === 'state') {
+    return 'The installed group_content.grequest_status definition is already up to date.';
+  }
+
+  $field_storage = FieldStorageConfig::load("$entity_type_id.$field_name");
+  if ($field_storage === NULL || $field_storage->getType() !== 'state') {
+    throw new \RuntimeException('Expected group_content.grequest_status to be a state field, run social_group_request_update_13005() first.');
+  }
+
+  /** @var \Drupal\Core\Entity\Sql\SqlEntityStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+  $table_mapping = $storage->getTableMapping();
+  $column_name = $table_mapping->getFieldColumnName($field_storage, 'value');
+
+  // What a fresh install creates: StateItem::schema() declares a varchar_ascii
+  // column, and SqlContentEntityStorageSchema marks it NOT NULL in a dedicated
+  // table because the value property is required. Update 13005 created a
+  // utf8mb4 varchar NOT NULL column instead. State values are machine names
+  // (pending, approved, rejected), so converting them to ASCII loses nothing,
+  // and the NOT NULL constraint stays the same.
+  $column_spec = [
+    'type' => 'varchar_ascii',
+    'length' => 255,
+    'not null' => TRUE,
+  ];
+
+  $schema = \Drupal::database()->schema();
+  foreach ($table_mapping->getAllFieldTableNames($field_name) as $table) {
+    if ($schema->fieldExists($table, $column_name)) {
+      $schema->changeField($table, $column_name, $column_name, $column_spec);
+    }
+  }
+
+  // The stored schema still describes the integer column. Swap in the state
+  // column and keep the rest of each table's schema (keys, indexes) as is.
+  $schema_key = "$entity_type_id.field_schema_data.$field_name";
+  $schema_repository = \Drupal::keyValue('entity.storage_schema.sql');
+  $field_schema_data = $schema_repository->get($schema_key, []);
+  foreach ($field_schema_data as $table => $table_schema) {
+    if (isset($table_schema['fields'][$column_name])) {
+      $field_schema_data[$table]['fields'][$column_name] = $column_spec;
+    }
+  }
+  $schema_repository->set($schema_key, $field_schema_data);
+
+  $last_installed_repository->setLastInstalledFieldStorageDefinition($field_storage);
+
+  return 'Updated the installed group_content.grequest_status definition to a state field.';
 }
