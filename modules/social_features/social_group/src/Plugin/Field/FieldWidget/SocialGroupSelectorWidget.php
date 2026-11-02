@@ -55,6 +55,11 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
   protected array $lockedGroupIds = [];
 
   /**
+   * IDs of the locked groups the current user is not a member of.
+   */
+  protected array $nonMemberGroupIds = [];
+
+  /**
    * The config factory.
    */
   protected ConfigFactoryInterface $configFactory;
@@ -228,27 +233,23 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
     // can pick.
     $relationships = $this->currentGroupRelationships($entity);
 
-    // Which of them the editor may not detach is decided by the same rule the
-    // save applies, not by their absence from the list above. Deriving the lock
-    // from the option list instead would disable - and therefore drop - groups
-    // that SocialGroupReferenceItemList::postSave() does not put back, for
-    // example for an account holding the entity admin permission.
+    // The lock comes from the rule the save applies
+    // (GroupRelationshipStanding), not from absence from the option list, so
+    // admins holding the entity admin permission are not locked.
     $this->lockedGroupIds = array_map(
       'intval',
       array_values($this->groupRelationshipStanding->lockedGroupIds($entity, $relationships)),
     );
 
+    // getGroup() is never NULL: lockedGroupIds() skips orphan relationships.
+    $this->nonMemberGroupIds = array_values(array_filter(
+      $this->lockedGroupIds,
+      fn (int $gid): bool => !$relationships[$gid]->getGroup()->getMember($this->currentUser),
+    ));
+
     $missing = array_diff(
       array_keys($relationships),
       array_map('intval', array_keys(OptGroup::flattenOptions($options))),
-    );
-
-    // Locked groups go first, so the last of the preselected options is always
-    // one the editor can act on: on a single-value select every group the
-    // entity is in is preselected and the browser keeps only the last of them.
-    $missing = array_merge(
-      array_intersect($missing, $this->lockedGroupIds),
-      array_diff($missing, $this->lockedGroupIds),
     );
 
     foreach (array_reverse($missing) as $gid) {
@@ -314,29 +315,31 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget {
       }
     }
 
-    // We don't allow to LU to edit field if there are multiple values. Locked
-    // groups do not count: the editor cannot act on them anyway, and letting
-    // them trip this check would take away the one group the editor does have
-    // standing in.
-    $editableDefaults = array_diff($element['#default_value'], $this->lockedGroupIds);
+    // A verified user without cross-group posting may not change content
+    // posted to multiple groups.
+    if (count($element['#default_value']) > 1 && !$this->currentUser->hasPermission('access cross-group posting')) {
+      $element['#disabled'] = TRUE;
+      $element['#description'] = $this->t('This content is posted to multiple groups. In order to move it, please contact a site manager.');
+    }
 
-    if (count($editableDefaults) > 1) {
-      if ($socialGroupSettings->get('cross_posting.status') && !$this->currentUser->hasPermission('access cross-group posting')) {
-        $element['#disabled'] = TRUE;
-        $element['#description'] = $this->t('You are not allowed to edit this field!');
+    // FAPI ignores input on a disabled element and keeps its #default_value,
+    // so every current group survives the save. A member can lack create
+    // permission for the bundle too, so a message above is kept if any.
+    if ($this->lockedGroupIds !== []) {
+      if (empty($element['#disabled'])) {
+        $element['#description'] = $this->t('You are not allowed to post this type of content in this group. In order to move it, please contact a site manager.');
       }
+      $element['#disabled'] = TRUE;
     }
 
-    // Show the groups this editor may not act on as locked. getOptions()
-    // collected them for $items->getEntity() while the parent built the
-    // element, so they are right for embedded widgets too. This is
-    // presentation only, and only in themes that render #options_attributes
-    // (socialbase does, Claro does not): the enforcement lives in
-    // SocialGroupReferenceItemList::postSave(), which recomputes the same rule
-    // from stored state on every entity save.
-    foreach ($this->lockedGroupIds as $gid) {
-      $element['#options_attributes'][$gid]['disabled'] = 'disabled';
+    // Set last so it wins over the messages above.
+    if ($this->nonMemberGroupIds !== []) {
+      $element['#description'] = $this->t('This content is posted in a group that you are no longer a member of. In order to move it, please contact a site manager.');
     }
+
+    // Only social_group_form_node_form_alter() reads this, to lock the
+    // visibility.
+    $form_state->set('social_group_non_member_group_ids', $this->nonMemberGroupIds);
 
     return $element;
   }

@@ -1968,6 +1968,21 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
         $form['groups']['widget']['#description'] = t('Changing groups is disabled when translating.');
       }
 
+      // Lock the visibility too when the editor is not a member of one of the
+      // locked groups. Each radio carries its own #disabled. A disabled element
+      // saves its #default_value, which the widget alter clears when the group
+      // no longer allows the stored value, so put the stored value back.
+      if (!empty($form_state->get('social_group_non_member_group_ids')) && isset($form['field_content_visibility']['widget'])) {
+        $form['field_content_visibility']['widget']['#disabled'] = TRUE;
+        $form['field_content_visibility']['widget']['#description'] = t('This content is posted in a group that you are no longer a member of. In order to change its visibility, please contact a site manager.');
+        if ($node->hasField('field_content_visibility') && !$node->get('field_content_visibility')->isEmpty()) {
+          $form['field_content_visibility']['widget']['#default_value'] = $node->get('field_content_visibility')->getString();
+        }
+        foreach (Element::children($form['field_content_visibility']['widget']) as $key) {
+          $form['field_content_visibility']['widget'][$key]['#disabled'] = TRUE;
+        }
+      }
+
       $change_fieldgroup_titles = [
         'group_topic_visibility',
         'group_event_visibility',

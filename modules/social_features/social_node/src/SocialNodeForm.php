@@ -108,12 +108,10 @@ class SocialNodeForm extends NodeForm {
     foreach ($visibilities as $visibility => $value) {
       if (isset($form['field_content_visibility']['widget'][$visibility]['#disabled'])
         && $form['field_content_visibility']['widget'][$visibility]['#disabled'] === TRUE
-        // At this time $form_state->getUserInput()['field_content_visibility']
-        // is NULL.
-        // So, we fetch the values of existing role visibility option and
-        // changed form.
-        // If they both match, this means that value has been manipulated.
-        && $input['field_content_visibility'] === $visibility
+        // The key is missing when every radio is disabled (a disabled radio is
+        // never submitted) and NULL when translating. A submitted value
+        // matching a disabled option means the input was manipulated.
+        && ($input['field_content_visibility'] ?? NULL) === $visibility
       ) {
         $form_state->setErrorByName('field_content_visibility', t('@visibility visibility is not allowed', ['@visibility' => $visibility]));
       }

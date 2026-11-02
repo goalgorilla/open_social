@@ -129,6 +129,8 @@ class SocialGroupSettings extends ConfigFormBase {
       '#default_value' => [],
     ];
 
+    $form['permissions']['allow_group_selection_in_node']['#description'] = $this->t('Users must still be members of the group to be allowed to change it. If content is cross-posted to multiple groups, the user will not be allowed to change the group.');
+
     foreach (array_keys($form['permissions']['#options']) as $permission) {
       if ($this->hasPermission($permission)) {
         $form['permissions']['#default_value'][] = $permission;
