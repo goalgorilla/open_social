@@ -21,6 +21,31 @@
   @include z-depth-5;
 }
 
+// The open filter is fixed to the viewport, but it's still painted in the
+// stacking context of its region, so the hero and the header covered it. Lift
+// the region above the page content while the filter is open.
+.region--complementary:has(#block-filter:target) {
+  @include for-tablet-landscape-down {
+    z-index: $zindex-navbar-fixed - 1;
+  }
+}
+
+// The two-line header scrolls with the page instead of being fixed to the
+// top, so the open filter covers it rather than leaving room for it.
+.has-two-line-header {
+  .off-canvas {
+    @include for-tablet-landscape-down {
+      top: 0;
+    }
+  }
+
+  .region--complementary:has(#block-filter:target) {
+    @include for-tablet-landscape-down {
+      z-index: $zindex-navbar-fixed + 2;
+    }
+  }
+}
+
 .off-canvas-right {
   @include for-tablet-landscape-down {
     transform: translateX(290px);

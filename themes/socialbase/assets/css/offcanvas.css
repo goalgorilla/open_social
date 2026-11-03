@@ -78,6 +78,15 @@
     transition: transform 0.5s, box-shadow 0.3s;
     transition: transform 0.5s, box-shadow 0.3s, -webkit-transform 0.5s, -webkit-box-shadow 0.3s;
   }
+  .region--complementary:has(#block-filter:target) {
+    z-index: 1029;
+  }
+  .has-two-line-header .off-canvas {
+    top: 0;
+  }
+  .has-two-line-header .region--complementary:has(#block-filter:target) {
+    z-index: 1032;
+  }
   .off-canvas-right {
     -webkit-transform: translateX(290px);
     transform: translateX(290px);
