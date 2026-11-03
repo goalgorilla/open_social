@@ -248,8 +248,6 @@ final class Validator {
   ): void {
     $nodeArray = $node->toArray();
 
-    // Ignore until https://github.com/phpstan/phpstan/issues/8438.
-    /** @phpstan-ignore-next-line isset.offset booleanAnd.alwaysFalse */
     if (isset($nodeArray['children']) && is_array($nodeArray['children']) && $nodeArray['children'] !== []) {
       $errors[] = new ValidationError(
         sprintf('Node type "%s" must not have children', $node->getType()),
