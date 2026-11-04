@@ -29,6 +29,7 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
+use Drupal\social_core\Service\PhotoswipeSize;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\system\Entity\Menu;
@@ -367,6 +368,22 @@ function social_core_preprocess_field(array &$variables) {
   if ($element['#formatter'] == 'comment_node') {
     // Create separate variables for the more_link.
     $variables['more_link'] = $element[0]['more_link'];
+  }
+
+  // PhotoSwipe opens the original: see PhotoswipeSize. Width/height stay raw.
+  if ($variables['field_name'] === 'field_post_image') {
+    $photoswipe_size = \Drupal::service(PhotoswipeSize::class);
+    foreach ($variables['items'] as $item) {
+      // Formatters such as image_url render no #item.
+      if (!isset($item['content']['#item'])) {
+        continue;
+      }
+      /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem&object{width: int|null, height: int|null, entity: \Drupal\file\FileInterface} $image_item */
+      $image_item = $item['content']['#item'];
+      /** @var string $uri */
+      $uri = $image_item->entity->getFileUri();
+      $image_item->set('photoswipe_size', $photoswipe_size->get($image_item->width, $image_item->height, $uri));
+    }
   }
 }
 

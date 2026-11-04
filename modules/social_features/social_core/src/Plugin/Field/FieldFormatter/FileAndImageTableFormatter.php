@@ -5,6 +5,8 @@ namespace Drupal\social_core\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 use Drupal\file\FileInterface;
+use Drupal\social_core\Service\PhotoswipeSize;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'file_image_default' formatter.
@@ -19,6 +21,20 @@ use Drupal\file\FileInterface;
  * )
  */
 class FileAndImageTableFormatter extends ImageFormatter {
+
+  /**
+   * The PhotoSwipe size calculator.
+   */
+  protected PhotoswipeSize $photoswipeSize;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->photoswipeSize = $container->get(PhotoswipeSize::class);
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -40,21 +56,15 @@ class FileAndImageTableFormatter extends ImageFormatter {
             'tags' => $file->getCacheTags(),
           ],
         ];
-        // Pass field item attributes to the theme function.
-        if (isset($item->_attributes)) {
-          $elements[$delta] += ['#attributes' => []];
-          $elements[$delta]['#attributes'] += $item->_attributes;
-          // Unset field item attributes since they have been included in the
-          // formatter output and should not be rendered in the field template.
-          unset($item->_attributes);
-        }
       }
       else {
-        // If it's an image we need to add the image width and height
-        // so Photoswipe knows what to render.
+        // Width/height stay the raw pixel size: the thumbnail's image style
+        // applies the EXIF orientation itself. Only PhotoSwipe, which shows
+        // the original, gets the oriented size.
         $image = $this->getImage($file);
         $elements[$delta]['#item']->height = $image->getHeight();
         $elements[$delta]['#item']->width = $image->getWidth();
+        $elements[$delta]['#item']->photoswipe_size = $this->photoswipeSize->get($image->getWidth(), $image->getHeight(), $image->getSource());
         $elements[$delta]['#item']->is_image = TRUE;
       }
     }

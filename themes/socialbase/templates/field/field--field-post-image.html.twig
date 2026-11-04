@@ -45,8 +45,8 @@
   {% for item in items %}
     <a href="{{ file_url(item.content['#item'].entity.uri.value) }}"
        data-med="{{ file_url(item.content['#item'].entity.uri.value) }}"
-       data-med-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}"
-       data-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}">
+       data-med-size="{{ item.content['#item'].photoswipe_size }}"
+       data-size="{{ item.content['#item'].photoswipe_size }}">
       {{ item.content }}
     </a>
   {% endfor %}
