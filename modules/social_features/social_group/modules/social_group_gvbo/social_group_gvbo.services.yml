@@ -1,6 +1,6 @@
 services:
   social_group_gvbo.views_bulk_operations.access:
     class: Drupal\social_group_gvbo\Access\SocialGroupViewsBulkOperationsAccess
-    arguments: ['@tempstore.private']
+    arguments: ['@tempstore.private', '@Drupal\views_bulk_operations\ViewsBulkOperationsTempStoreKeyResolver']
     tags:
     - { name: access_check, applies_to: _social_group_views_bulk_operation_access }

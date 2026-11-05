@@ -39,6 +39,14 @@ services:
     class: Drupal\social_group\EventSubscriber\RedirectSubscriber
     tags:
       - { name: event_subscriber }
+
+  social_group.vbo_subscriber:
+    class: Drupal\social_group\EventSubscriber\ViewsBulkOperationsEventSubscriber
+    arguments:
+      - '@social_group.current_group_provider'
+    tags:
+      - { name: event_subscriber }
+
   social_group.overrider:
     class: Drupal\social_group\SocialGroupSelectorWidgetConfigOverride
     tags:
