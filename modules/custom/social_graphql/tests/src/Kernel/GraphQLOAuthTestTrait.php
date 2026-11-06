@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\social_graphql\Kernel;
 
 use Drupal\consumers\Entity\ConsumerInterface;
+use Drupal\Core\Session\UserSession;
 use Drupal\simple_oauth\Authentication\TokenAuthUserInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,10 +95,7 @@ trait GraphQLOAuthTestTrait {
         'redirect' => 'foo://bar',
       ]);
     assert($client instanceof ConsumerInterface);
-    $violations = $client->validate();
-    if ($violations->count() !== 0) {
-      throw new \Exception("The client is invalid: {$violations->__toString()}");
-    }
+    $this->assertValidConsumer($client);
     $client->save();
 
     // Request a token.
@@ -156,10 +154,7 @@ trait GraphQLOAuthTestTrait {
         'redirect' => 'foo://bar',
       ]);
     assert($client instanceof ConsumerInterface);
-    $violations = $client->validate();
-    if ($violations->count() !== 0) {
-      throw new \Exception("The client is invalid: {$violations->__toString()}");
-    }
+    $this->assertValidConsumer($client);
     $client->save();
 
     /** @var \Symfony\Component\HttpKernel\HttpKernel $httpKernel */
@@ -203,6 +198,32 @@ trait GraphQLOAuthTestTrait {
     $token_user = $this->container->get("simple_oauth.authentication.simple_oauth")->authenticate($account_request);
     assert($token_user instanceof TokenAuthUserInterface);
     return $token_user;
+  }
+
+  /**
+   * Fails the test when the consumer is invalid.
+   *
+   * Simple OAuth only lets users with "administer consumer access settings"
+   * set a consumer's grant types, user, scopes and automatic authorization
+   * (SA-CONTRIB-2026-296). The current user here is whoever the test acts as,
+   * so validate as the super user; the consumer's other constraints still
+   * apply.
+   *
+   * @param \Drupal\consumers\Entity\ConsumerInterface $client
+   *   The consumer to validate.
+   */
+  private function assertValidConsumer(ConsumerInterface $client) : void {
+    $account_switcher = $this->container->get('account_switcher');
+    $account_switcher->switchTo(new UserSession(['uid' => 1]));
+    try {
+      $violations = $client->validate();
+    }
+    finally {
+      $account_switcher->switchBack();
+    }
+    if ($violations->count() !== 0) {
+      throw new \Exception("The client is invalid: {$violations->__toString()}");
+    }
   }
 
 }
