@@ -35,33 +35,29 @@
     icon and icon_position and not icon_only ? 'icon-' ~ icon_position,
   ]
 %}
-{% apply spaceless %}
+{%- if input_group -%}
+  {{- attach_library('socialbase/form--input-groups') -}}
+  <div class="input-group">
+{%- endif -%}
 
-  {% if input_group %}
-    {{ attach_library('socialbase/form--input-groups') }}
+{%- if prefix -%}
+  {{ prefix }}
+{%- endif -%}
 
-    <div class="input-group">
-  {% endif %}
+{%- block input -%}
+  {%- if simple_checkbox -%}
+    <input{{ attributes }} />
+  {%- else -%}
+    <input{{ attributes.addClass(classes) }} />
+  {%- endif -%}
+{%- endblock -%}
 
-  {% if prefix %}
-    {{ prefix }}
-  {% endif %}
+{%- if suffix -%}
+  {{ suffix }}
+{%- endif -%}
 
-  {% block input %}
-      {% if simple_checkbox %}
-        <input{{ attributes }} />
-      {% else %}
-        <input{{ attributes.addClass(classes) }} />
-      {% endif %}
-  {% endblock %}
+{%- if input_group -%}
+  </div>
+{%- endif -%}
 
-  {% if suffix %}
-    {{ suffix }}
-  {% endif %}
-
-  {% if input_group %}
-    </div>
-  {% endif %}
-
-  {{ children }}
-{% endapply %}
+{{- children -}}

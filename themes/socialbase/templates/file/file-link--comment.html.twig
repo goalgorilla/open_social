@@ -14,16 +14,8 @@
 */
 #}
 {{ attach_library('socialbase/file') }}
-{% apply spaceless %}
-
-  <div class="file-tile">
-      <span class="file-link notranslate">{{ link }}</span>
-      <span class="file-metadata">
-        <span class="file-size">{{ file_size }}</span>
-        <span class="file-icon">
-          <img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" />
-        </span>
-      </span>
-  </div>
-
-{% endapply %}
+<div class="file-tile"><span class="file-link notranslate">
+  {{- link -}}
+</span><span class="file-metadata"><span class="file-size">
+  {{- file_size -}}
+</span><span class="file-icon"><img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" /></span></span></div>

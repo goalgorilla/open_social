@@ -11,44 +11,41 @@
  * - flaggable: The flaggable entity.
  */
 #}
-{% apply spaceless %}
 {# Attach the flag JS library.#}
-{{ attach_library('social_follow_taxonomy/follow_term.link_ajax') }}
+{{- attach_library('social_follow_taxonomy/follow_term.link_ajax') }}
 
-  {# Depending on the flag action, set the appropriate action class. #}
-  {% if action == 'unflag' %}
-    {% set action_class = 'action-unflag' %}
-  {% else %}
-    {% set action_class = 'action-flag' %}
-  {% endif %}
+{#- Depending on the flag action, set the appropriate action class. #}
+{%- if action == 'unflag' %}
+  {%- set action_class = 'action-unflag' %}
+{%- else %}
+  {%- set action_class = 'action-flag' %}
+{%- endif %}
 
-  {# Set the remaining Flag CSS classes. #}
-  {% set classes = [
+{#- Set the remaining Flag CSS classes. #}
+{%- set classes = [
   'flag-default',
   'flag-' ~ flag.id()|clean_class,
   'js-flag-' ~ flag.id()|clean_class ~ '-' ~ flaggable.id(),
   action_class
-  ] %}
+] %}
 
-  {% set button_classes = [
+{%- set button_classes = [
   'btn',
   'btn-default',
   'btn-follow',
   'follow-term-link',
-  ] %}
+] %}
 
-  {% set button_primaty_classes = [
-    'btn-primary',
-  ] %}
+{%- set button_primaty_classes = [
+  'btn-primary',
+] %}
 
-  {% set attributes = attributes.setAttribute('rel', 'nofollow').addClass(button_classes) %}
+{%- set attributes = attributes.setAttribute('rel', 'nofollow').addClass(button_classes) -%}
 
-  <div class="{{classes|join(' ')}}">
-    {% if action == 'unflag' %}
-      <a role="button"{{ attributes }}>{{ title }}</a>
-    {% else %}
-      <a role="button"{{ attributes.addClass('btn-primary') }}>{{ title }}</a>
-    {% endif %}
-  </div>
-
-{% endapply %}
+<div class="{{ classes|join(' ') }}">
+  {%- if action == 'unflag' -%}
+    <a role="button"{{ attributes }}>{{ title }}</a>
+  {%- else -%}
+    <a role="button"{{ attributes.addClass('btn-primary') }}>{{ title }}</a>
+  {%- endif -%}
+</div>

@@ -28,26 +28,22 @@
 
 {{ attach_library('socialbase/form--input-groups') }}
 
-{% apply spaceless %}
-  {% if input_group %}
+{%- if input_group -%}
+  <div class="input-group">
+{%- endif -%}
 
-    <div class="input-group">
-  {% endif %}
+{%- if prefix -%}
+  {{ prefix }}
+{%- endif -%}
 
-  {% if prefix %}
-    {{ prefix }}
-  {% endif %}
+{%- block input -%}
+  <input{{ attributes.addClass(classes) }} />
+{%- endblock -%}
 
-  {% block input %}
-    <input{{ attributes.addClass(classes) }} />
-  {% endblock %}
+{%- if suffix -%}
+  {{ suffix }}
+{%- endif -%}
 
-  {% if suffix %}
-    {{ suffix }}
-  {% endif %}
-
-  {% if input_group %}
-    </div>
-  {% endif %}
-
-{% endapply %}
+{%- if input_group -%}
+  </div>
+{%- endif -%}
