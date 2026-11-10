@@ -70,7 +70,6 @@ class QueryHiddenCommentFieldTest extends SocialGraphQLTestBase {
     'views',
     'views_bulk_operations',
     'group',
-    'variationcache',
     'flexible_permissions',
     'social_topic',
     'social_tagging',

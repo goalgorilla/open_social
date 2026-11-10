@@ -108,7 +108,6 @@ class SocialGroupMembershipsCount extends SocialGraphQLTestBase {
     'social_comment',
     'taxonomy',
     'role_delegation',
-    'variationcache',
     'filter',
     'menu_link_content',
     'flag',

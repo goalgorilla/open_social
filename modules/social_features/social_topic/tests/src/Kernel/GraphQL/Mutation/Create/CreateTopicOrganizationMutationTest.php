@@ -124,7 +124,6 @@ class CreateTopicOrganizationMutationTest extends SocialTopicGraphQLKernelTestBa
     'social_comment',
     'taxonomy',
     'role_delegation',
-    'variationcache',
     'menu_link_content',
     'flag',
     'field',

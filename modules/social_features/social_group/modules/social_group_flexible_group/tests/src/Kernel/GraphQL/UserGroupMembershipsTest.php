@@ -158,7 +158,6 @@ class UserGroupMembershipsTest extends SocialGraphQLTestBase {
     'graphql_oauth',
     'social_comment',
     'role_delegation',
-    'variationcache',
     'menu_link_content',
     'social_group_invite',
     'ginvite',

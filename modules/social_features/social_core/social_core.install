@@ -1064,3 +1064,17 @@ function social_core_update_130028(): void {
   $view->set('display', $displays);
   $view->save();
 }
+
+/**
+ * Uninstall the obsolete variationcache module.
+ *
+ * Drupal core includes VariationCache since 10.2. When enabled, the contrib
+ * module only replaces core's variation_cache_factory service with its own
+ * copy, and it has no Drupal 11 release. Its code is removed from the codebase
+ * in a later release, once every site has run this update.
+ */
+function social_core_update_130029(): void {
+  if (\Drupal::moduleHandler()->moduleExists('variationcache')) {
+    \Drupal::service('module_installer')->uninstall(['variationcache']);
+  }
+}

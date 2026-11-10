@@ -70,7 +70,6 @@ class QueryCommentsGroupAccessTest extends SocialGraphQLTestBase {
     'social_topic',
     'views',
     'views_bulk_operations',
-    'variationcache',
     'flexible_permissions',
     'menu_ui',
     'path',

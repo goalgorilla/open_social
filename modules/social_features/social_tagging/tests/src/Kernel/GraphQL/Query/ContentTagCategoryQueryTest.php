@@ -53,7 +53,6 @@ class ContentTagCategoryQueryTest extends SocialGraphQLTestBase {
     'social_oauth',
     'social_graphql',
     'graphql_oauth',
-    'variationcache',
     'image',
     'file',
     'file_mdm',

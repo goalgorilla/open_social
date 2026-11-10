@@ -53,7 +53,6 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
     'views',
     'views_bulk_operations',
     'group',
-    'variationcache',
     'flexible_permissions',
     // For node query access (status, visibility).
     'options',

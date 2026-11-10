@@ -60,7 +60,6 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
     'group_core_comments',
     'views',
     'group',
-    'variationcache',
     'path_alias',
     'hux',
     'social_tagging',

@@ -35,7 +35,6 @@ class SocialCourseNodeQueryAccessTest extends EntityKernelTestBase {
     'group',
     'options',
     'entity',
-    'variationcache',
     'node',
     'gnode',
     'social_group',

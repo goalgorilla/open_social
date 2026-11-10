@@ -121,7 +121,6 @@ abstract class SocialTopicGraphQLKernelTestBase extends SocialGraphQLTestBase {
     'social_comment',
     'taxonomy',
     'role_delegation',
-    'variationcache',
     'menu_link_content',
     'flag',
     'field',

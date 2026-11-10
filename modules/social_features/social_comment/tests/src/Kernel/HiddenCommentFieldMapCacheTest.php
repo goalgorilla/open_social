@@ -40,7 +40,6 @@ class HiddenCommentFieldMapCacheTest extends EntityKernelTestBase {
     'views_bulk_operations',
     'group',
     'group_core_comments',
-    'variationcache',
     'flexible_permissions',
   ];
 

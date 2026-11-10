@@ -64,7 +64,6 @@ class QueryTopicTest extends SocialGraphQLTestBase {
     'views',
     'views_bulk_operations',
     'group',
-    'variationcache',
     'social_tagging',
   ];
 

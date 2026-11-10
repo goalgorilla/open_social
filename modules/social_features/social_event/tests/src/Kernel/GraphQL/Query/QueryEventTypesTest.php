@@ -69,7 +69,6 @@ class QueryEventTypesTest extends SocialGraphQLTestBase {
     'address',
     'profile',
     'social_profile',
-    'variationcache',
     'social_tagging',
   ];
 

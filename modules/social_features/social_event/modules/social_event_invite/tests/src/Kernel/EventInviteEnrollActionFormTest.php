@@ -107,7 +107,6 @@ class EventInviteEnrollActionFormTest extends SocialEventGraphQLKernelTestBase {
     'social_comment',
     'taxonomy',
     'role_delegation',
-    'variationcache',
     'menu_link_content',
     'flag',
     'field',
