@@ -313,7 +313,7 @@ class BookContext extends RawMinkContext {
       throw new \Exception("The book you tried to create is invalid: $violations");
     }
 
-    $book_object->book = \Drupal::service('book.manager')->getLinkDefaults($book_object);
+    $book_object->book = \Drupal::service('book.manager')->getLinkDefaults('new');
     $book_object->book['bid'] = $book_id;
 
     if (!isset($book['parent']) && isset($book['book'])) {

@@ -5,6 +5,8 @@
  * Contains post-update hooks for the Social Book module.
  */
 
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+
 /**
  * Updates the node type visibility condition.
  */
@@ -27,4 +29,30 @@ function social_book_post_update_replace_node_type_condition(): void {
       $block->save(TRUE);
     }
   }
+}
+
+/**
+ * Show the book navigation on book pages again.
+ *
+ * Core Book always added the book navigation to the full view of book pages.
+ * The contributed Book module only adds it when the display enables its
+ * book_navigation component, and its own post update hides that component on
+ * every node display. Enable it on the default book display, which renders the
+ * full view of book pages.
+ */
+function social_book_post_update_enable_book_navigation_component(): void {
+  $display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('node.book.default');
+  if (!$display instanceof EntityViewDisplayInterface) {
+    return;
+  }
+
+  $display->setComponent('book_navigation', [
+    'weight' => 100,
+    'region' => 'content',
+    'settings' => [],
+    'third_party_settings' => [],
+  ]);
+  $display->save();
 }
