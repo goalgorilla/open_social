@@ -7,13 +7,16 @@ use Drupal\Core\Cache\CacheableRedirectResponse;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Installer\InstallerKernel;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\PathMatcher;
+use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\State\StateInterface;
 use Drupal\user\UserData;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\Core\Url;
@@ -81,6 +84,13 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   protected AliasRepositoryInterface $pathAliasRepository;
 
   /**
+   * The inbound path processor manager.
+   *
+   * @var \Drupal\Core\PathProcessor\InboundPathProcessorInterface
+   */
+  protected InboundPathProcessorInterface $pathProcessor;
+
+  /**
    * Constructor for the RedirectHomepageSubscriber.
    *
    * @param \Drupal\user\UserData $user_data
@@ -99,6 +109,8 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    *   The language manager.
    * @param \Drupal\path_alias\AliasRepositoryInterface $path_alias_repository
    *   The path alias repository.
+   * @param \Drupal\Core\PathProcessor\InboundPathProcessorInterface $path_processor
+   *   The inbound path processor manager.
    */
   public function __construct(
     UserData $user_data,
@@ -109,6 +121,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     EntityTypeManagerInterface $entity_type_manager,
     LanguageManagerInterface $language_manager,
     AliasRepositoryInterface $path_alias_repository,
+    InboundPathProcessorInterface $path_processor,
   ) {
     // We need it.
     $this->userData = $user_data;
@@ -119,6 +132,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     $this->entityTypeManager = $entity_type_manager;
     $this->languageManager = $language_manager;
     $this->pathAliasRepository = $path_alias_repository;
+    $this->pathProcessor = $path_processor;
   }
 
   /**
@@ -157,109 +171,156 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $request = $event->getRequest();
-    $request_path = $request->getPathInfo();
-    $site_settings_frontpage = $this->configFactory->get('system.site')->get('page.front');
-    $active_language = $this->languageManager->getCurrentLanguage()->getId();
+    $response = $this->getHomepageRedirect($event->getRequest());
+    if ($response !== NULL) {
+      $event->setResponse($response);
+    }
+  }
 
-    // No redirection is required for administrators and no alternative front
-    // page for authenticated users. Ideally, we want to check the permission
-    // (for example, "administer site configuration"), but SM also has this
-    // permission, and we have no other permission to check if the user
-    // is an administrator.
+  /**
+   * Gets the redirect to the front page of the current user, if one is needed.
+   *
+   * A redirect is needed when the request is for the site's front page, in any
+   * language and by any of its paths, and the current user has another front
+   * page. The redirect stays in the language of the requested URL.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request to check. It must be the current request, because the
+   *   language of the URL is negotiated from the current request.
+   *
+   * @return \Drupal\Core\Cache\CacheableRedirectResponse|null
+   *   The redirect, or NULL when the request should be handled as it is.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getHomepageRedirect(Request $request): ?CacheableRedirectResponse {
+    $site_settings_frontpage = $this->configFactory->get('system.site')->get('page.front');
+    // Without a front page there is nothing to redirect from, and Drupal's
+    // front page path processor throws a "not found" exception for "/".
+    if (!is_string($site_settings_frontpage) || $site_settings_frontpage === '') {
+      return NULL;
+    }
+
+    // Find out which system path is requested, the same way the router does
+    // later in the request: the language prefix is removed, "/" becomes the
+    // site's front page and an alias becomes the path it belongs to. This
+    // subscriber runs before routing, so it has to do this itself. The request
+    // is cloned because path processors may change the request they are given.
+    $request_path = $this->pathProcessor->processInbound($request->getPathInfo(), clone $request);
+
+    // The site's front page is configured as a system path on Drupal's own
+    // form, but as it was typed, so possibly as an alias, when it was set by
+    // saving the front page for anonymous users.
+    $frontpage_path = $this->getSystemPath($site_settings_frontpage);
+
+    // An alias only exists in its own language. When the site's front page is
+    // an alias and the request is in another language, Drupal can't find the
+    // page that belongs to it and would answer "not found".
+    $is_frontpage_of_other_language = $request_path === $site_settings_frontpage && $request_path !== $frontpage_path;
+
+    // We only proceed if the user requests the front page.
+    if ($request_path !== $frontpage_path && !$is_frontpage_of_other_language) {
+      return NULL;
+    }
+
+    // Administrators get the front page for authenticated users. Ideally, we
+    // want to check the permission (for example, "administer site
+    // configuration"), but SM also has this permission, and we have no other
+    // permission to check if the user is an administrator.
     if (in_array('administrator', $this->currentUser->getRoles(), TRUE)) {
       $authenticated_page = $this->entityTypeManager
         ->getStorage('alternative_frontpage')
         ->loadByProperties(['roles_target_id' => AccountInterface::AUTHENTICATED_ROLE]);
 
+      // No redirection is required for administrators when there is no
+      // alternative front page for authenticated users.
       if (empty($authenticated_page)) {
-        return;
+        return NULL;
       }
 
       /** @var \Drupal\alternative_frontpage\Entity\AlternativeFrontpage $authenticated_page */
       $authenticated_page = reset($authenticated_page);
-      $authenticated_page_url = $authenticated_page->path;
-      if ($alias = $this->pathAliasRepository->lookupByAlias($authenticated_page_url, $active_language)) {
-        $authenticated_page_url = $alias['path'];
-      }
-
-      // If we are on the frontpage, Drupal will rewrite the url
-      // to '/', so the below if condition  will never be true
-      // this will cause an endless loop.
-      if ($request_path === "/") {
-        $request_path = $site_settings_frontpage;
-      }
-
-      if ($request_path === $authenticated_page_url) {
-        return;
-      }
-
-      if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language)) {
-        $this->doRedirect($event, 'administrator', $authenticated_page_url);
-      }
-
-      // Administrators are fully handled above, continuing would overwrite the
-      // redirect with the one for their other roles.
-      return;
+      $user_role = 'administrator';
+      $user_page = (string) $authenticated_page->path;
     }
-
-    $current_user_roles = $this->currentUser->getRoles(FALSE);
-    $current_user_data = $this->getAlternativePageDataForCurrentUser($current_user_roles);
-    $user_role = $current_user_data['role'] ?? '';
-    $user_page = $current_user_data['page'] ?? '';
-
-    $active_language = $this->languageManager->getCurrentLanguage();
+    else {
+      $current_user_data = $this->getAlternativePageDataForCurrentUser($this->currentUser->getRoles(FALSE));
+      $user_role = $current_user_data['role'] ?? '';
+      $user_page = $current_user_data['page'] ?? '';
+    }
 
     // Do nothing if the current user does not have a custom front page.
-    if (empty($user_page)) {
-      return;
+    if ($user_page === '') {
+      return NULL;
     }
 
-    // We do not redirect if the user is already on the desired page,
-    // otherwise there will be an endless loop.
-    if ($request_path === $user_page) {
-      return;
+    // The front page of the user may be configured as an alias too, so we
+    // compare system paths.
+    $user_page = $this->getSystemPath($user_page);
+
+    // The front page for the user is the same as in the site configuration,
+    // and we are not redirecting, otherwise there will be an endless loop.
+    // This also covers a user who is already on their front page. The
+    // exception is the front page that Drupal can't find in this language:
+    // the redirect below goes to a URL of the same page that it can find.
+    if ($user_page === $frontpage_path && !$is_frontpage_of_other_language) {
+      return NULL;
     }
 
-    // We only proceed if the user requests the home page.
-    if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language->getId())) {
-      // Check if user_page is an alias, if so get the actual url.
-      // $site_settings_frontpage will always be a URL, even if the alias
-      // is used.
-      if ($alias = $this->pathAliasRepository->lookupByAlias($user_page, $active_language->getId())) {
-        $user_page = $alias['path'];
-      }
+    // No language is given, so that the URL is built in the language of the
+    // requested URL, with its prefix and its alias, like any link on a page.
+    $redirect_url = Url::fromUserInput('/' . ltrim($user_page, '/'))->toString(TRUE);
 
-      // The home page for the user is the same as in the site configuration,
-      // and we are not redirecting, otherwise there will be an endless loop.
-      if ($user_page === $site_settings_frontpage) {
-        return;
-      }
+    $cacheability = new CacheableMetadata();
+    // Which page is requested and in which language decide the redirect,
+    // together with the role of the user.
+    $cacheability->setCacheContexts([
+      'user.roles:' . $user_role,
+      'url.path',
+      'languages:' . LanguageInterface::TYPE_URL,
+    ]);
+    // The redirect changes with the site's front page and with the configured
+    // alternative front pages. A changed alias is not covered.
+    $cacheability->setCacheTags([
+      'config:system.site',
+      'config:alternative_frontpage_list',
+    ]);
 
-      $redirect_path = Url::fromUserInput('/' . ltrim($user_page, '/'), [
-        'language' => $active_language,
-      ])->toString();
-
-      $this->doRedirect($event, $user_role, $redirect_path);
-    }
+    $response = new CacheableRedirectResponse($redirect_url->getGeneratedUrl());
+    $response->addCacheableDependency($cacheability);
+    $response->addCacheableDependency($redirect_url);
+    return $response;
   }
 
   /**
-   * Redirect to a page for a specific role.
+   * Gets the system path for a configured path that may be an alias.
+   *
+   * An alias only exists in the language it was made for, while the path is
+   * configured once for all languages. The alias is therefore looked up in
+   * the language of the requested URL first and then in every other language.
+   *
+   * @param string $path
+   *   The configured path: a system path or an alias.
+   *
+   * @return string
+   *   The system path, or the given path when it is not an alias.
    */
-  private function doRedirect(RequestEvent $event, string $user_role, string $redirect_path): void {
-    $cache_contexts = new CacheableMetadata();
-    $cache_contexts->setCacheContexts(['user.roles:' . $user_role]);
-    $response = new CacheableRedirectResponse($redirect_path);
-    $response->addCacheableDependency($cache_contexts);
-    $event->setResponse($response);
-  }
+  private function getSystemPath(string $path): string {
+    $url_langcode = $this->languageManager->getCurrentLanguage(LanguageInterface::TYPE_URL)->getId();
+    $langcodes = array_unique([
+      $url_langcode,
+      ...array_keys($this->languageManager->getLanguages()),
+    ]);
 
-  /**
-   * Check if the requested page is a front page.
-   */
-  private function isFrontPageRequested(string $request_path, string $site_settings_frontpage, string $active_language): bool {
-    return $request_path === $site_settings_frontpage || $request_path === '/' || $request_path === '/' . $active_language;
+    foreach ($langcodes as $langcode) {
+      $alias = $this->pathAliasRepository->lookupByAlias($path, $langcode);
+      if ($alias !== NULL) {
+        return $alias['path'];
+      }
+    }
+
+    return $path;
   }
 
   /**
