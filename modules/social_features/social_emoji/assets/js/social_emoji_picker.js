@@ -97,7 +97,12 @@
    *   Emoji picker element.
    */
   Drupal.emojiPicker.prototype.createPickerElement = function(Picker) {
-    this.pickerElement = new Picker();
+    // Load the emoji data from the site itself. Without a dataSource the
+    // library fetches it from cdn.jsdelivr.net.
+    this.pickerElement = new Picker({
+      locale: 'en',
+      dataSource: drupalSettings.path.baseUrl + 'libraries/emoji-picker-element-data/en/emojibase/data.json',
+    });
     // Override the i18n property to get the translated searchLabel from drupalSettings.
     this.pickerElement.i18n.searchLabel = drupalSettings.social_emoji.searchLabel;
     // Add custom attributes.

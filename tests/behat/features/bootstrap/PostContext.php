@@ -168,4 +168,68 @@ class PostContext extends RawMinkContext {
     return $post_object;
   }
 
+  /**
+   * Checks that the emoji picker loaded its emoji data from the site itself.
+   *
+   * Waits until the picker shows emoji, then checks that its data source is
+   * the copy in /libraries and that the page made no request to jsDelivr,
+   * the library's default data source.
+   *
+   * @Then the emoji picker loads its emoji data from the site itself
+   */
+  public function assertEmojiPickerLoadsLocalData() : void {
+    $session = $this->getSession();
+    $loaded = $session->wait(30000, "!!document.querySelector('emoji-picker')?.shadowRoot?.querySelector('.tabpanel [role=\"menuitem\"]')");
+    if (!$loaded) {
+      throw new \Exception('The emoji picker did not show any emoji within 30 seconds.');
+    }
+
+    $data_source = $session->evaluateScript("return document.querySelector('emoji-picker').dataSource;");
+    $local_data_source = '/libraries/emoji-picker-element-data/en/emojibase/data.json';
+    if (!is_string($data_source) || !str_ends_with($data_source, $local_data_source)) {
+      throw new \Exception(sprintf('The emoji picker loads its data from "%s" instead of "%s".', $data_source, $local_data_source));
+    }
+
+    $third_party_requests = $session->evaluateScript(<<<JS
+      return performance.getEntriesByType('resource')
+        .map(function (entry) { return entry.name; })
+        .filter(function (url) { return url.indexOf('jsdelivr.net') !== -1; });
+JS
+    );
+    if (!empty($third_party_requests)) {
+      throw new \Exception(sprintf('The page requested emoji data from jsDelivr: %s', implode(', ', $third_party_requests)));
+    }
+  }
+
+  /**
+   * Picks an emoji in the open emoji picker.
+   *
+   * @When I pick the emoji :emoji in the emoji picker
+   */
+  public function pickEmoji(string $emoji) : void {
+    $session = $this->getSession();
+    $id = json_encode('emo-' . $emoji, JSON_THROW_ON_ERROR);
+    // Chrome Mink evaluateScript() does not support arguments[], and the
+    // emoji buttons are in the picker's shadow DOM, out of Mink's reach.
+    $clicked = $session->evaluateScript(<<<JS
+      return (function (id) {
+        var button = document.querySelector('emoji-picker')?.shadowRoot?.getElementById(id);
+        if (!button) {
+          return false;
+        }
+        button.click();
+        return true;
+      })({$id});
+JS
+    );
+    if (!$clicked) {
+      throw new \Exception(sprintf('The emoji "%s" is not in the emoji picker.', $emoji));
+    }
+
+    // Picking an emoji inserts it and then closes the picker.
+    if (!$session->wait(10000, "!document.querySelector('emoji-picker').classList.contains('open')")) {
+      throw new \Exception(sprintf('The emoji picker did not close after picking "%s".', $emoji));
+    }
+  }
+
 }
