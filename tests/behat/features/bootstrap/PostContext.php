@@ -169,6 +169,31 @@ class PostContext extends RawMinkContext {
   }
 
   /**
+   * Opens the emoji picker of the first emoji-enabled field on the page.
+   *
+   * The "Pick an emoji" button is added by JavaScript after the emoji picker
+   * library has been imported, so it can appear a moment after the page loads.
+   *
+   * @When I open the emoji picker
+   */
+  public function openEmojiPicker() : void {
+    $session = $this->getSession();
+    if (!$session->wait(30000, "!!document.querySelector('button.social-emoji-trigger')")) {
+      throw new \Exception('The "Pick an emoji" button did not appear within 30 seconds.');
+    }
+
+    $button = $session->getPage()->find('css', 'button.social-emoji-trigger');
+    if ($button === NULL) {
+      throw new ElementNotFoundException($session->getDriver(), 'button', 'css', 'button.social-emoji-trigger');
+    }
+    $button->click();
+
+    if (!$session->wait(10000, "!!document.querySelector('emoji-picker.open')")) {
+      throw new \Exception('The emoji picker did not open.');
+    }
+  }
+
+  /**
    * Checks that the emoji picker loaded its emoji data from the site itself.
    *
    * Waits until the picker shows emoji, then checks that its data source is
@@ -211,6 +236,8 @@ JS
     $id = json_encode('emo-' . $emoji, JSON_THROW_ON_ERROR);
     // Chrome Mink evaluateScript() does not support arguments[], and the
     // emoji buttons are in the picker's shadow DOM, out of Mink's reach.
+    // The buttons only exist once the picker has loaded its emoji data.
+    $session->wait(30000, "!!document.querySelector('emoji-picker')?.shadowRoot?.getElementById({$id})");
     $clicked = $session->evaluateScript(<<<JS
       return (function (id) {
         var button = document.querySelector('emoji-picker')?.shadowRoot?.getElementById(id);
