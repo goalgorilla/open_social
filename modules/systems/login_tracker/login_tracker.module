@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @file
+ * The main module file.
+ *
+ * The main module file contains hooks to create the permissions used by the
+ * module, to log the login data, and to expose the module to views.
+ */
+
+/**
+ * Implements hook_user_login().
+ *
+ * Stores the fact that the user has logged in. 3rd party modules may override
+ * whether a particular login is tracked by using
+ * hook_login_tracker_track_login_alter(). Modules may also provide additional
+ * data to be logged by using
+ * hook_login_tracker_login_data_alter().
+ */
+function login_tracker_user_login($account) {
+
+  // Do not track the login by default if the user's role is excluded from
+  // tracking.
+  $track_login = !$account->hasPermission('excluded_from_login_tracking');
+
+  // Allow other modules to override whether or not we're tracking this
+  // login.
+  \Drupal::moduleHandler()->alter('login_tracker_track_login', $track_login, $account);
+
+  if (!$track_login) {
+    return;
+  }
+
+  $data = [];
+  \Drupal::moduleHandler()->alter('login_tracker_login_data', $data, $account);
+  $data = serialize($data);
+
+  $keys = [
+    'record_id' => NULL,
+  ];
+  $fields = [
+    'uid'             => $account->id(),
+    'login_timestamp' => \Drupal::time()->getRequestTime(),
+    'data'            => $data,
+  ];
+
+  \Drupal::database()->merge('login_tracker')
+    ->key($keys)
+    ->fields($fields)
+    ->execute();
+}
+
+/**
+ * Implements hook_cron().
+ */
+function login_tracker_cron() {
+  $settings = \Drupal::state()->get('login_tracker_settings', []);
+  if (!empty($settings['purge_interval'])) {
+    $query = \Drupal::database()->delete('login_tracker');
+    $query->condition('login_timestamp', time() - $settings['purge_interval'], '<=');
+    $results = $query->execute();
+
+    if ($results) {
+      \Drupal::logger('login_tracker')->notice(
+        t(
+          '@logs records have been purged with success from table @table',
+          ['@logs' => $results, '@table' => 'login_tracker']
+        )
+      );
+    }
+    else {
+      \Drupal::logger('login_tracker')->notice(t('Nothing to purge from table @table', ['@table' => 'login_tracker']));
+    }
+  }
+}
