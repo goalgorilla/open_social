@@ -8,6 +8,10 @@
  * module, to log the login data, and to expose the module to views.
  */
 
+declare(strict_types=1);
+
+use Drupal\Core\Session\AccountInterface;
+
 /**
  * Implements hook_user_login().
  *
@@ -17,7 +21,7 @@
  * data to be logged by using
  * hook_login_tracker_login_data_alter().
  */
-function login_tracker_user_login($account) {
+function login_tracker_user_login(AccountInterface $account): void {
 
   // Do not track the login by default if the user's role is excluded from
   // tracking.
@@ -45,7 +49,7 @@ function login_tracker_user_login($account) {
   ];
 
   \Drupal::database()->merge('login_tracker')
-    ->key($keys)
+    ->keys($keys)
     ->fields($fields)
     ->execute();
 }
@@ -53,7 +57,7 @@ function login_tracker_user_login($account) {
 /**
  * Implements hook_cron().
  */
-function login_tracker_cron() {
+function login_tracker_cron(): void {
   $settings = \Drupal::state()->get('login_tracker_settings', []);
   if (!empty($settings['purge_interval'])) {
     $query = \Drupal::database()->delete('login_tracker');

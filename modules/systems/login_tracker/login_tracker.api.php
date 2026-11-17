@@ -5,6 +5,8 @@
  * Hooks provided by the Login Tracker module.
  */
 
+declare(strict_types=1);
+
 /**
  * Override whether a login request should be tracked or not.
  *

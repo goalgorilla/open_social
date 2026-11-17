@@ -5,10 +5,12 @@
  * Views integration for the Login Tracker module.
  */
 
+declare(strict_types=1);
+
 /**
  * Implements hook_views_data().
  */
-function login_tracker_views_data() {
+function login_tracker_views_data(): array {
   $data = [];
   $data['login_tracker']['table']['group'] = t('User logins');
   $data['login_tracker']['table']['base'] = [

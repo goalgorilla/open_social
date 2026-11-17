@@ -5,10 +5,12 @@
  * Install, update, and uninstall functions for the Login Tracker module.
  */
 
+declare(strict_types=1);
+
 /**
  * Implements hook_schema().
  */
-function login_tracker_schema() {
+function login_tracker_schema(): array {
   $schema['login_tracker'] = [
     'fields' => [
       'record_id' => [

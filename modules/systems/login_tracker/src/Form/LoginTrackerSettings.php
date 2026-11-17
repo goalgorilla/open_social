@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\login_tracker\Form;
 
 use Drupal\Core\Form\FormBase;
@@ -32,7 +34,7 @@ class LoginTrackerSettings extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('state')
     );
@@ -82,7 +84,7 @@ class LoginTrackerSettings extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     $this->messenger()->addMessage($this->t('The configuration has been saved'), 'status');
 
