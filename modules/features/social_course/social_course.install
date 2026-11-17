@@ -105,6 +105,8 @@ function _social_course_get_permissions($role) {
   // Anonymous.
   $permissions['anonymous'] = [
     'access course overview',
+    'view terms in course_type',
+    'view term names in course_type',
   ];
 
   // Authenticated.
@@ -160,10 +162,16 @@ function _social_course_get_permissions($role) {
     'override course_section revision option',
     'override course_section sticky option',
     'view unpublished groups',
+    'select terms in course_type',
   ]);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'create terms in course_type',
+    'edit terms in course_type',
+    'delete terms in course_type',
+    'reorder terms in course_type',
+  ]);
 
   return $permissions[$role] ?? [];
 }
@@ -931,4 +939,31 @@ function social_course_update_13010(): void {
  */
 function social_course_update_13011(): void {
   SocialCourseUninstallHelper::addEnforcedDependency('social_course');
+}
+
+/**
+ * Grant "Course type" vocabulary permissions to existing roles.
+ *
+ * Site managers can manage course types, and every role can view course type
+ * labels on course pages.
+ */
+function social_course_update_26000(): void {
+  if (\Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->load('course_type') === NULL) {
+    return;
+  }
+
+  foreach (Role::loadMultiple() as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = array_filter(
+      _social_course_get_permissions((string) $role->id()),
+      static fn (string $permission): bool => str_ends_with($permission, ' in course_type'),
+    );
+
+    if ($permissions !== []) {
+      user_role_grant_permissions((string) $role->id(), $permissions);
+    }
+  }
 }
