@@ -2,9 +2,7 @@
 
 namespace Drupal\social_core\Controller;
 
-use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -14,8 +12,6 @@ use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInter
 use Drupal\views_bulk_operations\Traits\ViewsBulkOperationsFormTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Returns responses for social_core module routes.
@@ -122,114 +118,6 @@ class SocialCoreController extends ControllerBase {
   }
 
   /**
-   * AJAX callback to update selection (multipage).
-   *
-   * @param string $view_id
-   *   The current view ID.
-   * @param string $display_id
-   *   The display ID of the current view.
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The request object.
-   *
-   * @deprecated in open_social:12.1.0 and is removed from open_social:14.0.0. Use
-   *   'views_bulk_operations.update_selection' instead.
-   *
-   * @see https://www.drupal.org/node/3419770
-   */
-  public function updateSelection(
-    string $view_id,
-    string $display_id,
-    Request $request,
-  ): AjaxResponse {
-    $view_data = $this->getTempstoreData($view_id, $display_id);
-    if (empty($view_data)) {
-      throw new NotFoundHttpException();
-    }
-
-    // If the group id doesn't match.
-    // We reset the selection and update the group.
-    if ($view_id === 'group_manage_members') {
-      $group_id = $request->attributes->get('group');
-      if (!empty($group_id) && !empty($view_data['group_id'])) {
-        if ($group_id !== $view_data['group_id']) {
-          $view_data['list'] = [];
-          $view_data['group_id'] = $group_id;
-          $view_data['total_results'] = 0;
-        }
-      }
-    }
-
-    // If the event id doesn't match.
-    // We reset the selection and update the group.
-    if ($view_id === 'event_manage_enrollments') {
-      // Gets overridden by GVBO in to the group argument.
-      $event_id = $request->attributes->get('group');
-      if (!empty($event_id) && !empty($view_data['event_id'])) {
-        if ($event_id !== $view_data['event_id']) {
-          $view_data['list'] = [];
-          $view_data['event_id'] = $event_id;
-          $view_data['total_results'] = 0;
-        }
-      }
-    }
-
-    // All borrowed from ViewsBulkOperationsController.php.
-    $parameters = $request->request->all();
-
-    // Reverse operation when in exclude mode.
-    if (!empty($view_data['exclude_mode'])) {
-      if ($parameters['op'] === 'add') {
-        $parameters['op'] = 'remove';
-      }
-      elseif ($parameters['op'] === 'remove') {
-        $parameters['op'] = 'add';
-      }
-    }
-
-    switch ($parameters['op']) {
-      case 'add':
-        foreach ($parameters['list'] as $bulkFormKey) {
-          if (!isset($view_data['list'][$bulkFormKey])) {
-            $view_data['list'][$bulkFormKey] = $this->getListItem($bulkFormKey);
-          }
-        }
-        break;
-
-      case 'remove':
-        foreach ($parameters['list'] as $bulkFormKey) {
-          if (isset($view_data['list'][$bulkFormKey])) {
-            unset($view_data['list'][$bulkFormKey]);
-          }
-        }
-        break;
-
-      case 'method_include':
-        unset($view_data['exclude_mode']);
-        $view_data['list'] = [];
-        break;
-
-      case 'method_exclude':
-        $view_data['exclude_mode'] = TRUE;
-        $view_data['list'] = [];
-        break;
-    }
-
-    $this->setTempstoreData($view_data);
-
-    $count = empty($view_data['exclude_mode']) ? \count($view_data['list']) : $view_data['total_results'] - \count($view_data['list']);
-
-    return (new AjaxResponse())
-      ->setData([
-        'count' => $count,
-        'selection_info' => $this->formatPlural(
-          $count,
-          '<b><em class="placeholder">1</em> Member</b> is selected',
-          '<b><em class="placeholder">@count</em> Members</b> are selected',
-        ),
-      ]);
-  }
-
-  /**
    * Redirects a user to the group or events invite page, or home if empty.
    */
   public function myInvitesUserPage(): RedirectResponse {
@@ -244,54 +132,6 @@ class SocialCoreController extends ControllerBase {
       : 'social_user.user_home';
 
     return $this->redirect($route_name, ['user' => $this->currentUser()->id()]);
-  }
-
-  /**
-   * The _title_callback for the entity creation route.
-   */
-  public function addPageTitle(): string {
-    $titles = $this->moduleHandler()->invokeAll('social_core_title');
-    $this->moduleHandler()->alter('social_core_title', $titles);
-
-    if (!empty($titles['node'])) {
-      if (!isset($titles['node']['bundles'])) {
-        $titles['node']['bundles'] = [];
-      }
-    }
-
-    if (($route_name = $this->routeMatch->getRouteName()) === NULL) {
-      return '';
-    }
-
-    $route_name = explode('.', $route_name);
-    $entity_type_id = $route_name[count($route_name) - 2];
-
-    if (isset($titles[$entity_type_id]['callback'])) {
-      $entity_type = $titles[$entity_type_id]['callback']();
-    }
-    else {
-      $definition = $this->entityTypeManager()->getDefinition($entity_type_id);
-
-      if (
-        $definition !== NULL &&
-        ($bundle_entity_type = $definition->getBundleEntityType()) !== NULL
-      ) {
-        $entity_type = $this->routeMatch->getParameter($bundle_entity_type);
-      }
-    }
-
-    if (
-      isset($entity_type) &&
-      $entity_type instanceof EntityInterface &&
-      ($label = $entity_type->label()) !== NULL
-    ) {
-      return $this->t('Create @article @name', [
-        '@article' => $titles[$entity_type_id]['bundles'][$entity_type->id()] ?? $this->t('a'),
-        '@name' => mb_strtolower($label),
-      ])->render();
-    }
-
-    return '';
   }
 
   /**

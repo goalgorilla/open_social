@@ -16,7 +16,6 @@ use Drupal\Core\Url;
 use Drupal\group\Entity\GroupRelationship;
 use Drupal\social_event\Entity\Node\EventInterface;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\social_event\SocialEventTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,8 +24,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @package Drupal\social_event\Form
  */
 class EnrollActionForm extends FormBase {
-
-  use SocialEventTrait;
 
   /**
    * The routing matcher to get the nid.

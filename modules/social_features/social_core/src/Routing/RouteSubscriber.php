@@ -47,38 +47,6 @@ class RouteSubscriber extends RouteSubscriberBase {
       }
     }
 
-    $titles = [];
-
-    // Deprecate and replace the invocation of 'social_core_title'.
-    $titles = $this->moduleHandler->invokeAllDeprecated(
-      'Deprecated in social:13.0.0 and is removed from social:14.0.0. Use hook_social_core_add_form_title_override instead.',
-      'social_core_title',
-      $titles
-    );
-
-    // Deprecate and replace the invocation of 'social_core_title_alter'.
-    $this->moduleHandler->alterDeprecated(
-      'Deprecated in social:13.0.0 and is removed from social:14.0.0. Use hook_social_core_add_form_title_override instead.',
-      'social_core_title_alter',
-      $titles
-    );
-
-    if (!empty($titles['node'])) {
-      if (!isset($titles['node']['bundles'])) {
-        $titles['node']['bundles'] = [];
-      }
-    }
-
-    // Write our own page title resolver for creation pages.
-    foreach (array_column($titles, 'route_name') as $route_name) {
-      if ($route = $collection->get($route_name)) {
-        $route->setDefault(
-          '_title_callback',
-          SocialCoreController::class . '::addPageTitle',
-        );
-      }
-    }
-
     // New approach for overriding add_form page titles.
     $titles = $this->moduleHandler->invokeAll('social_core_add_form_title_override');
     foreach ($titles as $route_name => $data) {

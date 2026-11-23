@@ -23,56 +23,6 @@ function hook_social_filter_format_default_alter(&$filter_format) {
 }
 
 /**
- * Provide a method to insert an article in the page title.
- *
- * @deprecated in social:13.0.0 and is removed from social:14.0.0. Use
- * hook_social_core_add_form_title_override instead.
- *
- * @return array
- *   An associative array of titles configuration. The keys are entity types.
- *   The values are associative arrays that may contain the following elements:
- *   - route_name: The route name of the page which title should be replaced.
- *   - bundles: (optional) An associative array of articles, keyed by bundle
- *     name.
- *   - callback: (optional) The function should return the config entity object
- *     of an entity type.
- *
- * @see \Drupal\social_core\Routing\RouteSubscriber::alterRoutes()
- * @see \Drupal\social_core\Controller\SocialCoreController::addPageTitle()
- *
- * @ingroup social_core_api
- */
-function hook_social_core_title() {
-  return [
-    'node' => [
-      'route_name' => 'node.add',
-      'bundles' => [
-        'article' => 'an',
-      ],
-    ],
-  ];
-}
-
-/**
- * Alter configuration of titles.
- *
- * @param array $titles
- *   An associative array of titles configuration returned by
- *   hook_social_core_title().
- *
- * @deprecated in social:13.0.0 and is removed from social:14.0.0. Use
- * hook_social_core_add_form_title_override instead.
- *
- * @see \Drupal\social_core\Routing\RouteSubscriber::alterRoutes()
- * @see \Drupal\social_core\Controller\SocialCoreController::addPageTitle()
- *
- * @ingroup social_core_api
- */
-function hook_social_core_title_alter(array &$titles) {
-  $titles['node']['bundles']['event'] = 'an';
-}
-
-/**
  * Provides route for node page where should be displayed simple title.
  *
  * @return string
@@ -224,42 +174,47 @@ function hook_social_core_ENTITY_TYPE_unpublished(\Drupal\Core\Entity\EntityInte
 }
 
 /**
- * Provides a mechanism to override form titles for specific routes dynamically.
+ * Provides the page title for entity add form routes.
  *
- * This hook allows modules to define custom logic for overriding form titles
- * based on the route name and its parameters. The hook implementations should
- * return an array keyed by the route name, with each value containing:
- * - `label`: A string representing the entity type label or a callable function
- *   to dynamically generate the page title. If a callable is provided, it will
- *   receive the route parameters as arguments and must return a string for the
- *   entity type label.
+ * The title of each route returned by an implementation becomes
+ * "Create a <label>" or "Create an <label>". The label is lowercased and the
+ * article is chosen by whether the label starts with a vowel, so the label
+ * should be the singular name of the thing being created.
+ *
+ * The hook implementations should return an array keyed by the route name,
+ * with each value containing:
+ * - `label`: The entity type or bundle label as a string, or a callable that
+ *   returns it. A callable is called without arguments when the title is
+ *   generated; use the current route match to read the route parameters.
  *
  * Example usage:
  *
  * @code
  * function my_module_social_core_add_form_title_override() {
  *   return [
- *     'entity.node.edit_form' => [
- *       'label' => function ($parameters) {
- *         // Custom logic to generate the label dynamically.
- *         return 'Custom Label for Node';
- *       },
+ *     // Static label: "Create a post".
+ *     'entity.post.add_page' => [
+ *       'label' => 'Post',
  *     ],
- *     'entity.user.edit_form' => [
- *       'label' => 'User', // Static label.
+ *     // Dynamic label from the bundle in the route: "Create an article".
+ *     'entity.node.add_form' => [
+ *       'label' => function () {
+ *         $node_type = \Drupal::routeMatch()->getParameter('node_type');
+ *         return $node_type?->label() ?? 'Content';
+ *       },
  *     ],
  *   ];
  * }
  * @endcode
  *
  * @return array
- *   An associative array of overrides keyed by route name. Each key-value pair
- *   includes:
- *   - `label` (string|callable): The label as a string or a callable function
- *     to dynamically generate the label.
+ *   An associative array of overrides keyed by route name. Each value is an
+ *   array with:
+ *   - `label` (string|callable): The label as a string, or a callable without
+ *     parameters that returns the label.
  *
  * @see \Drupal\social_core\Routing\RouteSubscriber::alterRoutes()
- * @see \Drupal\social_core\Controller\SocialCoreController::addPageTitle()
+ * @see \Drupal\social_core\Controller\SocialCoreController::generateAddFormTitle()
  *
  * @ingroup social_core_api
  */

@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_post\Entity\Post;
 use Drupal\social_profile_organization_tag\Service\SocialProfileOrganizationTag;
@@ -95,17 +94,4 @@ function social_profile_organization_tag_social_registration_fields_list_alter(a
   if (($key = array_search('field_profile_organization_tag', $fields, TRUE)) !== FALSE) {
     unset($fields[$key]);
   }
-}
-
-/**
- * Function that fetches the extra organizational info for a profile.
- *
- * @deprecated in social:13.0.0 and is removed from social:14.0.0.
- *   Use \Drupal::service(SocialProfileOrganizationTag::class)->getTagText()
- *   instead.
- * @see https://www.drupal.org/project/social
- */
-function social_profile_organization_tag_fetch(ProfileInterface $profile, bool $return_html = TRUE): FormattableMarkup|string {
-  @trigger_error('social_profile_organization_tag_fetch() is deprecated in social:13.0.0 and is removed from social:14.0.0. Use \Drupal::service(SocialProfileOrganizationTag::class)->getTagText() instead. See https://www.drupal.org/node/1234567', E_USER_DEPRECATED);
-  return \Drupal::service(SocialProfileOrganizationTag::class)->getTagText($profile, $return_html);
 }

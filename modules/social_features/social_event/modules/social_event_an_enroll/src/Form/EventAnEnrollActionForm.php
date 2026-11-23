@@ -12,7 +12,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Entity\Node\EventInterface;
-use Drupal\social_event\SocialEventTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -21,8 +20,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @package Drupal\social_event_an_enroll\Form
  */
 class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInterface {
-
-  use SocialEventTrait;
 
   /**
    * Event anonymous enrollment service.
