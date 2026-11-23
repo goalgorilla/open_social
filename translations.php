@@ -230,6 +230,9 @@ new TranslatableMarkup('Group roles');
 new TranslatableMarkup('Create digital spaces that empower your members to share');
 new TranslatableMarkup('#MadeToShare');
 
+// Strings added to replace the old ones due to ticket PROD-37153.
+new TranslatableMarkup("Routes Drupal's logging through Monolog so structured logs reach our observability stack (Grafana/Loki) instead of only the database.");
+
 // POTX doesn't pick up labels from third party settings
 // like field groups yet. Remove once our POTX patch is in.
 new TranslatableMarkup('A background task has been finished');
